@@ -81,7 +81,7 @@
                             case 2:
                                 ?>
                                 <li class="nav-item">
-                                    <a href="#" class="nav-link">
+                                    <a href="index.php" class="nav-link">
                                         <i class="icon-user-plus"></i>
                                         <span>Сегодня зарегистроваль</span>
                                     </a>
