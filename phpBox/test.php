@@ -76,6 +76,14 @@ class Planet
 // $stmt->setFetchMode(PDO::FETCH_CLASS, 'Planet');
 // $planet = $stmt->fetch();
 // var_dump($planet);
+
+function deleteAtr($id, $table, $location=''){
+    if ($id and $table) {
+        return "id=".$id."&table=".$table."&location=".$location;
+    }else{
+        echo "Ошибка не указаны(id или таблица)!";
+    }
+}
 ?>
 <table>
     <tbody>
@@ -83,8 +91,9 @@ class Planet
     foreach($pdo->query('SELECT * from planets') as $row) {
         ?>
         <tr>
+            <th><?= $row['id'] ?></th>
             <th><?= $row['name'] ?></th>
-            <th><?= $row['color'] ?></th>
+            <th><a href="delete.php?<?= deleteAtr($row['id'], 'planets', 'test.php')?>"><button>del</button></a></th>
         </tr>
         <?php
     }
@@ -92,6 +101,8 @@ class Planet
     </tbody>
 </table>
 <?php
+
+// echo deleteB(30, 'planets', 'test.php');
 // $stmt = $pdo->prepare("INSERT INTO planets(name, color) VALUES(:name, :color)");
 // $stmt->execute(['name' => 'leyt', 'color' => 'green']);
 
@@ -102,4 +113,3 @@ Planet::form('test.php');
 //     $stmt->execute(['name' => $planet->name, 'color' => $planet->color]);
 // }
 ?>
-

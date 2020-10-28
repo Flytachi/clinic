@@ -2,6 +2,21 @@
 require_once 'connection.php';
 
 
+
+// TODO Functions
+/*
+    --| get_full_name(),
+    --| get_name(),
+    --| level(),
+    --| permission(),
+    --| delAtr()
+    --| delete(),
+    --| clean(),
+    --| dateformat(),
+    --| nodateformat(),
+    --| showTitle(),
+*/
+
 function get_full_name($id = null) {
     global $db; 
     if($id){
@@ -59,6 +74,29 @@ function permission($arr){
     
 }
 
+function delAtr($id, $table, $location=''){
+    if ($id and $table) {
+        return "id=".$id."&table=".$table."&location=".$location;
+    }else{
+        return "Ошибка не указаны(id или таблица)!";
+    }
+}
+function delete($id, $table, $location=''){
+    global $db; 
+    if ($id and $table) {
+        $stmt = $db->prepare("DELETE FROM $table WHERE id = :id");
+        $stmt->bindValue(':id', $id);
+        $stmt->execute();
+        if ($stmt->rowCount()) {
+            header("location:../$location");
+        }else{
+            header("location:errors/404.php");
+        }
+    }else{
+        echo "Ошибка не указаны(id или таблица)!";
+    }
+}
+
 function clean($value = "") {
     $value = trim($value);
     $value = stripslashes($value);
@@ -67,13 +105,13 @@ function clean($value = "") {
     return $value;
 }
 
-function dateformat ($var=""){
+function dateformat($var=""){
 	$var = strtotime($var) ; 
 	$var = date('Y-m-d', $var);
-	return $var ; 
+	return $var; 
 }
 
-function nodateformat ($var=""){
+function nodateformat($var=""){
 	$var = strtotime($var) ; 
 	$var = date('d-m-Y', $var);
 	return $var ; 
@@ -81,7 +119,8 @@ function nodateformat ($var=""){
 
 function showTitle() //Функция title
 {
-	$title = "Rassrochka+";
+	$title = "Clinics";
 	return $title;
 }
+
 ?>
