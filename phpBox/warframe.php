@@ -13,6 +13,17 @@ function get_full_name($id = null) {
     return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
 }
 
+function get_name($id = null) {
+    global $db; 
+    if($id){
+        $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
+    }else{
+        $id = $_SESSION['session_id'];
+        $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
+    }
+    return ucwords($stmt->last_name." ".$stmt->first_name);
+}
+
 function level($id = null) {
     /*
     level(1)
