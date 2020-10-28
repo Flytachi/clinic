@@ -51,8 +51,9 @@ class Planet
         return $this->color;
     }
 
-    public function form($pdo, $local)
+    public function form($local)
     {
+        global $pdo;
         ?>
         <form method="post" action="">
             <input class="form-control" type="text" name="name">
@@ -65,7 +66,6 @@ class Planet
             $stmt = $pdo->prepare("INSERT INTO planets(name, color) VALUES(:name, :color)");
             $stmt->execute($_POST);
             if($stmt){
-                $pdo->commit();
                 header("location:$local");
             }
         };
@@ -95,7 +95,7 @@ class Planet
 // $stmt = $pdo->prepare("INSERT INTO planets(name, color) VALUES(:name, :color)");
 // $stmt->execute(['name' => 'leyt', 'color' => 'green']);
 
-Planet::form($pdo, 'connect.php');
+Planet::form('test.php');
 
 // if(isset($_POST['save_planet'])){
 //     $stmt = $pdo->prepare("INSERT INTO planets(name, color) VALUES(:name, :color)");
