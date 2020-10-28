@@ -9,7 +9,6 @@ require_once 'connection.php';
     --| get_name(),
     --| level(),
     --| permission(),
-    --| delAtr()
     --| delete(),
     --| clean(),
     --| dateformat(),
@@ -74,26 +73,27 @@ function permission($arr){
     
 }
 
-function delAtr($id, $table, $location=''){
-    if ($id and $table) {
-        return "id=".$id."&table=".$table."&location=".$location;
-    }else{
-        return "Ошибка не указаны(id или таблица)!";
-    }
-}
-function delete($id, $table, $location=''){
-    global $db; 
-    if ($id and $table) {
-        $stmt = $db->prepare("DELETE FROM $table WHERE id = :id");
-        $stmt->bindValue(':id', $id);
-        $stmt->execute();
-        if ($stmt->rowCount()) {
-            header("location:../$location");
+function delete($id, $table, $location='', $staus = null){
+    if($staus){
+        global $db; 
+        if ($id and $table) {
+            $stmt = $db->prepare("DELETE FROM $table WHERE id = :id");
+            $stmt->bindValue(':id', $id);
+            $stmt->execute();
+            if ($stmt->rowCount()) {
+                header("location:../$location");
+            }else{
+                header("location:errors/404.php");
+            }
         }else{
-            header("location:errors/404.php");
+            echo "Ошибка не указаны(id или таблица)!";
         }
     }else{
-        echo "Ошибка не указаны(id или таблица)!";
+        if ($id and $table) {
+            return "id=".$id."&table=".$table."&location=".$location;
+        }else{
+            return "Ошибка не указаны(id или таблица)!";
+        }
     }
 }
 
