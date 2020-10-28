@@ -73,8 +73,8 @@ function permission($arr){
     
 }
 
-function delete($id, $table, $location='', $staus = null){
-    if($staus){
+function delete($id, $table, $location='', $status = null){
+    if($status){
         global $db; 
         if ($id and $table) {
             $stmt = $db->prepare("DELETE FROM $table WHERE id = :id");
