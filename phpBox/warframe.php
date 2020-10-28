@@ -66,4 +66,22 @@ function clean($value = "") {
     $value = htmlspecialchars($value);    
     return $value;
 }
+
+function dateformat ($var=""){
+	$var = strtotime($var) ; 
+	$var = date('Y-m-d', $var);
+	return $var ; 
+}
+
+function nodateformat ($var=""){
+	$var = strtotime($var) ; 
+	$var = date('d-m-Y', $var);
+	return $var ; 
+}
+
+function showTitle() //Функция title
+{
+	$title = "Rassrochka+";
+	return $title;
+}
 ?>
