@@ -110,6 +110,8 @@ is_auth();
 
 					</div>
 					<?php
+				}elseif (permission(2)) {
+					
 				}
 				?>
 
