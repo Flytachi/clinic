@@ -1,7 +1,9 @@
 <?php
-require_once 'connection.php';
 
-
+$PERSONAL = array(
+    1 => "Администратор",
+    2 => "Регистратура",
+);
 
 // TODO Functions
 /*
@@ -16,14 +18,8 @@ require_once 'connection.php';
     --| nodateformat(),
     --| showTitle(),
 */
-$PERSONAL = array(
-    1 => "Администратор",
-    2 => "Регистратура",
-    3 => "",
-    4 => "",
-    5 => "",
-    6 => "", 
-);
+require_once 'connection.php';
+require_once 'forms.php';
 
 
 function is_auth(){

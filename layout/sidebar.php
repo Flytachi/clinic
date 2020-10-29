@@ -21,6 +21,12 @@
             <div class="" id="user-nav">
                 <ul class="nav nav-sidebar">
                     <li class="nav-item">
+                        <a href="create_user.php" class="nav-link">
+                            <i class="icon-user-plus"></i>
+                            <span>Добавить пользователя</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="icon-user-plus"></i>
                             <span>Сегодня зарегистроваль</span>
@@ -43,6 +49,12 @@
                         <a href="#" class="nav-link">
                             <i class="icon-cog5"></i>
                             <span>Account settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="test.php" class="nav-link">
+                            <i class="icon-cog5"></i>
+                            <span>Test</span>
                         </a>
                     </li>
                     <!-- <li class="nav-item">
