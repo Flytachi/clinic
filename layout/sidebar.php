@@ -9,8 +9,8 @@
                     <a href="#">
                         <img src="global_assets/images/placeholders/placeholder.jpg" class="img-fluid rounded-circle shadow-1 mb-3" width="80" height="80" alt="">
                     </a>
-                    <h6 class="mb-0 text-white text-shadow-dark">Имя персонала</h6>
-                    <span class="font-size-sm text-white text-shadow-dark">Отдел регистратура</span>
+                    <h6 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h6>
+                    <span class="font-size-sm text-white text-shadow-dark"><?= level() ?></span>
                 </div>
                                             
                 <div class="sidebar-user-material-footer">
@@ -46,7 +46,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="auth/logout.php" class="nav-link">
                             <i class="icon-switch2"></i>
                             <span>Logout</span>
                         </a>

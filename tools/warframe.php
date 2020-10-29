@@ -5,6 +5,7 @@ require_once 'connection.php';
 
 // TODO Functions
 /*
+    --| is_auth()
     --| get_full_name(),
     --| get_name(),
     --| level(),
@@ -15,6 +16,13 @@ require_once 'connection.php';
     --| nodateformat(),
     --| showTitle(),
 */
+
+function is_auth(){
+    session_start();
+    if (!$_SESSION['session_id']) {
+        header('location: auth/login.php');
+    }
+}
 
 function get_full_name($id = null) {
     global $db; 
@@ -83,7 +91,7 @@ function delete($id, $table, $location='', $status = null){
             if ($stmt->rowCount()) {
                 header("location:../$location");
             }else{
-                header("location:errors/404.php");
+                header("location:../error/404.php");
             }
         }else{
             echo "Ошибка не указаны(id или таблица)!";

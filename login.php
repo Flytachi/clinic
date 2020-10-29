@@ -47,45 +47,44 @@
 
 <body background="assets/images/fon-3.jpg">
 
-  <div class="content">
-    
-        <div class="row">
-          
-          <div class="col-md-3 pad">
+    <div class="content">
+      
+		<div class="row">
+		
+			<div class="col-md-3 pad">
 
-            <div class="card backop">
-              <div class="card-header header-elements-inline" style="text-align: center;">
-                <h5 class="card-title" >Форма входа</h5>
-              </div>
+				<div class="card backop">
+					<div class="card-header header-elements-inline" style="text-align: center;">
+						<h5 class="card-title" >Форма входа</h5>
+					</div>
 
-              <div class="card-body">
-                <form action="#">
-                  <div class="form-group">
-                    <label>Логин:</label>
-                    <input type="text" class="form-control" placeholder="Введите логин">
-                  </div>
+					<div class="card-body">
+						<form action="#">
+							<div class="form-group">
+								<label>Логин:</label>
+								<input type="text" class="form-control" placeholder="Введите логин">
+							</div>
 
-                  <div class="form-group">
-                    <label>Пароль:</label>
-                    <input type="password" class="form-control" placeholder="Введите пароль">
-                  </div>
+							<div class="form-group">
+								<label>Пароль:</label>
+								<input type="password" class="form-control" placeholder="Введите пароль">
+							</div>
 
-                
+						
 
-                  <div class="text-right">
-                    <button type="submit" class="btn btn-primary legitRipple">Войти<i class="icon-paperplane ml-2"></i></button>
-                  </div>
-                </form>
-              </div>
-            </div>
+							<div class="text-right">
+							<button type="submit" class="btn btn-primary legitRipple">Войти<i class="icon-paperplane ml-2"></i></button>
+							</div>
+						</form>
+					</div>
+				</div>
 
-            
-          </div>
-        </div>
-      </div>
-  </div>
-</div>
+			
+			</div>
 
+		</div>
+
+    </div>
 
 </body>
 </html>
