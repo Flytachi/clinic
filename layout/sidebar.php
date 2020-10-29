@@ -10,7 +10,7 @@
                         <img src="global_assets/images/placeholders/placeholder.jpg" class="img-fluid rounded-circle shadow-1 mb-3" width="80" height="80" alt="">
                     </a>
                     <h6 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h6>
-                    <span class="font-size-sm text-white text-shadow-dark"><?= level() ?></span>
+                    <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ?></span>
                 </div>
                                             
                 <div class="sidebar-user-material-footer">
@@ -45,12 +45,12 @@
                             <span>Account settings</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="auth/logout.php" class="nav-link">
                             <i class="icon-switch2"></i>
                             <span>Logout</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>

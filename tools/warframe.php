@@ -16,6 +16,15 @@ require_once 'connection.php';
     --| nodateformat(),
     --| showTitle(),
 */
+$PERSONAL = array(
+    1 => "Администратор",
+    2 => "",
+    3 => "",
+    4 => "",
+    5 => "",
+    6 => "", 
+);
+
 
 function is_auth(){
     session_start();
@@ -58,6 +67,14 @@ function level($id = null) {
         $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     }
 	return intval($stmt); 
+}
+
+function level_name($id = null) {
+    /*
+    level_name(1)
+    */
+    global $PERSONAL;
+	return $PERSONAL[level($id)]; 
 }
 
 function permission($arr){
