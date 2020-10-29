@@ -81,7 +81,7 @@ function permission($arr){
     /*
     permission(1) or permission([1,2, ..])
     */
-    $perk =level(1);
+    $perk =level();
     if (is_array($arr)){
         if(in_array($perk, $arr)){
             return true;
