@@ -33,6 +33,7 @@ is_auth();
 
 	<script src="assets/js/app.js"></script>
 	<script src="global_assets/js/demo_pages/form_layouts.js"></script>
+	<script src="global_assets/js/demo_pages/form_inputs.js"></script>
 	<!-- /theme JS files -->
 
 </head>

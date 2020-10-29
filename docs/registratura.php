@@ -48,7 +48,7 @@
 	<div class="card-body">
 		<form action="#">
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-4">
 					<fieldset>
 						<legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Добавить пациента</legend>
 
@@ -65,7 +65,7 @@
 							<label>Отчество пациента:</label>
 							<input type="text" class="form-control" placeholder="Введите Отчество">
 						</div>
-						<div class="form-group col-md-6">
+						<div class="form-group">
 					        <label>Дата рождение:</label>
 					      <div class="input-group">
 						    <span class="input-group-prepend">
@@ -115,21 +115,13 @@
 							<label>Адрес по прописке:</label>
 							<input type="text" class="form-control" placeholder="Введите адрес">
 						</div>
-						<div class="form-group">
-							<label>Адрес проживание:</label>
-							<input type="text" class="form-control" placeholder="Введите адрес">
-						</div>
-
-						<div class="form-group">
-							<label>Добавить фото:</label>
-							<input type="file" class="form-input-styled" data-fouc>
-						</div>
+						
 
 	
 					</fieldset>
 				</div>
 
-				<div class="col-md-6">
+				<div class="col-md-8">
 					<fieldset>
 	                	<legend class="font-weight-semibold"><i class="icon-user"></i> Данные пациента</legend>
 
@@ -203,7 +195,7 @@
 	                            </div>
 							</div>
 
-							<div class="col-md-6">
+							<div class="col-md-12">
 								<div class="form-group">
 									<label>Специалист 	:</label>
 									<input type="text" placeholder="Специалист" class="form-control">
@@ -211,42 +203,50 @@
 							</div>
 						</div>
 
-						<div class="row">
-							<div class="col-md-4">
-								<div class="form-group">
-									<label>Кабинет Специалиста:</label>
-									<input type="text" placeholder="Кабинет Специалиста" class="form-control">
-								</div>
-							</div>
-
-							<div class="col-md-4">
-								<div class="form-group">
-									<label>Номер очереда:</label>
-									<input type="text" placeholder="№ очереда" class="form-control">
-								</div>
-							</div>
-
-							<div class="col-md-3">
-								<div class="form-group">
-									<label>ID:</label>
-									<input type="id" placeholder="ID номер" class="form-control">
-								</div>
-							</div>
-							
+						<div class="col-md-12">
+							<label>Адрес проживание:</label>
+							<input type="text" class="form-control" placeholder="Введите адрес">
 						</div>
-						<div class="col-md-6">
-								<div class="form-group">
-		                            <label>Выбирите пол:</label>
-		                            <select data-placeholder="Выбрать пол" class="form-control form-control-select2" data-fouc>
-		                            	<option></option>
-		                                <option value="Женшина">Женщина</option> 
-		                                <option value="Мужчина">Мужчина</option> 
-		                            </select>
-	                            </div>
-							</div>
+							
+							
+							<!-- <div class="form-group col-12">
+								<label>Добавить фото:</label>
+								<input type="file" class="form-control-uniform-custom">
+							</div> -->
 
-						
 					</fieldset>
+				</div>
+
+				<div class="col-md-3">
+					<div class="form-group">
+	                    <label>Выбирите пол:</label>
+	                    <select data-placeholder="Выбрать пол" class="form-control form-control-select2" data-fouc>
+	                    	<option></option>
+	                        <option value="Женшина">Женщина</option> 
+	                        <option value="Мужчина">Мужчина</option> 
+	                    </select>
+	                </div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>№ кабинета:</label>
+						<input type="text" placeholder="№ кабинета" class="form-control">
+					</div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>№ очереда:</label>
+						<input type="text" placeholder="№ очереда" class="form-control">
+					</div>
+				</div>
+
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>ID:</label>
+						<input type="id" placeholder="ID номер" class="form-control">
+					</div>
 				</div>
 			</div>
 
