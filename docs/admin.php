@@ -37,6 +37,7 @@
                         <th>#</th>
                         <th>Логин</th>
                         <th>Ф.И.О</th>
+                        <th>Роль</th>
                         <th style="width: 100px">Действия</th>
                     </tr>
                 </thead>
@@ -49,6 +50,7 @@
                             <td><?= $i++ ?></td>
                             <td><?= $row['username'] ?></td>
                             <td><?= get_full_name($row['id']); ?></td>
+                            <td><?= level_name($row['id']); ?></td>
                             <td>
                                 <div class="list-icons">
                                     <a href="#" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
