@@ -17,6 +17,7 @@ $PERSONAL = array(
     --| dateformat(),
     --| nodateformat(),
     --| showTitle(),
+    --| form(),
 */
 require_once 'connection.php';
 require_once 'forms.php';
@@ -142,6 +143,11 @@ function showTitle() //Функция title
 {
 	$title = "Clinics";
 	return $title;
+}
+
+function form($name) //Функция title
+{
+	return $name();
 }
 
 ?>
