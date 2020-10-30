@@ -62,12 +62,29 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Служебный персонал</h5>
+                        <h5 class="card-title">Добавить койку</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
-                                <a class="list-icons-item" data-action="reload"></a>
-                                <a class="list-icons-item" data-action="remove"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <?php
+                        form('BadForm');
+                        ?>
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="card-header header-elements-inline">
+                        <h5 class="card-title">Койки</h5>
+                        <div class="header-elements">
+                            <div class="list-icons">
+                                <a class="list-icons-item" data-action="collapse"></a>
                             </div>
                         </div>
                     </div>
@@ -78,7 +95,10 @@ is_auth();
                                 <thead>
                                     <tr class="bg-blue">
                                         <th>Этаж</th>
-                                        <th>Кабинет</th>
+                                        <th>Палата</th>
+                                        <th>Койка</th>
+                                        <th>Тип</th>
+                                        <th style="width: 100px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,8 +106,21 @@ is_auth();
                                     foreach($db->query('SELECT * from bads') as $row) {
                                         ?>
                                         <tr>
-                                            <td><?= $row['flor'] ?></td>
-                                            <td><?= $row['cabinet'] ?></td>
+                                            <td><?= $row['floor'] ?> этаж</td>
+                                            <td><?= $row['ward'] ?> палата</td>
+                                            <td><?= $row['num'] ?> койка</td>
+                                            <td><?php 
+                                                if ($row['category']){
+                                                    echo "VIP";
+                                                }else{
+                                                    echo "Обычная";
+                                                }
+
+                                            ?></td>
+                                            <td>
+                                                <a href="model/update.php?id=<?= $row['id'] ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                <a href="model/delete.php?<?= delete($row['id'], 'bads', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                            </td>
                                         </tr>
                                         <?php
                                     }

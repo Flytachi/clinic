@@ -5,6 +5,12 @@ $PERSONAL = array(
     2 => "Регистратура",
 );
 
+$FLOOR = array(
+    1 => "1 этаж",
+    2 => "2 этаж",
+    3 => "3 этаж",
+);
+
 // TODO Functions
 /*
     --| is_auth()
@@ -22,7 +28,6 @@ $PERSONAL = array(
 */
 require_once 'connection.php';
 require_once 'forms.php';
-
 
 function is_auth(){
     session_start();
