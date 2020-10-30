@@ -58,6 +58,26 @@ is_auth();
 			<!-- Content area -->
 			<div class="content">
 
+				<div class="card">
+
+                    <div class="card-header header-elements-inline">
+                        <h5 class="card-title">Добавить койку</h5>
+                        <div class="header-elements">
+                            <div class="list-icons">
+                                <a class="list-icons-item" data-action="collapse"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <?php
+                        // prit($_SESSION);
+                        form('PlanetForm');
+                        ?>
+                    </div>
+
+                </div>
+
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
@@ -87,6 +107,9 @@ is_auth();
                                         <tr>
                                             <td><?= $row['name'] ?></td>
                                             <td><?= $row['color'] ?></td>
+                                            <td>
+                                                <a href="model/update.php?id=<?= $row['id'] ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                            </td>
                                         </tr>
                                         <?php
                                     }

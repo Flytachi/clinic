@@ -139,6 +139,13 @@ function clean($value = "") {
     return $value;
 }
 
+function clean_arr($array){
+    foreach ($array as $key => $value) {
+        $array[$key] = clean($value);
+    };
+    return $array;
+}
+
 function dateformat($var=""){
 	$var = strtotime($var) ; 
 	$var = date('Y-m-d', $var);

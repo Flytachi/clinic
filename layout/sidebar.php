@@ -36,6 +36,12 @@
                                 <span>Инвентарь</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="test.php" class="nav-link">
+                                <i class="icon-cog5"></i>
+                                <span>Test</span>
+                            </a>
+                        </li>
                         <?php
                     }elseif (permission(2)) {
                         ?>
@@ -62,12 +68,6 @@
                             <a href="#" class="nav-link">
                                 <i class="icon-cog5"></i>
                                 <span>Account settings</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="test.php" class="nav-link">
-                                <i class="icon-cog5"></i>
-                                <span>Test</span>
                             </a>
                         </li>
                         <?php
