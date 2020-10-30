@@ -32,14 +32,13 @@ try {
         `last_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL , 
         `father_name` VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL , 
         `user_level` TINYINT NOT NULL , 
-        `add_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+        `status` BOOLEAN NULL DEFAULT FALSE , 
+        `add_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP , 
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci; 
 
-    INSERT INTO `users` 
-    (`id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `user_level`, `add_date`) 
-    VALUES 
-    (NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', '1', current_timestamp()) 
+    INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `user_level`, `add_date`) 
+        VALUES (NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', '1');
 
 */
 ?>

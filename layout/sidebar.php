@@ -20,43 +20,60 @@
 
             <div class="" id="user-nav">
                 <ul class="nav nav-sidebar">
-                    <li class="nav-item">
-                        <a href="create_user.php" class="nav-link">
-                            <i class="icon-user-plus"></i>
-                            <span>Добавить пользователя</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="icon-user-plus"></i>
-                            <span>Сегодня зарегистроваль</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="icon-coins"></i>
-                            <span>Отправили на консультацию</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="icon-comment-discussion"></i>
-                            <span>Messages</span>
-                            <span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="icon-cog5"></i>
-                            <span>Account settings</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="test.php" class="nav-link">
-                            <i class="icon-cog5"></i>
-                            <span>Test</span>
-                        </a>
-                    </li>
+
+                    <?php
+                    if(permission(1)){
+                        ?>
+                        <li class="nav-item">
+                            <a href="index.php" class="nav-link">
+                                <i class="icon-user-plus"></i>
+                                <span>Персонал</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="index.php" class="nav-link">
+                                <i class="icon-user-plus"></i>
+                                <span>Инвентарь</span>
+                            </a>
+                        </li>
+                        <?php
+                    }elseif (permission(2)) {
+                        ?>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="icon-user-plus"></i>
+                                <span>Сегодня зарегистроваль</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="icon-coins"></i>
+                                <span>Отправили на консультацию</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="icon-comment-discussion"></i>
+                                <span>Messages</span>
+                                <span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="icon-cog5"></i>
+                                <span>Account settings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="test.php" class="nav-link">
+                                <i class="icon-cog5"></i>
+                                <span>Test</span>
+                            </a>
+                        </li>
+                        <?php
+                    }
+                    ?>
+                    
                     <!-- <li class="nav-item">
                         <a href="auth/logout.php" class="nav-link">
                             <i class="icon-switch2"></i>
