@@ -111,12 +111,6 @@
 								</optgroup>
 							</select>
 						</div>
-						<div class="form-group">
-							<label>Адрес по прописке:</label>
-							<input type="text" class="form-control" placeholder="Введите адрес">
-						</div>
-						
-
 	
 					</fieldset>
 				</div>
@@ -168,8 +162,6 @@
 								</div>
 							</div>
 							     
-
-						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 		                            <label>Выбирите категорию:</label>
@@ -194,20 +186,36 @@
 		                            </select>
 	                            </div>
 							</div>
-
-							<div class="col-md-12">
+							
+							<div class="col-md-5">
 								<div class="form-group">
-									<label>Специалист 	:</label>
-									<input type="text" placeholder="Специалист" class="form-control">
+									<label>Адрес проживание:</label>
+									<input type="text" class="form-control" placeholder="Введите адрес">
+								</div>	
+							</div>
+							
+							<div class="col-md-5">
+								<div class="form-group">
+									<label>Адрес по прописке:</label>
+									<input type="text" class="form-control" placeholder="Введите адрес">
 								</div>
 							</div>
-						</div>
 
-						<div class="col-md-12">
-							<label>Адрес проживание:</label>
-							<input type="text" class="form-control" placeholder="Введите адрес">
-						</div>
-							
+
+							<div class="col-md-2" style="margin-top: 5px;">
+				                <div class="form-check" style="margin-bottom: 10px;">
+									<label class="form-check-label">
+										<input type="checkbox" class="form-check-input" checked="">
+										Мужчина
+									</label>
+								</div>
+								<div class="form-check">
+									<label class="form-check-label">
+										<input type="checkbox" class="form-check-input" checked="">
+										Женщина
+									</label>
+								</div>
+							</div>
 							
 							<!-- <div class="form-group col-12">
 								<label>Добавить фото:</label>
@@ -217,15 +225,12 @@
 					</fieldset>
 				</div>
 
+
 				<div class="col-md-3">
 					<div class="form-group">
-	                    <label>Выбирите пол:</label>
-	                    <select data-placeholder="Выбрать пол" class="form-control form-control-select2" data-fouc>
-	                    	<option></option>
-	                        <option value="Женшина">Женщина</option> 
-	                        <option value="Мужчина">Мужчина</option> 
-	                    </select>
-	                </div>
+						<label>Специалист 	:</label>
+						<input type="text" placeholder="Специалист" class="form-control">
+					</div>
 				</div>
 
 				<div class="col-md-3">

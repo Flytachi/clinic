@@ -15,7 +15,7 @@ body{
 
 .backcard{
     background: rgba(255, 255, 255, 0,8);
-    border: 3px solid #3936ee;
+    border: 2px solid #C6C5DB;
     /* border-radius: 25px; */
     border-radius: 1px 100px 15px 100px;
 }
