@@ -77,8 +77,8 @@ is_auth();
                             <table class="table table-hover">
                                 <thead>
                                     <tr class="bg-blue">
-                                        <th>Planet</th>
-                                        <th>Color</th>
+                                        <th>Этаж</th>
+                                        <th>Кабинет</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,8 +86,8 @@ is_auth();
                                     foreach($db->query('SELECT * from bads') as $row) {
                                         ?>
                                         <tr>
-                                            <td><?= $row['name'] ?></td>
-                                            <td><?= $row['color'] ?></td>
+                                            <td><?= $row['flor'] ?></td>
+                                            <td><?= $row['cabinet'] ?></td>
                                         </tr>
                                         <?php
                                     }
