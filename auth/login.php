@@ -19,6 +19,7 @@ if ($_SESSION['session_id']) {
   <link href="../assets/css/layout.min.css" rel="stylesheet" type="text/css">
   <link href="../assets/css/components.min.css" rel="stylesheet" type="text/css">
   <link href="../assets/css/colors.min.css" rel="stylesheet" type="text/css">
+  <link href="../vendors/css/login.css" rel="stylesheet" type="text/css">
   <!-- /global stylesheets -->
 
   <!-- Core JS files -->
@@ -34,20 +35,6 @@ if ($_SESSION['session_id']) {
   <script src="../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
   <script src="../global_assets/js/demo_pages/form_layouts.js"></script>
   <script src="../assets/js/app.js"></script>
-
-  <style>
-    
-    .pad{
-      margin-left: 850px; 
-      margin-top:100px;
-    }
-
-    .backop{
-      background: rgba(255, 255, 255, 0.5);
-    }
-
-  </style>
-
 </head>
 <?php
     if($_POST){
@@ -63,15 +50,15 @@ if ($_SESSION['session_id']) {
         }
     }
 ?>
-<body background="../assets/images/fon-3.jpg">
+<body>
 
     <div class="content">
       
 		<div class="row">
 		
-			<div class="col-md-3 pad">
+			<div class="col-md-3 local_card">
 
-				<div class="card backop">
+				<div class="card backcard">
 					<div class="card-header header-elements-inline" style="text-align: center;">
                         <h5 class="card-title" >Форма входа</h5>
                     </div>
@@ -107,7 +94,6 @@ if ($_SESSION['session_id']) {
 					</div>
 				</div>
 
-			
 			</div>
 
 		</div>

@@ -1,0 +1,20 @@
+
+.local_card{
+    margin-left: 1050px; 
+    margin-top: 150px;
+}
+
+body{
+    background: rgba(174, 229, 243, 0.5);
+    background-image: url('../../assets/images/fon-3.jpg'); 
+    -moz-background-size: 100%; /* Firefox 3.6+ */
+    -webkit-background-size: 100%; /* Safari 3.1+ и Chrome 4.0+ */
+    -o-background-size: 100%; /* Opera 9.6+ */
+    background-size: 100%; /* Современные браузеры */
+}
+
+.backcard{
+    background: rgba(255, 255, 255, 0,8);
+    border: 3px solid #5b3bec;
+    border-radius: 25px;
+}
