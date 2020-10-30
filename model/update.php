@@ -2,8 +2,8 @@
 require_once '../tools/warframe.php';
 is_auth();
 if ($_GET['id']) {
-    UserForm(0, $_GET['id']);
+    $_SESSION['form_name'](0, $_GET['id']);
 }else{
-    UserForm(1, $_POST['id']);
+    $_SESSION['form_name'](1, $_POST['id']);
 }
 ?>

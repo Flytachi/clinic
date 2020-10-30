@@ -60,16 +60,6 @@ is_auth();
 
                 <div class="card">
 
-                    <div class="card-body">
-                        <?php
-                        UserForm();
-                        ?>
-                    </div>
-
-                </div>
-
-                <div class="card">
-
                     <div class="card-header header-elements-inline">
                         <h5 class="card-title">Служебный персонал</h5>
                         <div class="header-elements">

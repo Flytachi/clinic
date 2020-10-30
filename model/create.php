@@ -1,5 +1,5 @@
 <?php
 require_once '../tools/warframe.php';
 is_auth();
-UserForm(1);
+$_SESSION['form_name'](1);
 ?>

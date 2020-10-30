@@ -4,6 +4,11 @@
 function UserForm($status = null, $pk=null){
     global $db, $PERSONAL;
     $table = 'users';
+    $form_name = 'UserForm';
+
+
+    unset($_SESSION['form_name']);
+    $_SESSION['form_name'] = $form_name;
 
     if($status){
 

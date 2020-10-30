@@ -13,6 +13,7 @@ $PERSONAL = array(
     --| level(),
     --| permission(),
     --| delete(),
+    --| prit()
     --| clean(),
     --| dateformat(),
     --| nodateformat(),
@@ -117,6 +118,12 @@ function delete($id, $table, $location='', $status = null){
             return "Ошибка не указаны(id или таблица)!";
         }
     }
+}
+
+function prit($value) {
+    echo "<pre>";
+    print_r($value);
+    echo "</pre>";
 }
 
 function clean($value = "") {
