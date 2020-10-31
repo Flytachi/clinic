@@ -48,6 +48,13 @@ try {
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci; 
 
+    CREATE TABLE `clinic`.`bad_catigories` 
+    ( 
+        `id` INT(11) NOT NULL AUTO_INCREMENT , 
+        `name` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL , 
+        `price` DECIMAL(35) NULL DEFAULT NULL , PRIMARY KEY (`id`)
+    ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci; 
+
     INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `user_level`) 
     VALUES (NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', '1');
 */

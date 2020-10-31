@@ -182,10 +182,18 @@ function UserForm($status = null, $pk=null){
                             <legend class="font-weight-semibold"><i class="icon-user"></i> Person</legend>
 
                             <div class="row">
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Доля:</label>
+                                        <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $_SESSION['form']['share']?>">
+                                    </div>
+                                </div>
+                                    
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Логин:</label>
-                                        <input type="username" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $_SESSION['form']['username']?>">
+                                        <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $_SESSION['form']['username']?>">
                                     </div>
                                 </div>
 
@@ -364,9 +372,8 @@ function BadForm($status = null, $pk=null){
                             <div class="form-group">
                                 <label>Тип:</label>
                                 <select data-placeholder="Выбрать этаж" name="category" class="form-control form-control-select2" required data-fouc>
-                                    <option></option>
-                                    <option value="0">Обычная</option>
-                                    <option value="1">VIP</option>
+                                    <option value="0"<?php if(0 ==$_SESSION['form']['category']){echo'selected';} ?>>Обычная</option>
+                                    <option value="1"<?php if(1 ==$_SESSION['form']['category']){echo'selected';} ?>>VIP</option>
                                 </select>
                             </div>
 
