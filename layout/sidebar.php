@@ -62,6 +62,12 @@
                                 <span>Койки</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link legitRipple">
+                                <i class="icon-tree6"></i>
+                                <span>Услуги</span>
+                            </a>
+                        </li>
                         <?php
                     }elseif (permission(2)) {
                         ?>
