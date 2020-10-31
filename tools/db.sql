@@ -1,6 +1,6 @@
-DROP TABLE `users`;
-DROP TABLE `bads`;
-DROP TABLE `bad_type`;
+-- DROP TABLE `users`;
+-- DROP TABLE `beds`;
+-- DROP TABLE `bed_type`;
 
 CREATE TABLE `clinic`.`users` 
     ( 
@@ -17,7 +17,7 @@ CREATE TABLE `clinic`.`users`
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci; 
     
-CREATE TABLE `clinic`.`bads` 
+CREATE TABLE `clinic`.`beds` 
     ( 
         `id` INT(11) NOT NULL AUTO_INCREMENT , 
         `floor` TINYINT NOT NULL , 
@@ -29,7 +29,7 @@ CREATE TABLE `clinic`.`bads`
         PRIMARY KEY (`id`)
     ) ENGINE = InnoDB CHARSET=utf8 COLLATE utf8_general_ci; 
 
-CREATE TABLE `clinic`.`bad_type` 
+CREATE TABLE `clinic`.`bed_type` 
     ( 
         `id` INT(11) NOT NULL AUTO_INCREMENT , 
         `name` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL , 

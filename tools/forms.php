@@ -257,10 +257,11 @@ function UserForm($status = null, $pk=null){
 
 };
 
-function BadForm($status = null, $pk=null){
+
+function BedForm($status = null, $pk=null){
     global $db, $FLOOR;
-    $form_name = 'BadForm';
-    $table = 'bads';
+    $form_name = 'BedForm';
+    $table = 'beds';
     $redirect = '../inventory.php';
     $succees_message = 'Успешно';
 
@@ -371,7 +372,7 @@ function BadForm($status = null, $pk=null){
                     <select data-placeholder="Выбрать тип" name="types" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php 
-                        foreach($db->query('SELECT * from bad_type') as $row) {
+                        foreach($db->query('SELECT * from bed_type') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"<?php if($row['id'] == $_SESSION[$form_name]['types']){echo'selected';} ?>><?= $row['name'] ?></option>
 
@@ -394,10 +395,11 @@ function BadForm($status = null, $pk=null){
 
 };
 
-function BadTypeForm($status = null, $pk=null){
+
+function BedTypeForm($status = null, $pk=null){
     global $db;
-    $form_name = 'BadTypeForm';
-    $table = 'bad_type';
+    $form_name = 'BedTypeForm';
+    $table = 'bed_type';
     $redirect = '../inventory.php';
     $succees_message = 'Успешно';
 
@@ -509,6 +511,7 @@ function BadTypeForm($status = null, $pk=null){
     }
 
 };
+
 
 function PlanetForm($status = null, $pk=null){
     global $db;
@@ -629,5 +632,6 @@ function PlanetForm($status = null, $pk=null){
     }
 
 };
+
 
 ?>

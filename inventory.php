@@ -62,7 +62,7 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Добавить койку</h5>
+                        <h5 class="card-title">Койки</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
@@ -75,19 +75,21 @@ is_auth();
                         <div class="row">
 
                             <div class="col-md-6">
+                                <legend class="font-weight-semibold"> Добавить койку</legend>
                                 <?php
-                                form('BadForm');
+                                form('BedForm');
                                 ?>
                             </div>
 
                             <div class="col-md-6">
+                            <legend class="font-weight-semibold"> Добавить тип коек</legend>
                                 <?php
-                                form('BadTypeForm');
+                                form('BedTypeForm');
                                 ?>
 
                                 <table class="table table-hover">
                                     <thead>
-                                        <tr class="bg-blue">
+                                        <tr class="">
                                             <th>Вид</th>
                                             <th>Цена</th>
                                             <th style="width: 100px">Действия</th>
@@ -95,14 +97,14 @@ is_auth();
                                     </thead>
                                     <tbody>
                                         <?php 
-                                        foreach($db->query('SELECT * from bad_type') as $row) {
+                                        foreach($db->query('SELECT * from bed_type') as $row) {
                                             ?>
                                             <tr>
                                                 <td><?= $row['name'] ?></td>
                                                 <td><?= $row['price'] ?></td>
                                                 <td>
-                                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=BadTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                    <a href="model/delete.php?<?= delete($row['id'], 'bad_type', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=BedTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                                 </td>
                                             </tr>
                                             <?php
@@ -144,7 +146,7 @@ is_auth();
                                 </thead>
                                 <tbody>
                                     <?php 
-                                    foreach($db->query('SELECT * from bads') as $row) {
+                                    foreach($db->query('SELECT * from beds') as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $row['floor'] ?> этаж</td>
@@ -152,14 +154,14 @@ is_auth();
                                             <td><?= $row['num'] ?> койка</td>
                                             <td>
                                                 <?php
-                                                    $stmt = $db->query("SELECT * from bad_type where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);
+                                                    $stmt = $db->query("SELECT * from bed_type where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);
                                                     echo $stmt->name;
                                                 ?>
                                             </td>
                                             <td><?= $stmt->price ?></td>
                                             <td>
-                                                <a href="model/update.php?id=<?= $row['id'] ?>&form=BadForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                <a href="model/delete.php?<?= delete($row['id'], 'bads', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                <a href="model/update.php?id=<?= $row['id'] ?>&form=BedForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                             </td>
                                         </tr>
                                         <?php
