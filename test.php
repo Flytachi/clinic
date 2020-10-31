@@ -108,7 +108,7 @@ is_auth();
                                             <td><?= $row['name'] ?></td>
                                             <td><?= $row['color'] ?></td>
                                             <td>
-                                                <a href="model/update.php?id=<?= $row['id'] ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                <a href="model/update.php?id=<?= $row['id'] ?>&form=PlanetForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                                             </td>
                                         </tr>
                                         <?php

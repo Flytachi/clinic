@@ -10,8 +10,8 @@ function UserForm($status = null, $pk=null){
     $succees_message = 'Успешно';
 
 
-    unset($_SESSION['form_name']);
-    $_SESSION['form_name'] = $form_name;
+    /* --------------------------- */
+    unset($_POST['form_name']);
 
     if($status){
 
@@ -134,6 +134,7 @@ function UserForm($status = null, $pk=null){
                 ?><form method="post" action="model/create.php"><?php
             }
             ?>
+            <input type="hidden" name="form_name" value="<?= $form_name ?>">
                 <div class="row">
 
                     <div class="col-md-6">
@@ -260,9 +261,8 @@ function BadForm($status = null, $pk=null){
     $redirect = '../inventory.php';
     $succees_message = 'Успешно';
 
-
-    unset($_SESSION['form_name']);
-    $_SESSION['form_name'] = $form_name;
+    /* --------------------------- */
+    unset($_POST['form_name']);
 
     if($status){
 
@@ -336,6 +336,7 @@ function BadForm($status = null, $pk=null){
                 ?><form method="post" action="model/create.php"><?php
             }
             ?>
+            <input type="hidden" name="form_name" value="<?= $form_name ?>">
                 <div class="row">
 
                     <div class="col-md-6">
@@ -403,9 +404,7 @@ function PlanetForm($status = null, $pk=null){
     $succees_message = 'Успешно';
 
     /* --------------------------- */
-
-    unset($_SESSION['form_name']);
-    $_SESSION['form_name'] = $form_name;
+    unset($_POST['form_name']);
 
     if($status){
 
@@ -433,7 +432,6 @@ function PlanetForm($status = null, $pk=null){
             }
 
         }elseif(!$pk and $_POST){
-
             $stmt = insert($table, $_POST);
             if($stmt == 1){
                 $_SESSION['message'] = '
@@ -473,17 +471,18 @@ function PlanetForm($status = null, $pk=null){
                 exit();
             }
         }else{
-                if($_SESSION['form']['id']){
-                    ?>
-                    <form method="post" action="model/update.php">
-                    <?php
-                }else{
-                    ?>
-                    <form method="post" action="model/create.php">
-                    <?php
-                }
+            if($_SESSION['form']['id']){
+                ?>
+                <form method="post" action="model/update.php">
+                <?php
+            }else{
+                ?>
+                <form method="post" action="model/create.php">
+                <?php
+            }
                     
             ?>
+            <input type="hidden" name="form_name" value="<?= $form_name ?>">
                 <div class="row">
 
                     <div class="col-md-12">

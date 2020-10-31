@@ -118,7 +118,7 @@ is_auth();
 
                                             ?></td>
                                             <td>
-                                                <a href="model/update.php?id=<?= $row['id'] ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                <a href="model/update.php?id=<?= $row['id'] ?>&form=BadForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                                                 <a href="model/delete.php?<?= delete($row['id'], 'bads', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                             </td>
                                         </tr>

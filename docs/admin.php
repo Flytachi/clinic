@@ -55,7 +55,7 @@
                             <td><?= level_name($row['id']); ?></td>
                             <td>
                                 <div class="list-icons">
-                                    <a href="model/update.php?id=<?= $row['id'] ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=UserForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                                     <a href="model/delete.php?<?= delete($row['id'], 'users', 'index.php') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                     <!-- <a href="#" class="list-icons-item text-teal-600"><i class="icon-cog6"></i></a> -->
                                 </div>
