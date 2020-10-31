@@ -32,8 +32,8 @@ function UserForm($status = null, $pk=null){
                         Пароли не совпадают
                     </div>
                     ';
-                    $_SESSION['form'] = $_POST;
-                    $_SESSION['form']['id'] = $pk;
+                    $_SESSION[$form_name] = $_POST;
+                    $_SESSION[$form_name]['id'] = $pk;
                     header("location: $redirect");
                     exit();
                 }
@@ -75,7 +75,7 @@ function UserForm($status = null, $pk=null){
                     Пользователь с таким логином существует!
                 </div>
                 ';
-                $_SESSION['form'] = $_POST;
+                $_SESSION[$form_name] = $_POST;
                 header("location: $redirect");
             }elseif(!($_POST['password'] === $_POST['password2'])){
                 $_SESSION['message'] = '
@@ -84,7 +84,7 @@ function UserForm($status = null, $pk=null){
                     Пароли не совпадают
                 </div>
                 ';
-                $_SESSION['form'] = $_POST;
+                $_SESSION[$form_name] = $_POST;
                 header("location: $redirect");
             }else{
                 $_POST['password'] = sha1($_POST['password']);
@@ -120,7 +120,7 @@ function UserForm($status = null, $pk=null){
         if($pk){
             $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
             if ($stmt) {
-                $_SESSION['form'] = $stmt;
+                $_SESSION[$form_name] = $stmt;
                 header("location: $redirect");
                 exit();
             }else{
@@ -128,7 +128,7 @@ function UserForm($status = null, $pk=null){
                 exit();
             }
         }else{
-            if($_SESSION['form']['id']){
+            if($_SESSION[$form_name]['id']){
                 ?><form method="post" action="model/update.php"><?php
             }else{
                 ?><form method="post" action="model/create.php"><?php
@@ -142,24 +142,24 @@ function UserForm($status = null, $pk=null){
 
                             <legend class="font-weight-semibold"><i class="icon-user mr-2"></i> Персональные данные</legend>
                             <?php
-                                if($_SESSION['form']['id']){
+                                if($_SESSION[$form_name]['id']){
                                     ?>
-                                    <input type="hidden" name="id" value="<?= $_SESSION['form']['id']?>">
+                                    <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
                                     <?php
                                 }
                             ?>
                             <div class="form-group">
                                 <label>Имя пользователя:</label>
-                                <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $_SESSION['form']['first_name']?>">
+                                <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $_SESSION[$form_name]['first_name']?>">
                             </div>
 
                             <div class="form-group">
                                 <label>Фамилия пользователя:</label>
-                                <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $_SESSION['form']['last_name']?>">
+                                <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $_SESSION[$form_name]['last_name']?>">
                             </div>
                             <div class="form-group">
                                 <label>Отчество пользователя:</label>
-                                <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $_SESSION['form']['father_name']?>">
+                                <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $_SESSION[$form_name]['father_name']?>">
                             </div>
 
                             <div class="form-group">
@@ -168,7 +168,7 @@ function UserForm($status = null, $pk=null){
                                     <option></option>
                                     <?php
                                     foreach ($PERSONAL as $key => $value) {
-                                        ?><option value="<?= $key ?>"<?php if($key ==$_SESSION['form']['user_level']){echo'selected';} ?>><?= $value ?></option><?php
+                                        ?><option value="<?= $key ?>"<?php if($key ==$_SESSION[$form_name]['user_level']){echo'selected';} ?>><?= $value ?></option><?php
                                     }
                                     ?>
                                 </select>
@@ -187,19 +187,19 @@ function UserForm($status = null, $pk=null){
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Доля:</label>
-                                        <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $_SESSION['form']['share']?>">
+                                        <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $_SESSION[$form_name]['share']?>">
                                     </div>
                                 </div>
                                     
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Логин:</label>
-                                        <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $_SESSION['form']['username']?>">
+                                        <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $_SESSION[$form_name]['username']?>">
                                     </div>
                                 </div>
 
                                 <?php
-                                    if(!$_SESSION['form']['id']){
+                                    if(!$_SESSION[$form_name]['id']){
                                         ?>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -248,7 +248,7 @@ function UserForm($status = null, $pk=null){
 
             </form>
             <?php
-            unset($_SESSION['form']);
+            unset($_SESSION[$form_name]);
         }
     }
 
@@ -315,14 +315,10 @@ function BadForm($status = null, $pk=null){
         }
 
     }else{
-        if($_SESSION['message']){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
         if($pk){
             $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
             if ($stmt) {
-                $_SESSION['form'] = $stmt;
+                $_SESSION[$form_name] = $stmt;
                 header("location: $redirect");
                 exit();
             }else{
@@ -330,58 +326,174 @@ function BadForm($status = null, $pk=null){
                 exit();
             }
         }else{
-            if($_SESSION['form']['id']){
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
                 ?><form method="post" action="model/update.php"><?php
             }else{
                 ?><form method="post" action="model/create.php"><?php
             }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
+            }
+            prit($_SESSION);
             ?>
-            <input type="hidden" name="form_name" value="<?= $form_name ?>">
-                <div class="row">
+                <input type="hidden" name="form_name" value="<?= $form_name ?>">
 
-                    <div class="col-md-6">
-                        
-                        <fieldset>
-                            <?php
-                                if($_SESSION['form']['id']){
-                                    ?>
-                                    <input type="hidden" name="id" value="<?= $_SESSION['form']['id']?>">
-                                    <?php
-                                }
+                <div class="form-group">
+                    <label>Выбирите этаж:</label>
+                    <select data-placeholder="Выбрать этаж" name="floor" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach ($FLOOR as $key => $value) {
+                            ?><option value="<?= $key ?>"<?php if($key ==$_SESSION[$form_name]['floor']){echo'selected';} ?>><?= $value ?></option><?php
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Палата:</label>
+                    <input type="text" class="form-control" name="ward" placeholder="Введите кабинет" required value="<?= $_SESSION[$form_name]['ward']?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Номер:</label>
+                    <input type="text" class="form-control" name="num" placeholder="Введите номер" required value="<?= $_SESSION[$form_name]['num']?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Тип:</label>
+                    <select data-placeholder="Выбрать тип" name="category" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php 
+                        foreach($db->query('SELECT * from bad_type') as $row) {
                             ?>
-                            <div class="form-group">
-                                <label>Выбирите этаж:</label>
-                                <select data-placeholder="Выбрать этаж" name="floor" class="form-control form-control-select2" required data-fouc>
-                                    <option></option>
-                                    <?php
-                                    foreach ($FLOOR as $key => $value) {
-                                        ?><option value="<?= $key ?>"<?php if($key ==$_SESSION['form']['floor']){echo'selected';} ?>><?= $value ?></option><?php
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Палата:</label>
-                                <input type="text" class="form-control" name="ward" placeholder="Введите кабинет" required value="<?= $_SESSION['form']['ward']?>">
-                            </div>
+                            <option value="<?= $row['id'] ?>"<?php if($row['id'] == $_SESSION[$form_name]['category']){echo'selected';} ?>><?= $row['name'] ?></option>
 
-                            <div class="form-group">
-                                <label>Номер:</label>
-                                <input type="text" class="form-control" name="num" placeholder="Введите номер" required value="<?= $_SESSION['form']['num']?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Тип:</label>
-                                <select data-placeholder="Выбрать этаж" name="category" class="form-control form-control-select2" required data-fouc>
-                                    <option value="0"<?php if(0 ==$_SESSION['form']['category']){echo'selected';} ?>>Обычная</option>
-                                    <option value="1"<?php if(1 ==$_SESSION['form']['category']){echo'selected';} ?>>VIP</option>
-                                </select>
-                            </div>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
 
 
-                        </fieldset>
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                </div>
+
+            </form>
+            <?php
+            unset($_SESSION[$form_name]);
+        }
+    }
+
+};
+
+function BadTypeForm($status = null, $pk=null){
+    global $db;
+    $form_name = 'BadTypeForm';
+    $table = 'bad_type';
+    $redirect = '../inventory.php';
+    $succees_message = 'Успешно';
+
+    /* --------------------------- */
+    unset($_POST['form_name']);
+
+    if($status){
+
+        if($pk and $_POST){
+            unset($_POST['id']);
+            $stmt = update($table, $_POST, $pk);
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
                     </div>
+                    ';
+                    header("location: $redirect");
+                    exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
 
+        }elseif(!$pk and $_POST){
+
+            $stmt = insert($table, $_POST);
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                <div class="alert alert-primary" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$succees_message.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
+    
+        }
+
+    }else{
+        if($pk){
+            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $_SESSION[$form_name] = $stmt;
+                header("location: $redirect");
+                exit();
+            }else{
+                header('location: ../error/404.php');
+                exit();
+            }
+        }else{
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
+                ?><form method="post" action="model/update.php"><?php
+            }else{
+                ?><form method="post" action="model/create.php"><?php
+            }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
+            }
+            ?>
+                <input type="hidden" name="form_name" value="<?= $form_name ?>">
+                <?php
+                    if($_SESSION[$form_name]['id']){
+                        ?>
+                        <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                        <?php
+                    }
+                ?>
+                <div class="form-group">
+                    <label>Название:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $_SESSION[$form_name]['name']?>">
+                </div>
+
+                <div class="form-group">
+                    <label>Цена:</label>
+                    <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $_SESSION[$form_name]['price']?>">
                 </div>
 
                 <div class="text-right">
@@ -390,7 +502,7 @@ function BadForm($status = null, $pk=null){
 
             </form>
             <?php
-            unset($_SESSION['form']);
+            unset($_SESSION[$form_name]);
         }
     }
 
@@ -463,7 +575,7 @@ function PlanetForm($status = null, $pk=null){
         if($pk){
             $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
             if ($stmt) {
-                $_SESSION['form'] = $stmt;
+                $_SESSION[$form_name] = $stmt;
                 header("location: $redirect");
                 exit();
             }else{
@@ -471,7 +583,7 @@ function PlanetForm($status = null, $pk=null){
                 exit();
             }
         }else{
-            if($_SESSION['form']['id']){
+            if($_SESSION[$form_name]['id']){
                 ?>
                 <form method="post" action="model/update.php">
                 <?php
@@ -488,25 +600,25 @@ function PlanetForm($status = null, $pk=null){
                     <div class="col-md-12">
                         <fieldset>
                             <?php
-                                if($_SESSION['form']['id']){
+                                if($_SESSION[$form_name]['id']){
                                     ?>
-                                    <input type="hidden" name="id" value="<?=$_SESSION['form']['id']?>">
+                                    <input type="hidden" name="id" value="<?=$_SESSION[$form_name]['id']?>">
                                     <?php
                                 }
                             ?>
                             <div class="form-group">
                                 <label>name:</label>
-                                <input type="text" class="form-control" name="name" placeholder="Введите кабинет" required value="<?=$_SESSION['form']['name']?>">
+                                <input type="text" class="form-control" name="name" placeholder="Введите кабинет" required value="<?=$_SESSION[$form_name]['name']?>">
                             </div>
 
                             <div class="form-group">
                                 <label>color:</label>
-                                <input type="text" class="form-control" name="color" placeholder="Введите номер" required value="<?=$_SESSION['form']['color']?>">
+                                <input type="text" class="form-control" name="color" placeholder="Введите номер" required value="<?=$_SESSION[$form_name]['color']?>">
                             </div>
 
                             <div class="form-group">
                                 <label>tip:</label>
-                                <input type="text" class="form-control" name="tip" placeholder="Введите номер" required value="<?=$_SESSION['form']['tip']?>">
+                                <input type="text" class="form-control" name="tip" placeholder="Введите номер" required value="<?=$_SESSION[$form_name]['tip']?>">
                             </div>
 
 
@@ -521,7 +633,7 @@ function PlanetForm($status = null, $pk=null){
 
             </form>
             <?php
-            unset($_SESSION['form']);
+            unset($_SESSION[$form_name]);
         }
     }
 

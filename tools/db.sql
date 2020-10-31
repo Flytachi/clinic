@@ -21,8 +21,9 @@ CREATE TABLE `clinic`.`bads`
     ( 
         `id` INT(11) NOT NULL AUTO_INCREMENT , 
         `floor` TINYINT NOT NULL , 
-        `cabinet` INT NOT NULL , 
+        `ward` INT NOT NULL , 
         `num` INT NOT NULL , 
+        `category` BOOLEAN NULL DEFAULT FALSE,
         `status` TINYINT NULL DEFAULT NULL , 
         `user_id` INT(11) NULL DEFAULT NULL , 
         PRIMARY KEY (`id`)

@@ -71,9 +71,49 @@ is_auth();
                     </div>
 
                     <div class="card-body">
-                        <?php
-                        form('BadForm');
-                        ?>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <?php
+                                form('BadForm');
+                                ?>
+                            </div>
+
+                            <div class="col-md-6">
+                                <?php
+                                form('BadTypeForm');
+                                ?>
+
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="bg-blue">
+                                            <th>Вид</th>
+                                            <th>Цена</th>
+                                            <th style="width: 100px">Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        foreach($db->query('SELECT * from bad_type') as $row) {
+                                            ?>
+                                            <tr>
+                                                <td><?= $row['name'] ?></td>
+                                                <td><?= $row['price'] ?></td>
+                                                <td>
+                                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=BadTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                    <a href="model/delete.php?<?= delete($row['id'], 'bad_type', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
@@ -109,12 +149,9 @@ is_auth();
                                             <td><?= $row['floor'] ?> этаж</td>
                                             <td><?= $row['ward'] ?> палата</td>
                                             <td><?= $row['num'] ?> койка</td>
-                                            <td><?php 
-                                                if ($row['category']){
-                                                    echo "VIP";
-                                                }else{
-                                                    echo "Обычная";
-                                                }
+                                            <td><?php $cat= $row['category'];
+                                                $stmt = $db->query("SELECT * from bad_type where id = '$cat'")->fetch(PDO::FETCH_OBJ);
+                                                echo $stmt->name;
 
                                             ?></td>
                                             <td>
