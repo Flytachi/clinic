@@ -99,11 +99,11 @@
 
                     <ul class="nav nav-group-sub" data-submenu-title="Layouts">
                         <li class="nav-item"><a href="index.html" class="nav-link active legitRipple">Default layout</a></li>
-                        <li class="nav-item"><a href="../../../../layout_2/LTR/material/full/index.html" class="nav-link legitRipple">Layout 2</a></li>
-                        <li class="nav-item"><a href="../../../../layout_3/LTR/material/full/index.html" class="nav-link legitRipple">Layout 3</a></li>
-                        <li class="nav-item"><a href="../../../../layout_4/LTR/material/full/index.html" class="nav-link legitRipple">Layout 4</a></li>
-                        <li class="nav-item"><a href="../../../../layout_5/LTR/material/full/index.html" class="nav-link legitRipple">Layout 5</a></li>
-                        <li class="nav-item"><a href="../../../../layout_6/LTR/material/full/index.html" class="nav-link disabled">Layout 6 <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 2</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 3</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 4</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 5</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link disabled">Layout 6 <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
