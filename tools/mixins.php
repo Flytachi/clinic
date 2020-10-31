@@ -5,7 +5,6 @@
 
 // }
 
-
 function insert($tb, $post)
 {
     global $db;
