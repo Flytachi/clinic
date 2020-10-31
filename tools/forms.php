@@ -16,7 +16,6 @@ function UserForm($status = null, $pk=null){
     if($status){
 
         if($pk and $_POST){
-            prit($_POST);
             unset($_POST['id']);
             if ($_POST['password'] and $_POST['password2']) {
 
@@ -113,10 +112,6 @@ function UserForm($status = null, $pk=null){
         }
 
     }else{
-        if($_SESSION['message']){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
         if($pk){
             $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
             if ($stmt) {
@@ -128,10 +123,18 @@ function UserForm($status = null, $pk=null){
                 exit();
             }
         }else{
-            if($_SESSION[$form_name]['id']){
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
                 ?><form method="post" action="model/update.php"><?php
             }else{
                 ?><form method="post" action="model/create.php"><?php
+            }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
             }
             ?>
             <input type="hidden" name="form_name" value="<?= $form_name ?>">
@@ -339,7 +342,6 @@ function BadForm($status = null, $pk=null){
                 <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
                 <?php
             }
-            prit($_SESSION);
             ?>
                 <input type="hidden" name="form_name" value="<?= $form_name ?>">
 
@@ -366,12 +368,12 @@ function BadForm($status = null, $pk=null){
 
                 <div class="form-group">
                     <label>Тип:</label>
-                    <select data-placeholder="Выбрать тип" name="category" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать тип" name="types" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php 
                         foreach($db->query('SELECT * from bad_type') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>"<?php if($row['id'] == $_SESSION[$form_name]['category']){echo'selected';} ?>><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>"<?php if($row['id'] == $_SESSION[$form_name]['types']){echo'selected';} ?>><?= $row['name'] ?></option>
 
                             <?php
                         }
@@ -568,10 +570,6 @@ function PlanetForm($status = null, $pk=null){
         }
 
     }else{
-        if($_SESSION['message']){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
         if($pk){
             $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
             if ($stmt) {
@@ -583,49 +581,42 @@ function PlanetForm($status = null, $pk=null){
                 exit();
             }
         }else{
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
+                ?><form method="post" action="model/update.php"><?php
+            }else{
+                ?><form method="post" action="model/create.php"><?php
+            }
             if($_SESSION[$form_name]['id']){
                 ?>
-                <form method="post" action="model/update.php">
-                <?php
-            }else{
-                ?>
-                <form method="post" action="model/create.php">
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
                 <?php
             }
-                    
             ?>
-            <input type="hidden" name="form_name" value="<?= $form_name ?>">
-                <div class="row">
+                <input type="hidden" name="form_name" value="<?= $form_name ?>">
+                <?php
+                    if($_SESSION[$form_name]['id']){
+                        ?>
+                        <input type="hidden" name="id" value="<?=$_SESSION[$form_name]['id']?>">
+                        <?php
+                    }
+                ?>
+                <div class="form-group">
+                    <label>name:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите кабинет" required value="<?=$_SESSION[$form_name]['name']?>">
+                </div>
 
-                    <div class="col-md-12">
-                        <fieldset>
-                            <?php
-                                if($_SESSION[$form_name]['id']){
-                                    ?>
-                                    <input type="hidden" name="id" value="<?=$_SESSION[$form_name]['id']?>">
-                                    <?php
-                                }
-                            ?>
-                            <div class="form-group">
-                                <label>name:</label>
-                                <input type="text" class="form-control" name="name" placeholder="Введите кабинет" required value="<?=$_SESSION[$form_name]['name']?>">
-                            </div>
+                <div class="form-group">
+                    <label>color:</label>
+                    <input type="text" class="form-control" name="color" placeholder="Введите номер" required value="<?=$_SESSION[$form_name]['color']?>">
+                </div>
 
-                            <div class="form-group">
-                                <label>color:</label>
-                                <input type="text" class="form-control" name="color" placeholder="Введите номер" required value="<?=$_SESSION[$form_name]['color']?>">
-                            </div>
-
-                            <div class="form-group">
-                                <label>tip:</label>
-                                <input type="text" class="form-control" name="tip" placeholder="Введите номер" required value="<?=$_SESSION[$form_name]['tip']?>">
-                            </div>
-
-
-                        </fieldset>
-                    </div>
-
-                    </div>
+                <div class="form-group">
+                    <label>tip:</label>
+                    <input type="text" class="form-control" name="tip" placeholder="Введите номер" required value="<?=$_SESSION[$form_name]['tip']?>">
+                </div>
 
                 <div class="text-right">
                     <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>

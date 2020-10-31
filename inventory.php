@@ -138,6 +138,7 @@ is_auth();
                                         <th>Палата</th>
                                         <th>Койка</th>
                                         <th>Тип</th>
+                                        <th>Цена</th>
                                         <th style="width: 100px">Действия</th>
                                     </tr>
                                 </thead>
@@ -149,11 +150,13 @@ is_auth();
                                             <td><?= $row['floor'] ?> этаж</td>
                                             <td><?= $row['ward'] ?> палата</td>
                                             <td><?= $row['num'] ?> койка</td>
-                                            <td><?php $cat= $row['category'];
-                                                $stmt = $db->query("SELECT * from bad_type where id = '$cat'")->fetch(PDO::FETCH_OBJ);
-                                                echo $stmt->name;
-
-                                            ?></td>
+                                            <td>
+                                                <?php
+                                                    $stmt = $db->query("SELECT * from bad_type where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);
+                                                    echo $stmt->name;
+                                                ?>
+                                            </td>
+                                            <td><?= $stmt->price ?></td>
                                             <td>
                                                 <a href="model/update.php?id=<?= $row['id'] ?>&form=BadForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                                                 <a href="model/delete.php?<?= delete($row['id'], 'bads', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
