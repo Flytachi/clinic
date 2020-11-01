@@ -4,39 +4,7 @@ is_auth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title><?= ShowTitle() ?></title>
-
-	<!-- Global stylesheets -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-	<link href="global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/layout.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/components.min.css" rel="stylesheet" type="text/css">
-	<link href="assets/css/colors.min.css" rel="stylesheet" type="text/css">
-	<!-- /global stylesheets -->
-
-	<!-- Core JS files -->
-	<script src="global_assets/js/main/jquery.min.js"></script>
-	<script src="global_assets/js/main/bootstrap.bundle.min.js"></script>
-	<script src="global_assets/js/plugins/loaders/blockui.min.js"></script>
-	<script src="global_assets/js/plugins/ui/ripple.min.js"></script>
-	<!-- /core JS files -->
-
-	<!-- Theme JS files -->
-	<script src="global_assets/js/plugins/forms/selects/select2.min.js"></script>
-	<script src="global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-
-	<script src="assets/js/app.js"></script>
-	<script src="global_assets/js/demo_pages/form_layouts.js"></script>
-	<script src="global_assets/js/demo_pages/form_inputs.js"></script>
-	<!-- /theme JS files -->
-
-</head>
+<?php include 'layout/head.php' ?>
 
 <body>
 
@@ -62,12 +30,71 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Служебный персонал</h5>
+                        <h5 class="card-title">Койки</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
-                                <a class="list-icons-item" data-action="reload"></a>
-                                <a class="list-icons-item" data-action="remove"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <legend class="font-weight-semibold"> Добавить койку</legend>
+                                <?php
+                                form('BedForm');
+                                ?>
+                            </div>
+
+                            <div class="col-md-6">
+                            <legend class="font-weight-semibold"> Добавить тип коек</legend>
+                                <?php
+                                form('BedTypeForm');
+                                ?>
+
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="">
+                                            <th>Вид</th>
+                                            <th>Цена</th>
+                                            <th style="width: 100px">Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        foreach($db->query('SELECT * from bed_type') as $row) {
+                                            ?>
+                                            <tr>
+                                                <td><?= $row['name'] ?></td>
+                                                <td><?= $row['price'] ?></td>
+                                                <td>
+                                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=BedTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card">
+
+                    <div class="card-header header-elements-inline">
+                        <h5 class="card-title">Койки</h5>
+                        <div class="header-elements">
+                            <div class="list-icons">
+                                <a class="list-icons-item" data-action="collapse"></a>
                             </div>
                         </div>
                     </div>
@@ -78,16 +105,32 @@ is_auth();
                                 <thead>
                                     <tr class="bg-blue">
                                         <th>Этаж</th>
-                                        <th>Кабинет</th>
+                                        <th>Палата</th>
+                                        <th>Койка</th>
+                                        <th>Тип</th>
+                                        <th>Цена</th>
+                                        <th style="width: 100px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php 
-                                    foreach($db->query('SELECT * from bads') as $row) {
+                                    foreach($db->query('SELECT * from beds') as $row) {
                                         ?>
                                         <tr>
-                                            <td><?= $row['flor'] ?></td>
-                                            <td><?= $row['cabinet'] ?></td>
+                                            <td><?= $row['floor'] ?> этаж</td>
+                                            <td><?= $row['ward'] ?> палата</td>
+                                            <td><?= $row['num'] ?> койка</td>
+                                            <td>
+                                                <?php
+                                                    $stmt = $db->query("SELECT * from bed_type where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);
+                                                    echo $stmt->name;
+                                                ?>
+                                            </td>
+                                            <td><?= $stmt->price ?></td>
+                                            <td>
+                                                <a href="model/update.php?id=<?= $row['id'] ?>&form=BedForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                            </td>
                                         </tr>
                                         <?php
                                     }

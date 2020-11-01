@@ -5,6 +5,12 @@ $PERSONAL = array(
     2 => "Регистратура",
 );
 
+$FLOOR = array(
+    1 => "1 этаж",
+    2 => "2 этаж",
+    3 => "3 этаж",
+);
+
 // TODO Functions
 /*
     --| is_auth()
@@ -22,7 +28,6 @@ $PERSONAL = array(
 */
 require_once 'connection.php';
 require_once 'forms.php';
-
 
 function is_auth(){
     session_start();
@@ -132,6 +137,13 @@ function clean($value = "") {
     $value = strip_tags($value);
     $value = htmlspecialchars($value);    
     return $value;
+}
+
+function clean_arr($array){
+    foreach ($array as $key => $value) {
+        $array[$key] = clean($value);
+    };
+    return $array;
 }
 
 function dateformat($var=""){

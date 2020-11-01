@@ -15,27 +15,64 @@
                     <div id="sessionButton"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
                 </div>
                                             
+<<<<<<< HEAD
                 <div class="sidebar-user-material-footer" >
                     <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Сессия открыто</span></a>
+=======
+                <div class="sidebar-user-material-footer">
+                    <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Мой профиль</span></a>
+>>>>>>> 2fc041ca15bc27e5a4e9820baf21f34831d62105
                 </div>
             </div>
 
-            <div class="" id="user-nav">
+            <div class="collapse" id="user-nav">
                 <ul class="nav nav-sidebar">
 
-                    <?php
+                    <!-- <li class="nav-item">
+                        <a href="index.php" class="nav-link">
+                            <i class="icon-users"></i>
+                            <span>Персонал</span>
+                        </a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="auth/logout.php" class="nav-link">
+                            <i class="icon-switch2"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <!-- /user menu -->
+
+
+        <!-- Main navigation -->
+        <div class="card card-sidebar-mobile">
+
+            <ul class="nav nav-sidebar" data-nav-type="accordion">
+                <!-- Main -->
+                <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
+
+                <?php
                     if(permission(1)){
                         ?>
                         <li class="nav-item">
-                            <a href="index.php" class="nav-link">
-                                <i class="icon-user-plus"></i>
+                            <a href="index.php" class="nav-link legitRipple">
+                                <i class="icon-users"></i>
                                 <span>Персонал</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="inventory.php" class="nav-link">
-                                <i class="icon-user-plus"></i>
-                                <span>Инвентарь</span>
+                            <a href="inventory.php" class="nav-link legitRipple">
+                                <i class="icon-bed2"></i>
+                                <span>Койки</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link legitRipple">
+                                <i class="icon-tree6"></i>
+                                <span>Услуги</span>
                             </a>
                         </li>
                         <?php
@@ -66,35 +103,32 @@
                                 <span>Account settings</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="test.php" class="nav-link">
-                                <i class="icon-cog5"></i>
-                                <span>Test</span>
-                            </a>
-                        </li>
                         <?php
                     }
                     ?>
-                    
-                    <!-- <li class="nav-item">
-                        <a href="auth/logout.php" class="nav-link">
-                            <i class="icon-switch2"></i>
-                            <span>Logout</span>
-                        </a>
-                    </li> -->
-                </ul>
-            </div>
-        </div>
-        <!-- /user menu -->
+                
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link legitRipple"><i class="icon-copy"></i> <span>Layouts</span></a>
 
-
-        <!-- Main navigation -->
-        <div class="card card-sidebar-mobile">
-            <ul class="nav nav-sidebar" data-nav-type="accordion">
-
-            
-
+                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                        <li class="nav-item"><a href="index.html" class="nav-link active legitRipple">Default layout</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 2</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 3</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 4</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 5</a></li>
+                        <li class="nav-item"><a href="index.html" class="nav-link disabled">Layout 6 <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="test.php" class="nav-link legitRipple">
+                        <i class="icon-width"></i> 
+                        <span>Tests</span>
+                        <span class="badge bg-blue-400 align-self-center ml-auto">2.0</span>
+                    </a>
+                </li>
+                <!-- /main -->
             </ul>
+
         </div>
         <!-- /main navigation -->
 
