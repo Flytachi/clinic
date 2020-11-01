@@ -11,9 +11,11 @@
                     </a>
                     <h6 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h6>
                     <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ?></span>
+                    <h6 id="timeSession" class="font-size-lg text-white">00:00:00</h6>
+                    <div id="sessionButton"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
                 </div>
                                             
-                <div class="sidebar-user-material-footer">
+                <div class="sidebar-user-material-footer" >
                     <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Сессия открыто</span></a>
                 </div>
             </div>
@@ -97,6 +99,10 @@
         <!-- /main navigation -->
 
     </div>
+
+    <script src="../vendors/js/cookie.js"></script>
+
+    <script src="../vendors/js/Timer.js"></script>
     <!-- /sidebar content -->
     
 </div>
