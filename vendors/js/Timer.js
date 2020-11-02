@@ -1,3 +1,4 @@
+/* Beta 1.0.0 */
 let intevalId;
 
 let time = document.getElementById('timeSession');

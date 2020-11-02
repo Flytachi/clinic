@@ -6,16 +6,16 @@
 
 body{
     background: rgba(174, 229, 243, 0.5);
-    background-image: url('../image/back.jpg'); 
-    -moz-background-size: 100%; /* Firefox 3.6+ */
-    -webkit-background-size: 100%; /* Safari 3.1+ и Chrome 4.0+ */
-    -o-background-size: 100%; /* Opera 9.6+ */
-    background-size: 100%; /* Современные браузеры */
+    background-image: url('../image/bg.jpg'); 
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .backcard{
     background: rgba(255, 255, 255, 0,8);
     border: 2px solid #C6C5DB;
-    /* border-radius: 25px; */
-    border-radius: 1px 100px 15px 100px;
+     border-radius: 10px; 
+    /*border-radius: 1px 100px 15px 100px;*/
 }
