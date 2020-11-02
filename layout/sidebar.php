@@ -15,13 +15,8 @@
                     <div id="sessionButton"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
                 </div>
                                             
-<<<<<<< HEAD
-                <div class="sidebar-user-material-footer" >
-                    <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Сессия открыто</span></a>
-=======
                 <div class="sidebar-user-material-footer">
                     <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Мой профиль</span></a>
->>>>>>> 2fc041ca15bc27e5a4e9820baf21f34831d62105
                 </div>
             </div>
 
