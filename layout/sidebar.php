@@ -136,9 +136,9 @@
 
     </div>
 
-    <script src="../vendors/js/cookie.js"></script>
+    <script src="vendors/js/cookie.js"></script>
 
-    <script src="../vendors/js/Timer.js"></script>
+    <script src="vendors/js/Timer.js"></script>
     <!-- /sidebar content -->
     
 </div>
