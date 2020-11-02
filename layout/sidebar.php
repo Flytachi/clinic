@@ -11,8 +11,15 @@
                     </a>
                     <h6 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h6>
                     <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ?></span>
-                    <h6 id="timeSession" class="font-size-lg text-white">00:00:00</h6>
-                    <div id="sessionButton"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
+
+                    <?php
+                        if(permission(2)){
+                            ?>
+                            <h6 id="timeSession" class="font-size-lg text-white">00:00:00</h6>
+                            <div id="sessionButton"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
+                            <?php
+                        }
+                    ?>
                 </div>
                                             
                 <div class="sidebar-user-material-footer">
@@ -100,7 +107,7 @@
                         </li>
                         <?php
                     }
-                    ?>
+                ?>
                 
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link legitRipple"><i class="icon-copy"></i> <span>Layouts</span></a>
