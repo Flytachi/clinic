@@ -74,7 +74,7 @@
                             <li class="nav-item nav-item-submenu">
                                 <a href="#" class="nav-link legitRipple"><i class="icon-tree6"></i> <span>Услуги</span></a>
                                 <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-                                    <li class="nav-item"><a href="service.php" class="nav-link legitRipple">Добавить услугу </a></li>
+                                    <li class="nav-item"><a href="service.php" class="nav-link legitRipple">Услуги</a></li>
                                     <li class="nav-item"><a href="service_group.php" class="nav-link legitRipple">Группы</a></li>
                                     <li class="nav-item"><a href="service_category.php" class="nav-link legitRipple">Категории</a></li>
                                 </ul>
@@ -111,18 +111,6 @@
                         }
                         ?>
 
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link legitRipple"><i class="icon-copy"></i> <span>Layouts</span></a>
-
-                        <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-                            <li class="nav-item"><a href="index.html" class="nav-link active legitRipple">Default layout</a></li>
-                            <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 2</a></li>
-                            <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 3</a></li>
-                            <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 4</a></li>
-                            <li class="nav-item"><a href="index.html" class="nav-link legitRipple">Layout 5</a></li>
-                            <li class="nav-item"><a href="index.html" class="nav-link disabled">Layout 6 <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                        </ul>
-                    </li>
                     <li class="nav-item">
                         <a href="test.php" class="nav-link legitRipple">
                             <i class="icon-width"></i>

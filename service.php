@@ -30,7 +30,7 @@ is_auth();
         <div class="card">
 
 	          <div class="card-header header-elements-inline">
-	              <h5 class="card-title">Добавить услугу</h5>
+	              <h5 class="card-title">Добавить Услугу</h5>
 	              <div class="header-elements">
 	                  <div class="list-icons">
 	                      <a class="list-icons-item" data-action="collapse"></a>
@@ -49,7 +49,7 @@ is_auth();
         <div class="card">
 
               <div class="card-header header-elements-inline">
-                  <h5 class="card-title">Услуги</h5>
+                  <h5 class="card-title">Список Услуг</h5>
                   <div class="header-elements">
                       <div class="list-icons">
                           <a class="list-icons-item" data-action="collapse"></a>
@@ -62,11 +62,11 @@ is_auth();
                       <table class="table table-hover">
                           <thead>
                               <tr class="bg-blue">
-																	<th style="width:20%">Id</th>
+																	<th style="width:8%">Id</th>
+																	<th style="width:40%">Название</th>
 																	<th>Группа</th>
 																	<th>Категория</th>
 																	<th>Роль</th>
-																	<th>Название</th>
 																	<th>Цена</th>
 																	<th style="width: 100px">Действия</th>
                               </tr>
@@ -77,6 +77,7 @@ is_auth();
                                   ?>
                                   <tr>
 																			<td><?= $row['id'] ?></td>
+																			<td><?= $row['name'] ?></td>
                                       <td>
 																					<?php
 																							$stmt = $db->query("SELECT * from service_group where id = ".$row['group_id'])->fetch(PDO::FETCH_OBJ);
@@ -90,11 +91,10 @@ is_auth();
 																					?>
 																			</td>
 																			<td><?= level_name($row['user_level']); ?></td>
-                                      <td><?= $row['name'] ?></td>
 																			<td><?= $row['price'] ?></td>
                                       <td>
 																					<a href="model/update.php?id=<?= $row['id'] ?>&form=ServiceForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-																					<a href="model/delete.php?<?= delete($row['id'], 'serviсe', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+																					<a href="model/delete.php?<?= delete($row['id'], 'service', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                       </td>
                                   </tr>
                                   <?php

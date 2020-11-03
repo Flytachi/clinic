@@ -1,7 +1,7 @@
 <div class="card">
 
     <div class="card-header header-elements-inline">
-        <h5 class="card-title">Добавить пользователя</h5>
+        <h5 class="card-title">Добавить Пользователя</h5>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>
@@ -22,7 +22,7 @@
 <div class="card">
 
     <div class="card-header header-elements-inline">
-        <h5 class="card-title">Служебный персонал</h5>
+        <h5 class="card-title">Список Пользователей</h5>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>

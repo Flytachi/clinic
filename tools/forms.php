@@ -892,7 +892,7 @@ function ServiceForm($status = null, $pk=null){
 
                 <div class="form-group">
                     <label>Цена:</label>
-                    <input type="number" class="form-control" name="price" placeholder="Введите цену" required value="<?= $_SESSION[$form_name]['price']?>">
+                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $_SESSION[$form_name]['price']?>">
                 </div>
 
                 <div class="text-right">

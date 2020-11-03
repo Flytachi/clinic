@@ -30,7 +30,7 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Койки</h5>
+                        <h5 class="card-title">Добавить Койку</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
@@ -91,7 +91,7 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Койки</h5>
+                        <h5 class="card-title">Список Коек</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
