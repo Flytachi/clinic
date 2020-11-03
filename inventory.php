@@ -72,7 +72,7 @@ is_auth();
                                                 <td><?= $row['price'] ?></td>
                                                 <td>
                                                     <a href="model/update.php?id=<?= $row['id'] ?>&form=BedTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                                 </td>
                                             </tr>
                                             <?php
@@ -129,7 +129,7 @@ is_auth();
                                             <td><?= $stmt->price ?></td>
                                             <td>
                                                 <a href="model/update.php?id=<?= $row['id'] ?>&form=BedForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                             </td>
                                         </tr>
                                         <?php

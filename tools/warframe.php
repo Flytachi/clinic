@@ -37,7 +37,7 @@ function is_auth(){
 }
 
 function get_full_name($id = null) {
-    global $db; 
+    global $db;
     if($id){
         $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }else{
@@ -48,7 +48,7 @@ function get_full_name($id = null) {
 }
 
 function get_name($id = null) {
-    global $db; 
+    global $db;
     if($id){
         $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }else{
@@ -62,14 +62,14 @@ function level($id = null) {
     /*
     level(1)
     */
-	global $db; 
+	global $db;
 	if($id){
         $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     }else{
         $id = $_SESSION['session_id'];
         $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     }
-	return intval($stmt); 
+	return intval($stmt);
 }
 
 function level_name($id = null) {
@@ -77,7 +77,7 @@ function level_name($id = null) {
     level_name(1)
     */
     global $PERSONAL;
-	return $PERSONAL[level($id)]; 
+	return $PERSONAL[level($id)];
 }
 
 function permission($arr){
@@ -98,18 +98,18 @@ function permission($arr){
             return false;
         }
     }
-    
+
 }
 
 function delete($id, $table, $location='', $status = null){
     if($status){
-        global $db; 
+        global $db;
         if ($id and $table) {
             $stmt = $db->prepare("DELETE FROM $table WHERE id = :id");
             $stmt->bindValue(':id', $id);
             $stmt->execute();
             if ($stmt->rowCount()) {
-                header("location:../$location");
+                header("location:$location");
             }else{
                 header("location:../error/404.php");
             }
@@ -135,7 +135,7 @@ function clean($value = "") {
     $value = trim($value);
     $value = stripslashes($value);
     $value = strip_tags($value);
-    $value = htmlspecialchars($value);    
+    $value = htmlspecialchars($value);
     return $value;
 }
 
@@ -147,15 +147,15 @@ function clean_arr($array){
 }
 
 function dateformat($var=""){
-	$var = strtotime($var) ; 
+	$var = strtotime($var) ;
 	$var = date('Y-m-d', $var);
-	return $var; 
+	return $var;
 }
 
 function nodateformat($var=""){
-	$var = strtotime($var) ; 
+	$var = strtotime($var) ;
 	$var = date('d-m-Y', $var);
-	return $var ; 
+	return $var ;
 }
 
 function showTitle() //Функция title

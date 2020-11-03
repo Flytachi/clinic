@@ -30,7 +30,7 @@ is_auth();
         <div class="card">
 
           <div class="card-header header-elements-inline">
-                  <h5 class="card-title">Добавить услугу</h5>
+                  <h5 class="card-title">Добавить группу</h5>
                   <div class="header-elements">
                       <div class="list-icons">
                           <a class="list-icons-item" data-action="collapse"></a>
@@ -41,10 +41,8 @@ is_auth();
           <div class="card-body">
                   <?php
                   // prit($_SESSION);
+                  form('ServiceGroupForm');
                   ?>
-                  <form class="" action="#" method="post">
-
-                  </form>
               </div>
 
         </div>
@@ -52,41 +50,41 @@ is_auth();
         <div class="card">
 
               <div class="card-header header-elements-inline">
-                  <h5 class="card-title">Услуги</h5>
+                  <h5 class="card-title">Группы</h5>
                   <div class="header-elements">
                       <div class="list-icons">
                           <a class="list-icons-item" data-action="collapse"></a>
-                          <a class="list-icons-item" data-action="reload"></a>
-                          <a class="list-icons-item" data-action="remove"></a>
                       </div>
                   </div>
               </div>
 
               <div class="card-body">
                   <div class="table-responsive">
-                      <!-- <table class="table table-hover">
+                      <table class="table table-hover">
                           <thead>
                               <tr class="bg-blue">
-                                  <th>Planet</th>
-                                  <th>Color</th>
+                                  <th style="width:20%">Id</th>
+                                  <th>Название</th>
+                                  <th style="width: 100px">Действия</th>
                               </tr>
                           </thead>
                           <tbody>
                               <?php
-                              foreach($db->query('SELECT * from planets') as $row) {
+                              foreach($db->query('SELECT * from service_group') as $row) {
                                   ?>
                                   <tr>
+                                      <td><?= $row['id'] ?></td>
                                       <td><?= $row['name'] ?></td>
-                                      <td><?= $row['color'] ?></td>
                                       <td>
-                                          <a href="model/update.php?id=<?= $row['id'] ?>&form=PlanetForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                          <a href="model/update.php?id=<?= $row['id'] ?>&form=ServiceGroupForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                          <a href="model/delete.php?<?= delete($row['id'], 'service_group', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                       </td>
                                   </tr>
                                   <?php
                               }
                               ?>
                           </tbody>
-                      </table> -->
+                      </table>
                   </div>
               </div>
 
