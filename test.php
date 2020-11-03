@@ -70,7 +70,7 @@ is_auth();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     foreach($db->query('SELECT * from planets') as $row) {
                                         ?>
                                         <tr>
@@ -92,7 +92,7 @@ is_auth();
 
 			</div>
             <!-- /content area -->
-            
+
 		</div>
 		<!-- /main content -->
 

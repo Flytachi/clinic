@@ -72,7 +72,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link legitRipple">
+                                <a href="store.php" class="nav-link legitRipple">
                                     <i class="icon-tree6"></i>
                                     <span>Услуги</span>
                                 </a>
@@ -136,9 +136,8 @@
 
         </div>
 
-        <script src="../vendors/js/cookie.js"></script>
-
-        <script src="../vendors/js/Timer.js"></script>
+        <script src="vendors/js/cookie.js"></script>
+        <script src="vendors/js/Timer.js"></script>
         <!-- /sidebar content -->
 
     </div>
