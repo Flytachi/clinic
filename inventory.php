@@ -64,7 +64,7 @@ is_auth();
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
+                                        <?php
                                         foreach($db->query('SELECT * from bed_type') as $row) {
                                             ?>
                                             <tr>
@@ -113,7 +113,7 @@ is_auth();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     foreach($db->query('SELECT * from beds') as $row) {
                                         ?>
                                         <tr>
@@ -144,7 +144,7 @@ is_auth();
 
 			</div>
             <!-- /content area -->
-            
+
 		</div>
 		<!-- /main content -->
 

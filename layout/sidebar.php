@@ -13,7 +13,7 @@
                     <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ?></span>
 
                     <?php
-                        if(permission(2)){
+                        if(permission([1,2])){
                             ?>
                             <h6 id="timeSession" class="font-size-lg text-white">00:00:00</h6>
                             <div id="sessionButton"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
@@ -21,61 +21,32 @@
                         }
                     ?>
                 </div>
-                                            
-<<<<<<< HEAD
+
                 <div class="sidebar-user-material-footer" >
-                    <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Сессия открыто</span></a>
-                    <div class="sidebar-user-material-footer">
-                        <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Мой профиль</span></a>
-                    </div>
-=======
-                <div class="sidebar-user-material-footer">
                     <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>Мой профиль</span></a>
->>>>>>> b459284b011cb4c9499a8f8eac47e087c51aac7f
                 </div>
 
-                <div class="collapse" id="user-nav">
-                    <ul class="nav nav-sidebar">
-
-                        <!-- <li class="nav-item">
-                            <a href="index.php" class="nav-link">
-                                <i class="icon-users"></i>
-                                <span>Персонал</span>
-                            </a>
-                        </li> -->
-                        <li class="nav-item">
-                            <a href="auth/logout.php" class="nav-link">
-                                <i class="icon-switch2"></i>
-                                <span>Logout</span>
-                            </a>
-                        </li>
-<<<<<<< HEAD
-=======
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="icon-comment-discussion"></i>
-                                <span>Messages</span>
-                                <span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="icon-cog5"></i>
-                                <span>Account settings</span>
-                            </a>
-                        </li>
-                        <?php
-                    }
-                ?>
-                
-                <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link legitRipple"><i class="icon-copy"></i> <span>Layouts</span></a>
->>>>>>> b459284b011cb4c9499a8f8eac47e087c51aac7f
-
-                    </ul>
-                </div>
             </div>
             <!-- /user menu -->
+
+            <div class="collapse" id="user-nav">
+                <ul class="nav nav-sidebar">
+
+                    <!-- <li class="nav-item">
+                        <a href="index.php" class="nav-link">
+                            <i class="icon-users"></i>
+                            <span>Персонал</span>
+                        </a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="auth/logout.php" class="nav-link">
+                            <i class="icon-switch2"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
 
 
             <!-- Main navigation -->
@@ -85,7 +56,6 @@
                     <!-- Main -->
                     <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
 
-<<<<<<< HEAD
                     <?php
                         if(permission(1)){
                             ?>
@@ -138,7 +108,7 @@
                             <?php
                         }
                         ?>
-                    
+
                     <li class="nav-item nav-item-submenu">
                         <a href="#" class="nav-link legitRipple"><i class="icon-copy"></i> <span>Layouts</span></a>
 
@@ -153,7 +123,7 @@
                     </li>
                     <li class="nav-item">
                         <a href="test.php" class="nav-link legitRipple">
-                            <i class="icon-width"></i> 
+                            <i class="icon-width"></i>
                             <span>Tests</span>
                             <span class="badge bg-blue-400 align-self-center ml-auto">2.0</span>
                         </a>
@@ -170,13 +140,6 @@
 
         <script src="../vendors/js/Timer.js"></script>
         <!-- /sidebar content -->
-        
-    </div>
-=======
-    <script src="vendors/js/cookie.js"></script>
 
-    <script src="vendors/js/Timer.js"></script>
-    <!-- /sidebar content -->
-    
->>>>>>> b459284b011cb4c9499a8f8eac47e087c51aac7f
+    </div>
 </div>
