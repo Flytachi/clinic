@@ -69,6 +69,7 @@
                                 <a href="inventory.php" class="nav-link legitRipple">
                                     <i class="icon-bed2"></i>
                                     <span>Койки</span>
+                                    <span class="badge bg-blue-400 align-self-center ml-auto">2.0</span>
                                 </a>
                             </li>
                             <li class="nav-item nav-item-submenu">
@@ -110,14 +111,6 @@
                             <?php
                         }
                         ?>
-
-                    <li class="nav-item">
-                        <a href="test.php" class="nav-link legitRipple">
-                            <i class="icon-width"></i>
-                            <span>Tests</span>
-                            <span class="badge bg-blue-400 align-self-center ml-auto">2.0</span>
-                        </a>
-                    </li>
                     <!-- /main -->
                 </ul>
 
