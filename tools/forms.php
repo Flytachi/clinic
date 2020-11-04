@@ -750,6 +750,7 @@ function ServiceCategoryForm($status = null, $pk=null){
 
 };
 
+
 function PatientRegistration($status = null, $pk=null){
     global $db, $PERSONAL;
     $table = 'users';
@@ -767,7 +768,7 @@ function PatientRegistration($status = null, $pk=null){
             unset($_POST['id']);
 
             $stmt = update($table, $_POST, $pk);
-            
+
             if($stmt == 1){
                 $_SESSION['message'] = '
                     <div class="alert alert-primary" role="alert">
@@ -789,7 +790,7 @@ function PatientRegistration($status = null, $pk=null){
             }
 
         }elseif(!$pk and $_POST){
-    
+
             // $use = $_POST['username'];
             // $stmt = $db->query("SELECT * from $table where username = '$use'")->fetch(PDO::FETCH_OBJ);
             // if ($stmt) {
@@ -815,7 +816,7 @@ function PatientRegistration($status = null, $pk=null){
                 // unset($_POST['password2']);
 
                 $_POST['user_level'] = 3;
-    
+
                 $stmt = insert($table, $_POST);
                 if($stmt == 1){
                     $_SESSION['message'] = '
@@ -835,7 +836,7 @@ function PatientRegistration($status = null, $pk=null){
                     header("location: $redirect");
                 }
             // }
-    
+
         }
 
     }else{
@@ -929,7 +930,7 @@ function PatientRegistration($status = null, $pk=null){
                                     </optgroup>
                                 </select>
                             </div>
-        
+
                         </fieldset>
                     </div>
 
@@ -966,14 +967,18 @@ function PatientRegistration($status = null, $pk=null){
                                         <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['numberPhone']?>">
                                     </div>
                                 </div>
+<<<<<<< HEAD
                                 
+=======
+
+>>>>>>> a87c9f8619e19df6dad883364ac05aeb3dbb2527
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Адрес проживание:</label>
                                         <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
-                                    </div>  
+                                    </div>
                                 </div>
-                                
+
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Адрес по прописке:</label>
@@ -983,20 +988,22 @@ function PatientRegistration($status = null, $pk=null){
 
 
                                 <div class="col-md-2" style="margin-top: 5px;">
-                                    <div class="form-check" style="margin-bottom: 10px;">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" name="gender" value="m" class="form-check-input" >
-                                            Мужчина
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="gender" value="w">
-                                            Женщина
-                                        </label>
-                                    </div>
+                                    <label class="font-weight-semibold">Пол</label>
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" name="gender" <?php if(1 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
+											Мужчина
+										</label>
+									</div>
+
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" name="gender" <?php if(0 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
+											Женщина
+										</label>
+									</div>
                                 </div>
-                                
+
                                 <!-- <div class="form-group col-12">
                                     <label>Добавить фото:</label>
                                     <input type="file" class="form-control-uniform-custom">

@@ -127,7 +127,6 @@ CREATE TABLE `users` (
   `placeWork` varchar(1000) DEFAULT NULL,
   `position` varchar(1000) DEFAULT NULL,
   `numberPhone` varchar(255) DEFAULT NULL,
-  `workPhone` varchar(255) DEFAULT NULL,
   `residenceAddress` varchar(1000) DEFAULT NULL,
   `registrationAddress` varchar(1000) DEFAULT NULL,
   `gender` varchar(2) DEFAULT NULL,

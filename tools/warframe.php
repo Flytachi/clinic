@@ -25,6 +25,7 @@ $FLOOR = array(
     --| nodateformat(),
     --| showTitle(),
     --| form(),
+    --| addZero(),
 */
 require_once 'connection.php';
 require_once 'forms.php';
@@ -180,7 +181,7 @@ function addZero($number){
 
         $countZero = 5 - strlen($strNumber);
 
-        for ($i=0; $i < $countZero; $i++) { 
+        for ($i=0; $i < $countZero; $i++) {
 
             $newNumber .= "0";
         }
