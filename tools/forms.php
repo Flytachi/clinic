@@ -966,12 +966,6 @@ function PatientRegistration($status = null, $pk=null){
                                         <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['numberPhone']?>">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Рабочий телефон:</label>
-                                        <input type="number" name="workPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['workPhone']?>">
-                                    </div>
-                                </div>
                                 
                                 <div class="col-md-5">
                                     <div class="form-group">

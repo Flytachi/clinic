@@ -1,3 +1,5 @@
 <?php
 
-	print_r($_POST);
+	$nm = (0 == 0) ? 'e' : 'a';
+
+	echo $nm;
