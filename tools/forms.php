@@ -984,18 +984,20 @@ function PatientRegistration($status = null, $pk=null){
 
 
                                 <div class="col-md-2" style="margin-top: 5px;">
-                                    <div class="form-check" style="margin-bottom: 10px;">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" name="gender" value="m" class="form-check-input" >
-                                            Мужчина
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="gender" value="w">
-                                            Женщина
-                                        </label>
-                                    </div>
+                                    <label class="font-weight-semibold">Пол</label>
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" name="gender" <?php if(1 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
+											Мужчина
+										</label>
+									</div>
+
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" name="gender" <?php if(0 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
+											Женщина
+										</label>
+									</div>
                                 </div>
 
                                 <!-- <div class="form-group col-12">

@@ -37,7 +37,7 @@ is_auth();
 
 			</div>
             <!-- /content area -->
-            
+
 		</div>
 		<!-- /main content -->
 
@@ -47,11 +47,8 @@ is_auth();
 
     <!-- Footer -->
 
-    <script src="../vendors/js/cookie.js"></script>
-    <script src="../vendors/js/Timer.js"></script>
-
     <?php include 'layout/footer.php' ?>
-  
+
     <!-- /footer -->
 
 </body>
