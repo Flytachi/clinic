@@ -29,7 +29,13 @@
             <?= get_full_name() ?> - <?= level_name() ?>
         </span>
 
+
+
         <ul class="navbar-nav ml-md-auto">
+
+             <?php
+                if(permission(2)){
+                    ?>
 
             <li class="nav-item">
                 <div id="sessionButton" style="margin-top: 5px;"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
@@ -38,6 +44,7 @@
             <li class="nav-item navbar-nav-link" >
                 <h6 id="timeSession" class="font-size-lg">00:00:00</h6>
             </li>
+        <?php } ?>
 
             <li class="nav-item">
                 <a href="auth/logout.php" class="navbar-nav-link">

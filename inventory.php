@@ -30,7 +30,7 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Койки</h5>
+                        <h5 class="card-title">Добавить Койку</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
@@ -64,7 +64,7 @@ is_auth();
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php 
+                                        <?php
                                         foreach($db->query('SELECT * from bed_type') as $row) {
                                             ?>
                                             <tr>
@@ -72,7 +72,7 @@ is_auth();
                                                 <td><?= $row['price'] ?></td>
                                                 <td>
                                                     <a href="model/update.php?id=<?= $row['id'] ?>&form=BedTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                                 </td>
                                             </tr>
                                             <?php
@@ -91,7 +91,7 @@ is_auth();
                 <div class="card">
 
                     <div class="card-header header-elements-inline">
-                        <h5 class="card-title">Койки</h5>
+                        <h5 class="card-title">Список Коек</h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
@@ -113,7 +113,7 @@ is_auth();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     foreach($db->query('SELECT * from beds') as $row) {
                                         ?>
                                         <tr>
@@ -129,7 +129,7 @@ is_auth();
                                             <td><?= $stmt->price ?></td>
                                             <td>
                                                 <a href="model/update.php?id=<?= $row['id'] ?>&form=BedForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', 'inventory.php') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                             </td>
                                         </tr>
                                         <?php
@@ -144,7 +144,7 @@ is_auth();
 
 			</div>
             <!-- /content area -->
-            
+
 		</div>
 		<!-- /main content -->
 

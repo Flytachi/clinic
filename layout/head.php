@@ -30,4 +30,7 @@
 	<script src="global_assets/js/demo_pages/form_inputs.js"></script>
 	<!-- /theme JS files -->
 
+	<!-- JS chained -->
+	<script src="vendors/js/jquery.chained.js"></script>
+
 </head>
