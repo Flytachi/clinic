@@ -129,7 +129,7 @@ CREATE TABLE `users` (
   `numberPhone` varchar(255) DEFAULT NULL,
   `residenceAddress` varchar(1000) DEFAULT NULL,
   `registrationAddress` varchar(1000) DEFAULT NULL,
-  `gender` varchar(2) DEFAULT NULL,
+  `gender` tinyint NULL,
   `user_level` tinyint NOT NULL,
   `activity` tinyint(1) NOT NULL DEFAULT '1',
   `share` float DEFAULT '0',
