@@ -750,6 +750,7 @@ function ServiceCategoryForm($status = null, $pk=null){
 
 };
 
+
 function PatientRegistration($status = null, $pk=null){
     global $db, $PERSONAL;
     $table = 'users';
@@ -767,7 +768,7 @@ function PatientRegistration($status = null, $pk=null){
             unset($_POST['id']);
 
             $stmt = update($table, $_POST, $pk);
-            
+
             if($stmt == 1){
                 $_SESSION['message'] = '
                     <div class="alert alert-primary" role="alert">
@@ -789,7 +790,7 @@ function PatientRegistration($status = null, $pk=null){
             }
 
         }elseif(!$pk and $_POST){
-    
+
             // $use = $_POST['username'];
             // $stmt = $db->query("SELECT * from $table where username = '$use'")->fetch(PDO::FETCH_OBJ);
             // if ($stmt) {
@@ -815,7 +816,7 @@ function PatientRegistration($status = null, $pk=null){
                 // unset($_POST['password2']);
 
                 $_POST['user_level'] = 3;
-    
+
                 $stmt = insert($table, $_POST);
                 if($stmt == 1){
                     $_SESSION['message'] = '
@@ -835,7 +836,7 @@ function PatientRegistration($status = null, $pk=null){
                     header("location: $redirect");
                 }
             // }
-    
+
         }
 
     }else{
@@ -929,7 +930,7 @@ function PatientRegistration($status = null, $pk=null){
                                     </optgroup>
                                 </select>
                             </div>
-        
+
                         </fieldset>
                     </div>
 
@@ -966,20 +967,14 @@ function PatientRegistration($status = null, $pk=null){
                                         <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['numberPhone']?>">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Рабочий телефон:</label>
-                                        <input type="number" name="workPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['workPhone']?>">
-                                    </div>
-                                </div>
-                                
+
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Адрес проживание:</label>
                                         <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
-                                    </div>  
+                                    </div>
                                 </div>
-                                
+
                                 <div class="col-md-5">
                                     <div class="form-group">
                                         <label>Адрес по прописке:</label>
@@ -1002,7 +997,7 @@ function PatientRegistration($status = null, $pk=null){
                                         </label>
                                     </div>
                                 </div>
-                                
+
                                 <!-- <div class="form-group col-12">
                                     <label>Добавить фото:</label>
                                     <input type="file" class="form-control-uniform-custom">
