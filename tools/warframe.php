@@ -169,4 +169,26 @@ function form($name) //Функция title
 	return $name();
 }
 
+/* Добавляет нули к числам, чьи значаения меньше пятизначных*/
+
+function addZero($number){
+
+    $strNumber = strval($number);
+    $newNumber = "";
+
+    if(strlen($strNumber) < 5){
+
+        $countZero = 5 - strlen($strNumber);
+
+        for ($i=0; $i < $countZero; $i++) { 
+
+            $newNumber .= "0";
+        }
+        $newNumber .= $strNumber;
+        return $newNumber;
+    }
+
+    return $strNumber;
+}
+
 ?>

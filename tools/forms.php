@@ -633,5 +633,285 @@ function PlanetForm($status = null, $pk=null){
 
 };
 
+function PatientRegistration($status = null, $pk=null){
+    global $db, $PERSONAL;
+    $table = 'users';
+    $form_name = 'PatientRegistration';
+    $redirect = '../index.php';
+    $succees_message = 'Успешно';
+
+
+    /* --------------------------- */
+    unset($_POST['form_name']);
+
+    if($status){
+
+        if($pk and $_POST){
+            unset($_POST['id']);
+
+            $stmt = update($table, $_POST, $pk);
+            
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                header("location: $redirect");
+                exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
+
+        }elseif(!$pk and $_POST){
+    
+            // $use = $_POST['username'];
+            // $stmt = $db->query("SELECT * from $table where username = '$use'")->fetch(PDO::FETCH_OBJ);
+            // if ($stmt) {
+            //     $_SESSION['message'] = '
+            //     <div class="alert alert-danger" role="alert">
+            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            //         Пользователь с таким логином существует!
+            //     </div>
+            //     ';
+            //     $_SESSION[$form_name] = $_POST;
+            //     header("location: $redirect");
+            // }elseif(!($_POST['password'] === $_POST['password2'])){
+            //     $_SESSION['message'] = '
+            //     <div class="alert alert-danger" role="alert">
+            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            //         Пароли не совпадают
+            //     </div>
+            //     ';
+            //     $_SESSION[$form_name] = $_POST;
+            //     header("location: $redirect");
+            // }else{
+                // $_POST['password'] = sha1($_POST['password']);
+                // unset($_POST['password2']);
+
+                $_POST['user_level'] = 3;
+    
+                $stmt = insert($table, $_POST);
+                if($stmt == 1){
+                    $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                }else{
+                    $_SESSION['message'] = '
+                    <div class="alert alert-danger" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$stmt.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                }
+            // }
+    
+        }
+
+    }else{
+        if($pk){
+            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $_SESSION[$form_name] = $stmt;
+                header("location: $redirect");
+                exit();
+            }else{
+                header('location: ../error/404.php');
+                exit();
+            }
+        }else{
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
+                ?><form method="post" action="model/update.php"><?php
+            }else{
+                ?><form method="post" action="model/create.php"><?php
+            }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
+            }
+            ?>
+            <input type="hidden" name="form_name" value="<?= $form_name ?>">
+                <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Добавить пациента</legend>
+                <div class="row">
+                    <div class="col-md-4">
+                        <fieldset>
+
+                            <div class="form-group">
+                                <label>Имя пациента:</label>
+                                <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $_SESSION[$form_name]['first_name']?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Фамилия пациента:</label>
+                                <input type="text" name="last_name" class="form-control" placeholder="Введите Фамилия" value="<?= $_SESSION[$form_name]['last_name']?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Отчество пациента:</label>
+                                <input type="text" name="father_name" class="form-control" placeholder="Введите Отчество" value="<?= $_SESSION[$form_name]['father_name']?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Дата рождение:</label>
+                              <div class="input-group">
+                                <span class="input-group-prepend">
+                                 <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                 </span>
+                <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $_SESSION[$form_name]['dateBith']?>">
+                            </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Выбирите регион:</label>
+                                <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
+                                    <option><?= $_SESSION[$form_name]['region']?></option>
+                                    <optgroup label="Бухоро вилояти">
+                                        <option value="Бухоро">Бухоро ш</option>
+                                        <option value="Жондор">Жондор</option>
+                                        <option value="Вобкент">Вобкент</option>
+                                        <option value="Шофиркон">Шофиркон</option>
+                                        <option value="Гиждувон">Гиждувон</option>
+                                        <option value="Бухоро">Бухоро т</option>
+                                        <option value="Когон">Когон т</option>
+                                        <option value="Когон">Когон ш</option>
+                                        <option value="Қаравулбозор">Қаравулбозор</option>
+                                        <option value="Қоракўл">Қоракўл</option>
+                                        <option value="Олот">Олот</option>
+                                        <option value="Ромитан">Ромитан</option>
+                                    </optgroup>
+                                    <optgroup label="Тошкент вилояти">
+                                        <option value="Чилонзор">Чилонзор</option>
+                                        <option value="Миробод">Миробод</option>
+                                        <option value="Олмазор">Олмазор</option>
+                                        <option value="Юнусобод">Юнусобод</option>
+                                    </optgroup>
+                                    <optgroup label="Наманган вилояти">
+                                        <option value="Наманган">Наманган</option>
+                                        <option value="Наманган">Наманган</option>
+                                        <option value="Наманган">Наманган</option>
+                                    </optgroup>
+                                    <optgroup label="Фарғона вилояти">
+                                        <option value="Фарғона">Фарғона</option>
+                                        <option value="Фарғона">Фарғона</option>
+                                        <option value="Фарғона">Фарғона</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+        
+                        </fieldset>
+                    </div>
+
+                    <div class="col-md-8">
+                        <fieldset>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Серия и номер паспорта:</label>
+                                        <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $_SESSION[$form_name]['passport']?>">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Место работы:</label>
+                                        <input type="text" name="placeWork" placeholder="Введите место работ" class="form-control" value="<?= $_SESSION[$form_name]['placeWork']?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Должность:</label>
+                                        <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $_SESSION[$form_name]['position']?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Телефон номер:</label>
+                                        <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['numberPhone']?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Рабочий телефон:</label>
+                                        <input type="number" name="workPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['workPhone']?>">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Адрес проживание:</label>
+                                        <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
+                                    </div>  
+                                </div>
+                                
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label>Адрес по прописке:</label>
+                                        <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['registrationAddress']?>">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-2" style="margin-top: 5px;">
+                                    <div class="form-check" style="margin-bottom: 10px;">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="gender" class="form-check-input" checked="">
+                                            Мужчина
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" class="form-check-input" checked="">
+                                            Женщина
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- <div class="form-group col-12">
+                                    <label>Добавить фото:</label>
+                                    <input type="file" class="form-control-uniform-custom">
+                                </div> -->
+
+                        </fieldset>
+                    </div>
+
+                    <!-- <div class="col-md-3">
+                        <div class="form-group">
+                            <label>ID:</label>
+                            <input type="id" placeholder="ID номер" class="form-control">
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                </div>
+        </form>
+                            <?php
+            unset($_SESSION[$form_name]);
+        }
+    }
+
+};
+
 
 ?>

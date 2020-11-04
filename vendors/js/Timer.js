@@ -38,7 +38,7 @@ function inTime(time){
 
 }
 
-function setTime(argument) {
+function setTime() {
 
     setCookie('sessionTime', true);
 
@@ -46,6 +46,9 @@ function setTime(argument) {
 
     let now, hour, minute, second;
 
+    $('.card-sidebar-mobile').css({'pointer-events':'all', 'background-color':'rgb(255,255,255)'});
+    $('.content-wrapper').css({'pointer-events':'all', 'background-color':'rgb(255,255,255)'});
+    $('.card').css({'pointer-events':'all', 'background-color':'rgb(255,255,255)'});
 
     intevalId = setInterval(function () {
 
@@ -81,9 +84,18 @@ function stopTime() {
     clearInterval(intevalId)
 
     setCookie('sessionTime', false);
+
+    $('.card-sidebar-mobile').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
+    $('.content-wrapper').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
+    $('.card').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
 }
 
 if(getCookie('sessionTime') == 'true'){
+
+    $('.card-sidebar-mobile').css({'pointer-events':'all', 'background-color':'rgb(255,255,255)'});
+    $('.content-wrapper').css({'pointer-events':'all', 'background-color':'rgb(255,255,255)'});
+    $('.card').css({'pointer-events':'all', 'background-color':'rgb(255,255,255)'});
+
     intevalId = setInterval(function () {
 
         if (second1 == 60) {
@@ -112,6 +124,10 @@ if(getCookie('sessionTime') == 'true'){
 
     sessionButton.innerHTML = `<button class="btn bg-danger legitRipple" onclick="stopTime()" type="button">Остановить сессию</button>`
 }else if(getCookie('sessionTime') == 'false'){
+    $('.card-sidebar-mobile').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
+    $('.content-wrapper').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
+    $('.card').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
+
     time.innerHTML = `${inTime(hour1)}:${inTime(minute1)}:${inTime(second1)}`
 
     sessionButton.innerHTML = `<button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Продолжить сессию</button>`

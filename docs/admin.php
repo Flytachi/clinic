@@ -1,3 +1,4 @@
+</div>
 <div class="card">
 
     <div class="card-header header-elements-inline">

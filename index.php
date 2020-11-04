@@ -22,8 +22,8 @@ is_auth();
 
 
 		<!-- Main content -->
-		<div class="content-wrapper">
 
+		<div class="content-wrapper">
 			<!-- Content area -->
 			<div class="content">
 
@@ -46,7 +46,12 @@ is_auth();
 
 
     <!-- Footer -->
+
+    <script src="../vendors/js/cookie.js"></script>
+    <script src="../vendors/js/Timer.js"></script>
+
     <?php include 'layout/footer.php' ?>
+  
     <!-- /footer -->
 
 </body>

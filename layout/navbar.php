@@ -26,101 +26,17 @@
 
         <span class="navbar-text ml-md-3">
             <span class="badge badge-mark border-orange-300 mr-2"></span>
-            <?= get_name() ?>
+            <?= get_full_name() ?> - <?= level_name() ?>
         </span>
 
         <ul class="navbar-nav ml-md-auto">
 
-            <li class="nav-item dropdown">
-                <a href="#" class="navbar-nav-link dropdown-toggle" data-toggle="dropdown">
-                    <i class="icon-pulse2 mr-2"></i>
-                    Activity
-                </a>
-                
-                <div class="dropdown-menu dropdown-menu-right dropdown-content wmin-md-350">
-                    <div class="dropdown-content-header">
-                        <span class="font-size-sm line-height-sm text-uppercase font-weight-semibold">Latest activity</span>
-                        <a href="#" class="text-default"><i class="icon-search4 font-size-base"></i></a>
-                    </div>
+            <li class="nav-item">
+                <div id="sessionButton" style="margin-top: 5px;"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>
+            </li>
 
-                    <div class="dropdown-content-body dropdown-scrollable">
-                        <ul class="media-list">
-                            <li class="media">
-                                <div class="mr-3">
-                                    <a href="#" class="btn bg-success-400 rounded-round btn-icon"><i class="icon-mention"></i></a>
-                                </div>
-
-                                <div class="media-body">
-                                    <a href="#">Taylor Swift</a> mentioned you in a post "Angular JS. Tips and tricks"
-                                    <div class="font-size-sm text-muted mt-1">4 minutes ago</div>
-                                </div>
-                            </li>
-
-                            <li class="media">
-                                <div class="mr-3">
-                                    <a href="#" class="btn bg-pink-400 rounded-round btn-icon"><i class="icon-paperplane"></i></a>
-                                </div>
-                                
-                                <div class="media-body">
-                                    Special offers have been sent to subscribed users by <a href="#">Donna Gordon</a>
-                                    <div class="font-size-sm text-muted mt-1">36 minutes ago</div>
-                                </div>
-                            </li>
-
-                            <li class="media">
-                                <div class="mr-3">
-                                    <a href="#" class="btn bg-blue rounded-round btn-icon"><i class="icon-plus3"></i></a>
-                                </div>
-                                
-                                <div class="media-body">
-                                    <a href="#">Chris Arney</a> created a new <span class="font-weight-semibold">Design</span> branch in <span class="font-weight-semibold">Limitless</span> repository
-                                    <div class="font-size-sm text-muted mt-1">2 hours ago</div>
-                                </div>
-                            </li>
-
-                            <li class="media">
-                                <div class="mr-3">
-                                    <a href="#" class="btn bg-purple-300 rounded-round btn-icon"><i class="icon-truck"></i></a>
-                                </div>
-                                
-                                <div class="media-body">
-                                    Shipping cost to the Netherlands has been reduced, database updated
-                                    <div class="font-size-sm text-muted mt-1">Feb 8, 11:30</div>
-                                </div>
-                            </li>
-
-                            <li class="media">
-                                <div class="mr-3">
-                                    <a href="#" class="btn bg-warning-400 rounded-round btn-icon"><i class="icon-comment"></i></a>
-                                </div>
-                                
-                                <div class="media-body">
-                                    New review received on <a href="#">Server side integration</a> services
-                                    <div class="font-size-sm text-muted mt-1">Feb 2, 10:20</div>
-                                </div>
-                            </li>
-
-                            <li class="media">
-                                <div class="mr-3">
-                                    <a href="#" class="btn bg-teal-400 rounded-round btn-icon"><i class="icon-spinner11"></i></a>
-                                </div>
-                                
-                                <div class="media-body">
-                                    <strong>January, 2018</strong> - 1320 new users, 3284 orders, $49,390 revenue
-                                    <div class="font-size-sm text-muted mt-1">Feb 1, 05:46</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="dropdown-content-footer bg-light">
-                        <a href="#" class="font-size-sm line-height-sm text-uppercase font-weight-semibold text-grey mr-auto">All activity</a>
-                        <div>
-                            <a href="#" class="text-grey" data-popup="tooltip" title="Clear list"><i class="icon-checkmark3"></i></a>
-                            <a href="#" class="text-grey ml-2" data-popup="tooltip" title="Settings"><i class="icon-gear"></i></a>
-                        </div>
-                    </div>
-                </div>
+            <li class="nav-item navbar-nav-link" >
+                <h6 id="timeSession" class="font-size-lg">00:00:00</h6>
             </li>
 
             <li class="nav-item">

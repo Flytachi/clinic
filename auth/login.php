@@ -9,7 +9,7 @@ if ($_SESSION['session_id']) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Авторизвция</title>
+  <title>Авторизация</title>
   <link rel="stylesheet" href="../assets/css/style.css">
 
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -56,7 +56,7 @@ if ($_SESSION['session_id']) {
       
 		<div class="row">
 		
-			<div class="col-md-3 local_card">
+			<div class="col-md-3 local_card" style="width: 100px;">
 
 				<div class="card backcard">
 					<div class="card-header header-elements-inline" style="text-align: center;">
