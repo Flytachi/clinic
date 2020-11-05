@@ -51,6 +51,12 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="division.php" class="nav-link legitRipple">
+                                        <i class="icon-users"></i>
+                                        <span>Класификация персонала</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="inventory.php" class="nav-link legitRipple">
                                         <i class="icon-bed2"></i>
                                         <span>Койки</span>

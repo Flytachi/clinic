@@ -39,7 +39,7 @@ is_auth();
 <body>
 
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+
 	<!-- /main navbar -->
 
 
