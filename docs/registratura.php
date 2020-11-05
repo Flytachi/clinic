@@ -16,7 +16,9 @@
 	<div class="card-body">
 		<ul class="nav nav-tabs nav-justified">
 			<li class="nav-item"><a href="#basic-justified-tab1" class="nav-link legitRipple active show" data-toggle="tab">Регистрация</a></li>
-			<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Список пациетов</a></li>
+			<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Стационарная</a></li>
+			<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">Амбулаторная</a></li>
+			<li class="nav-item"><a href="#basic-justified-tab4" class="nav-link legitRipple" data-toggle="tab">Список пациетов</a></li>
 		</ul>
 
 		<div class="tab-content">
@@ -25,6 +27,14 @@
 			</div>
 
 			<div class="tab-pane fade" id="basic-justified-tab2">
+				Стационарная
+			</div>
+
+			<div class="tab-pane fade" id="basic-justified-tab3">
+				Амбулаторная
+			</div>
+
+			<div class="tab-pane fade" id="basic-justified-tab4">
 				<div class="card card-table table-responsive shadow-0 mb-0">
 				    <table class="table table-bordered">
 						<thead>

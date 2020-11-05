@@ -1117,6 +1117,17 @@ function PatientRegistration($status = null, $pk=null){
                                                     <option value="Фарғона">Фарғона</option>
                                                     <option value="Фарғона">Фарғона</option>
                                                 </optgroup>
+
+                                                <?php
+                                                    $i = 0;
+                                                    while($i < 1000){
+                                                ?>
+                                                    <option value="<?=$i?>"><?=$i?></option>
+                                                        <?php
+                                                        $i++;
+                                                    }
+
+                                                ?>
                                             </select>
                                         </div>
                                     </div>
