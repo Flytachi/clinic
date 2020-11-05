@@ -3,6 +3,7 @@
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",
+    3 => "Аптекарь",
 );
 
 $FLOOR = array(
@@ -27,6 +28,7 @@ $FLOOR = array(
     --| form(),
     --| addZero(),
 */
+
 require_once 'connection.php';
 require_once 'forms.php';
 
