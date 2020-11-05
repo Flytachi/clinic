@@ -1057,8 +1057,8 @@ function PatientRegistration($status = null, $pk=null){
                             </div>
 
                             <div class="form-group">
-                               <label class="d-block font-weight-semibold">Пол</label> 
-                                        
+                               <label class="d-block font-weight-semibold">Пол</label>
+
                                     <div class="form-check form-check-inline">
                                         <label class="form-check-label">
                                             <input type="radio" name="gender" <?php if(1 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
@@ -1163,7 +1163,7 @@ function PatientRegistration($status = null, $pk=null){
                                         <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['numberPhone']?>">
                                     </div>
                                 </div>
-                                
+
 
                                 <!-- <div class="form-group col-12">
                                     <label>Добавить фото:</label>
@@ -1186,6 +1186,118 @@ function PatientRegistration($status = null, $pk=null){
                 </div>
             </form>
                             <?php
+            unset($_SESSION[$form_name]);
+        }
+    }
+
+};
+
+
+function StorageTypeForm($status = null, $pk=null){
+    global $db;
+    $form_name = 'StorageTypeForm';
+    $table = 'storage_type';
+    $redirect = '../storage.php';
+    $succees_message = 'Успешно';
+
+    /* --------------------------- */
+    unset($_POST['form_name']);
+
+    if($status){
+
+        if($pk and $_POST){
+            unset($_POST['id']);
+            $stmt = update($table, $_POST, $pk);
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                    exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
+
+        }elseif(!$pk and $_POST){
+
+            $stmt = insert($table, $_POST);
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                <div class="alert alert-primary" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$succees_message.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
+
+        }
+
+    }else{
+        if($pk){
+            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $_SESSION[$form_name] = $stmt;
+                header("location: $redirect");
+                exit();
+            }else{
+                header('location: ../error/404.php');
+                exit();
+            }
+        }else{
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
+                ?><form method="post" action="model/update.php"><?php
+            }else{
+                ?><form method="post" action="model/create.php"><?php
+            }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
+            }
+            ?>
+                <input type="hidden" name="form_name" value="<?= $form_name ?>">
+                <?php
+                    if($_SESSION[$form_name]['id']){
+                        ?>
+                        <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                        <?php
+                    }
+                ?>
+                <div class="form-group">
+                    <label>Название:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $_SESSION[$form_name]['name']?>">
+                </div>
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                </div>
+
+            </form>
+            <?php
             unset($_SESSION[$form_name]);
         }
     }
