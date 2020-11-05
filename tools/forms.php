@@ -815,8 +815,6 @@ function PatientRegistration($status = null, $pk=null){
                 // $_POST['password'] = sha1($_POST['password']);
                 // unset($_POST['password2']);
 
-                $_POST['user_level'] = 3;
-
                 $stmt = insert($table, $_POST);
                 if($stmt == 1){
                     $_SESSION['message'] = '
@@ -865,6 +863,7 @@ function PatientRegistration($status = null, $pk=null){
                 <?php
             }
             ?>
+            <input type="hidden" name="user_level" value="15">
             <input type="hidden" name="form_name" value="<?= $form_name ?>">
                 <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Добавить пациента</legend>
                 <div class="row">
@@ -890,45 +889,25 @@ function PatientRegistration($status = null, $pk=null){
                                 <span class="input-group-prepend">
                                  <span class="input-group-text"><i class="icon-calendar22"></i></span>
                                  </span>
-                <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $_SESSION[$form_name]['dateBith']?>">
+                                <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $_SESSION[$form_name]['dateBith']?>">
                             </div>
                             </div>
 
                             <div class="form-group">
-                                <label>Выбирите регион:</label>
-                                <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
-                                    <option><?= $_SESSION[$form_name]['region']?></option>
-                                    <optgroup label="Бухоро вилояти">
-                                        <option value="Бухоро">Бухоро ш</option>
-                                        <option value="Жондор">Жондор</option>
-                                        <option value="Вобкент">Вобкент</option>
-                                        <option value="Шофиркон">Шофиркон</option>
-                                        <option value="Гиждувон">Гиждувон</option>
-                                        <option value="Бухоро">Бухоро т</option>
-                                        <option value="Когон">Когон т</option>
-                                        <option value="Когон">Когон ш</option>
-                                        <option value="Қаравулбозор">Қаравулбозор</option>
-                                        <option value="Қоракўл">Қоракўл</option>
-                                        <option value="Олот">Олот</option>
-                                        <option value="Ромитан">Ромитан</option>
-                                    </optgroup>
-                                    <optgroup label="Тошкент вилояти">
-                                        <option value="Чилонзор">Чилонзор</option>
-                                        <option value="Миробод">Миробод</option>
-                                        <option value="Олмазор">Олмазор</option>
-                                        <option value="Юнусобод">Юнусобод</option>
-                                    </optgroup>
-                                    <optgroup label="Наманган вилояти">
-                                        <option value="Наманган">Наманган</option>
-                                        <option value="Наманган">Наманган</option>
-                                        <option value="Наманган">Наманган</option>
-                                    </optgroup>
-                                    <optgroup label="Фарғона вилояти">
-                                        <option value="Фарғона">Фарғона</option>
-                                        <option value="Фарғона">Фарғона</option>
-                                        <option value="Фарғона">Фарғона</option>
-                                    </optgroup>
-                                </select>
+                               <label class="d-block font-weight-semibold">Пол</label> 
+                                        
+                                    <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" <?php if(1 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
+                                            Мужчина
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                            <input type="radio" name="gender" <?php if(0 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
+                                            Женщина
+                                        </label>
+                                    </div>
                             </div>
 
                         </fieldset>
@@ -938,13 +917,67 @@ function PatientRegistration($status = null, $pk=null){
                         <fieldset>
 
                             <div class="row">
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label>Выбирите регион:</label>
+                                            <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
+                                                <option><?= $_SESSION[$form_name]['region']?></option>
+                                                <optgroup label="Бухоро вилояти">
+                                                    <option value="Бухоро">Бухоро ш</option>
+                                                    <option value="Жондор">Жондор</option>
+                                                    <option value="Вобкент">Вобкент</option>
+                                                    <option value="Шофиркон">Шофиркон</option>
+                                                    <option value="Гиждувон">Гиждувон</option>
+                                                    <option value="Бухоро">Бухоро т</option>
+                                                    <option value="Когон">Когон т</option>
+                                                    <option value="Когон">Когон ш</option>
+                                                    <option value="Қаравулбозор">Қаравулбозор</option>
+                                                    <option value="Қоракўл">Қоракўл</option>
+                                                    <option value="Олот">Олот</option>
+                                                    <option value="Ромитан">Ромитан</option>
+                                                </optgroup>
+                                                <optgroup label="Тошкент вилояти">
+                                                    <option value="Чилонзор">Чилонзор</option>
+                                                    <option value="Миробод">Миробод</option>
+                                                    <option value="Олмазор">Олмазор</option>
+                                                    <option value="Юнусобод">Юнусобод</option>
+                                                </optgroup>
+                                                <optgroup label="Наманган вилояти">
+                                                    <option value="Наманган">Наманган</option>
+                                                    <option value="Наманган">Наманган</option>
+                                                    <option value="Наманган">Наманган</option>
+                                                </optgroup>
+                                                <optgroup label="Фарғона вилояти">
+                                                    <option value="Фарғона">Фарғона</option>
+                                                    <option value="Фарғона">Фарғона</option>
+                                                    <option value="Фарғона">Фарғона</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Адрес проживание:</label>
+                                        <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Адрес по прописке:</label>
+                                        <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['registrationAddress']?>">
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Серия и номер паспорта:</label>
                                         <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $_SESSION[$form_name]['passport']?>">
                                     </div>
                                 </div>
-
                             </div>
 
                             <div class="row">
@@ -961,48 +994,13 @@ function PatientRegistration($status = null, $pk=null){
                                     </div>
                                 </div>
 
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label>Телефон номер:</label>
                                         <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $_SESSION[$form_name]['numberPhone']?>">
                                     </div>
                                 </div>
-<<<<<<< HEAD
                                 
-=======
-
->>>>>>> a87c9f8619e19df6dad883364ac05aeb3dbb2527
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label>Адрес проживание:</label>
-                                        <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-5">
-                                    <div class="form-group">
-                                        <label>Адрес по прописке:</label>
-                                        <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $_SESSION[$form_name]['registrationAddress']?>">
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-2" style="margin-top: 5px;">
-                                    <label class="font-weight-semibold">Пол</label>
-									<div class="form-check">
-										<label class="form-check-label">
-											<input type="radio" name="gender" <?php if(1 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
-											Мужчина
-										</label>
-									</div>
-
-									<div class="form-check">
-										<label class="form-check-label">
-											<input type="radio" name="gender" <?php if(0 == $_SESSION[$form_name]['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
-											Женщина
-										</label>
-									</div>
-                                </div>
 
                                 <!-- <div class="form-group col-12">
                                     <label>Добавить фото:</label>

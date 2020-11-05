@@ -26,6 +26,8 @@ if(getCookie('hour1') == undefined){
     hour1 = Number(getCookie('hour1'));
 }
 
+console.log(second1, hour1, minute1);
+
 let sessionButton = document.getElementById('sessionButton');
 
 function inTime(time){
@@ -40,7 +42,7 @@ function inTime(time){
 
 function setTime() {
 
-    setCookie('sessionTime', true);
+    setCookie('sessionTime', 'true');
 
     sessionButton.innerHTML = `<button class="btn bg-danger legitRipple" onclick="stopTime()" type="button">Остановить сессию</button>`
 
@@ -83,7 +85,7 @@ function stopTime() {
 
     clearInterval(intevalId)
 
-    setCookie('sessionTime', false);
+    setCookie('sessionTime', 'false');
 
     $('.card-sidebar-mobile').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
     $('.content-wrapper').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
@@ -128,6 +130,7 @@ if(getCookie('sessionTime') == 'true'){
     $('.content-wrapper').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
     $('.card').css({'pointer-events':'none', 'background-color':'rgba(0,0,0,0.5)'});
 
+    console.log('false');
     time.innerHTML = `${inTime(hour1)}:${inTime(minute1)}:${inTime(second1)}`
 
     sessionButton.innerHTML = `<button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Продолжить сессию</button>`

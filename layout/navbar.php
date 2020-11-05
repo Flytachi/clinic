@@ -36,8 +36,7 @@
             <?php
                 if(permission(2)){
             ?>
-            <script src="vendors/js/cookie.js"></script>
-            <script src="vendors/js/Timer.js"></script>
+            
 
             <li class="nav-item">
                 <div id="sessionButton" style="margin-top: 5px;"><button class="btn bg-teal legitRipple" onclick="setTime()" type="button">Открыть сессию</button></div>

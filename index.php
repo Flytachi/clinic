@@ -49,6 +49,9 @@ is_auth();
 
     <?php include 'layout/footer.php' ?>
 
+    <script src="vendors/js/cookie.js"></script>
+    <script src="vendors/js/Timer.js"></script>
+
     <!-- /footer -->
 
 </body>

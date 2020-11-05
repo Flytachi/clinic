@@ -1,15 +1,10 @@
 <?php 
 session_start();
+setcookie('hour1','0');
+setcookie('minute1','0');
+setcookie('second1','0');
+setcookie('sessionTime','false');
 unset($_SESSION['session_id']);
 session_destroy();
 header("location:login.php");
 ?>
-
-<script src="../vendors/js/cookie.js"></script>
-<script>
-	
-	deleteCookie('second1', 0);
-	deleteCookie('hour1', hour1);
-	deleteCookie('minute1', 0);
-
-</script>
