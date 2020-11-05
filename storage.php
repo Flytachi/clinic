@@ -27,14 +27,11 @@ is_auth();
 			<!-- Content area -->
 			<div class="content">
 
-				<?php
+                <?php
                 switch (level()):
                     case 1:
-                        include('docs/index/admin.php');
+                        include('docs/storage/admin.php');
                         break;
-					case 2:
-						include('docs/index/registratura.php');
-						break;
                 endswitch;
                 ?>
 
@@ -51,9 +48,6 @@ is_auth();
     <!-- Footer -->
 
     <?php include 'layout/footer.php' ?>
-
-    <script src="vendors/js/cookie.js"></script>
-    <script src="vendors/js/Timer.js"></script>
 
     <!-- /footer -->
 
