@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 03 2020 г., 19:18
+-- Время создания: Ноя 05 2020 г., 14:18
 -- Версия сервера: 10.5.5-MariaDB
 -- Версия PHP: 7.4.10
 
@@ -48,6 +48,13 @@ CREATE TABLE `bed_type` (
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `price` decimal(35,0) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `bed_type`
+--
+
+INSERT INTO `bed_type` (`id`, `name`, `price`) VALUES
+(1, 'VIP', '1222');
 
 -- --------------------------------------------------------
 
@@ -111,38 +118,56 @@ INSERT INTO `service_group` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `storage_type`
+--
+
+CREATE TABLE `storage_type` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `storage_type`
+--
+
+INSERT INTO `storage_type` (`id`, `name`) VALUES
+(1, 'Аптечный склад');
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `users`
 --
 
 CREATE TABLE `users` (
-  `id` int NOT NULL,
+  `id` int(11) NOT NULL,
   `username` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `password` varchar(70) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `password` varchar(70) DEFAULT NULL,
   `first_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `last_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `father_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `dateBith` date DEFAULT NULL,
   `region` varchar(255) DEFAULT NULL,
-  `passport` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `passport` varchar(255) DEFAULT NULL,
   `placeWork` varchar(1000) DEFAULT NULL,
   `position` varchar(1000) DEFAULT NULL,
   `numberPhone` varchar(255) DEFAULT NULL,
   `residenceAddress` varchar(1000) DEFAULT NULL,
   `registrationAddress` varchar(1000) DEFAULT NULL,
-  `gender` tinyint NULL,
-  `user_level` tinyint NOT NULL,
-  `activity` tinyint(1) NOT NULL DEFAULT '1',
-  `share` float DEFAULT '0',
-  `add_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `gender` tinyint(1) DEFAULT NULL,
+  `user_level` tinyint(4) NOT NULL,
+  `activity` tinyint(1) NOT NULL DEFAULT 1,
+  `share` float DEFAULT 0,
+  `add_date` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `user_level`, `activity`, `share`, `add_date`) VALUES
-(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', 1, 1, 0, '2020-10-31 17:48:15'),
-(2, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', 2, 1, 13, '2020-11-02 08:50:01');
+INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `activity`, `share`, `add_date`) VALUES
+(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 0, '2020-10-31 17:48:15'),
+(2, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 13, '2020-11-02 08:50:01');
 
 --
 -- Индексы сохранённых таблиц
@@ -179,6 +204,12 @@ ALTER TABLE `service_group`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `storage_type`
+--
+ALTER TABLE `storage_type`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Индексы таблицы `users`
 --
 ALTER TABLE `users`
@@ -198,7 +229,7 @@ ALTER TABLE `beds`
 -- AUTO_INCREMENT для таблицы `bed_type`
 --
 ALTER TABLE `bed_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
@@ -219,10 +250,16 @@ ALTER TABLE `service_group`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT для таблицы `storage_type`
+--
+ALTER TABLE `storage_type`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

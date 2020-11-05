@@ -41,7 +41,7 @@
                     <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
 
                         <?php
-                        switch (level()) {
+                        switch (level()):
                             case 1:
                                 ?>
                                 <li class="nav-item">
@@ -70,13 +70,8 @@
                                         <span>Пакеты</span>
                                     </a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="" class="nav-link legitRipple">
-                                        <i class="icon-width"></i>
-                                        <span>Склад</span>
-                                    </a>
-                                </li>
                                 <?php
+                                break;
                             case 2:
                                 ?>
                                 <li class="nav-item">
@@ -105,14 +100,9 @@
                                     </a>
                                 </li>
                                 <?php
+                                break;
                             case 3:
                                 ?>
-                                <li class="nav-item">
-                                    <a href="" class="nav-link legitRipple">
-                                        <i class="icon-width"></i>
-                                        <span>Склад</span>
-                                    </a>
-                                </li>
                                 <li class="nav-item">
                                     <a href="" class="nav-link legitRipple">
                                         <i class="icon-width"></i>
@@ -120,8 +110,15 @@
                                     </a>
                                 </li>
                                 <?php
-                        }
+                                break;
+                        endswitch;
                         ?>
+                        <li class="nav-item">
+                            <a href="storage.php" class="nav-link legitRipple">
+                                <i class="icon-width"></i>
+                                <span>Склад</span>
+                            </a>
+                        </li>
 
                     <!-- <li class="nav-item">
                         <a href="test.php" class="nav-link legitRipple">
