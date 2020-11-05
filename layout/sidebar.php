@@ -63,6 +63,12 @@
                                     <li class="nav-item"><a href="service_category.php" class="nav-link legitRipple">Категории</a></li>
                                 </ul>
                             </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link legitRipple">
+                                    <i class="icon-store"></i>
+                                    <span>Пакеты</span>
+                                </a>
+                            </li>
                             <?php
                         }elseif (permission(2)) {
                             ?>

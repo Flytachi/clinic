@@ -47,7 +47,7 @@
                 <tbody>
                     <?php
                     $i = 1;
-                    foreach($db->query('SELECT * from users') as $row) {
+                    foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row) {
                         ?>
                         <tr>
                             <td><?= $i++ ?></td>
