@@ -973,30 +973,6 @@ function PatientRegistration($status = null, $pk=null){
 
         }elseif(!$pk and $_POST){
 
-            // $use = $_POST['username'];
-            // $stmt = $db->query("SELECT * from $table where username = '$use'")->fetch(PDO::FETCH_OBJ);
-            // if ($stmt) {
-            //     $_SESSION['message'] = '
-            //     <div class="alert alert-danger" role="alert">
-            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            //         Пользователь с таким логином существует!
-            //     </div>
-            //     ';
-            //     $_SESSION[$form_name] = $_POST;
-            //     header("location: $redirect");
-            // }elseif(!($_POST['password'] === $_POST['password2'])){
-            //     $_SESSION['message'] = '
-            //     <div class="alert alert-danger" role="alert">
-            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            //         Пароли не совпадают
-            //     </div>
-            //     ';
-            //     $_SESSION[$form_name] = $_POST;
-            //     header("location: $redirect");
-            // }else{
-                // $_POST['password'] = sha1($_POST['password']);
-                // unset($_POST['password2']);
-
                 $stmt = insert($table, $_POST);
                 if($stmt == 1){
                     $_SESSION['message'] = '
@@ -1015,8 +991,6 @@ function PatientRegistration($status = null, $pk=null){
                     ';
                     header("location: $redirect");
                 }
-            // }
-
         }
 
     }else{
@@ -1202,13 +1176,6 @@ function PatientRegistration($status = null, $pk=null){
 
                         </fieldset>
                     </div>
-
-                    <!-- <div class="col-md-3">
-                        <div class="form-group">
-                            <label>ID:</label>
-                            <input type="id" placeholder="ID номер" class="form-control">
-                        </div>
-                    </div> -->
                 </div>
 
                 <div class="text-right">
@@ -1222,6 +1189,422 @@ function PatientRegistration($status = null, $pk=null){
 
 };
 
+function StationaryTreatment($status = null, $pk=null){
+    global $db, $PERSONAL;
+    $table = 'beds';
+    $form_name = 'StationaryTreatment';
+    $redirect = '../index.php';
+    $succees_message = 'Успешно';
+
+
+    /* --------------------------- */
+    unset($_POST['form_name']);
+
+    if($status){
+
+        if($pk and $_POST){
+            unset($_POST['id']);
+
+            $stmt = update($table, $_POST, $pk);
+
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                header("location: $redirect");
+                exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
+
+        }elseif(!$pk and $_POST){
+
+                $stmt = insert($table, $_POST);
+                if($stmt == 1){
+                    $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                }else{
+                    $_SESSION['message'] = '
+                    <div class="alert alert-danger" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$stmt.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                }
+        }
+
+    }else{
+        if($pk){
+            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $_SESSION[$form_name] = $stmt;
+                header("location: $redirect");
+                exit();
+            }else{
+                header('location: ../error/404.php');
+                exit();
+            }
+        }else{
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
+                ?><form method="post" action="model/update.php"><?php
+            }else{
+                ?><form method="post" action="model/create.php"><?php
+            }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
+            }
+            ?>
+                <div class="row">
+
+                    <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Стационарная</legend>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Выберите пациета:</label>
+                            <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 15 ');
+
+                                    foreach ($stm as $key) {
+                                        ?>
+
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Этаж:</label>
+                            <select data-placeholder="Выбрать группу" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                                <option></option>
+                                <?php
+                                foreach($FLOOR as $key => $value) {
+                                    ?>
+                                    <option value="<?= $key ?>"><?= $value ?></option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Палата:</label>
+                            <select data-placeholder="Выбрать категорию" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                                <option></option>
+                                <?php
+                                foreach($db->query('SELECT * from beds') as $row) {
+                                    ?>
+                                    <option value="<?= $row['ward'] ?>" name="id" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Койка:</label>
+                            <select data-placeholder="Выбрать койку" name="" id="bed" class="form-control form-control-select2" required data-fouc>
+                                <option></option>
+                                <?php
+                                foreach($db->query('SELECT * from beds') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>"><?= $row['num'] ?> палата</option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <script type="text/javascript">
+                        $(function(){
+                            $("#ward").chained("#floor");
+                            $("#bed").chained("#ward");
+
+                        });
+                    </script>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Выберите отдел:</label>
+                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 6 ');
+
+                                    foreach ($stm as $key) {
+                                        ?>
+
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Выберите специалиста:</label>
+                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 5 ');
+                                    foreach ($stm as $key) {
+                                        ?>
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                </div>
+            </form>
+                            <?php
+            unset($_SESSION[$form_name]);
+        }
+    }
+
+};
+
+function OutpatientCures($status = null, $pk=null){
+    global $db, $PERSONAL;
+    $table = 'users';
+    $form_name = 'PatientRegistration';
+    $redirect = '../index.php';
+    $succees_message = 'Успешно';
+
+
+    /* --------------------------- */
+    unset($_POST['form_name']);
+
+    if($status){
+
+        if($pk and $_POST){
+            unset($_POST['id']);
+
+            $stmt = update($table, $_POST, $pk);
+
+            if($stmt == 1){
+                $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                header("location: $redirect");
+                exit();
+            }else{
+                $_SESSION['message'] = '
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                    '.$stmt.'
+                </div>
+                ';
+                header("location: $redirect");
+                exit();
+            }
+
+        }elseif(!$pk and $_POST){
+
+                $stmt = insert($table, $_POST);
+                if($stmt == 1){
+                    $_SESSION['message'] = '
+                    <div class="alert alert-primary" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$succees_message.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                }else{
+                    $_SESSION['message'] = '
+                    <div class="alert alert-danger" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                        '.$stmt.'
+                    </div>
+                    ';
+                    header("location: $redirect");
+                }
+        }
+
+    }else{
+        if($pk){
+            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $_SESSION[$form_name] = $stmt;
+                header("location: $redirect");
+                exit();
+            }else{
+                header('location: ../error/404.php');
+                exit();
+            }
+        }else{
+            if($_SESSION['message']){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }if($_SESSION[$form_name]['id']){
+                ?><form method="post" action="model/update.php"><?php
+            }else{
+                ?><form method="post" action="model/create.php"><?php
+            }
+            if($_SESSION[$form_name]['id']){
+                ?>
+                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
+                <?php
+            }
+            ?>
+                <div class="row">
+                    <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Амбулаторная</legend>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Выберите пациета:</label>
+                            <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 15 ');
+
+                                    foreach ($stm as $key) {
+                                        ?>
+
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Выберите группу:</label>
+                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 6 ');
+
+                                    foreach ($stm as $key) {
+                                        ?>
+
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Выберите категорию:</label>
+                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 5 ');
+
+                                    foreach ($stm as $key) {
+                                        ?>
+
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Выберите услугу:</label>
+                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
+                               <?php
+
+                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 5 ');
+
+                                    foreach ($stm as $key) {
+                                        ?>
+
+                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
+
+                                        <?php
+                                    }
+
+                               ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Специалист:</label>
+                            <input type="text" name="residenceAddress" class="form-control" placeholder="Специалист" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>№ кабинета:</label>
+                            <input type="text" name="registrationAddress" class="form-control" placeholder="Кабинета" value="<?= $_SESSION[$form_name]['registrationAddress']?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                </div>
+            </form>
+                            <?php
+            unset($_SESSION[$form_name]);
+        }
+    }
+
+};
 
 function StorageTypeForm($status = null, $pk=null){
     global $db;
