@@ -946,8 +946,9 @@ function PatientRegistration($status = null, $pk=null){
 
 };
 
+
 function StationaryTreatment($status = null, $pk=null){
-    global $db, $PERSONAL;
+    global $db, $FLOOR;
     $table = 'beds';
     $form_name = 'StationaryTreatment';
     $redirect = '../index.php';
@@ -1026,11 +1027,6 @@ function StationaryTreatment($status = null, $pk=null){
             }else{
                 ?><form method="post" action="model/create.php"><?php
             }
-            if($_SESSION[$form_name]['id']){
-                ?>
-                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
-                <?php
-            }
             ?>
                 <div class="row">
 
@@ -1039,20 +1035,15 @@ function StationaryTreatment($status = null, $pk=null){
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Выберите пациета:</label>
-                            <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 15 ');
-
-                                    foreach ($stm as $key) {
+                            <select data-placeholder="Выбрать пациета" name="user_id" class="form-control form-control-select2" data-fouc>
+                                <option></option>
+                                <?php
+                                    foreach ($db->query('SELECT * FROM users WHERE user_level = 15 ') as $stm) {
                                         ?>
-
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
+                                        <option value="<?= $stm['id'] ?>"><?= addZero($stm['id']) ?> - <?= $stm['first_name'] ?> <?= $stm['last_name'] ?> <?= $stm['father_name'] ?></option>
                                         <?php
                                     }
-
-                               ?>
+                                ?>
                             </select>
                         </div>
                     </div>
@@ -1079,9 +1070,9 @@ function StationaryTreatment($status = null, $pk=null){
                             <select data-placeholder="Выбрать категорию" name="" id="ward" class="form-control form-control-select2" required data-fouc>
                                 <option></option>
                                 <?php
-                                foreach($db->query('SELECT * from beds') as $row) {
+                                foreach($db->query('SELECT * from beds ') as $row) {
                                     ?>
-                                    <option value="<?= $row['ward'] ?>" name="id" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                                    <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
                                     <?php
                                 }
                                 ?>
@@ -1092,12 +1083,12 @@ function StationaryTreatment($status = null, $pk=null){
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Койка:</label>
-                            <select data-placeholder="Выбрать койку" name="" id="bed" class="form-control form-control-select2" required data-fouc>
+                            <select data-placeholder="Выбрать койку" name="bed_id" id="bed_id" class="form-control form-control-select2" required data-fouc>
                                 <option></option>
                                 <?php
                                 foreach($db->query('SELECT * from beds') as $row) {
                                     ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>"><?= $row['num'] ?> палата</option>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>"><?= $row['num'] ?> койка</option>
                                     <?php
                                 }
                                 ?>
@@ -1108,8 +1099,7 @@ function StationaryTreatment($status = null, $pk=null){
                     <script type="text/javascript">
                         $(function(){
                             $("#ward").chained("#floor");
-                            $("#bed").chained("#ward");
-
+                            $("#bed_id").chained("#ward");
                         });
                     </script>
                 </div>
@@ -1118,19 +1108,15 @@ function StationaryTreatment($status = null, $pk=null){
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Выберите отдел:</label>
-                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 6 ');
-
-                                    foreach ($stm as $key) {
-                                        ?>
-
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
-                                        <?php
-                                    }
-                               ?>
+                            <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" data-fouc>
+                                <option></option>
+                                <?php
+                                foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                    <?php
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>
@@ -1165,6 +1151,7 @@ function StationaryTreatment($status = null, $pk=null){
     }
 
 };
+
 
 function OutpatientCures($status = null, $pk=null){
     global $db, $PERSONAL;
@@ -1362,6 +1349,7 @@ function OutpatientCures($status = null, $pk=null){
     }
 
 };
+
 
 function StorageTypeForm($status = null, $pk=null){
     global $db;
