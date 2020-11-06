@@ -35,6 +35,9 @@ is_auth();
 					case 2:
 						include('docs/index/registratura.php');
 						break;
+					case 4:
+						include('docs/index/kassa.php');
+						break;
                 endswitch;
                 ?>
 
@@ -52,8 +55,8 @@ is_auth();
 
     <?php include 'layout/footer.php' ?>
 
-    <script src="vendors/js/cookie.js"></script>
-    <script src="vendors/js/Timer.js"></script>
+    <!-- <script src="vendors/js/cookie.js"></script>
+    <script src="vendors/js/Timer.js"></script> -->
 
     <!-- /footer -->
 

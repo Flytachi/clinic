@@ -10,8 +10,6 @@
         </div>
     </div>
 
-
-
     <div class="card-body">
         <?php
         form('UserForm');

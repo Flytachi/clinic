@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 05 2020 г., 14:18
+-- Время создания: Ноя 05 2020 г., 21:54
 -- Версия сервера: 10.5.5-MariaDB
 -- Версия PHP: 7.4.10
 
@@ -54,7 +54,30 @@ CREATE TABLE `bed_type` (
 --
 
 INSERT INTO `bed_type` (`id`, `name`, `price`) VALUES
-(1, 'VIP', '1222');
+(1, 'Обычная', '100'),
+(2, 'VIP', '500');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `division`
+--
+
+CREATE TABLE `division` (
+  `id` int(11) NOT NULL,
+  `level` tinyint(4) DEFAULT NULL,
+  `title` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `division`
+--
+
+INSERT INTO `division` (`id`, `level`, `title`, `name`) VALUES
+(1, 5, 'Травматалогия', 'Травматолог'),
+(2, 5, 'Хирургия', 'Хирург'),
+(3, 5, 'Стоматология', 'Стоматолог');
 
 -- --------------------------------------------------------
 
@@ -141,6 +164,7 @@ INSERT INTO `storage_type` (`id`, `name`) VALUES
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
   `username` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `password` varchar(70) DEFAULT NULL,
   `first_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
@@ -156,6 +180,7 @@ CREATE TABLE `users` (
   `registrationAddress` varchar(1000) DEFAULT NULL,
   `gender` tinyint(1) DEFAULT NULL,
   `user_level` tinyint(4) NOT NULL,
+  `division_id` int(11) DEFAULT NULL,
   `activity` tinyint(1) NOT NULL DEFAULT 1,
   `share` float DEFAULT 0,
   `add_date` timestamp NULL DEFAULT current_timestamp()
@@ -165,9 +190,9 @@ CREATE TABLE `users` (
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `activity`, `share`, `add_date`) VALUES
-(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 0, '2020-10-31 17:48:15'),
-(2, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, 1, 13, '2020-11-02 08:50:01');
+INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `division_id`, `activity`, `share`, `add_date`) VALUES
+(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 0, '2020-10-31 17:48:15'),
+(2, NULL, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 13, '2020-11-02 08:50:01');
 
 --
 -- Индексы сохранённых таблиц
@@ -183,6 +208,12 @@ ALTER TABLE `beds`
 -- Индексы таблицы `bed_type`
 --
 ALTER TABLE `bed_type`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `division`
+--
+ALTER TABLE `division`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -229,7 +260,13 @@ ALTER TABLE `beds`
 -- AUTO_INCREMENT для таблицы `bed_type`
 --
 ALTER TABLE `bed_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT для таблицы `division`
+--
+ALTER TABLE `division`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `service`

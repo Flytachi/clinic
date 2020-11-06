@@ -4,6 +4,9 @@ $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",
     3 => "Аптекарь",
+    4 => "Кассир",
+    5 => "Врач",
+    6 => "Бугалтер",
 );
 
 $FLOOR = array(
@@ -32,10 +35,22 @@ $FLOOR = array(
 require_once 'connection.php';
 require_once 'forms.php';
 
-function is_auth(){
+function is_auth($arr = null){
     session_start();
     if (!$_SESSION['session_id']) {
         header('location: auth/login.php');
+    }
+    if ($arr){
+        $perk =level();
+        if (is_array($arr)){
+            if(!in_array($perk, $arr)){
+                header('location: error/303.php');
+            }
+        }else{
+            if(intval($arr) != $perk){
+                header('location: error/303.php');
+            }
+        }
     }
 }
 
