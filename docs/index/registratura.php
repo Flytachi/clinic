@@ -23,15 +23,15 @@
 
 		<div class="tab-content">
 			<div class="tab-pane fade active show" id="basic-justified-tab1">
-				<?php form('PatientRegistration');?>
+				<?php form('PatientRegistrationForm');?>
 			</div>
 
 			<div class="tab-pane fade" id="basic-justified-tab2">
-				<?php form('StationaryTreatment');?>	
+				<?php form('StationaryTreatmentForm');?>
 			</div>
 
 			<div class="tab-pane fade" id="basic-justified-tab3">
-				<?php form('OutpatientCures');?>
+				<?php form('OutpatientCuresForm');?>
 			</div>
 
 			<div class="tab-pane fade" id="basic-justified-tab4">
@@ -40,34 +40,30 @@
 						<thead>
 							<tr>
 								<th>ID</th>
-								<th>Имя</th>
-								<th>Фамилия</th>
-								<th>Отчество</th>
+								<th>ФИО</th>
 								<th>Дата рождение</th>
 								<th>Телефон</th>
-								<th>Мед услуга</th>
+								<th>Регион</th>
 								<th>Дата визита</th>
 								<!-- <th>Тип визита</th> -->
 								<th class="text-center">Действия</th>
 							</tr>
 						</thead>
 						<tbody>
-				            <?php 
+				            <?php
 				            $i = 1;
 				            foreach($db->query('SELECT * FROM users WHERE user_level = 15') as $row) {
 				                ?>
 				                <tr>
 				                    <td><?= addZero($row['id']) ?></td>
-				                    <td><?= $row['first_name'] ?></td>
-				                    <td><?= $row['last_name'] ?></td>
-				                    <td><?= $row['father_name'] ?></td>
+				                    <td><?= get_full_name($row['id']) ?></td>
 				                    <td><?= $row['dateBith'] ?></td>
 				                    <td><?= $row['numberPhone'] ?></td>
-				                    <td><?= $row['service'] ?></td>
+				                    <td><?= $row['region'] ?></td>
 				                    <td><?= $row['add_date'] ?></td>
-				                    <td>
+				                    <td class="text-right">
 				                        <div class="list-icons">
-				                            <a href="model/update.php?id=<?= $row['id'] ?>&form=PatientRegistration" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+				                            <a href="model/update.php?id=<?= $row['id'] ?>&form=PatientRegistrationForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 				                            <!-- <a href="#" class="list-icons-item text-teal-600"><i class="icon-cog6"></i></a> -->
 				                        </div>
 				                    </td>

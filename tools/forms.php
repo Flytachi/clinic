@@ -689,10 +689,10 @@ function ServiceForm($status = null, $pk=null){
 };
 
 
-function PatientRegistration($status = null, $pk=null){
+function PatientRegistrationForm($status = null, $pk=null){
     global $db, $PERSONAL;
     $table = 'users';
-    $form_name = 'PatientRegistration';
+    $form_name = 'PatientRegistrationForm';
     $redirect = '../index.php';
     $succees_message = 'Успешно';
 
@@ -947,10 +947,11 @@ function PatientRegistration($status = null, $pk=null){
 };
 
 
-function StationaryTreatment($status = null, $pk=null){
+function StationaryTreatmentForm($status = null, $pk=null){
     global $db, $FLOOR;
-    $table = 'beds';
-    $form_name = 'StationaryTreatment';
+    $table1 = 'beds';
+    $table2 = 'users';
+    $form_name = 'StationaryTreatmentForm';
     $redirect = '../index.php';
     $succees_message = 'Успешно';
 
@@ -962,10 +963,13 @@ function StationaryTreatment($status = null, $pk=null){
 
         if($pk and $_POST){
             unset($_POST['id']);
+            $post1 = array('user_id' => $pk); // id => bed_id   // table => beds
+            $post2 = array('parent_id' => $_POST['parent_id'], 'status_bed' => True); // id => pk  // table => users
 
-            $stmt = update($table, $_POST, $pk);
+            $stmt1 = update($table1, $post1, $_POST['bed_id']);
+            $stmt2 = update($table2, $post2, $pk);
 
-            if($stmt == 1){
+            if($stmt1 == 1 and $stmt2 == 1){
                 $_SESSION['message'] = '
                     <div class="alert alert-primary" role="alert">
                         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
@@ -986,177 +990,164 @@ function StationaryTreatment($status = null, $pk=null){
             }
 
         }elseif(!$pk and $_POST){
-
-                $stmt = insert($table, $_POST);
-                if($stmt == 1){
-                    $_SESSION['message'] = '
-                    <div class="alert alert-primary" role="alert">
-                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                        '.$succees_message.'
-                    </div>
-                    ';
-                    header("location: $redirect");
-                }else{
-                    $_SESSION['message'] = '
-                    <div class="alert alert-danger" role="alert">
-                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                        '.$stmt.'
-                    </div>
-                    ';
-                    header("location: $redirect");
-                }
+            // prit($_POST);
+            // $stmt = insert($table, $_POST);
+            // if($stmt == 1){
+            //     $_SESSION['message'] = '
+            //     <div class="alert alert-primary" role="alert">
+            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            //         '.$succees_message.'
+            //     </div>
+            //     ';
+            //     header("location: $redirect");
+            // }else{
+            //     $_SESSION['message'] = '
+            //     <div class="alert alert-danger" role="alert">
+            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            //         '.$stmt.'
+            //     </div>
+            //     ';
+            //     header("location: $redirect");
+            // }
         }
 
     }else{
-        if($pk){
-            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
-            if ($stmt) {
-                $_SESSION[$form_name] = $stmt;
-                header("location: $redirect");
-                exit();
-            }else{
-                header('location: ../error/404.php');
-                exit();
-            }
-        }else{
-            if($_SESSION['message']){
-                echo $_SESSION['message'];
-                unset($_SESSION['message']);
-            }if($_SESSION[$form_name]['id']){
-                ?><form method="post" action="model/update.php"><?php
-            }else{
-                ?><form method="post" action="model/create.php"><?php
-            }
-            ?>
-                <div class="row">
-
-                    <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Стационарная</legend>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Выберите пациета:</label>
-                            <select data-placeholder="Выбрать пациета" name="user_id" class="form-control form-control-select2" data-fouc>
-                                <option></option>
-                                <?php
-                                    foreach ($db->query('SELECT * FROM users WHERE user_level = 15 ') as $stm) {
-                                        ?>
-                                        <option value="<?= $stm['id'] ?>"><?= addZero($stm['id']) ?> - <?= $stm['first_name'] ?> <?= $stm['last_name'] ?> <?= $stm['father_name'] ?></option>
-                                        <?php
-                                    }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Этаж:</label>
-                            <select data-placeholder="Выбрать группу" name="" id="floor" class="form-control form-control-select2" required data-fouc>
-                                <option></option>
-                                <?php
-                                foreach($FLOOR as $key => $value) {
-                                    ?>
-                                    <option value="<?= $key ?>"><?= $value ?></option>
-                                    <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Палата:</label>
-                            <select data-placeholder="Выбрать категорию" name="" id="ward" class="form-control form-control-select2" required data-fouc>
-                                <option></option>
-                                <?php
-                                foreach($db->query('SELECT * from beds ') as $row) {
-                                    ?>
-                                    <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
-                                    <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Койка:</label>
-                            <select data-placeholder="Выбрать койку" name="bed_id" id="bed_id" class="form-control form-control-select2" required data-fouc>
-                                <option></option>
-                                <?php
-                                foreach($db->query('SELECT * from beds') as $row) {
-                                    ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>"><?= $row['num'] ?> койка</option>
-                                    <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <script type="text/javascript">
-                        $(function(){
-                            $("#ward").chained("#floor");
-                            $("#bed_id").chained("#ward");
-                        });
-                    </script>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Выберите отдел:</label>
-                            <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" data-fouc>
-                                <option></option>
-                                <?php
-                                foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
-                                    ?>
-                                    <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                                    <?php
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label>Выберите специалиста:</label>
-                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 5 ');
-                                    foreach ($stm as $key) {
-                                        ?>
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
-                                        <?php
-                                    }
-                               ?>
-                            </select>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="text-right">
-                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
-                </div>
-            </form>
-                            <?php
-            unset($_SESSION[$form_name]);
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
         }
+        ?>
+        <form method="post" action="model/update.php">
+            <input type="hidden" name="form_name" value="<?= $form_name ?>">
+
+            <div class="row">
+
+                <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Стационарная</legend>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Выберите пациета:</label>
+                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND parent_id IS NULL') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                    <?php
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Этаж:</label>
+                        <select data-placeholder="Выбрать группу" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($FLOOR as $key => $value) {
+                                ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Палата:</label>
+                        <select data-placeholder="Выбрать категорию" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT DISTINCT ward, floor from beds ') as $row) {
+                                ?>
+                                <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Койка:</label>
+                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed_id" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from beds') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['num'] ?> койка</option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Выберите отдел:</label>
+                        <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Выберите специалиста:</label>
+                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#ward").chained("#floor");
+                $("#bed_id").chained("#ward");
+                $("#parent_id").chained("#division");
+            });
+        </script>
+        <?php
+        unset($_SESSION[$form_name]);
     }
 
 };
 
 
-function OutpatientCures($status = null, $pk=null){
+function OutpatientCuresForm($status = null, $pk=null){
     global $db, $PERSONAL;
     $table = 'users';
-    $form_name = 'PatientRegistration';
+    $form_name = 'OutpatientCuresForm';
     $redirect = '../index.php';
     $succees_message = 'Успешно';
 
@@ -1168,7 +1159,8 @@ function OutpatientCures($status = null, $pk=null){
 
         if($pk and $_POST){
             unset($_POST['id']);
-
+            // prit($_POST);
+            // prit($pk);
             $stmt = update($table, $_POST, $pk);
 
             if($stmt == 1){
@@ -1192,160 +1184,100 @@ function OutpatientCures($status = null, $pk=null){
             }
 
         }elseif(!$pk and $_POST){
-
-                $stmt = insert($table, $_POST);
-                if($stmt == 1){
-                    $_SESSION['message'] = '
-                    <div class="alert alert-primary" role="alert">
-                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                        '.$succees_message.'
-                    </div>
-                    ';
-                    header("location: $redirect");
-                }else{
-                    $_SESSION['message'] = '
-                    <div class="alert alert-danger" role="alert">
-                        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                        '.$stmt.'
-                    </div>
-                    ';
-                    header("location: $redirect");
-                }
+            // prit($_POST);
+            // $stmt = insert($table, $_POST);
+            // if($stmt == 1){
+            //     $_SESSION['message'] = '
+            //     <div class="alert alert-primary" role="alert">
+            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            //         '.$succees_message.'
+            //     </div>
+            //     ';
+            //     header("location: $redirect");
+            // }else{
+            //     $_SESSION['message'] = '
+            //     <div class="alert alert-danger" role="alert">
+            //         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            //         '.$stmt.'
+            //     </div>
+            //     ';
+            //     header("location: $redirect");
+            // }
         }
 
     }else{
-        if($pk){
-            $stmt = $db->query("SELECT * from $table where id = '$pk'")->fetch(PDO::FETCH_ASSOC);
-            if ($stmt) {
-                $_SESSION[$form_name] = $stmt;
-                header("location: $redirect");
-                exit();
-            }else{
-                header('location: ../error/404.php');
-                exit();
-            }
-        }else{
-            if($_SESSION['message']){
-                echo $_SESSION['message'];
-                unset($_SESSION['message']);
-            }if($_SESSION[$form_name]['id']){
-                ?><form method="post" action="model/update.php"><?php
-            }else{
-                ?><form method="post" action="model/create.php"><?php
-            }
-            if($_SESSION[$form_name]['id']){
-                ?>
-                <input type="hidden" name="id" value="<?= $_SESSION[$form_name]['id']?>">
-                <?php
-            }
-            ?>
-                <div class="row">
-                    <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Амбулаторная</legend>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Выберите пациета:</label>
-                            <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 15 ');
-
-                                    foreach ($stm as $key) {
-                                        ?>
-
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
-                                        <?php
-                                    }
-
-                               ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>Выберите группу:</label>
-                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 6 ');
-
-                                    foreach ($stm as $key) {
-                                        ?>
-
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
-                                        <?php
-                                    }
-
-                               ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label>Выберите категорию:</label>
-                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 5 ');
-
-                                    foreach ($stm as $key) {
-                                        ?>
-
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
-                                        <?php
-                                    }
-
-                               ?>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>Выберите услугу:</label>
-                            <select data-placeholder="Выберите специалиста" name="region" class="form-control form-control-select2" data-fouc>
-                               <?php
-
-                                    $stm = $db->query('SELECT * FROM users WHERE user_level = 5 ');
-
-                                    foreach ($stm as $key) {
-                                        ?>
-
-                                        <option value="<?= addZero($key['id']) ?>"><?= addZero($key['id']) ?> - <?= $key['first_name'] ?> <?= $key['last_name'] ?> <?= $key['father_name'] ?></option>
-
-                                        <?php
-                                    }
-
-                               ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>Специалист:</label>
-                            <input type="text" name="residenceAddress" class="form-control" placeholder="Специалист" value="<?= $_SESSION[$form_name]['residenceAddress']?>">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>№ кабинета:</label>
-                            <input type="text" name="registrationAddress" class="form-control" placeholder="Кабинета" value="<?= $_SESSION[$form_name]['registrationAddress']?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
-                </div>
-            </form>
-                            <?php
-            unset($_SESSION[$form_name]);
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
         }
+        ?>
+        <form method="post" action="model/update.php">
+            <input type="hidden" name="form_name" value="<?= $form_name ?>">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Выберите пациета:</label>
+                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND parent_id IS NULL') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                    <?php
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Выберите отдел:</label>
+                        <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                <?php
+                            }division
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Выберите специалиста:</label>
+                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id2").chained("#division2");
+            });
+        </script>
+        <?php
+        unset($_SESSION[$form_name]);
     }
 
 };
