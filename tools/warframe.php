@@ -76,17 +76,13 @@ function get_name($id = null) {
     return ucwords($stmt->last_name." ".$stmt->first_name);
 }
 
-function level($id = null) {
+function level() {
     /*
-    level(1)
+    level()
     */
 	global $db;
-	if($id){
-        $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-    }else{
-        $id = $_SESSION['session_id'];
-        $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-    }
+    $id = $_SESSION['session_id'];
+    $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
 	return intval($stmt);
 }
 
@@ -94,8 +90,14 @@ function level_name($id = null) {
     /*
     level_name(1)
     */
-    global $PERSONAL;
-	return $PERSONAL[level($id)];
+    global $db, $PERSONAL;
+    if($id){
+        $stmt = $id;
+    }else{
+        $id = $_SESSION['session_id'];
+        $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
+    }
+	return $PERSONAL[$stmt];
 }
 
 function permission($arr){
@@ -207,4 +209,26 @@ function addZero($number){
     }
 
     return $strNumber;
+}
+
+
+function division_name($id = null) {
+    /*
+    level_name(1)
+    */
+    global $db, $PERSONAL;
+    if(!$id){
+        $id = $_SESSION['session_id'];
+        $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    }
+
+    try{
+        $stmt = $db->query("SELECT name from division where id = $id")->fetchColumn();
+        // $stmt = "( $stmt )";
+    }
+    catch (PDOException $ex) {
+        $stmt = null;
+    }
+
+	return $stmt;
 }

@@ -64,9 +64,8 @@ is_auth(1);
 	                              	<tr class="bg-blue">
 										<th style="width:8%">Id</th>
 										<th style="width:40%">Название</th>
-										<th>Группа</th>
-										<th>Категория</th>
 										<th>Роль</th>
+										<th>Отдел</th>
 										<th>Цена</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
@@ -78,19 +77,8 @@ is_auth(1);
                                   		<tr>
 											<td><?= $row['id'] ?></td>
 											<td><?= $row['name'] ?></td>
-	                                      	<td>
-												<?php
-												$stmt = $db->query("SELECT * from service_group where id = ".$row['group_id'])->fetch(PDO::FETCH_OBJ);
-												echo $stmt->name;
-												?>
-											</td>
-	                                      	<td>
-												<?php
-												$stmt = $db->query("SELECT * from service_category where id = ".$row['category_id'])->fetch(PDO::FETCH_OBJ);
-												echo $stmt->name;
-												?>
-											</td>
-											<td><?= level_name($row['user_level']); ?></td>
+	                                      	<td><?= level_name($row['user_level']) ?></td>
+	                                      	<td><?= division_name($row['division_id']) ?></td>
 											<td><?= $row['price'] ?></td>
 	                                      	<td>
 												<a href="model/update.php?id=<?= $row['id'] ?>&form=ServiceForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>

@@ -51,7 +51,13 @@
                             <td><?= $i++ ?></td>
                             <td><?= $row['username'] ?></td>
                             <td><?= get_full_name($row['id']); ?></td>
-                            <td><?= level_name($row['id']); ?></td>
+                            <td><?php
+                                echo level_name($row['user_level']);
+                                if(division_name($row['division_id'])){
+                                    echo " (".division_name($row['division_id']).")";
+                                }
+                                ?>
+                            </td>
                             <td>
                                 <div class="list-icons">
                                     <a href="model/update.php?id=<?= $row['id'] ?>&form=UserForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>

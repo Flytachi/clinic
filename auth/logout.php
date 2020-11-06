@@ -1,9 +1,5 @@
-<?php 
+<?php
 session_start();
-setcookie('hour1','0');
-setcookie('minute1','0');
-setcookie('second1','0');
-setcookie('sessionTime','false');
 unset($_SESSION['session_id']);
 session_destroy();
 header("location:login.php");
