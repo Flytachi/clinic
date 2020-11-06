@@ -62,13 +62,11 @@
                                         <span>Койки</span>
                                     </a>
                                 </li>
-                                <li class="nav-item nav-item-submenu">
-                                    <a href="#" class="nav-link legitRipple"><i class="icon-tree6"></i> <span>Услуги</span></a>
-                                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-                                        <li class="nav-item"><a href="service.php" class="nav-link legitRipple">Услуги</a></li>
-                                        <li class="nav-item"><a href="service_group.php" class="nav-link legitRipple">Группы</a></li>
-                                        <li class="nav-item"><a href="service_category.php" class="nav-link legitRipple">Категории</a></li>
-                                    </ul>
+                                <li class="nav-item">
+                                    <a href="service.php" class="nav-link legitRipple">
+                                        <i class="icon-bed2"></i>
+                                        <span>Услуги</span>
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#" class="nav-link legitRipple">

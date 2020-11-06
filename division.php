@@ -76,7 +76,7 @@ is_auth(1);
                                         ?>
                                         <tr>
                                             <td><?= $row['id'] ?></td>
-                                            <td><?= $row['level'] ?></td>
+                                            <td><?= level_name($row['level']) ?></td>
                                             <td><?= $row['title'] ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td>

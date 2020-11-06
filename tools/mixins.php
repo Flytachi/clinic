@@ -5,6 +5,15 @@
 
 // }
 
+function to_null($post){
+    foreach ($post as $key => $value) {
+        if(!$value){
+            $post[$key] = null;
+        }
+    }
+    return $post;
+}
+
 function insert($tb, $post)
 {
     global $db;
@@ -25,6 +34,7 @@ function update($tb, $post, $pk)
 {
     global $db;
     $post = clean_arr($post);
+    $post = to_null($post);
     foreach (array_keys($post) as $key) {
         if (isset($col)) {
             $col .= ", ".$key."=:".$key;
