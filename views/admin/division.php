@@ -1,15 +1,15 @@
 <?php
-require_once 'tools/warframe.php';
+require_once '../../tools/warframe.php';
 is_auth(1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include 'layout/head.php' ?>
+<?php include '../layout/head.php' ?>
 
 <body>
 
 	<!-- Main navbar -->
-	<?php include 'layout/navbar.php' ?>
+	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
 
 
@@ -17,7 +17,7 @@ is_auth(1);
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include 'layout/sidebar.php' ?>
+		<?php include '../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
 
@@ -41,7 +41,7 @@ is_auth(1);
                   <div class="card-body">
                           <?php
                           // prit($_SESSION);
-                          form('DivisionForm');
+                          // form('DivisionForm');
                           ?>
                       </div>
 
@@ -81,7 +81,7 @@ is_auth(1);
                                             <td><?= $row['name'] ?></td>
                                             <td>
                                                 <a href="model/update.php?id=<?= $row['id'] ?>&form=DivisionForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                <a href="model/delete.php?<?= delete($row['id'], 'division', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить раздел?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                                <a href="/clinic/model/delete.php?<?= delete($row['id'], 'division', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить раздел?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                             </td>
                                         </tr>
                                         <?php

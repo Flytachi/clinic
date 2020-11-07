@@ -23,7 +23,7 @@
                         </a>
                     </li> -->
                     <li class="nav-item">
-                        <a href="auth/logout.php" class="nav-link">
+                        <a href="<?= logout() ?>" class="nav-link">
                             <i class="icon-switch2"></i>
                             <span>Logout</span>
                         </a>

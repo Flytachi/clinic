@@ -1,8 +1,8 @@
-<?php require_once 'tools/warframe.php'; ?>
+
 <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static">
     <div class="navbar-brand">
         <a href="index.php" class="d-inline-block">
-            <img src="global_assets/images/logo_light.png" alt="">
+            <img src="<?= stack("global_assets/images/logo_light.png") ?>" alt="">
         </a>
     </div>
 
@@ -27,14 +27,14 @@
 
         <span class="navbar-text ml-md-3">
             <span class="badge badge-mark border-orange-300 mr-2"></span>
-            <?= get_full_name() ." - ". level_name(). " ". division_name()?>
+            <?= get_full_name() ." - ". level_name() ." " /*division_name()*/ ?>
         </span>
 
 
 
         <ul class="navbar-nav ml-md-auto">
             <li class="nav-item">
-                <a href="auth/logout.php" class="navbar-nav-link">
+                <a href="<?= logout() ?>" class="navbar-nav-link">
                     <i class="icon-switch2"></i>
                     <span class="d-md-none ml-2">Logout</span>
                 </a>

@@ -1,5 +1,7 @@
 <?php
 
+$PROJECT_NAME = "clinic";
+
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",
@@ -17,44 +19,11 @@ $FLOOR = array(
     3 => "3 этаж",
 );
 
-// TODO Functions
-/*
-    --| is_auth()
-    --| get_full_name(),
-    --| get_name(),
-    --| level(),
-    --| permission(),
-    --| delete(),
-    --| prit()
-    --| clean(),
-    --| dateformat(),
-    --| nodateformat(),
-    --| showTitle(),
-    --| form(),
-    --| addZero(),
-*/
+require_once 'functions/connection.php';
+require_once 'functions/auth.php';
+require_once 'functions/tag.php';
+require_once 'models.php';
 
-require_once 'connection.php';
-require_once 'forms.php';
-
-function is_auth($arr = null){
-    session_start();
-    if (!$_SESSION['session_id']) {
-        header('location: auth/login.php');
-    }
-    if ($arr){
-        $perk =level();
-        if (is_array($arr)){
-            if(!in_array($perk, $arr)){
-                header('location: error/303.php');
-            }
-        }else{
-            if(intval($arr) != $perk){
-                header('location: error/303.php');
-            }
-        }
-    }
-}
 
 function get_full_name($id = null) {
     global $db;
@@ -123,51 +92,6 @@ function permission($arr){
 
 }
 
-function delete($id, $table, $location='', $status = null){
-    if($status){
-        global $db;
-        if ($id and $table) {
-            $stmt = $db->prepare("DELETE FROM $table WHERE id = :id");
-            $stmt->bindValue(':id', $id);
-            $stmt->execute();
-            if ($stmt->rowCount()) {
-                header("location:$location");
-            }else{
-                header("location:../error/404.php");
-            }
-        }else{
-            echo "Ошибка не указаны(id или таблица)!";
-        }
-    }else{
-        if ($id and $table) {
-            return "id=".$id."&table=".$table."&location=".$location;
-        }else{
-            return "Ошибка не указаны(id или таблица)!";
-        }
-    }
-}
-
-function prit($value) {
-    echo "<pre>";
-    print_r($value);
-    echo "</pre>";
-}
-
-function clean($value = "") {
-    $value = trim($value);
-    $value = stripslashes($value);
-    $value = strip_tags($value);
-    $value = htmlspecialchars($value);
-    return $value;
-}
-
-function clean_arr($array){
-    foreach ($array as $key => $value) {
-        $array[$key] = clean($value);
-    };
-    return $array;
-}
-
 function dateformat($var=""){
 	$var = strtotime($var) ;
 	$var = date('Y-m-d', $var);
@@ -182,7 +106,7 @@ function nodateformat($var=""){
 
 function showTitle() //Функция title
 {
-	$title = "Clinics";
+	$title = "Clinic";
 	return $title;
 }
 
@@ -215,9 +139,6 @@ function addZero($number){
 
 
 function division_name($id = null) {
-    /*
-    level_name(1)
-    */
     global $db, $PERSONAL;
     if(!$id){
         $id = $_SESSION['session_id'];
@@ -234,3 +155,4 @@ function division_name($id = null) {
 
 	return $stmt;
 }
+?>

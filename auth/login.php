@@ -1,5 +1,5 @@
 <?php
-require_once '../tools/connection.php';
+require_once '../tools/warframe.php';
 session_start();
 if ($_SESSION['session_id']) {
     header('location: ../index.php');
@@ -10,31 +10,32 @@ if ($_SESSION['session_id']) {
 <head>
   <meta charset="UTF-8">
   <title>Авторизация</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="<?= stack("assets/css/style.css") ?>" rel="stylesheet">
 
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-  <link href="../global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
-  <link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-  <link href="../assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
-  <link href="../assets/css/layout.min.css" rel="stylesheet" type="text/css">
-  <link href="../assets/css/components.min.css" rel="stylesheet" type="text/css">
-  <link href="../assets/css/colors.min.css" rel="stylesheet" type="text/css">
-  <link href="../vendors/css/login.css" rel="stylesheet" type="text/css">
+  <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("vendors/css/login.css") ?>" rel="stylesheet" type="text/css">
   <!-- /global stylesheets -->
 
   <!-- Core JS files -->
-  <script src="../global_assets/js/main/jquery.min.js"></script>
-  <script src="../global_assets/js/main/bootstrap.bundle.min.js"></script>
-  <script src="../global_assets/js/plugins/loaders/blockui.min.js"></script>
-  <script src="../global_assets/js/plugins/ui/ripple.min.js"></script>
+  <script src="<?= stack("global_assets/js/main/jquery.min.js") ?>"></script>
+  <script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
+  <script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
+  <script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
   <!-- /core JS files -->
 
   <!-- Theme JS files -->
 
-  <script src="../global_assets/js/plugins/forms/selects/select2.min.js"></script>
-  <script src="../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-  <script src="../global_assets/js/demo_pages/form_layouts.js"></script>
-  <script src="../assets/js/app.js"></script>
+  <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+  <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+  <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+  <script src="<?= stack("assets/js/app.js") ?>"></script>
 </head>
 <?php
     if($_POST){
@@ -53,9 +54,9 @@ if ($_SESSION['session_id']) {
 <body>
 
     <div class="content">
-      
+
 		<div class="row">
-		
+
 			<div class="col-md-3 local_card" style="width: 100px;">
 
 				<div class="card backcard">
@@ -75,7 +76,7 @@ if ($_SESSION['session_id']) {
                     ?>
 					<div class="card-body">
 						<form action="" method="post">
-                            
+
 							<div class="form-group">
 								<label>Логин:</label>
 								<input type="text" class="form-control" name="username" placeholder="Введите логин">
@@ -89,7 +90,7 @@ if ($_SESSION['session_id']) {
 							<div class="text-right">
 							    <button type="submit" class="btn btn-primary legitRipple">Войти<i class="icon-paperplane ml-2"></i></button>
                             </div>
-                            
+
 						</form>
 					</div>
 				</div>

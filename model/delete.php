@@ -1,5 +1,7 @@
 <?php
 require_once '../tools/warframe.php';
 is_auth();
-delete($_GET['id'], $_GET['table'], $_GET['location'], 1);
+$form = new $_GET['model'];
+unset($_GET['model']);
+$form->delete($_GET['id']);
 ?>

@@ -1,15 +1,15 @@
 <?php
-require_once 'tools/warframe.php';
+require_once '../../tools/warframe.php';
 is_auth(1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include 'layout/head.php' ?>
+<?php include '../layout/head.php' ?>
 
 <body>
 
 	<!-- Main navbar -->
-	<?php include 'layout/navbar.php' ?>
+	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
 
 
@@ -17,7 +17,7 @@ is_auth(1);
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include 'layout/sidebar.php' ?>
+		<?php include '../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
 
@@ -40,7 +40,7 @@ is_auth(1);
 
 		          	<div class="card-body">
 		    			<?php
-						form('ServiceForm');
+						// form('ServiceForm');
 		                ?>
 		          	</div>
 
@@ -106,7 +106,7 @@ is_auth(1);
 
 
     <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 
 </body>
