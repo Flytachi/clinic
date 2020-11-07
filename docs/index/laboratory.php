@@ -1,7 +1,7 @@
 <div class="card">
 					<div class="card-header bg-white header-elements-inline">
 						<h6 class="card-title">Добавить Услугу <span class="text-muted font-size-base ml-2">Направит пациента</span></h6>
-						
+
 					</div>
 
                 	<form class="wizard-form steps-enable-all" action="#" data-fouc>
@@ -21,12 +21,12 @@
 												<option value="2">Травмотология</option>
 											</optgroup>
 
-											
+
 										</select>
 									</div>
 								</div>
 
-								
+
 							</div>
 
 							<div class="row">
@@ -51,18 +51,18 @@
 									</div>
 								</div>
 
-								
+
 							</div>
 
 							<div class="row">
 								<div class="col-md-4">
 									<div class="form-group">
 										<label>Кабинет Врача:</label>
-										<input type="text" name="tel" class="form-control" 
+										<input type="text" name="tel" class="form-control"
 									</div>
 								</div>
 
-								
+
 							</div>
 						</fieldset>
 
@@ -71,9 +71,9 @@
 							<div class="card">
 						<div class="card-header header-elements-inline">
 						<h5 class="card-title">Создать пакет услуг</h5>
-						
+
 						</div>
-<button type="button" data-toggle="modal" data-target="#modal_default333" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple">Создать пакет</button>		
+<button type="button" data-toggle="modal" data-target="#modal_default333" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple">Создать пакет</button>
 		<!-- Basic modal -->
 				<div id="modal_default333" class="modal fade" tabindex="-1">
 					<div class="modal-dialog">
@@ -84,9 +84,9 @@
 							</div>
 
 							<div class="modal-body">
-									
+
 									<div class="card">
-							
+
 
 							<div class="card-body">
 								<div class="form-group form-group-float">
@@ -103,7 +103,7 @@
 									<label class="form-group-float-label is-visible">Выберите услугу</label>
 									<input type="text" class="form-control"  placeholder="Услуга">
 								</div>
-								
+
 								<div class="form-group form-group-float">
 									<label class="form-group-float-label is-visible">Количество</label>
 									<input type="number" class="form-control"  placeholder="Количество">
@@ -122,7 +122,7 @@
 												<thead>
 													<tr class="bg-blue">
 														<th>Услуга</th>
-														
+
 														<th>Количество</th>
 														<th>Действия</th>
 													</tr>
@@ -130,30 +130,30 @@
 									<tbody>
 										<tr>
 											<td>Название услуги</td>
-											
+
 											<td>
 											<div class="form-group form-group-float mt-2">
 									<input type="number" class="form-control" readonly  placeholder="Количество">
 											</div>
 								</td>
-											
+
 											<td>
-											
+
 											<button type="button" class="btn btn-outline bg-danger border-danger text-danger-800 btn-icon border-2 ml-2 legitRipple"><i class="icon-trash"></i></button>
 											<button type="button" class="btn btn-outline bg-primary border-primary text-primary-800 btn-icon border-2 ml-2 legitRipple"><i class="icon-pencil"></i></button>
-											
+
 											</td>
-											
+
 										</tr>
-										
-										
-										
+
+
+
 									</tbody>
 								</table>
-						
+
 							</div>
 						</div>
-									
+
 							</div>
 
 							<div class="modal-footer">
@@ -164,11 +164,11 @@
 					</div>
 				</div>
 				<!-- /basic modal -->
-		
-		
+
+
 		<div class="card-body">
-						
-						
+
+
 						<div class="bootstrap-duallistbox-container row moveonselect"> <div class="box1 col-md-6"> <label for="bootstrap-duallistbox-nonselected-list_" style="display: none;"></label> <input class="filter form-control" type="text" placeholder="Filter"> <div class="btn-group buttons"> <button type="button" class="btn moveall btn-light legitRipple" title="Move all"> <i class="icon-arrow-right22"></i> <i class="icon-arrow-right22"></i> </button> <button type="button" class="btn move btn-light legitRipple" title="Move selected"> <i class="icon-arrow-right22"></i> </button> </div> <select multiple="multiple" id="bootstrap-duallistbox-nonselected-list_" class="form-control" name="_helper1" style="height: 302px;"><option value="option1" selected="">Classical mechanics</option><option value="option2">Electromagnetism</option><option value="option4">Relativity</option><option value="option5" selected="">Quantum mechanics</option><option value="option7">Astrophysics</option><option value="option8" selected="">Biophysics</option><option value="option9">Chemical physics</option><option value="option10">Econophysics</option><option value="option11">Geophysics</option><option value="option12">Medical physics</option><option value="option13">Physical chemistry</option><option value="option14" selected="">Continuum mechanics</option><option value="option15">Electrodynamics</option><option value="option16" selected="">Quantum field theory</option><option value="option17">Scattering theory</option><option value="option18" selected="">Chaos theory</option><option value="option19" selected="">Newton's laws of motion</option><option value="option20">Thermodynamics</option></select> <span class="info-container"> <span class="info">Showing all 18</span> <button type="button" class="btn clear1 float-right btn-light btn-xs legitRipple">show all</button> </span> </div> <div class="box2 col-md-6"> <label for="bootstrap-duallistbox-selected-list_" style="display: none;"></label> <input class="filter form-control" type="text" placeholder="Filter"> <div class="btn-group buttons"> <button type="button" class="btn remove btn-light legitRipple" title="Remove selected"> <i class="icon-arrow-left22"></i> </button> <button type="button" class="btn removeall btn-light legitRipple" title="Remove all"> <i class="icon-arrow-left22"></i> <i class="icon-arrow-left22"></i> </button> </div> <select multiple="multiple" id="bootstrap-duallistbox-selected-list_" class="form-control" name="_helper2" style="height: 302px;"></select> <span class="info-container"> <span class="info">Empty list</span> <button type="button" class="btn clear2 float-right btn-light btn-xs legitRipple">show all</button> </span> </div></div><select multiple="multiple" class="form-control listbox-tall" data-fouc="" style="display: none;">
 							<option value="option1" selected="">Classical mechanics</option>
 							<option value="option2">Electromagnetism</option>
@@ -231,8 +231,7 @@
 							</table>
 						</div>
 					</div>
-				</fieldset>	
+				</fieldset>
 			</form>
 	            </div>
 	            <!-- /starting step -->
-

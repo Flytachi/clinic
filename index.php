@@ -40,16 +40,16 @@ is_auth();
 						include('docs/index/kassa.php');
 						break;
 					case 5:
-						include('docs/index/loboratory.php');
+						include('docs/index/anestiziolog.php');
 						break;
 					case 6:
-                        include('docs/index/anestiziolog.php');
-                        break;
+						include('docs/index/laboratory.php');
+						break;
 					case 7:
                         include('docs/index/ambulator.php');
                         break;
                     case 8:
-                        include('docs/index/medsestra.php');
+                        include('docs/index/nurse.php');
                         break;
                 endswitch;
                 ?>
