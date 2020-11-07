@@ -1,3 +1,4 @@
+<?php require_once 'tools/warframe.php'; ?>
 <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static">
     <div class="navbar-brand">
         <a href="index.php" class="d-inline-block">
@@ -26,7 +27,7 @@
 
         <span class="navbar-text ml-md-3">
             <span class="badge badge-mark border-orange-300 mr-2"></span>
-            <?= get_full_name() ." - ". level_name()." ".division_name() ?>
+            <?= get_full_name() ." - ". level_name()?>
         </span>
 
 

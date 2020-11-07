@@ -6,35 +6,6 @@ is_auth();
 <html lang="en">
 <?php include 'layout/head.php' ?>
 
-	<!-- /global stylesheets -->
-
-	<!-- Core JS files -->
-	<script src="../../../../global_assets/js/main/jquery.min.js"></script>
-	<script src="../../../../global_assets/js/main/bootstrap.bundle.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/loaders/blockui.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/ui/ripple.min.js"></script>
-	<!-- /core JS files -->
-
-	<!-- Theme JS files -->
-	<script src="../../../../global_assets/js/plugins/forms/wizards/steps.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/forms/selects/select2.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/forms/inputs/inputmask.js"></script>
-	<script src="../../../../global_assets/js/plugins/forms/validation/validate.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/extensions/cookie.js"></script>
-
-	<script src="assets/js/app.js"></script>
-	<script src="../../../../global_assets/js/demo_pages/form_wizard.js"></script>
-	
-	<!-- /theme JS files -->
-	<!-- Theme JS files -->
-	<script src="../../../../global_assets/js/plugins/editors/summernote/summernote.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-	<script src="../../../../global_assets/js/plugins/forms/selects/select2.min.js"></script>
-	<script src="../../../../global_assets/js/demo_pages/form_select2.js"></script>
-
-	<script src="assets/js/app.js"></script>
-	<script src="../../../../global_assets/js/demo_pages/editor_summernote.js"></script>
 
 <body>
 
@@ -60,7 +31,7 @@ is_auth();
 				<?php
                 switch (level()):
                     case 1:
-                        include('docs/index/ambulator.php');
+                        include('docs/index/admin.php');
                         break;
 					case 2:
 						include('docs/index/registratura.php');
@@ -71,6 +42,15 @@ is_auth();
 					case 5:
 						include('docs/index/loboratory.php');
 						break;
+					case 6:
+                        include('docs/index/anestiziolog.php');
+                        break;
+					case 7:
+                        include('docs/index/ambulator.php');
+                        break;
+                    case 8:
+                        include('docs/index/medsestra.php');
+                        break;
                 endswitch;
                 ?>
 
