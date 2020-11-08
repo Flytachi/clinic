@@ -38,9 +38,9 @@ is_auth(1);
 		              	</div>
 		          	</div>
 
-		          	<div class="card-body">
+		          	<div class="card-body" id="form_card">
 		    			<?php
-						// form('ServiceForm');
+						ServiceModel::form();
 		                ?>
 		          	</div>
 
@@ -81,8 +81,10 @@ is_auth(1);
 	                                      	<td><?= division_name($row['division_id']) ?></td>
 											<td><?= $row['price'] ?></td>
 	                                      	<td>
-												<a href="model/update.php?id=<?= $row['id'] ?>&form=ServiceForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-												<a href="model/delete.php?<?= delete($row['id'], 'service', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+												<div class="list-icons">
+													<a onclick="Update('<?= up_url($row['id'], 'ServiceModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+				                                </div>
 	                                      	</td>
                               			</tr>
 	                                  	<?php
@@ -108,6 +110,19 @@ is_auth(1);
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
+
+	<script type="text/javascript">
+		function Update(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#form_card').html(result);
+				},
+			});
+		};
+	</script>
 
 </body>
 </html>

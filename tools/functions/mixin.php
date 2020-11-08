@@ -6,7 +6,7 @@ function clean($value = "") {
     $value = trim($value);
     $value = stripslashes($value);
     $value = strip_tags($value);
-    $value = htmlspecialchars($value);    
+    $value = htmlspecialchars($value);
     return $value;
 }
 
@@ -29,8 +29,6 @@ function to_null($post){
 function insert($tb, $post)
 {
     global $db;
-    $post = clean_form($post);
-    $post = to_null($post);
     $col = implode(",", array_keys($post));
     $val = ":".implode(", :", array_keys($post));
     $sql = "INSERT INTO $tb ($col) VALUES ($val)";
@@ -46,8 +44,6 @@ function insert($tb, $post)
 function update($tb, $post, $pk)
 {
     global $db;
-    $post = clean_form($post);
-    $post = to_null($post);
     foreach (array_keys($post) as $key) {
         if (isset($col)) {
             $col .= ", ".$key."=:".$key;
@@ -66,16 +62,21 @@ function update($tb, $post, $pk)
 }
 
 function delete($tb, $pk){
-    global $db; 
+    global $db;
     $stmt = $db->prepare("DELETE FROM $tb WHERE id = :id");
     $stmt->bindValue(':id', $pk);
     $stmt->execute();
     return $stmt->rowCount();
-    
+
 }
 
-function error_404(){
+function error($url){
     global $PROJECT_NAME;
-    header("location:/$PROJECT_NAME/error/404.php");
+    header("location:/$PROJECT_NAME/error/$url.php");
     exit;
 }
+// function error_404(){
+//     global $PROJECT_NAME;
+//     header("location:/$PROJECT_NAME/error/404.php");
+//     exit;
+// }

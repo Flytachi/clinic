@@ -57,7 +57,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="inventory.php" class="nav-link legitRipple">
+                                    <a href="bed.php" class="nav-link legitRipple">
                                         <i class="icon-bed2"></i>
                                         <span>Койки</span>
                                     </a>

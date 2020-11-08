@@ -53,46 +53,54 @@ class Model
     public function get(int $pk)
     {
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         prit($object);
         $this->set_post($object);
-        // $this->dd();
-        return $this->form($object->id);
+        return $this->form($object['id']);
     }
 
     public function get_or_404(int $pk)
     {
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         if($object){
             $this->set_post($object);
-            return $this->form($object->id);
+            return $this->form($object['id']);
         }else{
-            header('location: ../error/404.php');
+            Mixin\error('404');
         }
 
     }
 
     public function save()
     {
-        // $form = insert(strtolower(__CLASS__)."s", $this->post);
-        $object = Mixin\insert($this->table, $this->post);
-        if ($object == 1){
-            $this->success();
-        }else{
-            $this->error($object);
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if ($object == 1){
+                $this->success();
+            }else{
+                $this->error($object);
+            }
         }
     }
 
     public function update(int $pk)
     {
-        // $form = insert(strtolower(__CLASS__)."s", $this->post);
-        $object = Mixin\update($this->table, $this->post, $pk);
-        if ($object == 1){
-            $this->success();
-        }else{
-            $this->error($object);
+        if($this->clean()){
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if ($object == 1){
+                $this->success();
+            }else{
+                $this->error($object);
+            }
         }
+    }
+
+    public function clean()
+    {
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function delete(int $pk)
@@ -101,7 +109,7 @@ class Model
         if ($object) {
             $this->success();
         } else {
-            Mixin\error_404();
+            Mixin\error('404');
         }
 
     }

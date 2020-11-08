@@ -38,7 +38,7 @@ is_auth();
 				        </div>
 				    </div>
 
-				    <div class="card-body">
+				    <div class="card-body" id="form_card">
 				        <?php
 						UserModel::form();
 				        ?>
@@ -88,7 +88,7 @@ is_auth();
 				                            </td>
 				                            <td>
 				                                <div class="list-icons">
-													<a href="<?= up_url($row['id'], 'UserModel') ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 				                            </td>
@@ -119,6 +119,19 @@ is_auth();
     <?php include 'layout/footer.php' ?>
 
     <!-- /footer -->
+
+	<script type="text/javascript">
+		function Update(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#form_card').html(result);
+				},
+			});
+		};
+	</script>
 
 </body>
 </html>

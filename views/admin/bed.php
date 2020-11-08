@@ -44,16 +44,20 @@ is_auth(1);
 
                             <div class="col-md-6">
                                 <legend class="font-weight-semibold"> Добавить койку</legend>
-                                <?php
-                                // form('BedForm');
-                                ?>
+								<div id="form_card">
+								   <?php
+								   BedModel::form();
+								   ?>
+							   	</div>
                             </div>
 
                             <div class="col-md-6">
                             <legend class="font-weight-semibold"> Добавить тип коек</legend>
-                                <?php
-                                // form('BedTypeForm');
-                                ?>
+								<div id="form_card2">
+								   <?php
+								   BedTypeModel::form();
+								   ?>
+							   	</div>
 
                                 <table class="table table-hover">
                                     <thead>
@@ -71,8 +75,10 @@ is_auth(1);
                                                 <td><?= $row['name'] ?></td>
                                                 <td><?= $row['price'] ?></td>
                                                 <td>
-                                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=BedTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                    <a href="model/delete.php?<?= delete($row['id'], 'bed_type', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<div class="list-icons">
+														<a onclick="Update2('<?= up_url($row['id'], 'BedTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+														<a href="<?= del_url($row['id'], 'BedTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													</div>
                                                 </td>
                                             </tr>
                                             <?php
@@ -128,8 +134,10 @@ is_auth(1);
                                             </td>
                                             <td><?= $stmt->price ?></td>
                                             <td>
-                                                <a href="model/update.php?id=<?= $row['id'] ?>&form=BedForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                                <a href="model/delete.php?<?= delete($row['id'], 'beds', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+												<div class="list-icons">
+													<a onclick="Update('<?= up_url($row['id'], 'BedModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'BedModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+				                                </div>
                                             </td>
                                         </tr>
                                         <?php
@@ -155,6 +163,29 @@ is_auth(1);
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
+
+	<script type="text/javascript">
+		function Update(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#form_card').html(result);
+				},
+			});
+		};
+		function Update2(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#form_card2').html(result);
+				},
+			});
+		};
+	</script>
 
 </body>
 </html>

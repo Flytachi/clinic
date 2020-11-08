@@ -10,11 +10,11 @@ function is_auth($arr = null){
         $perk =level();
         if (is_array($arr)){
             if(!in_array($perk, $arr)){
-                header("location:/$PROJECT_NAME/error/303.php");
+                Mixin\error('303');
             }
         }else{
             if(intval($arr) != $perk){
-                header("location:/$PROJECT_NAME/error/303.php");
+                Mixin\error('303');
             }
         }
     }

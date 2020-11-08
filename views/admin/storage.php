@@ -40,9 +40,9 @@ is_auth(1);
 
 
 
-				    <div class="card-body">
+				    <div class="card-body" id="form_card">
 				        <?php
-				        // form('StorageTypeForm');
+				        StorageTypeModel::form();
 				        ?>
 				    </div>
 
@@ -79,10 +79,9 @@ is_auth(1);
 				                            <td><?= $i++ ?></td>
 				                            <td><?= $row['name'] ?></td>
 				                            <td>
-				                                <div class="list-icons">
-				                                    <a href="model/update.php?id=<?= $row['id'] ?>&form=StorageTypeForm" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-				                                    <a href="model/delete.php?<?= delete($row['id'], 'users', $_SERVER['PHP_SELF']) ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-				                                    <!-- <a href="#" class="list-icons-item text-teal-600"><i class="icon-cog6"></i></a> -->
+												<div class="list-icons">
+													<a onclick="Update('<?= up_url($row['id'], 'StorageTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'StorageTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 				                            </td>
 				                        </tr>
@@ -113,6 +112,19 @@ is_auth(1);
     <?php include '../layout/footer.php' ?>
 
     <!-- /footer -->
+
+	<script type="text/javascript">
+		function Update(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#form_card').html(result);
+				},
+			});
+		};
+	</script>
 
 </body>
 </html>

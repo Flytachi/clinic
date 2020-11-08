@@ -1,5 +1,6 @@
 <?php
 
+
 function parad($title, $value) {
     echo "<strong>$title</strong>";
     echo "<pre>";
