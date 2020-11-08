@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 07 2020 г., 13:50
+-- Время создания: Ноя 08 2020 г., 22:42
 -- Версия сервера: 10.5.6-MariaDB
 -- Версия PHP: 7.4.12
 
@@ -41,7 +41,7 @@ CREATE TABLE `beds` (
 --
 
 INSERT INTO `beds` (`id`, `floor`, `ward`, `num`, `types`, `user_id`) VALUES
-(1, 1, 1, 1, 1, NULL),
+(1, 1, 1, 1, 2, NULL),
 (2, 1, 1, 2, 1, NULL);
 
 -- --------------------------------------------------------
@@ -84,8 +84,7 @@ CREATE TABLE `division` (
 INSERT INTO `division` (`id`, `level`, `title`, `name`) VALUES
 (1, 5, 'Травматалогия', 'Травматолог'),
 (2, 5, 'Хирургия', 'Хирург'),
-(3, 5, 'Стоматология', 'Стоматолог'),
-(4, 5, 'Отдел для лора', 'Лор');
+(3, 5, 'Стоматология', 'Стоматолог');
 
 -- --------------------------------------------------------
 
@@ -107,7 +106,8 @@ CREATE TABLE `service` (
 
 INSERT INTO `service` (`id`, `user_level`, `division_id`, `name`, `price`) VALUES
 (1, 1, NULL, 'Поддержка сайта и обеспечение безопасности', '1499.9'),
-(2, 5, 3, 'Вырвать зуб', '23434.0');
+(2, 5, 3, 'Вырвать зуб', '23434.0'),
+(3, 2, NULL, 'test', '100.0');
 
 -- --------------------------------------------------------
 
@@ -163,8 +163,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `division_id`, `activity`, `status_bed`, `share`, `add_date`) VALUES
-(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, 0, '2020-10-31 17:48:15'),
-(2, NULL, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 1, 1, NULL, 13, '2020-11-02 08:50:01');
+(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, 99.1, '2020-10-31 17:48:15'),
+(18, NULL, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, NULL, 20, '2020-11-08 14:03:49'),
+(19, NULL, '213132', '056eafe7cf52220de2df36845b8ed170c67e23e3', 'admin', 'weqwe', 'qweqwe', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, NULL, 2, '2020-11-08 14:28:30');
 
 --
 -- Индексы сохранённых таблиц
@@ -204,7 +205,8 @@ ALTER TABLE `storage_type`
 -- Индексы таблицы `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- AUTO_INCREMENT для сохранённых таблиц
@@ -226,13 +228,13 @@ ALTER TABLE `bed_type`
 -- AUTO_INCREMENT для таблицы `division`
 --
 ALTER TABLE `division`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
 --
 ALTER TABLE `service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_type`
@@ -244,7 +246,7 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
