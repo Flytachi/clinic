@@ -11,7 +11,7 @@ $DNS = "".DRIVER.":host=".DB_HOST.";dbname=".DB_NAME.";user=".DB_USER.";password
 try {
     $db = new PDO($DNS);
     $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
+} catch (\PDOException $e) {
     print "Error!: " . $e->getMessage() . "<br/>";
     die();
 }

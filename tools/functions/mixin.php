@@ -36,7 +36,7 @@ function insert($tb, $post)
         $stm = $db->prepare($sql)->execute($post);
         return $stm;
     }
-    catch (PDOException $ex) {
+    catch (\PDOException $ex) {
         return $ex->getMessage();
     }
 }
@@ -56,7 +56,7 @@ function update($tb, $post, $pk)
         $stm = $db->prepare($sql)->execute($post);
         return $stm;
     }
-    catch (PDOException $ex) {
+    catch (\PDOException $ex) {
         return $ex->getMessage();
     }
 }
