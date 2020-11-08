@@ -8,9 +8,7 @@ if (!$_POST['id']) {
     $form->set_post($_POST);
     $form->save();
 }else{
-    $pk = $_POST['id'];
-    unset($_POST['id']);
     $form->set_post($_POST);
-    $form->update($pk);
+    $form->update();
 }
 ?>

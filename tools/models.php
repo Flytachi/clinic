@@ -10,7 +10,7 @@ class UserModel extends Model
     public function form($pk = null)
     {
         global $db, $PERSONAL;
-        if(intval($pk)){
+        if($pk){
             $post = $this->post;
         }else{
             $post = array();
@@ -102,7 +102,7 @@ class UserModel extends Model
                             </div>
 
                             <?php
-                                if(!intval($pk)){
+                                if(!$pk){
                                     ?>
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -121,7 +121,7 @@ class UserModel extends Model
                                 }
                                 else {
                                     ?>
-                                    <!-- <div class="col-md-6">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Пароль:</label>
                                             <input type="password" class="form-control" name="password" placeholder="Введите Пароль">
@@ -133,7 +133,7 @@ class UserModel extends Model
                                             <label>Повторите пароль:</label>
                                             <input type="password" class="form-control" name="password2" placeholder="Введите Пароль">
                                         </div>
-                                    </div> -->
+                                    </div>
                                     <?php
                                 }
                             ?>
@@ -216,7 +216,7 @@ class DivisionModel extends Model
     public function form($pk = null)
     {
         global $db, $PERSONAL;
-        if(intval($pk)){
+        if($pk){
             $post = $this->post;
         }else{
             $post = array();
@@ -228,7 +228,7 @@ class DivisionModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label>Выбирите Роль:</label>
@@ -292,7 +292,7 @@ class BedModel extends Model
     public function form($pk = null)
     {
         global $db, $FLOOR;
-        if(intval($pk)){
+        if($pk){
             $post = $this->post;
         }else{
             $post = array();
@@ -382,7 +382,7 @@ class BedTypeModel extends Model
     public function form($pk = null)
     {
         global $db;
-        if(intval($pk)){
+        if($pk){
             $post = $this->post;
         }else{
             $post = array();
@@ -444,7 +444,7 @@ class ServiceModel extends Model
     public function form($pk = null)
     {
         global $db, $PERSONAL;
-        if(intval($pk)){
+        if($pk){
             $post = $this->post;
         }else{
             $post = array();
@@ -550,7 +550,7 @@ class StorageTypeModel extends Model
     public function form($pk = null)
     {
         global $db;
-        if(intval($pk)){
+        if($pk){
             $post = $this->post;
         }else{
             $post = array();

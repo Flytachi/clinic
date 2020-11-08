@@ -31,17 +31,22 @@ class Model
     {
         /* Пример:
 
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label for="exampleInputEmail1">Name</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" name="name" value="<?= ($pk) ? $this->post->name : '' ?>" placeholder="">
+                <input type="text" class="form-control" id="exampleInputEmail1" name="name" value="<?= $post['name'] ?>" placeholder="">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Color</label>
-                <input type="text" class="form-control" id="exampleInputPassword1" name="color" value="<?= ($pk) ? $this->post->color : '' ?>" placeholder="">
+                <input type="text" class="form-control" id="exampleInputPassword1" name="color" value="<?= $post['color']?>" placeholder="">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -84,9 +89,12 @@ class Model
         }
     }
 
-    public function update(int $pk)
+    public function update()
     {
         if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            // $this->dd();
             $object = Mixin\update($this->table, $this->post, $pk);
             if ($object == 1){
                 $this->success();
