@@ -39,9 +39,7 @@ is_auth(1);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php
-						ServiceModel::form();
-		                ?>
+		    			<?php ServiceModel::form(); ?>
 		          	</div>
 
 	        	</div>

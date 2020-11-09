@@ -45,25 +45,25 @@
                             case 1:
                                 ?>
                                 <li class="nav-item">
-                                    <a href="index.php" class="nav-link legitRipple">
+                                    <a href="<?= viv('admin/index') ?>" class="nav-link legitRipple">
                                         <i class="icon-users"></i>
                                         <span>Персонал</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="division.php" class="nav-link legitRipple">
+                                    <a href="<?= viv('admin/division') ?>" class="nav-link legitRipple">
                                         <i class="icon-users"></i>
                                         <span>Класификация персонала</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="bed.php" class="nav-link legitRipple">
+                                    <a href="<?= viv('admin/bed') ?>" class="nav-link legitRipple">
                                         <i class="icon-bed2"></i>
                                         <span>Койки</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="service.php" class="nav-link legitRipple">
+                                    <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
                                         <i class="icon-bed2"></i>
                                         <span>Услуги</span>
                                     </a>
@@ -74,12 +74,18 @@
                                         <span>Пакеты</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">
+                                        <i class="icon-width"></i>
+                                        <span>Склад</span>
+                                    </a>
+                                </li>
                                 <?php
                                 break;
                             case 2:
                                 ?>
                                 <li class="nav-item">
-                                    <a href="index.php" class="nav-link">
+                                    <a href="<?= viv('registry/index') ?>" class="nav-link">
                                         <i class="icon-user-plus"></i>
                                         <span>Сегодня зарегистроваль</span>
                                     </a>
@@ -117,12 +123,6 @@
                                 break;
                         endswitch;
                         ?>
-                        <li class="nav-item">
-                            <a href="storage.php" class="nav-link legitRipple">
-                                <i class="icon-width"></i>
-                                <span>Склад</span>
-                            </a>
-                        </li>
 
                     <!-- <li class="nav-item">
                         <a href="test.php" class="nav-link legitRipple">

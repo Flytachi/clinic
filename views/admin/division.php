@@ -38,9 +38,7 @@ is_auth(1);
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php
-                      	DivisionModel::form();
-                      	?>
+                      	<?php DivisionModel::form(); ?>
                   	</div>
 
             	</div>
@@ -120,6 +118,6 @@ is_auth(1);
 			});
 		};
 	</script>
-	
+
 </body>
 </html>

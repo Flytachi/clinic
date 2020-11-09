@@ -41,9 +41,7 @@ is_auth(1);
 
 
 				    <div class="card-body" id="form_card">
-				        <?php
-				        StorageTypeModel::form();
-				        ?>
+				        <?php StorageTypeModel::form(); ?>
 				    </div>
 
 				</div>

@@ -45,18 +45,14 @@ is_auth(1);
                             <div class="col-md-6">
                                 <legend class="font-weight-semibold"> Добавить койку</legend>
 								<div id="form_card">
-								   <?php
-								   BedModel::form();
-								   ?>
+								   <?php BedModel::form(); ?>
 							   	</div>
                             </div>
 
                             <div class="col-md-6">
                             <legend class="font-weight-semibold"> Добавить тип коек</legend>
 								<div id="form_card2">
-								   <?php
-								   BedTypeModel::form();
-								   ?>
+								   <?php BedTypeModel::form(); ?>
 							   	</div>
 
                                 <table class="table table-hover">

@@ -32,6 +32,7 @@
 
 	<!-- JS chained -->
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
+	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 
 	<!-- <script src="../../../../global_assets/js/plugins/forms/wizards/steps.min.js"></script>
     <script src="../../../../global_assets/js/plugins/forms/selects/select2.min.js"></script>

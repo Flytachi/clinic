@@ -7,10 +7,10 @@ switch (level()):
         render('admin/index');
         break;
     case 2:
-        include('docs/index/registratura.php');
+        render('registry/index');
         break;
-    case 4:
-        include('docs/index/kassa.php');
+    case 3:
+        render('cashbox/index');
         break;
     case 5:
         include('docs/index/anestiziolog.php');

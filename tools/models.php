@@ -600,4 +600,487 @@ class StorageTypeModel extends Model
     }
 }
 
+class PatientForm extends Model
+{
+    public $table = 'users';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="user_level" value="15">
+
+
+            <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Добавить пациента</legend>
+            <div class="row">
+                <div class="col-md-4">
+                    <fieldset>
+
+                        <div class="form-group">
+                            <label>Имя пациента:</label>
+                            <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Фамилия пациента:</label>
+                            <input type="text" name="last_name" class="form-control" placeholder="Введите Фамилия" value="<?= $post['last_name']?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Отчество пациента:</label>
+                            <input type="text" name="father_name" class="form-control" placeholder="Введите Отчество" value="<?= $post['father_name']?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Дата рождение:</label>
+                          <div class="input-group">
+                            <span class="input-group-prepend">
+                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                             </span>
+                            <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $post['dateBith']?>" required>
+                        </div>
+                        </div>
+
+                        <div class="form-group">
+                           <label class="d-block font-weight-semibold">Пол</label>
+
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" name="gender" <?php if(1 == $post['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
+                                        Мужчина
+                                    </label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" name="gender" <?php if(0 == $post['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
+                                        Женщина
+                                    </label>
+                                </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+
+                <div class="col-md-8">
+                    <fieldset>
+
+                        <div class="row">
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Выбирите регион:</label>
+                                        <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" required>
+                                            <option><?= $post['region']?></option>
+                                            <optgroup label="Бухоро вилояти">
+                                                <option value="Бухоро">Бухоро ш</option>
+                                                <option value="Жондор">Жондор</option>
+                                                <option value="Вобкент">Вобкент</option>
+                                                <option value="Шофиркон">Шофиркон</option>
+                                                <option value="Гиждувон">Гиждувон</option>
+                                                <option value="Бухоро">Бухоро т</option>
+                                                <option value="Когон">Когон т</option>
+                                                <option value="Когон">Когон ш</option>
+                                                <option value="Қаравулбозор">Қаравулбозор</option>
+                                                <option value="Қоракўл">Қоракўл</option>
+                                                <option value="Олот">Олот</option>
+                                                <option value="Ромитан">Ромитан</option>
+                                            </optgroup>
+                                            <optgroup label="Тошкент вилояти">
+                                                <option value="Чилонзор">Чилонзор</option>
+                                                <option value="Миробод">Миробод</option>
+                                                <option value="Олмазор">Олмазор</option>
+                                                <option value="Юнусобод">Юнусобод</option>
+                                            </optgroup>
+                                            <optgroup label="Наманган вилояти">
+                                                <option value="Наманган">Наманган</option>
+                                                <option value="Наманган">Наманган</option>
+                                                <option value="Наманган">Наманган</option>
+                                            </optgroup>
+                                            <optgroup label="Фарғона вилояти">
+                                                <option value="Фарғона">Фарғона</option>
+                                                <option value="Фарғона">Фарғона</option>
+                                                <option value="Фарғона">Фарғона</option>
+                                            </optgroup>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Адрес проживание:</label>
+                                    <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Адрес по прописке:</label>
+                                    <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Серия и номер паспорта:</label>
+                                    <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Место работы:</label>
+                                    <input type="text" name="placeWork" placeholder="Введите место работ" class="form-control" value="<?= $post['placeWork']?>" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Должность:</label>
+                                    <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Телефон номер:</label>
+                                    <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $post['numberPhone']?>" required>
+                                </div>
+                            </div>
+
+
+                            <!-- <div class="form-group col-12">
+                                <label>Добавить фото:</label>
+                                <input type="file" class="form-control-uniform-custom">
+                            </div> -->
+
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('registry/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render('registry/index');
+    }
+}
+
+class StationaryTreatmentForm extends Model
+{
+    public $table = 'users';
+    public $table2 = 'beds';
+
+    public function form($pk = null)
+    {
+        global $db, $FLOOR;
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
+            <div class="row">
+
+                <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Стационарная</legend>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Выберите пациета:</label>
+                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND parent_id IS NULL') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                    <?php
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Этаж:</label>
+                        <select data-placeholder="Выбрать группу" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($FLOOR as $key => $value) {
+                                ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Палата:</label>
+                        <select data-placeholder="Выбрать категорию" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT DISTINCT ward, floor from beds ') as $row) {
+                                ?>
+                                <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Койка:</label>
+                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed_id" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from beds') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['num'] ?> койка</option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Выберите отдел:</label>
+                        <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Выберите специалиста:</label>
+                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#ward").chained("#floor");
+                $("#bed_id").chained("#ward");
+                $("#parent_id").chained("#division");
+            });
+        </script>
+        <?php
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            $post1 = array('parent_id' => $_POST['parent_id'], 'status_bed' => True); // id => pk  // table => users
+            $post2 = array('user_id' => $pk); // id => bed_id   // table => beds
+
+            $object1 = Mixin\update($this->table, $post1, $pk);
+            $object2 = Mixin\update($this->table2, $post2, $_POST['bed_id']);
+            if ($object1 == 1 and $object2 == 1){
+                $this->success();
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('registry/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render('registry/index');
+    }
+}
+
+class OutpatientTreatmentForm extends Model
+{
+    public $table = 'users';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Выберите пациета:</label>
+                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND parent_id IS NULL') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                    <?php
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Выберите отдел:</label>
+                        <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                <?php
+                            }division
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Выберите специалиста:</label>
+                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id2").chained("#division2");
+            });
+        </script>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('registry/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render('registry/index');
+    }
+}
+
 ?>

@@ -12,7 +12,7 @@ try {
     $db = new PDO($DNS);
     $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (\PDOException $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
+    print "Error: " . $e->getMessage() . "<br/>";
     die();
 }
 
