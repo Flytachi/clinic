@@ -39,7 +39,7 @@ is_auth();
 <body>
 
 	<!-- Main navbar -->
-	
+
 	<!-- /main navbar -->
 
 
@@ -57,8 +57,8 @@ is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title">404</h1>
-						<h5>Oops, an error has occurred. Page not found!</h5>
+						<h1 class="error-title text-danger">Иди Нахуй</h1>
+						<h5>У вас не достаточно прав!</h5>
 					</div>
 					<!-- /error title -->
 
