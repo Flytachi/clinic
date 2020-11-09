@@ -20,21 +20,31 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th style="width:20%;">ID</th>
+                                <th>#</th>
+                                <th>ID</th>
                                 <th>ФИО</th>
-
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>8525</td>
-                                <td>Евгений Копьев</td>
-
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            <?php
+                            $i = 1;
+                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                                ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= addZero($row['id']) ?></td>
+                                        <td>
+                                            <a onclick="alert('<?= get_full_name($row['id']) ?>')">
+                                                <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+                                            </a>
+                                        </td>
+                                        <!-- <td class="text-center">
+                                            <button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Редактировать</button>
+                                        </td> -->
+                                    </tr>
+                                <?php
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>

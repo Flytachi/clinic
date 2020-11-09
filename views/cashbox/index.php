@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(3	);
+is_auth(3);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -201,10 +201,21 @@ is_auth(3	);
 	<!-- /basic modal -->
 
 
-
     <!-- Footer -->
     <?php include 'layout/footer.php' ?>
     <!-- /footer -->
+
+	<script type="text/javascript">
+		function CheckAmb(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#check-amb').html(result);
+				},
+			});
+		};
+	</script>
 
 </body>
 </html>
