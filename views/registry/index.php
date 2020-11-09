@@ -66,35 +66,42 @@ is_auth(2);
 							<div class="tab-pane fade" id="basic-justified-tab4">
 								<div class="card card-table table-responsive shadow-0 mb-0">
 								    <table class="table table-bordered">
-										<thead>
+										<thead class="bg-blue text-center">
 											<tr>
 												<th>ID</th>
 												<th>ФИО</th>
 												<th>Дата рождение</th>
 												<th>Телефон</th>
 												<th>Регион</th>
+												<th>Тип визита</th>
 												<th>Дата визита</th>
-												<!-- <th>Тип визита</th> -->
 												<th class="text-center">Действия</th>
 											</tr>
 										</thead>
 										<tbody>
 								            <?php
 								            $i = 1;
-								            foreach($db->query('SELECT * FROM users WHERE user_level = 15') as $row) {
+								            foreach($db->query('SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC') as $row) {
 								                ?>
 								                <tr>
 								                    <td><?= addZero($row['id']) ?></td>
-								                    <td><?= get_full_name($row['id']) ?></td>
+								                    <td>
+														<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+														<div class="text-muted">
+															<?php
+															if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['id'])->fetch()){
+																echo $stm['floor']." этаж ".$stm['ward']." палата";
+															}
+															?>
+														</div>
+													</td>
 								                    <td><?= $row['dateBith'] ?></td>
 								                    <td><?= $row['numberPhone'] ?></td>
 								                    <td><?= $row['region'] ?></td>
+													<td><?= ($row['status_bed']) ? "Стационарный" : "Амбулаторная" ?></td>
 								                    <td><?= $row['add_date'] ?></td>
-								                    <td class="text-right">
-								                        <div class="list-icons">
-															<a onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-								                            <!-- <a href="#" class="list-icons-item text-teal-600"><i class="icon-cog6"></i></a> -->
-								                        </div>
+								                    <td class="text-center">
+														<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Редактировать</button>
 								                    </td>
 								                </tr>
 								                <?php

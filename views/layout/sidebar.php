@@ -67,13 +67,13 @@
                                         <i class="icon-bed2"></i>
                                         <span>Услуги</span>
                                     </a>
-                                </li>
+                                <!-- </li>
                                 <li class="nav-item">
                                     <a href="#" class="nav-link legitRipple">
                                         <i class="icon-store"></i>
                                         <span>Пакеты</span>
                                     </a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
                                     <a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">
                                         <i class="icon-width"></i>
@@ -86,27 +86,8 @@
                                 ?>
                                 <li class="nav-item">
                                     <a href="<?= viv('registry/index') ?>" class="nav-link">
-                                        <i class="icon-user-plus"></i>
-                                        <span>Сегодня зарегистроваль</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="icon-coins"></i>
-                                        <span>Отправили на консультацию</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="icon-comment-discussion"></i>
-                                        <span>Messages</span>
-                                        <span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="icon-cog5"></i>
-                                        <span>Account settings</span>
+                                        <i class="icon-display"></i>
+                                        <span>Рабочий стол</span>
                                     </a>
                                 </li>
                                 <?php
@@ -114,9 +95,9 @@
                             case 3:
                                 ?>
                                 <li class="nav-item">
-                                    <a href="" class="nav-link legitRipple">
-                                        <i class="icon-width"></i>
-                                        <span>Поставщики</span>
+                                    <a href="<?= viv('cashbox/index') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>Рабочий стол</span>
                                     </a>
                                 </li>
                                 <?php

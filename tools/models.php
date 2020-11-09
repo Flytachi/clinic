@@ -167,9 +167,9 @@ class UserModel extends Model
                 unset($this->post['password2']);
             }else{
                 $_SESSION['message'] = '
-                <div class="alert alert-danger" role="alert">
-                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                    Пароли не совпадают!
+                <div class="alert bg-danger alert-styled-left alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                    <span class="font-weight-semibold"> Пароли не совпадают!</span>
                 </div>
                 ';
                 $_SESSION['message_post']= $this->post;
@@ -200,10 +200,10 @@ class UserModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/index');
     }
@@ -366,10 +366,10 @@ class BedModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/bed');
     }
@@ -428,10 +428,10 @@ class BedTypeModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/bed');
     }
@@ -534,10 +534,10 @@ class ServiceModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/service');
     }
@@ -591,10 +591,10 @@ class StorageTypeModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/storage');
     }
@@ -623,9 +623,8 @@ class PatientForm extends Model
             <input type="hidden" name="user_level" value="15">
 
 
-            <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Добавить пациента</legend>
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <fieldset>
 
                         <div class="form-group">
@@ -643,13 +642,43 @@ class PatientForm extends Model
                         </div>
                         <div class="form-group">
                             <label>Дата рождение:</label>
-                          <div class="input-group">
-                            <span class="input-group-prepend">
-                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                             </span>
-                            <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $post['dateBith']?>" required>
+                            <div class="input-group">
+                                <span class="input-group-prepend">
+                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                </span>
+                                <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $post['dateBith']?>" required>
+                            </div>
                         </div>
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>Выбирите регион:</label>
+                                <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" required>
+                                    <option><?= $post['region']?></option>
+                                    <optgroup label="Бухоро вилояти">
+                                        <option value="Ромитан">Ромитан</option>
+                                    </optgroup>
+                                    <optgroup label="Тошкент вилояти">
+                                        <option value="Чилонзор">Чилонзор</option>
+                                        <option value="Миробод">Миробод</option>
+                                        <option value="Олмазор">Олмазор</option>
+                                        <option value="Юнусобод">Юнусобод</option>
+                                    </optgroup>
+
+                                </select>
+                            </div>
                         </div>
+
+                        <div class="form-group">
+                            <label>Адрес проживание:</label>
+                            <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Адрес по прописке:</label>
+                            <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>" required>
+                        </div>
+
 
                         <div class="form-group">
                            <label class="d-block font-weight-semibold">Пол</label>
@@ -672,102 +701,40 @@ class PatientForm extends Model
                     </fieldset>
                 </div>
 
-                <div class="col-md-8">
-                    <fieldset>
+                <div class="col-md-9">
 
-                        <div class="row">
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="form-group">
-                                        <label>Выбирите регион:</label>
-                                        <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" required>
-                                            <option><?= $post['region']?></option>
-                                            <optgroup label="Бухоро вилояти">
-                                                <option value="Бухоро">Бухоро ш</option>
-                                                <option value="Жондор">Жондор</option>
-                                                <option value="Вобкент">Вобкент</option>
-                                                <option value="Шофиркон">Шофиркон</option>
-                                                <option value="Гиждувон">Гиждувон</option>
-                                                <option value="Бухоро">Бухоро т</option>
-                                                <option value="Когон">Когон т</option>
-                                                <option value="Когон">Когон ш</option>
-                                                <option value="Қаравулбозор">Қаравулбозор</option>
-                                                <option value="Қоракўл">Қоракўл</option>
-                                                <option value="Олот">Олот</option>
-                                                <option value="Ромитан">Ромитан</option>
-                                            </optgroup>
-                                            <optgroup label="Тошкент вилояти">
-                                                <option value="Чилонзор">Чилонзор</option>
-                                                <option value="Миробод">Миробод</option>
-                                                <option value="Олмазор">Олмазор</option>
-                                                <option value="Юнусобод">Юнусобод</option>
-                                            </optgroup>
-                                            <optgroup label="Наманган вилояти">
-                                                <option value="Наманган">Наманган</option>
-                                                <option value="Наманган">Наманган</option>
-                                                <option value="Наманган">Наманган</option>
-                                            </optgroup>
-                                            <optgroup label="Фарғона вилояти">
-                                                <option value="Фарғона">Фарғона</option>
-                                                <option value="Фарғона">Фарғона</option>
-                                                <option value="Фарғона">Фарғона</option>
-                                            </optgroup>
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Адрес проживание:</label>
-                                    <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Адрес по прописке:</label>
-                                    <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>" required>
-                                </div>
-                            </div>
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Серия и номер паспорта:</label>
-                                    <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>" required>
-                                </div>
-                            </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label>Серия и номер паспорта:</label>
+                            <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>" required>
                         </div>
+                        <div class="col-md-6">
+                            <label>Телефон номер:</label>
+                            <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $post['numberPhone']?>" required>
+                        </div>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Место работы:</label>
-                                    <input type="text" name="placeWork" placeholder="Введите место работ" class="form-control" value="<?= $post['placeWork']?>" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Должность:</label>
-                                    <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
-                                </div>
-                            </div>
+                    <div class="form-group">
+                        <label>Место работы:</label>
+                        <input type="text" name="placeWork" placeholder="Введите место работ" class="form-control" value="<?= $post['placeWork']?>" required>
+                    </div>
 
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Телефон номер:</label>
-                                    <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $post['numberPhone']?>" required>
-                                </div>
-                            </div>
+                    <div class="form-group">
+                        <label>Должность:</label>
+                        <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
+                    </div>
 
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label>Жалоба:</label>
+                            <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $post['complaint']?></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Аллергия:</label>
+                            <textarea rows="4" cols="4" name="allergy" class="form-control" placeholder="Введите аллергия ..."><?= $post['allergy']?></textarea>
+                        </div>
+                    </div>
 
-                            <!-- <div class="form-group col-12">
-                                <label>Добавить фото:</label>
-                                <input type="file" class="form-control-uniform-custom">
-                            </div> -->
-
-                    </fieldset>
                 </div>
             </div>
 
@@ -793,10 +760,10 @@ class PatientForm extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('registry/index');
     }
@@ -821,11 +788,9 @@ class StationaryTreatmentForm extends Model
 
             <div class="row">
 
-                <legend class="font-weight-semibold"><i class="icon-reading mr-2"></i> Стационарная</legend>
-
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Выберите пациета:</label>
+                        <label>Пациет:</label>
                         <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
@@ -842,7 +807,7 @@ class StationaryTreatmentForm extends Model
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Этаж:</label>
-                        <select data-placeholder="Выбрать группу" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
                             foreach($FLOOR as $key => $value) {
@@ -858,7 +823,7 @@ class StationaryTreatmentForm extends Model
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Палата:</label>
-                        <select data-placeholder="Выбрать категорию" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                        <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
                             foreach($db->query('SELECT DISTINCT ward, floor from beds ') as $row) {
@@ -892,7 +857,7 @@ class StationaryTreatmentForm extends Model
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Выберите отдел:</label>
+                        <label>Отдел:</label>
                         <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
@@ -908,7 +873,7 @@ class StationaryTreatmentForm extends Model
 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Выберите специалиста:</label>
+                        <label>Специалиста:</label>
                         <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
@@ -970,10 +935,10 @@ class StationaryTreatmentForm extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('registry/index');
     }
@@ -982,6 +947,7 @@ class StationaryTreatmentForm extends Model
 class OutpatientTreatmentForm extends Model
 {
     public $table = 'users';
+    public $table2 = 'user_service';
 
     public function form($pk = null)
     {
@@ -997,7 +963,7 @@ class OutpatientTreatmentForm extends Model
 
             <div class="row">
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>Выберите пациета:</label>
                         <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" data-fouc>
@@ -1013,9 +979,9 @@ class OutpatientTreatmentForm extends Model
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
-                        <label>Выберите отдел:</label>
+                        <label>Отдел:</label>
                         <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" data-fouc>
                             <option></option>
                             <?php
@@ -1029,7 +995,10 @@ class OutpatientTreatmentForm extends Model
                     </div>
                 </div>
 
-                <div class="col-md-4">
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label>Выберите специалиста:</label>
                         <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc>
@@ -1038,6 +1007,22 @@ class OutpatientTreatmentForm extends Model
                             foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                                 ?>
                                 <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Услуга:</label>
+                        <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php
+                            foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
                                 <?php
                             }
                             ?>
@@ -1055,9 +1040,28 @@ class OutpatientTreatmentForm extends Model
         <script type="text/javascript">
             $(function(){
                 $("#parent_id2").chained("#division2");
+                $("#service").chained("#division2");
             });
         </script>
         <?php
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            $servise_pk = $this->post['service'];
+            unset($this->post['id']);
+            unset($this->post['service']);
+            $post2 = array('user_id' => $pk, 'service_id' => $servise_pk);
+            $object1 = Mixin\update($this->table, $this->post, $pk);
+            $object2 = Mixin\insert($this->table2, $post2);
+            if ($object1 == 1 and $object2 == 1){
+                $this->success();
+            }else{
+                $this->error($object);
+            }
+        }
     }
 
     public function success()
@@ -1074,10 +1078,10 @@ class OutpatientTreatmentForm extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('registry/index');
     }

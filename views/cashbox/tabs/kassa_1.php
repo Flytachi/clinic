@@ -23,11 +23,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>0007</td>
-                                <td>Kopyov</td>
-                            </tr>
+                            <?php
+                            $i = 1;
+                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                                ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= addZero($row['id']) ?></td>
+                                        <td>
+                                            <a onclick="alert('<?= get_full_name($row['id']) ?>')">
+                                                <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+                                            </a>
+                                        </td>
+                                        <!-- <td class="text-center">
+                                            <button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Редактировать</button>
+                                        </td> -->
+                                    </tr>
+                                <?php
+                            }
+                            ?>
 
                         </tbody>
                     </table>
