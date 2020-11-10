@@ -33,3 +33,4 @@
 	<!-- JS chained -->
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 	<script src="<?= stack("vendors/js/box.js") ?>"></script>
+</head>
