@@ -90,43 +90,13 @@ is_auth(3);
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Оплата</h5>
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Оплата</h6>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="card">
-								<div class="card-header">
+				<?php UserCheckOutpatientModel::form(); ?>
 
-								</div>
-
-								<div class="card-body">
-									<div class="row">
-										<div class="col-md-10 offset-md-1">
-											<?php UserCheckModel::form(); ?>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-<!--
-						<h6 class="mb-0 font-weight-semibold">
-							<ul>
-								<li style="margin-bottom: -15px !important;">Общая сумма к оплате - 300000</li><br>
-								<li style="margin-bottom: -15px !important;">Скидка-0</li><br>
-								<li style="margin-bottom: -15px !important;">Сумма с скидками-300000</li>
-							</ul>
-						</h6> -->
-					</div>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-					<button type="button" class="btn bg-primary">Печать чека</button>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -178,6 +148,31 @@ is_auth(3);
     <!-- /footer -->
 
 	<script type="text/javascript">
+		if (sessionStorage['message_amb']) {
+			$('#message_ses').html(sessionStorage['message_amb']);
+			sessionStorage['message_amb'] = '';
+		}
+		function Update(events, tr) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (data) {
+					var result = JSON.parse(data);
+					if (result.stat) {
+						sessionStorage['message_amb'] = result.message;
+						location.reload();
+					}else{
+						$('#'+tr).css("background-color", "red");
+						$('#'+tr).css("color", "white");
+						$('#'+tr).fadeOut('slow', function() {
+						 	$(this).remove();
+						});
+						$('#message_ses').html(result.message);
+					}
+				},
+			});
+		};
+
 		function CheckAmb(events) {
 			$.ajax({
 				type: "GET",
@@ -187,6 +182,44 @@ is_auth(3);
 				},
 			});
 		};
+		function CheckSt(events, pk) {
+			$.ajax({
+				type: "GET",
+				url: events+"&mod=st",
+				success: function (result) {
+					$('#check-st').html(result);
+					$('#user_st_id').val(pk);
+				},
+			});
+		};
+
+		$("#search_tab-1").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "search.php",
+				data: {
+					tab: 1,
+                    search: $("#search_tab-1").val(),
+                },
+				success: function (result) {
+					$('#displ_tab-1').html(result);
+				},
+			});
+		});
+
+		$("#search_tab-4").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "search.php",
+				data: {
+					tab: 4,
+                    search: $("#search_tab-4").val(),
+                },
+				success: function (result) {
+					$('#displ_tab-4').html(result);
+				},
+			});
+		});
 	</script>
 
 </body>

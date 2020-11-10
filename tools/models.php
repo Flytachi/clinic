@@ -621,6 +621,7 @@ class PatientForm extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
             <input type="hidden" name="user_level" value="15">
+            <input type="hidden" name="status" value="0">
 
 
             <div class="row">
@@ -794,7 +795,7 @@ class StationaryTreatmentForm extends Model
                         <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
-                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND parent_id IS NULL') as $row) {
+                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL AND parent_id IS NULL') as $row) {
                                     ?>
                                     <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
                                     <?php
@@ -966,10 +967,10 @@ class OutpatientTreatmentForm extends Model
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Выберите пациета:</label>
-                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" data-fouc>
+                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
-                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND parent_id IS NULL') as $row) {
+                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL AND parent_id IS NULL') as $row) {
                                     ?>
                                     <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
                                     <?php
@@ -982,7 +983,7 @@ class OutpatientTreatmentForm extends Model
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Отдел:</label>
-                        <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" data-fouc>
+                        <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
                             <option></option>
                             <?php
                             foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
@@ -1001,7 +1002,7 @@ class OutpatientTreatmentForm extends Model
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Выберите специалиста:</label>
-                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc>
+                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                             <option></option>
                             <?php
                             foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
@@ -1104,13 +1105,127 @@ class UserServiceForm extends Model
                 $post101 = array('parent_id' => null);
                 $object1 = Mixin\update($this->table2, $post101, $user_pk);
                 if($object1){
-                    $this->success();
+                    $this->success(1);
                 }
             }else {
                 $this->success();
             }
         }else {
             $this->error('Ошибка при удаление услуги!');
+        }
+    }
+
+    public function success($stat = null)
+    {
+        $mess = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        if ($stat) {
+            $sth = array('message' => $mess, 'stat'=>1);
+        }else {
+            $sth = array('message' => $mess);
+        }
+        echo json_encode($sth);
+    }
+
+    public function error($message)
+    {
+        $mess = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        $sth = array('message' => $mess);
+        echo json_encode($sth);
+
+    }
+}
+
+class UserCheckOutpatientModel extends Model
+{
+    public $table = 'user_check';
+    public $table2 = 'users';
+    public $table3 = 'user_service';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <div class="modal-body">
+            <form method="post" action="<?= add_url() ?>">
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="user_id" id="user_amb_id">
+
+                <div class="form-group row">
+
+                    <div class="col-md-9">
+                        <label class="col-form-label">Сумма к оплате:</label>
+                        <input type="text" class="form-control" id="total_price" value="-" disabled>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="col-form-label">Скидка:</label>
+                        <div class="form-group-feedback form-group-feedback-right">
+                            <input type="text" class="form-control" name="sale" placeholder="">
+                            <div class="form-control-feedback text-success">
+                                <span style="font-size: 20px;">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="col-form-label">Наличный расчет:</label>
+                    <div class="form-group-feedback form-group-feedback-right">
+                        <input type="text" class="form-control border-success" name="price_cash" placeholder="" >
+                        <div class="form-control-feedback text-success">
+                            <i class="icon-checkmark-circle2"></i>
+                        </div>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
+		<div class="modal-footer">
+			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+			<button type="submit" class="btn bg-info">Печать</button>
+		</div>
+        <?php
+    }
+
+    public function save()
+    {
+        if($this->clean()){
+            // $this->dd();
+            $user_pk = $this->post['user_id'];
+            $pk_us = array('user_id' => $user_pk);
+            $post1 = array('parent_id' => null, 'status' => 1);
+            $object1 = Mixin\update($this->table2, $post1, $user_pk);
+
+            if($object1 == 1){
+                $post2 = array('priced' => date('Y-m-d H:i:s'));
+                $object2 = Mixin\updatePro($this->table3, $post2, $pk_us);
+                if(intval($object2)){
+                    $object = Mixin\insert($this->table, $this->post);
+                    if ($object == 1){
+                        $this->success();
+                    }else{
+                        $this->error($object);
+                    }
+                }else{
+                    $this->error($object2);
+                }
+            }else{
+                $this->error($object1);
+            }
         }
     }
 
@@ -1129,19 +1244,17 @@ class UserServiceForm extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render('cashbox/index');
     }
 }
 
-class UserCheckModel extends Model
+class UserCheckStationaryModel extends Model
 {
     public $table = 'user_check';
-    public $table2 = 'users';
-    public $table3 = 'user_service';
 
     public function form($pk = null)
     {
@@ -1149,74 +1262,66 @@ class UserCheckModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="user_id" id="user_amb_id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="user_id" id="user_st_id">
 
-            <div class="form-group" style="margin-bottom: 0px !important;">
-                <label class="col-form-label" style="margin-bottom: -5px !important;">Сумма к оплате:</label>
-                <input type="text" class="form-control" id="total_price" value="-" disabled>
-            </div>
+            <div class="form-group form-group-float row">
 
-            <div class="form-group" style="margin-bottom: 0px !important;">
-                <label class="col-form-label" style="margin-bottom: -5px !important;">Скидка:</label>
-                <input type="text" class="form-control" name="sale" placeholder="%">
-            </div>
+                <div class="col-md-6">
+                    <div class="form-group-feedback form-group-feedback-right">
+                        <input type="text" class="form-control border-success" name="price_payment" placeholder="Предоплата" >
+                        <div class="form-control-feedback text-success">
+                            <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
+                                <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="col-md-6">
+                    <div class="form-group-feedback form-group-feedback-right">
+                        <input type="text" class="form-control border-danger" placeholder="Возврат">
+                        <div class="form-control-feedback text-danger">
+                            <i style="font-size: 23px;" class="icon-history" data-toggle="modal" data-target="#modal_default2"></i>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- <div class="form-group" style="margin-bottom: 0px !important;">
-                <label class="col-form-label" style="margin-bottom: -5px !important;">Пластиковая карта:</label>
-                <input type="text" class="form-control" placeholder="">
-            </div>
-
-            <div class="form-group" style="margin-bottom: 0px !important;">
-                <label class="col-form-label" style="margin-bottom: -5px !important;">Перечисление:</label>
-                <input type="text" class="form-control" placeholder="">
-            </div> -->
-
-            <div class="form-group" style="margin-bottom: 0px !important;">
-                <label class="col-form-label" style="margin-bottom: -5px !important;">Наличный расчет:</label>
-                <input type="text" class="form-control" name="price" placeholder="" >
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple ">Экспорт в PDF</button>
             </div>
-
         </form>
         <?php
     }
 
-    public function save()
-    {
-        if($this->clean()){
-            // $this->dd();
-            $user_pk = $this->post['user_id'];
-            echo $user_pk;
-            $date = date('Y-m-d');
-            $post2 = array('deleted' => "$date");
-            $object2 = Mixin\update($this->table3, $post2, $user_pk);
-            echo $object2;
-
-            // $post1 = array('parent_id' => null);
-            // $object1 = Mixin\update($this->table2, $post1, $user_pk);
-            // if($object1 == 1){
-            //     $date1 = date("d/m/Y H:i:s");
-            //     $post2 = array('deleted' => "$date");
-            //     $object2 = Mixin\update($this->table3, $post2, $user_pk);
-            //     if(intval($object2)){
-            //         $object = Mixin\insert($this->table, $this->post);
-            //         if ($object == 1){
-            //             $this->success();
-            //         }else{
-            //             $this->error($object);
-            //         }
-            //     }else{
-            //         $this->error($object2);
-            //     }
-            // }else{
-            //     $this->error($object1);
-            // }
-        }
-    }
+    // public function save()
+    // {
+    //     if($this->clean()){
+    //         // $this->dd();
+    //         $user_pk = $this->post['user_id'];
+    //         $pk_us = array('user_id' => $user_pk);
+    //         $post1 = array('parent_id' => null, 'status' => 1);
+    //         $object1 = Mixin\update($this->table2, $post1, $user_pk);
+    //
+    //         if($object1 == 1){
+    //             $post2 = array('priced' => date('Y-m-d H:i:s'));
+    //             $object2 = Mixin\updatePro($this->table3, $post2, $pk_us);
+    //             if(intval($object2)){
+    //                 $object = Mixin\insert($this->table, $this->post);
+    //                 if ($object == 1){
+    //                     $this->success();
+    //                 }else{
+    //                     $this->error($object);
+    //                 }
+    //             }else{
+    //                 $this->error($object2);
+    //             }
+    //         }else{
+    //             $this->error($object1);
+    //         }
+    //     }
+    // }
 
     public function success()
     {

@@ -90,7 +90,7 @@ is_auth(2);
 														<div class="text-muted">
 															<?php
 															if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['id'])->fetch()){
-																echo $stm['floor']." этаж ".$stm['ward']." палата".$stm['num']." койка";
+																echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['num']." койка";
 															}
 															?>
 														</div>
