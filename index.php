@@ -13,10 +13,10 @@ switch (level()):
         render('cashbox/index');
         break;
     case 5:
-        include('docs/index/anestiziolog.php');
+        render('doctor/index');
         break;
     case 6:
-        include('docs/index/laboratory.php');
+        render('laboratory/index');
         break;
     case 7:
         include('docs/index/ambulator.php');

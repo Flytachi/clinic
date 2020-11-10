@@ -4,7 +4,29 @@ is_auth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<head>
+	
 <?php include '../layout/head.php' ?>
+
+
+<script src="../../static/global_assets/js/plugins/forms/wizards/steps.min.js"></script>
+<script src="../../static/global_assets/js/plugins/forms/selects/select2.min.js"></script>
+<script src="../../static/global_assets/js/plugins/forms/styling/uniform.min.js"></script>
+<script src="../../static/global_assets/js/plugins/forms/inputs/inputmask.js"></script>
+<script src="../../static/global_assets/js/plugins/forms/validation/validate.min.js"></script>
+<script src="../../static/global_assets/js/plugins/extensions/cookie.js"></script>
+<script src="../../static/assets/js/app.js"></script>
+<script src="../../static/global_assets/js/demo_pages/form_wizard.js"></script>
+<!-- /theme JS files -->
+<!-- Theme JS files -->
+<script src="../../static/global_assets/js/plugins/editors/summernote/summernote.min.js"></script>
+<script src="../../static/global_assets/js/plugins/forms/styling/uniform.min.js"></script>
+<script src="../../static/global_assets/js/plugins/forms/selects/select2.min.js"></script>
+<script src="../../static/global_assets/js/demo_pages/form_select2.js"></script>
+<script src="../../static/assets/js/app.js"></script>
+<script src="../../static/global_assets/js/demo_pages/editor_summernote.js"></script>
+</head>
+
 
 <body>
 
@@ -646,6 +668,7 @@ is_auth();
 
     <!-- Footer -->
     <?php include 'layout/footer.php' ?>
+
     <!-- /footer -->
 
 </body>
