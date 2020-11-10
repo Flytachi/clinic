@@ -16,7 +16,7 @@
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
-                            <tr>
+                            <tr class="text-center">
                                 <th>#</th>
                                 <th>ID</th>
                                 <th>ФИО</th>
@@ -25,9 +25,9 @@
                         <tbody>
                             <?php
                             $i = 1;
-                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
                                 ?>
-                                    <tr>
+                                    <tr class="text-center">
                                         <td><?= $i++ ?></td>
                                         <td><?= addZero($row['id']) ?></td>
                                         <td>
@@ -48,7 +48,11 @@
     </div>
 
     <div class="col-md-7" id="check-amb">
-
+        <?php
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        } ?>
     </div>
 
 </div>

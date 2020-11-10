@@ -1087,4 +1087,158 @@ class OutpatientTreatmentForm extends Model
     }
 }
 
+class UserServiceForm extends Model
+{
+    public $table = 'user_service';
+    public $table2 = 'users';
+
+    public function get_or_404($pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+        $user_pk = $object->user_id;
+        $del = Mixin\delete($this->table, $pk);
+        if($del){
+            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object->user_id")->rowCount();
+            if(!$status){
+                $post101 = array('parent_id' => null);
+                $object1 = Mixin\update($this->table2, $post101, $user_pk);
+                if($object1){
+                    $this->success();
+                }
+            }else {
+                $this->success();
+            }
+        }else {
+            $this->error('Ошибка при удаление услуги!');
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('cashbox/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render('cashbox/index');
+    }
+}
+
+class UserCheckModel extends Model
+{
+    public $table = 'user_check';
+    public $table2 = 'users';
+    public $table3 = 'user_service';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="user_id" id="user_amb_id" value="<?= $post['id'] ?>">
+
+            <div class="form-group" style="margin-bottom: 0px !important;">
+                <label class="col-form-label" style="margin-bottom: -5px !important;">Сумма к оплате:</label>
+                <input type="text" class="form-control" id="total_price" value="-" disabled>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0px !important;">
+                <label class="col-form-label" style="margin-bottom: -5px !important;">Скидка:</label>
+                <input type="text" class="form-control" name="sale" placeholder="%">
+            </div>
+
+
+            <!-- <div class="form-group" style="margin-bottom: 0px !important;">
+                <label class="col-form-label" style="margin-bottom: -5px !important;">Пластиковая карта:</label>
+                <input type="text" class="form-control" placeholder="">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0px !important;">
+                <label class="col-form-label" style="margin-bottom: -5px !important;">Перечисление:</label>
+                <input type="text" class="form-control" placeholder="">
+            </div> -->
+
+            <div class="form-group" style="margin-bottom: 0px !important;">
+                <label class="col-form-label" style="margin-bottom: -5px !important;">Наличный расчет:</label>
+                <input type="text" class="form-control" name="price" placeholder="" >
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function save()
+    {
+        if($this->clean()){
+            // $this->dd();
+            $user_pk = $this->post['user_id'];
+            echo $user_pk;
+            $date = date('Y-m-d');
+            $post2 = array('deleted' => "$date");
+            $object2 = Mixin\update($this->table3, $post2, $user_pk);
+            echo $object2;
+
+            // $post1 = array('parent_id' => null);
+            // $object1 = Mixin\update($this->table2, $post1, $user_pk);
+            // if($object1 == 1){
+            //     $date1 = date("d/m/Y H:i:s");
+            //     $post2 = array('deleted' => "$date");
+            //     $object2 = Mixin\update($this->table3, $post2, $user_pk);
+            //     if(intval($object2)){
+            //         $object = Mixin\insert($this->table, $this->post);
+            //         if ($object == 1){
+            //             $this->success();
+            //         }else{
+            //             $this->error($object);
+            //         }
+            //     }else{
+            //         $this->error($object2);
+            //     }
+            // }else{
+            //     $this->error($object1);
+            // }
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('cashbox/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render('cashbox/index');
+    }
+}
+
 ?>

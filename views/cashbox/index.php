@@ -106,48 +106,20 @@ is_auth(3);
 								<div class="card-body">
 									<div class="row">
 										<div class="col-md-10 offset-md-1">
-											<form action="#">
-
-												<div class="form-group" style="margin-bottom: 0px !important;">
-													<label class="col-form-label" style="margin-bottom: -5px !important;">Сумма к оплате:</label>
-													<input type="text" class="form-control" value="300 000" disabled>
-												</div>
-
-												<div class="form-group" style="margin-bottom: 0px !important;">
-													<label class="col-form-label" style="margin-bottom: -5px !important;">Скидка:</label>
-													<input type="text" class="form-control" placeholder="%">
-												</div>
-
-
-												<div class="form-group" style="margin-bottom: 0px !important;">
-													<label class="col-form-label" style="margin-bottom: -5px !important;">Пластиковая карта:</label>
-													<input type="text" class="form-control" placeholder="">
-												</div>
-
-												<div class="form-group" style="margin-bottom: 0px !important;">
-													<label class="col-form-label" style="margin-bottom: -5px !important;">Перечисление:</label>
-													<input type="text" class="form-control" placeholder="">
-												</div>
-
-												<div class="form-group" style="margin-bottom: 0px !important;">
-													<label class="col-form-label" style="margin-bottom: -5px !important;">Наличный расчет:</label>
-													<input type="text" class="form-control" placeholder="" >
-												</div>
-
-											</form>
+											<?php UserCheckModel::form(); ?>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
+<!--
 						<h6 class="mb-0 font-weight-semibold">
 							<ul>
 								<li style="margin-bottom: -15px !important;">Общая сумма к оплате - 300000</li><br>
 								<li style="margin-bottom: -15px !important;">Скидка-0</li><br>
 								<li style="margin-bottom: -15px !important;">Сумма с скидками-300000</li>
 							</ul>
-						</h6>
+						</h6> -->
 					</div>
 				</div>
 

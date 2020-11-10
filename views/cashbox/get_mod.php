@@ -18,31 +18,39 @@ if ($_GET['pk']) {
                             <th>Дата и время</th>
                             <th>Мед услуги</th>
                             <th>Сумма</th>
+                            <th class="text-center">Отменить</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         foreach($db->query("SELECT * FROM user_service WHERE user_id = $pk AND deleted IS NULL") as $row) {
                             $service = $db->query('SELECT * FROM service WHERE id='.$row['service_id'])->fetch();
+                            if(isset($total_price)){
+                                $total_price = $service['price'];
+                            }else{
+                                $total_price += $service['price'];
+                            }
                             ?>
                                 <tr>
-                                    <td></td>
+                                    <td><?= date("d/m/Y H:i"); ?></td>
                                     <td><?= $service['name'] ?></td>
                                     <td><?= $service['price'] ?></td>
+                                    <th class="text-center">
+                                        <div class="list-icons">
+                                            <a href="<?= up_url($row['id'], 'UserServiceForm') ?>" class="list-icons-item btn border-danger-600 text-danger-600"><i class="icon-minus2"></i></a>
+                                        </div>
+                                    </th>
                                 </tr>
                             <?php
                         }
                         ?>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
-                            </td>
-                        </tr>
 
                     </tbody>
                 </table>
+                <br>
+                <div class="text-right">
+                    <button onclick="$('#total_price').val(this.dataset.price);$('#user_amb_id').val(this.dataset.pk);" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-pk="<?= $pk ?>" data-price="<?= $total_price ?>" data-target="#modal_default">Оплата (<?= $total_price ?>)</button>
+                </div>
             </div>
         </div>
 

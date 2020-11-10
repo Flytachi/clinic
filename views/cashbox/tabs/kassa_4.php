@@ -28,7 +28,7 @@
                         <tbody>
                             <?php
                             $i = 1;
-                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
                                 ?>
                                     <tr>
                                         <td><?= $i++ ?></td>
