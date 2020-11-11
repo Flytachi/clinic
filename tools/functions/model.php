@@ -94,7 +94,6 @@ class Model
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
-            // $this->dd();
             $object = Mixin\update($this->table, $this->post, $pk);
             if ($object == 1){
                 $this->success();

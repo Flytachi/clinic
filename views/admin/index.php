@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
+is_auth(1);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,9 +39,7 @@ is_auth();
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php
-						UserModel::form();
-				        ?>
+				        <?php UserModel::form(); ?>
 				    </div>
 
 				</div>

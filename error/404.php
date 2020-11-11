@@ -12,34 +12,19 @@ is_auth();
 
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-	<link href="../global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
-	<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="../assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
-	<link href="../assets/css/layout.min.css" rel="stylesheet" type="text/css">
-	<link href="../assets/css/components.min.css" rel="stylesheet" type="text/css">
-	<link href="../assets/css/colors.min.css" rel="stylesheet" type="text/css">
+	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
-
-	<!-- Core JS files -->
-	<script src="../global_assets/js/main/jquery.min.js"></script>
-	<script src="../global_assets/js/main/bootstrap.bundle.min.js"></script>
-	<script src="../global_assets/js/plugins/loaders/blockui.min.js"></script>
-	<script src="../global_assets/js/plugins/ui/ripple.min.js"></script>
-	<!-- /core JS files -->
-
-	<!-- Theme JS files -->
-	<script src="../global_assets/js/plugins/forms/selects/select2.min.js"></script>
-	<script src="../global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-	<script src="../assets/js/app.js"></script>
-	<script src="../global_assets/js/demo_pages/form_layouts.js"></script>
-	<!-- /theme JS files -->
 
 </head>
 
 <body>
 
 	<!-- Main navbar -->
-	
+
 	<!-- /main navbar -->
 
 
@@ -57,8 +42,8 @@ is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title">404</h1>
-						<h5>Oops, an error has occurred. Page not found!</h5>
+						<h1 class="error-title text-danger">404</h1>
+						<h5>Page not found!</h5>
 					</div>
 					<!-- /error title -->
 
@@ -95,10 +80,6 @@ is_auth();
 	</div>
 	<!-- /page content -->
 
-
-    <!-- Footer -->
-    <?php include '../layout/footer.php' ?>
-    <!-- /footer -->
 
 </body>
 </html>

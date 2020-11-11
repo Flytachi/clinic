@@ -167,9 +167,9 @@ class UserModel extends Model
                 unset($this->post['password2']);
             }else{
                 $_SESSION['message'] = '
-                <div class="alert alert-danger" role="alert">
-                    <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                    Пароли не совпадают!
+                <div class="alert bg-danger alert-styled-left alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                    <span class="font-weight-semibold"> Пароли не совпадают!</span>
                 </div>
                 ';
                 $_SESSION['message_post']= $this->post;
@@ -200,12 +200,213 @@ class UserModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/index');
+    }
+}
+
+class UserCheckOutpatientModel extends Model
+{
+    public $table = 'user_check';
+    public $table2 = 'users';
+    public $table3 = 'user_service';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+
+            <div class="modal-body">
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="user_id" id="user_amb_id">
+
+                <div class="form-group row">
+
+                    <div class="col-md-9">
+                        <label class="col-form-label">Сумма к оплате:</label>
+                        <input type="text" class="form-control" id="total_price" value="-" disabled>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="col-form-label">Скидка:</label>
+                        <div class="form-group-feedback form-group-feedback-right">
+                            <input type="text" class="form-control" name="sale" placeholder="">
+                            <div class="form-control-feedback text-success">
+                                <span style="font-size: 20px;">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="col-form-label">Наличный расчет:</label>
+                    <div class="form-group-feedback form-group-feedback-right">
+                        <input type="text" class="form-control border-success" name="price_cash" placeholder="" >
+                        <div class="form-control-feedback text-success">
+                            <i class="icon-checkmark-circle2"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+    		<div class="modal-footer">
+    			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+    			<button type="submit" class="btn bg-info">Печать</button>
+    		</div>
+
+        </form>
+        <?php
+    }
+
+    public function save()
+    {
+        if($this->clean()){
+            // $this->dd();
+            $user_pk = $this->post['user_id'];
+            $pk_us = array('user_id' => $user_pk);
+            $post1 = array('status' => 1);
+            $object1 = Mixin\update($this->table2, $post1, $user_pk);
+
+            if($object1 == 1){
+                $post2 = array('priced' => date('Y-m-d H:i:s'));
+                $object2 = Mixin\updatePro($this->table3, $post2, $pk_us);
+                if(intval($object2)){
+                    $object = Mixin\insert($this->table, $this->post);
+                    if ($object == 1){
+                        $this->success();
+                    }else{
+                        $this->error($object);
+                    }
+                }else{
+                    $this->error($object2);
+                }
+            }else{
+                $this->error($object1);
+            }
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('cashbox/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render('cashbox/index');
+    }
+}
+
+class UserCheckStationaryModel extends Model
+{
+    public $table = 'user_check';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="user_id" id="user_st_id">
+
+            <div class="form-group form-group-float row">
+
+                <div class="col-md-6">
+                    <div class="form-group-feedback form-group-feedback-right">
+                        <input type="text" class="form-control border-success" name="price_payment" placeholder="Предоплата" >
+                        <div class="form-control-feedback text-success">
+                            <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
+                                <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group-feedback form-group-feedback-right">
+                        <input type="text" class="form-control border-danger" placeholder="Возврат">
+                        <div class="form-control-feedback text-danger">
+                            <i style="font-size: 23px;" class="icon-history" data-toggle="modal" data-target="#modal_default2"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple ">Экспорт в PDF</button>
+            </div>
+        </form>
+        <?php
+    }
+
+    // public function save()
+    // {
+    //     if($this->clean()){
+    //         // $this->dd();
+    //         $user_pk = $this->post['user_id'];
+    //         $pk_us = array('user_id' => $user_pk);
+    //         $post1 = array('parent_id' => null, 'status' => 1);
+    //         $object1 = Mixin\update($this->table2, $post1, $user_pk);
+    //
+    //         if($object1 == 1){
+    //             $post2 = array('priced' => date('Y-m-d H:i:s'));
+    //             $object2 = Mixin\updatePro($this->table3, $post2, $pk_us);
+    //             if(intval($object2)){
+    //                 $object = Mixin\insert($this->table, $this->post);
+    //                 if ($object == 1){
+    //                     $this->success();
+    //                 }else{
+    //                     $this->error($object);
+    //                 }
+    //             }else{
+    //                 $this->error($object2);
+    //             }
+    //         }else{
+    //             $this->error($object1);
+    //         }
+    //     }
+    // }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('cashbox/index');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render('cashbox/index');
     }
 }
 
@@ -366,10 +567,10 @@ class BedModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/bed');
     }
@@ -428,10 +629,10 @@ class BedTypeModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/bed');
     }
@@ -534,10 +735,10 @@ class ServiceModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/service');
     }
@@ -591,10 +792,10 @@ class StorageTypeModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
         ';
         render('admin/storage');
     }

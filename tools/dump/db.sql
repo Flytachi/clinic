@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 08 2020 г., 22:46
+-- Время создания: Ноя 09 2020 г., 18:56
 -- Версия сервера: 10.5.6-MariaDB
 -- Версия PHP: 7.4.12
 
@@ -41,7 +41,7 @@ CREATE TABLE `beds` (
 --
 
 INSERT INTO `beds` (`id`, `floor`, `ward`, `num`, `types`, `user_id`) VALUES
-(1, 1, 1, 1, 2, NULL),
+(1, 1, 1, 1, 2, 24),
 (2, 1, 1, 2, 1, NULL);
 
 -- --------------------------------------------------------
@@ -84,7 +84,8 @@ CREATE TABLE `division` (
 INSERT INTO `division` (`id`, `level`, `title`, `name`) VALUES
 (1, 5, 'Травматалогия', 'Травматолог'),
 (2, 5, 'Хирургия', 'Хирург'),
-(3, 5, 'Стоматология', 'Стоматолог');
+(3, 5, 'Стоматология', 'Стоматолог'),
+(6, 5, 'Радиология', 'Радиолог');
 
 -- --------------------------------------------------------
 
@@ -106,7 +107,8 @@ CREATE TABLE `service` (
 
 INSERT INTO `service` (`id`, `user_level`, `division_id`, `name`, `price`) VALUES
 (1, 1, NULL, 'Поддержка сайта и обеспечение безопасности', '1499.9'),
-(2, 5, 3, 'Вырвать зуб', '23434.0');
+(2, 5, 3, 'Вырвать зуб', '23434.0'),
+(4, 5, 6, 'MRT', '1000.0');
 
 -- --------------------------------------------------------
 
@@ -154,6 +156,8 @@ CREATE TABLE `users` (
   `activity` tinyint(1) NOT NULL DEFAULT 1,
   `status_bed` tinyint(1) DEFAULT NULL,
   `share` float DEFAULT 0,
+  `complaint` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `allergy` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `add_date` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -161,9 +165,33 @@ CREATE TABLE `users` (
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `division_id`, `activity`, `status_bed`, `share`, `add_date`) VALUES
-(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, 99.1, '2020-10-31 17:48:15'),
-(2, NULL, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, NULL, 20, '2020-11-08 14:03:49');
+INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `division_id`, `activity`, `status_bed`, `share`, `complaint`, `allergy`, `add_date`) VALUES
+(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, NULL, 99.1, NULL, NULL, '2020-10-31 17:48:15'),
+(2, NULL, 'legion', 'bd53add93b49c4dff72730e05f11f1ee31074fe4', 'legion', 'legion', 'legion', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, NULL, 20, NULL, NULL, '2020-11-08 14:03:49'),
+(22, NULL, 'travma', '09cad82f43c6fcf04357b175cdf4763a3daf9a89', 'Шерзод', 'Ахмедов', 'Турсунович', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 6, 1, NULL, 20, NULL, NULL, '2020-11-09 16:07:37'),
+(23, 22, NULL, NULL, 'Фарход', 'Якубов', 'Абдурасулович', '2020-11-03', 'Ромитан', 'Ac464646', 'himchan', 'it', '31231231231', '34', '9/2', 1, 15, NULL, 1, NULL, 0, 'болит голова', 'коффе, програмисты', '2020-11-09 16:11:05'),
+(24, 22, NULL, NULL, 'Амир', 'Аминов', 'Абдурасулович', '2020-11-19', 'Чилонзор', 'AC4745659', 'qwe', 'rak', '2132132131212', 'test', 'test', 1, 15, NULL, 1, 1, 0, 'Нос', 'Клубника', '2020-11-09 16:54:30'),
+(26, NULL, 'kassa', '913c8fd5abbf64f58c66b63dd31f6c310c757702', 'kassa', 'kassa', 'kassa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, NULL, 2, NULL, NULL, '2020-11-09 17:49:52');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `user_service`
+--
+
+CREATE TABLE `user_service` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
+  `deleted` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `user_service`
+--
+
+INSERT INTO `user_service` (`id`, `user_id`, `service_id`, `deleted`) VALUES
+(1, 23, 4, NULL);
 
 --
 -- Индексы сохранённых таблиц
@@ -207,6 +235,12 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `username` (`username`);
 
 --
+-- Индексы таблицы `user_service`
+--
+ALTER TABLE `user_service`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -226,13 +260,13 @@ ALTER TABLE `bed_type`
 -- AUTO_INCREMENT для таблицы `division`
 --
 ALTER TABLE `division`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
 --
 ALTER TABLE `service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_type`
@@ -244,7 +278,13 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT для таблицы `user_service`
+--
+ALTER TABLE `user_service`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
