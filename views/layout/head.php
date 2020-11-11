@@ -31,6 +31,9 @@
 	<!-- /theme JS files -->
 
 	<!-- JS chained -->
+	<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script>
+	
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 </head>

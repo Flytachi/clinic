@@ -181,13 +181,14 @@ is_auth(3);
 				},
 			});
 		};
+
 		function CheckSt(events, pk) {
 			$.ajax({
 				type: "GET",
 				url: events+"&mod=st",
 				success: function (result) {
 					$('#check-st').html(result);
-					$('#user_st_id').val(pk);
+					$('#visit_st_id').val(pk);
 				},
 			});
 		};

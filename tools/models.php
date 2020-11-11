@@ -211,9 +211,9 @@ class UserModel extends Model
 
 class UserCheckOutpatientModel extends Model
 {
-    public $table = 'user_check';
-    public $table2 = 'users';
-    public $table3 = 'user_service';
+    public $table = 'visit_price';
+    public $table1 = 'visit_service';
+    public $table2 = 'visit';
 
     public function form($pk = null)
     {
@@ -223,7 +223,7 @@ class UserCheckOutpatientModel extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="user_id" id="user_amb_id">
+                <input type="hidden" name="visit_id" id="visit_amb_id">
 
                 <div class="form-group row">
 
@@ -268,27 +268,22 @@ class UserCheckOutpatientModel extends Model
     public function save()
     {
         if($this->clean()){
-            // $this->dd();
-            $user_pk = $this->post['user_id'];
-            $pk_us = array('user_id' => $user_pk);
-            $post1 = array('status' => 1);
-            $object1 = Mixin\update($this->table2, $post1, $user_pk);
-
-            if($object1 == 1){
-                $post2 = array('priced' => date('Y-m-d H:i:s'));
-                $object2 = Mixin\updatePro($this->table3, $post2, $pk_us);
-                if(intval($object2)){
-                    $object = Mixin\insert($this->table, $this->post);
-                    if ($object == 1){
+            $pk_vis = array('visit_id' => $this->post['visit_id']);
+            $object = Mixin\updatePro($this->table1, array('priced' => date('Y-m-d H:i:s')), $pk_vis);
+            if(intval($object)){
+                $object1 = Mixin\insert($this->table, $this->post);
+                if (intval($object1)){
+                    $object2 = Mixin\update($this->table2, array('status' => 1), $this->post['visit_id']);
+                    if(intval($object2)){
                         $this->success();
                     }else{
-                        $this->error($object);
+                        $this->error($object1);
                     }
                 }else{
-                    $this->error($object2);
+                    $this->error($object1);
                 }
             }else{
-                $this->error($object1);
+                $this->error($object);
             }
         }
     }
@@ -318,7 +313,7 @@ class UserCheckOutpatientModel extends Model
 
 class UserCheckStationaryModel extends Model
 {
-    public $table = 'user_check';
+    public $table = 'visit_price';
 
     public function form($pk = null)
     {
@@ -326,7 +321,7 @@ class UserCheckStationaryModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="user_id" id="user_st_id">
+            <input type="hidden" name="visit_id" id="visit_st_id">
 
             <div class="form-group form-group-float row">
 
