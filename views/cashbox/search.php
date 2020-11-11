@@ -26,10 +26,10 @@ switch ($_GET['tab']) {
 
     case 4:
         if(empty($_GET['search'])){
-            $sql = "SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND status IS NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5";
+            $sql = "SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND status IS NOT NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5";
         }else {
             $ser = $_GET['search'];
-            $sql = "SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND status IS NULL AND parent_id IS NOT NULL AND (id LIKE '%$ser%' OR first_name LIKE '%$ser%' OR last_name LIKE '%$ser%' OR father_name LIKE '%$ser%')";
+            $sql = "SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND status IS NOT NULL AND parent_id IS NOT NULL AND (id LIKE '%$ser%' OR first_name LIKE '%$ser%' OR last_name LIKE '%$ser%' OR father_name LIKE '%$ser%')";
         }
         foreach($db->query($sql) as $row) {
         ?>

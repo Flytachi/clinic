@@ -167,7 +167,6 @@ is_auth(3);
 						$('#'+tr).fadeOut('slow', function() {
 						 	$(this).remove();
 						});
-						$('#message_ses').html(result.message);
 					}
 				},
 			});

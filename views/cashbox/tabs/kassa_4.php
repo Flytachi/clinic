@@ -27,7 +27,7 @@
                         </thead>
                         <tbody id="displ_tab-4">
                             <?php
-                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND status IS NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NOT NULL AND status IS NOT NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
                                 ?>
                                     <tr>
                                         <td class="text-left"><?= date("d/m/Y H:i"); ?></td>

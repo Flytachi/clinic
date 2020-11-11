@@ -75,6 +75,7 @@ is_auth(2);
 												<th>Регион</th>
 												<th>Тип визита</th>
 												<th>Дата визита</th>
+												<th>Статус</th>
 												<th class="text-center">Действия</th>
 											</tr>
 										</thead>
@@ -98,8 +99,9 @@ is_auth(2);
 								                    <td><?= $row['dateBith'] ?></td>
 								                    <td><?= $row['numberPhone'] ?></td>
 								                    <td><?= $row['region'] ?></td>
-													<td><?= ($row['status_bed']) ? "Стационарный" : "Амбулаторная" ?></td>
+													<td><?= ($row['parent_id']) ? ($row['status_bed']) ? "Стационарный" : "Амбулаторный" : "Не незначено" ?></td>
 								                    <td><?= $row['add_date'] ?></td>
+													<td><?= ($row['status']) ? "Активный" : "Не активный" ?></td>
 								                    <td class="text-center">
 														<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Редактировать</button>
 								                    </td>

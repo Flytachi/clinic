@@ -27,7 +27,7 @@
 
         <span class="navbar-text ml-md-3">
             <span class="badge badge-mark border-orange-300 mr-2"></span>
-            <?= get_full_name() ." - ". level_name() ." " /*division_name()*/ ?>
+            <?= get_full_name() ." - ". level_name() ." ". division_name() ?>
         </span>
 
 

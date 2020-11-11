@@ -23,6 +23,7 @@ require_once 'functions/connection.php';
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'models.php';
+require_once 'forms.php';
 
 
 function get_full_name($id = null) {
@@ -144,15 +145,12 @@ function division_name($id = null) {
         $id = $_SESSION['session_id'];
         $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
     }
-
     try{
         $stmt = $db->query("SELECT name from division where id = $id")->fetchColumn();
-        // $stmt = "( $stmt )";
     }
     catch (PDOException $ex) {
         $stmt = null;
     }
-
 	return $stmt;
 }
 ?>
