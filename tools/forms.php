@@ -432,20 +432,19 @@ class OutpatientTreatmentForm extends Model
                     </select>
                 </div>
 
-            </div>
-
-            <div class="form-group">
-				<label>Full width button (default)</label>
-				<select class="form-control multiselect" multiple="multiple" data-fouc>
-                    <?php
-                    foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
-                        ?>
-                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                <div class="col-md-6">
+                    <select data-placeholder="Выберите услуги" class="form-control multiselect" multiple="multiple" required data-fouc>
                         <?php
-                    }
-                    ?>
-				</select>
-			</div>
+                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+    				</select>
+                </div>
+
+            </div>
 
             <div class="form-group row">
 
