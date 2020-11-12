@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(2);
+$header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +25,11 @@ is_auth(2);
 		<!-- Main content -->
 
 		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
+
 			<!-- Content area -->
 			<div class="content">
 

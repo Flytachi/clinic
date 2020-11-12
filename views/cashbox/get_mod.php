@@ -4,10 +4,11 @@ is_auth(3);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
     if($_GET['mod']){
+        $user = $db->query("SELECT user_id FROM visit WHERE id = $pk")->fetch();
         ?>
         <div class="card">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk) ?></em></h5>
+                <h5 class="card-title"><em><?= get_full_name($user['user_id']) ?></em></h5>
                 <div class="header-elements">
                     <div class="list-icons">
 

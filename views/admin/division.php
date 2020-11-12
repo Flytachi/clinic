@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(1);
+$header = "Класификация персонала";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +24,10 @@ is_auth(1);
 
 		<!-- Main content -->
 		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
 
 			<!-- Content area -->
 			<div class="content">
