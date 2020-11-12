@@ -32,25 +32,30 @@ $header = "Приём пациетов";
 			<div class="content">
 
 
-				<div class="card">
+				<div class="card border-1 border-primary">
 
-                    <div class="card-header">
-                        <h4>Пациенты на приём</h4>
-                    </div>
+					<div class="card-header bg-primary text-white header-elements-inline">
+						<h6 class="card-title">Пациенты на приём</h6>
+						<div class="header-elements">
+							<div class="list-icons">
+								<a class="list-icons-item" data-action="collapse"></a>
+							</div>
+						</div>
+					</div>
 
-                    <div class="card-body">
+					<div class="card-body">
 
-                        <div class="table-responsive">
-                            <table class="table table-hover table-columned">
+						<div class="table-responsive">
+                            <table class="table table-hover table-sm table-bordered">
                                 <thead>
-                                    <tr class="bg-blue text-center">
+                                    <tr class="bg-blue">
                                         <th>ID</th>
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th>Тип визита</th>
-                                        <th style="width:300px">Действия</th>
+                                        <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -83,8 +88,8 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-                                                <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Принять</button>
-                                                <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-lg legitRipple">Отказ</button>
+                                                <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple">Принять</button>
+                                                <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -94,7 +99,7 @@ $header = "Приём пациетов";
                             </table>
                         </div>
 
-                    </div>
+					</div>
 
 				</div>
 
@@ -111,7 +116,7 @@ $header = "Приём пациетов";
     <!-- Failure modal -->
 	<div id="modal_failure" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
-			<div class="modal-content">
+			<div class="modal-content border-1 border-danger">
 
 				<div class="modal-header bg-danger">
 					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>

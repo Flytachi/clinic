@@ -44,13 +44,18 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade active show" id="basic-justified-tab1">
 
-						<div class="card">
+						<div class="card border-1 border-dark">
 
-							<div class="card-header">
-								<h4>Регистрация</h4>
+							<div class="card-header bg-dark text-white header-elements-inline">
+								<h6 class="card-title">Регистрация</h6>
+								<div class="header-elements">
+									<div class="list-icons">
+				                		<a class="list-icons-item" data-action="collapse"></a>
+				                	</div>
+			                	</div>
 							</div>
 
-							<div class="card-body" id="form_up">
+							<div class="card-body" style="" id="form_up">
 								<?php PatientForm::form(); ?>
 							</div>
 
@@ -60,10 +65,15 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade" id="basic-justified-tab2">
 
-						<div class="card">
+						<div class="card border-1 border-danger">
 
-							<div class="card-header">
-								<h4>Стационарная</h4>
+							<div class="card-header bg-danger text-white header-elements-inline">
+								<h6 class="card-title">Стационарная</h6>
+								<div class="header-elements">
+									<div class="list-icons">
+				                		<a class="list-icons-item" data-action="collapse"></a>
+				                	</div>
+			                	</div>
 							</div>
 
 							<div class="card-body">
@@ -76,10 +86,15 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade" id="basic-justified-tab3">
 
-						<div class="card">
+						<div class="card border-1 border-primary">
 
-							<div class="card-header">
-								<h4>Амбулаторная</h4>
+							<div class="card-header bg-primary text-white header-elements-inline">
+								<h6 class="card-title">Амбулаторная</h6>
+								<div class="header-elements">
+									<div class="list-icons">
+				                		<a class="list-icons-item" data-action="collapse"></a>
+				                	</div>
+			                	</div>
 							</div>
 
 							<div class="card-body">
@@ -92,25 +107,28 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade" id="basic-justified-tab4">
 
-						<div class="card">
+						<div class="card border-1 border-dark">
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Список Пациетов</h5>
-						        <div class="header-elements">
-									<div class="dataTables_filter">
-										<label>
-											<span>Поиск:</span>
-											<input type="search" class="form-control border-success" placeholder="Введите ID или имя" >
-										</label>
-									</div>
-						        </div>
+							<div class="card-header bg-dark text-white header-elements-inline">
+								<h6 class="card-title">Список Пациетов</h6>
+								<div class="header-elements">
+									<form action="#">
+										<div class="form-group-feedback form-group-feedback-right">
+											<input type="search" class="form-control wmin-200 text-white" placeholder="Search...">
+											<div class="form-control-feedback">
+												<i class="icon-search4 font-size-base text-muted"></i>
+											</div>
+										</div>
+									</form>
+			                	</div>
 							</div>
 
-							<div class="card-body">
-								<div class="table-responsive shadow-0 mb-0">
-									<table class="table table-bordered">
-										<thead class="bg-blue text-center">
-											<tr>
+							<div class="card-body" style="">
+
+								<div class="table-responsive">
+									<table class="table table-hover table-sm table-bordered">
+										<thead>
+											<tr class="bg-blue">
 												<th>ID</th>
 												<th>ФИО</th>
 												<th>Дата рождение</th>
@@ -204,7 +222,7 @@ $header = "Рабочий стол";
 													}
 												  	?>
 													<td class="text-center">
-														<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Редактировать</button>
+														<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple">Редактировать</button>
 													</td>
 												</tr>
 												<?php
@@ -213,6 +231,7 @@ $header = "Рабочий стол";
 										</tbody>
 									</table>
 								</div>
+
 							</div>
 
 						</div>
