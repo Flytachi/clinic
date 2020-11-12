@@ -27,7 +27,7 @@
                         </thead>
                         <tbody id="displ_tab-4">
                             <?php
-                            foreach($db->query('SELECT * FROM visit WHERE direction IS NOT NULL AND status = 0 ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query('SELECT * FROM visit WHERE direction IS NOT NULL AND status = 1 ORDER BY add_date ASC LIMIT 5') as $row) {
                                 ?>
                                     <tr>
                                         <td class="text-left"><?= $row['add_date'] ?></td>

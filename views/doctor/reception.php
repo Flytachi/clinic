@@ -79,7 +79,7 @@ is_auth();
                                             </td>
                                             <td class="text-center">
                                                 <button onclick="return alert('<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Принять</button>
-                                                <button onclick="return alert('<?= $row['id'] ?>')" type="button" class="btn btn-outline-danger btn-lg legitRipple">Отказ</button>
+                                                <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-lg legitRipple">Отказ</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -103,9 +103,36 @@ is_auth();
 	</div>
 	<!-- /page content -->
 
+    <!-- Failure modal -->
+	<div id="modal_failure" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
 
+				<div class="modal-header bg-danger">
+					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
 
+				<div class="modal-body">
+                    <div class="form-group row">
 
+                        <input type="hidden" id="vis_id" name="id" value="">
+
+                        <div class="col-md-12">
+                            <label>Причина:</label>
+                            <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите причину ..." required></textarea>
+                        </div>
+
+                    </div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn bg-danger">Отказаться</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /failure modal -->
 
     <!-- Footer -->
     <?php include 'layout/footer.php' ?>

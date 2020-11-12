@@ -185,6 +185,7 @@ class StationaryTreatmentForm extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group row">
