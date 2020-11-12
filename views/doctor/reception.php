@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
+$header = "Приём пациетов";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,8 +22,12 @@ is_auth();
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
-
 		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
+
 			<!-- Content area -->
 			<div class="content">
 
@@ -52,7 +57,7 @@ is_auth();
                                     <?php
                                     foreach($db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.die_date IS NULL AND vs.status = 1 AND vs.parent_id = '.$_SESSION['session_id'].' ORDER BY vs.add_date ASC') as $row) {
                                         ?>
-                                        <tr>
+                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['user_id']) ?></td>
                                             <td><?= get_full_name($row['user_id']) ?></td>
                                             <td><?= $row['dateBith'] ?></td>
@@ -78,7 +83,7 @@ is_auth();
                                                 ?>
                                             </td>
                                             <td class="text-center">
-                                                <button onclick="return alert('<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Принять</button>
+                                                <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Принять</button>
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-lg legitRipple">Отказ</button>
                                             </td>
                                         </tr>
@@ -113,22 +118,7 @@ is_auth();
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<div class="modal-body">
-                    <div class="form-group row">
-
-                        <input type="hidden" id="vis_id" name="id" value="">
-
-                        <div class="col-md-12">
-                            <label>Причина:</label>
-                            <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите причину ..." required></textarea>
-                        </div>
-
-                    </div>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn bg-danger">Отказаться</button>
-				</div>
+				<?= PatientFailure::form(); ?>
 			</div>
 		</div>
 	</div>
@@ -137,6 +127,34 @@ is_auth();
     <!-- Footer -->
     <?php include 'layout/footer.php' ?>
     <!-- /footer -->
+
+    <script type="text/javascript">
+
+		function Recept(tr) {
+			$('#'+tr).css("background-color", "blue");
+			$('#'+tr).css("color", "white");
+			$('#'+tr).fadeOut('slow', function() {
+				$(this).remove();
+			});
+		}
+
+        $('#form_PatientFailure').submit(function (events) {
+            events.preventDefault();
+            $.ajax({
+                type: $(this).attr("method"),
+                url: $(this).attr("action"),
+                data: $(this).serializeArray(),
+                success: function (result) {
+					$('#modal_failure').modal('hide');
+					$('#'+result).css("background-color", "red");
+					$('#'+result).css("color", "white");
+					$('#'+result).fadeOut('slow', function() {
+						$(this).remove();
+					});
+                },
+            });
+        });
+    </script>
 
 </body>
 </html>

@@ -120,6 +120,12 @@
                                         <span>Мои пациенты</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('doctor/index') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>Операционные пациенты</span>
+                                    </a>
+                                </li>
                                 <?php
                                 break;
                         endswitch;

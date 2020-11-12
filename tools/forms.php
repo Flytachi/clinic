@@ -586,4 +586,91 @@ class UserServiceForm extends Model
     }
 }
 
+class PatientFailure extends Model
+{
+    public $table = 'visit';
+
+    public function form($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="form_<?= __CLASS__ ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <div class="form-group row">
+
+                    <input type="hidden" id="vis_id" name="id" value="">
+                    <input type="hidden" name="parent_id" value="">
+
+                    <div class="col-md-12">
+                        <label>Причина:</label>
+                        <textarea rows="4" cols="4" name="failure" class="form-control" placeholder="Введите причину ..." required></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn bg-danger">Отказаться</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if ($object == 1){
+                $this->success($pk);
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function success($pk)
+    {
+        echo "PatientFailure_tr_$pk";
+    }
+
+}
+/*
+class PatientPreroute extends Model
+{
+    public $table = 'visit';
+
+    public function form($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <div class="form-group row">
+
+                    <input type="hidden" id="vis_id" name="id" value="">
+                    <input type="hidden" name="parent_id" value="">
+
+                    <div class="col-md-12">
+                        <label>Причина:</label>
+                        <textarea rows="4" cols="4" name="failure" class="form-control" placeholder="Введите причину ..." required></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn bg-danger">Отказаться</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+}
+/*
 ?>

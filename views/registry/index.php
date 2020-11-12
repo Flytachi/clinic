@@ -27,7 +27,7 @@ is_auth(2);
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-bottom border-bottom-0 nav-justified">
+				<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
 					<li class="nav-item"><a href="#basic-justified-tab1" class="nav-link legitRipple active show" data-toggle="tab">Регистрация</a></li>
 					<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Стационарная</a></li>
 					<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">Амбулаторная</a></li>
@@ -165,15 +165,23 @@ is_auth(2);
 															</td>
 															<td>
 																<?php
-																if($stm_dr['status'] == 1){
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
-																	<?php
-																}else {
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Оплачивается</span>
-																	<?php
-																}
+																switch ($stm_dr['status']):
+																    case 1:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+																		<?php
+																        break;
+																    case 2:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+																		<?php
+																        break;
+																	default:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+																		<?php
+																		break;
+																endswitch;
 																?>
 															</td>
 															<?php
