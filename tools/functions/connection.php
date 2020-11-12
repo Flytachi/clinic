@@ -2,9 +2,12 @@
 // Database Constants
 define("DRIVER", "mysql");
 define("DB_HOST", "localhost");
-define("DB_NAME", "clinic");
-define("DB_USER", "clinic");
-define("DB_PASS", "clin_pik27");
+// define("DB_NAME", "clinic");
+// define("DB_USER", "clinic");
+// define("DB_PASS", "clin_pik27");
+define("DB_NAME", "u723643070_clinic");
+define("DB_USER", "u723643070_clinic");
+define("DB_PASS", "u723643070_Clinic_pik27");
 define("CHARSET", "utf8");
 $DNS = DRIVER.":host=".DB_HOST.";dbname=".DB_NAME.";charset=".CHARSET;
 
