@@ -18,7 +18,7 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                foreach($db->query("SELECT * FROM user_check WHERE user_id = $pk") as $row) {
+                foreach($db->query("SELECT * FROM visit_price WHERE visit_id = $pk") as $row) {
                     if(empty($total_price_payment)){
                         $total_price_payment = $row['price_payment'];
                     }else{
@@ -42,7 +42,7 @@ if ($_GET['pk']) {
         <div class="card">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk); ?></em></h5>
+                <h5 class="card-title"><em><?= get_full_name($_GET['user_id']); ?></em></h5>
             </div>
 
             <div class="card-body">
@@ -57,17 +57,12 @@ if ($_GET['pk']) {
                         </thead>
                         <tbody>
                             <?php
-                            foreach($db->query("SELECT * FROM user_service WHERE user_id = $pk AND priced IS NULL") as $row) {
+                            foreach($db->query("SELECT * FROM visit_service WHERE visit_id = $pk AND priced IS NULL") as $row) {
                                 $service = $db->query('SELECT * FROM service WHERE id='.$row['service_id'])->fetch();
-                                if(empty($total_price)){
-                                    $total_price = $service['price'];
-                                }else{
-                                    $total_price += $service['price'];
-                                }
                                 ?>
                                     <tr id="tr_UserServiceForm_<?= $row['id'] ?>">
                                         <td><?= $service['name'] ?></td>
-                                        <td class="text-right"><?= number_format($service['price']) ?></td>
+                                        <td class="text-right total_cost"><?= $service['price'] ?></td>
                                         <th class="text-center">
                                             <div class="list-icons">
                                                 <button onclick="Update('<?= up_url($row['id'], 'UserServiceForm') ?>', 'tr_UserServiceForm_<?= $row['id'] ?>')" class="btn border-danger-600 text-danger-600"><i class="icon-minus2"></i></button>
@@ -81,8 +76,11 @@ if ($_GET['pk']) {
                         </tbody>
                     </table>
                     <br>
+                    <div class="text-left">
+                        <strong>Итого: </strong><strong id="total_title"></strong>
+                    </div>
                     <div class="text-right">
-                        <button onclick="$('#total_price').val(this.dataset.price);$('#user_amb_id').val(this.dataset.pk);" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-pk="<?= $pk ?>" data-price="<?= $total_price ?>" data-target="#modal_default">Оплата (<?= number_format($total_price) ?>)</button>
+                        <button onclick="$('#total_price').val($('#total_title').text());$('#visit_amb_id').val(this.dataset.pk);" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-pk="<?= $pk ?>" data-target="#modal_default">Оплата</button>
                     </div>
                 </div>
             </div>

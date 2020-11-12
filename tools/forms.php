@@ -22,9 +22,9 @@ class PatientForm extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_level" value="15">
             <input type="hidden" name="status" value="0">
-
 
             <div class="row">
                 <div class="col-md-3">
@@ -129,10 +129,6 @@ class PatientForm extends Model
 
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <label>Жалоба:</label>
-                            <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $post['complaint']?></textarea>
-                        </div>
-                        <div class="col-md-6">
                             <label>Аллергия:</label>
                             <textarea rows="4" cols="4" name="allergy" class="form-control" placeholder="Введите аллергия ..."><?= $post['allergy']?></textarea>
                         </div>
@@ -174,8 +170,9 @@ class PatientForm extends Model
 
 class StationaryTreatmentForm extends Model
 {
-    public $table = 'users';
-    public $table2 = 'beds';
+    public $table = 'visit';
+    public $table1 = 'beds';
+    public $table2 = 'users';
 
     public function form($pk = null)
     {
@@ -187,107 +184,107 @@ class StationaryTreatmentForm extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
-            <div class="row">
+            <div class="form-group row">
 
                 <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Пациет:</label>
-                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL AND parent_id IS NULL') as $row) {
-                                    ?>
-                                    <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
-                                    <?php
-                                }
-                            ?>
-                        </select>
-                    </div>
+                    <label>Пациет:</label>
+                    <select data-placeholder="Выбрать пациета" name="user_id" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Этаж:</label>
-                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($FLOOR as $key => $value) {
-                                ?>
-                                <option value="<?= $key ?>"><?= $value ?></option>
-                                <?php
-                            }
+                    <label>Этаж:</label>
+                    <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($FLOOR as $key => $value) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $key ?>"><?= $value ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Палата:</label>
-                        <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT DISTINCT ward, floor from beds ') as $row) {
-                                ?>
-                                <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
-                                <?php
-                            }
+                    <label>Палата:</label>
+                    <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT DISTINCT ward, floor from beds ') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Койка:</label>
-                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed_id" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from beds') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['num'] ?> койка</option>
-                                <?php
-                            }
+                    <label>Койка:</label>
+                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from beds') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['num'] ?> койка</option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
             </div>
 
-            <div class="row">
+            <div class="form-group row">
+
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Отдел:</label>
-                        <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                                <?php
-                            }
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Специалиста:</label>
-                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
+                    <label>Специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
                 </div>
 
             </div>
@@ -300,24 +297,35 @@ class StationaryTreatmentForm extends Model
         <script type="text/javascript">
             $(function(){
                 $("#ward").chained("#floor");
-                $("#bed_id").chained("#ward");
+                $("#bed").chained("#ward");
                 $("#parent_id").chained("#division");
             });
         </script>
         <?php
     }
 
-    public function update()
+    public function save()
     {
+        global $db;
         if($this->clean()){
-            $pk = $this->post['id'];
-            $post1 = array('parent_id' => $_POST['parent_id'], 'status_bed' => True, 'status' => True); // id => pk  // table => users
-            $post2 = array('user_id' => $pk); // id => bed_id   // table => beds
-
-            $object1 = Mixin\update($this->table, $post1, $pk);
-            $object2 = Mixin\update($this->table2, $post2, $_POST['bed_id']);
-            if ($object1 == 1 and $object2 == 1){
-                $this->success();
+            $bed_pk = $this->post['bed'];
+            unset($this->post['bed']);
+            $object = Mixin\insert($this->table, $this->post);
+            if ($object == 1){
+                // Бронь койки
+                $post1 = array('visit_id' => $db->lastInsertId(), 'service_id' => $servise_pk);
+                $object1 = Mixin\update($this->table1, array('user_id' => $this->post['user_id']), $bed_pk);
+                if ($object1 == 1){
+                    // Обновление статуса у пациента
+                    $object2 = Mixin\update($this->table2, array('status' => True), $this->post['user_id']);
+                    if ($object2 == 1){
+                        $this->success();
+                    }else {
+                        $this->error($object2);
+                    }
+                }else{
+                    $this->error($object1);
+                }
             }else{
                 $this->error($object);
             }
@@ -349,8 +357,9 @@ class StationaryTreatmentForm extends Model
 
 class OutpatientTreatmentForm extends Model
 {
-    public $table = 'users';
-    public $table2 = 'user_service';
+    public $table = 'visit';
+    public $table1 = 'visit_service';
+    public $table2 = 'users';
 
     public function form($pk = null)
     {
@@ -362,75 +371,90 @@ class OutpatientTreatmentForm extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="direction" value="0">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
-            <div class="row">
+            <div class="form-group row">
 
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Выберите пациета:</label>
-                        <select data-placeholder="Выбрать пациета" name="id" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                                foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL AND parent_id IS NULL') as $row) {
-                                    ?>
-                                    <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
-                                    <?php
-                                }
-                            ?>
-                        </select>
-                    </div>
+                    <label>Выберите пациета:</label>
+                    <select data-placeholder="Выбрать пациета" name="user_id" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Отдел:</label>
-                        <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                                <?php
-                            }division
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }division
+                        ?>
+                    </select>
                 </div>
 
             </div>
 
-            <div class="row">
+            <div class="form-group row">
+
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Выберите специалиста:</label>
-                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Услуга:</label>
-                        <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
-                                <?php
-                            }
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
                             ?>
-                        </select>
-                    </div>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <!-- <div class="col-md-6">
+                    <select data-placeholder="Выберите услуги"  id="service" class="form-control multiselect" multiple="multiple" required data-fouc>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+    				</select>
+                </div> -->
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
                 </div>
 
             </div>
@@ -449,21 +473,32 @@ class OutpatientTreatmentForm extends Model
         <?php
     }
 
-    public function update()
+    public function save()
     {
+        global $db;
         if($this->clean()){
-            $pk = $this->post['id'];
             $servise_pk = $this->post['service'];
-            unset($this->post['id']);
             unset($this->post['service']);
-            $post2 = array('user_id' => $pk, 'service_id' => $servise_pk);
-            $object1 = Mixin\update($this->table, $this->post, $pk);
-            $object2 = Mixin\insert($this->table2, $post2);
-            if ($object1 == 1 and $object2 == 1){
-                $this->success();
+            $object = Mixin\insert($this->table, $this->post);
+            if ($object == 1){
+                // Создание списка Услуг
+                $post1 = array('visit_id' => $db->lastInsertId(), 'service_id' => $servise_pk);
+                $object1 = Mixin\insert($this->table1, $post1);
+                // Обновление статуса у пациента
+                $object2 = Mixin\update($this->table2, array('status' => True), $this->post['user_id']);
+                if ($object1 == 1 and $object2 == 1){
+                    $this->success();
+                }else {
+                    if ($object1 != 1) {
+                        $this->error($object1);
+                    }else {
+                        $this->error($object2);
+                    }
+                }
             }else{
                 $this->error($object);
             }
+
         }
     }
 
@@ -492,21 +527,25 @@ class OutpatientTreatmentForm extends Model
 
 class UserServiceForm extends Model
 {
-    public $table = 'user_service';
+    public $table = 'visit_service';
+    public $table1 = 'visit';
     public $table2 = 'users';
 
     public function get_or_404($pk)
     {
         global $db;
+        // Нахождение id визита
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
-        $user_pk = $object->user_id;
+        // Удаление услуги
         $del = Mixin\delete($this->table, $pk);
         if($del){
-            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object->user_id")->rowCount();
+            // Проверка услуг
+            $status = $db->query("SELECT * FROM $this->table WHERE visit_id = $object->visit_id")->rowCount();
             if(!$status){
-                $post101 = array('parent_id' => null);
-                $object1 = Mixin\update($this->table2, $post101, $user_pk);
-                if($object1){
+                $object2 = $db->query("SELECT * FROM $this->table1 WHERE id = $object->visit_id")->fetch(PDO::FETCH_OBJ);
+                $del1 = Mixin\delete($this->table1, $object->visit_id);
+                if($del1){
+                    Mixin\update($this->table2, array('status' => null), $object2->user_id);
                     $this->success(1);
                 }
             }else {
@@ -547,4 +586,91 @@ class UserServiceForm extends Model
     }
 }
 
+class PatientFailure extends Model
+{
+    public $table = 'visit';
+
+    public function form($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="form_<?= __CLASS__ ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <div class="form-group row">
+
+                    <input type="hidden" id="vis_id" name="id" value="">
+                    <input type="hidden" name="parent_id" value="">
+
+                    <div class="col-md-12">
+                        <label>Причина:</label>
+                        <textarea rows="4" cols="4" name="failure" class="form-control" placeholder="Введите причину ..." required></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn bg-danger">Отказаться</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if ($object == 1){
+                $this->success($pk);
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function success($pk)
+    {
+        echo "PatientFailure_tr_$pk";
+    }
+
+}
+/*
+class PatientPreroute extends Model
+{
+    public $table = 'visit';
+
+    public function form($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <div class="form-group row">
+
+                    <input type="hidden" id="vis_id" name="id" value="">
+                    <input type="hidden" name="parent_id" value="">
+
+                    <div class="col-md-12">
+                        <label>Причина:</label>
+                        <textarea rows="4" cols="4" name="failure" class="form-control" placeholder="Введите причину ..." required></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn bg-danger">Отказаться</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+}
+/*
 ?>

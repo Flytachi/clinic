@@ -102,6 +102,32 @@
                                 </li>
                                 <?php
                                 break;
+                            case 5:
+                                ?>
+                                <li class="nav-item">
+                                    <a href="<?= viv('doctor/reception') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>Принять пациентов</span>
+                                        <span class="badge bg-pink badge-pill ml-auto">
+                                            <?= $db->query('SELECT id FROM visit WHERE die_date IS NULL AND status = 1 AND parent_id = '.$_SESSION['session_id'])->rowCount() ?>
+                                        </span>
+
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('doctor/index') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>Мои пациенты</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('doctor/index') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>Операционные пациенты</span>
+                                    </a>
+                                </li>
+                                <?php
+                                break;
                         endswitch;
                         ?>
 

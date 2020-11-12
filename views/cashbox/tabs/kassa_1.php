@@ -26,14 +26,14 @@
                         </thead>
                         <tbody id="displ_tab-1">
                             <?php
-                            foreach($db->query('SELECT * FROM users WHERE user_level = 15 AND status_bed IS NULL AND status IS NULL AND parent_id IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query('SELECT * FROM visit WHERE direction IS NULL AND status = 0 ORDER BY add_date ASC LIMIT 5') as $row) {
                             ?>
                                 <tr>
-                                    <td class="text-left"><?= date("d/m/Y H:i"); ?></td>
-                                    <td class="text-center"><?= addZero($row['id']) ?></td>
+                                    <td class="text-left"><?= $row['add_date'] ?></td>
+                                    <td class="text-center"><?= addZero($row['user_id']) ?></td>
                                     <td class="text-center">
-                                        <a onclick="CheckAmb('get_mod.php?pk=<?= $row['id'] ?>')">
-                                            <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+                                        <a onclick="CheckAmb('get_mod.php?pk=<?= $row['id'] ?>&user_id=<?= $row['user_id'] ?>')">
+                                            <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
                                         </a>
                                     </td>
                                 </tr>
