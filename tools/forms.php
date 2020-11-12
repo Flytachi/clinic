@@ -22,6 +22,7 @@ class PatientForm extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_level" value="15">
             <input type="hidden" name="status" value="0">
 
@@ -184,6 +185,7 @@ class StationaryTreatmentForm extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group row">
 
@@ -369,6 +371,7 @@ class OutpatientTreatmentForm extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="0">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group row">
 
@@ -432,8 +435,8 @@ class OutpatientTreatmentForm extends Model
                     </select>
                 </div>
 
-                <div class="col-md-6">
-                    <select data-placeholder="Выберите услуги" class="form-control multiselect" multiple="multiple" required data-fouc>
+                <!-- <div class="col-md-6">
+                    <select data-placeholder="Выберите услуги"  id="service" class="form-control multiselect" multiple="multiple" required data-fouc>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
                             ?>
@@ -442,7 +445,7 @@ class OutpatientTreatmentForm extends Model
                         }
                         ?>
     				</select>
-                </div>
+                </div> -->
 
             </div>
 

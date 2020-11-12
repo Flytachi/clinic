@@ -1,4 +1,3 @@
-
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
@@ -6,7 +5,6 @@ is_auth();
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../layout/head.php' ?>
-</head>
 
 <body>
 
@@ -3993,7 +3991,7 @@ is_auth();
 				    </div>
 				    <!-- /page content -->
 				</div>
-				
+
 			</div>
             <!-- /content area -->
 

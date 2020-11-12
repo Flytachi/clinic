@@ -166,11 +166,20 @@ is_auth(3);
 						$('#'+tr).css("color", "white");
 						$('#'+tr).fadeOut('slow', function() {
 						 	$(this).remove();
+							sumTo($('.total_cost'));
 						});
 					}
 				},
 			});
 		};
+
+		function sumTo(arr) {
+			var total = 0;
+			for (value of arr) {
+			  total += parseInt(value.textContent);
+			}
+			$('#total_title').html(total);
+		}
 
 		function CheckAmb(events) {
 			$.ajax({
@@ -178,6 +187,7 @@ is_auth(3);
 				url: events,
 				success: function (result) {
 					$('#check-amb').html(result);
+					sumTo($('.total_cost'));
 				},
 			});
 		};
