@@ -1,7 +1,5 @@
 <?php
 
-$PROJECT_NAME = "clinic";
-date_default_timezone_set('Asia/Samarkand');
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",

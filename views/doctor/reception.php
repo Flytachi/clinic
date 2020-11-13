@@ -88,7 +88,7 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-                                                <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple">Принять</button>
+                                                <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
@@ -136,7 +136,7 @@ $header = "Приём пациетов";
     <script type="text/javascript">
 
 		function Recept(tr) {
-			$('#'+tr).css("background-color", "blue");
+			$('#'+tr).css("background-color", "rgb(76, 175, 80)");
 			$('#'+tr).css("color", "white");
 			$('#'+tr).fadeOut('slow', function() {
 				$(this).remove();
@@ -151,9 +151,9 @@ $header = "Приём пациетов";
                 data: $(this).serializeArray(),
                 success: function (result) {
 					$('#modal_failure').modal('hide');
-					$('#'+result).css("background-color", "red");
+					$('#'+result).css("background-color", "rgb(244, 67, 54)");
 					$('#'+result).css("color", "white");
-					$('#'+result).fadeOut('slow', function() {
+					$('#'+result).fadeOut(900, function() {
 						$(this).remove();
 					});
                 },
