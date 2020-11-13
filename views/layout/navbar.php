@@ -1,5 +1,4 @@
-
-<div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static">
+<div class="navbar navbar-expand-md navbar-dark bg-info navbar-static">
     <div class="navbar-brand">
         <a href="index.php" class="d-inline-block">
             <img src="<?= stack("global_assets/images/logo_light.png") ?>" alt="">
@@ -25,9 +24,8 @@
             </li>
         </ul>
 
-        <span class="navbar-text ml-md-3">
-            <span class="badge badge-mark border-orange-300 mr-2"></span>
-            <?= get_full_name() ." - ". level_name() ." ". division_name() ?>
+        <span class=" ml-md-3">
+            <span class="siya"><?= get_full_name() ." - ". level_name() ." ". division_name() ?></span>
         </span>
 
 

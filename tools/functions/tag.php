@@ -17,7 +17,6 @@ function prit($value) {
 
 function render($url){
     global $PROJECT_NAME;
-    header('HTTP/1.1 200 OK');
     header("location:/$PROJECT_NAME/views/$url.php");
     exit;
 }

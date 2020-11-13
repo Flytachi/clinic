@@ -12,6 +12,7 @@
 	<link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("vendors/css/style.css") ?>" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->
@@ -33,7 +34,7 @@
 	<!-- JS chained -->
 	<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script>
-	
+
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 </head>

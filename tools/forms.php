@@ -586,6 +586,27 @@ class UserServiceForm extends Model
     }
 }
 
+class PatientUpStatus extends Model
+{
+    public $table = 'visit';
+
+    public function get_or_404($pk)
+    {
+        $this->post['id'] = $pk;
+        $this->post['status'] = 2;
+        $this->url = "content_1.php?id=".$this->post['id'];
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/doctor/$this->url");
+        exit;
+    }
+
+}
+
 class PatientFailure extends Model
 {
     public $table = 'visit';

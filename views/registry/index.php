@@ -44,9 +44,9 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade active show" id="basic-justified-tab1">
 
-						<div class="card border-1 border-dark">
+						<div class="card border-1 border-info">
 
-							<div class="card-header bg-dark text-white header-elements-inline">
+							<div class="card-header text-dark header-elements-inline alpha-info">
 								<h6 class="card-title">Регистрация</h6>
 								<div class="header-elements">
 									<div class="list-icons">
@@ -65,9 +65,9 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade" id="basic-justified-tab2">
 
-						<div class="card border-1 border-danger">
+						<div class="card border-1 border-info">
 
-							<div class="card-header bg-danger text-white header-elements-inline">
+							<div class="card-header text-dark header-elements-inline alpha-info">
 								<h6 class="card-title">Стационарная</h6>
 								<div class="header-elements">
 									<div class="list-icons">
@@ -86,9 +86,9 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade" id="basic-justified-tab3">
 
-						<div class="card border-1 border-primary">
+						<div class="card border-1 border-info">
 
-							<div class="card-header bg-primary text-white header-elements-inline">
+							<div class="card-header text-dark header-elements-inline alpha-info">
 								<h6 class="card-title">Амбулаторная</h6>
 								<div class="header-elements">
 									<div class="list-icons">
@@ -107,14 +107,14 @@ $header = "Рабочий стол";
 
 					<div class="tab-pane fade" id="basic-justified-tab4">
 
-						<div class="card border-1 border-dark">
+						<div class="card border-1 border-info">
 
-							<div class="card-header bg-dark text-white header-elements-inline">
+							<div class="card-header text-dark header-elements-inline alpha-info">
 								<h6 class="card-title">Список Пациетов</h6>
 								<div class="header-elements">
 									<form action="#">
 										<div class="form-group-feedback form-group-feedback-right">
-											<input type="search" class="form-control wmin-200 text-white" placeholder="Search...">
+											<input type="search" class="form-control wmin-200" placeholder="Search...">
 											<div class="form-control-feedback">
 												<i class="icon-search4 font-size-base text-muted"></i>
 											</div>
@@ -128,7 +128,7 @@ $header = "Рабочий стол";
 								<div class="table-responsive">
 									<table class="table table-hover table-sm table-bordered">
 										<thead>
-											<tr class="bg-blue">
+											<tr class="bg-info">
 												<th>ID</th>
 												<th>ФИО</th>
 												<th>Дата рождение</th>
@@ -170,15 +170,23 @@ $header = "Рабочий стол";
 															</td>
 															<td>
 																<?php
-																if($stm_dr['status']){
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-																	<?php
-																}else {
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
-																	<?php
-																}
+																switch ($stm_dr['status']):
+																    case 1:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+																		<?php
+																        break;
+																    case 2:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+																		<?php
+																        break;
+																	default:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+																		<?php
+																		break;
+																endswitch;
 																?>
 															</td>
 															<?php
