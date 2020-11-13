@@ -10,11 +10,11 @@ function is_auth($arr = null){
         $perk =level();
         if (is_array($arr)){
             if(!in_array($perk, $arr)){
-                Mixin\error('303');
+                Mixin\error('423');
             }
         }else{
             if(intval($arr) != $perk){
-                Mixin\error('303');
+                Mixin\error('423');
             }
         }
     }

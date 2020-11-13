@@ -42,8 +42,8 @@ is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title text-danger">303</h1>
-						<h5>У вас не достаточно прав!</h5>
+						<h1 class="error-title text-danger">423</h1>
+						<h4>заблокировано!</h4>
 					</div>
 					<!-- /error title -->
 

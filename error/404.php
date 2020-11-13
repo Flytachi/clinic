@@ -43,7 +43,7 @@ is_auth();
 					<!-- Error title -->
 					<div class="text-center mb-3">
 						<h1 class="error-title text-danger">404</h1>
-						<h5>Page not found!</h5>
+						<h4>Page not found!</h4>
 					</div>
 					<!-- /error title -->
 
