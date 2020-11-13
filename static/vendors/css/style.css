@@ -2,12 +2,18 @@
     animation: pulsate 2.4s linear infinite;
     text-align: center;
     text-shadow:
-        #E7D06D 0px 0px 10px,
+        /* #E7D06D 0px 0px 10px,
         #E7D06D 0px 0px 20px,
         #E7D06D 0px 0px 30px,
         #E7D06D 0px 0px 40px,
         #E7D06D 0px 0px 70px,
-        #E7D06D 0px 0px 80px;
+        #E7D06D 0px 0px 80px; */
+        #1b45b8 0px 0px 10px,
+        #3563df 0px 0px 20px,
+        #4271f1 0px 0px 30px,
+        #42b1f1 0px 0px 40px,
+        #4ae1fc 0px 0px 70px,
+        #4ae1fc 0px 0px 80px;
     color: #ffffff;
     font-variant: normal;
     font-weight: normal;
