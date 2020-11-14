@@ -695,13 +695,18 @@ class PatientReport extends Model
     public function form($pk = null)
     {
         global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" id="rep_id" value="<?= $pk ?>">
 
             <textarea name="report" id="report" rows="10" cols="80">
-                This is my textarea to be replaced with CKEditor 4.
+                <?= $post['report'] ?>
             </textarea>
             <script>
                 CKEDITOR.replace( 'report' );

@@ -45,10 +45,8 @@ $header = "Пациент";
 								<h5 class="card-title">Осмотр Пациента</h5>
 							</div>
 
-							<?php PatientReport::form(3); ?>
-
 							<?php prit($patient); ?>
-							<a href="<?= up_url($patient->id, 'PatientFinish') ?>" class="btn btn-danger">Завершить</a>
+							<a href="<?= up_url($patient->id, 'PatientFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит?')" class="btn btn-danger">Завершить</a>
 						</div>
 
 				    </div>

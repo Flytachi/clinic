@@ -61,11 +61,15 @@ $header = "Пациент";
 												<?php
 												if ($row['completed']) {
 													?>
-													<button onclick="Update('<?= viv('doctor/report') ?>?id=<?= $_GET['id'] ?>')" class="btn btn-outline-primary btn-sm legitRipple">Просмотр</button> <!-- data-toggle="modal" data-target="#modal_report_show" -->
+													<button type="button" class="btn btn-outline-primary btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+	                                                    <a onclick="Update('<?= up_url($row['id'], 'PatientReport') ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Изменить</a>
+	                                                    <a onclick="Check('<?= viv('doctor/report') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i> Отчёт</a>
+	                                                </div>
 													<?php
 												}else {
 													?>
-													<button onclick="$('#rep_id').val(this.dataset.id);" type="button" class="btn btn-outline-success btn-sm legitRipple" data-id="<?= $row['id'] ?>" data-toggle="modal" data-target="#modal_report_add">Провести</button>
+													<button onclick="CKEDITOR.instances.report.setData(''); $('#rep_id').val(this.dataset.id);" type="button" class="btn btn-outline-success btn-sm legitRipple" data-id="<?= $row['id'] ?>" data-toggle="modal" data-target="#modal_report_add">Провести</button>
 													<?php
 												}
 												?>
@@ -91,10 +95,10 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_report_add" class="modal fade" tabindex="-1">events
+	<div id="modal_report_add" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-full">
 			<div class="modal-content">
-				<div class="modal-body">
+				<div class="modal-body" id="form_card">
 
 					<?php PatientReport::form(); ?>
 
@@ -104,13 +108,9 @@ $header = "Пациент";
 	</div>
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-full">
-			<div class="modal-content">
-				<div class="modal-body">
-
-					<div class="card" id="report_show">
-
-					</div>
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-body" id="report_show">
 
 				</div>
 			</div>
@@ -118,7 +118,7 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
-		function Update(events) {
+		function Check(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
@@ -128,6 +128,18 @@ $header = "Пациент";
 				},
 			});
 		};
+
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_report_add').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
+
 	</script>
 
     <!-- Footer -->

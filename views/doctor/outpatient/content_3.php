@@ -54,10 +54,8 @@ $header = "Пациент";
 			                    </thead>
 			                    <tbody>
 									<?php
-									// prit($patient);
-									// prit($db->query("SELECT * FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL")->fetchAll());
 									$i = 1;
-									foreach ($db->query("SELECT * FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id !=".$_SESSION['session_id']) as $row) {
+									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id !=".$_SESSION['session_id']) as $row) {
 									?>
 										<tr class="text-center">
 											<td><?= $i++ ?></td>
@@ -67,7 +65,7 @@ $header = "Пациент";
 											<td><?= $row['completed'] ?></td>
 											<td>
                                                 <?php
-                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id ='. $row['id']) as $serv) {
+                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>
@@ -75,7 +73,7 @@ $header = "Пациент";
 											<td class="text-center">
 												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 												<div class="dropdown-menu dropdown-menu-right">
-													<a href="#" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
+													<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
 												</div>
 											</td>
 										</tr>
@@ -97,6 +95,29 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_report_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-body" id="report_show">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function Check(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (data) {
+					$('#modal_report_show').modal('show');
+					$('#report_show').html(data);
+				},
+			});
+		};
+	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
