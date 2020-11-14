@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(3);
+$header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,56 +23,48 @@ is_auth(3);
 
 
 		<!-- Main content -->
-
 		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
+
 			<!-- Content area -->
 			<div class="content">
 
+				<ul class="nav nav-tabs nav-tabs-highlight nav-justified">
+					<li class="nav-item"><a href="#highlighted-justified-tab1" class="nav-link active" data-toggle="tab">Приём платежей</a></li>
+					<li class="nav-item"><a href="#highlighted-justified-tab2" class="nav-link" data-toggle="tab">История платежей</a></li>
+					<li class="nav-item"><a href="#highlighted-justified-tab3" class="nav-link" data-toggle="tab">Возврат</a></li>
+					<li class="nav-item"><a href="#highlighted-justified-tab4" class="nav-link" data-toggle="tab">Стационар</a></li>
+				</ul>
+
 				<!-- Highlighted tabs -->
-				<div class="row">
+				<div class="tab-content">
 
-				    <div class="col-md-12">
-				        <div class="card">
+					<div class="tab-pane fade show active" id="highlighted-justified-tab1">
+						<?php
+							include 'tabs/kassa_1.php';
+						?>
+					</div>
 
-				            <div class="card-body">
-				                <ul class="nav nav-tabs nav-tabs-highlight nav-justified">
-				                    <li class="nav-item"><a href="#highlighted-justified-tab1" class="nav-link active" data-toggle="tab">Приём платежей</a></li>
-				                    <li class="nav-item"><a href="#highlighted-justified-tab2" class="nav-link" data-toggle="tab">История платежей</a></li>
-				                    <li class="nav-item"><a href="#highlighted-justified-tab3" class="nav-link" data-toggle="tab">Возврат</a></li>
-				                    <li class="nav-item"><a href="#highlighted-justified-tab4" class="nav-link" data-toggle="tab">Стационар</a></li>
-				                </ul>
+					<div class="tab-pane fade" id="highlighted-justified-tab2">
+						<?php
+							include 'tabs/kassa_2.php';
+						?>
+					</div>
 
-				                <div class="tab-content">
+					<div class="tab-pane fade" id="highlighted-justified-tab3">
+						<?php
+							include 'tabs/kassa_3.php';
+						?>
+					</div>
 
-				                    <div class="tab-pane fade show active" id="highlighted-justified-tab1">
-				                        <?php
-				                            include 'tabs/kassa_1.php';
-				                        ?>
-				                    </div>
-
-				                    <div class="tab-pane fade" id="highlighted-justified-tab2">
-				                        <?php
-				                            include 'tabs/kassa_2.php';
-				                        ?>
-				                    </div>
-
-				                    <div class="tab-pane fade" id="highlighted-justified-tab3">
-				                        <?php
-				                            include 'tabs/kassa_3.php';
-				                        ?>
-				                    </div>
-
-				                    <div class="tab-pane fade" id="highlighted-justified-tab4">
-				                        <?php
-				                            include 'tabs/kassa_4.php';
-				                        ?>
-				                    </div>
-
-				                </div>
-				            </div>
-
-				        </div>
-				    </div>
+					<div class="tab-pane fade" id="highlighted-justified-tab4">
+						<?php
+							include 'tabs/kassa_4.php';
+						?>
+					</div>
 
 				</div>
 				<!-- /highlighted tabs -->

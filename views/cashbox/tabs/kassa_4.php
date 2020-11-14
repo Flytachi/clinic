@@ -2,7 +2,7 @@
 
     <div class="col-md-5">
 
-        <div class="card">
+        <div class="card border-1 border-info">
             <div class="card-body">
 
                 <div class="form-group form-group-float">

@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
-$header = "Мои пациенты";
+is_auth(5);
+$header = "Приём пациетов";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,6 @@ $header = "Мои пациенты";
 		<?php include '../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -32,201 +31,79 @@ $header = "Мои пациенты";
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
-					<li class="nav-item"><a href="#colored-rounded-justified-tab1" class="nav-link rounded-left legitRipple active show" data-toggle="tab">Амбулаторные пациенти</a></li>
-					<li class="nav-item"><a href="#colored-rounded-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Стационарные пациенти</a></li>
-				</ul>
 
-				<div class="tab-content">
+				<div class="card border-1 border-info">
 
-					<div class="tab-pane fade active show" id="colored-rounded-justified-tab1">
-
-						<div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h5>Список Пациетов</h5>
-						        <div class="header-elements">
-									<div class="dataTables_filter">
-										<label>
-											<span>Поиск:</span>
-											<input type="search" class="form-control border-success" placeholder="Введите ID или имя" >
-										</label>
-									</div>
-						        </div>
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">Пациенты на приём</h6>
+						<div class="header-elements">
+							<div class="list-icons">
+								<a class="list-icons-item" data-action="collapse"></a>
 							</div>
-
-							<div class="card-body">
-
-								<div class="table-responsive shadow-0 mb-0">
-									<table class="table table-hover table-columned">
-										<thead>
-											<tr class="bg-blue text-center">
-												<th>ID</th>
-												<th>ФИО</th>
-												<th>Дата визита</th>
-												<th>Возраст</th>
-												<th>Мед услуга</th>
-												<th>Тип визита</th>
-												<th>Направление</th>
-												<th class="text-center">Действия</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>1</td>
-												<td>2</td>
-
-												<td>5</td>
-												<td>6</td>
-												<td>7</td>
-												<td>8</td>
-												<td>9</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right">
-														<a href="outpatient.php" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-														<a href="#" class="dropdown-item"><i class="icon-add"></i> Добавить визит</a>
-														<a href="#" class="dropdown-item"><i class="icon-repo-forked"></i> Осмотр Врача</a>
-														<a href="#" class="dropdown-item"><i class="icon-plus-circle2"></i> Другие визити</a>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td>2</td>
-
-												<td>5</td>
-												<td>5</td>
-												<td>6</td>
-												<td>7</td>
-												<td>8</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>				  <div class="dropdown-menu dropdown-menu-right">
-														<a href="outpatient.php" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-														<a href="#" class="dropdown-item"><i class="icon-add"></i> Добавить визит</a>
-														<a href="#" class="dropdown-item"><i class="icon-repo-forked"></i> Осмотр Врача</a>
-														<a href="#" class="dropdown-item"><i class="icon-plus-circle2"></i> Другие визити</a>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-
-							</div>
-
 						</div>
-
 					</div>
 
-					<div class="tab-pane fade" id="colored-rounded-justified-tab2">
+					<div class="card-body">
 
-						<div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h5>Список Пациетов</h5>
-						        <div class="header-elements">
-									<div class="dataTables_filter">
-										<label>
-											<span>Поиск:</span>
-											<input type="search" class="form-control border-success" placeholder="Введите ID или имя" >
-										</label>
-									</div>
-						        </div>
-							</div>
-
-							<div class="card-body">
-
-								<div class="table-responsive shadow-0 mb-0">
-									<table class="table table-hover table-columned">
-										<thead>
-											<tr class="bg-blue text-center">
-												<th>ID</th>
-												<th>Имя</th>
-												<th>Фамилия</th>
-												<th>Отчество</th>
-												<th>Дата визита</th>
-												<th>Суток</th>
-												<th>Койка</th>
-												<th>Возраст</th>
-												<th class="text-center">Действия</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>1</td>
-												<td>2</td>
-												<td>3</td>
-												<td>4</td>
-												<td>5</td>
-												<td>6</td>
-												<td>7</td>
-												<td>8</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right">
-														<a href="hospital.php" class="dropdown-item"><i class="icon-user-plus"></i>Обход</a>
-														<a href="#" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-														<a href="#" class="dropdown-item"><i class="icon-clipboard3"></i>Назначение врача</a>
-														<a href="#" class="dropdown-item"><i class="icon-clipboard2"></i> Записи медсестры</a>
-														<a href="#" class="dropdown-item"><i class="icon-diff-ignored"></i> Анестизиолог</a>
-														<a href="#" class="dropdown-item"><i class="icon-file-eye"></i> Операционные</a>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td>2</td>
-												<td>3</td>
-												<td>4</td>
-												<td>5</td>
-												<td>6</td>
-												<td>7</td>
-												<td>8</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right">
-														<a href="hospital" class="dropdown-item"><i class="icon-user-plus"></i>Обход</a>
-														<a href="#" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-														<a href="#" class="dropdown-item"><i class="icon-clipboard3"></i>Назначение врача</a>
-														<a href="#" class="dropdown-item"><i class="icon-clipboard2"></i> Записи медсестры</a>
-														<a href="#" class="dropdown-item"><i class="icon-diff-ignored"></i> Анестизиолог</a>
-														<a href="#" class="dropdown-item"><i class="icon-file-eye"></i> Операционные</a>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td>1</td>
-												<td>2</td>
-												<td>3</td>
-												<td>4</td>
-												<td>5</td>
-												<td>6</td>
-												<td>7</td>
-												<td>8</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right">
-														<a href="#" class="dropdown-item"><i class="icon-user-plus"></i>Обход</a>
-														<a href="#" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-														<a href="#" class="dropdown-item"><i class="icon-clipboard3"></i>Назначение врача</a>
-														<a href="#" class="dropdown-item"><i class="icon-clipboard2"></i> Записи медсестры</a>
-														<a href="#" class="dropdown-item"><i class="icon-diff-ignored"></i> Анестизиолог</a>
-														<a href="#" class="dropdown-item"><i class="icon-file-eye"></i> Операционные</a>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-
-							</div>
-
-						</div>
+						<div class="table-responsive">
+                            <table class="table table-hover table-sm table-bordered">
+                                <thead>
+                                    <tr class="bg-info">
+                                        <th>ID</th>
+                                        <th>ФИО</th>
+                                        <th>Дата рождения</th>
+                                        <th>Мед услуга</th>
+                                        <th>Направитель</th>
+                                        <th>Тип визита</th>
+                                        <th class="text-center" style="width:210px">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach($db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = '.$_SESSION['session_id'].' ORDER BY vs.add_date ASC') as $row) {
+                                        ?>
+                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
+                                            <td><?= addZero($row['user_id']) ?></td>
+                                            <td><?= get_full_name($row['user_id']) ?></td>
+                                            <td><?= $row['dateBith'] ?></td>
+                                            <td>
+                                                <?php
+                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id ='. $row['id']) as $serv) {
+                                                    echo $serv['name']."<br>";
+                                                }
+                                                ?>
+                                            </td>
+                                            <td><?= get_full_name($row['route_id']) ?></td>
+                                            <td class="text-center">
+                                                <?php
+                                                if($row['direction']){
+                                                    ?>
+                                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
+                                                    <?php
+                                                }else{
+                                                    ?>
+                                                    <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+												<a href="<?= up_url($row['id'], 'PatientUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
+                                                <!-- <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button> -->
+                                                <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
 
 					</div>
 
 				</div>
+
 
 			</div>
             <!-- /content area -->
@@ -237,13 +114,53 @@ $header = "Мои пациенты";
 	</div>
 	<!-- /page content -->
 
+    <!-- Failure modal -->
+	<div id="modal_failure" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-1 border-danger">
 
+				<div class="modal-header bg-danger">
+					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
 
-
+				<?= PatientFailure::form(); ?>
+			</div>
+		</div>
+	</div>
+	<!-- /failure modal -->
 
     <!-- Footer -->
     <?php include 'layout/footer.php' ?>
     <!-- /footer -->
+
+    <script type="text/javascript">
+
+		function Recept(tr) {
+			$('#'+tr).css("background-color", "rgb(76, 175, 80)");
+			$('#'+tr).css("color", "white");
+			$('#'+tr).fadeOut('slow', function() {
+				$(this).remove();
+			});
+		}
+
+        $('#form_PatientFailure').submit(function (events) {
+            events.preventDefault();
+            $.ajax({
+                type: $(this).attr("method"),
+                url: $(this).attr("action"),
+                data: $(this).serializeArray(),
+                success: function (result) {
+					$('#modal_failure').modal('hide');
+					$('#'+result).css("background-color", "rgb(244, 67, 54)");
+					$('#'+result).css("color", "white");
+					$('#'+result).fadeOut(900, function() {
+						$(this).remove();
+					});
+                },
+            });
+        });
+    </script>
 
 </body>
 </html>

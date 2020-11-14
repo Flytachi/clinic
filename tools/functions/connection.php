@@ -1,29 +1,20 @@
 <?php
 // Database Constants
-define("DRIVER", "mysql");
-define("DB_HOST", "localhost");
-// define("DB_NAME", "clinic");
-// define("DB_USER", "clinic");
-// define("DB_PASS", "clin_pik27");
-define("DB_NAME", "u723643070_clinic");
-define("DB_USER", "u723643070_clinic");
-define("DB_PASS", "u723643070_Clinic_pik27");
-define("CHARSET", "utf8");
-$DNS = DRIVER.":host=".DB_HOST.";dbname=".DB_NAME.";charset=".CHARSET;
-
+$ini =  parse_ini_file("setting.ini", true);
+$DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
+// Site Constants
+date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
+$PROJECT_NAME = $ini['GLOBAL_SETTING']['PROJECT_NAME'];
 // print_r(PDO::getAvailableDrivers());
 try {
-    $db = new PDO($DNS, DB_USER, DB_PASS);
+    $db = new PDO($DNS, $ini['DATABASE']['USER'], $ini['DATABASE']['PASS']);
     $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     $db->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
 } catch (\PDOException $e) {
-    print "Error: " . $e->getMessage() . "<br/>";
-    die();
+    die(include "error_db_connect.php");
+    // Класический Вывод ошибок
+    // die(include "error_db_connect.php");
 }
-/*
-    foreach($db->query('SELECT * from users') as $row) {
-        print code..
-    };
-*/
 ?>
+

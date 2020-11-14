@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(2);
+$header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,6 +25,11 @@ is_auth(2);
 		<!-- Main content -->
 
 		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
+
 			<!-- Content area -->
 			<div class="content">
 
@@ -38,13 +44,18 @@ is_auth(2);
 
 					<div class="tab-pane fade active show" id="basic-justified-tab1">
 
-						<div class="card">
+						<div class="card border-1 border-info">
 
-							<div class="card-header">
-								<h4>Регистрация</h4>
+							<div class="card-header text-dark header-elements-inline alpha-info">
+								<h6 class="card-title">Регистрация</h6>
+								<div class="header-elements">
+									<div class="list-icons">
+				                		<a class="list-icons-item" data-action="collapse"></a>
+				                	</div>
+			                	</div>
 							</div>
 
-							<div class="card-body" id="form_up">
+							<div class="card-body" style="" id="form_up">
 								<?php PatientForm::form(); ?>
 							</div>
 
@@ -54,10 +65,15 @@ is_auth(2);
 
 					<div class="tab-pane fade" id="basic-justified-tab2">
 
-						<div class="card">
+						<div class="card border-1 border-info">
 
-							<div class="card-header">
-								<h4>Стационарная</h4>
+							<div class="card-header text-dark header-elements-inline alpha-info">
+								<h6 class="card-title">Стационарная</h6>
+								<div class="header-elements">
+									<div class="list-icons">
+				                		<a class="list-icons-item" data-action="collapse"></a>
+				                	</div>
+			                	</div>
 							</div>
 
 							<div class="card-body">
@@ -70,10 +86,15 @@ is_auth(2);
 
 					<div class="tab-pane fade" id="basic-justified-tab3">
 
-						<div class="card">
+						<div class="card border-1 border-info">
 
-							<div class="card-header">
-								<h4>Амбулаторная</h4>
+							<div class="card-header text-dark header-elements-inline alpha-info">
+								<h6 class="card-title">Амбулаторная</h6>
+								<div class="header-elements">
+									<div class="list-icons">
+				                		<a class="list-icons-item" data-action="collapse"></a>
+				                	</div>
+			                	</div>
 							</div>
 
 							<div class="card-body">
@@ -86,25 +107,28 @@ is_auth(2);
 
 					<div class="tab-pane fade" id="basic-justified-tab4">
 
-						<div class="card">
+						<div class="card border-1 border-info">
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Список Пациетов</h5>
-						        <div class="header-elements">
-									<div class="dataTables_filter">
-										<label>
-											<span>Поиск:</span>
-											<input type="search" class="form-control border-success" placeholder="Введите ID или имя" >
-										</label>
-									</div>
-						        </div>
+							<div class="card-header text-dark header-elements-inline alpha-info">
+								<h6 class="card-title">Список Пациетов</h6>
+								<div class="header-elements">
+									<form action="#">
+										<div class="form-group-feedback form-group-feedback-right">
+											<input type="search" class="form-control wmin-200" placeholder="Search...">
+											<div class="form-control-feedback">
+												<i class="icon-search4 font-size-base text-muted"></i>
+											</div>
+										</div>
+									</form>
+			                	</div>
 							</div>
 
-							<div class="card-body">
-								<div class="table-responsive shadow-0 mb-0">
-									<table class="table table-bordered">
-										<thead class="bg-blue text-center">
-											<tr>
+							<div class="card-body" style="">
+
+								<div class="table-responsive">
+									<table class="table table-hover table-sm table-bordered">
+										<thead>
+											<tr class="bg-info">
 												<th>ID</th>
 												<th>ФИО</th>
 												<th>Дата рождение</th>
@@ -138,7 +162,7 @@ is_auth(2);
 													<td><?= $row['region'] ?></td>
 													<td><?= $row['add_date'] ?></td>
 													<?php
-													if($stm_dr = $db->query('SELECT direction, status FROM visit WHERE user_id='.$row['id'])->fetch()){
+													if($stm_dr = $db->query('SELECT direction, status FROM visit WHERE completed IS NULL AND user_id='.$row['id'])->fetch()){
 														if($stm_dr['direction']){
 															?>
 															<td>
@@ -146,15 +170,23 @@ is_auth(2);
 															</td>
 															<td>
 																<?php
-																if($stm_dr['status']){
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-																	<?php
-																}else {
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
-																	<?php
-																}
+																switch ($stm_dr['status']):
+																    case 1:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+																		<?php
+																        break;
+																    case 2:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+																		<?php
+																        break;
+																	default:
+																		?>
+																		<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+																		<?php
+																		break;
+																endswitch;
 																?>
 															</td>
 															<?php
@@ -198,7 +230,7 @@ is_auth(2);
 													}
 												  	?>
 													<td class="text-center">
-														<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-lg legitRipple">Редактировать</button>
+														<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple">Редактировать</button>
 													</td>
 												</tr>
 												<?php
@@ -207,6 +239,7 @@ is_auth(2);
 										</tbody>
 									</table>
 								</div>
+
 							</div>
 
 						</div>

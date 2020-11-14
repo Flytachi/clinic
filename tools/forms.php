@@ -586,6 +586,28 @@ class UserServiceForm extends Model
     }
 }
 
+class PatientUpStatus extends Model
+{
+    public $table = 'visit';
+
+    public function get_or_404($pk)
+    {
+        $this->post['id'] = $pk;
+        $this->post['status'] = 2;
+        $this->post['accept_date'] = date('Y-m-d H:i:s');
+        $this->url = "outpatient/content_1.php?id=".$this->post['id'];
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/doctor/$this->url");
+        exit;
+    }
+
+}
+
 class PatientFailure extends Model
 {
     public $table = 'visit';
@@ -638,39 +660,66 @@ class PatientFailure extends Model
     }
 
 }
-/*
-class PatientPreroute extends Model
+
+class PatientFinish extends Model
 {
     public $table = 'visit';
+    public $table1 = 'users';
+
+    public function get_or_404($pk)
+    {
+        global $db;
+        $this->post['id'] = $pk;
+        $this->post['status'] = 0;
+        $this->post['completed'] = date('Y-m-d H:i:s');
+        $this->url = "index";
+        $this->pk = $db->query("SELECT us.id FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.id=$pk")->fetch(PDO::FETCH_OBJ)->id;
+        // $this->dd();
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        Mixin\update($this->table1, array('status' => null), $this->pk);
+        header("location:/$PROJECT_NAME/views/doctor/$this->url.php");
+        exit;
+    }
+
+}
+
+class PatientReport extends Model
+{
+    public $table = 'visit_service';
 
     public function form($pk = null)
     {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" id="rep_id" value="<?= $pk ?>">
 
-            <div class="modal-body">
-                <div class="form-group row">
-
-                    <input type="hidden" id="vis_id" name="id" value="">
-                    <input type="hidden" name="parent_id" value="">
-
-                    <div class="col-md-12">
-                        <label>Причина:</label>
-                        <textarea rows="4" cols="4" name="failure" class="form-control" placeholder="Введите причину ..." required></textarea>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn bg-danger">Отказаться</button>
-            </div>
+            <textarea name="report" id="report" rows="10" cols="80">
+                <?= $post['report'] ?>
+            </textarea>
+            <script>
+                CKEDITOR.replace( 'report' );
+            </script>
 
         </form>
         <?php
     }
 
+    public function clean()
+    {
+        $this->post['completed'] = True;
+        return True;
+    }
+
 }
-/*
-?>
