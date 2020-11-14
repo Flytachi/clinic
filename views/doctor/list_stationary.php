@@ -59,7 +59,7 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.die_date IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = '.$_SESSION['session_id'].' ORDER BY vs.add_date ASC') as $row) {
+                                    foreach($db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = '.$_SESSION['session_id'].' ORDER BY vs.add_date ASC') as $row) {
                                         ?>
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['user_id']) ?></td>
@@ -67,7 +67,7 @@ $header = "Стационарные пациенты";
                                             <td><?= $row['dateBith'] ?></td>
                                             <td>
                                                 <?php
-                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE status IS NULL AND visit_id ='. $row['id']) as $serv) {
+                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id ='. $row['id']) as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>

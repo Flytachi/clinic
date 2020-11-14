@@ -109,7 +109,7 @@
                                         <i class="icon-user-plus"></i>
                                         <span>Принять пациентов</span>
                                         <span class="badge bg-pink badge-pill ml-auto">
-                                            <?= $db->query('SELECT id FROM visit WHERE die_date IS NULL AND status = 1 AND parent_id = '.$_SESSION['session_id'])->rowCount() ?>
+                                            <?= $db->query('SELECT id FROM visit WHERE completed IS NULL AND status = 1 AND parent_id = '.$_SESSION['session_id'])->rowCount() ?>
                                         </span>
 
                                     </a>

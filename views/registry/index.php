@@ -162,7 +162,7 @@ $header = "Рабочий стол";
 													<td><?= $row['region'] ?></td>
 													<td><?= $row['add_date'] ?></td>
 													<?php
-													if($stm_dr = $db->query('SELECT direction, status FROM visit WHERE user_id='.$row['id'])->fetch()){
+													if($stm_dr = $db->query('SELECT direction, status FROM visit WHERE completed IS NULL AND user_id='.$row['id'])->fetch()){
 														if($stm_dr['direction']){
 															?>
 															<td>

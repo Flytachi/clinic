@@ -40,35 +40,50 @@ $header = "Пациент";
 				        <?php include "content_tabs.php"; ?>
 
 						<h4 class="card-title">Мои Заключение</h4>
-						<table class="table table-hover table-columned">
-							<thead>
-								<tr class="bg-blue text-center">
-									<th>ID</th>
-									<th>ФИО</th>
-									<th>Дата и время</th>
-									<th>Тип визита</th>
-									<th>Тип Группы</th>
-									<th>Мед услуга</th>
-									<th class="text-center">Действия</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr class="text-center">
-									<td>1</td>
-									<td>2</td>
-									<td>4</td>
-									<td>5</td>
-									<td>6</td>
-									<td>7</td>
-									<td class="text-center">
-										<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-										<div class="dropdown-menu dropdown-menu-right">
-											<a href="#" data-toggle="modal" data-target="#modal_2323" class="dropdown-item"><i class="icon-paste2"></i>История</a>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="table-responsive">
+			                <table class="table table-hover table-columned">
+			                    <thead>
+			                        <tr class="bg-blue text-center">
+			                            <th>#</th>
+			                            <th>Специалист</th>
+			                            <th>Тип визита</th>
+										<th>Дата визита</th>
+										<th>Дата завершения</th>
+			                            <th>Мед услуга</th>
+			                            <th class="text-center">Действия</th>
+			                        </tr>
+			                    </thead>
+			                    <tbody>
+									<?php
+									$i = 1;
+									foreach ($db->query("SELECT * FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id =".$_SESSION['session_id']) as $row) {
+									?>
+										<tr class="text-center">
+											<td><?= $i++ ?></td>
+											<td><?= get_full_name($row['parent_id']) ?></td>
+											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
+											<td><?= $row['accept_date'] ?></td>
+											<td><?= $row['completed'] ?></td>
+											<td>
+                                                <?php
+                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id ='. $row['id']) as $serv) {
+                                                    echo $serv['name']."<br>";
+                                                }
+                                                ?>
+                                            </td>
+											<td class="text-center">
+												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a href="#" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
+												</div>
+											</td>
+										</tr>
+									<?php
+									}
+								 	?>
+			                    </tbody>
+			                </table>
+			            </div>
 
 				    </div>
 

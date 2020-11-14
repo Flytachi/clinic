@@ -6,6 +6,7 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -42,22 +43,37 @@ $header = "Пациент";
                         <div class="card">
                             <table class="table table-togglable table-hover">
                                 <thead>
-                                    <tr class="bg-blue text-center">
-                                        <th>ID</th>
-                                        <th>ФИО</th>
-                                        <th>Дата визита</th>
+                                    <tr class="bg-blue">
                                         <th>Мед Услуга</th>
-                                        <th>Статус</th>
+                                        <th style="width: 10%">Статус</th>
+										<th style="width: 10%">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="text-center">
-                                        <td>00001</td>
-                                        <td>Якубов Фарход Абдурасулович</td>
-                                        <td>04.10.2020</td>
-                                        <td>Осмотр терапевта</td>
-                                        <td><span class="badge badge-success">Оплачено</span></td>
-                                    </tr>
+									<?php
+									// prit($db->query("SELECT vs.id, ser.name, vs.completed FROM visit_service vs LEFT JOIN service ser ON (vs.service_id = ser.id) WHERE vs.visit_id = $patient->id")->fetchAll());
+									foreach ($db->query("SELECT vs.id, ser.name, vs.completed FROM visit_service vs LEFT JOIN service ser ON (vs.service_id = ser.id) WHERE vs.visit_id = $patient->id") as $row) {
+									?>
+	                                    <tr>
+	                                        <td><?= $row['name'] ?></td>
+	                                        <td><span class="badge badge-success">Оплачено</span></td>
+											<td class="text-center">
+												<?php
+												if ($row['completed']) {
+													?>
+													<button onclick="Update('<?= viv('doctor/report') ?>?id=<?= $_GET['id'] ?>')" class="btn btn-outline-primary btn-sm legitRipple">Просмотр</button> <!-- data-toggle="modal" data-target="#modal_report_show" -->
+													<?php
+												}else {
+													?>
+													<button onclick="$('#rep_id').val(this.dataset.id);" type="button" class="btn btn-outline-success btn-sm legitRipple" data-id="<?= $row['id'] ?>" data-toggle="modal" data-target="#modal_report_add">Провести</button>
+													<?php
+												}
+												?>
+                                            </td>
+	                                    </tr>
+									<?php
+									}
+								 	?>
                                 </tbody>
                             </table>
                         </div>
@@ -74,6 +90,45 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_report_add" class="modal fade" tabindex="-1">events
+		<div class="modal-dialog modal-full">
+			<div class="modal-content">
+				<div class="modal-body">
+
+					<?php PatientReport::form(); ?>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="modal_report_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-full">
+			<div class="modal-content">
+				<div class="modal-body">
+
+					<div class="card" id="report_show">
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (data) {
+					$('#modal_report_show').modal('show');
+					$('#report_show').html(data);
+				},
+			});
+		};
+	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>

@@ -1,5 +1,5 @@
 <?php
-$patient = $db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.status = 2 AND vs.id = '.$_GET['id'])->fetch(PDO::FETCH_OBJ);
+$patient = $db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.status = 2 AND vs.id = '.$_GET['id'])->fetch(PDO::FETCH_OBJ);
 // prit($patient);
 ?>
 <div class="card border-1 border-info">
@@ -54,6 +54,13 @@ $patient = $db->query('SELECT vs.id, vs.user_id, us.dateBith, vs.complaint, us.n
     						<label class="col-form-label col-md-3"><b>Адрес прописки:</b></label>
     						<div class="col-md-9">
     							<input type="text" class="form-control" value="г. <?= $patient->region ?> <?= $patient->registrationAddress ?>" disabled>
+    						</div>
+    					</div>
+
+                        <div class="form-group row">
+    						<label class="col-form-label col-md-3"><b>Дата визита:</b></label>
+    						<div class="col-md-9">
+    							<input type="text" class="form-control" value="<?= $patient->accept_date ?>" disabled>
     						</div>
     					</div>
 
