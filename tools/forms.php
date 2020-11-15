@@ -708,6 +708,10 @@ class PatientReport extends Model
             <textarea name="report" id="report" rows="10" cols="80">
                 <?= $post['report'] ?>
             </textarea>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
             <script>
                 CKEDITOR.replace( 'report' );
             </script>
@@ -720,6 +724,11 @@ class PatientReport extends Model
     {
         $this->post['completed'] = True;
         return True;
+    }
+
+    public function success()
+    {
+        header('location:'.$_SERVER['HTTP_REFERER']);
     }
 
 }

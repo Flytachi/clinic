@@ -90,6 +90,12 @@
                                         <span>Рабочий стол</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('registry/list_patient') ?>" class="nav-link">
+                                        <i class="icon-users"></i>
+                                        <span>Список пациентов</span>
+                                    </a>
+                                </li>
                                 <?php
                                 break;
                             case 3:
@@ -97,7 +103,13 @@
                                 <li class="nav-item">
                                     <a href="<?= viv('cashbox/index') ?>" class="nav-link legitRipple">
                                         <i class="icon-display"></i>
-                                        <span>Рабочий стол</span>
+                                        <span>Приём платежей</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('cashbox/history') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>История</span>
                                     </a>
                                 </li>
                                 <?php
@@ -108,22 +120,42 @@
                                     <a href="<?= viv('doctor/index') ?>" class="nav-link legitRipple">
                                         <i class="icon-user-plus"></i>
                                         <span>Принять пациентов</span>
-                                        <span class="badge bg-pink badge-pill ml-auto">
-                                            <?= $db->query('SELECT id FROM visit WHERE completed IS NULL AND status = 1 AND parent_id = '.$_SESSION['session_id'])->rowCount() ?>
-                                        </span>
-
+                                        <?php
+                                        $con_one = $db->query('SELECT id FROM visit WHERE completed IS NULL AND status = 1 AND parent_id = '.$_SESSION['session_id'])->rowCount();
+                                        if ($con_one) {
+                                            ?>
+                                            <span class="badge bg-pink badge-pill ml-auto"><?=$con_one?></span>
+                                            <?php
+                                        }
+                                        ?>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="<?= viv('doctor/list_outpatient') ?>" class="nav-link legitRipple">
                                         <i class="icon-users2 "></i>
                                         <span>Амбулаторные пациенты</span>
+                                        <?php
+                                        $con_two = $db->query('SELECT id FROM visit WHERE completed IS NULL AND status = 2 AND direction IS NULL AND parent_id = '.$_SESSION['session_id'])->rowCount();
+                                        if ($con_two) {
+                                            ?>
+                                            <span class="badge bg-blue badge-pill ml-auto"><?=$con_two?></span>
+                                            <?php
+                                        }
+                                        ?>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="<?= viv('doctor/list_stationary') ?>" class="nav-link legitRipple">
                                         <i class="icon-users2"></i>
                                         <span>Стационарные пациенты</span>
+                                        <?php
+                                        $con_tree = $db->query('SELECT id FROM visit WHERE completed IS NULL AND status = 2 AND direction IS NOT NULL AND parent_id = '.$_SESSION['session_id'])->rowCount();
+                                        if ($con_tree) {
+                                            ?>
+                                            <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
+                                            <?php
+                                        }
+                                        ?>
                                     </a>
                                 </li>
                                 <li class="nav-item">

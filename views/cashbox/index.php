@@ -33,36 +33,22 @@ $header = "Рабочий стол";
 			<div class="content">
 
 				<ul class="nav nav-tabs nav-tabs-highlight nav-justified">
-					<li class="nav-item"><a href="#highlighted-justified-tab1" class="nav-link active" data-toggle="tab">Приём платежей</a></li>
-					<li class="nav-item"><a href="#highlighted-justified-tab2" class="nav-link" data-toggle="tab">История платежей</a></li>
-					<li class="nav-item"><a href="#highlighted-justified-tab3" class="nav-link" data-toggle="tab">Возврат</a></li>
-					<li class="nav-item"><a href="#highlighted-justified-tab4" class="nav-link" data-toggle="tab">Стационар</a></li>
+					<li class="nav-item"><a href="#highlighted-tab1" class="nav-link active" data-toggle="tab">Приём платежей</a></li>
+					<li class="nav-item"><a href="#highlighted-tab2" class="nav-link" data-toggle="tab">Стационар</a></li>
 				</ul>
 
 				<!-- Highlighted tabs -->
 				<div class="tab-content">
 
-					<div class="tab-pane fade show active" id="highlighted-justified-tab1">
+					<div class="tab-pane fade show active" id="highlighted-tab1">
 						<?php
 							include 'tabs/kassa_1.php';
 						?>
 					</div>
 
-					<div class="tab-pane fade" id="highlighted-justified-tab2">
+					<div class="tab-pane fade" id="highlighted-tab2">
 						<?php
 							include 'tabs/kassa_2.php';
-						?>
-					</div>
-
-					<div class="tab-pane fade" id="highlighted-justified-tab3">
-						<?php
-							include 'tabs/kassa_3.php';
-						?>
-					</div>
-
-					<div class="tab-pane fade" id="highlighted-justified-tab4">
-						<?php
-							include 'tabs/kassa_4.php';
 						?>
 					</div>
 
@@ -93,47 +79,6 @@ $header = "Рабочий стол";
 			</div>
 		</div>
 	</div>
-
-
-	<div id="modal_default2" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Возврат</h5>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<div class="modal-body">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th style="width:20%;">Дата и время</th>
-								<th>Мед услуги</th>
-								<th>Сумма</th>
-								<th>Статус</th>
-								<th>Действия</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>02.05.2021 14:30</td>
-								<td>Осмотр терапевта</td>
-								<td>50000</td>
-								<td>Проведен/Пластик</td>
-								<td><button type="button" class="btn btn-sm btn-danger legitRipple" data-toggle="button">Отменить</button></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-link" data-dismiss="modal">Закрыть</button>
-					<button type="button" class="btn bg-primary">Печать чека</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /basic modal -->
 
 
     <!-- Footer -->
@@ -210,16 +155,17 @@ $header = "Рабочий стол";
 			});
 		});
 
-		$("#search_tab-4").keyup(function() {
+		$("#search_tab-2").keyup(function() {
 			$.ajax({
 				type: "GET",
 				url: "search.php",
 				data: {
-					tab: 4,
-                    search: $("#search_tab-4").val(),
+					tab: 2,
+                    search: $("#search_tab-2").val(),
                 },
 				success: function (result) {
-					$('#displ_tab-4').html(result);
+					console.log(result);
+					$('#displ_tab-2').html(result);
 				},
 			});
 		});

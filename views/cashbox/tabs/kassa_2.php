@@ -1,14 +1,14 @@
 <div class="row">
 
-    <div class="col-md-4">
-        <div class="card">
+    <div class="col-md-5">
 
+        <div class="card border-1 border-info">
             <div class="card-body">
 
                 <div class="form-group form-group-float">
                     <label class="form-group-float-label text-success font-weight-semibold animate">ID или имя пациента</label>
                     <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" placeholder="Введите ID или имя">
+                        <input type="text" class="form-control border-success" id="search_tab-2" placeholder="Введите ID или имя">
                         <div class="form-control-feedback text-success">
                             <i class="icon-search4"></i>
                         </div>
@@ -16,69 +16,47 @@
                     <span class="form-text text-success">Выбор пациента</span>
                 </div>
 
-                <div class="form-group form-group-float">
-                    <label class="form-group-float-label text-success font-weight-semibold animate">ID или имя пациента</label>
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <input type="date" class="form-control">
-                    </div>
-                    <span class="form-text text-success">Выбор даты</span>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Дата и время</th>
+                                <th class="text-center">ID</th>
+                                <th class="text-center">ФИО</th>
+                            </tr>
+                        </thead>
+                        <tbody id="displ_tab-2">
+                            <?php
+                            foreach($db->query('SELECT * FROM visit WHERE direction IS NOT NULL AND status IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                                ?>
+                                    <tr>
+                                        <td class="text-left"><?= $row['add_date'] ?></td>
+                                        <td class="text-center"><?= addZero($row['user_id']) ?></td>
+                                        <td class="text-center">
+                                            <a onclick="CheckSt('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')" >
+                                                <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
-
         </div>
+
     </div>
 
-    <div class="col-md-8">
-
-        <div class="card-header header-elements-inline">
-            <h5 class="card-title">История платежей</h5>
-            <div class="header-elements">
-                <div class="list-icons">
-
-                </div>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width:20%;">Дата и время</th>
-                            <th>Мед услуги</th>
-                            <th>Скидка</th>
-                            <th>Возврат</th>
-                            <th>Расчет</th>
-                            <th>Сумма</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>02.05.2021 14:30</td>
-                            <td>Осмотр терапевта</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>Пластик</td>
-                            <td>50000</td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>
-                                <button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple ">Загрузить</button>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+    <div class="col-md-7" id="check-st">
+        <?php
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
     </div>
 
 </div>

@@ -118,13 +118,14 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
+
 		function Check(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
-				success: function (data) {
+				success: function (result) {
 					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
+					$('#report_show').html(result);
 				},
 			});
 		};
