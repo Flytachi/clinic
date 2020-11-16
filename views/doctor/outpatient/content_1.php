@@ -45,8 +45,7 @@ $header = "Пациент";
                                 <thead>
                                     <tr class="bg-blue">
                                         <th>Мед Услуга</th>
-                                        <th style="width: 10%">Статус</th>
-										<th style="width: 10%">Действия</th>
+										<th style="width: 25%">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -56,16 +55,13 @@ $header = "Пациент";
 									?>
 	                                    <tr>
 	                                        <td><?= $row['name'] ?></td>
-	                                        <td><span class="badge badge-success">Оплачено</span></td>
 											<td class="text-center">
 												<?php
 												if ($row['completed']) {
 													?>
-													<button type="button" class="btn btn-outline-primary btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
-	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-	                                                    <a onclick="Update('<?= up_url($row['id'], 'PatientReport') ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Изменить</a>
-	                                                    <a onclick="Check('<?= viv('doctor/report') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i> Отчёт</a>
-	                                                </div>
+													<button onclick="Check('<?= viv('doctor/report') ?>?id=<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<button onclick="Update('<?= up_url($row['id'], 'PatientReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+
 													<?php
 												}else {
 													?>
@@ -81,6 +77,8 @@ $header = "Пациент";
                                 </tbody>
                             </table>
                         </div>
+
+						<a href="<?= up_url($patient->id, 'PatientFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит?')" class="btn btn-danger">Завершить</a>
 
 				    </div>
 

@@ -124,7 +124,7 @@
                                         $con_one = $db->query('SELECT id FROM visit WHERE completed IS NULL AND status = 1 AND parent_id = '.$_SESSION['session_id'])->rowCount();
                                         if ($con_one) {
                                             ?>
-                                            <span class="badge bg-pink badge-pill ml-auto"><?=$con_one?></span>
+                                            <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
                                             <?php
                                         }
                                         ?>
