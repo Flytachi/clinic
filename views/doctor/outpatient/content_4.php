@@ -55,13 +55,13 @@ $header = "Пациент";
 			                    <tbody>
 									<?php
 									$i = 1;
-									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id =".$_SESSION['session_id']) as $row) {
+									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id = {$_SESSION['session_id']}") as $row) {
 									?>
 										<tr class="text-center">
 											<td><?= $i++ ?></td>
 											<td>
                                                 <?php
-                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
+                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id = {$row['id']}") as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>

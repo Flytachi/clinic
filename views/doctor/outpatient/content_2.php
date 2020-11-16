@@ -55,7 +55,7 @@ $header = "Пациент";
 			                    <tbody>
 									<?php
 									$i = 1;
-									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id !=".$_SESSION['session_id']." AND route_id !=".$_SESSION['session_id']) as $row) {
+									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id != {$_SESSION['session_id']} AND route_id != {$_SESSION['session_id']}") as $row) {
 									?>
 										<tr class="text-center">
 											<td><?= $i++ ?></td>

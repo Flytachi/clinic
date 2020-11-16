@@ -59,7 +59,8 @@ $header = "Завершёный пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query('SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date  FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.parent_id = '.$_SESSION['session_id'].' ORDER BY us.add_date DESC') as $row) {
+                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY us.add_date DESC")->fetchAll());
+                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date  FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY us.add_date DESC") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>

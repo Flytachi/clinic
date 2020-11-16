@@ -50,7 +50,6 @@ $header = "Пациент";
                                 </thead>
                                 <tbody>
 									<?php
-									// prit($db->query("SELECT vs.id, ser.name, vs.completed FROM visit_service vs LEFT JOIN service ser ON (vs.service_id = ser.id) WHERE vs.visit_id = $patient->id")->fetchAll());
 									foreach ($db->query("SELECT vs.id, ser.name, vs.completed FROM visit_service vs LEFT JOIN service ser ON (vs.service_id = ser.id) WHERE vs.visit_id = $patient->id") as $row) {
 									?>
 	                                    <tr>
@@ -61,7 +60,6 @@ $header = "Пациент";
 													?>
 													<button onclick="Check('<?= viv('doctor/report') ?>?id=<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 													<button onclick="Update('<?= up_url($row['id'], 'PatientReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
-
 													<?php
 												}else {
 													?>

@@ -158,12 +158,12 @@
                                         ?>
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="<?= viv('doctor/list_surgical') ?>" class="nav-link legitRipple">
                                         <i class="icon-collaboration"></i>
                                         <span>Операционные пациенты</span>
                                     </a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
                                     <a href="<?= viv('doctor/list_completed') ?>" class="nav-link legitRipple">
                                         <i class="icon-collaboration"></i>
