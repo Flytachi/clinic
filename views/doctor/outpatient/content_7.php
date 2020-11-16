@@ -46,7 +46,27 @@ $header = "Пациент";
 								<h5 class="card-title">Осмотр Пациента</h5>
 							</div>
 
-							<?php prit($patient); ?>
+							<?php //prit($patient); ?>
+							<table id="data_table" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Date</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								?>
+								<tr id="<?php echo $developer ['id']; ?>">
+							   		<td><?php echo $developer ['id']; ?></td>
+								   	<td><?php echo $developer ['date']; ?></td>
+								   	<td><?php echo $developer ['description']; ?></td>
+							   	</tr>
+								<?php } ?>
+								</tbody>
+							</table>
 						</div>
 
 				    </div>

@@ -1,12 +1,12 @@
 $(document).ready(function(){
 	$('#data_table').Tabledit({
 		deleteButton: false,
-		editButton: false,   		
+		editButton: false,
 		columns: {
-		  identifier: [0, 'id'],                    
-		  editable: [[1, 'name'], [2, 'gender'], [3, 'age'], [4, 'designation'], [5, 'address']]
+		  identifier: [0, 'id'],
+		  editable: [[1, 'date'], [2, 'description']]
 		},
 		hideIdentifier: true,
-		url: 'live_edit.php'		
+		url: 'live_edit.php'
 	});
 });
