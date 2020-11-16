@@ -38,6 +38,13 @@ is_auth();
 
 </head>
 
+<?php
+
+	$level_id = level();
+
+	$mas = $db->query("SELECT us.id, us.dateBith, s.name, first_name, last_name  FROM division AS d LEFT JOIN service AS s ON d.id = s.division_id LEFT JOIN user_service AS u ON s.id = u.service_id LEFT JOIN users AS us ON u.user_id = us.id WHERE level = $level_id")->fetchAll();
+?>
+
 <body>
 
 	<!-- Main navbar -->
@@ -96,7 +103,6 @@ is_auth();
 
 				                                <th>Возраст</th>
 				                                <th>Мед услуги</th>
-				                                <th>Тип визита</th>
 				                                <th>Отправитель</th>
 				                                <th class="text-center">Действия</th>
 				                            </tr>
@@ -109,10 +115,9 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Амбулатор</td>
 				                                <td>Мирзаева А</td>
 				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggl"dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
 				                                    <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(906px, 33px, 0px);">
 				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
 				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
@@ -126,7 +131,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Амбулатор</td>
 				                                <td>Мирзаева А</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -143,7 +147,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Амбулатор</td>
 				                                <td>Мирзаева А</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -160,7 +163,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Амбулатор</td>
 				                                <td>Мирзаева А</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -177,7 +179,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Амбулатор</td>
 				                                <td>Мирзаева А</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -213,12 +214,43 @@ is_auth();
 
 				                                <th>Возраст</th>
 				                                <th>Мед услуги</th>
-				                                <th>Тип визита</th>
 				                                <th>Отправитель</th>
 				                                <th class="text-center">Действия</th>
 				                            </tr>
 				                        </thead>
 				                        <tbody>
+
+				                        	<?php
+
+				                        		foreach($mas as $key) {
+
+				                        			$tz = new DateTimeZone('Europe/Brussels');
+
+													$dateBith = DateTime::createFromFormat('Y-m-d', $key['dateBith'], $tz)->diff(new DateTime('now', $tz))->y;
+				                        		?>
+
+				                        		<tr>
+					                                <td><?= addZero($key['id'])?></td>
+					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
+					                                <td>13.03.2020 13:04</td>
+
+					                                <td><?= $dateBith ?></td>
+					                                <td><?= "dsa"?></td>
+					                                <td>Ахмедов Ш</td>
+					                                <td class="text-center">
+					                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
+					                                    <div class="dropdown-menu dropdown-menu-right">
+					                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#mini<?= $key['id'] ?>"><i class="icon-user-plus"></i>печатать штрих</a>
+					                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#<?= $key['id'] ?>"><i class="icon-fire2"></i> Добавить резултаты</a>
+					                                    </div>
+					                                </td>
+					                            </tr>
+
+				                        	<?php
+				                        		}
+				                        	?>
+
+
 				                            <tr>
 				                                <td>0001</td>
 				                                <td>Якубов Фарход Абдурасуловия</td>
@@ -226,7 +258,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Стационар</td>
 				                                <td>Ахмедов Ш</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -243,7 +274,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Стационар</td>
 				                                <td>Ахмедов Ш</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -260,7 +290,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Стационар</td>
 				                                <td>Ахмедов Ш</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -277,7 +306,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Стационар</td>
 				                                <td>Ахмедов Ш</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -294,7 +322,6 @@ is_auth();
 
 				                                <td>33</td>
 				                                <td>Общий анализ крови</td>
-				                                <td>Стационар</td>
 				                                <td>Ахмедов Ш</td>
 				                                <td class="text-center">
 				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -328,7 +355,6 @@ is_auth();
 				                            <tr class="bg-blue">
 				                                <th>ID</th>
 				                                <th>Дата и время</th>
-
 				                                <th>Имя анализа</th>
 				                                <th>Специалист</th>
 				                                <th class="text-center">Результаты</th>
@@ -340,7 +366,6 @@ is_auth();
 				                            <tr>
 				                                <td>0001</td>
 				                                <td>13.03.2020 13:03</td>
-
 				                                <td>Анализ мочи</td>
 				                                <td>Ахмедова З</td>
 				                                <td>
@@ -365,7 +390,6 @@ is_auth();
 				                            <tr>
 				                                <td>0001</td>
 				                                <td>13.03.2020 13:03</td>
-
 				                                <td>Анализ мочи</td>
 				                                <td>Ахмедова З</td>
 				                                <td>
@@ -444,6 +468,148 @@ is_auth();
 				        </div>
 				    </div>
 				</div>
+
+				<?php
+
+					foreach($mas as $key) {
+				?>
+
+				<div id="<?= $key['id'] ?>" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
+					<form id="f<?= $key['id'] ?>">
+						<input type="hidden" name="qwe" value="000ww">
+					    <div class="modal-dialog modal-full">
+					        <div class="modal-content">
+					            <div class="modal-header">
+					                <h5 class="modal-title">
+					                    Анализы пациента:<b><p><?= $key['first_name']?> <?= $key['last_name']?></p></b>
+					                </h5>
+					                <button type="button" class="close" data-dismiss="modal"></button>
+					            </div>
+
+					            <div class="modal-body">
+					                <div class="table-responsive">
+					                    <table class="table">
+					                        <thead>
+					                            <tr class="bg-blue">
+					                                <th>ID</th>
+					                                <th>Дата и время</th>
+					                                <th>Имя анализа</th>
+					                                <th>Специалист</th>
+					                                <th class="text-center">Результаты</th>
+					                                <th>Норматив</th>
+					                                <th>Примечание</th>
+					                            </tr>
+					                        </thead>
+					                        <tbody>
+					                            <tr>
+					                                <td><?= addZero($key['id'])?></td>
+					                                <td>13.03.2020 13:03</td>
+					                                <td>Анализ мочи</td>
+					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-5">
+					                                            <input type="text" class="form-control font-weight-bold text-center" />
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                                <td>10</td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-12">
+					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                            </tr>
+
+					                            <tr>
+					                                <td><?= addZero($key['id'])?></td>
+					                                <td>13.03.2020 13:03</td>
+					                                <td>Анализ мочи</td>
+					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-5">
+					                                            <input type="text" class="form-control font-weight-bold text-center" />
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                                <td>10</td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-12">
+					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                            </tr>
+					                            <tr>
+					                                <td><?= addZero($key['id'])?></td>
+					                                <td>13.03.2020 13:03</td>
+					                                <td>Анализ мочи</td>
+					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-5">
+					                                            <input type="text" class="form-control font-weight-bold text-center" />
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                                <td>10</td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-12">
+					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                            </tr>
+					                            <tr>
+					                                <td><?= addZero($key['id'])?></td>
+					                                <td>13.03.2020 13:03</td>
+					                                <td>Анализ мочи</td>
+					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-12">
+					                                            <input type="text" class="form-control font-weight-bold text-center" />
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                                <td>10</td>
+					                                <td>
+					                                    <div class="form-group row">
+					                                        <label class="col-form-label col-md-3"></label>
+					                                        <div class="col-md-12">
+					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
+					                                        </div>
+					                                    </div>
+					                                </td>
+					                            </tr>
+					                        </tbody>
+					                    </table>
+					                </div>
+					            </div>
+
+					            <div class="modal-footer">
+					                <button type="button" class="btn btn-link legitRipple" onclick="console.log(document.forms.f<?= $key['id'] ?>.qwe)" data-dismiss="modal">Сохранить</button>
+					                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">Завершить</button>
+					            </div>
+					        </div>
+					    </div>
+					</form>
+				</div>
+				<?php 
+					}
+				?>
 				<div id="modal_mini" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
 				    <div class="modal-dialog modal-xs">
 				        <div class="modal-content">
@@ -471,6 +637,41 @@ is_auth();
 				    </div>
 				</div>
 			</div>
+
+			<?php
+
+				foreach($mas as $key) {
+			?>
+
+				<div id="mini<?= $key['id'] ?>" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
+				    <div class="modal-dialog modal-xs">
+				        <div class="modal-content">
+				            <div class="modal-header">
+				                <h5 class="modal-title">печать на пробирку</h5>
+				                <button type="button" class="close" data-dismiss="modal">×</button>
+				            </div>
+
+				            <div class="modal-body">
+				                <h6 class="font-weight-semibold">Данные пациента</h6>
+				                <p>ID пациента : <?= addZero($key['id'])?></p>
+				                <p>ФИО : <?= $key['first_name']?> <?= $key['last_name']?></p>
+				                <p>Дата и время</p>
+				                <p>Дата рождение: <?= $key['dateBith']?></p>
+				            </div>
+
+				            <div class="modal-footer">
+				                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">
+				                    Закрыть
+				                    <div class="legitRipple-ripple" style="left: 46.8524%; top: 44.1228%; transform: translate3d(-50%, -50%, 0px); width: 215.559%; opacity: 0;"></div>
+				                </button>
+				                <button type="button" class="btn bg-primary legitRipple">печатать</button>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			<?php
+				}
+			?>
             <!-- /content area -->
 
 		</div>

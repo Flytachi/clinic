@@ -98,7 +98,7 @@ $header = "Пациент";
 
 								<div class="tab-content card-body border-top-0 rounded-0 rounded-bottom mb-0">
 									<div class="tab-pane fade" id="james">
-										<ul class="media-list media-chat mb-3">
+										<ul class="media-list media-chat mb-3" data-chatid="James">
 											<li class="media">
 												<div class="mr-3">
 													<a href="#">
@@ -193,7 +193,7 @@ $header = "Пациент";
 											</li>
 										</ul>
 
-										<textarea name="enter-message" class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
+										<textarea name="enter-message" class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..." data-inputid="James"></textarea>
 
 										<div class="d-flex align-items-center">
 											<div class="list-icons list-icons-extended">
@@ -202,7 +202,7 @@ $header = "Пациент";
 												<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send file"><i class="icon-file-plus"></i></a>
 											</div>
 
-											<button type="button" class="btn bg-teal-400 btn-labeled btn-labeled-right ml-auto legitRipple">
+											<button type="button" onclick="sendMessage(this)" class="btn bg-teal-400 btn-labeled btn-labeled-right ml-auto legitRipple" data-buttonid="James">
 												<b><i class="icon-paperplane"></i></b> Send
 											</button>
 										</div>
@@ -560,5 +560,40 @@ $header = "Пациент";
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
     <!-- /footer -->
+    <script>
+    	
+    	var conn = new WebSocket('ws://192.168.1.106:8080');
+		conn.onopen = function(e) {
+		    console.log("Connection established!");
+		};
+
+		conn.onmessage = function(e) {
+			let d = JSON.parse(e.data)
+		    $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
+												<div class="mr-3">
+													<a href="#">
+														<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+													</a>
+												</div>
+
+												<div class="media-body">
+													<div class="media-chat-item"> ${d.message} </div>
+													<div class="font-size-sm text-muted mt-2">
+														Tue, 10:28 am <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+													</div>
+												</div>
+											</li>`)
+
+		};
+
+		function sendMessage(body) {
+			let id = body.dataset.buttonid;
+			let word = $(`textarea[data-inputid=${id}]`).val();
+			$(`textarea[data-inputid=${id}]`).val('');
+			let obj = JSON.stringify({ id : id , message : word });
+			conn.send(obj);
+		}
+
+    </script>
 </body>
 </html>

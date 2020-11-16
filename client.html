@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>qwe</title>
+	<meta charset="utf-8">
+
+</head>
+<body>
+
+	<input type="text" id="suck">
+
+	<h3 onclick="sendEmit()">отправить</h3>
+
+	<div id="qwe"></div>
+
+	<script>
+		
+		var conn = new WebSocket('ws://localhost:8080');
+		conn.onopen = function(e) {
+		    console.log("Connection established!");
+		};
+
+		conn.onmessage = function(e) {
+			let d = JSON.parse(e.data)
+		    console.log(d);
+
+		    document.getElementById('qwe').innerHTML = e.data;
+		};
+
+		conn.onWpen = function(e) {
+		    console.log(e.data);
+		};
+
+		function sendEmit() {
+			let x = document.getElementById('suck').value;
+			let obj = JSON.stringify({ "mes" : x, "id" : '1' });
+			conn.send(obj);
+		}
+
+		// conn.send('Hello World!');
+
+	</script>
+
+</body>
+</html>
