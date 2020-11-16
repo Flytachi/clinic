@@ -6,7 +6,6 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
-<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -561,7 +560,7 @@ $header = "Пациент";
     <?php include '../../layout/footer.php' ?>
     <!-- /footer -->
     <script>
-    	
+
     	var conn = new WebSocket('ws://192.168.1.106:8080');
 		conn.onopen = function(e) {
 		    console.log("Connection established!");

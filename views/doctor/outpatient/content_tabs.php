@@ -18,6 +18,9 @@
         <a href="<?= viv('doctor/outpatient/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/outpatient/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Переписка <i class="icon-bubbles2 ml-3"></i> </a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/outpatient/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/outpatient/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >POS_даные </a>
+        <a href="<?= viv('doctor/outpatient/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/outpatient/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Test </a>
+    </li>
+    <li class="nav-item">
+        <a href="<?= viv('doctor/outpatient/content_8') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/outpatient/content_8')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >POS_даные </a>
     </li>
 </ul>

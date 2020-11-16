@@ -6,8 +6,7 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
-<script src="<?= stack('vendors/js/jquery.tabledit.js') ?>"></script>
-<script src="<?= stack('vendors/js/custom_table_edit.js') ?>"></script>
+<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
