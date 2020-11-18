@@ -30,7 +30,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">

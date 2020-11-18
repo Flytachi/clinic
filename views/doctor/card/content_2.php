@@ -18,7 +18,6 @@ $header = "Пациент";
 		<?php include '../../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -29,7 +28,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -39,36 +38,38 @@ $header = "Пациент";
 				    <div class="card-body">
 				        <?php include "content_tabs.php"; ?>
 
-						<h4 class="card-title">Мои Заключение</h4>
-						<div class="table-responsive">
+						<h4 class="card-title">Осмотр других специалистов</h4>
+			            <div class="table-responsive">
 			                <table class="table table-hover table-columned">
 			                    <thead>
 			                        <tr class="bg-blue text-center">
 			                            <th>#</th>
-			                            <th>Мед услуга</th>
+			                            <th>Специалист</th>
 			                            <th>Тип визита</th>
 										<th>Дата визита</th>
 										<th>Дата завершения</th>
+			                            <th>Мед услуга</th>
 			                            <th class="text-center">Действия</th>
 			                        </tr>
 			                    </thead>
 			                    <tbody>
 									<?php
 									$i = 1;
-									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id = {$_SESSION['session_id']}") as $row) {
+									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id != {$_SESSION['session_id']} AND route_id != {$_SESSION['session_id']}") as $row) {
 									?>
 										<tr class="text-center">
 											<td><?= $i++ ?></td>
+											<td><?= get_full_name($row['parent_id']) ?></td>
+											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
+											<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
+											<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
 											<td>
                                                 <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id = {$row['id']}") as $serv) {
+                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>
                                             </td>
-											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= $row['accept_date'] ?></td>
-											<td><?= $row['completed'] ?></td>
 											<td class="text-center">
 												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 												<div class="dropdown-menu dropdown-menu-right">
@@ -82,7 +83,6 @@ $header = "Пациент";
 			                    </tbody>
 			                </table>
 			            </div>
-
 				    </div>
 
 				    <!-- /content wrapper -->

@@ -29,7 +29,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -76,8 +76,13 @@ $header = "Пациент";
                             </table>
                         </div>
 
-						<a href="<?= up_url($patient->id, 'PatientFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит?')" class="btn btn-danger">Завершить</a>
-
+						<?php
+						if (!$patient->direction) {
+							?>
+							<a href="document.php" class="btn">Шабллон</a>
+							<?php
+						}
+						?>
 				    </div>
 
 				    <!-- /content wrapper -->

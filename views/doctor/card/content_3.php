@@ -30,7 +30,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -46,7 +46,7 @@ $header = "Пациент";
 				        }
 						?>
 
-						<button onclick="$('#PatientOutpatientRoute_user_id').val('<?= $patient->user_id ?>');$('#PatientOutpatientRoute_user_id_get').val('<?= get_full_name($patient->user_id) ?>');" type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
+						<button onclick="$('#PatientRoute_user_id').val('<?= $patient->user_id ?>');$('#PatientRoute_user_id_get').val('<?= get_full_name($patient->user_id) ?>');$('#PatientRoute_complaint').val('<?= $patient->complaint ?>');" type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
 
 						<div class="card">
 							<table class="table table-togglable table-hover">
@@ -70,8 +70,8 @@ $header = "Пациент";
 										<tr class="text-center">
 											<td><?= $i++ ?></td>
 											<td><?= get_full_name($row['parent_id']) ?></td>
-											<td><?= ($row['accept_date']) ? $row['accept_date'] : '<span class="text-muted">Не активный</span>'?></td>
-											<td><?= ($row['completed']) ? $row['completed'] : '<span class="text-muted">Не активный</span>'?></td>
+											<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не активный</span>'?></td>
+											<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не активный</span>'?></td>
 											<td>
                                                 <?php
                                                 foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
@@ -79,7 +79,7 @@ $header = "Пациент";
                                                 }
                                                 ?>
                                             </td>
-											<td>Амбулаторный</td>
+											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 											<td>
 												<?php
 												if ($row['completed']) {
@@ -155,7 +155,7 @@ $header = "Пациент";
 
 				<div class="modal-body">
 
-					<?= PatientOutpatientRoute::form() ?>
+					<?= PatientRoute::form() ?>
 
 				</div>
 			</div>

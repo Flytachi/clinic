@@ -28,7 +28,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -46,6 +46,10 @@ $header = "Пациент";
 										<th>Дата и время</th>
 										<th>Состояние пациента</th>
 										<th>Медсестра ФИО</th>
+										<th>давление</th>
+										<th>Пульс</th>
+										<th>Температура</th>
+
 									</tr>
 								</thead>
 								<tbody>

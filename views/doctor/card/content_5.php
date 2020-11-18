@@ -28,7 +28,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -40,12 +40,10 @@ $header = "Пациент";
 
 						<h4 class="card-title">Анализ Пациента</h4>
 						<div class="card">
-							<div class="card-header header-elements-inline"></div>
-
 							<div class="table-responsive">
 								<table class="table">
 									<thead>
-										<tr class="bg-blue">
+										<tr class="bg-blue text-center">
 											<th>ID</th>
 											<th>ФИО</th>
 											<th>Дата и время</th>
@@ -57,7 +55,7 @@ $header = "Пациент";
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
+										<tr class="text-center">
 											<td>0001</td>
 											<td>Якубов Фарход Абдурасулович</td>
 											<td>13.03.2020 13:04</td>
@@ -68,30 +66,33 @@ $header = "Пациент";
 											<td>10</td>
 											<td>Тест</td>
 										</tr>
-										<tr>
+										<tr class="text-center">
 											<td>0001</td>
 											<td>Якубов Фарход Абдурасулович</td>
 											<td>13.03.2020 13:04</td>
+
 											<td>Анализ мочи</td>
 											<td>Ахмедова З</td>
 											<td>10-12</td>
 											<td>10</td>
 											<td>Тест</td>
 										</tr>
-										<tr>
+										<tr class="text-center">
 											<td>0001</td>
 											<td>Якубов Фарход Абдурасулович</td>
 											<td>13.03.2020 13:04</td>
+
 											<td>Анализ мочи</td>
 											<td>Ахмедова З</td>
 											<td>10-12</td>
 											<td>10</td>
 											<td>Тест</td>
 										</tr>
-										<tr>
+										<tr class="text-center">
 											<td>0001</td>
 											<td>Якубов Фарход Абдурасулович</td>
 											<td>13.03.2020 13:04</td>
+
 											<td>Анализ мочи</td>
 											<td>Ахмедова З</td>
 											<td>10-12</td>
@@ -102,6 +103,7 @@ $header = "Пациент";
 								</table>
 							</div>
 						</div>
+
 				    </div>
 
 				    <!-- /content wrapper -->

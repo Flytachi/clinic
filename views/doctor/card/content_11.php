@@ -29,7 +29,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -41,10 +41,6 @@ $header = "Пациент";
 						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Осмотр Пациента</h5>
-							</div>
-
 							<?php prit($patient); ?>
 						</div>
 

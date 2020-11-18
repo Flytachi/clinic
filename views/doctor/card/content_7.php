@@ -6,13 +6,13 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('vendors/js/jquery.tabledit.js') ?>"></script>
+<script src="<?= stack('vendors/js/custom_table_edit.js') ?>"></script>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -30,7 +30,7 @@ $header = "Пациент";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "../profile_card.php"; ?>
+				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
@@ -38,38 +38,36 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-				        <?php include "content_tabs.php"; ?>
 
-						<h4 class="card-title">Осмотр других специалистов</h4>
-						<table class="table table-hover table-columned">
-							<thead>
-								<tr class="bg-blue">
-									<th>ID</th>
+						<?php include "content_tabs.php"; ?>
 
-									<th>Дата визита</th>
-									<th>Тип Группы</th>
-									<th>Мед Услуга</th>
-									<th>Специалист</th>
-									<th class="text-center">Действия</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>1</td>
+						<div class="card">
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Заметки</h5>
+							</div>
 
-									<td>4</td>
-									<td>5</td>
-									<td>5</td>
-									<td>6</td>
-									<td class="text-center">
-										<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-										<div class="dropdown-menu dropdown-menu-right">
-											<a href="#" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+							<?php //prit($patient); ?>
+							<table id="data_table" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Date</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								?>
+								<tr id="<?php echo $developer ['id']; ?>">
+							   		<td><?php echo $developer ['id']; ?></td>
+								   	<td><?php echo $developer ['date']; ?></td>
+								   	<td><?php echo $developer ['description']; ?></td>
+							   	</tr>
+								<?php } ?>
+								</tbody>
+							</table>
+						</div>
 
 				    </div>
 

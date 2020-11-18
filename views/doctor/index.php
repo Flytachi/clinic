@@ -103,7 +103,7 @@ $header = "Приём пациетов";
 					</div>
 
 				</div>
-
+			</td>
 
 			</div>
             <!-- /content area -->
