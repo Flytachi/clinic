@@ -46,3 +46,7 @@ is_auth();
     </div>
 
 </div>
+
+<div class="modal-footer">
+    <button type="submit" class="btn bg-info">Сохранить</button>
+</div>
