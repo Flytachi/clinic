@@ -8,11 +8,9 @@ $header = "Класификация персонала";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -106,9 +104,8 @@ $header = "Класификация персонала";
 	</div>
 	<!-- /page content -->
 
-
-    <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 
 	<script type="text/javascript">

@@ -24,13 +24,12 @@ switch ($_GET['tab']) {
         <?php
         }
         break;
-
-    case 4:
+    case 2:
         if(empty($_GET['search'])){
-            $sql = "SELECT * FROM visit WHERE direction IS NOT NULL AND status = 0 ORDER BY add_date ASC LIMIT 5";
+            $sql = "SELECT * FROM visit WHERE direction IS NOT NULL AND status = 1 ORDER BY add_date ASC LIMIT 5";
         }else {
             $ser = $_GET['search'];
-            $sql = "SELECT * FROM visit WHERE direction IS NOT NULL AND status = 0 AND (user_id LIKE '%$ser%')";// OR first_name LIKE '%$ser%' OR last_name LIKE '%$ser%' OR father_name LIKE '%$ser%'
+            $sql = "SELECT * FROM visit WHERE direction IS NOT NULL AND status = 1 AND (user_id LIKE '%$ser%')";// OR first_name LIKE '%$ser%' OR last_name LIKE '%$ser%' OR father_name LIKE '%$ser%'
         }
         foreach($db->query($sql) as $row) {
         ?>

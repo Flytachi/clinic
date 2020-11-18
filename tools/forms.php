@@ -312,6 +312,9 @@ class StationaryTreatmentForm extends Model
             unset($this->post['bed']);
             $object = Mixin\insert($this->table, $this->post);
             if ($object == 1){
+                // Создание списка Услуг
+                $post0 = array('visit_id' => $db->lastInsertId(), 'service_id' => 1);
+                $object0 = Mixin\insert('visit_service', $post0);
                 // Бронь койки
                 $post1 = array('visit_id' => $db->lastInsertId(), 'service_id' => $servise_pk);
                 $object1 = Mixin\update($this->table1, array('user_id' => $this->post['user_id']), $bed_pk);
@@ -377,8 +380,8 @@ class OutpatientTreatmentForm extends Model
             <div class="form-group row">
 
                 <div class="col-md-6">
-                    <label>Выберите пациета:</label>
-                    <select data-placeholder="Выбрать пациета" name="user_id" class="form-control form-control-select2" required data-fouc>
+                    <label>Пациент:</label>
+                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                             foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
@@ -395,11 +398,11 @@ class OutpatientTreatmentForm extends Model
                     <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
-                        }division
+                        }
                         ?>
                     </select>
                 </div>
@@ -413,7 +416,7 @@ class OutpatientTreatmentForm extends Model
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -427,7 +430,7 @@ class OutpatientTreatmentForm extends Model
                     <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
                             <?php
@@ -595,7 +598,7 @@ class PatientUpStatus extends Model
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
-        $this->url = "outpatient/content_1.php?id=".$this->post['id'];
+        $this->url = "card/content_1.php?id=".$this->post['id'];
         $this->update();
     }
 
@@ -603,6 +606,28 @@ class PatientUpStatus extends Model
     {
         global $PROJECT_NAME;
         header("location:/$PROJECT_NAME/views/doctor/$this->url");
+        exit;
+    }
+
+}
+
+class LaboratoryUpStatus extends Model
+{
+    public $table = 'visit';
+
+    public function get_or_404($pk)
+    {
+        $this->post['id'] = $pk;
+        $this->post['status'] = 2;
+        $this->post['accept_date'] = date('Y-m-d H:i:s');
+        $this->url = "index.php";
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/laboratory/$this->url");
         exit;
     }
 
@@ -665,16 +690,20 @@ class PatientFinish extends Model
 {
     public $table = 'visit';
     public $table1 = 'users';
+    public $table2 = 'beds';
 
     public function get_or_404($pk)
     {
         global $db;
+        if ($db->query("SELECT * FROM visit WHERE id=$pk")->rowCount()) {
+            $pk_arr = array('user_id' => $db->query("SELECT * FROM visit WHERE id=$pk")->fetch(PDO::FETCH_OBJ)->user_id);
+            $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
+        }
         $this->post['id'] = $pk;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
         $this->url = "index";
         $this->pk = $db->query("SELECT us.id FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.id=$pk")->fetch(PDO::FETCH_OBJ)->id;
-        // $this->dd();
         $this->update();
     }
 
@@ -707,7 +736,12 @@ class PatientReport extends Model
 
             <textarea name="report" id="report" rows="10" cols="80">
                 <?= $post['report'] ?>
+
             </textarea>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
             <script>
                 CKEDITOR.replace( 'report' );
             </script>
@@ -722,4 +756,157 @@ class PatientReport extends Model
         return True;
     }
 
+    public function success()
+    {
+        header('location:'.$_SERVER['HTTP_REFERER']);
+    }
+
+}
+
+class PatientRoute extends Model
+{
+    public $table = 'visit';
+    public $table1 = 'visit_service';
+    public $table2 = 'users';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="0">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Пациент:</label>
+                    <input type="hidden" class="form-control" name="user_id" id="<?= __CLASS__ ?>_user_id">
+                    <input type="text" class="form-control" id="<?= __CLASS__ ?>_user_id_get" disabled>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }division
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                            if ($row['id'] != $_SESSION['session_id']) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row" style="display: none;">
+
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea rows="4" cols="4" name="complaint" id="<?= __CLASS__ ?>_complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id2").chained("#division2");
+                $("#service").chained("#division2");
+            });
+        </script>
+        <?php
+    }
+
+    public function save()
+    {
+        global $db;
+        if($this->clean()){
+            $servise_pk = $this->post['service'];
+            unset($this->post['service']);
+            $object = Mixin\insert($this->table, $this->post);
+            if ($object == 1){
+                // Создание списка Услуг
+                $post1 = array('visit_id' => $db->lastInsertId(), 'service_id' => $servise_pk);
+                $object1 = Mixin\insert($this->table1, $post1);
+                // Обновление статуса у пациента
+                $object2 = Mixin\update($this->table2, array('status' => True), $this->post['user_id']);
+                if ($object1 == 1 and $object2 == 1){
+                    $this->success();
+                }else {
+                    if ($object1 != 1) {
+                        $this->error($object1);
+                    }else {
+                        $this->error($object2);
+                    }
+                }
+            }else{
+                $this->error($object);
+            }
+
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        header('location:'.$_SERVER['HTTP_REFERER']);
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        header('location:'.$_SERVER['HTTP_REFERER']);
+    }
 }
