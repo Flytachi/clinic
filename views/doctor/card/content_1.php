@@ -63,7 +63,7 @@ $header = "Пациент";
 													<?php
 												}else {
 													?>
-													<button onclick="CKEDITOR.instances.report.setData(''); $('#rep_id').val(this.dataset.id);" type="button" class="btn btn-outline-success btn-sm legitRipple" data-id="<?= $row['id'] ?>" data-toggle="modal" data-target="#modal_report_add">Провести</button>
+													<button onclick="CleanForm('<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 													<?php
 												}
 												?>
@@ -76,13 +76,6 @@ $header = "Пациент";
                             </table>
                         </div>
 
-						<?php
-						if (!$patient->direction) {
-							?>
-							<a href="document.php" class="btn">Шабллон</a>
-							<?php
-						}
-						?>
 				    </div>
 
 				    <!-- /content wrapper -->
@@ -97,7 +90,7 @@ $header = "Пациент";
 	<!-- /page content -->
 
 	<div id="modal_report_add" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-full">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-body" id="form_card">
 
@@ -119,6 +112,12 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
+
+		function CleanForm(id) {
+			$('#report_editor').html('');
+			$('#rep_id').val(id);
+			$('#modal_report_add').modal('show');
+		}
 
 		function Check(events) {
 			$.ajax({
