@@ -41,7 +41,7 @@ $header = "Анализы";
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php LaboratoryAnalyzeModel::form(); ?>
+                      	<?php LaboratoryAnalyzeTypeModel::form(); ?>
                   	</div>
 
             	</div>
@@ -74,7 +74,7 @@ $header = "Анализы";
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query('SELECT * from laboratory_analyze') as $row) {
+                                    foreach($db->query('SELECT * from laboratory_analyze_type') as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
@@ -90,8 +90,8 @@ $header = "Анализы";
                                             <td><?= ($row['status']) ? "Активный" : "Не активный" ?></td>
                                             <td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'LaboratoryAnalyzeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'LaboratoryAnalyzeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
                                             </td>
                                         </tr>

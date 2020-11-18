@@ -59,7 +59,7 @@ $header = "Стационарные пациенты";
                                     <?php
                                     foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
-                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
+                                        <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
                                             <td><?= get_full_name($row['user_id']) ?></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>

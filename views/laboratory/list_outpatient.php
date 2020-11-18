@@ -8,11 +8,9 @@ $header = "Амбулаторные пациенты";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -61,15 +59,14 @@ $header = "Амбулаторные пациенты";
                                     <?php
                                     foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
-                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
+                                        <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
                                             <td><?= get_full_name($row['user_id']) ?></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.visit_id = {$row['id']}") as $serv) {
-                                                    echo $serv['name']."<br>";
-                                                }
+												$serv = $db->query("SELECT sr.name, sr.id FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.visit_id = {$row['id']}")->fetch();
+												echo $serv['name'];
                                                 ?>
                                             </td>
                                             <td><?= get_full_name($row['route_id']) ?></td>
@@ -77,7 +74,7 @@ $header = "Амбулаторные пациенты";
                                                 <button type="button" class="btn btn-outline-primary btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Печать</a>
-                                                    <a href="<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
+                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>&service_id=<?= $serv['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -102,8 +99,32 @@ $header = "Амбулаторные пациенты";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_result_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-full">
+			<div class="modal-content border-3 border-info" id="modal_result_show_content">
+
+			</div>
+		</div>
+	</div>
+
 	<!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
+
+	<script type="text/javascript">
+
+		function ResultShow(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_result_show').modal('show');
+					$('#modal_result_show_content').html(result);
+				},
+			});
+		};
+
+	</script>
+
 </body>
 </html>

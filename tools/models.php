@@ -796,9 +796,9 @@ class StorageTypeModel extends Model
     }
 }
 
-class LaboratoryAnalyzeModel extends Model
+class LaboratoryAnalyzeTypeModel extends Model
 {
-    public $table = 'laboratory_analyze';
+    public $table = 'laboratory_analyze_type';
 
     public function form($pk = null)
     {
