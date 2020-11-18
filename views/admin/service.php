@@ -8,11 +8,9 @@ $header = "Услуги";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -108,7 +106,6 @@ $header = "Услуги";
 
 	</div>
 	<!-- /page content -->
-
 
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>

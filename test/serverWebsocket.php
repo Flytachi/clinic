@@ -1,6 +1,6 @@
 <?php
 
-require dirname(__DIR__) . '/clinic/vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;

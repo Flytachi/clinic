@@ -93,5 +93,8 @@ $header = "Архив";
 	</div>
 	<!-- /page content -->
 
+	<!-- Footer -->
+	<?php include '../layout/footer.php' ?>
+	<!-- /footer -->
 </body>
 </html>

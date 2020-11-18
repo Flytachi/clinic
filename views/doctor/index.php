@@ -8,11 +8,9 @@ $header = "Приём пациетов";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -131,7 +129,7 @@ $header = "Приём пациетов";
 	<!-- /failure modal -->
 
     <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 
     <script type="text/javascript">

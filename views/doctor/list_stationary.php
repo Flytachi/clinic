@@ -8,11 +8,9 @@ $header = "Стационарные пациенты";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -64,7 +62,7 @@ $header = "Стационарные пациенты";
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['user_id']) ?></td>
                                             <td><?= get_full_name($row['user_id']) ?></td>
-                                            <td><?= $row['dateBith'] ?></td>
+                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php
                                                 foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id = {$row['id']}") as $serv) {
@@ -106,9 +104,8 @@ $header = "Стационарные пациенты";
 	</div>
 	<!-- /page content -->
 
-    <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
 </body>
 </html>

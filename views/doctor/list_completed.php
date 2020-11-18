@@ -8,11 +8,9 @@ $header = "Завершёный пациенты";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -65,7 +63,7 @@ $header = "Завершёный пациенты";
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><?= get_full_name($row['id']) ?></td>
-                                            <td><?= $row['dateBith'] ?></td>
+                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td><?= $row['numberPhone'] ?></td>
                                             <td><?= $row['add_date'] ?></td>
                                             <td class="text-center">
@@ -94,9 +92,7 @@ $header = "Завершёный пациенты";
 	<!-- /page content -->
 
     <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
-
 </body>
 </html>

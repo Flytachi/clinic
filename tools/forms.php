@@ -398,11 +398,11 @@ class OutpatientTreatmentForm extends Model
                     <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
-                        }division
+                        }
                         ?>
                     </select>
                 </div>
@@ -416,7 +416,7 @@ class OutpatientTreatmentForm extends Model
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -430,7 +430,7 @@ class OutpatientTreatmentForm extends Model
                     <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
                             <?php
@@ -611,6 +611,28 @@ class PatientUpStatus extends Model
 
 }
 
+class LaboratoryUpStatus extends Model
+{
+    public $table = 'visit';
+
+    public function get_or_404($pk)
+    {
+        $this->post['id'] = $pk;
+        $this->post['status'] = 2;
+        $this->post['accept_date'] = date('Y-m-d H:i:s');
+        $this->url = "index.php";
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/laboratory/$this->url");
+        exit;
+    }
+
+}
+
 class PatientFailure extends Model
 {
     public $table = 'visit';
@@ -714,7 +736,7 @@ class PatientReport extends Model
 
             <textarea name="report" id="report" rows="10" cols="80">
                 <?= $post['report'] ?>
-                
+
             </textarea>
 
             <div class="text-right">

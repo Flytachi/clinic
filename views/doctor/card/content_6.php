@@ -305,7 +305,7 @@ $header = "Пациент";
 		    return strNumber;
 		}
 
-    	var conn = new WebSocket('ws://localhost:8080');
+    	var conn = new WebSocket('ws://192.168.1.114:8080');
 		conn.onopen = function(e) {
 		    console.log("Connection established!");
 		};
