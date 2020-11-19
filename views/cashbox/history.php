@@ -8,11 +8,9 @@ $header = "Рабочий стол";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -64,9 +62,8 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
-    <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
 </body>
 </html>

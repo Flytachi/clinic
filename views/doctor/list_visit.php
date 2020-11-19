@@ -299,8 +299,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 		};
 	</script>
 
-    <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 </body>
 </html>

@@ -796,4 +796,184 @@ class StorageTypeModel extends Model
     }
 }
 
+class LaboratoryAnalyzeTypeModel extends Model
+{
+    public $table = 'laboratory_analyze_type';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+
+            <div class="form-group">
+                <label>Услуга:</label>
+                <select data-placeholder="Выбрать услугу" name="service_id" class="form-control form-control-select2" required>
+                    <option></option>
+                    <?php
+                    foreach($db->query('SELECT * from service WHERE user_level = 6') as $row) {
+                        ?>
+                        <option value="<?= $row['id'] ?>"<?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Название:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Код:</label>
+                <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Норматив:</label>
+                <textarea rows="4" cols="4" name="standart" class="form-control" placeholder="Введите норматив ..."><?= $post['standart']?></textarea>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('admin/analyze');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render('admin/analyze');
+    }
+}
+
+class LaboratoryAnalyzeTableModel extends Model
+{
+    public $table = 'laboratory_analyze';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        prit($_GET);
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm table-bordered">
+                    <thead>
+                        <tr class="bg-info">
+                            <th style="width:3%">№</th>
+                            <th>Название</th>
+                            <th>Направитель</th>
+                            <th style="width:10%">Норматив</th>
+                            <th style="width:10%">Результат</th>
+                            <th class="text-center" style="width:25%">Примечание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $i = 1;
+                        foreach ($db->query("SELECT la.id, la.result, la.description, lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}") as $row) {
+                            ?>
+                            <tr>
+                                <td><?= $i++ ?></td>
+                                <td><?= $row['name'] ?></td>
+                                <td><?= get_full_name($pacc['route_id']) ?></td>
+                                <td><?= $row['standart'] ?></td>
+                                <td>
+                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                </td>
+                                <td>
+                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить! <i class="icon-paperplane ml-2"></i></button>
+            </div>
+        </form>
+        <?php
+    }
+
+    public function save()
+    {
+        foreach ($this->post as $val) {
+            $pk = $val['id'];
+            unset($val['id']);
+            $object = Mixin\update($this->table, $val, $pk);
+        }
+        if ($object == 1){
+            $this->success();
+        }else{
+            $this->error($object);
+        }
+    }
+
+    public function success()
+    {
+        echo '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+    }
+
+    public function error($message)
+    {
+        echo '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+    }
+}
 ?>

@@ -8,11 +8,9 @@ $header = "Рабочий стол";
 <?php include '../layout/head.php' ?>
 
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -64,7 +62,6 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
-
 	<!-- Basic modal -->
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
@@ -81,8 +78,8 @@ $header = "Рабочий стол";
 	</div>
 
 
-    <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 
 	<script type="text/javascript">

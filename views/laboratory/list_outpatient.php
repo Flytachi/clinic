@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
-$header = "Стационарные пациенты";
+is_auth(6);
+$header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@ $header = "Стационарные пациенты";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Стационарные пациенты</h6>
+						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
 								<a class="list-icons-item" data-action="collapse"></a>
@@ -43,7 +43,7 @@ $header = "Стационарные пациенты";
 
 					<div class="card-body">
 
-                        <div class="table-responsive">
+						<div class="table-responsive">
                             <table class="table table-hover table-sm table-bordered">
                                 <thead>
                                     <tr class="bg-info">
@@ -57,7 +57,7 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+                                    foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
@@ -65,23 +65,18 @@ $header = "Стационарные пациенты";
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id = {$row['id']}") as $serv) {
-                                                    echo $serv['name']."<br>";
-                                                }
+												$serv = $db->query("SELECT sr.name, sr.id FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.visit_id = {$row['id']}")->fetch();
+												echo $serv['name'];
                                                 ?>
                                             </td>
                                             <td><?= get_full_name($row['route_id']) ?></td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-primary btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
-                                                <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                                    <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-user-plus"></i>Обход</a>
-                                                    <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-                                                    <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard3"></i>Назначение врача</a>
-                                                    <a href="<?= viv('doctor/card/content_10') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Записи медсестры</a>
-                                                    <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-diff-ignored"></i> Анестизиолог</a>
-                                                    <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-file-eye"></i> Операционные</a>
+                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Печать</a>
+                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>&user_id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
                                                 </div>
-                                              </td>
+                                            </td>
                                         </tr>
                                         <?php
                                     }
@@ -104,8 +99,32 @@ $header = "Стационарные пациенты";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_result_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-full">
+			<div class="modal-content border-3 border-info" id="modal_result_show_content">
+
+			</div>
+		</div>
+	</div>
+
 	<!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
+
+	<script type="text/javascript">
+
+		function ResultShow(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_result_show').modal('show');
+					$('#modal_result_show_content').html(result);
+				},
+			});
+		};
+
+	</script>
+
 </body>
 </html>

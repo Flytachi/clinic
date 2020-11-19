@@ -189,8 +189,8 @@ $header = "Список пациентов";
 		</div>
 	</div>
 
-    <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 
 	<script type="text/javascript">

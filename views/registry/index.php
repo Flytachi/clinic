@@ -112,8 +112,8 @@ $header = "Рабочий стол";
 	<!-- /page content -->
 
 
-    <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 </body>
 </html>

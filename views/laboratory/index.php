@@ -1,56 +1,16 @@
-
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
+is_auth(6);
+$header = "Приём пациетов";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../layout/head.php' ?>
 
-<script src="<?= stack("global_assets/js/plugins/forms/wizards/steps.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/inputs/inputmask.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/validation/validate.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/extensions/cookie.js")?>"></script>
-<script src="<?= stack("assets/js/app.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_wizard.js")?>"></script>
-<!-- /theme JS files -->
-<!-- Theme JS files -->
-<script src="<?= stack("global_assets/js/plugins/editors/summernote/summernote.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js")?>"></script>
-<script src="<?= stack("assets/js/app.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/editor_summernote.js")?> "></script>
-
-<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3_tooltip.js")?>"></script>
-
-<script src="<?= stack("assets/js/app.js")?>"></script>	
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic_bivariate.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic_area.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic_multi_series.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic_stacked.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic_stacked_nest.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/charts/d3/lines/lines_basic_gradient.js")?>"></script>
-
-</head>
-
-<?php
-
-	$level_id = level();
-
-	$mas = $db->query("SELECT us.id, us.dateBith, s.name, first_name, last_name  FROM division AS d LEFT JOIN service AS s ON d.id = s.division_id LEFT JOIN user_service AS u ON s.id = u.service_id LEFT JOIN users AS us ON u.user_id = us.id WHERE level = $level_id")->fetchAll();
-?>
-
 <body>
-
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
-
 
 	<!-- Page content -->
 	<div class="page-content">
@@ -59,619 +19,91 @@ is_auth();
 		<?php include '../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
-
 		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
+
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
-				    <div class="card-header header-elements-inline">
-				        <h6 class="card-title">Лаборатория</h6>
-				        <div class="header-elements">
-				            <div class="list-icons">
-				                <a class="list-icons-item" data-action="collapse"></a>
-				            </div>
-				        </div>
-				    </div>
 
-				    <div class="card-body">
-				        <ul class="nav nav-tabs nav-tabs-solid nav-justified border-0">
-				            <li class="nav-item"><a href="#solid-justified-tab1" class="nav-link active legitRipple" data-toggle="tab">Амбулаторный пациенты</a></li>
-				            <li class="nav-item"><a href="#solid-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Стационар пациенты</a></li>
-				        </ul>
+				<div class="card border-1 border-info">
 
-				        <div class="tab-content">
-				            <div class="tab-pane fade show active" id="solid-justified-tab1">
-				                <!-- Multiple rows selection -->
-				                <div class="card">
-				                    <div class="card-header header-elements-inline">
-				                        <h5 class="card-title">Информация о пациенты</h5>
-				                        <div class="header-elements">
-				                            <div class="list-icons">
-				                                <a class="list-icons-item" data-action="reload"></a>
-				                            </div>
-				                        </div>
-				                    </div>
-				                    <table class="table datatable-selection-multiple">
-				                        <thead>
-				                            <tr class="bg-blue text-center">
-				                                <th>ID</th>
-				                                <th>ФИО</th>
-				                                <th>Дата и время</th>
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">Пациенты на приём</h6>
+						<div class="header-elements">
+							<div class="list-icons">
+								<a class="list-icons-item" data-action="collapse"></a>
+							</div>
+						</div>
+					</div>
 
-				                                <th>Возраст</th>
-				                                <th>Мед услуги</th>
-				                                <th>Отправитель</th>
-				                                <th class="text-center">Действия</th>
-				                            </tr>
-				                        </thead>
-				                        <tbody>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
+					<div class="card-body">
 
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Мирзаева А</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggl"dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(906px, 33px, 0px);">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
+						<div class="table-responsive">
+                            <table class="table table-hover table-sm table-bordered">
+                                <thead>
+                                    <tr class="bg-info">
+                                        <th>ID</th>
+                                        <th>ФИО</th>
+                                        <th>Дата рождения</th>
+                                        <th>Мед услуга</th>
+                                        <th>Направитель</th>
+                                        <th>Тип визита</th>
+                                        <th class="text-center" style="width:210px">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+                                        ?>
+                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
+                                            <td><?= addZero($row['user_id']) ?></td>
+                                            <td><?= get_full_name($row['user_id']) ?></td>
+                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+                                            <td>
+                                                <?php
+                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id = {$row['id']}") as $serv) {
+                                                    echo $serv['name']."<br>";
+                                                }
+                                                ?>
+                                            </td>
+                                            <td><?= get_full_name($row['route_id']) ?></td>
+                                            <td class="text-center">
+                                                <?php
+                                                if($row['direction']){
+                                                    ?>
+                                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
+                                                    <?php
+                                                }else{
+                                                    ?>
+                                                    <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </td>
+                                            <td class="text-center">
+												<a href="<?= up_url($row['id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
+                                                <!-- <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button> -->
+                                                <!-- <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button> -->
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
 
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Мирзаева А</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
+					</div>
 
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Мирзаева А</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Мирзаева А</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Мирзаева А</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                        </tbody>
-				                    </table>
-				                </div>
-				                <!-- /multiple rows selection -->
-				            </div>
-
-				            <div class="tab-pane fade" id="solid-justified-tab2">
-				                <div class="card">
-				                    <div class="card-header header-elements-inline">
-				                        <h5 class="card-title">Информация о пациенты</h5>
-				                        <div class="header-elements">
-				                            <div class="list-icons">
-				                                <a class="list-icons-item" data-action="reload"></a>
-				                            </div>
-				                        </div>
-				                    </div>
-
-				                    <table class="table datatable-selection-multiple">
-				                        <thead>
-				                            <tr class="bg-blue text-center">
-				                                <th>ID</th>
-				                                <th>ФИО</th>
-				                                <th>Дата и время</th>
-
-				                                <th>Возраст</th>
-				                                <th>Мед услуги</th>
-				                                <th>Отправитель</th>
-				                                <th class="text-center">Действия</th>
-				                            </tr>
-				                        </thead>
-				                        <tbody>
-
-				                        	<?php
-
-				                        		foreach($mas as $key) {
-
-				                        			$tz = new DateTimeZone('Europe/Brussels');
-
-													$dateBith = DateTime::createFromFormat('Y-m-d', $key['dateBith'], $tz)->diff(new DateTime('now', $tz))->y;
-				                        		?>
-
-				                        		<tr>
-					                                <td><?= addZero($key['id'])?></td>
-					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
-					                                <td>13.03.2020 13:04</td>
-
-					                                <td><?= $dateBith ?></td>
-					                                <td><?= "dsa"?></td>
-					                                <td>Ахмедов Ш</td>
-					                                <td class="text-center">
-					                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-					                                    <div class="dropdown-menu dropdown-menu-right">
-					                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#mini<?= $key['id'] ?>"><i class="icon-user-plus"></i>печатать штрих</a>
-					                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#<?= $key['id'] ?>"><i class="icon-fire2"></i> Добавить резултаты</a>
-					                                    </div>
-					                                </td>
-					                            </tr>
-
-				                        	<?php
-				                        		}
-				                        	?>
-
-
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Ахмедов Ш</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Ахмедов Ш</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Ахмедов Ш</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Ахмедов Ш</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>Якубов Фарход Абдурасуловия</td>
-				                                <td>13.03.2020 13:04</td>
-
-				                                <td>33</td>
-				                                <td>Общий анализ крови</td>
-				                                <td>Ахмедов Ш</td>
-				                                <td class="text-center">
-				                                    <button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-				                                    <div class="dropdown-menu dropdown-menu-right">
-				                                        <a href="#" class="dropdown-item btn btn-light legitRipple" data-toggle="modal" data-target="#modal_mini"><i class="icon-user-plus"></i>печатать штрих</a>
-				                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#modal_default2"><i class="icon-fire2"></i> Добавить резултаты</a>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                        </tbody>
-				                    </table>
-				                </div>
-				            </div>
-				        </div>
-				    </div>
 				</div>
-				<div id="modal_default2" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-				    <div class="modal-dialog modal-full">
-				        <div class="modal-content">
-				            <div class="modal-header">
-				                <h5 class="modal-title">
-				                    Анализы пациента:<b><p>Якубов Фарход</p></b>
-				                </h5>
-				                <button type="button" class="close" data-dismiss="modal"></button>
-				            </div>
+			</td>
 
-				            <div class="modal-body">
-				                <div class="table-responsive">
-				                    <table class="table">
-				                        <thead>
-				                            <tr class="bg-blue">
-				                                <th>ID</th>
-				                                <th>Дата и время</th>
-				                                <th>Имя анализа</th>
-				                                <th>Специалист</th>
-				                                <th class="text-center">Результаты</th>
-				                                <th>Норматив</th>
-				                                <th>Примечание</th>
-				                            </tr>
-				                        </thead>
-				                        <tbody>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>13.03.2020 13:03</td>
-				                                <td>Анализ мочи</td>
-				                                <td>Ахмедова З</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-5">
-				                                            <input type="text" class="form-control font-weight-bold text-center" />
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                                <td>10</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-12">
-				                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                            </tr>
-
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>13.03.2020 13:03</td>
-				                                <td>Анализ мочи</td>
-				                                <td>Ахмедова З</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-5">
-				                                            <input type="text" class="form-control font-weight-bold text-center" />
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                                <td>10</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-12">
-				                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>13.03.2020 13:03</td>
-				                                <td>Анализ мочи</td>
-				                                <td>Ахмедова З</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-5">
-				                                            <input type="text" class="form-control font-weight-bold text-center" />
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                                <td>10</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-12">
-				                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                            <tr>
-				                                <td>0001</td>
-				                                <td>13.03.2020 13:03</td>
-				                                <td>Анализ мочи</td>
-				                                <td>Ахмедова З</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-12">
-				                                            <input type="text" class="form-control font-weight-bold text-center" />
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                                <td>10</td>
-				                                <td>
-				                                    <div class="form-group row">
-				                                        <label class="col-form-label col-md-3"></label>
-				                                        <div class="col-md-12">
-				                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-				                                        </div>
-				                                    </div>
-				                                </td>
-				                            </tr>
-				                        </tbody>
-				                    </table>
-				                </div>
-				            </div>
-
-				            <div class="modal-footer">
-				                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">Сохранить</button>
-				                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">Завершить</button>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-
-				<?php
-
-					foreach($mas as $key) {
-				?>
-
-				<div id="<?= $key['id'] ?>" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-					<form id="f<?= $key['id'] ?>">
-						<input type="hidden" name="qwe" value="000ww">
-					    <div class="modal-dialog modal-full">
-					        <div class="modal-content">
-					            <div class="modal-header">
-					                <h5 class="modal-title">
-					                    Анализы пациента:<b><p><?= $key['first_name']?> <?= $key['last_name']?></p></b>
-					                </h5>
-					                <button type="button" class="close" data-dismiss="modal"></button>
-					            </div>
-
-					            <div class="modal-body">
-					                <div class="table-responsive">
-					                    <table class="table">
-					                        <thead>
-					                            <tr class="bg-blue">
-					                                <th>ID</th>
-					                                <th>Дата и время</th>
-					                                <th>Имя анализа</th>
-					                                <th>Специалист</th>
-					                                <th class="text-center">Результаты</th>
-					                                <th>Норматив</th>
-					                                <th>Примечание</th>
-					                            </tr>
-					                        </thead>
-					                        <tbody>
-					                            <tr>
-					                                <td><?= addZero($key['id'])?></td>
-					                                <td>13.03.2020 13:03</td>
-					                                <td>Анализ мочи</td>
-					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-5">
-					                                            <input type="text" class="form-control font-weight-bold text-center" />
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                                <td>10</td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-12">
-					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                            </tr>
-
-					                            <tr>
-					                                <td><?= addZero($key['id'])?></td>
-					                                <td>13.03.2020 13:03</td>
-					                                <td>Анализ мочи</td>
-					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-5">
-					                                            <input type="text" class="form-control font-weight-bold text-center" />
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                                <td>10</td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-12">
-					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                            </tr>
-					                            <tr>
-					                                <td><?= addZero($key['id'])?></td>
-					                                <td>13.03.2020 13:03</td>
-					                                <td>Анализ мочи</td>
-					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-5">
-					                                            <input type="text" class="form-control font-weight-bold text-center" />
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                                <td>10</td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-12">
-					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                            </tr>
-					                            <tr>
-					                                <td><?= addZero($key['id'])?></td>
-					                                <td>13.03.2020 13:03</td>
-					                                <td>Анализ мочи</td>
-					                                <td><?= $key['first_name']?> <?= $key['last_name']?></td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-12">
-					                                            <input type="text" class="form-control font-weight-bold text-center" />
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                                <td>10</td>
-					                                <td>
-					                                    <div class="form-group row">
-					                                        <label class="col-form-label col-md-3"></label>
-					                                        <div class="col-md-12">
-					                                            <textarea rows="1" cols="3" class="form-control" placeholder="Примечание"></textarea>
-					                                        </div>
-					                                    </div>
-					                                </td>
-					                            </tr>
-					                        </tbody>
-					                    </table>
-					                </div>
-					            </div>
-
-					            <div class="modal-footer">
-					                <button type="button" class="btn btn-link legitRipple" onclick="console.log(document.forms.f<?= $key['id'] ?>.qwe)" data-dismiss="modal">Сохранить</button>
-					                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">Завершить</button>
-					            </div>
-					        </div>
-					    </div>
-					</form>
-				</div>
-				<?php 
-					}
-				?>
-				<div id="modal_mini" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-				    <div class="modal-dialog modal-xs">
-				        <div class="modal-content">
-				            <div class="modal-header">
-				                <h5 class="modal-title">печать на пробирку</h5>
-				                <button type="button" class="close" data-dismiss="modal">×</button>
-				            </div>
-
-				            <div class="modal-body">
-				                <h6 class="font-weight-semibold">Данные пациента</h6>
-				                <p>ID пациента</p>
-				                <p>ФИО</p>
-				                <p>Дата и время</p>
-				                <p>Дата рождение</p>
-				            </div>
-
-				            <div class="modal-footer">
-				                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">
-				                    Закрыть
-				                    <div class="legitRipple-ripple" style="left: 46.8524%; top: 44.1228%; transform: translate3d(-50%, -50%, 0px); width: 215.559%; opacity: 0;"></div>
-				                </button>
-				                <button type="button" class="btn bg-primary legitRipple">печатать</button>
-				            </div>
-				        </div>
-				    </div>
-				</div>
 			</div>
-
-			<?php
-
-				foreach($mas as $key) {
-			?>
-
-				<div id="mini<?= $key['id'] ?>" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-				    <div class="modal-dialog modal-xs">
-				        <div class="modal-content">
-				            <div class="modal-header">
-				                <h5 class="modal-title">печать на пробирку</h5>
-				                <button type="button" class="close" data-dismiss="modal">×</button>
-				            </div>
-
-				            <div class="modal-body">
-				                <h6 class="font-weight-semibold">Данные пациента</h6>
-				                <p>ID пациента : <?= addZero($key['id'])?></p>
-				                <p>ФИО : <?= $key['first_name']?> <?= $key['last_name']?></p>
-				                <p>Дата и время</p>
-				                <p>Дата рождение: <?= $key['dateBith']?></p>
-				            </div>
-
-				            <div class="modal-footer">
-				                <button type="button" class="btn btn-link legitRipple" data-dismiss="modal">
-				                    Закрыть
-				                    <div class="legitRipple-ripple" style="left: 46.8524%; top: 44.1228%; transform: translate3d(-50%, -50%, 0px); width: 215.559%; opacity: 0;"></div>
-				                </button>
-				                <button type="button" class="btn bg-primary legitRipple">печатать</button>
-				            </div>
-				        </div>
-				    </div>
-				</div>
-			<?php
-				}
-			?>
             <!-- /content area -->
 
 		</div>
@@ -680,13 +112,53 @@ is_auth();
 	</div>
 	<!-- /page content -->
 
+    <!-- Failure modal -->
+	<div id="modal_failure" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-1 border-danger">
 
+				<div class="modal-header bg-danger">
+					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
 
-
+				<?= PatientFailure::form(); ?>
+			</div>
+		</div>
+	</div>
+	<!-- /failure modal -->
 
     <!-- Footer -->
-    <?php include 'layout/footer.php' ?>
+    <?php include '../layout/footer.php' ?>
     <!-- /footer -->
+
+    <script type="text/javascript">
+
+		function Recept(tr) {
+			$('#'+tr).css("background-color", "rgb(76, 175, 80)");
+			$('#'+tr).css("color", "white");
+			$('#'+tr).fadeOut('slow', function() {
+				$(this).remove();
+			});
+		}
+
+        $('#form_PatientFailure').submit(function (events) {
+            events.preventDefault();
+            $.ajax({
+                type: $(this).attr("method"),
+                url: $(this).attr("action"),
+                data: $(this).serializeArray(),
+                success: function (result) {
+					$('#modal_failure').modal('hide');
+					$('#'+result).css("background-color", "rgb(244, 67, 54)");
+					$('#'+result).css("color", "white");
+					$('#'+result).fadeOut(900, function() {
+						$(this).remove();
+					});
+                },
+            });
+        });
+    </script>
 
 </body>
 </html>

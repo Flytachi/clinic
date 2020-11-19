@@ -305,7 +305,7 @@ $header = "Пациент";
 		    return strNumber;
 		}
 
-    	var conn = new WebSocket('ws://localhost:8080');
+    	var conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 		conn.onopen = function(e) {
 		    console.log("Connection established!");
 		};
