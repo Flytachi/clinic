@@ -44,61 +44,34 @@ $header = "Пациент";
 								<table class="table">
 									<thead>
 										<tr class="bg-blue text-center">
-											<th>ID</th>
-											<th>ФИО</th>
-											<th>Дата и время</th>
-											<th>Имя анализа</th>
+											<th>№</th>
 											<th>Специалист</th>
+											<th>Дата и время</th>
+											<th>Услуга</th>
+											<th>Анализ</th>
 											<th>Результаты</th>
 											<th>Норматив</th>
 											<th>Примечание</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr class="text-center">
-											<td>0001</td>
-											<td>Якубов Фарход Абдурасулович</td>
-											<td>13.03.2020 13:04</td>
-
-											<td>Анализ мочи</td>
-											<td>Ахмедова З</td>
-											<td>10-12</td>
-											<td>10</td>
-											<td>Тест</td>
-										</tr>
-										<tr class="text-center">
-											<td>0001</td>
-											<td>Якубов Фарход Абдурасулович</td>
-											<td>13.03.2020 13:04</td>
-
-											<td>Анализ мочи</td>
-											<td>Ахмедова З</td>
-											<td>10-12</td>
-											<td>10</td>
-											<td>Тест</td>
-										</tr>
-										<tr class="text-center">
-											<td>0001</td>
-											<td>Якубов Фарход Абдурасулович</td>
-											<td>13.03.2020 13:04</td>
-
-											<td>Анализ мочи</td>
-											<td>Ахмедова З</td>
-											<td>10-12</td>
-											<td>10</td>
-											<td>Тест</td>
-										</tr>
-										<tr class="text-center">
-											<td>0001</td>
-											<td>Якубов Фарход Абдурасулович</td>
-											<td>13.03.2020 13:04</td>
-
-											<td>Анализ мочи</td>
-											<td>Ахмедова З</td>
-											<td>10-12</td>
-											<td>10</td>
-											<td>Тест</td>
-										</tr>
+										<?php
+										$i = 1;
+										foreach ($db->query("SELECT vs.parent_id, vs.completed, sr.name 'service_name', lat.name, lat.standart, la.result, la.description FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (lat.id=la.analyze_id) LEFT JOIN visit vs ON (vs.id=la.visit_id) LEFT JOIN service sr ON (sr.id=lat.service_id) WHERE la.user_id = $patient->user_id ORDER BY la.id DESC") as $row) {
+										?>
+											<tr class="text-center">
+												<td><?= $i++ ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
+												<td><?= $row['service_name'] ?></td>
+												<td><?= $row['name'] ?></td>
+												<td><?= $row['result'] ?></td>
+												<td><?= $row['standart'] ?></td>
+												<td><?= $row['description'] ?></td>
+											</tr>
+										<?php
+										}
+									 	?>
 									</tbody>
 								</table>
 							</div>

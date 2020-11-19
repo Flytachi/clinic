@@ -46,8 +46,17 @@ $header = "Пациент";
 				        }
 						?>
 
-						<button onclick="$('#PatientRoute_user_id').val('<?= $patient->user_id ?>');$('#PatientRoute_user_id_get').val('<?= get_full_name($patient->user_id) ?>');$('#PatientRoute_complaint').val('<?= $patient->complaint ?>');" type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
-
+						<?php
+						if ($patient->direction) {
+							?>
+							<button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
+							<?php
+						} else {
+							?>
+							<button onclick="$('#PatientRoute_user_id').val('<?= $patient->user_id ?>');$('#PatientRoute_user_id_get').val('<?= get_full_name($patient->user_id) ?>');$('#PatientRoute_complaint').val('<?= $patient->complaint ?>');" type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
+							<?php
+						}
+						?>
 						<div class="card">
 							<table class="table table-togglable table-hover">
 								<thead>
@@ -155,7 +164,13 @@ $header = "Пациент";
 
 				<div class="modal-body">
 
-					<?= PatientRoute::form() ?>
+					<?php
+					if ($patient->direction) {
+						PatientRouteStationary::form();
+					} else {
+						PatientRoute::form();
+					}
+					?>
 
 				</div>
 			</div>

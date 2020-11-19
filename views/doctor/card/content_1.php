@@ -91,12 +91,10 @@ $header = "Пациент";
 
 	<div id="modal_report_add" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-body" id="form_card">
+			<div class="modal-content border-3 border-info" id="form_card">
 
-					<?php PatientReport::form(); ?>
+				<?php PatientReport::form(); ?>
 
-				</div>
 			</div>
 		</div>
 	</div>
