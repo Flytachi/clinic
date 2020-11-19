@@ -614,9 +614,15 @@ class PatientUpStatus extends Model
 class LaboratoryUpStatus extends Model
 {
     public $table = 'visit';
+    public $table2 = 'laboratory_analyze';
 
     public function get_or_404($pk)
     {
+        global $db;
+        $serv_id = $db->query("SELECT * FROM visit_service WHERE visit_id=$pk")->fetch()['service_id'];
+        foreach ($db->query("SELECT * FROM laboratory_analyze_type WHERE service_id = $serv_id") as $row) {
+            Mixin\insert( $this->table2, array('visit_id' => $pk, 'analyze_id' => $row['id']) );
+        }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
