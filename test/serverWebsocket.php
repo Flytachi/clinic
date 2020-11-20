@@ -1,6 +1,7 @@
 <?php
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+require_once '../tools/functions/connection.php';
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;
@@ -28,7 +29,40 @@ class Chat implements MessageComponentInterface {
 
         foreach ($this->clients as $client) {
             $client->send($msg);
+
+            $mas = json_decode($msg);
+
+            var_dump($mas);
+
+            $id_push = $mas->{"id"};
+            $id_pull = $mas->{"id_cli"};
+            $message = $mas->{"message"};
+
+
         }
+
+        global $db;
+
+        $hour = date('H');
+
+        $minute = date('i');
+
+        $year = date('Y');
+
+        $month = date('m');
+
+        $day = date('d');
+
+        $date = $year .".". $month .".". $day;
+
+        $time = $hour .":". $minute;
+
+
+        $sql = "INSERT INTO `chat` (`id`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$id_push', '$id_pull', '$message', '$date', '$time')";
+
+        echo $sql;
+
+        $db->query($sql);
     }
 
     public function onClose(ConnectionInterface $conn) {

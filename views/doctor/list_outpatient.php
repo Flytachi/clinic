@@ -77,7 +77,7 @@ $header = "Амбулаторные пациенты";
 													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Осмотр Врача</a>
                                                     <a href="<?= viv('doctor/card/content_2') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Другие визити</a>
                                                     <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i> Добавить визит</a>
-                                                    <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
+                                                    <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
                                                 </div>
                                             </td>
                                         </tr>

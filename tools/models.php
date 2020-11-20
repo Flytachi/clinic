@@ -223,6 +223,7 @@ class UserCheckOutpatientModel extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
                 <input type="hidden" name="visit_id" id="visit_amb_id">
 
                 <div class="form-group row">
@@ -321,6 +322,7 @@ class UserCheckStationaryModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="visit_id" id="visit_st_id">
 
             <div class="form-group form-group-float row">
@@ -874,6 +876,113 @@ class LaboratoryAnalyzeTypeModel extends Model
         </div>
         ';
         render('admin/analyze');
+    }
+}
+
+class LaboratoryAnalyzeTableModel extends Model
+{
+    public $table = 'laboratory_analyze';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-info">
+                                <th style="width:3%">№</th>
+                                <th>Название услуги</th>
+                                <th>Анализ</th>
+                                <th>Направитель</th>
+                                <th style="width:10%">Норматив</th>
+                                <th style="width:10%">Результат</th>
+                                <th class="text-center" style="width:25%">Примечание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $i = 1;
+                            foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}") as $row) {
+                                ?>
+                                <tr>
+                                    <td><?= $i++ ?></td>
+                                    <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= get_full_name($pacc['route_id']) ?></td>
+                                    <td><?= $row['standart'] ?></td>
+                                    <td>
+                                        <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                        <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <a href="<?= up_url($_GET['id'], 'PatientLaboratoryFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
+                <button type="submit" class="btn bg-info">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function save()
+    {
+        foreach ($this->post as $val) {
+            $pk = $val['id'];
+            unset($val['id']);
+            $object = Mixin\update($this->table, $val, $pk);
+        }
+        if ($object == 1){
+            $this->success();
+        }else{
+            $this->error($object);
+        }
+    }
+
+    public function success()
+    {
+        echo '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+    }
+
+    public function error($message)
+    {
+        echo '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
     }
 }
 ?>

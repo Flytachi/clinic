@@ -22,7 +22,7 @@ switch (level()):
         include('docs/index/ambulator.php');
         break;
     case 8:
-        include('docs/index/nurse.php');
+        render('nurse/index');
         break;
 endswitch;
 ?>

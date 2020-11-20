@@ -1,5 +1,5 @@
 <?php
-$sql = "SELECT vs.id, vs.user_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, bds.floor, bds.ward, bds.num FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) LEFT JOIN beds bds ON (bds.user_id=vs.user_id) WHERE vs.status = 2 AND vs.id = {$_GET['id']}";
+$sql = "SELECT vs.id, vs.user_id, vs.grant_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, bds.floor, bds.ward, bds.num FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) LEFT JOIN beds bds ON (bds.user_id=vs.user_id) WHERE vs.status = 2 AND vs.id = {$_GET['id']}";
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($patient);
 ?>
@@ -102,6 +102,17 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     <fieldset class="mb-3 row" style="margin-top: -40px; ">
                         <legend></legend>
 
+                        <div class="col-md-12">
+                            <div class="form-group row">
+
+                                <label class="col-md-4"><b>Ответственный врач:</b></label>
+                                <div class="col-md-8 text-right">
+                                    <?= get_full_name($patient->grant_id) ?>
+                                </div>
+
+                            </div>
+                        </div>
+
                         <div class="col-md-6">
                             <div class="form-group row">
 
@@ -122,7 +133,18 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
                                 <label class="col-md-3"><b>Прибывание:</b></label>
                                 <div class="col-md-9 text-right">
-                                    2 дня
+                                    <?php
+                                    $end_date = date_diff(new \DateTime(), new \DateTime($patient->add_date))->days;
+                                    if ($end_date == 1) {
+                                        echo $end_date." день";
+                                    }elseif (in_array($end_date, [2,3,4])) {
+                                        echo $end_date." дня";
+                                    }elseif ($end_date >= 5) {
+                                        echo $end_date." дней";
+                                    }else {
+                                        echo "Прибыл сегодня";
+                                    }
+                                    ?>
                                 </div>
 
                                 <label class="col-md-4"><b>Дата выписки:</b></label>
@@ -143,7 +165,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
             <div class="col-md-12">
                 <div class="text-right">
                     <?php
-                    if ($patient->direction) {
+                    if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
                         ?>
                         <a href="<?= up_url($patient->id, 'PatientFinish') ?>" onclick="return confirm('Вы точно хотите выписать пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Выписать</a>
                         <?php
