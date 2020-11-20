@@ -133,7 +133,18 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
                                 <label class="col-md-3"><b>Прибывание:</b></label>
                                 <div class="col-md-9 text-right">
-                                    2 дня
+                                    <?php
+                                    $end_date = date_diff(new \DateTime(), new \DateTime($patient->add_date))->days;
+                                    if ($end_date == 1) {
+                                        echo $end_date." день";
+                                    }elseif (in_array($end_date, [2,3,4])) {
+                                        echo $end_date." дня";
+                                    }elseif ($end_date >= 5) {
+                                        echo $end_date." дней";
+                                    }else {
+                                        echo "Прибыл сегодня";
+                                    }
+                                    ?>
                                 </div>
 
                                 <label class="col-md-4"><b>Дата выписки:</b></label>

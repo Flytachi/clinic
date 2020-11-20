@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 19 2020 г., 21:20
+-- Время создания: Ноя 20 2020 г., 20:12
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.12
 
@@ -42,12 +42,12 @@ CREATE TABLE `beds` (
 
 INSERT INTO `beds` (`id`, `floor`, `ward`, `num`, `types`, `user_id`) VALUES
 (1, 1, 1, 1, 1, NULL),
-(2, 1, 1, 2, 1, 17),
-(3, 1, 1, 3, 1, 23),
-(4, 1, 1, 4, 1, 24),
+(2, 1, 1, 2, 1, NULL),
+(3, 1, 1, 3, 1, NULL),
+(4, 1, 1, 4, 1, NULL),
 (5, 1, 2, 1, 2, NULL),
-(6, 1, 2, 2, 2, 21),
-(7, 1, 3, 1, 1, 19),
+(6, 1, 2, 2, 2, NULL),
+(7, 1, 3, 1, 1, NULL),
 (8, 1, 3, 2, 1, NULL);
 
 -- --------------------------------------------------------
@@ -142,7 +142,13 @@ INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `analyze_id`, `re
 (17, 15, 26, 1, '10', ''),
 (18, 15, 26, 2, '7', ''),
 (19, 18, 30, 3, '12', 'плохо'),
-(20, 18, 30, 4, '34', 'норм');
+(20, 18, 30, 4, '34', 'норм'),
+(21, 25, 32, 1, '10', 'хорошо'),
+(22, 25, 32, 2, '7', 'хорошо'),
+(23, 14, 35, 3, '12', '1'),
+(24, 14, 35, 4, '34', '1'),
+(25, 14, 41, 1, '10', 'Отлично'),
+(26, 14, 41, 2, '7', 'Отлично');
 
 -- --------------------------------------------------------
 
@@ -285,19 +291,20 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (10, NULL, 'legion3', 'd6002ab2c6623db78330613043a7febec0e04fb2', 'legion3', 'legion3', 'legion3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 10, NULL, '2020-11-18 16:02:37'),
 (11, NULL, 'kassa2', 'ba87a038ef7c583ecb89e3f026403903a7f365b8', 'kassa2', 'kassa2', 'kassa2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 12, NULL, '2020-11-18 16:04:18'),
 (12, 10, NULL, NULL, 'pasient 1', 'pasient 1', 'pasient 1', '2000-12-12', 'Олмазор', 'kjhjkhjkhk', 'nmm,nj,n,n', ',kn,knm,nm,n', '9998989899', 'ajkshdjkashd', 'jhjkh', 1, 15, NULL, 1, 0, 'm,nm,nm,nm,n', '2020-11-18 16:05:52'),
-(13, 10, NULL, NULL, 'pasient 2', 'pasient 2', 'pasient 2', '2000-12-12', 'Миробод', 'kjklj', 'kn,knm,n', ',mn,mn,m', '98989898', 'iljiljklj', 'kjkljkl', NULL, 15, NULL, 1, 0, 'm,nm,n', '2020-11-18 16:06:24'),
-(14, 2, NULL, NULL, 'Жасур', 'Рахматов', 'Илхомович', '2003-05-08', 'Ромитан', 'AC6453482', 'Хокимиат', 'Глава отдела', '+998934568052', 'Алпомыш', 'Алпомыш', 1, 15, NULL, 1, 0, NULL, '2020-11-18 16:06:53'),
-(15, 10, NULL, NULL, 'pasient 3', 'pasient 3', 'pasient 3', '2000-12-12', 'Олмазор', 'jjjkhjk', 'm,nnm,nmbnm', 'nm,m,nm,n', '98098098098', ',jhknjj', 'jjnjjk', NULL, 15, NULL, 1, 0, 'm,nm,nm,nm,n', '2020-11-18 16:07:03'),
-(16, 9, NULL, NULL, 'Адольф', 'Гитлер', 'Нету', '1899-04-20', 'Ромитан', 'WE2312313', 'Германия, Мюнхен', 'Политик, глава 3 рейха', '998909090899', 'Австрия', 'могила №3', 1, 15, NULL, 1, 0, 'евреи', '2020-11-18 16:07:03'),
-(17, 10, NULL, NULL, 'pasient 4', 'pasient 4', 'pasient 4', '1212-02-11', 'Олмазор', 'kljkljklj', 'kljkljklj', 'ljkljklj', '8909809809', 'iljljklj', 'lkjkljklj', NULL, 15, NULL, 1, 0, 'lkjlkjkljkl', '2020-11-18 16:07:48'),
+(13, 10, NULL, NULL, 'pasient 2', 'pasient 2', 'pasient 2', '2000-12-12', 'Миробод', 'kjklj', 'kn,knm,n', ',mn,mn,m', '98989898', 'iljiljklj', 'kjkljkl', NULL, 15, NULL, NULL, 0, 'm,nm,n', '2020-11-18 16:06:24'),
+(14, 2, NULL, NULL, 'Жасур', 'Рахматов', 'Илхомович', '2003-05-08', 'Ромитан', 'AC6453482', 'Хокимиат', 'Глава отдела', '+998934568052', 'Алпомыш', 'Алпомыш', 1, 15, NULL, NULL, 0, NULL, '2020-11-18 16:06:53'),
+(15, 10, NULL, NULL, 'pasient 3', 'pasient 3', 'pasient 3', '2000-12-12', 'Олмазор', 'jjjkhjk', 'm,nnm,nmbnm', 'nm,m,nm,n', '98098098098', ',jhknjj', 'jjnjjk', NULL, 15, NULL, NULL, 0, 'm,nm,nm,nm,n', '2020-11-18 16:07:03'),
+(16, 9, NULL, NULL, 'Адольф', 'Гитлер', 'Нету', '1899-04-20', 'Ромитан', 'WE2312313', 'Германия, Мюнхен', 'Политик, глава 3 рейха', '998909090899', 'Австрия', 'могила №3', 1, 15, NULL, NULL, 0, 'евреи', '2020-11-18 16:07:03'),
+(17, 10, NULL, NULL, 'pasient 4', 'pasient 4', 'pasient 4', '1212-02-11', 'Олмазор', 'kljkljklj', 'kljkljklj', 'ljkljklj', '8909809809', 'iljljklj', 'lkjkljklj', NULL, 15, NULL, NULL, 0, 'lkjlkjkljkl', '2020-11-18 16:07:48'),
 (18, 10, NULL, NULL, 'pasient 5', 'pasient 5', 'pasient 5', '2122-03-12', 'Олмазор', 'jkhjkhjk', 'mnm,nm,nm,', 'm,nm,nm,n', '89098098098', 'kjhkljk', 'jkhjkhkjh', NULL, 15, NULL, NULL, 0, ',mn,mn,mn', '2020-11-18 16:08:21'),
-(19, 9, NULL, NULL, 'Иосиф', 'Сталин', 'Виссарионович', '1924-01-21', 'Ромитан', 'WE3424234234', 'Россия', 'Император Росси', '+998909990099', 'Россия', 'Москва кремоль', 1, 15, NULL, 1, 0, 'Гитлер', '2020-11-18 16:10:05'),
-(20, 9, NULL, NULL, 'Владимир', 'Ленин', 'Ильич', '1870-04-22', 'Ромитан', 'QW452345234532', 'CCCP', 'Вождь', '+998909445465', 'Россия', 'Мавзолей', 1, 15, NULL, 1, 0, 'Капитализм', '2020-11-18 16:12:51'),
-(21, 2, NULL, NULL, 'Pasient 6', 'Pasient 6', 'Pasient 6', '2019-11-06', 'Чилонзор', 'цуй321112312312', 'Pasient 6', 'Pasient 6', '2132132112312231', 'Pasient 6', 'Pasient 6', NULL, 15, NULL, 1, 0, 'Pasient 6', '2020-11-18 16:13:53'),
-(22, 9, NULL, NULL, 'Алексей', 'Шевцов', 'Владимирович', '1999-11-24', 'Юнусобод', 'WE324234234', 'Ютуб', 'Блогер', '+998990989078', 'Украина Одесса', 'Украина Одесса', 1, 15, NULL, 1, 0, 'Глупые люди', '2020-11-18 16:15:37'),
-(23, 9, NULL, NULL, 'Кира', 'Хошигаке', 'НЕТ', '1995-01-20', 'Юнусобод', 'CV 333222', 'Япония Токио', 'Коммисар', '+99899900098', 'Япония Токио', 'Япония Токио', 1, 15, NULL, 1, 0, 'L', '2020-11-18 16:17:36'),
-(24, 9, NULL, NULL, 'Умархан', 'Убунту', 'Вадимович', '2000-11-14', 'Юнусобод', 'AZ', 'Мексика', 'Укратитель змей', '+998999088998', 'Бухара', 'Бухара', 1, 15, NULL, 1, 0, 'любовь', '2020-11-18 16:20:14'),
-(25, 9, NULL, NULL, 'Гвидо', 'Мисто', 'Олегович', '1982-02-18', 'Ромитан', 'EWR2345345345', 'Аргентиа', 'Нарко барон', '+998994232', 'Швеция', 'Аргентина', 1, 15, NULL, NULL, 0, 'женщины', '2020-11-18 16:22:17');
+(19, 9, NULL, NULL, 'Иосиф', 'Сталин', 'Виссарионович', '1924-01-21', 'Ромитан', 'WE3424234234', 'Россия', 'Император Росси', '+998909990099', 'Россия', 'Москва кремоль', 1, 15, NULL, NULL, 0, 'Гитлер', '2020-11-18 16:10:05'),
+(20, 9, NULL, NULL, 'Владимир', 'Ленин', 'Ильич', '1870-04-22', 'Ромитан', 'QW452345234532', 'CCCP', 'Вождь', '+998909445465', 'Россия', 'Мавзолей', 1, 15, NULL, NULL, 0, 'Капитализм', '2020-11-18 16:12:51'),
+(21, 2, NULL, NULL, 'Pasient 6', 'Pasient 6', 'Pasient 6', '2019-11-06', 'Чилонзор', 'цуй321112312312', 'Pasient 6', 'Pasient 6', '2132132112312231', 'Pasient 6', 'Pasient 6', NULL, 15, NULL, NULL, 0, 'Pasient 6', '2020-11-18 16:13:53'),
+(22, 9, NULL, NULL, 'Алексей', 'Шевцов', 'Владимирович', '1999-11-24', 'Юнусобод', 'WE324234234', 'Ютуб', 'Блогер', '+998990989078', 'Украина Одесса', 'Украина Одесса', 1, 15, NULL, NULL, 0, 'Глупые люди', '2020-11-18 16:15:37'),
+(23, 9, NULL, NULL, 'Кира', 'Хошигаке', 'НЕТ', '1995-01-20', 'Юнусобод', 'CV 333222', 'Япония Токио', 'Коммисар', '+99899900098', 'Япония Токио', 'Япония Токио', 1, 15, NULL, NULL, 0, 'L', '2020-11-18 16:17:36'),
+(24, 9, NULL, NULL, 'Умархан', 'Убунту', 'Вадимович', '2000-11-14', 'Юнусобод', 'AZ', 'Мексика', 'Укратитель змей', '+998999088998', 'Бухара', 'Бухара', 1, 15, NULL, NULL, 0, 'любовь', '2020-11-18 16:20:14'),
+(25, 9, NULL, NULL, 'Гвидо', 'Мисто', 'Олегович', '1982-02-18', 'Ромитан', 'EWR2345345345', 'Аргентиа', 'Нарко барон', '+998994232', 'Швеция', 'Аргентина', 1, 15, NULL, NULL, 0, 'женщины', '2020-11-18 16:22:17'),
+(26, NULL, 'nurce_1', 'c000e8b0a3f6e91f586867365618581675fa20d7', 'nurce', 'nurce', 'nurce', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, 1, NULL, '2020-11-20 19:11:11');
 
 -- --------------------------------------------------------
 
@@ -328,33 +335,44 @@ CREATE TABLE `visit` (
 INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `direction`, `status`, `complaint`, `failure`, `add_date`, `accept_date`, `discharge_date`, `completed`) VALUES
 (1, 14, NULL, 5, 2, NULL, NULL, '111', NULL, '2020-11-18 21:07:51', '2020-11-18 21:20:21', NULL, '2020-11-18 21:26:55'),
 (2, 16, NULL, 7, 2, NULL, NULL, 'Боль в животе', NULL, '2020-11-18 21:08:32', '2020-11-18 21:18:13', NULL, '2020-11-18 21:32:59'),
-(3, 12, NULL, 7, 10, NULL, 2, 'sdcsdf', NULL, '2020-11-18 21:08:55', '2020-11-18 21:24:12', NULL, NULL),
-(4, 13, NULL, 8, 10, NULL, 0, 'kjkj,kjk,', NULL, '2020-11-18 21:09:38', NULL, NULL, NULL),
-(5, 17, 8, 8, 10, 1, 2, '.kjmk.k.j', NULL, '2020-11-18 21:10:13', '2020-11-18 21:28:50', NULL, NULL),
+(3, 12, NULL, 7, 10, NULL, NULL, 'sdcsdf', NULL, '2020-11-18 21:08:55', '2020-11-18 21:24:12', NULL, '2020-11-21 00:59:24'),
+(4, 13, NULL, 8, 10, NULL, NULL, 'kjkj,kjk,', NULL, '2020-11-18 21:09:38', '2020-11-21 00:56:37', NULL, '2020-11-21 00:59:33'),
+(5, 17, 8, 8, 10, 1, NULL, '.kjmk.k.j', NULL, '2020-11-18 21:10:13', '2020-11-18 21:28:50', NULL, '2020-11-21 00:56:12'),
 (6, 15, 6, 6, 2, 1, NULL, 'Боль в сердце', NULL, '2020-11-18 21:10:16', '2020-11-20 01:02:35', NULL, '2020-11-20 01:18:06'),
-(7, 18, 5, 5, 10, 1, 2, ',,kjkljklj', NULL, '2020-11-18 21:12:34', '2020-11-18 21:20:25', NULL, NULL),
+(7, 18, 5, 5, 10, 1, NULL, ',,kjkljklj', NULL, '2020-11-18 21:12:34', '2020-11-18 21:20:25', NULL, '2020-11-21 00:00:24'),
 (8, 19, NULL, 8, 2, NULL, NULL, 'Боль в зубах', NULL, '2020-11-18 21:12:35', '2020-11-18 21:28:54', NULL, '2020-11-18 21:33:14'),
-(9, 21, 5, 5, 10, 1, 2, 'jklkljkljkl', NULL, '2020-11-18 21:14:31', '2020-11-18 21:20:28', NULL, NULL),
-(10, 20, NULL, 6, 2, NULL, 2, 'Боль в спине', NULL, '2020-11-18 21:14:40', '2020-11-20 01:23:04', NULL, NULL),
-(11, 23, 8, 8, 10, 1, 2, 'j,hkhj,kjklj', NULL, '2020-11-18 21:20:13', '2020-11-18 21:28:56', NULL, NULL),
-(12, 22, NULL, 5, 10, NULL, 2, ',.m.,m,.m,.m', NULL, '2020-11-18 21:20:30', '2020-11-18 21:31:00', NULL, NULL),
+(9, 21, 5, 5, 10, 1, NULL, 'jklkljkljkl', NULL, '2020-11-18 21:14:31', '2020-11-18 21:20:28', NULL, '2020-11-21 00:57:15'),
+(10, 20, NULL, 6, 2, NULL, NULL, 'Боль в спине', NULL, '2020-11-18 21:14:40', '2020-11-20 01:23:04', NULL, '2020-11-21 00:59:11'),
+(11, 23, 8, 8, 10, 1, NULL, 'j,hkhj,kjklj', NULL, '2020-11-18 21:20:13', '2020-11-18 21:28:56', NULL, '2020-11-21 00:56:21'),
+(12, 22, NULL, 5, 10, NULL, NULL, ',.m.,m,.m,.m', NULL, '2020-11-18 21:20:30', '2020-11-18 21:31:00', NULL, '2020-11-21 00:59:00'),
 (13, 14, NULL, 7, 5, NULL, NULL, '111', NULL, '2020-11-18 21:24:21', '2020-11-18 21:25:05', NULL, '2020-11-18 21:26:16'),
-(14, 24, 8, 8, 10, 1, 2, 'jkljkljklj', NULL, '2020-11-18 21:28:12', '2020-11-18 21:28:58', NULL, NULL),
+(14, 24, 8, 8, 10, 1, NULL, 'jkljkljklj', NULL, '2020-11-18 21:28:12', '2020-11-18 21:28:58', NULL, '2020-11-21 00:56:27'),
 (15, 19, NULL, 5, 8, NULL, NULL, 'Боль в зубах', NULL, '2020-11-18 21:30:12', '2020-11-18 21:30:52', NULL, '2020-11-18 21:32:24'),
 (16, 14, NULL, 4, 2, NULL, NULL, 'test', NULL, '2020-11-18 21:57:27', '2020-11-19 21:01:37', NULL, '2020-11-19 21:58:13'),
-(17, 16, NULL, 4, 2, NULL, 2, 'sxasxasx', NULL, '2020-11-19 21:32:50', '2020-11-19 21:33:34', NULL, NULL),
-(18, 14, NULL, 5, 2, NULL, 2, 'qweqw', NULL, '2020-11-19 22:04:14', '2020-11-19 22:04:40', NULL, NULL),
+(17, 16, NULL, 4, 2, NULL, 2, 'sxasxasx', NULL, '2020-11-19 21:32:50', '2020-11-19 21:33:34', NULL, '2020-11-19 21:58:13'),
+(18, 14, NULL, 5, 2, NULL, NULL, 'qweqw', NULL, '2020-11-19 22:04:14', '2020-11-19 22:04:40', NULL, '2020-11-21 00:16:43'),
 (19, 19, NULL, 4, 2, NULL, NULL, 'qwewqewqewq', NULL, '2020-11-19 22:27:25', '2020-11-19 23:34:10', NULL, '2020-11-19 23:38:24'),
-(20, 19, NULL, 5, 2, NULL, 2, 'wqe', NULL, '2020-11-19 23:38:59', '2020-11-19 23:39:40', NULL, NULL),
+(20, 19, NULL, 5, 2, NULL, NULL, 'wqe', NULL, '2020-11-19 23:38:59', '2020-11-19 23:39:40', NULL, '2020-11-21 00:59:46'),
 (21, 19, NULL, 4, 5, NULL, NULL, 'wqe', NULL, '2020-11-19 23:43:16', '2020-11-19 23:43:46', NULL, '2020-11-19 23:44:46'),
 (23, 18, NULL, 4, 5, 1, NULL, ',,kjkljklj', NULL, '2020-11-20 00:25:20', '2020-11-20 00:25:47', NULL, '2020-11-20 00:26:39'),
 (24, 18, NULL, 6, 5, 1, NULL, ',,kjkljklj', NULL, '2020-11-20 00:46:00', '2020-11-20 00:46:14', NULL, '2020-11-20 01:01:46'),
-(25, 19, 6, 6, 2, 1, 2, 'qwe', NULL, '2020-11-20 00:54:15', '2020-11-20 01:23:07', NULL, NULL),
+(25, 19, 6, 6, 2, 1, NULL, 'qwe', NULL, '2020-11-20 00:54:15', '2020-11-20 01:23:07', NULL, '2020-11-21 00:56:56'),
 (26, 15, 6, 4, 6, 1, NULL, 'Боль в сердце', NULL, '2020-11-20 01:14:35', '2020-11-20 01:14:53', NULL, '2020-11-20 01:15:18'),
-(27, 15, NULL, 6, 2, NULL, 0, 'q', NULL, '2020-11-20 01:20:17', NULL, NULL, NULL),
+(27, 15, NULL, 6, 2, NULL, NULL, 'q', NULL, '2020-11-20 01:20:17', '2020-11-21 01:00:16', NULL, '2020-11-21 01:00:20'),
 (28, 25, 6, 6, 2, 1, NULL, 'q', NULL, '2020-11-20 01:21:00', '2020-11-20 01:21:33', NULL, '2020-11-20 01:22:59'),
 (29, 25, 6, 5, 6, 1, NULL, 'q', NULL, '2020-11-20 01:21:48', '2020-11-20 01:22:13', NULL, '2020-11-20 01:22:22'),
-(30, 18, 5, 4, 5, 1, NULL, ',,kjkljklj', NULL, '2020-11-20 01:27:38', '2020-11-20 01:28:46', NULL, '2020-11-20 01:29:07');
+(30, 18, 5, 4, 5, 1, NULL, ',,kjkljklj', NULL, '2020-11-20 01:27:38', '2020-11-20 01:28:46', NULL, '2020-11-20 01:29:07'),
+(31, 25, 6, 6, 2, 1, NULL, 'wqee', NULL, '2020-11-21 00:01:09', '2020-11-21 00:01:25', NULL, '2020-11-21 00:57:01'),
+(32, 25, 6, 4, 6, 1, NULL, 'wqee', NULL, '2020-11-21 00:01:42', '2020-11-21 00:01:53', NULL, '2020-11-21 00:02:26'),
+(33, 25, 6, 5, 6, 1, NULL, 'wqee', NULL, '2020-11-21 00:08:35', '2020-11-21 00:08:46', NULL, '2020-11-21 00:09:08'),
+(34, 14, 7, 7, 2, NULL, NULL, 'asqas', NULL, '2020-11-21 00:19:07', '2020-11-21 00:20:32', NULL, '2020-11-21 00:31:06'),
+(35, 14, 7, 4, 7, NULL, NULL, 'asqas', NULL, '2020-11-21 00:23:56', '2020-11-21 00:24:27', NULL, '2020-11-21 00:24:51'),
+(36, 14, 7, 5, 7, NULL, NULL, 'asqas', NULL, '2020-11-21 00:25:40', '2020-11-21 00:26:06', NULL, '2020-11-21 00:27:00'),
+(37, 14, 5, 5, 2, NULL, NULL, 'qwqw', NULL, '2020-11-21 00:34:50', '2020-11-21 00:35:07', NULL, '2020-11-21 00:35:14'),
+(38, 14, 8, 8, 10, NULL, NULL, 'sadasd', NULL, '2020-11-21 00:37:52', '2020-11-21 00:38:15', NULL, '2020-11-21 00:38:35'),
+(39, 14, 6, 6, 2, 1, NULL, 'qwqw', NULL, '2020-11-21 00:50:50', '2020-11-21 00:51:35', NULL, '2020-11-21 00:55:20'),
+(40, 14, 6, 5, 6, 1, NULL, 'qwqw', NULL, '2020-11-21 00:52:04', '2020-11-21 00:52:18', NULL, '2020-11-21 00:52:48'),
+(41, 14, 6, 4, 6, 1, NULL, 'qwqw', NULL, '2020-11-21 00:53:22', '2020-11-21 00:53:49', NULL, '2020-11-21 00:54:23');
 
 -- --------------------------------------------------------
 
@@ -365,6 +383,7 @@ INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `dire
 CREATE TABLE `visit_price` (
   `id` int(11) NOT NULL,
   `visit_id` int(11) NOT NULL,
+  `pricer_id` int(11) DEFAULT NULL,
   `price_cash` decimal(65,1) DEFAULT NULL,
   `price_card` decimal(65,1) DEFAULT NULL,
   `price_transfer` decimal(65,1) DEFAULT NULL,
@@ -377,21 +396,28 @@ CREATE TABLE `visit_price` (
 -- Дамп данных таблицы `visit_price`
 --
 
-INSERT INTO `visit_price` (`id`, `visit_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `price_payment`, `add_date`) VALUES
-(1, 1, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:28'),
-(2, 10, '100000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:41'),
-(3, 2, '200.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:47'),
-(4, 8, '23434.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:56'),
-(5, 12, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:20:56'),
-(6, 3, '200.0', NULL, NULL, NULL, NULL, '2020-11-18 16:21:04'),
-(7, 13, '40000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:24:55'),
-(8, 15, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:30:43'),
-(9, 16, '20000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:57:51'),
-(10, 17, '20000.0', NULL, NULL, NULL, NULL, '2020-11-19 16:33:14'),
-(11, 18, '3000.0', NULL, NULL, NULL, NULL, '2020-11-19 17:04:35'),
-(12, 19, '20000.0', NULL, NULL, NULL, NULL, '2020-11-19 17:27:39'),
-(13, 20, '1000.0', NULL, NULL, NULL, NULL, '2020-11-19 18:39:09'),
-(14, 21, '10000.0', NULL, NULL, NULL, NULL, '2020-11-19 18:43:30');
+INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `price_payment`, `add_date`) VALUES
+(1, 1, NULL, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:28'),
+(2, 10, NULL, '100000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:41'),
+(3, 2, NULL, '200.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:47'),
+(4, 8, NULL, '23434.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:56'),
+(5, 12, NULL, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:20:56'),
+(6, 3, NULL, '200.0', NULL, NULL, NULL, NULL, '2020-11-18 16:21:04'),
+(7, 13, NULL, '40000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:24:55'),
+(8, 15, NULL, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:30:43'),
+(9, 16, NULL, '20000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:57:51'),
+(10, 17, NULL, '20000.0', NULL, NULL, NULL, NULL, '2020-11-19 16:33:14'),
+(11, 18, NULL, '3000.0', NULL, NULL, NULL, NULL, '2020-11-19 17:04:35'),
+(12, 19, NULL, '20000.0', NULL, NULL, NULL, NULL, '2020-11-19 17:27:39'),
+(13, 20, NULL, '1000.0', NULL, NULL, NULL, NULL, '2020-11-19 18:39:09'),
+(14, 21, NULL, '10000.0', NULL, NULL, NULL, NULL, '2020-11-19 18:43:30'),
+(15, 34, NULL, '40000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:20:25'),
+(16, 35, NULL, '10000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:24:20'),
+(17, 36, NULL, '1000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:25:53'),
+(18, 37, NULL, '3000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:35:00'),
+(19, 38, NULL, '23434.0', NULL, NULL, NULL, NULL, '2020-11-20 19:38:08'),
+(20, 4, 11, '23434.0', NULL, NULL, NULL, NULL, '2020-11-20 19:44:08'),
+(21, 27, 3, '100000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:59:57');
 
 -- --------------------------------------------------------
 
@@ -419,7 +445,7 @@ INSERT INTO `visit_service` (`id`, `visit_id`, `service_id`, `priced`, `report`,
 (1, 1, 7, '2020-11-18 21:16:28', '<p>Все нормально</p>\r\n', NULL, NULL, NULL, 1),
 (2, 2, 6, '2020-11-18 21:16:47', '<p>Отреза ногу ему она больше не нужна, Теперь в место неё палка которую я отобрал у собаки на улицы.</p>\r\n\r\n<p>Вызжал на лбу немецкую зигу, он очень просил.</p>\r\n', NULL, NULL, NULL, 1),
 (3, 3, 6, '2020-11-18 21:21:04', NULL, NULL, NULL, NULL, NULL),
-(4, 4, 2, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 4, 2, '2020-11-21 00:44:08', NULL, NULL, NULL, NULL, NULL),
 (5, 5, 1, NULL, NULL, NULL, NULL, NULL, NULL),
 (6, 6, 1, NULL, NULL, NULL, NULL, NULL, NULL),
 (7, 7, 1, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -442,10 +468,21 @@ INSERT INTO `visit_service` (`id`, `visit_id`, `service_id`, `priced`, `report`,
 (24, 24, 9, NULL, NULL, NULL, NULL, NULL, NULL),
 (25, 25, 1, NULL, NULL, NULL, NULL, NULL, NULL),
 (26, 26, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(27, 27, 5, NULL, NULL, NULL, NULL, NULL, NULL),
+(27, 27, 5, '2020-11-21 00:59:57', NULL, NULL, NULL, NULL, NULL),
 (28, 28, 1, NULL, NULL, NULL, NULL, NULL, NULL),
 (29, 29, 4, NULL, NULL, NULL, NULL, NULL, NULL),
-(30, 30, 11, NULL, NULL, NULL, NULL, NULL, NULL);
+(30, 30, 11, NULL, NULL, NULL, NULL, NULL, NULL),
+(31, 31, 1, NULL, NULL, NULL, NULL, NULL, NULL),
+(32, 32, 10, NULL, NULL, NULL, NULL, NULL, NULL),
+(33, 33, 4, NULL, NULL, 'qweqweqwe', '21eqweqweqw', 'eqweqweqwqwasdsadcadw', 1),
+(34, 34, 9, '2020-11-21 00:20:25', NULL, 'qwdsadsa', 'ORDER BY accept_date ORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESC', 'ORDER BY accept_date DESC', 1),
+(35, 35, 11, '2020-11-21 00:24:20', NULL, NULL, NULL, NULL, NULL),
+(36, 36, 4, '2020-11-21 00:25:53', NULL, 'qwe', 'qwewqeqwdaswqedadvqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedad', 'dasdascdasbthnrthwree', 1),
+(37, 37, 8, '2020-11-21 00:35:00', NULL, 'qwewq', 'qwe', 'qweqq', 1),
+(38, 38, 2, '2020-11-21 00:38:08', NULL, 'wqe21', '321321wq', 'wqewqe', 1),
+(39, 39, 1, NULL, NULL, '221321', 'ййцуцйуцй', 'уцйуччясячсячсяч', 1),
+(40, 40, 7, NULL, NULL, '2132132', '3213213213', '2321312', 1),
+(41, 41, 10, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Индексы сохранённых таблиц
@@ -562,7 +599,7 @@ ALTER TABLE `division`
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
@@ -592,25 +629,25 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_service`
 --
 ALTER TABLE `visit_service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -223,6 +223,7 @@ class UserCheckOutpatientModel extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
                 <input type="hidden" name="visit_id" id="visit_amb_id">
 
                 <div class="form-group row">
@@ -321,6 +322,7 @@ class UserCheckStationaryModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="visit_id" id="visit_st_id">
 
             <div class="form-group form-group-float row">

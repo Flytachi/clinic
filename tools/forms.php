@@ -483,6 +483,7 @@ class OutpatientTreatmentForm extends Model
         if($this->clean()){
             $servise_pk = $this->post['service'];
             unset($this->post['service']);
+            $this->post['grant_id'] = $this->post['parent_id'];
             $object = Mixin\insert($this->table, $this->post);
             if ($object == 1){
                 // Создание списка Услуг
@@ -590,6 +591,28 @@ class UserServiceForm extends Model
     }
 }
 
+class PatientUpStatus extends Model
+{
+    public $table = 'visit';
+
+    public function get_or_404($pk)
+    {
+        $this->post['id'] = $pk;
+        $this->post['status'] = 2;
+        $this->post['accept_date'] = date('Y-m-d H:i:s');
+        $this->url = "card/content_1.php?id=".$this->post['id'];
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/doctor/$this->url");
+        exit;
+    }
+
+}
+
 class LaboratoryUpStatus extends Model
 {
     public $table = 'visit';
@@ -613,28 +636,6 @@ class LaboratoryUpStatus extends Model
     {
         global $PROJECT_NAME;
         header("location:/$PROJECT_NAME/views/laboratory/list_outpatient.php");
-        exit;
-    }
-
-}
-
-class PatientUpStatus extends Model
-{
-    public $table = 'visit';
-
-    public function get_or_404($pk)
-    {
-        $this->post['id'] = $pk;
-        $this->post['status'] = 2;
-        $this->post['accept_date'] = date('Y-m-d H:i:s');
-        $this->url = "card/content_1.php?id=".$this->post['id'];
-        $this->update();
-    }
-
-    public function success()
-    {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/doctor/$this->url");
         exit;
     }
 
@@ -693,38 +694,6 @@ class PatientFailure extends Model
 
 }
 
-class PatientFinish extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'users';
-    public $table2 = 'beds';
-
-    public function get_or_404($pk)
-    {
-        global $db;
-        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
-        if ($inf['grant_id'] == $inf['parent_id']) {
-            $pk_arr = array('user_id' => $inf['user_id']);
-            $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
-        }
-        $this->post['id'] = $pk;
-        $this->post['status'] = 0;
-        $this->post['completed'] = date('Y-m-d H:i:s');
-        $this->url = "index";
-        $this->pk = $db->query("SELECT us.id FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.id=$pk")->fetch(PDO::FETCH_OBJ)->id;
-        $this->update();
-    }
-
-    public function success()
-    {
-        global $PROJECT_NAME;
-        Mixin\update($this->table1, array('status' => null), $this->pk);
-        header("location:/$PROJECT_NAME/views/doctor/$this->url.php");
-        exit;
-    }
-
-}
-
 class PatientReport extends Model
 {
     public $table = 'visit_service';
@@ -770,7 +739,7 @@ class PatientReport extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -798,19 +767,20 @@ class PatientRoute extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $patient;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="0">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
 
             <div class="form-group row">
 
                 <div class="col-md-6">
                     <label>Пациент:</label>
-                    <input type="hidden" class="form-control" name="user_id" id="<?= __CLASS__ ?>_user_id">
-                    <input type="text" class="form-control" id="<?= __CLASS__ ?>_user_id_get" disabled>
+                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->user_id ?>">
+                    <input type="text" class="form-control" value="<?= get_full_name($patient->user_id) ?>" disabled>
                 </div>
 
                 <div class="col-md-6">
@@ -867,13 +837,13 @@ class PatientRoute extends Model
 
                 <div class="col-md-12">
                     <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" id="<?= __CLASS__ ?>_complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
+                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
                 </div>
 
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -1023,7 +993,7 @@ class PatientRouteStationary extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -1088,6 +1058,38 @@ class PatientRouteStationary extends Model
     }
 }
 
+class PatientFinish extends Model
+{
+    public $table = 'visit';
+    public $table1 = 'users';
+    public $table2 = 'beds';
+
+    public function get_or_404($pk)
+    {
+        global $db;
+        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
+        if ($inf['grant_id'] == $inf['parent_id']) {
+            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+            if ($inf['direction']) {
+                $pk_arr = array('user_id' => $inf['user_id']);
+                $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
+            }
+        }
+        $this->post['id'] = $pk;
+        $this->post['status'] = 0;
+        $this->post['completed'] = date('Y-m-d H:i:s');
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/doctor/index.php");
+        exit;
+    }
+
+}
+
 class PatientLaboratoryFinish extends Model
 {
     public $table = 'visit';
@@ -1097,23 +1099,24 @@ class PatientLaboratoryFinish extends Model
     public function get_or_404($pk)
     {
         global $db;
-        if ($db->query("SELECT * FROM visit WHERE id=$pk")->rowCount()) {
-            $pk_arr = array('user_id' => $db->query("SELECT * FROM visit WHERE id=$pk")->fetch(PDO::FETCH_OBJ)->user_id);
-            $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
+        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
+        if ($inf['grant_id'] == $inf['parent_id']) {
+            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+            if ($inf['direction']) {
+                $pk_arr = array('user_id' => $inf['user_id']);
+                $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
+            }
         }
         $this->post['id'] = $pk;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        $this->url = "index";
-        $this->pk = $db->query("SELECT us.id FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.id=$pk")->fetch(PDO::FETCH_OBJ)->id;
         $this->update();
     }
 
     public function success()
     {
         global $PROJECT_NAME;
-        Mixin\update($this->table1, array('status' => null), $this->pk);
-        header("location:/$PROJECT_NAME/views/laboratory/$this->url.php");
+        header("location:/$PROJECT_NAME/views/laboratory/index.php");
         exit;
     }
 

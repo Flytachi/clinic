@@ -46,17 +46,8 @@ $header = "Пациент";
 				        }
 						?>
 
-						<?php
-						if ($patient->direction) {
-							?>
-							<button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
-							<?php
-						} else {
-							?>
-							<button onclick="$('#PatientRoute_user_id').val('<?= $patient->user_id ?>');$('#PatientRoute_user_id_get').val('<?= get_full_name($patient->user_id) ?>');$('#PatientRoute_complaint').val('<?= $patient->complaint ?>');" type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
-							<?php
-						}
-						?>
+						<button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple" data-toggle="modal" data-target="#modal_route">Назначить визит</button>
+
 						<div class="card">
 							<table class="table table-togglable table-hover">
 								<thead>
@@ -74,7 +65,7 @@ $header = "Пациент";
 								<tbody>
 									<?php
 									$i = 1;
-									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, status FROM visit WHERE user_id = $patient->user_id AND route_id = {$_SESSION['session_id']}") as $row) {
+									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, status FROM visit WHERE user_id = $patient->user_id AND route_id = {$_SESSION['session_id']} ORDER BY accept_date DESC") as $row) {
 									?>
 										<tr class="text-center">
 											<td><?= $i++ ?></td>

@@ -65,7 +65,7 @@ $header = "Список пациентов";
 								<tbody>
 									<?php
 									$i = 1;
-									foreach($db->query('SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC') as $row) {
+									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC") as $row) {
 										?>
 										<tr>
 											<td><?= addZero($row['id']) ?></td>
@@ -84,7 +84,7 @@ $header = "Список пациентов";
 											<td><?= $row['region'] ?></td>
 											<td><?= $row['add_date'] ?></td>
 											<?php
-											if($stm_dr = $db->query('SELECT direction, status FROM visit WHERE completed IS NULL AND user_id='.$row['id'])->fetch()){
+											if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} ORDER BY add_date ASC")->fetch()){
 												if($stm_dr['direction']){
 													?>
 													<td>
@@ -143,7 +143,11 @@ $header = "Список пациентов";
 											}else {
 												?>
 													<td>
-														<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
+														<?= ($row['status']) ?
+														'<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Status error</span>' :
+														'<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>'
+														?>
+
 													</td>
 													<td>
 														<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Не активный</span>
