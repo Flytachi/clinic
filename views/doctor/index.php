@@ -87,7 +87,6 @@ $header = "Приём пациетов";
                                             </td>
                                             <td class="text-center">
 												<a href="<?= up_url($row['id'], 'PatientUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
-                                                <!-- <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button> -->
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
@@ -133,14 +132,6 @@ $header = "Приём пациетов";
     <!-- /footer -->
 
     <script type="text/javascript">
-
-		function Recept(tr) {
-			$('#'+tr).css("background-color", "rgb(76, 175, 80)");
-			$('#'+tr).css("color", "white");
-			$('#'+tr).fadeOut('slow', function() {
-				$(this).remove();
-			});
-		}
 
         $('#form_PatientFailure').submit(function (events) {
             events.preventDefault();

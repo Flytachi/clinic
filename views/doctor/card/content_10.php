@@ -6,6 +6,7 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -37,29 +38,10 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-				        <?php include "content_tabs.php"; ?>
+						<?php include "content_tabs.php"; ?>
 
-						<div class="table-responsive">
-							<table class="table">
-								<thead>
-									<tr class="bg-blue">
-										<th>Дата и время</th>
-										<th>Состояние пациента</th>
-										<th>Медсестра ФИО</th>
-										<th>давление</th>
-										<th>Пульс</th>
-										<th>Температура</th>
-
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>13.03.2020 13:04</td>
-										<td>Хорошо</td>
-										<td>Ахмедова З</td>
-									</tr>
-								</tbody>
-							</table>
+						<div class="card">
+							<?php prit($patient); ?>
 						</div>
 
 				    </div>

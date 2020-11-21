@@ -88,24 +88,26 @@ $header = "Рабочий стол";
 			sessionStorage['message_amb'] = '';
 		}
 		function Update(events, tr) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					var result = JSON.parse(data);
-					if (result.stat) {
-						sessionStorage['message_amb'] = result.message;
-						location.reload();
-					}else{
-						$('#'+tr).css("background-color", "red");
-						$('#'+tr).css("color", "white");
-						$('#'+tr).fadeOut('slow', function() {
-						 	$(this).remove();
-							sumTo($('.total_cost'));
-						});
-					}
-				},
-			});
+			if(confirm("Вы уверены что вы долбаёб?")){
+				$.ajax({
+					type: "GET",
+					url: events,
+					success: function (data) {
+						var result = JSON.parse(data);
+						if (result.stat) {
+							sessionStorage['message_amb'] = result.message;
+							location.reload();
+						}else{
+							$('#'+tr).css("background-color", "red");
+							$('#'+tr).css("color", "white");
+							$('#'+tr).fadeOut('slow', function() {
+							 	$(this).remove();
+								sumTo($('.total_cost'));
+							});
+						}
+					},
+				});
+			}
 		};
 
 		function sumTo(arr) {

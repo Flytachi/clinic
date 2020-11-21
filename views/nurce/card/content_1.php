@@ -36,7 +36,14 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-				        <?php include "content_tabs.php"; ?>
+				        <?php
+						include "content_tabs.php";
+
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						?>
 
 						<div class="row">
 
@@ -44,8 +51,6 @@ $header = "Пациент";
 								<div class="card">
 									<div class="card-header header-elements-inline">
 										<h6 class="card-title">Примечание Врача</h6>
-										<div class="header-elements">
-										</div>
 									</div>
 									<div class="table-responsive">
 										<table class="table">
@@ -57,11 +62,18 @@ $header = "Пациент";
 												</tr>
 											</thead>
 											<tbody>
-												<tr data-toggle="modal" data-target="#modal_iconified">
-													<td>3</td>
-													<td>16.10.2020 11:08</td>
-													<td class="text-primary">Имя Врача</td>
-												</tr>
+												<?php
+												$i=1;
+												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->user_id") as $row) {
+													?>
+													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
+														<td><?= $i++ ?></td>
+														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
+													</tr>
+													<?php
+												}
+												?>
 											</tbody>
 										</table>
 									</div>
@@ -75,7 +87,7 @@ $header = "Пациент";
 										<h6 class="card-title">Примечание медсестры</h6>
 										<div class="header-elements">
 											<div class="list-icons">
-												<a class="list-icons-item" data-toggle="modal" data-target="#modal_iconified">
+												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
 													<i class="icon-plus22"></i>Добавить
 												</a>
 											</div>
@@ -83,38 +95,6 @@ $header = "Пациент";
 									</div>
 
 									<div class="table-responsive">
-										<div id="modal_iconified" class="modal fade" tabindex="-1">
-											<div class="modal-dialog">
-												<div class="modal-content">
-													<div class="modal-header">
-														<h5 class="modal-title"><i class="icon-menu7 mr-2"></i> &nbsp;Modal with icons</h5>
-														<button type="button" class="close" data-dismiss="modal">×</button>
-													</div>
-
-													<div class="modal-body">
-														<div class="alert alert-info alert-dismissible alert-styled-left border-top-0 border-bottom-0 border-right-0">
-															<span class="font-weight-semibold">Here we go!</span> Example of an alert inside modal.
-															<button type="button" class="close" data-dismiss="alert">×</button>
-														</div>
-
-														<h6 class="font-weight-semibold"><i class="icon-law mr-2"></i> Sample heading with icon</h6>
-														<p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-
-														<hr />
-
-														<p>
-															<i class="icon-mention mr-2"></i> Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
-															ullamcorper nulla non metus auctor fringilla.
-														</p>
-													</div>
-
-													<div class="modal-footer">
-														<button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-														<button class="btn bg-primary legitRipple"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
-													</div>
-												</div>
-											</div>
-										</div>
 										<table class="table">
 											<thead>
 												<tr>
@@ -124,11 +104,18 @@ $header = "Пациент";
 												</tr>
 											</thead>
 											<tbody>
-												<tr data-toggle="modal" data-target="#modal_iconified">
-													<td>3</td>
-													<td>16.10.2020 11:08</td>
-													<td class="text-primary">Имя Медсестры</td>
-												</tr>
+												<?php
+												$i=1;
+												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->user_id") as $row) {
+													?>
+													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
+														<td><?= $i++ ?></td>
+														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
+													</tr>
+													<?php
+												}
+												?>
 											</tbody>
 										</table>
 									</div>
@@ -150,6 +137,41 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_add" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Добавить примечание</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<?= BypassModel::form() ?>
+
+			</div>
+		</div>
+	</div>
+
+	<div id="modal_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content" id="modal_show_body">
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function Check(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (data) {
+					$('#modal_show').modal('show');
+					$('#modal_show_body').html(data);
+				},
+			});
+		};
+	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>

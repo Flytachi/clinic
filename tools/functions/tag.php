@@ -15,9 +15,13 @@ function prit($value) {
 }
 
 
-function render($url){
-    global $PROJECT_NAME;
-    header("location:/$PROJECT_NAME/views/$url.php");
+function render($url=null){
+    if ($url) {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/$url.php");
+    }else {
+        header("location:".$_SERVER['HTTP_REFERER']);
+    }
     exit;
 }
 

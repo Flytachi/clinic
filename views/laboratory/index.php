@@ -87,8 +87,6 @@ $header = "Приём пациетов";
                                             </td>
                                             <td class="text-center">
 												<a href="<?= up_url($row['id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
-                                                <!-- <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button> -->
-                                                <!-- <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button> -->
                                             </td>
                                         </tr>
                                         <?php
@@ -112,53 +110,9 @@ $header = "Приём пациетов";
 	</div>
 	<!-- /page content -->
 
-    <!-- Failure modal -->
-	<div id="modal_failure" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content border-1 border-danger">
-
-				<div class="modal-header bg-danger">
-					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<?= PatientFailure::form(); ?>
-			</div>
-		</div>
-	</div>
-	<!-- /failure modal -->
-
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
-    <script type="text/javascript">
-
-		function Recept(tr) {
-			$('#'+tr).css("background-color", "rgb(76, 175, 80)");
-			$('#'+tr).css("color", "white");
-			$('#'+tr).fadeOut('slow', function() {
-				$(this).remove();
-			});
-		}
-
-        $('#form_PatientFailure').submit(function (events) {
-            events.preventDefault();
-            $.ajax({
-                type: $(this).attr("method"),
-                url: $(this).attr("action"),
-                data: $(this).serializeArray(),
-                success: function (result) {
-					$('#modal_failure').modal('hide');
-					$('#'+result).css("background-color", "rgb(244, 67, 54)");
-					$('#'+result).css("color", "white");
-					$('#'+result).fadeOut(900, function() {
-						$(this).remove();
-					});
-                },
-            });
-        });
-    </script>
 
 </body>
 </html>

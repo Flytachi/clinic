@@ -18,6 +18,6 @@
         <a href="<?= viv('nurce/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Заметки<i class="icon-clipboard3 ml-3"></i></a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_11') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_11')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >POS_даные </a>
+        <a href="<?= viv('nurce/card/content_10') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_10')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >POS_даные </a>
     </li>
 </ul>

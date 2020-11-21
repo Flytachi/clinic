@@ -162,7 +162,7 @@ is_auth(7);
 
 				                    <div class="card-body">
 				                        <div class="form-group">
-				                            <button type="button" id="edit" class="btn btn-primary legitRipple"><i class="icon-pencil3 mr-2"></i> Редактировать</button>
+				                            <button type="button" id="edit" class="btn btn-info legitRipple"><i class="icon-pencil3 mr-2"></i> Редактировать</button>
 				                            <button type="button" id="save" class="btn btn-success legitRipple"><i class="icon-checkmark3 mr-2"></i> Сохранить</button>
 				                        </div>
 
@@ -245,7 +245,7 @@ is_auth(7);
 
 				                    <div class="card-body">
 				                        <div class="form-group">
-				                            <button type="button" id="edit" class="btn btn-primary legitRipple"><i class="icon-pencil3 mr-2"></i> Редактировать</button>
+				                            <button type="button" id="edit" class="btn btn-info legitRipple"><i class="icon-pencil3 mr-2"></i> Редактировать</button>
 				                            <button type="button" id="save" class="btn btn-success legitRipple"><i class="icon-checkmark3 mr-2"></i> Сохранить</button>
 				                        </div>
 
@@ -496,7 +496,7 @@ is_auth(7);
 				                            </div>
 
 				                            <div class="modal-footer">
-				                                <button type="submit" class="btn bg-primary legitRipple">Сохранить</button>
+				                                <button type="submit" class="btn bg-info legitRipple">Сохранить</button>
 				                            </div>
 				                        </div>
 				                    </div>
@@ -589,7 +589,7 @@ is_auth(7);
 				                        </div>
 
 				                        <div class="modal-footer">
-				                            <button type="submit" class="btn bg-primary legitRipple">Сохранить</button>
+				                            <button type="submit" class="btn bg-info legitRipple">Сохранить</button>
 				                        </div>
 
 				                        <div class="table-responsive">
