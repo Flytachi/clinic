@@ -76,7 +76,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, status FROM visit WHERE user_id = $patient->user_id AND route_id = {$_SESSION['session_id']} ORDER BY id DESC") as $row) {
+										foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, status, laboratory FROM visit WHERE user_id = $patient->user_id AND route_id = {$_SESSION['session_id']} ORDER BY id DESC") as $row) {
 										?>
 											<tr class="text-center">
 												<td><?= $i++ ?></td>
@@ -121,15 +121,14 @@ $header = "Пациент";
 												<td class="text-center">
 													<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 													<div class="dropdown-menu dropdown-menu-right">
-
 														<?php
-														if ($row['completed']) {
+														if ($row['laboratory']) {
 															?>
-															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
+															<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>', 1)" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 															<?php
 														} else {
 															?>
-															<a onclick="alert('Заключение не создано')" class="dropdown-item text-muted"><i class="icon-paste2"></i>Заключения врача</a>
+															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
 															<?php
 														}
 														?>
@@ -182,7 +181,7 @@ $header = "Пациент";
 	</div>
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-lg" id="modal_class_show">
 			<div class="modal-content border-3 border-info" id="report_show">
 
 			</div>
@@ -190,11 +189,18 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
-		function Check(events) {
+		function Check(events, imp='') {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (data) {
+					if (imp) {
+						$('#modal_class_show').removeClass("modal-lg");
+						$('#modal_class_show').addClass("modal-full");
+					}else {
+						$('#modal_class_show').removeClass("modal-full");
+						$('#modal_class_show').addClass("modal-lg");
+					}
 					$('#modal_report_show').modal('show');
 					$('#report_show').html(data);
 				},

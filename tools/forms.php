@@ -628,6 +628,7 @@ class LaboratoryUpStatus extends Model
         }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
+        $this->post['laboratory'] = True;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
         $this->update();
     }

@@ -65,7 +65,7 @@ $header = "Завершёный пациенты";
                                             <td><?= get_full_name($row['id']) ?></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td><?= $row['numberPhone'] ?></td>
-                                            <td><?= $row['add_date'] ?></td>
+											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
 												<a href="<?= viv('doctor/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn bg-indigo btn-sm legitRipple">Визиты</button>
                                             </td>

@@ -46,5 +46,5 @@ is_auth();
 </div>
 
 <div class="modal-footer">
-    <button type="close" class="btn bg-info">Закрыть</button>
+    <button type="button" class="btn btn-info legitRipple" data-dismiss="modal">Закрыть</button>
 </div>
