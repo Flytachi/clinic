@@ -61,7 +61,16 @@ $header = "Стационарные пациенты";
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
-                                            <td><?= get_full_name($row['user_id']) ?></td>
+                                            <td>
+												<div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+												<div class="text-muted">
+													<?php
+													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['user_id'])->fetch()){
+														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['num']." койка";
+													}
+													?>
+												</div>
+											</td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php

@@ -62,7 +62,7 @@ $header = "Завершёный пациенты";
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
-                                            <td><?= get_full_name($row['id']) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td><?= $row['numberPhone'] ?></td>
 											<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>

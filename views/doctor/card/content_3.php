@@ -81,8 +81,8 @@ $header = "Пациент";
 											<tr class="text-center">
 												<td><?= $i++ ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не активный</span>'?></td>
-												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не активный</span>'?></td>
+												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не принят</span>'?></td>
+												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не завершён</span>'?></td>
 												<td>
 	                                                <?php
 	                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {

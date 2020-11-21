@@ -157,7 +157,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 										?>
                                         <tr>
                                             <td><?= $i++ ?></td>
-											<td><?= get_full_name($row['route_id']) ?></td>
+											<td><div class="font-weight-semibold"><?= get_full_name($row['route_id']) ?></div></td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>

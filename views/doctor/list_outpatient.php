@@ -61,7 +61,7 @@ $header = "Амбулаторные пациенты";
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
-                                            <td><?= get_full_name($row['user_id']) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php

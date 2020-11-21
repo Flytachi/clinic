@@ -153,11 +153,11 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query("SELECT * FROM visit WHERE user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
+                                    foreach($db->query("SELECT id, route_id, direction, accept_date, completed, laboratory FROM visit WHERE user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
-											<td><?= get_full_name($row['route_id']) ?></td>
+											<td><div class="font-weight-semibold"><?= get_full_name($row['route_id']) ?></div></td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 											<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
 											<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
@@ -171,7 +171,17 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                             <td class="text-center">
 												<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 												<div class="dropdown-menu dropdown-menu-right">
-													<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Анализы</a>
+													<?php
+													if ($row['laboratory']) {
+														?>
+														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>', 1)" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+														<?php
+													} else {
+														?>
+														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
+														<?php
+													}
+													?>
 												</div>
 											</td>
                                         </tr>
@@ -195,8 +205,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	</div>
 	<!-- /page content -->
 
-    <div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-full">
+	<div id="modal_report_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg" id="modal_class_show">
 			<div class="modal-content border-3 border-info" id="report_show">
 
 			</div>
@@ -204,11 +214,18 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	</div>
 
 	<script type="text/javascript">
-		function Check(events) {
+		function Check(events, imp='') {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (data) {
+					if (imp) {
+						$('#modal_class_show').removeClass("modal-lg");
+						$('#modal_class_show').addClass("modal-full");
+					}else {
+						$('#modal_class_show').removeClass("modal-full");
+						$('#modal_class_show').addClass("modal-lg");
+					}
 					$('#modal_report_show').modal('show');
 					$('#report_show').html(data);
 				},

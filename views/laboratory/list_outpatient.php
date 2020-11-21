@@ -62,7 +62,7 @@ $header = "Амбулаторные пациенты";
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
-                                            <td><?= get_full_name($row['user_id']) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php
@@ -75,7 +75,7 @@ $header = "Амбулаторные пациенты";
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Печать</a>
+													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
                                                     <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>&user_id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
                                                 </div>
                                             </td>
