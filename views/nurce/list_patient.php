@@ -1,32 +1,11 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
+is_auth(7);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	
+
 <?php include '../layout/head.php' ?>
-
-
-<script src="../../static/global_assets/js/plugins/forms/wizards/steps.min.js"></script>
-<script src="../../static/global_assets/js/plugins/forms/selects/select2.min.js"></script>
-<script src="../../static/global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-<script src="../../static/global_assets/js/plugins/forms/inputs/inputmask.js"></script>
-<script src="../../static/global_assets/js/plugins/forms/validation/validate.min.js"></script>
-<script src="../../static/global_assets/js/plugins/extensions/cookie.js"></script>
-<script src="../../static/assets/js/app.js"></script>
-<script src="../../static/global_assets/js/demo_pages/form_wizard.js"></script>
-<!-- /theme JS files -->
-<!-- Theme JS files -->
-<script src="../../static/global_assets/js/plugins/editors/summernote/summernote.min.js"></script>
-<script src="../../static/global_assets/js/plugins/forms/styling/uniform.min.js"></script>
-<script src="../../static/global_assets/js/plugins/forms/selects/select2.min.js"></script>
-<script src="../../static/global_assets/js/demo_pages/form_select2.js"></script>
-<script src="../../static/assets/js/app.js"></script>
-<script src="../../static/global_assets/js/demo_pages/editor_summernote.js"></script>
-</head>
-
 
 <body>
 
@@ -64,24 +43,7 @@ is_auth();
 
 				    <div class="card-body">
 				        <ul class="nav nav-tabs nav-tabs-highlight">
-				            <li class="nav-item">
-				                <a href="#right-icon-tab1" class="nav-link legitRipple" data-toggle="tab">История пациента <i class="icon-nbsp ml-3"></i></a>
-				            </li>
-				            <li class="nav-item">
-				                <a href="#right-icon-tab2" class="nav-link legitRipple" data-toggle="tab">Анализи Лаборатория <i class="icon-compose ml-3"></i></a>
-				            </li>
-				            <li class="nav-item">
-				                <a href="#right-icon-tab4" class="nav-link legitRipple" data-toggle="tab">Добавить Записки <i class="icon-users4 ml-3"></i></a>
-				            </li>
-				            <li class="nav-item">
-				                <a href="#right-icon-tab5" class="nav-link legitRipple" data-toggle="tab">Записки врача <i class="icon-user-plus ml-3"></i></a>
-				            </li>
-				            <li class="nav-item">
-				                <a href="#right-icon-tab6" class="nav-link legitRipple active show" data-toggle="tab">Блюда <i class="icon-spinner11 ml-3"></i></a>
-				            </li>
-				            <li class="nav-item">
-				                <a href="#right-icon-tab7" class="nav-link legitRipple" data-toggle="tab">Состаение <i class="icon-bubble9 ml-3"></i></a>
-				            </li>
+
 				        </ul>
 
 				        <div class="tab-content">

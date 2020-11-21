@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
+is_auth(6);
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
@@ -159,8 +159,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                             <td><?= $i++ ?></td>
 											<td><?= get_full_name($row['route_id']) ?></td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= $row['accept_date'] ?></td>
-											<td><?= $row['completed'] ?></td>
+											<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
+											<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
                                             <td>
                                                 <?php
                                                 foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
@@ -171,7 +171,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                             <td class="text-center">
 												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 												<div class="dropdown-menu dropdown-menu-right">
-													<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
+													<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Анализы</a>
 												</div>
 											</td>
                                         </tr>
@@ -196,7 +196,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	<!-- /page content -->
 
     <div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-full">
 			<div class="modal-content border-3 border-info" id="report_show">
 
 			</div>

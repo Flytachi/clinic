@@ -19,10 +19,10 @@ switch (level()):
         render('laboratory/index');
         break;
     case 7:
-        include('docs/index/ambulator.php');
+        render('nurce/index');
         break;
     case 8:
-        render('nurse/index');
+        render('maindoctor/index');
         break;
 endswitch;
 ?>

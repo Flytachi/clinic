@@ -45,7 +45,7 @@ $header = "Пациент";
                                 <thead>
                                     <tr class="bg-blue">
                                         <th>Мед Услуга</th>
-										<th style="width: 25%">Действия</th>
+										<th class="text-right" style="width: 25%">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,11 +54,11 @@ $header = "Пациент";
 									?>
 	                                    <tr>
 	                                        <td><?= $row['name'] ?></td>
-											<td class="text-center">
+											<td class="text-right">
 												<?php
 												if ($row['completed']) {
 													?>
-													<button onclick="Check('<?= viv('doctor/report') ?>?id=<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 													<button onclick="Update('<?= up_url($row['id'], 'PatientReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 													<?php
 												}else {
@@ -101,10 +101,8 @@ $header = "Пациент";
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-body" id="report_show">
+			<div class="modal-content border-3 border-info" id="report_show">
 
-				</div>
 			</div>
 		</div>
 	</div>

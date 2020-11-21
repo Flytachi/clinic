@@ -222,6 +222,30 @@
                                         ?>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('laboratory/list_completed') ?>" class="nav-link legitRipple">
+                                        <i class="icon-collaboration"></i>
+                                        <span>Завершёные пациенты</span>
+                                    </a>
+                                </li>
+                                <?php
+                                break;
+                            case 7:
+                                ?>
+                                <li class="nav-item">
+                                    <a href="<?= viv('nurce/index') ?>" class="nav-link legitRipple">
+                                        <i class="icon-users2"></i>
+                                        <span>Стационарные пациенты</span>
+                                        <?php
+                                        $con_one = $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL")->rowCount();
+                                        if ($con_one) {
+                                            ?>
+                                            <span class="badge bg-green badge-pill ml-auto"><?=$con_one?></span>
+                                            <?php
+                                        }
+                                        ?>
+                                    </a>
+                                </li>
                                 <?php
                                 break;
                         endswitch;
