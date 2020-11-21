@@ -891,15 +891,13 @@ class LaboratoryAnalyzeTableModel extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="modal-body">
+                <div id="modal_message">
+                </div>
 
                 <div class="table-responsive">
                     <table class="table table-hover table-sm table-bordered">
@@ -943,11 +941,33 @@ class LaboratoryAnalyzeTableModel extends Model
             </div>
 
             <div class="modal-footer">
-                <a href="<?= up_url($_GET['id'], 'PatientLaboratoryFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
+                <a href="<?= up_url($_GET['id'], 'PatientLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
                 <button type="submit" class="btn bg-info">Сохранить</button>
             </div>
 
         </form>
+
+        <script type="text/javascript">
+
+            function ResultEND() {
+                if (confirm('Вы точно хотите завершить визит пациента?')) {
+                    $('#<?= __CLASS__ ?>_form').submit();
+                }
+            }
+
+    		$('#<?= __CLASS__ ?>_form').submit(function (events) {
+                events.preventDefault();
+                $.ajax({
+                    type: $(this).attr("method"),
+                    url: $(this).attr("action"),
+                    data: $(this).serializeArray(),
+                    success: function (result) {
+    					$('#modal_message').html(result);
+                    },
+                });
+            });
+
+    	</script>
         <?php
     }
 

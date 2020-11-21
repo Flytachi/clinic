@@ -38,12 +38,16 @@ $header = "Пациент";
 				    <div class="card-body">
 				        <?php include "content_tabs.php"; ?>
 
-						<h4 class="card-title">Анализ Пациента</h4>
 						<div class="card">
+
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Анализы Пациента</h5>
+							</div>
+
 							<div class="table-responsive">
 								<table class="table">
-									<thead>
-										<tr class="bg-blue text-center">
+									<thead class="bg-info text-center">
+										<tr>
 											<th>№</th>
 											<th>Специалист</th>
 											<th>Дата и время</th>
@@ -75,6 +79,7 @@ $header = "Пациент";
 									</tbody>
 								</table>
 							</div>
+
 						</div>
 
 				    </div>

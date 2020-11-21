@@ -8,15 +8,19 @@ is_auth();
     <button type="button" class="close" data-dismiss="modal">×</button>
 </div>
 
-<div class="modal-body text-justify" style="font-size: 1rem">
+<div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
 $pack = $db->query("SELECT report_title, report_description, report_conclusion FROM visit_service WHERE id= {$_GET['pk']}")->fetch();
 ?>
     <h3 class="text-center"><?= $pack['report_title'] ?></h3>
-    <ul>
-        <li><h5><b>Описание</b></h5> - <?= $pack['report_description'] ?></li>
-        <li><h5><b>Заключение</b></h5> - <?= $pack['report_conclusion'] ?></li>
-    </ul>
+    <p>
+        <h4 class="text-center"><b>Описание</b></h4>
+        <?= $pack['report_description'] ?>
+    </p>
+    <p>
+        <b style="font-size: 1.1rem">Заключение:</b>
+        <?= $pack['report_conclusion'] ?>
+    </p>
 </div>
 
 <div class="modal-footer">

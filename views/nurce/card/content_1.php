@@ -50,11 +50,11 @@ $header = "Пациент";
 							<div class="col-md-6">
 								<div class="card">
 									<div class="card-header header-elements-inline">
-										<h6 class="card-title">Примечание Врача</h6>
+										<h5 class="card-title">Примечание Врача</h5>
 									</div>
 									<div class="table-responsive">
 										<table class="table">
-											<thead>
+											<thead class="bg-info">
 												<tr>
 													<th style="width: 40px;">№</th>
 													<th>Дата и время</th>
@@ -84,7 +84,7 @@ $header = "Пациент";
 								<div class="card">
 
 									<div class="card-header header-elements-inline">
-										<h6 class="card-title">Примечание медсестры</h6>
+										<h5 class="card-title">Примечание Медсестры</h5>
 										<div class="header-elements">
 											<div class="list-icons">
 												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
@@ -96,7 +96,7 @@ $header = "Пациент";
 
 									<div class="table-responsive">
 										<table class="table">
-											<thead>
+											<thead class="bg-info">
 												<tr>
 													<th style="width: 40px;">№</th>
 													<th>Дата и время</th>

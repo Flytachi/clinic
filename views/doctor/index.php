@@ -130,26 +130,5 @@ $header = "Приём пациетов";
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
-    <script type="text/javascript">
-
-        $('#form_PatientFailure').submit(function (events) {
-            events.preventDefault();
-            $.ajax({
-                type: $(this).attr("method"),
-                url: $(this).attr("action"),
-                data: $(this).serializeArray(),
-                success: function (result) {
-					$('#modal_failure').modal('hide');
-					$('#'+result).css("background-color", "rgb(244, 67, 54)");
-					$('#'+result).css("color", "white");
-					$('#'+result).fadeOut(900, function() {
-						$(this).remove();
-					});
-                },
-            });
-        });
-    </script>
-
 </body>
 </html>

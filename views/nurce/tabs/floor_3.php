@@ -13,8 +13,8 @@
 
         <div class="table-responsive">
             <table class="table table-hover table-sm table-bordered">
-                <thead>
-                    <tr class="bg-info">
+                <thead class="bg-info">
+                    <tr>
                         <th>ID</th>
                         <th>ФИО</th>
                         <th>Возрвст</th>
