@@ -46,24 +46,33 @@ $header = "Пациент";
 							</div>
 
 							<div class="table-responsive">
-								<table class="table">
+								<table class="table table-hover">
 									<thead>
 										<tr class="bg-info">
 											<th>Дата и время</th>
 											<th>Состояние пациента</th>
 											<th>Медсестра ФИО</th>
-											<th>давление</th>
+											<th>Давление</th>
 											<th>Пульс</th>
 											<th>Температура</th>
 
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td>13.03.2020 13:04</td>
-											<td>Хорошо</td>
-											<td>Ахмедова З</td>
-										</tr>
+										<?php
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->id") as $row) {
+											?>
+											<tr>
+												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+												<td><?= $row['stat'] ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= $row['pressure'] ?></td>
+												<td><?= $row['pulse'] ?></td>
+												<td><?= $row['temperature'] ?></td>
+											</tr>
+											<?php
+										}
+										?>
 									</tbody>
 								</table>
 							</div>

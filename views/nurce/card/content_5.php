@@ -18,7 +18,6 @@ $header = "Пациент";
 		<?php include '../../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -37,51 +36,61 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-				        <?php include "content_tabs.php"; ?>
+						<?php
+	 	   				include "content_tabs.php";
 
-						<h4 class="card-title">Мои Заключение</h4>
-						<div class="table-responsive">
-			                <table class="table table-hover table-columned">
-			                    <thead>
-			                        <tr class="bg-blue text-center">
-			                            <th>#</th>
-			                            <th>Мед услуга</th>
-			                            <th>Тип визита</th>
-										<th>Дата визита</th>
-										<th>Дата завершения</th>
-			                            <th class="text-center">Действия</th>
-			                        </tr>
-			                    </thead>
-			                    <tbody>
-									<?php
-									$i = 1;
-									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id = {$_SESSION['session_id']} ORDER BY id DESC") as $row) {
-									?>
-										<tr class="text-center">
-											<td><?= $i++ ?></td>
-											<td>
-                                                <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id = {$row['id']}") as $serv) {
-                                                    echo $serv['name']."<br>";
-                                                }
-                                                ?>
-                                            </td>
-											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
-											<td class="text-center">
-												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-												<div class="dropdown-menu dropdown-menu-right">
-													<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-												</div>
-											</td>
+	 	   				if($_SESSION['message']){
+	 	   					echo $_SESSION['message'];
+	 	   					unset($_SESSION['message']);
+	 	   				}
+	 	   				?>
+
+						<div class="card">
+
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Состояние</h5>
+								<div class="header-elements">
+									<div class="list-icons">
+										<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+											<i class="icon-plus22"></i>Добавить
+										</a>
+									</div>
+								</div>
+							</div>
+
+							<div class="table-responsive">
+								<table class="table table-hover">
+									<thead>
+										<tr class="bg-info">
+											<th>Дата и время</th>
+											<th>Состояние пациента</th>
+											<th>Медсестра ФИО</th>
+											<th>Давление</th>
+											<th>Пульс</th>
+											<th>Температура</th>
+
 										</tr>
-									<?php
-									}
-								 	?>
-			                    </tbody>
-			                </table>
-			            </div>
+									</thead>
+									<tbody>
+										<?php
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->id") as $row) {
+											?>
+											<tr>
+												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+												<td><?= $row['stat'] ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= $row['pressure'] ?></td>
+												<td><?= $row['pulse'] ?></td>
+												<td><?= $row['temperature'] ?></td>
+											</tr>
+											<?php
+										}
+										?>
+									</tbody>
+								</table>
+							</div>
+
+						</div>
 
 				    </div>
 
@@ -96,26 +105,19 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="report_show">
+	<div id="modal_add" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Добавить примечание</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<?= PatientStatsModel::form() ?>
 
 			</div>
 		</div>
 	</div>
-
-	<script type="text/javascript">
-		function Check(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
-				},
-			});
-		};
-	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
