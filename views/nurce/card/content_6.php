@@ -1,12 +1,13 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth(7);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
-<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
+<script src="<?= stack('vendors/js/jquery.tabledit.js') ?>"></script>
+<script src="<?= stack('vendors/js/custom_table_edit.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -41,7 +42,31 @@ $header = "Пациент";
 						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
-							<?php prit($patient); ?>
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Заметки</h5>
+							</div>
+
+							<?php //prit($patient); ?>
+							<table id="data_table" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Date</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								?>
+								<tr id="<?php echo $developer ['id']; ?>">
+							   		<td><?php echo $developer ['id']; ?></td>
+								   	<td><?php echo $developer ['date']; ?></td>
+								   	<td><?php echo $developer ['description']; ?></td>
+							   	</tr>
+								<?php } ?>
+								</tbody>
+							</table>
 						</div>
 
 				    </div>

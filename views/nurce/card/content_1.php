@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth(7);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -36,7 +36,7 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-						<?php
+				        <?php
 						include "content_tabs.php";
 
 						if($_SESSION['message']){
@@ -50,14 +50,7 @@ $header = "Пациент";
 							<div class="col-md-6">
 								<div class="card">
 									<div class="card-header header-elements-inline">
-										<h6 class="card-title">Примечание Врача</h6>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
+										<h5 class="card-title">Примечание Врача</h5>
 									</div>
 									<div class="table-responsive">
 										<table class="table">
@@ -73,7 +66,7 @@ $header = "Пациент";
 												$i=1;
 												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->user_id") as $row) {
 													?>
-													<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
+													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
 														<td><?= $i++ ?></td>
 														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
 														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
@@ -91,7 +84,14 @@ $header = "Пациент";
 								<div class="card">
 
 									<div class="card-header header-elements-inline">
-										<h6 class="card-title">Примечание медсестры</h6>
+										<h5 class="card-title">Примечание Медсестры</h5>
+										<div class="header-elements">
+											<div class="list-icons">
+												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+													<i class="icon-plus22"></i>Добавить
+												</a>
+											</div>
+										</div>
 									</div>
 
 									<div class="table-responsive">
@@ -108,7 +108,7 @@ $header = "Пациент";
 												$i=1;
 												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->user_id") as $row) {
 													?>
-													<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
+													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
 														<td><?= $i++ ?></td>
 														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
 														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>

@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth(7);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -36,34 +36,46 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-
 				        <?php include "content_tabs.php"; ?>
 
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Состояние</h5>
+								<h5 class="card-title">Анализы Пациента</h5>
 							</div>
 
 							<div class="table-responsive">
 								<table class="table">
-									<thead>
-										<tr class="bg-info">
+									<thead class="bg-info text-center">
+										<tr>
+											<th>№</th>
+											<th>Специалист</th>
 											<th>Дата и время</th>
-											<th>Состояние пациента</th>
-											<th>Медсестра ФИО</th>
-											<th>давление</th>
-											<th>Пульс</th>
-											<th>Температура</th>
-
+											<th>Услуга</th>
+											<th>Анализ</th>
+											<th>Результаты</th>
+											<th>Норматив</th>
+											<th>Примечание</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td>13.03.2020 13:04</td>
-											<td>Хорошо</td>
-											<td>Ахмедова З</td>
-										</tr>
+										<?php
+										$i = 1;
+										foreach ($db->query("SELECT vs.parent_id, vs.completed, sr.name 'service_name', lat.name, lat.standart, la.result, la.description FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (lat.id=la.analyze_id) LEFT JOIN visit vs ON (vs.id=la.visit_id) LEFT JOIN service sr ON (sr.id=lat.service_id) WHERE la.user_id = $patient->user_id ORDER BY la.id DESC") as $row) {
+										?>
+											<tr class="text-center">
+												<td><?= $i++ ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
+												<td><?= $row['service_name'] ?></td>
+												<td><?= $row['name'] ?></td>
+												<td><?= $row['result'] ?></td>
+												<td><?= $row['standart'] ?></td>
+												<td><?= $row['description'] ?></td>
+											</tr>
+										<?php
+										}
+									 	?>
 									</tbody>
 								</table>
 							</div>

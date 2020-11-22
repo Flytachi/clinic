@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth(7);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -41,26 +41,26 @@ $header = "Пациент";
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Другие Визиты</h5>
+								<h5 class="card-title">История Осмотров</h5>
 							</div>
 
 							<div class="table-responsive">
-				                <table class="table table-hover table-columned">
-				                    <thead>
-				                        <tr class="bg-info text-center">
-				                            <th>#</th>
-				                            <th>Специалист</th>
+								<table class="table table-hover table-columned">
+									<thead class="bg-info text-center">
+										<tr>
+											<th>№</th>
+											<th>Специалист</th>
 				                            <th>Тип визита</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
 				                            <th>Мед услуга</th>
 				                            <th class="text-center">Действия</th>
-				                        </tr>
-				                    </thead>
-				                    <tbody>
+										</tr>
+									</thead>
+									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, laboratory FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id != {$_SESSION['session_id']} AND route_id != {$_SESSION['session_id']} ORDER BY id DESC") as $row) {
+										foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, laboratory FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL ORDER BY id DESC") as $row) {
 										?>
 											<tr class="text-center">
 												<td><?= $i++ ?></td>
@@ -76,7 +76,7 @@ $header = "Пациент";
 	                                                ?>
 	                                            </td>
 												<td class="text-center">
-													<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 													<div class="dropdown-menu dropdown-menu-right">
 														<?php
 														if ($row['laboratory']) {
@@ -95,9 +95,9 @@ $header = "Пациент";
 										<?php
 										}
 									 	?>
-				                    </tbody>
-				                </table>
-				            </div>
+									</tbody>
+								</table>
+							</div>
 
 						</div>
 

@@ -62,8 +62,17 @@ $header = "Приём пациетов";
                                         ?>
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['user_id']) ?></td>
-                                            <td><?= get_full_name($row['user_id']) ?></td>
-                                            <td><?= $row['dateBith'] ?></td>
+                                            <td>
+												<div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+												<div class="text-muted">
+													<?php
+													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['user_id'])->fetch()){
+														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['num']." койка";
+													}
+													?>
+												</div>
+											</td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php
                                                 foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id = {$row['id']}") as $serv) {
@@ -87,7 +96,6 @@ $header = "Приём пациетов";
                                             </td>
                                             <td class="text-center">
 												<a href="<?= up_url($row['id'], 'PatientUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
-                                                <!-- <button onclick="Recept('PatientFailure_tr_<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button> -->
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
@@ -131,34 +139,5 @@ $header = "Приём пациетов";
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
-    <script type="text/javascript">
-
-		function Recept(tr) {
-			$('#'+tr).css("background-color", "rgb(76, 175, 80)");
-			$('#'+tr).css("color", "white");
-			$('#'+tr).fadeOut('slow', function() {
-				$(this).remove();
-			});
-		}
-
-        $('#form_PatientFailure').submit(function (events) {
-            events.preventDefault();
-            $.ajax({
-                type: $(this).attr("method"),
-                url: $(this).attr("action"),
-                data: $(this).serializeArray(),
-                success: function (result) {
-					$('#modal_failure').modal('hide');
-					$('#'+result).css("background-color", "rgb(244, 67, 54)");
-					$('#'+result).css("color", "white");
-					$('#'+result).fadeOut(900, function() {
-						$(this).remove();
-					});
-                },
-            });
-        });
-    </script>
-
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
+is_auth(6);
 $header = "Завершёный пациенты";
 ?>
 <!DOCTYPE html>
@@ -65,9 +65,9 @@ $header = "Завершёный пациенты";
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td><?= $row['numberPhone'] ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+											<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('doctor/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn bg-indigo btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('laboratory/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn bg-indigo btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php

@@ -628,6 +628,7 @@ class LaboratoryUpStatus extends Model
         }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
+        $this->post['laboratory'] = True;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
         $this->update();
     }
@@ -648,7 +649,7 @@ class PatientFailure extends Model
     public function form($pk = null)
     {
         ?>
-        <form method="post" action="<?= add_url() ?>" id="form_<?= __CLASS__ ?>">
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="modal-body">
@@ -670,6 +671,26 @@ class PatientFailure extends Model
             </div>
 
         </form>
+
+        <script type="text/javascript">
+
+            $('#<?= __CLASS__ ?>_form').submit(function (events) {
+                events.preventDefault();
+                $.ajax({
+                    type: $(this).attr("method"),
+                    url: $(this).attr("action"),
+                    data: $(this).serializeArray(),
+                    success: function (result) {
+                        $('#modal_failure').modal('hide');
+                        $('#'+result).css("background-color", "rgb(244, 67, 54)");
+                        $('#'+result).css("color", "white");
+                        $('#'+result).fadeOut(900, function() {
+                            $(this).remove();
+                        });
+                    },
+                });
+            });
+        </script>
         <?php
     }
 
