@@ -402,7 +402,7 @@ class OutpatientTreatmentForm extends Model
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
-                        }division
+                        }
                         ?>
                     </select>
                 </div>
@@ -723,7 +723,7 @@ class PatientReport extends Model
 
 <!--             <textarea name="report" id="report" rows="10" cols="80">
                 //<?= $post['report'] ?>
-                
+
             </textarea>
  -->
             <div class="text-right">
@@ -901,7 +901,7 @@ class PatientRoute extends Model
 
  class NotesModel extends Model
  {
-     
+
      public $table = "notes";
 
      public function form($pk=null)
@@ -913,16 +913,16 @@ class PatientRoute extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="user_id" value="<?= $patient->user_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            
+
              <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">  
-                        <label>Выберите дату:</label>                                   
+                    <div class="col-md-6">
+                        <label>Выберите дату:</label>
                         <input type="text" class="form-control" name="date_text" id="anytime-both" value="June 4th 08:47" readonly="">
                     </div>
                     <div class="col-md-6">
-                        <label>Введите описание:</label>                                    
-                        <input type="text" class="form-control" name="description">                                        
+                        <label>Введите описание:</label>
+                        <input type="text" class="form-control" name="description">
                     </div>
                 </div>
                 <div class="text-right" style="margin-top: 1%;">
