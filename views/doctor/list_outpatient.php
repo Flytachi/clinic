@@ -57,15 +57,15 @@ $header = "Амбулаторные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
                                         <tr>
-                                            <td><?= addZero($row['user_id']) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
+                                            <td><?= addZero($row['id']) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
                                                 <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.visit_id = {$row['id']}") as $serv) {
+                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']}") as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>

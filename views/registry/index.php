@@ -72,7 +72,7 @@ $header = "Рабочий стол";
 							</div>
 
 							<div class="card-body">
-								<?php OutpatientTreatmentForm::form(); ?>
+								<?php VisitModel::form_out(); ?>
 							</div>
 
 						</div>
@@ -93,7 +93,7 @@ $header = "Рабочий стол";
 							</div>
 
 							<div class="card-body">
-								<?php StationaryTreatmentForm::form(); ?>
+								<?php VisitModel::form_sta(); ?>
 							</div>
 
 						</div>

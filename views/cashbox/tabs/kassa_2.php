@@ -27,14 +27,14 @@
                         </thead>
                         <tbody id="displ_tab-2">
                             <?php
-                            foreach($db->query('SELECT * FROM visit WHERE direction IS NOT NULL AND status IS NOT NULL ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query("SELECT DISTINCT us.id, vs.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND us.status = 1") as $row) {
                                 ?>
                                     <tr>
                                         <td class="text-left"><?= $row['add_date'] ?></td>
-                                        <td class="text-center"><?= addZero($row['user_id']) ?></td>
+                                        <td class="text-center"><?= addZero($row['id']) ?></td>
                                         <td class="text-center">
                                             <a onclick="CheckSt('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')" >
-                                                <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+                                                <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
                                             </a>
                                         </td>
                                     </tr>

@@ -56,16 +56,16 @@ $header = "Пациент";
 	                                </thead>
 	                                <tbody>
 										<?php
-										foreach ($db->query("SELECT vs.id, ser.name, vs.completed FROM visit_service vs LEFT JOIN service ser ON (vs.service_id = ser.id) WHERE vs.visit_id = $patient->id") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id") as $row) {
 										?>
 		                                    <tr>
 		                                        <td><?= $row['name'] ?></td>
 												<td class="text-right">
 													<?php
-													if ($row['completed']) {
+													if ($row['report_description']) {
 														?>
 														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-														<button onclick="Update('<?= up_url($row['id'], 'PatientReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 														<?php
 													}else {
 														?>
@@ -101,7 +101,7 @@ $header = "Пациент";
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info" id="form_card">
 
-				<?php PatientReport::form(); ?>
+				<?php VisitReport::form(); ?>
 
 			</div>
 		</div>

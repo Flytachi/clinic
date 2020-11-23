@@ -1,5 +1,5 @@
 <?php
-$sql = "SELECT vs.id, vs.user_id, vs.grant_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, bds.floor, bds.ward, bds.num FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) LEFT JOIN beds bds ON (bds.user_id=vs.user_id) WHERE vs.status = 2 AND vs.id = {$_GET['id']}";
+$sql = "SELECT us.id, vs.grant_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, bds.floor, bds.ward, bds.num FROM users us LEFT JOIN visit vs ON (vs.user_id = us.id) LEFT JOIN beds bds ON (bds.user_id=vs.user_id) WHERE vs.status = 2 AND us.id = {$_GET['id']}";
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($patient);
 ?>
