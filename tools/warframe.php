@@ -9,6 +9,7 @@ $PERSONAL = array(
     6 => "Лаборант",
     7 => "Медсестра",
     8 => "Главный врач",
+    9 => "Повар",
 );
 
 $FLOOR = array(
@@ -22,6 +23,7 @@ require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'models.php';
 require_once 'forms.php';
+require_once 'forms_2.php';
 
 
 function get_full_name($id = null) {

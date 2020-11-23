@@ -31,8 +31,8 @@ $header = "Рабочий стол";
 
 				<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
 					<li class="nav-item"><a href="#basic-justified-tab1" class="nav-link legitRipple active show" data-toggle="tab">Регистрация</a></li>
-					<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Стационарная</a></li>
-					<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">Амбулаторная</a></li>
+					<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">Амбулаторная</a></li>
+					<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">Стационарная</a></li>
 				</ul>
 
 				<div class="tab-content">
@@ -63,7 +63,7 @@ $header = "Рабочий стол";
 						<div class="card border-1 border-info">
 
 							<div class="card-header text-dark header-elements-inline alpha-info">
-								<h6 class="card-title">Стационарная</h6>
+								<h6 class="card-title">Амбулаторная</h6>
 								<div class="header-elements">
 									<div class="list-icons">
 				                		<a class="list-icons-item" data-action="collapse"></a>
@@ -72,7 +72,7 @@ $header = "Рабочий стол";
 							</div>
 
 							<div class="card-body">
-								<?php StationaryTreatmentForm::form(); ?>
+								<?php OutpatientTreatmentForm::form(); ?>
 							</div>
 
 						</div>
@@ -84,7 +84,7 @@ $header = "Рабочий стол";
 						<div class="card border-1 border-info">
 
 							<div class="card-header text-dark header-elements-inline alpha-info">
-								<h6 class="card-title">Амбулаторная</h6>
+								<h6 class="card-title">Стационарная</h6>
 								<div class="header-elements">
 									<div class="list-icons">
 				                		<a class="list-icons-item" data-action="collapse"></a>
@@ -93,7 +93,7 @@ $header = "Рабочий стол";
 							</div>
 
 							<div class="card-body">
-								<?php OutpatientTreatmentForm::form(); ?>
+								<?php StationaryTreatmentForm::form(); ?>
 							</div>
 
 						</div>

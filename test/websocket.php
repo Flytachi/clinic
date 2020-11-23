@@ -1,5 +1,7 @@
 <?php
 
+echo 'olllllllll';
+
 require dirname(__DIR__) . '/vendor/autoload.php';
 require_once '../tools/functions/connection.php';
 use Ratchet\MessageComponentInterface;

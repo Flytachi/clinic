@@ -1,11 +1,12 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth(7);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -37,46 +38,10 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-				        <?php include "content_tabs.php"; ?>
+						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Состояние</h5>
-							</div>
-
-							<div class="table-responsive">
-								<table class="table table-hover">
-									<thead>
-										<tr class="bg-info">
-											<th>Дата и время</th>
-											<th>Состояние пациента</th>
-											<th>Медсестра ФИО</th>
-											<th>Давление</th>
-											<th>Пульс</th>
-											<th>Температура</th>
-
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->id") as $row) {
-											?>
-											<tr>
-												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-												<td><?= $row['stat'] ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= $row['pressure'] ?></td>
-												<td><?= $row['pulse'] ?></td>
-												<td><?= $row['temperature'] ?></td>
-											</tr>
-											<?php
-										}
-										?>
-									</tbody>
-								</table>
-							</div>
-
+							<?php prit($patient); ?>
 						</div>
 
 				    </div>

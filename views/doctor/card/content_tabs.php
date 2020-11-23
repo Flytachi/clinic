@@ -1,3 +1,12 @@
+<?php
+
+    $id = $_SESSION['session_id'];
+
+    $sql = "SELECT COUNT(*) FROM chat WHERE id_push = \"$id\" OR id_pull = \"$id\"";
+
+    $count = $db->query($sql)->fetchColumn();
+
+?>
 <ul class="nav nav-tabs nav-tabs-highlight">
     <li class="nav-item">
         <a href="<?= viv('doctor/card/content_1') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_1')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Осмотр<i class="icon-repo-forked ml-3"></i></a>
@@ -15,7 +24,7 @@
         <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_5')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Анализы<i class="icon-droplets ml-3"></i></a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Переписка<i class="icon-bubbles2 ml-3"></i></a>
+        <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Переписка <b id="noticeus"><?= $count ?></b> <i class="icon-bubbles2 ml-3"></i> </a>
     </li>
     <li class="nav-item">
         <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Заметки<i class="icon-clipboard3 ml-3"></i></a>
@@ -36,3 +45,11 @@
         <a href="<?= viv('doctor/card/content_10') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_10')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >POS_даные </a>
     </li>
 </ul>
+
+<script>   
+    let id = '<?= $_SESSION['session_id'] ?>';
+    let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+
+</script>
+<!-- /footer -->
+<script src="scriptJS/socket.js"></script>

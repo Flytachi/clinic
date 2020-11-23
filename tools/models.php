@@ -1081,4 +1081,82 @@ class BypassModel extends Model
         render();
     }
 }
+
+class PatientStatsModel extends Model
+{
+    public $table = 'user_stats';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>Состояние:</label>
+                    <input type="text" class="form-control" name="stat" placeholder="Введите кол-во" required>
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-4">
+                        <label>Давление:</label>
+                        <input type="number" class="form-control" name="pressure" placeholder="Введите давление" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Пульс:</label>
+                        <input type="number" class="form-control" name="pulse" placeholder="Введите пульс" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Температура:</label>
+                        <input type="number" class="form-control" name="temperature" placeholder="Введите температура" required>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
 ?>
