@@ -7,7 +7,6 @@ $header = "Отчёт по услугам";
 <html lang="en">
 <?php include '../../layout/head.php' ?>
 
-
 <body>
 	<!-- Main navbar -->
 	<?php include '../../layout/navbar.php' ?>
@@ -46,20 +45,20 @@ $header = "Отчёт по услугам";
 
 						<div class="form-group row">
 
-							<div class="col-md-2">
-								<label>Button class options:</label>
+							<div class="col-md-3">
+								<label>Дата визита:</label>
 								<div class="input-group">
-									<span class="input-group-prepend">
+									<input type="text" class="form-control daterange-locale">
+									<span class="input-group-append">
 										<span class="input-group-text"><i class="icon-calendar22"></i></span>
 									</span>
-									<input type="text" class="form-control daterange-basic" value="01/01/2015 - 01/31/2015">
 								</div>
 							</div>
 
 							<div class="col-md-3">
 			                    <label>Отдел:</label>
-			                    <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" required data-fouc>
-			                        <option></option>
+			                    <select data-placeholder="Выберите отдел" id="division" class="form-control form-control-select2" required data-fouc>
+			                       <option>Выберите отдел</option>
 			                        <?php
 			                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
 			                            ?>
@@ -70,8 +69,8 @@ $header = "Отчёт по услугам";
 			                    </select>
 			                </div>
 
-							<div class="col-md-3">
-								<label>Услуга:</label>
+			                <div class="col-md-3">
+			                    <label>Услуга:</label>
 			                    <select data-placeholder="Выберите услугу" id="service" class="form-control form-control-select2" required data-fouc>
 			                        <option></option>
 			                        <?php
@@ -82,8 +81,66 @@ $header = "Отчёт по услугам";
 			                        }
 			                        ?>
 			                    </select>
+			                </div>
+
+							<div class="col-md-3">
+			                    <label>Специалист:</label>
+			                    <select data-placeholder="Выберите специалиста" id="parent_id" class="form-control form-control-select2" data-fouc required>
+			                        <option></option>
+			                        <?php
+			                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+			                            ?>
+			                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+			                            <?php
+			                        }
+			                        ?>
+			                    </select>
+			                </div>
+
+						</div>
+
+						<div class="from-group row">
+
+							<div class="col-md-3">
+			                    <label>Тип визита:</label>
+			                    <select data-placeholder="Выберите тип визита" class="form-control form-control-select2" data-fouc required>
+			                        <option>Выберите тип визита</option>
+									<option value="0">Амбулаторный</option>
+									<option value="1">Стационарный</option>
+			                    </select>
+			                </div>
+
+							<div class="col-md-3">
+			                    <label>Пациент:</label>
+								<select class="form-control form-control-select2" data-fouc required>
+			                        <option>Выберите пациента</option>
+									<?php
+									foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
+										?>
+										<option value="<?= $row['id'] ?>"><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+										<?php
+									}
+									?>
+			                    </select>
+			                </div>
+
+							<div class="col-md-3">
+								<label class="d-block font-weight-semibold">Статус</label>
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" checked>
+									<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
+								</div>
+
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" checked>
+									<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
+								</div>
 							</div>
 
+						</div>
+
+						<div class="text-right">
+							<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
 						</div>
 
                     </div>
@@ -107,53 +164,17 @@ $header = "Отчёт по услугам";
                             <table class="table table-hover table-sm table-bordered">
                                 <thead>
                                     <tr class="bg-info">
-                                        <th>#</th>
+			                            <th>Отдел</th>
 			                            <th>Услуга</th>
+										<th>Специалист</th>
+										<th>Дата проведения</th>
 			                            <th>Тип визита</th>
-										<th>Дата визита</th>
-										<th>Дата завершения</th>
-			                            <th>Мед услуга</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+										<th>Статус</th>
+										<th>Пациент</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $i = 1;
-                                    foreach($db->query("SELECT id, route_id, direction, accept_date, completed, laboratory FROM visit WHERE user_id = {$_GET['id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
-										?>
-                                        <tr>
-                                            <td><?= $i++ ?></td>
-											<td><div class="font-weight-semibold"><?= get_full_name($row['route_id']) ?></div></td>
-											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
-                                            <td>
-                                                <?php
-                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
-                                                    echo $serv['name']."<br>";
-                                                }
-                                                ?>
-                                            </td>
-                                            <td class="text-center">
-												<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-												<div class="dropdown-menu dropdown-menu-right">
-													<?php
-													if ($row['laboratory']) {
-														?>
-														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>', 1)" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
-														<?php
-													} else {
-														?>
-														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-														<?php
-													}
-													?>
-												</div>
-											</td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    ?>
+
                                 </tbody>
                             </table>
                         </div>
@@ -172,6 +193,7 @@ $header = "Отчёт по услугам";
 
 	<script type="text/javascript">
 		$(function(){
+			$("#parent_id").chained("#division");
 			$("#service").chained("#division");
 		});
 	</script>
