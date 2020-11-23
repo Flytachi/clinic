@@ -89,18 +89,6 @@ conn.onmessage = function(e) {
 
 };
 
-$('textarea').keypress(function(e){
-	console.log(e.keyCode);
-
-	if(e.keyCode == 13){
-		let id_cli = $(this).attr('data-inputid');
-		let word = $(this).val();
-		$(this).val('');
-		let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
-		conn.send(obj);
-	}
-})
-
 function sendMessage(body) {
 	let id_cli = body.dataset.buttonid;
 	let word = $(`textarea[data-inputid=${id_cli}]`).val();

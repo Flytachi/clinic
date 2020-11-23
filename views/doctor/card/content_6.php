@@ -97,98 +97,7 @@ $header = "Пациент";
 
 										<div class="tab-pane fade" id="<?= $value['id'] ?>">
 											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>">
-												<li class="media">
-													<div class="mr-3">
-														<a href="#">
-															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-														</a>
-													</div>
-
-													<div class="media-body">
-														<div class="media-chat-item">Crud reran and while much withdrew ardent much crab hugely met dizzily that more jeez gent equivalent unsafely far one hesitant so therefore.</div>
-														<div class="font-size-sm text-muted mt-2">
-															Tue, 10:28 am <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-														</div>
-													</div>
-												</li>
-
-												<li class="media media-chat-item-reverse">
-													<div class="media-body">
-														<div class="media-chat-item">
-															Far squid and that hello fidgeted and when. As this oh darn but slapped casually husky sheared that cardinal hugely one and some unnecessary factiously hedgehog a feeling one rudely much
-														</div>
-														<div class="font-size-sm text-muted mt-2">
-															Mon, 10:24 am <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-														</div>
-													</div>
-
-													<div class="ml-3">
-														<a href="#">
-															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-														</a>
-													</div>
-												</li>
-
-												<li class="media">
-													<div class="mr-3">
-														<a href="#">
-															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-														</a>
-													</div>
-
-													<div class="media-body">
-														<div class="media-chat-item">Tolerantly some understood this stubbornly after snarlingly frog far added insect into snorted more auspiciously heedless drunkenly jeez foolhardy oh.</div>
-														<div class="font-size-sm text-muted mt-2">
-															Wed, 4:20 pm <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-														</div>
-													</div>
-												</li>
-
-												<li class="media content-divider justify-content-center text-muted mx-0">
-													<span class="px-2">New messages</span>
-												</li>
-
-												<li class="media media-chat-item-reverse">
-													<div class="media-body">
-														<div class="media-chat-item">Satisfactorily strenuously while sleazily dear frustratingly insect menially some shook far sardonic badger telepathic much jeepers immature much hey.</div>
-														<div class="font-size-sm text-muted mt-2">
-															2 hours ago <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-														</div>
-													</div>
-
-													<div class="ml-3">
-														<a href="#">
-															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-														</a>
-													</div>
-												</li>
-
-												<li class="media">
-													<div class="mr-3">
-														<a href="#">
-															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-														</a>
-													</div>
-
-													<div class="media-body">
-														<div class="media-chat-item">Grunted smirked and grew less but rewound much despite and impressive via alongside out and gosh easy manatee dear ineffective yikes.</div>
-														<div class="font-size-sm text-muted mt-2">
-															13 minutes ago <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-														</div>
-													</div>
-												</li>
-
-												<li class="media media-chat-item-reverse">
-													<div class="media-body">
-														<div class="media-chat-item"><i class="icon-menu"></i></div>
-													</div>
-
-													<div class="ml-3">
-														<a href="#">
-															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-														</a>
-													</div>
-												</li>
+												
 												<?php
 
 													$id_user = $value['id'];
@@ -281,12 +190,21 @@ $header = "Пациент";
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
 
-    <script>   
-    	let id = '<?= $_SESSION['session_id'] ?>';
-		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+    <script>
+    	
+    	$('textarea').keypress(function(e){
+			console.log(e.keyCode);
+
+			if(e.keyCode == 13){
+				let id_cli = $(this).attr('data-inputid');
+				let word = $(this).val();
+				$(this).val('');
+				let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
+				conn.send(obj);
+			}
+		})
 
     </script>
-    <!-- /footer -->
-    <script src="scriptJS/socket.js"></script>
+
 </body>
 </html>
