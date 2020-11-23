@@ -281,7 +281,7 @@ $header = "Пациент";
     <?php include '../../layout/footer.php' ?>
     <!-- /footer -->
     <script>
-
+    	
     	let id = '<?= $_SESSION['session_id'] ?>';
 
 
@@ -305,7 +305,7 @@ $header = "Пациент";
 		    return strNumber;
 		}
 
-    	var conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		var conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 		conn.onopen = function(e) {
 		    console.log("Connection established!");
 		};
