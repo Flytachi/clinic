@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 22 2020 г., 16:36
+-- Время создания: Ноя 23 2020 г., 16:12
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.12
 
@@ -86,6 +86,15 @@ CREATE TABLE `bypass` (
   `status` tinyint(1) DEFAULT NULL,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `bypass`
+--
+
+INSERT INTO `bypass` (`id`, `user_id`, `parent_id`, `preparat_id`, `count`, `description`, `status`, `add_date`) VALUES
+(1, 16, 7, 1, 2, '3 раза в день', 1, '2020-11-23 10:30:37'),
+(2, 16, 7, 2, 10, '1 hfp d ltn', 1, '2020-11-23 12:22:03'),
+(3, 16, 26, NULL, NULL, 'сделано', NULL, '2020-11-23 12:41:43');
 
 -- --------------------------------------------------------
 
@@ -175,7 +184,9 @@ INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `analyze_id`, `re
 (33, 16, 54, 1, '8', 'Нормально'),
 (34, 16, 54, 2, '7', 'Отлично'),
 (35, 16, 55, 3, '10', 'w'),
-(36, 16, 55, 4, '30', 'w');
+(36, 16, 55, 4, '34', 'w'),
+(37, 24, 58, 3, '12', 'wqewq'),
+(38, 24, 58, 4, '34', 'eq');
 
 -- --------------------------------------------------------
 
@@ -210,7 +221,9 @@ INSERT INTO `laboratory_analyze_type` (`id`, `service_id`, `name`, `code`, `stan
 
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL,
-  `date` varchar(255) COLLATE utf8_bin NOT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `date_text` varchar(255) COLLATE utf8_bin NOT NULL,
   `description` varchar(255) COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -218,9 +231,10 @@ CREATE TABLE `notes` (
 -- Дамп данных таблицы `notes`
 --
 
-INSERT INTO `notes` (`id`, `date`, `description`) VALUES
-(1, '21 ноября', 'посетить пациента 00032'),
-(2, '30 ноября', 'поитграть ');
+INSERT INTO `notes` (`id`, `parent_id`, `user_id`, `date_text`, `description`) VALUES
+(1, NULL, NULL, '21 ноября', 'посетить пациента 00032'),
+(2, NULL, NULL, '30 ноября', 'поитграть '),
+(4, 7, 16, 'June 4th 08:47', '12');
 
 -- --------------------------------------------------------
 
@@ -331,7 +345,9 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (23, 9, NULL, NULL, 'Кира', 'Хошигаке', 'НЕТ', '1995-01-20', 'Юнусобод', 'CV 333222', 'Япония Токио', 'Коммисар', '+99899900098', 'Япония Токио', 'Япония Токио', 1, 15, NULL, NULL, 0, 'L', '2020-11-18 16:17:36'),
 (24, 9, NULL, NULL, 'Умархан', 'Убунту', 'Вадимович', '2000-11-14', 'Юнусобод', 'AZ', 'Мексика', 'Укратитель змей', '+998999088998', 'Бухара', 'Бухара', 1, 15, NULL, 1, 0, 'любовь', '2020-11-18 16:20:14'),
 (25, 9, NULL, NULL, 'Гвидо', 'Мисто', 'Олегович', '1982-02-18', 'Ромитан', 'EWR2345345345', 'Аргентиа', 'Нарко барон', '+998994232', 'Швеция', 'Аргентина', 1, 15, NULL, NULL, 0, 'женщины', '2020-11-18 16:22:17'),
-(26, NULL, 'nurce_1', 'c000e8b0a3f6e91f586867365618581675fa20d7', 'nurce', 'nurce', 'nurce', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, NULL, '2020-11-20 19:11:11');
+(26, NULL, 'nurce_1', 'c000e8b0a3f6e91f586867365618581675fa20d7', 'nurce', 'nurce', 'nurce', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, NULL, '2020-11-20 19:11:11'),
+(27, NULL, 'coock', 'baa9797d705eebdf66f75d623c3cc1756c78d2ff', 'coock', 'coock', 'coock', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, NULL, 1, 1, NULL, '2020-11-23 10:50:15'),
+(28, NULL, 'doc_h', '8171857a4e3fbc786dd873feb372a6189166f891', 'doc_h', 'doc_h', 'doc_h', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, 99, NULL, '2020-11-23 11:03:05');
 
 -- --------------------------------------------------------
 
@@ -438,9 +454,10 @@ INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `dire
 (52, 16, 7, 4, 7, 1, NULL, 1, 'Боль в жопе', NULL, '2020-11-21 23:36:21', '2020-11-21 23:36:55', NULL, '2020-11-22 00:06:30'),
 (53, 16, 7, 5, 7, 1, NULL, NULL, 'Боль в жопе', NULL, '2020-11-22 00:11:22', '2020-11-22 00:11:34', NULL, '2020-11-22 00:18:27'),
 (54, 16, 7, 4, 7, 1, NULL, 1, 'Боль в жопе', NULL, '2020-11-22 00:32:43', '2020-11-22 00:33:17', NULL, '2020-11-22 00:33:55'),
-(55, 16, 7, 4, 7, 1, 2, 1, 'Боль в жопе', NULL, '2020-11-22 01:23:25', '2020-11-22 01:23:49', NULL, NULL),
+(55, 16, 7, 4, 7, 1, NULL, 1, 'Боль в жопе', NULL, '2020-11-22 01:23:25', '2020-11-22 01:23:49', NULL, '2020-11-23 11:57:23'),
 (56, 14, 7, 7, 2, NULL, 2, NULL, 'q', NULL, '2020-11-22 02:12:35', '2020-11-22 02:15:29', NULL, NULL),
-(57, 24, 7, 7, 2, 1, 2, NULL, 'a', NULL, '2020-11-22 02:14:22', '2020-11-22 02:15:32', NULL, NULL);
+(57, 24, 7, 7, 2, 1, 2, NULL, 'a', NULL, '2020-11-22 02:14:22', '2020-11-22 02:15:32', NULL, NULL),
+(58, 24, 7, 4, 7, 1, 2, 1, 'a', NULL, '2020-11-23 18:27:55', '2020-11-23 18:28:05', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -548,7 +565,7 @@ INSERT INTO `visit_service` (`id`, `visit_id`, `service_id`, `priced`, `report`,
 (33, 33, 4, NULL, NULL, 'qweqweqwe', '21eqweqweqw', 'eqweqweqwqwasdsadcadw', 1),
 (34, 34, 9, '2020-11-21 00:20:25', NULL, 'qwdsadsa', 'ORDER BY accept_date ORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESC', 'ORDER BY accept_date DESC', 1),
 (35, 35, 11, '2020-11-21 00:24:20', NULL, NULL, NULL, NULL, NULL),
-(36, 36, 4, '2020-11-21 00:25:53', NULL, 'qwe', 'qwewqeqwdaswqedadvqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedadqwewqeqwdaswqedad', 'dasdascdasbthnrthwree', 1),
+(36, 36, 4, '2020-11-21 00:25:53', NULL, 'qwe', 'qwewqeqwdasw qedadvqwewq eqwdasw qedadqwe wqeqwdaswq edadq wewqe qwdasw qedadqw ewqeqwda swqeda dqwewqeqwdaswq edadqwe  wqeqwdas wqedadqwew qeqwdaswqedad qwewqeqwdaswqe dadqwe wqeqwda swqed adqwewqeqwdaswqedadqw ewqeqw daswqe dadqwewqeqwdasw qedadqwewqe qwdaswqedad', 'dasdascdasbthnrthwree', 1),
 (37, 37, 8, '2020-11-21 00:35:00', NULL, 'qwewq', 'qwe', 'qweqq', 1),
 (38, 38, 2, '2020-11-21 00:38:08', NULL, 'wqe21', '321321wq', 'wqewqe', 1),
 (39, 39, 1, NULL, NULL, '221321', 'ййцуцйуцй', 'уцйуччясячсячсяч', 1),
@@ -568,7 +585,8 @@ INSERT INTO `visit_service` (`id`, `visit_id`, `service_id`, `priced`, `report`,
 (54, 54, 10, NULL, NULL, NULL, NULL, NULL, NULL),
 (55, 55, 11, NULL, NULL, NULL, NULL, NULL, NULL),
 (56, 56, 9, '2020-11-22 02:12:43', NULL, NULL, NULL, NULL, NULL),
-(57, 57, 1, NULL, NULL, NULL, NULL, NULL, NULL);
+(57, 57, 1, NULL, NULL, NULL, NULL, NULL, NULL),
+(58, 58, 11, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Индексы сохранённых таблиц
@@ -685,7 +703,7 @@ ALTER TABLE `bed_type`
 -- AUTO_INCREMENT для таблицы `bypass`
 --
 ALTER TABLE `bypass`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `chat`
@@ -703,7 +721,7 @@ ALTER TABLE `division`
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
@@ -715,7 +733,7 @@ ALTER TABLE `laboratory_analyze_type`
 -- AUTO_INCREMENT для таблицы `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
@@ -733,7 +751,7 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT для таблицы `user_stats`
@@ -745,7 +763,7 @@ ALTER TABLE `user_stats`
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
@@ -757,7 +775,7 @@ ALTER TABLE `visit_price`
 -- AUTO_INCREMENT для таблицы `visit_service`
 --
 ALTER TABLE `visit_service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
