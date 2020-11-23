@@ -13,6 +13,7 @@
     </li>
 </ul>
 
+
 <script src="<?= stack('global_assets/js/plugins/ui/moment/moment.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
