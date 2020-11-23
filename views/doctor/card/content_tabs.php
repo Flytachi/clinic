@@ -15,7 +15,7 @@
         <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_5')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Анализы<i class="icon-droplets ml-3"></i></a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Переписка<i class="icon-bubbles2 ml-3"></i></a>
+        <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Переписка <b id="noticeus"></b> <i class="icon-bubbles2 ml-3"></i> </a>
     </li>
     <li class="nav-item">
         <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Заметки<i class="icon-clipboard3 ml-3"></i></a>

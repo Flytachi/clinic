@@ -1,5 +1,3 @@
-let id = '<?= $_SESSION['session_id'] ?>';
-
 
 function addZero(number){
 
@@ -21,7 +19,6 @@ function addZero(number){
     return strNumber;
 }
 
-var conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 conn.onopen = function(e) {
     console.log("Connection established!");
 };
@@ -54,20 +51,39 @@ conn.onmessage = function(e) {
 										</li>`)
 		}else{
 
-		    $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
-												<div class="mr-3">
-													<a href="#">
-														<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-													</a>
-												</div>
+			let active = $('a.show').attr('data-idChat');
 
-												<div class="media-body">
-													<div class="media-chat-item"> ${d.message} </div>
-													<div class="font-size-sm text-muted mt-2">
-														${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+
+			if(active == d.id){
+			    $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
+													<div class="mr-3">
+														<a href="#">
+															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+														</a>
 													</div>
-												</div>
-											</li>`)
+
+													<div class="media-body">
+														<div class="media-chat-item"> ${d.message} </div>
+														<div class="font-size-sm text-muted mt-2">
+															${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+														</div>
+													</div>
+												</li>`)
+			}else{
+				let p = Number($(`p[data-idChat=${d.id}]`).text()) + 1;
+
+				let b = Number($(`b#noticeus`).text()) + 1;
+
+				console.log(`vvvvvvvvvvvvvvvvvvvv ${ $(`b#noticeus`).html() }`)
+
+				$(`b#noticeus`).html('');
+
+				$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${b}</span>`);
+
+				$(`p[data-idChat=${d.id}]`).text(p)						
+
+				console.log(p);
+			}
 		}
 	}
 
@@ -92,4 +108,17 @@ function sendMessage(body) {
 	$(`textarea[data-inputid=${id_cli}]`).val('');
 	let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
 	conn.send(obj);
+}
+
+function deletNotice(body) {
+	let id1 = $(body).attr('data-idChat');
+	let count;
+
+	try{
+		console.log('--------------------------------')
+		count = (Number($(`b#noticeus`).text()) - Number($(`p[data-idChat=${id1}]`).html())) != 0 ? $(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${count}</span>`) : $(`b#noticeus`).html(``);
+		$(`p[data-idChat=${id1}]`).html('');
+	}catch{
+		console.log('error')
+	}
 }
