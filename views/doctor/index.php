@@ -58,28 +58,23 @@ $header = "Приём пациетов";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+									// prit($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->fetchAll());
+                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
-                                            <td><?= addZero($row['user_id']) ?></td>
+                                            <td><?= addZero($row['id']) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
 												<div class="text-muted">
 													<?php
-													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['user_id'])->fetch()){
+													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['id'])->fetch()){
 														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['num']." койка";
 													}
 													?>
 												</div>
 											</td>
 											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-                                            <td>
-                                                <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.completed IS NULL AND visit_id = {$row['id']}") as $serv) {
-                                                    echo $serv['name']."<br>";
-                                                }
-                                                ?>
-                                            </td>
+                                            <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
                                             <td><?= get_full_name($row['route_id']) ?></td>
                                             <td class="text-center">
                                                 <?php
@@ -95,7 +90,7 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-												<a href="<?= up_url($row['id'], 'PatientUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
+												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>

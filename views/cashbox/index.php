@@ -71,7 +71,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php UserCheckOutpatientModel::form(); ?>
+				<?php VisitPriceModel::form(); ?>
 
 			</div>
 		</div>
@@ -87,23 +87,23 @@ $header = "Рабочий стол";
 			$('#message_ses').html(sessionStorage['message_amb']);
 			sessionStorage['message_amb'] = '';
 		}
-		function Update(events, tr) {
+
+		function Delete(events, tr) {
 			if(confirm("Вы уверены что вы долбаёб?")){
 				$.ajax({
 					type: "GET",
 					url: events,
 					success: function (data) {
-						var result = JSON.parse(data);
-						if (result.stat) {
-							sessionStorage['message_amb'] = result.message;
-							location.reload();
-						}else{
+						if (data == 1) {
 							$('#'+tr).css("background-color", "red");
 							$('#'+tr).css("color", "white");
 							$('#'+tr).fadeOut('slow', function() {
 							 	$(this).remove();
 								sumTo($('.total_cost'));
 							});
+						}else{
+							sessionStorage['message_amb'] = data;
+							location.reload();
 						}
 					},
 				});

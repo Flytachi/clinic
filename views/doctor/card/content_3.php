@@ -76,20 +76,14 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, status, laboratory FROM visit WHERE user_id = $patient->user_id AND route_id = {$_SESSION['session_id']} ORDER BY id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id = {$_SESSION['session_id']} ORDER BY vs.id DESC") as $row) {
 										?>
 											<tr class="text-center">
 												<td><?= $i++ ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не принят</span>'?></td>
 												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не завершён</span>'?></td>
-												<td>
-	                                                <?php
-	                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
-	                                                    echo $serv['name']."<br>";
-	                                                }
-	                                                ?>
-	                                            </td>
+												<td><?= $row['name'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td>
 													<?php
@@ -169,9 +163,9 @@ $header = "Пациент";
 
 					<?php
 					if ($patient->direction) {
-						PatientRouteStationary::form();
+						VisitRoute::form_sta();
 					} else {
-						PatientRoute::form();
+						VisitRoute::form_out();
 					}
 					?>
 

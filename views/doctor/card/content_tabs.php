@@ -49,7 +49,7 @@
     </li>
 </ul>
 
-<script>   
+<script>
     let id = '<?= $_SESSION['session_id'] ?>';
     let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 

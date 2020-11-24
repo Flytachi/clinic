@@ -10,7 +10,7 @@ is_auth();
 
 <div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
-$pack = $db->query("SELECT report_title, report_description, report_conclusion FROM visit_service WHERE id= {$_GET['pk']}")->fetch();
+$pack = $db->query("SELECT report_title, report_description, report_conclusion FROM visit WHERE id= {$_GET['pk']}")->fetch();
 ?>
     <h3 class="text-center"><?= $pack['report_title'] ?></h3>
     <p>

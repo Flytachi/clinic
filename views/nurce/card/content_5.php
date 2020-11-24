@@ -73,7 +73,7 @@ $header = "Пациент";
 									</thead>
 									<tbody>
 										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->id") as $row) {
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
 											?>
 											<tr>
 												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>

@@ -43,6 +43,13 @@ $header = "Стационарные пациенты";
 
 					<div class="card-body">
 
+						<?php
+			            if($_SESSION['message']){
+			                echo $_SESSION['message'];
+			                unset($_SESSION['message']);
+			            }
+			            ?>
+
                         <div class="table-responsive">
                             <table class="table table-hover table-sm table-bordered">
                                 <thead>
@@ -58,15 +65,15 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT vs.id, vs.user_id, us.dateBith, vs.route_id, vs.direction FROM visit vs LEFT JOIN users us ON (vs.user_id = us.id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
 										<tr>
-                                            <td><?= addZero($row['user_id']) ?></td>
+                                            <td><?= addZero($row['id']) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
 												<div class="text-muted">
 													<?php
-													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['user_id'])->fetch()){
+													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['id'])->fetch()){
 														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['num']." койка";
 													}
 													?>
@@ -74,14 +81,14 @@ $header = "Стационарные пациенты";
 											</td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
-                                                <?php
-												$serv = $db->query("SELECT sr.name, sr.id FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE vsr.visit_id = {$row['id']}")->fetch();
-												echo $serv['name'];
+												<?php
+                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL") as $serv) {
+                                                    echo $serv['name']."<br>";
+                                                }
                                                 ?>
                                             </td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
                                             <td><?= get_full_name($row['route_id']) ?></td>
-                                            <td class="text-center">
+											<td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
