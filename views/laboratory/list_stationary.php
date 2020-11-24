@@ -58,14 +58,13 @@ $header = "Стационарные пациенты";
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>
                                         <th>Мед услуга</th>
-										<th>Дата принятия</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
 										<tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -87,12 +86,15 @@ $header = "Стационарные пациенты";
                                                 }
                                                 ?>
                                             </td>
-                                            <td><?= get_full_name($row['route_id']) ?></td>
+											<td>
+												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
+												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+											</td>
 											<td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>&user_id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
+                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['visit_id'] ?>&user_id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
                                                 </div>
                                             </td>
                                         </tr>

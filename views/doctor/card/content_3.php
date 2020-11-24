@@ -62,7 +62,7 @@ $header = "Пациент";
 							<div class="table-responsive">
 								<table class="table table-togglable table-hover">
 									<thead>
-										<tr class="bg-info text-center">
+										<tr class="bg-info">
 											<th>#</th>
 				                            <th>Специалист</th>
 											<th>Дата визита</th>
@@ -78,9 +78,12 @@ $header = "Пациент";
 										$i = 1;
 										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id = {$_SESSION['session_id']} ORDER BY vs.id DESC") as $row) {
 										?>
-											<tr class="text-center">
+											<tr>
 												<td><?= $i++ ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td>
+													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
+													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
+												</td>
 												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не принят</span>'?></td>
 												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не завершён</span>'?></td>
 												<td><?= $row['name'] ?></td>

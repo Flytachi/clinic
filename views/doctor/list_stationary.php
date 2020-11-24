@@ -79,7 +79,10 @@ $header = "Стационарные пациенты";
                                                 }
                                                 ?>
                                             </td>
-                                            <td><?= get_full_name($row['route_id']) ?></td>
+                                            <td>
+												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
+												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+											</td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">

@@ -58,7 +58,6 @@ $header = "Амбулаторные пациенты";
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>
                                         <th>Мед услуга</th>
-										<th>Дата принятия</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
@@ -78,8 +77,10 @@ $header = "Амбулаторные пациенты";
                                                 }
                                                 ?>
                                             </td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
-                                            <td><?= get_full_name($row['route_id']) ?></td>
+											<td>
+												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
+												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+											</td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">

@@ -63,12 +63,10 @@ function level_name($id = null) {
     level_name(1)
     */
     global $db, $PERSONAL;
-    if($id){
-        $stmt = $id;
-    }else{
+    if(empty($id)){
         $id = $_SESSION['session_id'];
-        $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     }
+    $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
 	return $PERSONAL[$stmt];
 }
 
@@ -141,10 +139,10 @@ function addZero($number){
 
 function division_name($id = null) {
     global $db, $PERSONAL;
-    if(!$id){
+    if(empty($id)){
         $id = $_SESSION['session_id'];
-        $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
     }
+    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
     try{
         $stmt = $db->query("SELECT name from division where id = $id")->fetchColumn();
     }
