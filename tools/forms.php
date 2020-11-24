@@ -227,7 +227,7 @@ class VisitReport extends Model
 
 }
 
-class PatientUpStatus extends Model
+class VisitUpStatus extends Model
 {
     public $table = 'visit';
 
@@ -236,7 +236,7 @@ class PatientUpStatus extends Model
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
-        $this->url = "card/content_1.php?id=".$this->post['id'];
+        $this->url = "card/content_1.php?id=".$_GET['user_id'];
         $this->update();
     }
 
@@ -244,6 +244,301 @@ class PatientUpStatus extends Model
     {
         global $PROJECT_NAME;
         header("location:/$PROJECT_NAME/views/doctor/$this->url");
+        exit;
+    }
+
+}
+
+class VisitRoute extends Model
+{
+    public $table = 'visit';
+
+    public function form_out($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Пациент:</label>
+                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->id ?>">
+                    <input type="text" class="form-control" value="<?= get_full_name($patient->id) ?>" disabled>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }division
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+                            if ($row['id'] != $_SESSION['session_id']) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row" style="display: none;">
+
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id2").chained("#division2");
+                $("#service").chained("#division2");
+            });
+        </script>
+        <?php
+    }
+
+    public function form_sta($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Пациент:</label>
+                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->id ?>">
+                    <input type="text" class="form-control" value="<?= get_full_name($patient->user_id) ?>" disabled>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+                            if ($row['id'] != $_SESSION['session_id']) {
+                                ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row" style="display: none;">
+
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id2").chained("#division2");
+                $("#service").chained("#division2");
+            });
+        </script>
+        <?php
+    }
+
+    public function clean()
+    {
+        global $db;
+        $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
+        if ($stat) {
+            $this->post['laboratory'] = True;
+        }
+        unset($this->post['division_id']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        header('location:'.$_SERVER['HTTP_REFERER']);
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        header('location:'.$_SERVER['HTTP_REFERER']);
+    }
+}
+
+class VisitFinish extends Model
+{
+    public $table = 'visit';
+    public $table1 = 'users';
+    public $table2 = 'beds';
+
+    public function get_or_404($pk)
+    {
+        global $db;
+        $this->post['status'] = 0;
+        $this->post['completed'] = date('Y-m-d H:i:s');
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']}") as $inf){
+            if ($inf['grant_id'] == $inf['parent_id']) {
+                Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+                if ($inf['direction']) {
+                    $pk_arr = array('user_id' => $inf['user_id']);
+                    $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
+                }
+            }
+            $this->post['id'] = $inf['id'];
+            $this->update();
+        }
+        $this->success();
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if ($object != 1){
+                $this->error($object);
+            }
+        }
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/doctor/index.php");
+        exit;
+    }
+
+}
+
+class VisitLaboratoryFinish extends Model
+{
+    public $table = 'visit';
+    public $table1 = 'users';
+
+    public function get_or_404($pk)
+    {
+        global $db;
+        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
+        if ($inf['grant_id'] == $inf['parent_id']) {
+            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+        }
+        $this->post['id'] = $pk;
+        $this->post['status'] = 0;
+        $this->post['completed'] = date('Y-m-d H:i:s');
+        $this->update();
+    }
+
+    public function success()
+    {
+        global $PROJECT_NAME;
+        header("location:/$PROJECT_NAME/views/laboratory/index.php");
         exit;
     }
 
@@ -257,14 +552,12 @@ class LaboratoryUpStatus extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $user_id = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch()['user_id'];
-        $serv_id = $db->query("SELECT * FROM visit_service WHERE visit_id=$pk")->fetch()['service_id'];
-        foreach ($db->query("SELECT * FROM laboratory_analyze_type WHERE service_id = $serv_id") as $row) {
-            Mixin\insert( $this->table2, array('user_id' => $user_id, 'visit_id' => $pk, 'analyze_id' => $row['id']) );
+        $tip = $db->query("SELECT user_id, service_id FROM visit WHERE id=$pk")->fetch();
+        foreach ($db->query("SELECT * FROM laboratory_analyze_type WHERE service_id = {$tip['service_id']}") as $row) {
+            Mixin\insert( $this->table2, array('user_id' => $tip['user_id'], 'visit_id' => $pk, 'analyze_id' => $row['id']) );
         }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
-        $this->post['laboratory'] = True;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
         $this->update();
     }
@@ -277,6 +570,7 @@ class LaboratoryUpStatus extends Model
     }
 
 }
+
 
 class PatientFailure extends Model
 {
@@ -347,369 +641,6 @@ class PatientFailure extends Model
     public function success($pk)
     {
         echo "PatientFailure_tr_$pk";
-    }
-
-}
-
-class PatientRoute extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'visit_service';
-    public $table2 = 'users';
-
-    public function form($pk = null)
-    {
-        global $db, $patient;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="0">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->user_id ?>">
-                    <input type="text" class="form-control" value="<?= get_full_name($patient->user_id) ?>" disabled>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }division
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
-                            if ($row['id'] != $_SESSION['session_id']) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row" style="display: none;">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
-                </div>
-
-            </div>
-
-            <div class="text-right">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
-            </div>
-
-        </form>
-        <script type="text/javascript">
-            $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
-            });
-        </script>
-        <?php
-    }
-
-    public function save()
-    {
-        global $db;
-        if($this->clean()){
-            $servise_pk = $this->post['service'];
-            unset($this->post['service']);
-            $object = Mixin\insert($this->table, $this->post);
-            if ($object == 1){
-                // Создание списка Услуг
-                $post1 = array('visit_id' => $db->lastInsertId(), 'service_id' => $servise_pk);
-                $object1 = Mixin\insert($this->table1, $post1);
-                // Обновление статуса у пациента
-                $object2 = Mixin\update($this->table2, array('status' => True), $this->post['user_id']);
-                if ($object1 == 1 and $object2 == 1){
-                    $this->success();
-                }else {
-                    if ($object1 != 1) {
-                        $this->error($object1);
-                    }else {
-                        $this->error($object2);
-                    }
-                }
-            }else{
-                $this->error($object);
-            }
-
-        }
-    }
-
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        header('location:'.$_SERVER['HTTP_REFERER']);
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
-        ';
-        header('location:'.$_SERVER['HTTP_REFERER']);
-    }
-}
-
-class PatientRouteStationary extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'visit_service';
-    public $table2 = 'users';
-
-    public function form($pk = null)
-    {
-        global $db, $patient;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="1">
-            <input type="hidden" name="status" value="1">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->user_id ?>">
-                    <input type="text" class="form-control" value="<?= get_full_name($patient->user_id) ?>" disabled>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
-                            if ($row['id'] != $_SESSION['session_id']) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service" id="service" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row" style="display: none;">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
-                </div>
-
-            </div>
-
-            <div class="text-right">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
-            </div>
-
-        </form>
-        <script type="text/javascript">
-            $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
-            });
-        </script>
-        <?php
-    }
-
-    public function save()
-    {
-        global $db;
-        if($this->clean()){
-            $servise_pk = $this->post['service'];
-            unset($this->post['service']);
-            $object = Mixin\insert($this->table, $this->post);
-            if ($object == 1){
-                // Создание списка Услуг
-                $post1 = array('visit_id' => $db->lastInsertId(), 'service_id' => $servise_pk);
-                $object1 = Mixin\insert($this->table1, $post1);
-                // Обновление статуса у пациента
-                $object2 = Mixin\update($this->table2, array('status' => True), $this->post['user_id']);
-                if ($object1 == 1 and $object2 == 1){
-                    $this->success();
-                }else {
-                    if ($object1 != 1) {
-                        $this->error($object1);
-                    }else {
-                        $this->error($object2);
-                    }
-                }
-            }else{
-                $this->error($object);
-            }
-
-        }
-    }
-
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        header('location:'.$_SERVER['HTTP_REFERER']);
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
-        ';
-        header('location:'.$_SERVER['HTTP_REFERER']);
-    }
-}
-
-class PatientFinish extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'users';
-    public $table2 = 'beds';
-
-    public function get_or_404($pk)
-    {
-        global $db;
-        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
-        if ($inf['grant_id'] == $inf['parent_id']) {
-            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
-            if ($inf['direction']) {
-                $pk_arr = array('user_id' => $inf['user_id']);
-                $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
-            }
-        }
-        $this->post['id'] = $pk;
-        $this->post['status'] = 0;
-        $this->post['completed'] = date('Y-m-d H:i:s');
-        $this->update();
-    }
-
-    public function success()
-    {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/doctor/index.php");
-        exit;
-    }
-
-}
-
-class PatientLaboratoryFinish extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'users';
-    public $table2 = 'beds';
-
-    public function get_or_404($pk)
-    {
-        global $db;
-        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
-        if ($inf['grant_id'] == $inf['parent_id']) {
-            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
-            if ($inf['direction']) {
-                $pk_arr = array('user_id' => $inf['user_id']);
-                $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
-            }
-        }
-        $this->post['id'] = $pk;
-        $this->post['status'] = 0;
-        $this->post['completed'] = date('Y-m-d H:i:s');
-        $this->update();
-    }
-
-    public function success()
-    {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/laboratory/index.php");
-        exit;
     }
 
 }

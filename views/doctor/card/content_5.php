@@ -61,7 +61,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.parent_id, vs.completed, sr.name 'service_name', lat.name, lat.standart, la.result, la.description FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (lat.id=la.analyze_id) LEFT JOIN visit vs ON (vs.id=la.visit_id) LEFT JOIN service sr ON (sr.id=lat.service_id) WHERE la.user_id = $patient->user_id ORDER BY la.id DESC") as $row) {
+										foreach ($db->query("SELECT vs.parent_id, vs.completed, sr.name 'service_name', lat.name, lat.standart, la.result, la.description FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (lat.id=la.analyze_id) LEFT JOIN visit vs ON (vs.id=la.visit_id) LEFT JOIN service sr ON (sr.id=lat.service_id) WHERE la.user_id = $patient->id ORDER BY la.id DESC") as $row) {
 										?>
 											<tr class="text-center">
 												<td><?= $i++ ?></td>

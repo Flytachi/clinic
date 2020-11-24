@@ -56,7 +56,7 @@ $header = "Пациент";
 	                                </thead>
 	                                <tbody>
 										<?php
-										foreach ($db->query("SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL") as $row) {
 										?>
 		                                    <tr>
 		                                        <td><?= $row['name'] ?></td>

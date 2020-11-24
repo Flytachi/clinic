@@ -60,7 +60,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed, laboratory FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL ORDER BY id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND completed IS NOT NULL ORDER BY id DESC") as $row) {
 										?>
 											<tr class="text-center">
 												<td><?= $i++ ?></td>
@@ -68,15 +68,9 @@ $header = "Пациент";
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
 												<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
-												<td>
-	                                                <?php
-	                                                foreach ($db->query('SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id ='. $row['id']) as $serv) {
-	                                                    echo $serv['name']."<br>";
-	                                                }
-	                                                ?>
-	                                            </td>
+												<td><?= $row['name'] ?></td>
 												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 													<div class="dropdown-menu dropdown-menu-right">
 														<?php
 														if ($row['laboratory']) {

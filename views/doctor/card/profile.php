@@ -1,12 +1,12 @@
 <?php
-$sql = "SELECT us.id, vs.grant_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, bds.floor, bds.ward, bds.num FROM users us LEFT JOIN visit vs ON (vs.user_id = us.id) LEFT JOIN beds bds ON (bds.user_id=vs.user_id) WHERE vs.status = 2 AND us.id = {$_GET['id']}";
+$sql = "SELECT us.id, vs.id 'visit_id', vs.grant_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, bds.floor, bds.ward, bds.num FROM users us LEFT JOIN visit vs ON (vs.user_id = us.id) LEFT JOIN beds bds ON (bds.user_id=vs.user_id) WHERE vs.status = 2 AND us.id = {$_GET['id']}";
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($patient);
 ?>
 <div class="card border-1 border-info">
 
     <div class="card-header text-dark header-elements-inline alpha-info">
-        <h6 class="card-title" ><?= get_full_name($patient->user_id) ?></h6>
+        <h6 class="card-title" ><?= get_full_name($patient->id) ?></h6>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>
@@ -63,7 +63,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
     						<label class="col-md-3"><b>ID:</b></label>
     						<div class="col-md-9 text-right">
-    							<?= addZero($patient->user_id) ?>
+    							<?= addZero($patient->id) ?>
     						</div>
 
                             <label class="col-md-3"><b>Телефон:</b></label>
@@ -167,11 +167,11 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     <?php
                     if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
                         ?>
-                        <a href="<?= up_url($patient->id, 'PatientFinish') ?>" onclick="return confirm('Вы точно хотите выписать пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Выписать</a>
+                        <a href="<?= up_url($patient->id, 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите выписать пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Выписать</a>
                         <?php
                     }else {
                         ?>
-                        <a href="<?= up_url($patient->id, 'PatientFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
+                        <a href="<?= up_url($patient->id, 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
                         <?php
                     }
                     ?>
