@@ -49,12 +49,25 @@ conn.onmessage = function(e) {
 												</a>
 											</div>
 										</li>`)
+		     $(`ul[data-chatid=${d.id_cli}]`).scrollTop($(`ul[data-chatid=${d.id_cli}]`).prop('scrollHeight'));
 		}else{
 
 			let active = $('a.show').attr('data-idChat');
 
-
 			if(active == d.id){
+
+				$.ajax({
+			        type: "POST",
+
+			        url: "scriptJS/ajax.php",
+
+			        data: { id: id, id1: d.id },
+
+			        success: function (www) {
+			        	console.log(www);
+			        },
+			    });
+
 			    $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
 													<div class="mr-3">
 														<a href="#">
@@ -68,9 +81,27 @@ conn.onmessage = function(e) {
 															${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
 														</div>
 													</div>
-												</li>`)
+												</li>`);
+
+			     $(`ul[data-chatid=${d.id}]`).scrollTop($(`ul[data-chatid=${d.id}]`).prop('scrollHeight'));
 			}else{
-				let p = Number($(`p[data-idChat=${d.id}]`).text()) + 1;
+
+				$(`ul[data-chatid=${d.id}]`).append(`<li class="media">
+													<div class="mr-3">
+														<a href="#">
+															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+														</a>
+													</div>
+
+													<div class="media-body">
+														<div class="media-chat-item"> ${d.message} </div>
+														<div class="font-size-sm text-muted mt-2">
+															${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+														</div>
+													</div>
+												</li>`);
+
+				let p = Number($(`span[data-idChat=${d.id}]`).text()) + 1;
 
 				let b = Number($(`b#noticeus`).text()) + 1;
 
@@ -80,7 +111,7 @@ conn.onmessage = function(e) {
 
 				$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${b}</span>`);
 
-				$(`p[data-idChat=${d.id}]`).text(p)						
+				$(`span[data-idChat=${d.id}]`).text(p)						
 
 				console.log(p);
 			}
@@ -102,10 +133,30 @@ function deletNotice(body) {
 	let id1 = $(body).attr('data-idChat');
 	let count;
 
+	 $.ajax({
+        type: "POST",
+
+        url: "scriptJS/ajax.php",
+
+        data: { id: id, id1: id1 },
+
+        success: function (www) {
+        	console.log(www);
+        },
+    });
+
 	try{
-		console.log('--------------------------------')
-		count = (Number($(`b#noticeus`).text()) - Number($(`p[data-idChat=${id1}]`).html())) != 0 ? $(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${count}</span>`) : $(`b#noticeus`).html(``);
-		$(`p[data-idChat=${id1}]`).html('');
+		console.log('--------------------------------');
+		console.log($(`span[data-idChat=${id1}]`).text());
+		console.log($(`b#noticeus`).text());
+
+		count = Number($(`b#noticeus`).text()) - Number($(`span[data-idChat=${id1}]`).text());
+		if (count != 0) {
+			$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${count}</span>`);
+		}else{
+			$(`b#noticeus`).html(``);
+		}
+		$(`span[data-idChat=${id1}]`).html('');
 	}catch{
 		console.log('error')
 	}
