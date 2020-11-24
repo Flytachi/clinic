@@ -539,7 +539,7 @@ class VisitPriceModel extends Model
 
                     <div class="col-md-9">
                         <label class="col-form-label">Сумма к оплате:</label>
-                        <input type="text" class="form-control" id="total_price" value="-" disabled>
+                        <input type="text" class="form-control" id="total_price" disabled>
                     </div>
                     <div class="col-md-3">
                         <label class="col-form-label">Скидка:</label>
@@ -554,11 +554,10 @@ class VisitPriceModel extends Model
                 </div>
 
                 <div class="form-group row">
-
-                    <label class="col-form-label col-md-3">Наличный расчет</label>
+                    <label class="col-form-label col-md-3">Наличный</label>
 					<div class="col-md-9">
 						<div class="input-group">
-							<input type="number" name="price_cash" id="input_chek_1" class="form-control" placeholder="сумма" disabled>
+							<input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
 								<span class="input-group-text">
 									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_1" onchange="Checkert(this)">
@@ -566,8 +565,36 @@ class VisitPriceModel extends Model
 							</span>
 						</div>
 					</div>
-
                 </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Пластиковый</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+								<span class="input-group-text">
+									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_2" onchange="Checkert(this)">
+								</span>
+							</span>
+						</div>
+					</div>
+                </div>
+
+                <!-- <div class="form-group row">
+                    <label class="col-form-label col-md-3">Перевод</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+								<span class="input-group-text">
+									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_3" onchange="Checkert(this)">
+								</span>
+							</span>
+						</div>
+					</div>
+                </div> -->
+
             </div>
 
     		<div class="modal-footer">
@@ -581,26 +608,37 @@ class VisitPriceModel extends Model
                 var input = $('#input_'+event.id);
                 if(!input.prop('disabled')){
                     input.attr("disabled", "disabled");
-
+                    Downsum(input);
                 }else {
                     input.removeAttr("disabled");
+                    Upsum(input);
                 }
             }
         </script>
         <?php
     }
 
+    public function clean()
+    {
+        global $db;
+        $user_pk = $this->post['user_id'];
+        unset($this->post['user_id']);
+        $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $user_pk")->fetch();
+        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card']);
+        if ($result < 0) {
+            $this->error("Есть остаток ".$result);
+        }elseif ($result > 0) {
+            $this->error("Недостаточно средств! ". $result);
+        }else {
+            $this->error("Успешно!");
+            // return True;
+        }
+    }
+
     public function save()
     {
         global $db;
         if($this->clean()){
-            $user_pk = $this->post['user_id'];
-            unset($this->post['user_id']);
-            $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $user_pk")->fetch();
-            $result = $tot['total_price'] - $this->post['price_cash'];
-            if ($result != 0) {
-                $this->error("Сумма оплаты не равна требуемой!");
-            }
             foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $user_pk") as $row) {
                 $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
                 if(intval($object)){
@@ -641,9 +679,9 @@ class VisitPriceModel extends Model
     }
 }
 
-class UserCheckStationaryModel extends Model
+class InvestmentModel extends Model
 {
-    public $table = 'visit_price';
+    public $table = 'investment';
 
     public function form($pk = null)
     {
@@ -652,13 +690,13 @@ class UserCheckStationaryModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="visit_id" id="visit_st_id">
+            <input type="hidden" name="user_id" id="user_st_id">
 
             <div class="form-group form-group-float row">
 
                 <div class="col-md-6">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" name="price_payment" placeholder="Предоплата" >
+                        <input type="text" class="form-control border-success" name="price" placeholder="Предоплата">
                         <div class="form-control-feedback text-success">
                             <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
                                 <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
@@ -678,40 +716,9 @@ class UserCheckStationaryModel extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="button" class="btn alpha-blue text-blue-800 border-blue-600 legitRipple ">Экспорт в PDF</button>
-            </div>
         </form>
         <?php
     }
-
-    // public function save()
-    // {
-    //     if($this->clean()){
-    //         // $this->dd();
-    //         $user_pk = $this->post['user_id'];
-    //         $pk_us = array('user_id' => $user_pk);
-    //         $post1 = array('parent_id' => null, 'status' => 1);
-    //         $object1 = Mixin\update($this->table2, $post1, $user_pk);
-    //
-    //         if($object1 == 1){
-    //             $post2 = array('priced' => date('Y-m-d H:i:s'));
-    //             $object2 = Mixin\updatePro($this->table3, $post2, $pk_us);
-    //             if(intval($object2)){
-    //                 $object = Mixin\insert($this->table, $this->post);
-    //                 if ($object == 1){
-    //                     $this->success();
-    //                 }else{
-    //                     $this->error($object);
-    //                 }
-    //             }else{
-    //                 $this->error($object2);
-    //             }
-    //         }else{
-    //             $this->error($object1);
-    //         }
-    //     }
-    // }
 
     public function success()
     {

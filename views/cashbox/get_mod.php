@@ -18,24 +18,40 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                $user = $db->query("SELECT * FROM visit WHERE user_id = $pk")->fetchAll();
-                prit($user);
+                // Инвестиции
+                $sql = "SELECT SUM(price) 'total_price' FROM investment WHERE user_id = $pk ";
+                $invests = $db->query($sql)->fetch()['total_price'];
 
-                foreach($db->query("SELECT * FROM visit_price WHERE visit_id = $pk") as $row) {
-                    if(empty($total_price_payment)){
-                        $total_price_payment = $row['price_payment'];
-                    }else{
-                        $total_price_payment += $row['price_payment'];
-                    }
-                }
+                // Время прёма
+                $sql_1 = "SELECT add_date FROM visit WHERE user_id = $pk AND priced_date IS NULL AND grant_id=parent_id";
+                $cost_time = $db->query($sql_1)->fetch()['add_date'];
+
+                // Стоимость койки
+                $sql_2 = "SELECT bdt.price FROM beds bd LEFT JOIN bed_type bdt ON(bdt.id=bd.types) WHERE bd.user_id = $pk";
+                $cost_bed = $db->query($sql_2)->fetch()['price'];
+
+                // Сумма койка -> день
+                $cost_bed_time = $cost_bed * intval(date_diff(new \DateTime(), new \DateTime($cost_time))->days);
+
+                // Стоимость услуг
+                $sql_3 = "SELECT SUM(sc.price) 'cost' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL";
+                $cost_service = $db->query($sql_3)->fetch()['cost'];
+
+                // prit($invests);
+                // prit($cost_time);
+                // prit($cost_bed);
+                // prit($cost_service);
+                // prit($cost_bed_time);
+
+                $total_cost -= $cost_service + $cost_bed_time;
                 ?>
                 <div class="form-group form-group-float">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" value="<?= number_format($total_price_payment) ?>" disabled>
+                        <input type="text" class="form-control border-danger" value="<?= number_format($invests + $total_cost) ?>" disabled>
                     </div>
                 </div>
 
-                <?php UserCheckStationaryModel::form(); ?>
+                <?php InvestmentModel::form(); ?>
 
             </div>
         </div>

@@ -8,6 +8,8 @@ $header = "Рабочий стол";
 <?php include '../layout/head.php' ?>
 
 <script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
+
 <script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
 
 <body>
@@ -138,7 +140,7 @@ $header = "Рабочий стол";
 				url: events+"&mod=st",
 				success: function (result) {
 					$('#check-st').html(result);
-					$('#visit_st_id').val(pk);
+					$('#user_st_id').val(pk);
 				},
 			});
 		};
