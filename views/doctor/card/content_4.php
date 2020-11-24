@@ -48,7 +48,7 @@ $header = "Пациент";
 							<div class="table-responsive">
 				                <table class="table table-hover table-columned">
 				                    <thead>
-				                        <tr class="bg-info text-center">
+				                        <tr class="bg-info">
 				                            <th>#</th>
 				                            <th>Мед услуга</th>
 				                            <th>Тип визита</th>
@@ -62,7 +62,7 @@ $header = "Пациент";
 										$i = 1;
 										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY id DESC") as $row) {
 										?>
-											<tr class="text-center">
+											<tr>
 												<td><?= $i++ ?></td>
 												<td><?= $row['name'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>

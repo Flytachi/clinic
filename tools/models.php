@@ -553,15 +553,19 @@ class VisitPriceModel extends Model
 
                 </div>
 
-                <div class="form-group">
+                <div class="form-group row">
 
-                    <label class="col-form-label">Наличный расчет:</label>
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" name="price_cash" placeholder="" >
-                        <div class="form-control-feedback text-success">
-                            <i class="icon-checkmark-circle2"></i>
-                        </div>
-                    </div>
+                    <label class="col-form-label col-md-3">Наличный расчет</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input type="number" name="price_cash" id="input_chek_1" class="form-control" placeholder="сумма" disabled>
+                            <span class="input-group-prepend ml-5">
+								<span class="input-group-text">
+									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_1" onchange="Checkert(this)">
+								</span>
+							</span>
+						</div>
+					</div>
 
                 </div>
             </div>
@@ -572,6 +576,17 @@ class VisitPriceModel extends Model
     		</div>
 
         </form>
+        <script type="text/javascript">
+            function Checkert(event) {
+                var input = $('#input_'+event.id);
+                if(!input.prop('disabled')){
+                    input.attr("disabled", "disabled");
+
+                }else {
+                    input.removeAttr("disabled");
+                }
+            }
+        </script>
         <?php
     }
 
@@ -1220,7 +1235,6 @@ class LaboratoryAnalyzeTableModel extends Model
                                 <th style="width:3%">№</th>
                                 <th>Название услуги</th>
                                 <th>Анализ</th>
-                                <th>Направитель</th>
                                 <th style="width:10%">Норматив</th>
                                 <th style="width:10%">Результат</th>
                                 <th class="text-center" style="width:25%">Примечание</th>
@@ -1235,7 +1249,6 @@ class LaboratoryAnalyzeTableModel extends Model
                                     <td><?= $i++ ?></td>
                                     <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
                                     <td><?= $row['name'] ?></td>
-                                    <td><?= get_full_name($pacc['route_id']) ?></td>
                                     <td><?= $row['standart'] ?></td>
                                     <td>
                                         <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">

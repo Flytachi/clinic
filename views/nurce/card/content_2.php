@@ -46,7 +46,7 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-columned">
-									<thead class="bg-info text-center">
+									<thead class="bg-info">
 										<tr>
 											<th>№</th>
 											<th>Специалист</th>
@@ -62,9 +62,12 @@ $header = "Пациент";
 										$i = 1;
 										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND completed IS NOT NULL ORDER BY id DESC") as $row) {
 										?>
-											<tr class="text-center">
+											<tr>
 												<td><?= $i++ ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td>
+					                                <?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
+					                                <div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
+					                            </td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
 												<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>

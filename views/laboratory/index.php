@@ -73,7 +73,10 @@ $header = "Приём пациетов";
 											</td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
-                                            <td><?= get_full_name($row['route_id']) ?></td>
+											<td>
+												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
+												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+											</td>
                                             <td class="text-center">
                                                 <?php
                                                 if($row['direction']){
