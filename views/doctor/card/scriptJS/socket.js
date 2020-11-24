@@ -1,4 +1,4 @@
-
+console.log('www');
 function addZero(number){
 
     let strNumber = String(number);
@@ -111,7 +111,7 @@ conn.onmessage = function(e) {
 
 				$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${b}</span>`);
 
-				$(`span[data-idChat=${d.id}]`).text(p)						
+				$(`span[data-idChat=${d.id}]`).text(p)
 
 				console.log(p);
 			}
