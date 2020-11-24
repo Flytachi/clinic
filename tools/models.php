@@ -1350,7 +1350,7 @@ class BypassModel extends Model
             <div class="modal-body">
 
                 <?php
-                if(level() == 5){
+                if(permission(5)){
                     ?>
                     <div class="form-group">
                         <label>Препорат:</label>
