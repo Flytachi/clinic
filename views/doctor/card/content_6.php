@@ -54,13 +54,19 @@ $header = "Пациент";
 
 									foreach ($db->query("SELECT * FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
 
+										$id_user = $value['id'];
+
+										$sql1 = "SELECT COUNT(*) FROM `chat` WHERE `id_push` = '$id_user' AND `id_pull` = '$id' AND `activity` = 0";
+
+										$count = $db->query($sql1)->fetchColumn();
+
+										$count = $count == 0 ? "" : $count;
 									?>
 
 										<li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
 											<a href="#<?=$value['id']?>" class="nav-link legitRipple" data-idChat="<?=$value['id']?>" data-toggle="tab">
 												<img src="../../../../clinic/static/global_assets/images/placeholders/placeholder.jpg" alt="" class="rounded-circle mr-2" width="20" height="20" />
-												<?=$value['first_name']?>
-												<p data-idChat="<?=$value['id']?>"></p>
+												<?=$value['first_name']?> <span class="badge bg-danger badge-pill ml-auto" data-idChat="<?=$value['id']?>"><?= $count?></span>
 											</a>
 										</li>
 
@@ -95,14 +101,14 @@ $header = "Пациент";
 
 									?>
 
-										<div class="tab-pane fade" id="<?= $value['id'] ?>">
-											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>">
-												
+										<div class="tab-pane fade" id="<?= $value['id'] ?>" >
+											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>" data-offset="100" style="height: 600px; overflow: scroll;">
+
 												<?php
 
 													$id_user = $value['id'];
 
-													$sql = "SELECT * FROM `chat` WHERE `id_push` = '$id' AND `id_pull` = '$id_user' OR `id_push` = '$id_user' AND `id_pull` = '$id' LIMIT 100 ";
+													$sql = "SELECT * FROM (SELECT * FROM `chat` WHERE `id_push` = '$id' AND `id_pull` = '$id_user' OR `id_push` = '$id_user' AND `id_pull` = '$id' ORDER BY id DESC LIMIT 100)sub ORDER BY id ASC";
 
 													foreach ($db->query($sql) as $key => $val) {
 
@@ -147,6 +153,7 @@ $header = "Пациент";
 														}
 
 													}
+
 												?>
 											</ul>
 
@@ -161,7 +168,7 @@ $header = "Пациент";
 												</div>
 
 												<button type="button" onclick="sendMessage(this)" class="btn bg-teal-400 btn-labeled btn-labeled-right ml-auto legitRipple" data-buttonid="<?= $value['id'] ?>">
-													<b><i class="icon-paperplane"></i></b> Send
+													<b><i class="icon-paperplane"></i></b> Отправить
 												</button>
 											</div>
 										</div>
@@ -191,10 +198,8 @@ $header = "Пациент";
     <?php include '../../layout/footer.php' ?>
 
     <script>
-    	
-    	$('textarea').keypress(function(e){
-			console.log(e.keyCode);
 
+    	$('textarea').keypress(function(e){
 			if(e.keyCode == 13){
 				let id_cli = $(this).attr('data-inputid');
 				let word = $(this).val();
@@ -202,7 +207,58 @@ $header = "Пациент";
 				let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
 				conn.send(obj);
 			}
+		});
+
+		$(`ul.media-chat`).scroll(function () {
+			if( $(this).scrollTop() <= 0 ) {
+				console.log('начало блока');
+	           $(this).scrollTop(10);
+
+	           let id1 = $(this).attr('data-chatid');
+	           let offset = Number($(this).attr('data-offset'));
+
+				$(this).attr('data-offset', (offset+100));
+
+				$.ajax({
+			        type: "POST",
+
+			        url: "scriptJS/ajax2.php",
+
+			        data: { id: id, id1: id1, offset : offset},
+
+			        success: function (www) {
+			        	let obj = JSON.parse(www);
+
+			        	let messages = JSON.parse(obj.messages);
+
+
+			        	for (var i = 0; i <= messages.length; i++) {
+				        	let message = messages[i]['message'];
+
+				        	let time = messages[i]['time'];
+
+				        	console.log(message);
+
+				        	$(`ul[data-chatid=${id1}]`).prepend(`<li class="media media-chat-item-reverse">
+																<div class="media-body">
+																	<div class="media-chat-item">${ message }</div>
+														<div class="font-size-sm text-muted mt-2">													${ time }<a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																	</div>
+																</div>
+
+																<div class="ml-3">
+																	<a href="#">
+																		<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+																	</a>
+																</div>
+															</li>`);
+			        	}
+			        },
+			    });
+			}
 		})
+
+
 
     </script>
 

@@ -71,7 +71,7 @@ $header = "Пациент";
 											<tbody>
 												<?php
 												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->user_id") as $row) {
+												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->id") as $row) {
 													?>
 													<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
 														<td><?= $i++ ?></td>
@@ -106,7 +106,7 @@ $header = "Пациент";
 											<tbody>
 												<?php
 												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->user_id") as $row) {
+												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->id") as $row) {
 													?>
 													<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
 														<td><?= $i++ ?></td>
@@ -139,14 +139,14 @@ $header = "Пациент";
 	<!-- /page content -->
 
 	<div id="modal_add" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-full">
 			<div class="modal-content border-3 border-info">
 				<div class="modal-header bg-info">
 					<h5 class="modal-title">Добавить примечание</h5>
 					<button type="button" class="close" data-dismiss="modal">×</button>
 				</div>
 
-				<?= BypassModel::form() ?>
+				<?= BypassModel::table_form() ?>
 
 			</div>
 		</div>

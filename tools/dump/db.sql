@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 23 2020 г., 16:12
+-- Время создания: Ноя 25 2020 г., 12:01
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.12
 
@@ -41,11 +41,11 @@ CREATE TABLE `beds` (
 --
 
 INSERT INTO `beds` (`id`, `floor`, `ward`, `num`, `types`, `user_id`) VALUES
-(1, 1, 1, 1, 1, 16),
-(2, 1, 1, 2, 1, 24),
-(3, 1, 1, 3, 1, NULL),
+(1, 1, 1, 1, 1, NULL),
+(2, 1, 1, 2, 1, 14),
+(3, 1, 1, 3, 1, 18),
 (4, 1, 1, 4, 1, NULL),
-(5, 1, 2, 1, 2, NULL),
+(5, 1, 2, 1, 2, 19),
 (6, 1, 2, 2, 2, NULL),
 (7, 1, 3, 1, 1, NULL),
 (8, 1, 3, 2, 1, NULL);
@@ -92,9 +92,8 @@ CREATE TABLE `bypass` (
 --
 
 INSERT INTO `bypass` (`id`, `user_id`, `parent_id`, `preparat_id`, `count`, `description`, `status`, `add_date`) VALUES
-(1, 16, 7, 1, 2, '3 раза в день', 1, '2020-11-23 10:30:37'),
-(2, 16, 7, 2, 10, '1 hfp d ltn', 1, '2020-11-23 12:22:03'),
-(3, 16, 26, NULL, NULL, 'сделано', NULL, '2020-11-23 12:41:43');
+(1, 14, 6, 1, 13, '№ раза в день', 1, '2020-11-24 12:20:02'),
+(3, 14, 26, NULL, NULL, 'qwqws', NULL, '2020-11-24 12:25:24');
 
 -- --------------------------------------------------------
 
@@ -108,7 +107,8 @@ CREATE TABLE `chat` (
   `id_pull` varchar(255) DEFAULT NULL,
   `message` text CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `date` varchar(255) DEFAULT NULL,
-  `time` varchar(255) DEFAULT NULL
+  `time` varchar(255) DEFAULT NULL,
+  `activity` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -138,6 +138,28 @@ INSERT INTO `division` (`id`, `level`, `title`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `investment`
+--
+
+CREATE TABLE `investment` (
+  `id` int(11) NOT NULL,
+  `pricer_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `price` decimal(65,1) DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `investment`
+--
+
+INSERT INTO `investment` (`id`, `pricer_id`, `user_id`, `price`, `add_date`) VALUES
+(1, 3, 18, '30000.0', '2020-11-25 00:34:42'),
+(2, 3, 14, '40000.0', '2020-11-25 15:42:34');
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `laboratory_analyze`
 --
 
@@ -155,38 +177,12 @@ CREATE TABLE `laboratory_analyze` (
 --
 
 INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `analyze_id`, `result`, `description`) VALUES
-(1, NULL, 16, 1, '10', 'qwe'),
-(2, NULL, 16, 2, '7', 'qwe'),
-(3, 16, 17, 1, '7', 'Норма'),
-(4, 16, 17, 2, '8', 'переизбыток'),
-(11, 19, 19, 1, '9', 'Норма'),
-(12, 19, 19, 2, '7', 'Норма'),
-(13, 19, 21, 3, '0', 'Ура'),
-(14, 19, 21, 4, '0', 'Ура'),
-(15, 18, 23, 3, '11', 'нормально'),
-(16, 18, 23, 4, '10', 'JОчень плохо'),
-(17, 15, 26, 1, '10', ''),
-(18, 15, 26, 2, '7', ''),
-(19, 18, 30, 3, '12', 'плохо'),
-(20, 18, 30, 4, '34', 'норм'),
-(21, 25, 32, 1, '10', 'хорошо'),
-(22, 25, 32, 2, '7', 'хорошо'),
-(23, 14, 35, 3, '12', '1'),
-(24, 14, 35, 4, '34', '1'),
-(25, 14, 41, 1, '10', 'Отлично'),
-(26, 14, 41, 2, '7', 'Отлично'),
-(27, 14, 43, 1, '9', 'Хорошо'),
-(28, 14, 43, 2, '7', 'Отлично'),
-(29, 24, 51, 1, '10', 'Отлично'),
-(30, 24, 51, 2, '7', 'Отлично'),
-(31, 16, 52, 1, '10', 'Отлично'),
-(32, 16, 52, 2, '3', 'Плохой результат'),
-(33, 16, 54, 1, '8', 'Нормально'),
-(34, 16, 54, 2, '7', 'Отлично'),
-(35, 16, 55, 3, '10', 'w'),
-(36, 16, 55, 4, '34', 'w'),
-(37, 24, 58, 3, '12', 'wqewq'),
-(38, 24, 58, 4, '34', 'eq');
+(1, 14, 24, 3, '2', 'ewq'),
+(2, 14, 24, 4, '12', 'wqeq'),
+(3, 14, 26, 1, '10', 'w'),
+(4, 14, 26, 2, '7', '3'),
+(5, 19, 35, 3, '12', 'wqqweq'),
+(6, 19, 35, 4, '34', 'weqwew');
 
 -- --------------------------------------------------------
 
@@ -232,9 +228,7 @@ CREATE TABLE `notes` (
 --
 
 INSERT INTO `notes` (`id`, `parent_id`, `user_id`, `date_text`, `description`) VALUES
-(1, NULL, NULL, '21 ноября', 'посетить пациента 00032'),
-(2, NULL, NULL, '30 ноября', 'поитграть '),
-(4, 7, 16, 'June 4th 08:47', '12');
+(1, 6, NULL, 'June 4th 08:47', 'qewqe');
 
 -- --------------------------------------------------------
 
@@ -332,18 +326,18 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (10, NULL, 'legion3', 'd6002ab2c6623db78330613043a7febec0e04fb2', 'legion3', 'legion3', 'legion3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 10, NULL, '2020-11-18 16:02:37'),
 (11, NULL, 'kassa2', 'ba87a038ef7c583ecb89e3f026403903a7f365b8', 'kassa2', 'kassa2', 'kassa2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 12, NULL, '2020-11-18 16:04:18'),
 (12, 10, NULL, NULL, 'pasient 1', 'pasient 1', 'pasient 1', '2000-12-12', 'Олмазор', 'kjhjkhjkhk', 'nmm,nj,n,n', ',kn,knm,nm,n', '9998989899', 'ajkshdjkashd', 'jhjkh', 1, 15, NULL, 1, 0, 'm,nm,nm,nm,n', '2020-11-18 16:05:52'),
-(13, 10, NULL, NULL, 'pasient 2', 'pasient 2', 'pasient 2', '2000-12-12', 'Миробод', 'kjklj', 'kn,knm,n', ',mn,mn,m', '98989898', 'iljiljklj', 'kjkljkl', NULL, 15, NULL, NULL, 0, 'm,nm,n', '2020-11-18 16:06:24'),
+(13, 10, NULL, NULL, 'pasient 2', 'pasient 2', 'pasient 2', '2000-12-12', 'Миробод', 'kjklj', 'kn,knm,n', ',mn,mn,m', '98989898', 'iljiljklj', 'kjkljkl', NULL, 15, NULL, 1, 0, 'm,nm,n', '2020-11-18 16:06:24'),
 (14, 2, NULL, NULL, 'Жасур', 'Рахматов', 'Илхомович', '2003-05-08', 'Ромитан', 'AC6453482', 'Хокимиат', 'Глава отдела', '+998934568052', 'Алпомыш', 'Алпомыш', 1, 15, NULL, 1, 0, NULL, '2020-11-18 16:06:53'),
-(15, 10, NULL, NULL, 'pasient 3', 'pasient 3', 'pasient 3', '2000-12-12', 'Олмазор', 'jjjkhjk', 'm,nnm,nmbnm', 'nm,m,nm,n', '98098098098', ',jhknjj', 'jjnjjk', NULL, 15, NULL, NULL, 0, 'm,nm,nm,nm,n', '2020-11-18 16:07:03'),
+(15, 10, NULL, NULL, 'pasient 3', 'pasient 3', 'pasient 3', '2000-12-12', 'Олмазор', 'jjjkhjk', 'm,nnm,nmbnm', 'nm,m,nm,n', '98098098098', ',jhknjj', 'jjnjjk', NULL, 15, NULL, 1, 0, 'm,nm,nm,nm,n', '2020-11-18 16:07:03'),
 (16, 9, NULL, NULL, 'Адольф', 'Гитлер', 'Нету', '1899-04-20', 'Ромитан', 'WE2312313', 'Германия, Мюнхен', 'Политик, глава 3 рейха', '998909090899', 'Австрия', 'могила №3', 1, 15, NULL, 1, 0, 'евреи', '2020-11-18 16:07:03'),
-(17, 10, NULL, NULL, 'pasient 4', 'pasient 4', 'pasient 4', '1212-02-11', 'Олмазор', 'kljkljklj', 'kljkljklj', 'ljkljklj', '8909809809', 'iljljklj', 'lkjkljklj', NULL, 15, NULL, NULL, 0, 'lkjlkjkljkl', '2020-11-18 16:07:48'),
-(18, 10, NULL, NULL, 'pasient 5', 'pasient 5', 'pasient 5', '2122-03-12', 'Олмазор', 'jkhjkhjk', 'mnm,nm,nm,', 'm,nm,nm,n', '89098098098', 'kjhkljk', 'jkhjkhkjh', NULL, 15, NULL, NULL, 0, ',mn,mn,mn', '2020-11-18 16:08:21'),
-(19, 9, NULL, NULL, 'Иосиф', 'Сталин', 'Виссарионович', '1924-01-21', 'Ромитан', 'WE3424234234', 'Россия', 'Император Росси', '+998909990099', 'Россия', 'Москва кремоль', 1, 15, NULL, NULL, 0, 'Гитлер', '2020-11-18 16:10:05'),
-(20, 9, NULL, NULL, 'Владимир', 'Ленин', 'Ильич', '1870-04-22', 'Ромитан', 'QW452345234532', 'CCCP', 'Вождь', '+998909445465', 'Россия', 'Мавзолей', 1, 15, NULL, NULL, 0, 'Капитализм', '2020-11-18 16:12:51'),
+(17, 10, NULL, NULL, 'pasient 4', 'pasient 4', 'pasient 4', '1212-02-11', 'Олмазор', 'kljkljklj', 'kljkljklj', 'ljkljklj', '8909809809', 'iljljklj', 'lkjkljklj', NULL, 15, NULL, 1, 0, 'lkjlkjkljkl', '2020-11-18 16:07:48'),
+(18, 10, NULL, NULL, 'pasient 5', 'pasient 5', 'pasient 5', '2122-03-12', 'Олмазор', 'jkhjkhjk', 'mnm,nm,nm,', 'm,nm,nm,n', '89098098098', 'kjhkljk', 'jkhjkhkjh', NULL, 15, NULL, 1, 0, ',mn,mn,mn', '2020-11-18 16:08:21'),
+(19, 9, NULL, NULL, 'Иосиф', 'Сталин', 'Виссарионович', '1924-01-21', 'Ромитан', 'WE3424234234', 'Россия', 'Император Росси', '+998909990099', 'Россия', 'Москва кремоль', 1, 15, NULL, 1, 0, 'Гитлер', '2020-11-18 16:10:05'),
+(20, 9, NULL, NULL, 'Владимир', 'Ленин', 'Ильич', '1870-04-22', 'Ромитан', 'QW452345234532', 'CCCP', 'Вождь', '+998909445465', 'Россия', 'Мавзолей', 1, 15, NULL, 1, 0, 'Капитализм', '2020-11-18 16:12:51'),
 (21, 2, NULL, NULL, 'Pasient 6', 'Pasient 6', 'Pasient 6', '2019-11-06', 'Чилонзор', 'цуй321112312312', 'Pasient 6', 'Pasient 6', '2132132112312231', 'Pasient 6', 'Pasient 6', NULL, 15, NULL, NULL, 0, 'Pasient 6', '2020-11-18 16:13:53'),
-(22, 9, NULL, NULL, 'Алексей', 'Шевцов', 'Владимирович', '1999-11-24', 'Юнусобод', 'WE324234234', 'Ютуб', 'Блогер', '+998990989078', 'Украина Одесса', 'Украина Одесса', 1, 15, NULL, NULL, 0, 'Глупые люди', '2020-11-18 16:15:37'),
+(22, 9, NULL, NULL, 'Алексей', 'Шевцов', 'Владимирович', '1999-11-24', 'Юнусобод', 'WE324234234', 'Ютуб', 'Блогер', '+998990989078', 'Украина Одесса', 'Украина Одесса', 1, 15, NULL, 1, 0, 'Глупые люди', '2020-11-18 16:15:37'),
 (23, 9, NULL, NULL, 'Кира', 'Хошигаке', 'НЕТ', '1995-01-20', 'Юнусобод', 'CV 333222', 'Япония Токио', 'Коммисар', '+99899900098', 'Япония Токио', 'Япония Токио', 1, 15, NULL, NULL, 0, 'L', '2020-11-18 16:17:36'),
-(24, 9, NULL, NULL, 'Умархан', 'Убунту', 'Вадимович', '2000-11-14', 'Юнусобод', 'AZ', 'Мексика', 'Укратитель змей', '+998999088998', 'Бухара', 'Бухара', 1, 15, NULL, 1, 0, 'любовь', '2020-11-18 16:20:14'),
+(24, 9, NULL, NULL, 'Умархан', 'Убунту', 'Вадимович', '2000-11-14', 'Юнусобод', 'AZ', 'Мексика', 'Укратитель змей', '+998999088998', 'Бухара', 'Бухара', 1, 15, NULL, NULL, 0, 'любовь', '2020-11-18 16:20:14'),
 (25, 9, NULL, NULL, 'Гвидо', 'Мисто', 'Олегович', '1982-02-18', 'Ромитан', 'EWR2345345345', 'Аргентиа', 'Нарко барон', '+998994232', 'Швеция', 'Аргентина', 1, 15, NULL, NULL, 0, 'женщины', '2020-11-18 16:22:17'),
 (26, NULL, 'nurce_1', 'c000e8b0a3f6e91f586867365618581675fa20d7', 'nurce', 'nurce', 'nurce', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, NULL, '2020-11-20 19:11:11'),
 (27, NULL, 'coock', 'baa9797d705eebdf66f75d623c3cc1756c78d2ff', 'coock', 'coock', 'coock', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 9, NULL, 1, 1, NULL, '2020-11-23 10:50:15'),
@@ -359,10 +353,11 @@ CREATE TABLE `user_stats` (
   `id` int(11) NOT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `visit_id` int(11) DEFAULT NULL,
-  `stat` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `pressure` int(11) DEFAULT NULL,
+  `stat` tinyint(1) DEFAULT NULL,
+  `pressure` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pulse` int(11) DEFAULT NULL,
-  `temperature` int(11) DEFAULT NULL,
+  `temperature` decimal(3,1) DEFAULT NULL,
+  `saturation` tinyint(4) DEFAULT NULL,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -370,9 +365,10 @@ CREATE TABLE `user_stats` (
 -- Дамп данных таблицы `user_stats`
 --
 
-INSERT INTO `user_stats` (`id`, `parent_id`, `visit_id`, `stat`, `pressure`, `pulse`, `temperature`, `add_date`) VALUES
-(1, 26, 48, 'Хорошо', 12, 70, 36, '2020-11-22 16:22:26'),
-(2, 26, 48, 'Плохо', 1, 1, 1, '2020-11-22 16:28:31');
+INSERT INTO `user_stats` (`id`, `parent_id`, `visit_id`, `stat`, `pressure`, `pulse`, `temperature`, `saturation`, `add_date`) VALUES
+(1, 26, 27, 2, '21/2', 2121, '37.3', 100, '2020-11-24 12:32:28'),
+(2, 26, 31, 1, '123', 12, '40.9', 45, '2020-11-25 11:38:16'),
+(3, 26, 31, 2, '312', 121, '36.3', 25, '2020-11-25 11:39:31');
 
 -- --------------------------------------------------------
 
@@ -386,13 +382,18 @@ CREATE TABLE `visit` (
   `grant_id` int(11) DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `route_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
   `direction` tinyint(1) DEFAULT NULL,
   `status` tinyint(1) DEFAULT 0,
   `laboratory` tinyint(1) DEFAULT NULL,
   `complaint` varchar(300) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `failure` varchar(200) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `report_title` varchar(200) DEFAULT NULL,
+  `report_description` text DEFAULT NULL,
+  `report_conclusion` text DEFAULT NULL,
   `add_date` datetime DEFAULT current_timestamp(),
   `accept_date` datetime DEFAULT NULL,
+  `priced_date` datetime DEFAULT NULL,
   `discharge_date` datetime DEFAULT NULL,
   `completed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -401,63 +402,38 @@ CREATE TABLE `visit` (
 -- Дамп данных таблицы `visit`
 --
 
-INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `direction`, `status`, `laboratory`, `complaint`, `failure`, `add_date`, `accept_date`, `discharge_date`, `completed`) VALUES
-(1, 14, NULL, 5, 2, NULL, NULL, NULL, '111', NULL, '2020-11-18 21:07:51', '2020-11-18 21:20:21', NULL, '2020-11-18 21:26:55'),
-(2, 16, NULL, 7, 2, NULL, NULL, NULL, 'Боль в животе', NULL, '2020-11-18 21:08:32', '2020-11-18 21:18:13', NULL, '2020-11-18 21:32:59'),
-(3, 12, NULL, 7, 10, NULL, NULL, NULL, 'sdcsdf', NULL, '2020-11-18 21:08:55', '2020-11-18 21:24:12', NULL, '2020-11-21 00:59:24'),
-(4, 13, NULL, 8, 10, NULL, NULL, NULL, 'kjkj,kjk,', NULL, '2020-11-18 21:09:38', '2020-11-21 00:56:37', NULL, '2020-11-21 00:59:33'),
-(5, 17, 8, 8, 10, 1, NULL, NULL, '.kjmk.k.j', NULL, '2020-11-18 21:10:13', '2020-11-18 21:28:50', NULL, '2020-11-21 00:56:12'),
-(6, 15, 6, 6, 2, 1, NULL, NULL, 'Боль в сердце', NULL, '2020-11-18 21:10:16', '2020-11-20 01:02:35', NULL, '2020-11-20 01:18:06'),
-(7, 18, 5, 5, 10, 1, NULL, NULL, ',,kjkljklj', NULL, '2020-11-18 21:12:34', '2020-11-18 21:20:25', NULL, '2020-11-21 00:00:24'),
-(8, 19, NULL, 8, 2, NULL, NULL, NULL, 'Боль в зубах', NULL, '2020-11-18 21:12:35', '2020-11-18 21:28:54', NULL, '2020-11-18 21:33:14'),
-(9, 21, 5, 5, 10, 1, NULL, NULL, 'jklkljkljkl', NULL, '2020-11-18 21:14:31', '2020-11-18 21:20:28', NULL, '2020-11-21 00:57:15'),
-(10, 20, NULL, 6, 2, NULL, NULL, NULL, 'Боль в спине', NULL, '2020-11-18 21:14:40', '2020-11-20 01:23:04', NULL, '2020-11-21 00:59:11'),
-(11, 23, 8, 8, 10, 1, NULL, NULL, 'j,hkhj,kjklj', NULL, '2020-11-18 21:20:13', '2020-11-18 21:28:56', NULL, '2020-11-21 00:56:21'),
-(12, 22, NULL, 5, 10, NULL, NULL, NULL, ',.m.,m,.m,.m', NULL, '2020-11-18 21:20:30', '2020-11-18 21:31:00', NULL, '2020-11-21 00:59:00'),
-(13, 14, NULL, 7, 5, NULL, NULL, NULL, '111', NULL, '2020-11-18 21:24:21', '2020-11-18 21:25:05', NULL, '2020-11-18 21:26:16'),
-(14, 24, 8, 8, 10, 1, NULL, NULL, 'jkljkljklj', NULL, '2020-11-18 21:28:12', '2020-11-18 21:28:58', NULL, '2020-11-21 00:56:27'),
-(15, 19, NULL, 5, 8, NULL, NULL, NULL, 'Боль в зубах', NULL, '2020-11-18 21:30:12', '2020-11-18 21:30:52', NULL, '2020-11-18 21:32:24'),
-(16, 14, NULL, 4, 2, NULL, NULL, NULL, 'test', NULL, '2020-11-18 21:57:27', '2020-11-19 21:01:37', NULL, '2020-11-19 21:58:13'),
-(17, 16, NULL, 4, 2, NULL, 2, 1, 'sxasxasx', NULL, '2020-11-19 21:32:50', '2020-11-19 21:33:34', NULL, '2020-11-19 21:58:13'),
-(18, 14, NULL, 5, 2, NULL, NULL, NULL, 'qweqw', NULL, '2020-11-19 22:04:14', '2020-11-19 22:04:40', NULL, '2020-11-21 00:16:43'),
-(19, 19, NULL, 4, 2, NULL, NULL, 1, 'qwewqewqewq', NULL, '2020-11-19 22:27:25', '2020-11-19 23:34:10', NULL, '2020-11-19 23:38:24'),
-(20, 19, NULL, 5, 2, NULL, NULL, NULL, 'wqe', NULL, '2020-11-19 23:38:59', '2020-11-19 23:39:40', NULL, '2020-11-21 00:59:46'),
-(21, 19, NULL, 4, 5, NULL, NULL, NULL, 'wqe', NULL, '2020-11-19 23:43:16', '2020-11-19 23:43:46', NULL, '2020-11-19 23:44:46'),
-(23, 18, NULL, 4, 5, 1, NULL, 1, ',,kjkljklj', NULL, '2020-11-20 00:25:20', '2020-11-20 00:25:47', NULL, '2020-11-20 00:26:39'),
-(24, 18, NULL, 6, 5, 1, NULL, NULL, ',,kjkljklj', NULL, '2020-11-20 00:46:00', '2020-11-20 00:46:14', NULL, '2020-11-20 01:01:46'),
-(25, 19, 6, 6, 2, 1, NULL, NULL, 'qwe', NULL, '2020-11-20 00:54:15', '2020-11-20 01:23:07', NULL, '2020-11-21 00:56:56'),
-(26, 15, 6, 4, 6, 1, NULL, 1, 'Боль в сердце', NULL, '2020-11-20 01:14:35', '2020-11-20 01:14:53', NULL, '2020-11-20 01:15:18'),
-(27, 15, NULL, 6, 2, NULL, NULL, NULL, 'q', NULL, '2020-11-20 01:20:17', '2020-11-21 01:00:16', NULL, '2020-11-21 01:00:20'),
-(28, 25, 6, 6, 2, 1, NULL, NULL, 'q', NULL, '2020-11-20 01:21:00', '2020-11-20 01:21:33', NULL, '2020-11-20 01:22:59'),
-(29, 25, 6, 5, 6, 1, NULL, NULL, 'q', NULL, '2020-11-20 01:21:48', '2020-11-20 01:22:13', NULL, '2020-11-20 01:22:22'),
-(30, 18, 5, 4, 5, 1, NULL, 1, ',,kjkljklj', NULL, '2020-11-20 01:27:38', '2020-11-20 01:28:46', NULL, '2020-11-20 01:29:07'),
-(31, 25, 6, 6, 2, 1, NULL, NULL, 'wqee', NULL, '2020-11-21 00:01:09', '2020-11-21 00:01:25', NULL, '2020-11-21 00:57:01'),
-(32, 25, 6, 4, 6, 1, NULL, 1, 'wqee', NULL, '2020-11-21 00:01:42', '2020-11-21 00:01:53', NULL, '2020-11-21 00:02:26'),
-(33, 25, 6, 5, 6, 1, NULL, NULL, 'wqee', NULL, '2020-11-21 00:08:35', '2020-11-21 00:08:46', NULL, '2020-11-21 00:09:08'),
-(34, 14, 7, 7, 2, NULL, NULL, NULL, 'asqas', NULL, '2020-11-21 00:19:07', '2020-11-21 00:20:32', NULL, '2020-11-21 00:31:06'),
-(35, 14, 7, 4, 7, NULL, NULL, 1, 'asqas', NULL, '2020-11-21 00:23:56', '2020-11-21 00:24:27', NULL, '2020-11-21 00:24:51'),
-(36, 14, 7, 5, 7, NULL, NULL, NULL, 'asqas', NULL, '2020-11-21 00:25:40', '2020-11-21 00:26:06', NULL, '2020-11-21 00:27:00'),
-(37, 14, 5, 5, 2, NULL, NULL, NULL, 'qwqw', NULL, '2020-11-21 00:34:50', '2020-11-21 00:35:07', NULL, '2020-11-21 00:35:14'),
-(38, 14, 8, 8, 10, NULL, NULL, NULL, 'sadasd', NULL, '2020-11-21 00:37:52', '2020-11-21 00:38:15', NULL, '2020-11-21 00:38:35'),
-(39, 14, 6, 6, 2, 1, NULL, NULL, 'qwqw', NULL, '2020-11-21 00:50:50', '2020-11-21 00:51:35', NULL, '2020-11-21 00:55:20'),
-(40, 14, 6, 5, 6, 1, NULL, NULL, 'qwqw', NULL, '2020-11-21 00:52:04', '2020-11-21 00:52:18', NULL, '2020-11-21 00:52:48'),
-(41, 14, 6, 4, 6, 1, NULL, 1, 'qwqw', NULL, '2020-11-21 00:53:22', '2020-11-21 00:53:49', NULL, '2020-11-21 00:54:23'),
-(42, 14, 6, 6, 2, 1, NULL, NULL, 'ывцй', NULL, '2020-11-21 15:53:46', '2020-11-21 15:53:55', NULL, '2020-11-21 22:01:57'),
-(43, 14, 6, 4, 6, 1, NULL, 1, 'ывцй', NULL, '2020-11-21 15:59:53', '2020-11-21 16:03:32', NULL, '2020-11-21 16:04:07'),
-(44, 14, 6, 5, 6, 1, NULL, NULL, 'ывцй', NULL, '2020-11-21 16:00:01', '2020-11-21 16:03:08', NULL, '2020-11-21 16:06:58'),
-(45, 14, 6, 5, 6, 1, NULL, NULL, 'ывцй', NULL, '2020-11-21 16:33:37', '2020-11-21 16:33:44', NULL, '2020-11-21 16:50:52'),
-(46, 14, 6, 5, 6, 1, NULL, NULL, 'ывцй', NULL, '2020-11-21 16:45:29', '2020-11-21 16:46:50', NULL, '2020-11-21 17:00:38'),
-(47, 14, 6, 5, 6, 1, NULL, NULL, 'ывцй', NULL, '2020-11-21 16:51:37', '2020-11-21 16:51:48', NULL, '2020-11-21 22:02:47'),
-(48, 16, 7, 7, 9, 1, 2, NULL, 'Боль в жопе', NULL, '2020-11-21 22:05:04', '2020-11-21 22:05:08', NULL, NULL),
-(50, 24, 7, 7, 9, NULL, NULL, NULL, 'Совесть болит', NULL, '2020-11-21 22:08:49', '2020-11-21 22:16:28', NULL, '2020-11-22 00:10:27'),
-(51, 24, 7, 4, 7, NULL, NULL, 1, 'Совесть болит', NULL, '2020-11-21 23:35:46', '2020-11-21 23:36:52', NULL, '2020-11-22 00:05:38'),
-(52, 16, 7, 4, 7, 1, NULL, 1, 'Боль в жопе', NULL, '2020-11-21 23:36:21', '2020-11-21 23:36:55', NULL, '2020-11-22 00:06:30'),
-(53, 16, 7, 5, 7, 1, NULL, NULL, 'Боль в жопе', NULL, '2020-11-22 00:11:22', '2020-11-22 00:11:34', NULL, '2020-11-22 00:18:27'),
-(54, 16, 7, 4, 7, 1, NULL, 1, 'Боль в жопе', NULL, '2020-11-22 00:32:43', '2020-11-22 00:33:17', NULL, '2020-11-22 00:33:55'),
-(55, 16, 7, 4, 7, 1, NULL, 1, 'Боль в жопе', NULL, '2020-11-22 01:23:25', '2020-11-22 01:23:49', NULL, '2020-11-23 11:57:23'),
-(56, 14, 7, 7, 2, NULL, 2, NULL, 'q', NULL, '2020-11-22 02:12:35', '2020-11-22 02:15:29', NULL, NULL),
-(57, 24, 7, 7, 2, 1, 2, NULL, 'a', NULL, '2020-11-22 02:14:22', '2020-11-22 02:15:32', NULL, NULL),
-(58, 24, 7, 4, 7, 1, 2, 1, 'a', NULL, '2020-11-23 18:27:55', '2020-11-23 18:28:05', NULL, NULL);
+INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `service_id`, `direction`, `status`, `laboratory`, `complaint`, `failure`, `report_title`, `report_description`, `report_conclusion`, `add_date`, `accept_date`, `priced_date`, `discharge_date`, `completed`) VALUES
+(1, 12, 6, 6, 2, 5, NULL, NULL, NULL, '1', NULL, 'eqweqwe', 'qwqweqweqwe da dasdas dadqwq dqweeee dadad', 'wqeasadsa sadasdas dasd asasdasdas', '2020-11-24 00:06:27', '2020-11-24 02:40:47', '2020-11-24 02:09:05', NULL, '2020-11-24 14:44:58'),
+(9, 13, 7, 7, 2, 5, NULL, 2, NULL, 'e', NULL, NULL, NULL, NULL, '2020-11-24 01:16:27', '2020-11-24 21:18:22', '2020-11-24 02:08:51', NULL, NULL),
+(10, 13, 7, 7, 2, 6, NULL, 2, NULL, 'e', NULL, NULL, NULL, NULL, '2020-11-24 01:16:27', '2020-11-24 21:18:20', '2020-11-24 02:08:51', NULL, NULL),
+(11, 14, 6, 6, 2, 9, NULL, NULL, NULL, 'was', NULL, 'Тестовы Осмотр', 'зйлвцйщвлщ йвьйш тйв штавстыомсвгама  аырвыашра ывав ыав ыа выа  в ывы вы вы вывывы  ывыв ывы выв зйлвцйщвлщ йвьйш тйв штавстыомсвгама  аырвыашра ывав ыав ыа выа  в ывы вы вы вывывы  ывыв ывы выв зйлвцйщвлщ йвьйш тйв штавстыомсвгама  аырвыашра ывав ыав ыа выа  в ывы вы вы вывывы  ывыв ывы вывзйлвцйщвлщ йвьйш тйв штавстыомсвгама  аырвыашра ывав ыав ыа выа  в ывы вы вы вывывы  ывыв ывы выв1', 'зйлвцйщвлщ йвьйш тйв штавстыомсвгама  аырвыашра ывав ыав ыа выа  в ывы вы вы вывывы  ывыв ывы выв зйлвцйщвлщ йвьйш тйв штавстыомсвгама  аырвыашра ывав ыав ыа выа  в ывы вы вы вывывы  ывыв ывы выв', '2020-11-24 02:10:20', '2020-11-24 03:00:58', '2020-11-24 02:10:31', NULL, '2020-11-24 17:37:51'),
+(12, 15, 8, 8, 2, 2, NULL, NULL, NULL, 'd', NULL, NULL, NULL, NULL, '2020-11-24 02:14:06', NULL, '2020-11-24 02:57:36', NULL, '2020-11-24 14:27:50'),
+(14, 16, 6, 6, 2, 5, NULL, NULL, NULL, 'qwewq', NULL, 'wewqewq', 'ewqewqe', 'qweqweqwe', '2020-11-24 02:57:09', '2020-11-24 03:01:21', '2020-11-24 02:57:42', NULL, '2020-11-24 15:16:07'),
+(15, 18, 6, 6, 2, 1, 1, 2, NULL, 'qwewqe', NULL, NULL, NULL, NULL, '2020-11-24 02:57:22', '2020-11-24 03:01:18', NULL, NULL, NULL),
+(16, 12, 6, 5, 6, 4, NULL, NULL, NULL, '1', NULL, 'MRT', 'wwewq qdwqwdqw xasd asdasd asd as', 'dqwdasd sdsad asd asdas dasdas', '2020-11-24 13:54:39', '2020-11-24 14:11:56', '2020-11-24 14:10:00', NULL, '2020-11-24 14:53:44'),
+(17, 12, 6, 5, 6, 7, NULL, NULL, NULL, '1', NULL, 'Ренген', 'ssadsad asdsadas', 'dasdsad sasadadasda', '2020-11-24 14:18:23', '2020-11-24 14:20:12', '2020-11-24 14:18:38', NULL, '2020-11-24 14:53:44'),
+(18, 12, 6, 7, 6, 6, NULL, NULL, NULL, '1', NULL, 'das', 'wqeqweqwe', 'qweqweqeq', '2020-11-24 14:33:18', '2020-11-24 14:36:30', '2020-11-24 14:36:20', NULL, '2020-11-24 14:43:58'),
+(19, 12, 5, 5, 2, 8, NULL, NULL, NULL, 'qwe', NULL, 'УЗИ', 'фвфывфы', 'в сййцвйц', '2020-11-24 14:45:36', '2020-11-24 14:45:55', '2020-11-24 14:45:47', NULL, '2020-11-24 14:53:44'),
+(20, 12, 6, 6, 2, 9, NULL, 2, NULL, 'ewq', NULL, NULL, NULL, NULL, '2020-11-24 14:54:17', '2020-11-24 14:54:40', '2020-11-24 14:54:29', NULL, NULL),
+(24, 14, 6, 4, 6, 11, NULL, NULL, 1, 'was', NULL, NULL, NULL, NULL, '2020-11-24 15:21:24', '2020-11-24 16:45:49', '2020-11-24 15:32:47', NULL, '2020-11-24 16:49:45'),
+(25, 14, 6, 8, 6, 2, NULL, NULL, NULL, 'was', NULL, '213321321', '3asd', 'wqeqeqweqweqwd', '2020-11-24 15:31:35', '2020-11-24 17:07:53', '2020-11-24 15:32:47', NULL, '2020-11-24 17:08:38'),
+(26, 14, 6, 4, 6, 10, NULL, NULL, 1, 'was', NULL, NULL, NULL, NULL, '2020-11-24 16:53:08', '2020-11-24 16:53:43', '2020-11-24 16:53:29', NULL, '2020-11-24 16:57:58'),
+(27, 14, 6, 6, 2, 1, 1, NULL, NULL, 'qweqweq', NULL, '2131221213', '1221йцйуйцуцй йуцйцйцу', 'йцуйцувс  сйвцуук3йц43', '2020-11-24 17:11:53', '2020-11-24 17:12:09', NULL, NULL, '2020-11-24 17:37:51'),
+(28, 14, 6, 5, 6, 4, 1, NULL, NULL, 'qweqweq', NULL, 'МРТ Головнного мозга', 'eqweqwqwd asdqwdqwdq ddadas', 'eeqweqw', '2020-11-24 17:15:52', '2020-11-24 17:16:11', NULL, NULL, '2020-11-24 17:17:25'),
+(29, 14, 6, 5, 6, 7, 1, NULL, NULL, 'qweqweq', NULL, 'Ренген', 'dawd asdasd asd', 'dasdasdas', '2020-11-24 17:16:00', '2020-11-24 17:16:13', NULL, NULL, '2020-11-24 17:17:25'),
+(31, 14, 6, 6, 2, 1, 1, 2, NULL, '45995494', NULL, NULL, NULL, NULL, '2020-11-24 20:22:19', '2020-11-24 20:38:16', NULL, NULL, NULL),
+(32, 15, 6, 6, 2, 9, NULL, 2, NULL, 'wqeqewq', NULL, NULL, NULL, NULL, '2020-11-24 20:22:39', '2020-11-24 20:38:14', '2020-11-24 20:25:03', NULL, NULL),
+(33, 19, 7, 7, 2, 1, 1, 2, NULL, 'qweqeq', NULL, NULL, NULL, NULL, '2020-11-24 20:49:31', '2020-11-24 20:49:41', NULL, NULL, NULL),
+(34, 19, 7, 6, 7, 6, 1, NULL, NULL, 'qweqeq', NULL, 'eqwe21321321312', 'qw3122fjij 121dwddq dqeqqweqx [d dwadkaj9f eqfafafca', 'dd asd dwdqddsuihf9fgb asudhuwqdqd  321 312312 312 3 12', '2020-11-24 20:49:56', '2020-11-24 20:50:11', NULL, NULL, '2020-11-24 21:17:12'),
+(35, 19, 7, 4, 6, 11, 1, NULL, 1, 'qweqeq', NULL, NULL, NULL, NULL, '2020-11-24 21:06:20', '2020-11-24 21:07:03', NULL, NULL, '2020-11-24 21:15:59'),
+(36, 16, 5, 5, 2, 4, NULL, 0, NULL, 'ewrwere', NULL, NULL, NULL, NULL, '2020-11-24 21:31:58', NULL, NULL, NULL, NULL),
+(37, 22, 8, 8, 2, 2, NULL, 0, NULL, 'qwe', NULL, NULL, NULL, NULL, '2020-11-24 21:32:07', NULL, NULL, NULL, NULL),
+(38, 20, 6, 6, 2, 5, NULL, 0, NULL, '2132121312', NULL, NULL, NULL, NULL, '2020-11-24 21:32:26', NULL, NULL, NULL, NULL),
+(39, 14, 6, 7, 6, 9, 1, 2, NULL, '45995494', NULL, NULL, NULL, NULL, '2020-11-24 23:59:20', '2020-11-24 23:59:32', NULL, NULL, NULL),
+(40, 18, 6, 7, 6, 9, 1, 1, NULL, 'qwewqe', NULL, NULL, NULL, NULL, '2020-11-25 00:12:14', NULL, NULL, NULL, NULL),
+(41, 17, 6, 6, 2, 5, NULL, 2, NULL, 'sxasx', NULL, NULL, NULL, NULL, '2020-11-25 15:44:59', '2020-11-25 15:59:38', '2020-11-25 15:58:52', NULL, NULL),
+(42, 17, 6, 5, 6, 4, NULL, 2, NULL, 'sxasx', NULL, NULL, NULL, NULL, '2020-11-25 16:00:39', '2020-11-25 16:01:25', '2020-11-25 16:01:08', NULL, NULL),
+(43, 17, 6, 5, 6, 8, NULL, 2, NULL, 'sxasx', NULL, NULL, NULL, NULL, '2020-11-25 16:00:48', '2020-11-25 16:02:03', '2020-11-25 16:01:08', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -473,7 +449,6 @@ CREATE TABLE `visit_price` (
   `price_card` decimal(65,1) DEFAULT NULL,
   `price_transfer` decimal(65,1) DEFAULT NULL,
   `sale` tinyint(4) DEFAULT NULL,
-  `price_payment` decimal(65,1) DEFAULT NULL,
   `add_date` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -481,112 +456,25 @@ CREATE TABLE `visit_price` (
 -- Дамп данных таблицы `visit_price`
 --
 
-INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `price_payment`, `add_date`) VALUES
-(1, 1, NULL, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:28'),
-(2, 10, NULL, '100000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:41'),
-(3, 2, NULL, '200.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:47'),
-(4, 8, NULL, '23434.0', NULL, NULL, NULL, NULL, '2020-11-18 16:16:56'),
-(5, 12, NULL, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:20:56'),
-(6, 3, NULL, '200.0', NULL, NULL, NULL, NULL, '2020-11-18 16:21:04'),
-(7, 13, NULL, '40000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:24:55'),
-(8, 15, NULL, '2000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:30:43'),
-(9, 16, NULL, '20000.0', NULL, NULL, NULL, NULL, '2020-11-18 16:57:51'),
-(10, 17, NULL, '20000.0', NULL, NULL, NULL, NULL, '2020-11-19 16:33:14'),
-(11, 18, NULL, '3000.0', NULL, NULL, NULL, NULL, '2020-11-19 17:04:35'),
-(12, 19, NULL, '20000.0', NULL, NULL, NULL, NULL, '2020-11-19 17:27:39'),
-(13, 20, NULL, '1000.0', NULL, NULL, NULL, NULL, '2020-11-19 18:39:09'),
-(14, 21, NULL, '10000.0', NULL, NULL, NULL, NULL, '2020-11-19 18:43:30'),
-(15, 34, NULL, '40000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:20:25'),
-(16, 35, NULL, '10000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:24:20'),
-(17, 36, NULL, '1000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:25:53'),
-(18, 37, NULL, '3000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:35:00'),
-(19, 38, NULL, '23434.0', NULL, NULL, NULL, NULL, '2020-11-20 19:38:08'),
-(20, 4, 11, '23434.0', NULL, NULL, NULL, NULL, '2020-11-20 19:44:08'),
-(21, 27, 3, '100000.0', NULL, NULL, NULL, NULL, '2020-11-20 19:59:57'),
-(22, 50, 3, '40000.0', NULL, NULL, NULL, NULL, '2020-11-21 17:15:39'),
-(23, 51, 3, '20000.0', NULL, NULL, NULL, NULL, '2020-11-21 18:36:38'),
-(24, 56, 3, '40000.0', NULL, NULL, NULL, NULL, '2020-11-21 21:12:43');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `visit_service`
---
-
-CREATE TABLE `visit_service` (
-  `id` int(11) NOT NULL,
-  `visit_id` int(11) NOT NULL,
-  `service_id` int(11) NOT NULL,
-  `priced` datetime DEFAULT NULL,
-  `report` text CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `report_title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `report_description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `report_conclusion` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `completed` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `visit_service`
---
-
-INSERT INTO `visit_service` (`id`, `visit_id`, `service_id`, `priced`, `report`, `report_title`, `report_description`, `report_conclusion`, `completed`) VALUES
-(1, 1, 7, '2020-11-18 21:16:28', '<p>Все нормально</p>\r\n', NULL, NULL, NULL, 1),
-(2, 2, 6, '2020-11-18 21:16:47', '<p>Отреза ногу ему она больше не нужна, Теперь в место неё палка которую я отобрал у собаки на улицы.</p>\r\n\r\n<p>Вызжал на лбу немецкую зигу, он очень просил.</p>\r\n', NULL, NULL, NULL, 1),
-(3, 3, 6, '2020-11-18 21:21:04', NULL, NULL, NULL, NULL, NULL),
-(4, 4, 2, '2020-11-21 00:44:08', NULL, NULL, NULL, NULL, NULL),
-(5, 5, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(6, 6, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(7, 7, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(8, 8, 2, '2020-11-18 21:16:56', '<p>состояние нормальное</p>\r\n\r\n<p>зуб вырван</p>\r\n', NULL, NULL, NULL, 1),
-(9, 9, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(10, 10, 5, '2020-11-18 21:16:41', NULL, NULL, NULL, NULL, NULL),
-(11, 11, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(12, 12, 7, '2020-11-18 21:20:56', NULL, NULL, NULL, NULL, NULL),
-(13, 13, 9, '2020-11-18 21:24:55', '<p>Орезал не нужные детали, и пришил что надо</p>\r\n', NULL, NULL, NULL, 1),
-(14, 14, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(15, 15, 7, '2020-11-18 21:30:43', '<p>Ренген проведён успешно</p>\r\n\r\n<p>бракованый зуб</p>\r\n', NULL, NULL, NULL, 1),
-(16, 16, 10, '2020-11-18 21:57:51', NULL, NULL, NULL, NULL, NULL),
-(17, 17, 10, '2020-11-19 21:33:14', NULL, NULL, NULL, NULL, NULL),
-(18, 18, 8, '2020-11-19 22:04:35', NULL, 'qe', 'qweqweqwd', 'asdadadas', 1),
-(19, 19, 10, '2020-11-19 22:27:39', NULL, NULL, NULL, NULL, NULL),
-(20, 20, 4, '2020-11-19 23:39:09', NULL, NULL, NULL, NULL, NULL),
-(21, 21, 11, '2020-11-19 23:43:30', NULL, NULL, NULL, NULL, NULL),
-(22, 22, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(23, 23, 11, NULL, NULL, NULL, NULL, NULL, NULL),
-(24, 24, 9, NULL, NULL, NULL, NULL, NULL, NULL),
-(25, 25, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(26, 26, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(27, 27, 5, '2020-11-21 00:59:57', NULL, NULL, NULL, NULL, NULL),
-(28, 28, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(29, 29, 4, NULL, NULL, NULL, NULL, NULL, NULL),
-(30, 30, 11, NULL, NULL, NULL, NULL, NULL, NULL),
-(31, 31, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(32, 32, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(33, 33, 4, NULL, NULL, 'qweqweqwe', '21eqweqweqw', 'eqweqweqwqwasdsadcadw', 1),
-(34, 34, 9, '2020-11-21 00:20:25', NULL, 'qwdsadsa', 'ORDER BY accept_date ORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESCORDER BY accept_date DESC', 'ORDER BY accept_date DESC', 1),
-(35, 35, 11, '2020-11-21 00:24:20', NULL, NULL, NULL, NULL, NULL),
-(36, 36, 4, '2020-11-21 00:25:53', NULL, 'qwe', 'qwewqeqwdasw qedadvqwewq eqwdasw qedadqwe wqeqwdaswq edadq wewqe qwdasw qedadqw ewqeqwda swqeda dqwewqeqwdaswq edadqwe  wqeqwdas wqedadqwew qeqwdaswqedad qwewqeqwdaswqe dadqwe wqeqwda swqed adqwewqeqwdaswqedadqw ewqeqw daswqe dadqwewqeqwdasw qedadqwewqe qwdaswqedad', 'dasdascdasbthnrthwree', 1),
-(37, 37, 8, '2020-11-21 00:35:00', NULL, 'qwewq', 'qwe', 'qweqq', 1),
-(38, 38, 2, '2020-11-21 00:38:08', NULL, 'wqe21', '321321wq', 'wqewqe', 1),
-(39, 39, 1, NULL, NULL, '221321', 'ййцуцйуцй', 'уцйуччясячсячсяч', 1),
-(40, 40, 7, NULL, NULL, '2132132', '3213213213', '2321312', 1),
-(41, 41, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(42, 42, 1, NULL, NULL, '12323221', '21321321', 'wewqewqeqweqweqwe', 1),
-(43, 43, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(44, 44, 4, NULL, NULL, 'qewqeqwe', 'qwewqewqewqew', 'eqwddassadcxzczxczx', 1),
-(45, 45, 4, NULL, NULL, 'МРТ Головнного мозга', 'МРТ головного мозга — это неинвазивное исследование, которое подразумевает использование мощных магнитных полей, высокочастотных импульсов, компьютерной системы и программного обеспечения, позволяющих получить детальное изображение мозга. Рентгеновское излучение при МРТ не используется. Именно поэтому на сегодняшний день МРТ — одно из наиболее безопасных и притом очень точных исследований. Качество визуализации при МРТ намного лучше, чем при рентгенологическом или ультразвуковом исследовании, компьютерной томографии. Магнитно-резонансная томография дает возможность обнаружить опухоли, аневризму и другие патологии сосудов, а также некоторые проблемы нервной системы. Словом, возможности метода очень широки. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Несмотря на то, что для разных методов диагностики (рентгеновской, радионуклидной, магнитно-резонансной, ультразвуковой) используются различные физические принципы и источники излучения, их объединяет применение правил математического моделирования при создании изображений. Поэтому данные методы относят к методам лучевой диагностики, и обследование проводится в специальном отделении с аналогичным названием. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 1),
-(46, 46, 7, NULL, NULL, '2313', 'wewqeqw', 'ewqeqweqwe', 1),
-(47, 47, 4, NULL, NULL, 'wqewqewqewq', 'wewqq', 'ewqewqewqeqwqqeq', 1),
-(48, 48, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(50, 50, 9, '2020-11-21 22:15:39', NULL, 'qweqwewqeewwq', 'dasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadas dasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadas', 'dasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadasdasdasd d asdas das djmaikdn a najn jandja   dasdjasdjasdkashdoihoudhqwuid dqwdqwnhjdijdwaion adwqaudhwqudhadad adadsadas', 1),
-(51, 51, 10, '2020-11-21 23:36:38', NULL, NULL, NULL, NULL, NULL),
-(52, 52, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(53, 53, 4, NULL, NULL, 'МРТ Головнного мозга', 'МРТ головного мозга — это неинвазивное исследование, которое подразумевает использование мощных магнитных полей, высокочастотных импульсов, компьютерной системы и программного обеспечения, позволяющих получить детальное изображение мозга. Рентгеновское излучение при МРТ не используется. Именно поэтому на сегодняшний день МРТ — одно из наиболее безопасных и притом очень точных исследований. Качество визуализации при МРТ намного лучше, чем при рентгенологическом или ультразвуковом исследовании, компьютерной томографии. Магнитно-резонансная томография дает возможность обнаружить опухоли, аневризму и другие патологии сосудов, а также некоторые проблемы нервной системы. Словом, возможности метода очень широки. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Несмотря на то, что для разных методов диагностики (рентгеновской, радионуклидной, магнитно-резонансной, ультразвуковой) используются различные физические принципы и источники излучения, их объединяет применение правил математического моделирования при создании изображений. Поэтому данные методы относят к методам лучевой диагностики, и обследование проводится в специальном отделении с аналогичным названием. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 1),
-(54, 54, 10, NULL, NULL, NULL, NULL, NULL, NULL),
-(55, 55, 11, NULL, NULL, NULL, NULL, NULL, NULL),
-(56, 56, 9, '2020-11-22 02:12:43', NULL, NULL, NULL, NULL, NULL),
-(57, 57, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(58, 58, 11, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `add_date`) VALUES
+(5, 9, 3, '100000.0', NULL, NULL, NULL, '2020-11-23 21:08:51'),
+(6, 10, 3, '200.0', NULL, NULL, NULL, '2020-11-23 21:08:51'),
+(7, 1, 3, '100000.0', NULL, NULL, NULL, '2020-11-23 21:09:05'),
+(8, 11, 3, '40000.0', NULL, NULL, NULL, '2020-11-23 21:10:31'),
+(9, 12, 3, '23434.0', NULL, NULL, NULL, '2020-11-23 21:57:36'),
+(10, 14, 3, '100000.0', NULL, NULL, NULL, '2020-11-23 21:57:42'),
+(11, 16, 3, '1000.0', NULL, NULL, NULL, '2020-11-24 09:10:00'),
+(12, 17, 3, '2000.0', NULL, NULL, NULL, '2020-11-24 09:18:38'),
+(13, 18, 3, '200.0', NULL, NULL, NULL, '2020-11-24 09:36:20'),
+(14, 19, 3, '3000.0', NULL, NULL, NULL, '2020-11-24 09:45:47'),
+(15, 20, 3, '40000.0', NULL, NULL, NULL, '2020-11-24 09:54:29'),
+(16, 24, 3, '10000.0', NULL, NULL, NULL, '2020-11-24 10:32:47'),
+(17, 25, 3, '23434.0', NULL, NULL, NULL, '2020-11-24 10:32:47'),
+(18, 26, 3, '20000.0', NULL, NULL, NULL, '2020-11-24 11:53:29'),
+(19, 32, 3, '40000.0', NULL, NULL, NULL, '2020-11-24 15:25:03'),
+(22, 41, 3, '100000.0', NULL, NULL, NULL, '2020-11-25 10:58:52'),
+(23, 42, 3, '4000.0', NULL, NULL, NULL, '2020-11-25 11:01:08'),
+(24, 43, 3, '4000.0', NULL, NULL, NULL, '2020-11-25 11:01:08');
 
 --
 -- Индексы сохранённых таблиц
@@ -611,15 +499,15 @@ ALTER TABLE `bypass`
   ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `chat`
---
-ALTER TABLE `chat`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Индексы таблицы `division`
 --
 ALTER TABLE `division`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `investment`
+--
+ALTER TABLE `investment`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -678,12 +566,6 @@ ALTER TABLE `visit_price`
   ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `visit_service`
---
-ALTER TABLE `visit_service`
-  ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -706,22 +588,22 @@ ALTER TABLE `bypass`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT для таблицы `chat`
---
-ALTER TABLE `chat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT для таблицы `division`
 --
 ALTER TABLE `division`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT для таблицы `investment`
+--
+ALTER TABLE `investment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
@@ -733,7 +615,7 @@ ALTER TABLE `laboratory_analyze_type`
 -- AUTO_INCREMENT для таблицы `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
@@ -757,25 +639,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `user_stats`
 --
 ALTER TABLE `user_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
-
---
--- AUTO_INCREMENT для таблицы `visit_service`
---
-ALTER TABLE `visit_service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

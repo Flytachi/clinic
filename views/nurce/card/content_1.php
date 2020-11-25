@@ -64,7 +64,7 @@ $header = "Пациент";
 											<tbody>
 												<?php
 												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->user_id") as $row) {
+												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->id") as $row) {
 													?>
 													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
 														<td><?= $i++ ?></td>
@@ -106,7 +106,7 @@ $header = "Пациент";
 											<tbody>
 												<?php
 												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->user_id") as $row) {
+												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->id") as $row) {
 													?>
 													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
 														<td><?= $i++ ?></td>

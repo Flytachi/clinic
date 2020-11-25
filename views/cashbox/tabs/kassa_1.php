@@ -19,21 +19,19 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th class="text-left">Дата и время</th>
-                                <th class="text-center">ID</th>
+                                <th>ID</th>
                                 <th class="text-center">ФИО</th>
                             </tr>
                         </thead>
                         <tbody id="displ_tab-1">
                             <?php
-                            foreach($db->query('SELECT * FROM visit WHERE direction IS NULL AND status = 0 ORDER BY add_date ASC LIMIT 5') as $row) {
+                            foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NULL AND us.status = 1 AND vs.priced_date IS NULL") as $row) {
                             ?>
-                                <tr>
-                                    <td class="text-left"><?= $row['add_date'] ?></td>
-                                    <td class="text-center"><?= addZero($row['user_id']) ?></td>
+                                <tr onclick="CheckAmb('get_mod.php?pk=<?= $row['id'] ?>')">
+                                    <td><?= addZero($row['id']) ?></td>
                                     <td class="text-center">
-                                        <a onclick="CheckAmb('get_mod.php?pk=<?= $row['id'] ?>&user_id=<?= $row['user_id'] ?>')">
-                                            <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
+                                        <a>
+                                            <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
                                         </a>
                                     </td>
                                 </tr>

@@ -5,3 +5,23 @@ function TabControl(tab) {
     $('#'+tab).addClass('show').addClass('active');
     $('a[href="#'+tab+'"]').addClass('show').addClass('active');
 }
+
+function Downsum(input) {
+    input.attr("class", 'form-control');
+    input.val("");
+    var inp_s = $('.input_chek');
+
+    inp_s.attr("max", $('#total_price').val()/inp_s.length);
+    inp_s.val($('#total_price').val()/inp_s.length);
+}
+
+function Upsum(input) {
+    input.attr("class", 'form-control input_chek');
+    var inp_s = $('.input_chek');
+
+    inp_s.attr("max", $('#total_price').val()/inp_s.length);
+    inp_s.val($('#total_price').val()/inp_s.length);
+
+    input.attr("max", $('#total_price').val()/inp_s.length);
+    input.val($('#total_price').val()/inp_s.length);
+}

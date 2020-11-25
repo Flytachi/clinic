@@ -55,20 +55,35 @@ $header = "Пациент";
 											<th>Давление</th>
 											<th>Пульс</th>
 											<th>Температура</th>
-
+											<th>Сатурация</th>
 										</tr>
 									</thead>
 									<tbody>
 										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->id") as $row) {
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
 											?>
 											<tr>
 												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-												<td><?= $row['stat'] ?></td>
+												<td>
+													<?php
+													switch ($row['stat']) {
+														case 1:
+															echo "Актив";
+															break;
+														case 2:
+															echo "Пассив";
+															break;
+														default:
+															echo "Норма";
+															break;
+													}
+													?>
+												</td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= $row['pressure'] ?></td>
 												<td><?= $row['pulse'] ?></td>
 												<td><?= $row['temperature'] ?></td>
+												<td><?= $row['saturation'] ?></td>
 											</tr>
 											<?php
 										}

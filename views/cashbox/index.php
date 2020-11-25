@@ -7,6 +7,11 @@ $header = "Рабочий стол";
 <html lang="en">
 <?php include '../layout/head.php' ?>
 
+<script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
+
+<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
@@ -71,7 +76,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php UserCheckOutpatientModel::form(); ?>
+				<?php VisitPriceModel::form(); ?>
 
 			</div>
 		</div>
@@ -87,23 +92,23 @@ $header = "Рабочий стол";
 			$('#message_ses').html(sessionStorage['message_amb']);
 			sessionStorage['message_amb'] = '';
 		}
-		function Update(events, tr) {
+
+		function Delete(events, tr) {
 			if(confirm("Вы уверены что вы долбаёб?")){
 				$.ajax({
 					type: "GET",
 					url: events,
 					success: function (data) {
-						var result = JSON.parse(data);
-						if (result.stat) {
-							sessionStorage['message_amb'] = result.message;
-							location.reload();
-						}else{
+						if (data == 1) {
 							$('#'+tr).css("background-color", "red");
 							$('#'+tr).css("color", "white");
 							$('#'+tr).fadeOut('slow', function() {
 							 	$(this).remove();
 								sumTo($('.total_cost'));
 							});
+						}else{
+							sessionStorage['message_amb'] = data;
+							location.reload();
 						}
 					},
 				});
@@ -135,7 +140,7 @@ $header = "Рабочий стол";
 				url: events+"&mod=st",
 				success: function (result) {
 					$('#check-st').html(result);
-					$('#visit_st_id').val(pk);
+					$('#user_st_id').val(pk);
 				},
 			});
 		};
