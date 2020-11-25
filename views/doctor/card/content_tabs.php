@@ -5,7 +5,7 @@
 
     $count = $db->query($sql)->fetchColumn();
 
-    $count = $count == 0 ? '' : "<span class=\"badge bg-danger badge-pill ml-auto\">$count</span>"
+    $count = $count == 0 ? '' : "<span class=\"badge bg-danger badge-pill ml-auto\">$count</span>";
 
 ?>
 <ul class="nav nav-tabs nav-tabs-highlight">
