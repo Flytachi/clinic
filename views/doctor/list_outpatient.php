@@ -44,7 +44,7 @@ $header = "Амбулаторные пациенты";
 					<div class="card-body">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>

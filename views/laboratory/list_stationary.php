@@ -51,7 +51,7 @@ $header = "Стационарные пациенты";
 			            ?>
 
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+                            <table class="table table-hover table-sm">
                                 <thead>
 									<tr class="bg-info">
                                         <th>ID</th>
@@ -64,7 +64,7 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
                                         ?>
 										<tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -94,7 +94,7 @@ $header = "Стационарные пациенты";
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<a href="<?= viv('laboratory/print') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['visit_id'] ?>&user_id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
+                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
                                                 </div>
                                             </td>
                                         </tr>

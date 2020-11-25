@@ -46,7 +46,7 @@ $header = "Пациент";
 							</div>
 
 							<div class="table-responsive">
-								<table class="table table-hover">
+								<table class="table table-hover table-sm">
 									<thead>
 										<tr class="bg-info">
 											<th>Дата и время</th>
@@ -61,24 +61,24 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
+											switch ($row['stat']):
+												case 1:
+													$stat = "Актив";
+													$class_tr = "table-success";
+													break;
+												case 2:
+													$stat = "Пассив";
+													$class_tr = "table-danger";
+													break;
+												default:
+													$stat = "Норма";
+													$class_tr = "";
+													break;
+											endswitch;
 											?>
-											<tr>
+											<tr class="<?= $class_tr ?>">
 												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-												<td>
-													<?php
-													switch ($row['stat']) {
-														case 1:
-															echo "Актив";
-															break;
-														case 2:
-															echo "Пассив";
-															break;
-														default:
-															echo "Норма";
-															break;
-													}
-													?>
-												</td>
+												<td><?= $stat ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= $row['pressure'] ?></td>
 												<td><?= $row['pulse'] ?></td>
