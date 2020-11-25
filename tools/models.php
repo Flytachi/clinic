@@ -302,7 +302,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -310,7 +310,22 @@ class VisitModel extends Model
             $(function(){
                 $("#parent_id2").chained("#division2");
                 $("#service").chained("#division2");
+
             });
+            let conn = new WebSocket("ws://192.168.1.69:8080");
+            conn.onopen = function(e) {
+                console.log("Connection established!");
+            };
+
+            function submitAlert() {
+
+              let id = $("#parent_id2").val();
+
+              let obj = JSON.stringify({ type : 'alert',  id : id });
+              console.log(obj);
+              conn.send(obj);
+            }
+
         </script>
         <?php
     }
