@@ -73,7 +73,7 @@ $header = "Пациент";
 									</thead>
 									<tbody>
 										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id ORDER BY add_date DESC") as $row) {
 											switch ($row['stat']):
 												case 1:
 													$stat = "Актив";
