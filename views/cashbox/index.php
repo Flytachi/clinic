@@ -118,7 +118,11 @@ $header = "Рабочий стол";
 		function sumTo(arr) {
 			var total = 0;
 			for (value of arr) {
-			  total += parseInt(value.textContent);
+				console.log(value);
+				console.log($(value).text());
+				
+
+				total += Number($(value).text());
 			}
 			$('#total_title').html(total);
 		}
