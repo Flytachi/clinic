@@ -103,7 +103,7 @@ $header = "Пациент";
 
 										<div class="tab-pane fade" id="<?= $value['id'] ?>" >
 											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>" data-offset="100" style="height: 600px; overflow: scroll;">
-												
+
 												<?php
 
 													$id_user = $value['id'];
@@ -198,7 +198,7 @@ $header = "Пациент";
     <?php include '../../layout/footer.php' ?>
 
     <script>
-    	
+
     	$('textarea').keypress(function(e){
 			if(e.keyCode == 13){
 				let id_cli = $(this).attr('data-inputid');
@@ -217,7 +217,7 @@ $header = "Пациент";
 	           let id1 = $(this).attr('data-chatid');
 	           let offset = Number($(this).attr('data-offset'));
 
-				$(this).attr('data-offset', (offset+100));      
+				$(this).attr('data-offset', (offset+100));
 
 				$.ajax({
 			        type: "POST",
@@ -254,14 +254,11 @@ $header = "Пациент";
 															</li>`);
 			        	}
 			        },
-			    });    
+			    });
 			}
-
-
-
 		})
 
-		
+
 
     </script>
 

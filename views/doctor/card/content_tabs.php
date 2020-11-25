@@ -1,14 +1,12 @@
 <?php
-    /*
     $id = $_SESSION['session_id'];
-
 
     $sql = "SELECT COUNT(*) FROM chat WHERE id_pull = \"$id\"AND `activity` = 0";
 
     $count = $db->query($sql)->fetchColumn();
 
     $count = $count == 0 ? '' : "<span class=\"badge bg-danger badge-pill ml-auto\">$count</span>"
-    */
+
 ?>
 <ul class="nav nav-tabs nav-tabs-highlight">
     <li class="nav-item">
@@ -50,8 +48,8 @@
 </ul>
 
 <script>
-    // let id = '<?= $_SESSION['session_id'] ?>';
-    // let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+    let id = '<?= $_SESSION['session_id'] ?>';
+    let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 </script>
 <!-- /footer -->
-<!-- <script src="scriptJS/socket.js"></script> -->
+<script src="scriptJS/socket.js"></script>
