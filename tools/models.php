@@ -312,7 +312,7 @@ class VisitModel extends Model
                 $("#service").chained("#division2");
 
             });
-            let conn = new WebSocket("ws://192.168.1.69:8080");
+            let conn = new WebSocket("ws://192.168.1.114:8080");
             conn.onopen = function(e) {
                 console.log("Connection established!");
             };

@@ -76,7 +76,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.laboratory, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id = {$_SESSION['session_id']} ORDER BY vs.id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id = {$_SESSION['session_id']} AND vs.laboratory IS NULL ORDER BY vs.id DESC") as $row) {
 										?>
 											<tr>
 												<td><?= $i++ ?></td>
@@ -116,17 +116,7 @@ $header = "Пациент";
 													?>
 												</td>
 												<td class="text-center">
-													<?php
-													if (!$row['laboratory']) {
-														?>
-														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-														<?php
-													}else {
-														?>
-														<button onclick="return alert('Нет результатов')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-														<?php
-													}
-													?>
+													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 												</td>
 											</tr>
 										<?php
