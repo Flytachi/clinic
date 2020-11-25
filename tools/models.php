@@ -1292,16 +1292,28 @@ class LaboratoryAnalyzeModel extends Model
             </div>
 
             <div class="modal-footer">
-                <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
-                <button type="submit" class="btn bg-info">Сохранить</button>
+                <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
+                <a href="lod.php" id="result_end" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
+                <button type="submit" class="btn bg-info" id="button_456">Сохранить</button>
             </div>
 
         </form>
 
         <script type="text/javascript">
+            $('#result_end').click(function (event) {
+                event.preventDefault();
+                if (confirm('Вы точно хотите завершить визит пациента?')) {
+                    alert('Ура');
+                    // $('#<?= __CLASS__ ?>_form').submit();
+                }
+            });
+
             function ResultEND() {
                 if (confirm('Вы точно хотите завершить визит пациента?')) {
-                    $('#<?= __CLASS__ ?>_form').submit();
+                    alert('Ура');
+                    // $('#<?= __CLASS__ ?>_form').submit();
+                }else {
+                    alert('ds');
                 }
             }
     	</script>
@@ -1533,7 +1545,7 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-6">
                         <label>Состояние:</label>
-                        <select placeholder="Введите состояние" name="stat" class="form-control form-control-select2" required>
+                        <select placeholder="Введите состояние" name="stat" class="form-control form-control-select2">
                             <option value="">Норма</option>
                             <option value="1">Актив</option>
                             <option value="2">Пассив</option>
@@ -1551,17 +1563,17 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-4">
                         <label>Пульс:</label>
-                        <input type="number" class="form-control" name="pulse" placeholder="Введите пульс" required>
+                        <input type="number" class="form-control" name="pulse" min="40" step="1" max="150" value="85" placeholder="Введите пульс" required>
                     </div>
 
                     <div class="col-md-4">
                         <label>Температура:</label>
-                        <input type="number" class="form-control" name="temperature" min="30" step="0.1" max="45" value="36" placeholder="Введите температура" required>
+                        <input type="number" class="form-control" name="temperature" min="35" step="0.1" max="42" value="36.6" placeholder="Введите температура" required>
                     </div>
 
                     <div class="col-md-4">
                         <label>Сатурация:</label>
-                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите пульс" required>
+                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
                     </div>
 
                 </div>

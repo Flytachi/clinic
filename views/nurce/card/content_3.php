@@ -48,7 +48,7 @@ $header = "Пациент";
 								<table class="table table-hover table-sm">
 									<thead>
 										<tr class="bg-info">
-											<th>#</th>
+											<th>№</th>
 				                            <th>Специалист</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
