@@ -1245,6 +1245,7 @@ class LaboratoryAnalyzeModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
 
             <div class="modal-body">
                 <div id="modal_message">
@@ -1293,44 +1294,61 @@ class LaboratoryAnalyzeModel extends Model
 
             <div class="modal-footer">
                 <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
-                <a href="lod.php" id="result_end" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
+                <input class="btn btn-outline-danger btn-md" type="submit" value="Завершить" name="end"></input>
                 <button type="submit" class="btn bg-info">Сохранить</button>
             </div>
 
         </form>
-
-        <script type="text/javascript">
-            $('#result_end').click(function (event) {
-                event.preventDefault();
-                if (confirm('Вы точно хотите завершить визит пациента?')) {
-                    return true;
-                    // $('#<?= __CLASS__ ?>_form').submit();
-                }
-            });
-
-            // function ResultEND() {
-            //     if (confirm('Вы точно хотите завершить визит пациента?')) {
-            //         alert('Ура');
-            //         // $('#<?= __CLASS__ ?>_form').submit();
-            //     }else {
-            //         alert('ds');
-            //     }
-            // }
-    	</script>
         <?php
     }
 
     public function save()
     {
+        global $db;
+        $end = ($this->post['end']) ? true : false;
+        unset($this->post['end']);
+        $user_pk = $this->post['user_id'];
+        unset($this->post['user_id']);
+
         foreach ($this->post as $val) {
             $pk = $val['id'];
             unset($val['id']);
             $object = Mixin\update($this->table, $val, $pk);
         }
         if ($object == 1){
-            $this->success();
+            if ($end) {
+                foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+                    if ($row['grant_id'] == $row['parent_id']) {
+                        Mixin\update('users', array('status' => null), $user_pk);
+                    }
+                    $this->clear_post();
+                    $this->set_table('visit');
+                    $this->set_post(array(
+                        'id' => $row['id'],
+                        'status' => 0,
+                        'completed' => date('Y-m-d H:i:s')
+                    ));
+                    $this->update();
+                }
+                $this->success();
+
+            }else {
+                $this->success();
+            }
         }else{
             $this->error($object);
+        }
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
         }
     }
 

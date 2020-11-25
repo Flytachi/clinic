@@ -517,48 +517,6 @@ class VisitFinish extends Model
 
 }
 
-class VisitLaboratoryFinish extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'users';
-
-    public function get_or_404($pk)
-    {
-        global $db;
-        prit($pk);
-        foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
-            if ($row['grant_id'] == $row['parent_id']) {
-                Mixin\update($this->table1, array('status' => null), $pk);
-            }
-            $this->post['id'] = $row['id'];
-            $this->post['status'] = 0;
-            $this->post['completed'] = date('Y-m-d H:i:s');
-            $this->update();
-        }
-        $this->success();
-    }
-
-    public function update()
-    {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if (!intval($object)){
-                $this->error($object);
-            }
-        }
-    }
-
-    public function success()
-    {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/laboratory/index.php");
-        exit;
-    }
-
-}
-
 class LaboratoryUpStatus extends Model
 {
     public $table = 'visit';
@@ -585,7 +543,6 @@ class LaboratoryUpStatus extends Model
     }
 
 }
-
 
 class PatientFailure extends Model
 {
