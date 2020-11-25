@@ -636,17 +636,18 @@ class VisitPriceModel extends Model
     public function clean()
     {
         global $db;
-        $user_pk = $this->post['user_id'];
+        $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $user_pk")->fetch();
+        $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk")->fetch();
         $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card']);
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
         }elseif ($result > 0) {
             $this->error("Недостаточно средств! ". $result);
         }else {
-            $this->error("Успешно!");
-            // return True;
+            $this->post = Mixin\clean_form($this->post);
+            $this->post = Mixin\to_null($this->post);
+            return True;
         }
     }
 
@@ -654,11 +655,10 @@ class VisitPriceModel extends Model
     {
         global $db;
         if($this->clean()){
-            foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $user_pk") as $row) {
+            foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk") as $row) {
                 $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
                 if(intval($object)){
                     $this->post['visit_id'] = $row['id'];
-                    $this->post['price_cash'] = $row['price'];
                     $object1 = Mixin\insert($this->table, $this->post);
                     if (!intval($object1)){
                         $this->error($object1);
@@ -1396,6 +1396,94 @@ class BypassModel extends Model
         <?php
     }
 
+    public function table_form($pk = null)
+    {
+        global $db, $patient;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status" value="<?= (level() == 5) ?1:0 ?>">
+
+            <div class="modal-body">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm table-bordered">
+                        <thead>
+                            <tr class="bg-info">
+                                <th style="width:3%">№</th>
+                                <th>Припорат</th>
+                                <th>Примечание</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                </td>
+                                <td>
+                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                </td>
+                                <td>
+                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="modal-body">
+
+                <?php
+                if(permission(5)){
+                    ?>
+                    <div class="form-group">
+                        <label>Препорат:</label>
+                        <input type="number" class="form-control" name="preparat_id" placeholder="Введите препорат" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Количество:</label>
+                        <input type="number" class="form-control" step="1" name="count" placeholder="Введите кол-во" required>
+                    </div>
+                    <?php
+                }
+                ?>
+
+                <div class="form-group">
+                    <label>Примечание:</label>
+                    <textarea class="form-control" placeholder="Введите примечание" name="description" rows="3" cols="80"></textarea>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -1439,17 +1527,25 @@ class PatientStatsModel extends Model
 
             <div class="modal-body">
 
-                <div class="form-group">
-                    <label>Состояние:</label>
-                    <input type="text" class="form-control" name="stat" placeholder="Введите кол-во" required>
+                <div class="form-group row">
+
+                    <div class="col-md-6">
+                        <label>Состояние:</label>
+                        <select placeholder="Введите состояние" name="stat" class="form-control form-control-select2" required>
+                            <option value="">Норма</option>
+                            <option value="1">Актив</option>
+                            <option value="2">Пассив</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Давление:</label>
+                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление" required>
+                    </div>
+
                 </div>
 
                 <div class="form-group row">
-
-                    <div class="col-md-4">
-                        <label>Давление:</label>
-                        <input type="number" class="form-control" name="pressure" placeholder="Введите давление" required>
-                    </div>
 
                     <div class="col-md-4">
                         <label>Пульс:</label>
@@ -1458,7 +1554,12 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-4">
                         <label>Температура:</label>
-                        <input type="number" class="form-control" name="temperature" placeholder="Введите температура" required>
+                        <input type="number" class="form-control" name="temperature" min="30" step="0.1" max="45" value="36" placeholder="Введите температура" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Сатурация:</label>
+                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите пульс" required>
                     </div>
 
                 </div>
