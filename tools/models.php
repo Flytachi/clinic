@@ -614,7 +614,7 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-    			<button type="submit" class="btn bg-info">Печать</button>
+    			<button type="submit" class="btn bg-outline-info">Печать</button>
     		</div>
 
         </form>
@@ -1200,7 +1200,7 @@ class LaboratoryAnalyzeTypeModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -1295,7 +1295,7 @@ class LaboratoryAnalyzeModel extends Model
             <div class="modal-footer">
                 <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
                 <input class="btn btn-outline-danger btn-md" type="submit" value="Завершить" name="end"></input>
-                <button type="submit" class="btn bg-info">Сохранить</button>
+                <button type="submit" class="btn bg-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -1509,7 +1509,7 @@ class BypassModel extends Model
 
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn bg-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>
@@ -1600,7 +1600,7 @@ class PatientStatsModel extends Model
 
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn bg-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>

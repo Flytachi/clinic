@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(6);
+is_auth(5);
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
@@ -138,8 +138,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 					<div class="card-body">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
-								<thead>
+                            <table class="table table-hover table-sm">
+                                <thead>
                                     <tr class="bg-info">
                                         <th>№</th>
 			                            <th>Напрвитель</th>
@@ -166,7 +166,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td class="text-center">
-												<button onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+												<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 											</td>
                                         </tr>
                                         <?php

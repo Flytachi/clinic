@@ -138,7 +138,7 @@ class PatientForm extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -213,7 +213,7 @@ class VisitReport extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -330,7 +330,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -422,7 +422,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -569,7 +569,7 @@ class PatientFailure extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn bg-danger">Отказаться</button>
+                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger">Отказаться</button>
             </div>
 
         </form>
