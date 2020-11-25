@@ -44,7 +44,7 @@ $header = "Завершёный пациенты";
 					<div class="card-body">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>
@@ -67,7 +67,7 @@ $header = "Завершёный пациенты";
                                             <td><?= $row['numberPhone'] ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('doctor/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn bg-indigo btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('doctor/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php
