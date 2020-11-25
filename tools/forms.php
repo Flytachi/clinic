@@ -482,7 +482,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']}") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_conclusion IS NOT NULL)") as $inf){
             if ($inf['grant_id'] == $inf['parent_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {
@@ -525,14 +525,29 @@ class VisitLaboratoryFinish extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
-        if ($inf['grant_id'] == $inf['parent_id']) {
-            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+        prit($pk);
+        foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+            if ($row['grant_id'] == $row['parent_id']) {
+                Mixin\update($this->table1, array('status' => null), $pk);
+            }
+            $this->post['id'] = $row['id'];
+            $this->post['status'] = 0;
+            $this->post['completed'] = date('Y-m-d H:i:s');
+            $this->update();
         }
-        $this->post['id'] = $pk;
-        $this->post['status'] = 0;
-        $this->post['completed'] = date('Y-m-d H:i:s');
-        $this->update();
+        $this->success();
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
+        }
     }
 
     public function success()

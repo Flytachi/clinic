@@ -1230,11 +1230,11 @@ class LaboratoryAnalyzeTypeModel extends Model
     }
 }
 
-class LaboratoryAnalyzeTableModel extends Model
+class LaboratoryAnalyzeModel extends Model
 {
     public $table = 'laboratory_analyze';
 
-    public function form($pk = null)
+    public function table_form($pk = null)
     {
         global $db;
         if($pk){
@@ -1265,22 +1265,24 @@ class LaboratoryAnalyzeTableModel extends Model
                         <tbody>
                             <?php
                             $i = 1;
-                            foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}") as $row) {
-                                ?>
-                                <tr>
-                                    <td><?= $i++ ?></td>
-                                    <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['standart'] ?></td>
-                                    <td>
-                                        <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
-                                        <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
-                                    </td>
-                                </tr>
-                                <?php
+                            foreach ($db->query("SELECT id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+                                foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$row['id']}") as $row) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
+                                        <td><?= $row['name'] ?></td>
+                                        <td><?= $row['standart'] ?></td>
+                                        <td>
+                                            <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                            <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
                             }
                             ?>
                         </tbody>
