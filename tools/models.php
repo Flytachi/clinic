@@ -1294,7 +1294,7 @@ class LaboratoryAnalyzeModel extends Model
             <div class="modal-footer">
                 <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
                 <a href="lod.php" id="result_end" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
-                <button type="submit" class="btn bg-info" id="button_456">Сохранить</button>
+                <button type="submit" class="btn bg-info">Сохранить</button>
             </div>
 
         </form>
@@ -1303,19 +1303,19 @@ class LaboratoryAnalyzeModel extends Model
             $('#result_end').click(function (event) {
                 event.preventDefault();
                 if (confirm('Вы точно хотите завершить визит пациента?')) {
-                    alert('Ура');
+                    return true;
                     // $('#<?= __CLASS__ ?>_form').submit();
                 }
             });
 
-            function ResultEND() {
-                if (confirm('Вы точно хотите завершить визит пациента?')) {
-                    alert('Ура');
-                    // $('#<?= __CLASS__ ?>_form').submit();
-                }else {
-                    alert('ds');
-                }
-            }
+            // function ResultEND() {
+            //     if (confirm('Вы точно хотите завершить визит пациента?')) {
+            //         alert('Ура');
+            //         // $('#<?= __CLASS__ ?>_form').submit();
+            //     }else {
+            //         alert('ds');
+            //     }
+            // }
     	</script>
         <?php
     }
