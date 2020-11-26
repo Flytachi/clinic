@@ -614,7 +614,7 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-    			<button type="submit" class="btn bg-outline-info">Печать</button>
+    			<button type="submit" class="btn btn-outline-info">Печать</button>
     		</div>
 
         </form>
@@ -1445,35 +1445,47 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
+                <div class="header-elements">
+                    <div class="list-icons">
+                        <a class="list-icons-item text-success" id="by_create_button">
+                            <i class="icon-plus22"></i>Добавить
+                        </a>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-hover table-sm table-bordered">
                         <thead>
                             <tr class="bg-info">
-                                <th style="width:3%">№</th>
                                 <th>Припорат</th>
                                 <th>Примечание</th>
+                                <?php
+                                for ($i=0; $i < 10; $i++) {
+                                    ?>
+                                    <th><?php echo date('d M'); ?></th>
+                                    <?php
+                                }
+                                ?>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>1</td>
                                 <td>
-                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
-                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                    qewqeqweqeqw
                                 </td>
                                 <td>
-                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                    <input type="text" class="form-control" name="description">
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
-                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
-                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
 
                         </tbody>
@@ -1482,37 +1494,15 @@ class BypassModel extends Model
 
             </div>
 
-            <div class="modal-body">
-
-                <?php
-                if(permission(5)){
-                    ?>
-                    <div class="form-group">
-                        <label>Препорат:</label>
-                        <input type="number" class="form-control" name="preparat_id" placeholder="Введите препорат" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Количество:</label>
-                        <input type="number" class="form-control" step="1" name="count" placeholder="Введите кол-во" required>
-                    </div>
-                    <?php
-                }
-                ?>
-
-                <div class="form-group">
-                    <label>Примечание:</label>
-                    <textarea class="form-control" placeholder="Введите примечание" name="description" rows="3" cols="80"></textarea>
-                </div>
-
-            </div>
-
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn btn-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>
+        <script type="text/javascript">
+
+        </script>
         <?php
     }
 

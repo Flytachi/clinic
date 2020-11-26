@@ -36,6 +36,28 @@ var SweetAlert = function () {
 
 
         //
+        //  My scripts
+        //
+
+        $('#sweet_visit_finish').on('click', function(event) {
+            event.preventDefault();
+            var url = this.dataset.href;
+            swal({
+                title: 'Вы уверены?',
+                text: this.dataset.question,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: this.dataset.btn
+            }).then(function(ivi) {
+                if (ivi.value) {
+                    window.location = url;
+                }
+            });
+        });
+
+
+
+        //
         // Basic options
         //
 
@@ -524,7 +546,7 @@ var SweetAlert = function () {
         //
         // Contextual alerts
         //
-        
+
         // Success alert
         $('#sweet_success').on('click', function() {
             swal({
@@ -856,7 +878,7 @@ var SweetAlert = function () {
                     });
                 }
             });
-        });        
+        });
     };
 
     // SweetAlert with custom checkboxes, radios and file input

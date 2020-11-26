@@ -176,6 +176,12 @@
                                         <span>Завершёные пациенты</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('doctor/list_all') ?>" class="nav-link legitRipple">
+                                        <i class="icon-collaboration"></i>
+                                        <span>Все пациенты</span>
+                                    </a>
+                                </li>
                                 <?php
                                 break;
                             case 6:
