@@ -43,9 +43,10 @@ var SweetAlert = function () {
             event.preventDefault();
             var url = this.dataset.href;
             swal({
+                position: 'top',
                 title: 'Вы уверены?',
                 text: this.dataset.question,
-                type: 'warning',
+                type: 'info',
                 showCancelButton: true,
                 confirmButtonText: this.dataset.btn
             }).then(function(ivi) {
