@@ -94,7 +94,7 @@ $header = "Рабочий стол";
 		}
 
 		function Delete(events, tr) {
-			if(confirm("Вы уверены что вы долбаёб?")){
+			if(confirm("Вы уверены?")){
 				$.ajax({
 					type: "GET",
 					url: events,
