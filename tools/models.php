@@ -302,6 +302,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
+                <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
@@ -310,7 +311,22 @@ class VisitModel extends Model
             $(function(){
                 $("#parent_id2").chained("#division2");
                 $("#service").chained("#division2");
+
             });
+            let conn = new WebSocket("ws://192.168.1.114:8080");
+            conn.onopen = function(e) {
+                console.log("Connection established!");
+            };
+
+            function submitAlert() {
+
+              let id = $("#parent_id2").val();
+
+              let obj = JSON.stringify({ type : 'alert',  id : id });
+              console.log(obj);
+              conn.send(obj);
+            }
+
         </script>
         <?php
     }
@@ -581,8 +597,8 @@ class VisitPriceModel extends Model
 					</div>
                 </div>
 
-                <!-- <div class="form-group row">
-                    <label class="col-form-label col-md-3">Перевод</label>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Перечисление</label>
 					<div class="col-md-9">
 						<div class="input-group">
 							<input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
@@ -593,13 +609,13 @@ class VisitPriceModel extends Model
 							</span>
 						</div>
 					</div>
-                </div> -->
+                </div>
 
             </div>
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-    			<button type="submit" class="btn bg-info">Печать</button>
+    			<button type="submit" class="btn btn-outline-info">Печать</button>
     		</div>
 
         </form>
@@ -624,10 +640,10 @@ class VisitPriceModel extends Model
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
         $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk")->fetch();
-        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card']);
+        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
-        }elseif ($result > 0) {
+        }elseif ($result > 1) {
             $this->error("Недостаточно средств! ". $result);
         }else {
             $this->post = Mixin\clean_form($this->post);
@@ -636,22 +652,104 @@ class VisitPriceModel extends Model
         }
     }
 
+    public function price()
+    {
+        global $db;
+        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk") as $row) {
+
+            // Построение оплаты 1.наличные => 2.пластик => 3.перечисление
+            if ($this->post['price_cash']) {
+                if ($this->post['price_cash'] >= $row['price']) {
+                    $this->post['price_cash']-= $row['price'];
+                    // echo "<br>Оплачено наличными; ". $row['price'];
+                    $this->post_price = array(
+                        'pricer_id' => $this->post['pricer_id'],
+                        'sale' => $this->post['sale'],
+                        'price_cash' => $row['price'],
+                    );
+                }else {
+                    if ($this->post['price_card']) {
+                        $this->post['price_card'] += $this->post['price_cash'];
+                        unset($this->post['price_cash']);
+
+                        $this->post['price_card']-= $row['price'];
+                        // echo "<br>Оплачено пластиком; ". $row['price'];
+                        $this->post_price = array(
+                            'pricer_id' => $this->post['pricer_id'],
+                            'sale' => $this->post['sale'],
+                            'price_card' => $row['price'],
+                        );
+                    }elseif ($this->post['price_transfer']) {
+                        $this->post['price_transfer'] += $this->post['price_cash'];
+                        unset($this->post['price_cash']);
+
+                        $this->post['price_transfer']-= $row['price'];
+                        // echo "<br>Оплачено перечислением; ". $row['price'];
+                        $this->post_price = array(
+                            'pricer_id' => $this->post['pricer_id'],
+                            'sale' => $this->post['sale'],
+                            'price_transfer' => $row['price'],
+                        );
+                    }
+                }
+            }elseif ($this->post['price_card']) {
+                if ($this->post['price_card'] >= $row['price']) {
+                    $this->post['price_card']-= $row['price'];
+                    // echo "<br>Оплачено пластиком: ". $row['price'];
+                    $this->post_price = array(
+                        'pricer_id' => $this->post['pricer_id'],
+                        'sale' => $this->post['sale'],
+                        'price_card' => $row['price'],
+                    );
+                }else {
+                    if ($this->post['price_transfer']) {
+                        $this->post['price_transfer'] += $this->post['price_card'];
+                        unset($this->post['price_card']);
+
+                        $this->post['price_transfer']-= $row['price'];
+                        // echo "<br>Оплачено перечислением; ". $row['price'];
+                        $this->post_price = array(
+                            'pricer_id' => $this->post['pricer_id'],
+                            'sale' => $this->post['sale'],
+                            'price_transfer' => $row['price'],
+                        );
+                    }
+                }
+            }else {
+                $this->post['price_transfer'];
+                if ($this->post['price_transfer'] >= $row['price']) {
+                    $this->post['price_transfer']-= $row['price'];
+                    // echo "<br>Оплачено перечислением: ". $row['price'];
+                    $this->post_price = array(
+                        'pricer_id' => $this->post['pricer_id'],
+                        'sale' => $this->post['sale'],
+                        'price_transfer' => $row['price'],
+                    );
+                }else {
+                    $this->error("Ошибка в price transfer");
+                }
+            }
+
+            $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
+            if(intval($object)){
+                $this->post_price['visit_id'] = $row['id'];
+
+                $object1 = Mixin\insert($this->table, $this->post_price);
+                if (!intval($object1)){
+                    $this->error($object1);
+                }
+            }else {
+                $this->error($object);
+            }
+
+        }
+    }
+
     public function save()
     {
         global $db;
         if($this->clean()){
-            foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk") as $row) {
-                $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
-                if(intval($object)){
-                    $this->post['visit_id'] = $row['id'];
-                    $object1 = Mixin\insert($this->table, $this->post);
-                    if (!intval($object1)){
-                        $this->error($object1);
-                    }
-                }else {
-                    $this->error($object);
-                }
-            }
+            $this->price();
             $this->success();
         }
     }
@@ -1185,7 +1283,7 @@ class LaboratoryAnalyzeTypeModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -1215,11 +1313,11 @@ class LaboratoryAnalyzeTypeModel extends Model
     }
 }
 
-class LaboratoryAnalyzeTableModel extends Model
+class LaboratoryAnalyzeModel extends Model
 {
     public $table = 'laboratory_analyze';
 
-    public function form($pk = null)
+    public function table_form($pk = null)
     {
         global $db;
         if($pk){
@@ -1230,6 +1328,7 @@ class LaboratoryAnalyzeTableModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
 
             <div class="modal-body">
                 <div id="modal_message">
@@ -1250,22 +1349,24 @@ class LaboratoryAnalyzeTableModel extends Model
                         <tbody>
                             <?php
                             $i = 1;
-                            foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}") as $row) {
-                                ?>
-                                <tr>
-                                    <td><?= $i++ ?></td>
-                                    <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
-                                    <td><?= $row['name'] ?></td>
-                                    <td><?= $row['standart'] ?></td>
-                                    <td>
-                                        <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
-                                        <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
-                                    </td>
-                                    <td>
-                                        <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
-                                    </td>
-                                </tr>
-                                <?php
+                            foreach ($db->query("SELECT id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+                                foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$row['id']}") as $row) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
+                                        <td><?= $row['name'] ?></td>
+                                        <td><?= $row['standart'] ?></td>
+                                        <td>
+                                            <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                            <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                        </td>
+                                        <td>
+                                            <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                }
                             }
                             ?>
                         </tbody>
@@ -1275,33 +1376,62 @@ class LaboratoryAnalyzeTableModel extends Model
             </div>
 
             <div class="modal-footer">
-                <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
-                <button type="submit" class="btn bg-info">Сохранить</button>
+                <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
+                <input class="btn btn-outline-danger btn-md" type="submit" value="Завершить" name="end"></input>
+                <button type="submit" class="btn bg-outline-info">Сохранить</button>
             </div>
 
         </form>
-
-        <script type="text/javascript">
-            function ResultEND() {
-                if (confirm('Вы точно хотите завершить визит пациента?')) {
-                    $('#<?= __CLASS__ ?>_form').submit();
-                }
-            }
-    	</script>
         <?php
     }
 
     public function save()
     {
+        global $db;
+        $end = ($this->post['end']) ? true : false;
+        unset($this->post['end']);
+        $user_pk = $this->post['user_id'];
+        unset($this->post['user_id']);
+
         foreach ($this->post as $val) {
             $pk = $val['id'];
             unset($val['id']);
             $object = Mixin\update($this->table, $val, $pk);
         }
         if ($object == 1){
-            $this->success();
+            if ($end) {
+                foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+                    if ($row['grant_id'] == $row['parent_id']) {
+                        Mixin\update('users', array('status' => null), $user_pk);
+                    }
+                    $this->clear_post();
+                    $this->set_table('visit');
+                    $this->set_post(array(
+                        'id' => $row['id'],
+                        'status' => 0,
+                        'completed' => date('Y-m-d H:i:s')
+                    ));
+                    $this->update();
+                }
+                $this->success();
+
+            }else {
+                $this->success();
+            }
         }else{
             $this->error($object);
+        }
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
         }
     }
 
@@ -1398,35 +1528,47 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
+                <div class="header-elements">
+                    <div class="list-icons">
+                        <a class="list-icons-item text-success" id="by_create_button">
+                            <i class="icon-plus22"></i>Добавить
+                        </a>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-hover table-sm table-bordered">
                         <thead>
                             <tr class="bg-info">
-                                <th style="width:3%">№</th>
                                 <th>Припорат</th>
                                 <th>Примечание</th>
+                                <?php
+                                for ($i=0; $i < 10; $i++) {
+                                    ?>
+                                    <th><?php echo date('d M'); ?></th>
+                                    <?php
+                                }
+                                ?>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>1</td>
                                 <td>
-                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
-                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                    qewqeqweqeqw
                                 </td>
                                 <td>
-                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                    <input type="text" class="form-control" name="description">
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
-                                    <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
-                                </td>
-                                <td>
-                                    <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
-                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
 
                         </tbody>
@@ -1435,37 +1577,15 @@ class BypassModel extends Model
 
             </div>
 
-            <div class="modal-body">
-
-                <?php
-                if(permission(5)){
-                    ?>
-                    <div class="form-group">
-                        <label>Препорат:</label>
-                        <input type="number" class="form-control" name="preparat_id" placeholder="Введите препорат" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Количество:</label>
-                        <input type="number" class="form-control" step="1" name="count" placeholder="Введите кол-во" required>
-                    </div>
-                    <?php
-                }
-                ?>
-
-                <div class="form-group">
-                    <label>Примечание:</label>
-                    <textarea class="form-control" placeholder="Введите примечание" name="description" rows="3" cols="80"></textarea>
-                </div>
-
-            </div>
-
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn btn-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>
+        <script type="text/javascript">
+
+        </script>
         <?php
     }
 
@@ -1516,7 +1636,7 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-6">
                         <label>Состояние:</label>
-                        <select placeholder="Введите состояние" name="stat" class="form-control form-control-select2" required>
+                        <select placeholder="Введите состояние" name="stat" class="form-control form-control-select2">
                             <option value="">Норма</option>
                             <option value="1">Актив</option>
                             <option value="2">Пассив</option>
@@ -1534,17 +1654,17 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-4">
                         <label>Пульс:</label>
-                        <input type="number" class="form-control" name="pulse" placeholder="Введите пульс" required>
+                        <input type="number" class="form-control" name="pulse" min="40" step="1" max="150" value="85" placeholder="Введите пульс" required>
                     </div>
 
                     <div class="col-md-4">
                         <label>Температура:</label>
-                        <input type="number" class="form-control" name="temperature" min="30" step="0.1" max="45" value="36" placeholder="Введите температура" required>
+                        <input type="number" class="form-control" name="temperature" min="35" step="0.1" max="42" value="36.6" placeholder="Введите температура" required>
                     </div>
 
                     <div class="col-md-4">
                         <label>Сатурация:</label>
-                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите пульс" required>
+                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
                     </div>
 
                 </div>
@@ -1553,7 +1673,7 @@ class PatientStatsModel extends Model
 
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn bg-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>

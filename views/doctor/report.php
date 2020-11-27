@@ -24,5 +24,5 @@ $pack = $db->query("SELECT report_title, report_description, report_conclusion F
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-info legitRipple" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
 </div>

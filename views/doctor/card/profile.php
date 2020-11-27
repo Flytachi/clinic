@@ -166,15 +166,14 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 <div class="text-right">
                     <?php
                     if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
-                        ?>
-                        <a href="<?= up_url($patient->id, 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите выписать пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Выписать</a>
-                        <?php
+                        $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!"';
+                        $button_inner = "Выписать";
                     }else {
-                        ?>
-                        <a href="<?= up_url($patient->id, 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента?')" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a>
-                        <?php
+                        $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!"';
+                        $button_inner = "Завершить";
                     }
                     ?>
+                    <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> <?= $button_inner ?></button>
                 </div>
             </div>
 

@@ -17,6 +17,12 @@ class Model
         return $this->post;
     }
 
+    public function clear_post()
+    {
+        unset($this->post);
+    }
+
+
     public function set_table($table)
     {
         $this->table = $table;

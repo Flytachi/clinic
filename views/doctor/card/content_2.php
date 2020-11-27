@@ -45,10 +45,10 @@ $header = "Пациент";
 							</div>
 
 							<div class="table-responsive">
-				                <table class="table table-hover table-columned">
+				                <table class="table table-hover table-sm">
 				                    <thead>
 				                        <tr class="bg-info">
-				                            <th>#</th>
+				                            <th>№</th>
 				                            <th>Специалист</th>
 				                            <th>Тип визита</th>
 											<th>Дата визита</th>
@@ -60,7 +60,7 @@ $header = "Пациент";
 				                    <tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id != {$_SESSION['session_id']} AND vs.parent_id != {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id != {$_SESSION['session_id']} AND vs.parent_id != {$_SESSION['session_id']} AND vs.completed IS NOT NULL AND vs.laboratory IS NULL ORDER BY id DESC") as $row) {
 										?>
 											<tr>
 												<td><?= $i++ ?></td>
@@ -73,20 +73,7 @@ $header = "Пациент";
 												<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
 												<td><?= $row['name'] ?></td>
 												<td class="text-center">
-													<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right">
-														<?php
-														if ($row['laboratory']) {
-															?>
-															<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>', 1)" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
-															<?php
-														} else {
-															?>
-															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-															<?php
-														}
-														?>
-													</div>
+													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 												</td>
 											</tr>
 										<?php

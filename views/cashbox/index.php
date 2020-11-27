@@ -94,7 +94,7 @@ $header = "Рабочий стол";
 		}
 
 		function Delete(events, tr) {
-			if(confirm("Вы уверены что вы долбаёб?")){
+			if(confirm("Вы уверены?")){
 				$.ajax({
 					type: "GET",
 					url: events,
@@ -118,7 +118,7 @@ $header = "Рабочий стол";
 		function sumTo(arr) {
 			var total = 0;
 			for (value of arr) {
-			  total += parseInt(value.textContent);
+				total += Number($(value).text());
 			}
 			$('#total_title').html(total);
 		}

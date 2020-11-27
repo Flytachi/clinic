@@ -46,10 +46,10 @@ $header = "Пациент";
 							</div>
 
 							<div class="table-responsive">
-				                <table class="table table-hover table-columned">
+				                <table class="table table-hover table-sm">
 				                    <thead>
 				                        <tr class="bg-info">
-				                            <th>#</th>
+				                            <th>№</th>
 				                            <th>Мед услуга</th>
 				                            <th>Тип визита</th>
 											<th>Дата визита</th>
@@ -69,10 +69,7 @@ $header = "Пациент";
 												<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
 												<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
 												<td class="text-center">
-													<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right">
-														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-													</div>
+													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 												</td>
 											</tr>
 										<?php

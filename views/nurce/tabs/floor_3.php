@@ -12,7 +12,7 @@
     <div class="card-body">
 
         <div class="table-responsive">
-            <table class="table table-hover table-sm table-bordered">
+            <table class="table table-hover table-sm">
                 <thead class="bg-info">
                     <tr>
                         <th>ID</th>

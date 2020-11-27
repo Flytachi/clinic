@@ -26,7 +26,7 @@
                         </thead>
                         <tbody id="displ_tab-2">
                             <?php
-                            foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.status IS NOT NULL AND us.status = 1") as $row) {
+                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NOT NULL AND priced_date IS NULL AND status IS NOT NULL") as $row) {
                                 ?>
                                     <tr onclick="CheckSt('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
                                         <td><?= addZero($row['id']) ?></td>

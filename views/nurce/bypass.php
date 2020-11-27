@@ -20,5 +20,5 @@ $byp = $db->query("SELECT * FROM bypass WHERE id= {$_GET['pk']}")->fetch();
 
 <div class="modal-footer">
     <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-    <button class="btn bg-info legitRipple"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+    <button class="btn bg-outline-info legitRipple"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
 </div>

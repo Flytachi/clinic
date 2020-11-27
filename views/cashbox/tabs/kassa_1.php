@@ -25,7 +25,7 @@
                         </thead>
                         <tbody id="displ_tab-1">
                             <?php
-                            foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NULL AND us.status = 1 AND vs.priced_date IS NULL") as $row) {
+                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NULL AND priced_date IS NULL") as $row) {
                             ?>
                                 <tr onclick="CheckAmb('get_mod.php?pk=<?= $row['id'] ?>')">
                                     <td><?= addZero($row['id']) ?></td>

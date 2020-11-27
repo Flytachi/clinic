@@ -176,6 +176,12 @@
                                         <span>Завершёные пациенты</span>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('doctor/list_all') ?>" class="nav-link legitRipple">
+                                        <i class="icon-collaboration"></i>
+                                        <span>Все пациенты</span>
+                                    </a>
+                                </li>
                                 <?php
                                 break;
                             case 6:
@@ -185,7 +191,7 @@
                                         <i class="icon-display"></i>
                                         <span>Рабочий стол</span>
                                         <?php
-                                        $con_one = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_one = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_one) {
                                             ?>
                                             <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>

@@ -204,7 +204,7 @@ $header = "Пациент";
 				let id_cli = $(this).attr('data-inputid');
 				let word = $(this).val();
 				$(this).val('');
-				let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
+				let obj = JSON.stringify({ type : 'messages',  id : id, id_cli : id_cli, message : word });
 				conn.send(obj);
 			}
 		});

@@ -46,7 +46,7 @@ $header = "Пациент";
 							</div>
 
 							<div class="table-responsive">
-								<table class="table table-togglable table-hover">
+								<table class="table table-hover table-sm">
 	                                <thead>
 	                                    <tr class="bg-info">
 	                                        <th>Мед Услуга</th>

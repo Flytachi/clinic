@@ -1,7 +1,7 @@
 <div class="navbar navbar-expand-md navbar-dark bg-info navbar-static">
     <div class="navbar-brand">
         <a href="index.php" class="d-inline-block">
-            <img src="<?= stack("global_assets/images/logo_5.png") ?>" style="height: 2rem !important;" alt="">
+            <img src="<?= stack("global_assets/images/logo_light.png") ?>" alt="">
         </a>
     </div>
 
@@ -25,6 +25,7 @@
         </ul>
 
         <span class=" ml-md-3">
+            Здесь время
             <span class="siya"><?= get_full_name() ." - ". level_name() ." ". division_name() ?></span>
         </span>
 

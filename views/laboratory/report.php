@@ -10,13 +10,12 @@ is_auth();
 <div class="modal-body">
 
     <div class="table-responsive">
-        <table class="table table-hover table-sm table-bordered">
+        <table class="table table-hover">
             <thead>
                 <tr class="bg-info">
                     <th style="width:3%">№</th>
                     <th>Название услуги</th>
                     <th>Анализ</th>
-                    <th>Специалист</th>
                     <th style="width:10%">Норматив</th>
                     <th style="width:10%">Результат</th>
                     <th class="text-center" style="width:25%">Примечание</th>
@@ -31,10 +30,6 @@ is_auth();
                         <td><?= $i++ ?></td>
                         <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
                         <td><?= $row['name'] ?></td>
-                        <td>
-                            <?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-                            <div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
-                        </td>
                         <td><?= $row['standart'] ?></td>
                         <td><?= $row['result'] ?></td>
                         <td><?= $row['description'] ?></td>
@@ -49,5 +44,5 @@ is_auth();
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-info legitRipple" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
 </div>

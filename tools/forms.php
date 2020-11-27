@@ -138,7 +138,7 @@ class PatientForm extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -213,7 +213,7 @@ class VisitReport extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -330,7 +330,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -422,7 +422,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -482,7 +482,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']}") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_conclusion IS NOT NULL)") as $inf){
             if ($inf['grant_id'] == $inf['parent_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {
@@ -517,33 +517,6 @@ class VisitFinish extends Model
 
 }
 
-class VisitLaboratoryFinish extends Model
-{
-    public $table = 'visit';
-    public $table1 = 'users';
-
-    public function get_or_404($pk)
-    {
-        global $db;
-        $inf = $db->query("SELECT * FROM visit WHERE id=$pk")->fetch();
-        if ($inf['grant_id'] == $inf['parent_id']) {
-            Mixin\update($this->table1, array('status' => null), $inf['user_id']);
-        }
-        $this->post['id'] = $pk;
-        $this->post['status'] = 0;
-        $this->post['completed'] = date('Y-m-d H:i:s');
-        $this->update();
-    }
-
-    public function success()
-    {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/laboratory/index.php");
-        exit;
-    }
-
-}
-
 class LaboratoryUpStatus extends Model
 {
     public $table = 'visit';
@@ -571,7 +544,6 @@ class LaboratoryUpStatus extends Model
 
 }
 
-
 class PatientFailure extends Model
 {
     public $table = 'visit';
@@ -597,7 +569,7 @@ class PatientFailure extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn bg-danger">Отказаться</button>
+                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger">Отказаться</button>
             </div>
 
         </form>

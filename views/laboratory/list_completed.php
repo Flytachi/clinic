@@ -44,7 +44,7 @@ $header = "Завершёный пациенты";
 					<div class="card-body">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>
@@ -57,17 +57,17 @@ $header = "Завершёный пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY us.add_date DESC")->fetchAll());
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC") as $row) {
+                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC")->fetchAll());
+									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td><?= $row['numberPhone'] ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('laboratory/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn bg-indigo btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('laboratory/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php

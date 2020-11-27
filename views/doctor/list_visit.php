@@ -43,6 +43,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                         </div>
                     </div>
 
+
                     <div class="card-body">
 
                         <div class="row">
@@ -137,11 +138,11 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 					<div class="card-body">
 
-						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+						<div class="table-responsive card">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
-                                        <th>#</th>
+                                        <th>№</th>
 			                            <th>Напрвитель</th>
 			                            <th>Тип визита</th>
 										<th>Дата визита</th>
@@ -153,7 +154,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.accept_date, vs.completed, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
+                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.accept_date, vs.completed, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
 										?>
                                         <tr>
                                             <td><?= $i++ ?></td>
@@ -166,20 +167,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td class="text-center">
-												<button type="button" class="btn btn-outline-info btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-												<div class="dropdown-menu dropdown-menu-right">
-													<?php
-													if ($row['laboratory']) {
-														?>
-														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>', 1)" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
-														<?php
-													} else {
-														?>
-														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-														<?php
-													}
-													?>
-												</div>
+												<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 											</td>
                                         </tr>
                                         <?php

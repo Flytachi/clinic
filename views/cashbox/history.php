@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(3);
-$header = "Рабочий стол";
+$header = "История платежей";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,28 +30,49 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-highlight nav-justified">
-					<li class="nav-item"><a href="#highlighted-tab3" class="nav-link active" data-toggle="tab">История платежей</a></li>
-					<li class="nav-item"><a href="#highlighted-tab4" class="nav-link" data-toggle="tab">Возврат</a></li>
-				</ul>
+				<div class="card border-1 border-info">
 
-				<!-- Highlighted tabs -->
-				<div class="tab-content">
-
-					<div class="tab-pane fade show active" id="highlighted-tab3">
-						<?php
-							include 'tabs/kassa_3.php';
-						?>
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">История платежей</h6>
+						<div class="header-elements">
+							<div class="list-icons">
+								<a class="list-icons-item" data-action="collapse"></a>
+							</div>
+						</div>
 					</div>
 
-					<div class="tab-pane fade" id="highlighted-tab4">
-						<?php
-							include 'tabs/kassa_4.php';
-						?>
+					<div class="card-body">
+
+						<div class="table-responsive card">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr class="bg-info">
+                                        <th>ID</th>
+										<th>ФИО</th>
+                                        <th class="text-center" style="width:210px">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+									foreach($db->query("SELECT DISTINCT vs.user_id FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id)") as $row) {
+                                        ?>
+                                        <tr>
+                                            <td><?= addZero($row['user_id']) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
+                                            <td class="text-center">
+												<a href="<?= viv('cashbox/detail') ?>?pk=<?= $row['user_id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Детально</button>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+
 					</div>
 
 				</div>
-				<!-- /highlighted tabs -->
 
 			</div>
             <!-- /content area -->
