@@ -302,7 +302,8 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -596,8 +597,8 @@ class VisitPriceModel extends Model
 					</div>
                 </div>
 
-                <!-- <div class="form-group row">
-                    <label class="col-form-label col-md-3">Перевод</label>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Перечисление</label>
 					<div class="col-md-9">
 						<div class="input-group">
 							<input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
@@ -608,7 +609,7 @@ class VisitPriceModel extends Model
 							</span>
 						</div>
 					</div>
-                </div> -->
+                </div>
 
             </div>
 
@@ -639,10 +640,10 @@ class VisitPriceModel extends Model
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
         $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk")->fetch();
-        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card']);
+        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
-        }elseif ($result > 0) {
+        }elseif ($result > 1) {
             $this->error("Недостаточно средств! ". $result);
         }else {
             $this->post = Mixin\clean_form($this->post);
@@ -651,22 +652,104 @@ class VisitPriceModel extends Model
         }
     }
 
+    public function price()
+    {
+        global $db;
+        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk") as $row) {
+
+            // Построение оплаты 1.наличные => 2.пластик => 3.перечисление
+            if ($this->post['price_cash']) {
+                if ($this->post['price_cash'] >= $row['price']) {
+                    $this->post['price_cash']-= $row['price'];
+                    // echo "<br>Оплачено наличными; ". $row['price'];
+                    $this->post_price = array(
+                        'pricer_id' => $this->post['pricer_id'],
+                        'sale' => $this->post['sale'],
+                        'price_cash' => $row['price'],
+                    );
+                }else {
+                    if ($this->post['price_card']) {
+                        $this->post['price_card'] += $this->post['price_cash'];
+                        unset($this->post['price_cash']);
+
+                        $this->post['price_card']-= $row['price'];
+                        // echo "<br>Оплачено пластиком; ". $row['price'];
+                        $this->post_price = array(
+                            'pricer_id' => $this->post['pricer_id'],
+                            'sale' => $this->post['sale'],
+                            'price_card' => $row['price'],
+                        );
+                    }elseif ($this->post['price_transfer']) {
+                        $this->post['price_transfer'] += $this->post['price_cash'];
+                        unset($this->post['price_cash']);
+
+                        $this->post['price_transfer']-= $row['price'];
+                        // echo "<br>Оплачено перечислением; ". $row['price'];
+                        $this->post_price = array(
+                            'pricer_id' => $this->post['pricer_id'],
+                            'sale' => $this->post['sale'],
+                            'price_transfer' => $row['price'],
+                        );
+                    }
+                }
+            }elseif ($this->post['price_card']) {
+                if ($this->post['price_card'] >= $row['price']) {
+                    $this->post['price_card']-= $row['price'];
+                    // echo "<br>Оплачено пластиком: ". $row['price'];
+                    $this->post_price = array(
+                        'pricer_id' => $this->post['pricer_id'],
+                        'sale' => $this->post['sale'],
+                        'price_card' => $row['price'],
+                    );
+                }else {
+                    if ($this->post['price_transfer']) {
+                        $this->post['price_transfer'] += $this->post['price_card'];
+                        unset($this->post['price_card']);
+
+                        $this->post['price_transfer']-= $row['price'];
+                        // echo "<br>Оплачено перечислением; ". $row['price'];
+                        $this->post_price = array(
+                            'pricer_id' => $this->post['pricer_id'],
+                            'sale' => $this->post['sale'],
+                            'price_transfer' => $row['price'],
+                        );
+                    }
+                }
+            }else {
+                $this->post['price_transfer'];
+                if ($this->post['price_transfer'] >= $row['price']) {
+                    $this->post['price_transfer']-= $row['price'];
+                    // echo "<br>Оплачено перечислением: ". $row['price'];
+                    $this->post_price = array(
+                        'pricer_id' => $this->post['pricer_id'],
+                        'sale' => $this->post['sale'],
+                        'price_transfer' => $row['price'],
+                    );
+                }else {
+                    $this->error("Ошибка в price transfer");
+                }
+            }
+
+            $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
+            if(intval($object)){
+                $this->post_price['visit_id'] = $row['id'];
+
+                $object1 = Mixin\insert($this->table, $this->post_price);
+                if (!intval($object1)){
+                    $this->error($object1);
+                }
+            }else {
+                $this->error($object);
+            }
+
+        }
+    }
+
     public function save()
     {
         global $db;
         if($this->clean()){
-            foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk") as $row) {
-                $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
-                if(intval($object)){
-                    $this->post['visit_id'] = $row['id'];
-                    $object1 = Mixin\insert($this->table, $this->post);
-                    if (!intval($object1)){
-                        $this->error($object1);
-                    }
-                }else {
-                    $this->error($object);
-                }
-            }
+            $this->price();
             $this->success();
         }
     }

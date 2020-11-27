@@ -25,6 +25,7 @@
         </ul>
 
         <span class=" ml-md-3">
+            Здесь время
             <span class="siya"><?= get_full_name() ." - ". level_name() ." ". division_name() ?></span>
         </span>
 
