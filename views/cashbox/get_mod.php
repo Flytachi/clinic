@@ -47,7 +47,13 @@ if ($_GET['pk']) {
                 ?>
                 <div class="form-group form-group-float">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-danger" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                        <?php if (($invests + $total_cost) > 0): ?>
+                            <input type="text" class="form-control border-success" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                        <?php elseif(($invests + $total_cost) < 0): ?>
+                            <input type="text" class="form-control border-danger" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                        <?php else: ?>
+                            <input type="text" class="form-control border-dark" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                        <?php endif; ?>
                     </div>
                 </div>
 

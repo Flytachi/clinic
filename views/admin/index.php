@@ -67,7 +67,7 @@ $header = "Персонал";
 				                    <tr class="bg-blue">
 				                        <th>#</th>
 				                        <th>Логин</th>
-				                        <th>Ф.И.О</th>
+				                        <th>ФИО</th>
 				                        <th>Роль</th>
 				                        <th style="width: 100px">Действия</th>
 				                    </tr>
@@ -82,16 +82,22 @@ $header = "Персонал";
 				                            <td><?= $row['username'] ?></td>
 				                            <td><?= get_full_name($row['id']); ?></td>
 				                            <td><?php
-				                                echo level_name($row['user_level']);
-				                                if(division_name($row['division_id'])){
-				                                    echo " (".division_name($row['division_id']).")";
+				                                echo $PERSONAL[$row['user_level']];
+				                                if(division_name($row['id'])){
+				                                    echo " (".division_name($row['id']).")";
 				                                }
 				                                ?>
 				                            </td>
 				                            <td>
 				                                <div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<?php
+													if ($row['user_level'] !=1) {
+														?>
+														<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+														<?php
+													}
+													?>
 				                                </div>
 				                            </td>
 				                        </tr>

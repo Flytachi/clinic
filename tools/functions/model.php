@@ -127,9 +127,14 @@ class Model
 
     }
 
-    public function dd()
+    public function stop()
     {
-        prit($this->post);
+        exit;
+    }
+
+    public function test_mod()
+    {
+        prit($this);
         exit;
     }
 

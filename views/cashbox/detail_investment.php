@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(3);
-$header = "История платежей";
+$header = "Инвестиции ". addZero($_GET['pk']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@ $header = "История платежей";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">История платежей</h6>
+						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
 								<a class="list-icons-item" data-action="collapse"></a>
@@ -47,20 +47,25 @@ $header = "История платежей";
                             <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
-                                        <th>ID</th>
-										<th>ФИО</th>
+                                        <th>№</th>
+                                        <th>Дата платежа</th>
+                                        <th>Сумма</th>
+										<th>Кассир</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-									foreach($db->query("SELECT DISTINCT vs.user_id FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id)") as $row) {
+                                    $i = 1;
+									foreach($db->query("SELECT * FROM investment WHERE user_id = {$_GET['pk']} ORDER BY add_date DESC") as $row) {
                                         ?>
                                         <tr>
-                                            <td><?= addZero($row['user_id']) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
+                                            <td><?= $i++ ?></td>
+                                            <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                                            <td><?= $row['price'] ?></td>
+											<td><?= get_full_name($row['pricer_id']) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('cashbox/detail') ?>?pk=<?= $row['user_id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Детально</button>
+												<a href="#" type="button" class="btn btn-outline-info btn-sm legitRipple">PDF</button>
                                             </td>
                                         </tr>
                                         <?php

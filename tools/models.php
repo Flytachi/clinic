@@ -380,9 +380,9 @@ class VisitModel extends Model
                     <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT DISTINCT ward, floor from beds ') as $row) {
+                        foreach($db->query('SELECT * from wards ') as $row) {
                             ?>
-                            <option value="<?= $row['ward'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
                             <?php
                         }
                         ?>
@@ -396,7 +396,7 @@ class VisitModel extends Model
                         <?php
                         foreach($db->query('SELECT * from beds') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['num'] ?> койка</option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['bed'] ?> койка</option>
                             <?php
                         }
                         ?>
@@ -470,6 +470,7 @@ class VisitModel extends Model
                 if (!intval($object1)){
                     $this->error($object1);
                 }
+                $this->post['bed_id'] = $this->post['bed'];
                 unset($this->post['bed']);
                 $this->post['service_id'] = 1;
             }
@@ -643,7 +644,7 @@ class VisitPriceModel extends Model
         $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
-        }elseif ($result > 1) {
+        }elseif ($result > 0) {
             $this->error("Недостаточно средств! ". $result);
         }else {
             $this->post = Mixin\clean_form($this->post);
@@ -655,86 +656,70 @@ class VisitPriceModel extends Model
     public function price()
     {
         global $db;
-        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk") as $row) {
+        // parad("Услуги", $db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
+        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price") as $row) {
+            $post = array(
+                'pricer_id' => $this->post['pricer_id'],
+                'sale' => $this->post['sale'],
+            );
 
-            // Построение оплаты 1.наличные => 2.пластик => 3.перечисление
-            if ($this->post['price_cash']) {
+            if ($this->post['price_cash'])
+            {
                 if ($this->post['price_cash'] >= $row['price']) {
-                    $this->post['price_cash']-= $row['price'];
-                    // echo "<br>Оплачено наличными; ". $row['price'];
-                    $this->post_price = array(
-                        'pricer_id' => $this->post['pricer_id'],
-                        'sale' => $this->post['sale'],
-                        'price_cash' => $row['price'],
-                    );
+                    $this->post['price_cash'] -= $row['price'];
+                    $post['price_cash'] = $row['price'];
                 }else {
-                    if ($this->post['price_card']) {
-                        $this->post['price_card'] += $this->post['price_cash'];
-                        unset($this->post['price_cash']);
-
-                        $this->post['price_card']-= $row['price'];
-                        // echo "<br>Оплачено пластиком; ". $row['price'];
-                        $this->post_price = array(
-                            'pricer_id' => $this->post['pricer_id'],
-                            'sale' => $this->post['sale'],
-                            'price_card' => $row['price'],
-                        );
-                    }elseif ($this->post['price_transfer']) {
-                        $this->post['price_transfer'] += $this->post['price_cash'];
-                        unset($this->post['price_cash']);
-
-                        $this->post['price_transfer']-= $row['price'];
-                        // echo "<br>Оплачено перечислением; ". $row['price'];
-                        $this->post_price = array(
-                            'pricer_id' => $this->post['pricer_id'],
-                            'sale' => $this->post['sale'],
-                            'price_transfer' => $row['price'],
-                        );
+                    $post['price_cash'] = $this->post['price_cash'];
+                    $this->post['price_cash'] = 0;
+                    $temp = $row['price'] - $post['price_cash'];
+                    if ($this->post['price_card'] >= $temp) {
+                        $this->post['price_card'] -= $temp;
+                        $post['price_card'] = $temp;
+                    }else {
+                        $post['price_card'] = $this->post['price_card'];
+                        $this->post['price_card'] = 0;
+                        $temp = $temp - $post['price_card'];
+                        if ($this->post['price_transfer'] >= $temp) {
+                            $this->post['price_transfer'] -= $temp;
+                            $post['price_transfer'] = $temp;
+                        }else {
+                            $this->error("Ошибка в price transfer");
+                        }
                     }
                 }
-            }elseif ($this->post['price_card']) {
+            }
+            elseif ($this->post['price_card'])
+            {
                 if ($this->post['price_card'] >= $row['price']) {
-                    $this->post['price_card']-= $row['price'];
-                    // echo "<br>Оплачено пластиком: ". $row['price'];
-                    $this->post_price = array(
-                        'pricer_id' => $this->post['pricer_id'],
-                        'sale' => $this->post['sale'],
-                        'price_card' => $row['price'],
-                    );
+                    $this->post['price_card'] -= $row['price'];
+                    $post['price_card'] = $row['price'];
                 }else {
-                    if ($this->post['price_transfer']) {
-                        $this->post['price_transfer'] += $this->post['price_card'];
-                        unset($this->post['price_card']);
-
-                        $this->post['price_transfer']-= $row['price'];
-                        // echo "<br>Оплачено перечислением; ". $row['price'];
-                        $this->post_price = array(
-                            'pricer_id' => $this->post['pricer_id'],
-                            'sale' => $this->post['sale'],
-                            'price_transfer' => $row['price'],
-                        );
+                    $post['price_card'] = $this->post['price_card'];
+                    $this->post['price_card'] = 0;
+                    $temp = $row['price'] - $post['price_card'];
+                    if ($this->post['price_transfer'] >= $temp) {
+                        $this->post['price_transfer'] -= $temp;
+                        $post['price_transfer'] = $temp;
+                    }else {
+                        $this->error("Ошибка в price transfer");
                     }
                 }
-            }else {
-                $this->post['price_transfer'];
+            }
+            else
+            {
                 if ($this->post['price_transfer'] >= $row['price']) {
-                    $this->post['price_transfer']-= $row['price'];
-                    // echo "<br>Оплачено перечислением: ". $row['price'];
-                    $this->post_price = array(
-                        'pricer_id' => $this->post['pricer_id'],
-                        'sale' => $this->post['sale'],
-                        'price_transfer' => $row['price'],
-                    );
+                    $this->post['price_transfer'] -= $row['price'];
+                    $post['price_transfer'] = $row['price'];
                 }else {
                     $this->error("Ошибка в price transfer");
                 }
             }
-
+            // parad("Оплачено", $post);
+            // parad("Остаток", $this->post);
             $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
             if(intval($object)){
-                $this->post_price['visit_id'] = $row['id'];
-
-                $object1 = Mixin\insert($this->table, $this->post_price);
+                $post['visit_id'] = $row['id'];
+                $object1 = Mixin\insert($this->table, $post);
                 if (!intval($object1)){
                     $this->error($object1);
                 }
@@ -794,7 +779,7 @@ class InvestmentModel extends Model
 
                 <div class="col-md-6">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" name="price" placeholder="Предоплата">
+                        <input type="text" class="form-control border-success" name="price" placeholder="Предоплата" required>
                         <div class="form-control-feedback text-success">
                             <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
                                 <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
@@ -917,13 +902,13 @@ class DivisionModel extends Model
     }
 }
 
-class BedModel extends Model
+class WardModel extends Model
 {
-    public $table = 'beds';
+    public $table = 'wards';
 
     public function form($pk = null)
     {
-        global $db, $FLOOR;
+        global $FLOOR;
         if($pk){
             $post = $this->post;
         }else{
@@ -957,9 +942,89 @@ class BedModel extends Model
                <input type="text" class="form-control" name="ward" placeholder="Введите кабинет" required value="<?= $post['ward'] ?>">
             </div>
 
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render('admin/ward');
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render('admin/ward');
+    }
+}
+
+class BedModel extends Model
+{
+    public $table = 'beds';
+
+    public function form($pk = null)
+    {
+        global $db, $FLOOR;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
             <div class="form-group">
-                <label>Номер:</label>
-                <input type="text" class="form-control" name="num" placeholder="Введите номер" required value="<?= $post['num']?>">
+                <label>Выбирите этаж:</label>
+                <select data-placeholder="Выбрать этаж" id="floor" class="form-control form-control-select2" required>
+                    <option></option>
+                    <?php
+                    foreach ($FLOOR as $key => $value) {
+                        ?>
+                        <option value="<?= $key ?>"<?= ($post['floor']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+               <label>Палата:</label>
+               <select data-placeholder="Выбрать палату" name="ward_id" id="ward_id" class="form-control form-control-select2" required>
+                   <option></option>
+                   <?php
+                   foreach($db->query('SELECT * from wards') as $row) {
+                       ?>
+                       <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?php if($row['id'] == $post['ward_id']){echo'selected';} ?>><?= $row['ward'] ?> палата</option>
+                       <?php
+                   }
+                   ?>
+               </select>
+            </div>
+
+            <div class="form-group">
+                <label>Койка:</label>
+                <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $post['num']?>">
             </div>
 
             <div class="form-group">
@@ -981,6 +1046,11 @@ class BedModel extends Model
             </div>
 
         </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#ward_id").chained("#floor");
+            });
+        </script>
         <?php
     }
 
@@ -1377,8 +1447,8 @@ class LaboratoryAnalyzeModel extends Model
 
             <div class="modal-footer">
                 <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
-                <input class="btn btn-outline-danger btn-md" type="submit" value="Завершить" name="end"></input>
-                <button type="submit" class="btn bg-outline-info">Сохранить</button>
+                <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>

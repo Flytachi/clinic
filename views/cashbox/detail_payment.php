@@ -68,15 +68,11 @@ $header = "История платежей ". addZero($_GET['pk']);
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td>
-                                                <?php
-                                                if ($row['bed_class']) {
-                                                    ?>
-                                                    <span data-popup="tooltip" title="" data-placement="right" data-original-title="<?= $row['bed_class'] ?>">Койка</span>
-                                                    <?php
-                                                }else {
-                                                    echo $row['name'];
-                                                }
-                                                ?>
+												<?php if ($row['bed_class']): ?>
+													<span data-popup="tooltip" title="" data-placement="right" data-original-title="<?= $row['bed_class'] ?>">Койка</span>
+												<?php else: ?>
+													<?= $row['name'] ?>
+												<?php endif; ?>
                                             </td>
                                             <td><?= ($row['price_cash']) ? $row['price_cash']: "" ?></td>
                                             <td><?= ($row['price_card']) ? $row['price_card']: "" ?></td>

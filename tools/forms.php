@@ -569,7 +569,7 @@ class PatientFailure extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger">Отказаться</button>
+                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger btn-sm">Отказаться</button>
             </div>
 
         </form>
@@ -584,9 +584,9 @@ class PatientFailure extends Model
                     data: $(this).serializeArray(),
                     success: function (result) {
                         $('#modal_failure').modal('hide');
-                        $('#'+result).css("background-color", "rgb(244, 67, 54)");
-                        $('#'+result).css("color", "white");
-                        $('#'+result).fadeOut(900, function() {
+                        $(result).css("background-color", "rgb(244, 67, 54)");
+                        $(result).css("color", "white");
+                        $(result).fadeOut(900, function() {
                             $(this).remove();
                         });
                     },
@@ -598,21 +598,22 @@ class PatientFailure extends Model
 
     public function update()
     {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if ($object == 1){
-                $this->success($pk);
-            }else{
-                $this->error($object);
-            }
-        }
+        // if($this->clean()){
+        //     $pk = $this->post['id'];
+        //     unset($this->post['id']);
+        //     $object = Mixin\update($this->table, $this->post, $pk);
+        //     if ($object == 1){
+        //         $this->success($pk);
+        //     }else{
+        //         $this->error($object);
+        //     }
+        // }
+        $this->success($this->post['id']);
     }
 
     public function success($pk)
     {
-        echo "PatientFailure_tr_$pk";
+        echo "#PatientFailure_tr_$pk";
     }
 
 }

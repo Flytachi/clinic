@@ -57,6 +57,12 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="<?= viv('admin/ward') ?>" class="nav-link legitRipple">
+                                        <i class="icon-switch22"></i>
+                                        <span>Палаты</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="<?= viv('admin/bed') ?>" class="nav-link legitRipple">
                                         <i class="icon-bed2"></i>
                                         <span>Койки</span>
@@ -64,13 +70,13 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
-                                        <i class="icon-bed2"></i>
+                                        <i class="icon-bag"></i>
                                         <span>Услуги</span>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
-                                        <i class="icon-bed2"></i>
+                                        <i class="icon-fire"></i>
                                         <span>Анализы</span>
                                     </a>
                                 </li>
@@ -113,9 +119,15 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="<?= viv('cashbox/history') ?>" class="nav-link legitRipple">
+                                    <a href="<?= viv('cashbox/list_payment') ?>" class="nav-link legitRipple">
                                         <i class="icon-display"></i>
-                                        <span>История</span>
+                                        <span>История платежей</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('cashbox/list_investment') ?>" class="nav-link legitRipple">
+                                        <i class="icon-display"></i>
+                                        <span>Инвестиции</span>
                                     </a>
                                 </li>
                                 <?php

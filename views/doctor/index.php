@@ -67,8 +67,8 @@ $header = "Приём пациетов";
 												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
 												<div class="text-muted">
 													<?php
-													if($stm = $db->query('SELECT floor, ward, num FROM beds WHERE user_id='.$row['id'])->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['num']." койка";
+													if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
+														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
 													}
 													?>
 												</div>
