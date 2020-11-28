@@ -1,4 +1,4 @@
-<div class="navbar navbar-expand-md navbar-dark bg-info navbar-static">
+<div class="navbar navbar-expand-md navbar-dark bg-info navbar-static" >
     <div class="navbar-brand">
         <a href="index.php" class="d-inline-block">
             <img src="<?= stack("global_assets/images/logo_light.png") ?>" alt="">
@@ -24,12 +24,7 @@
             </li>
         </ul>
 
-        <span class=" ml-md-3">
-            Здесь время
-            <span class="siya"><?= get_full_name() ." - ". level_name() ." ". division_name() ?></span>
-        </span>
-
-
+        <span class="ml-md-3 siya-long" id="timedisplay"></span>
 
         <ul class="navbar-nav ml-md-auto">
             <li class="nav-item">

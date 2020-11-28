@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(8);
-$header = "Завершёный пациенты";
+$header = "Все пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@ $header = "Завершёный пациенты";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Завершёный пациенты</h6>
+						<h6 class="card-title">Все пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
 								<a class="list-icons-item" data-action="collapse"></a>
@@ -43,8 +43,8 @@ $header = "Завершёный пациенты";
 
 					<div class="card-body">
 
-						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+						<div class="table-responsive card">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>
@@ -57,8 +57,8 @@ $header = "Завершёный пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY us.add_date DESC")->fetchAll());
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date  FROM visit vs LEFT JOIN users us ON (vs.user_id=us.id) WHERE vs.completed IS NOT NULL ORDER BY us.id ASC") as $row) {
+                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC")->fetchAll());
+									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 ORDER BY us.add_date DESC") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -67,7 +67,7 @@ $header = "Завершёный пациенты";
                                             <td><?= $row['numberPhone'] ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('maindoctor/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn bg-indigo btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('maindoctor/list_all_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php

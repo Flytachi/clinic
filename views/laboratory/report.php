@@ -24,9 +24,9 @@ is_auth();
             <tbody>
                 <?php
                 $i = 1;
-                foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
+                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
                     ?>
-                    <tr>
+                    <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                         <td><?= $i++ ?></td>
                         <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
                         <td><?= $row['name'] ?></td>

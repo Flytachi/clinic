@@ -8,11 +8,8 @@ $header = "Рабочий стол";
 <?php include '../layout/head.php' ?>
 
 <!-- Theme JS files -->
-<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3_tooltip.js") ?>"></script>
-
-<script src="<?= stack("assets/js/app.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/widgets_stats.js") ?>"></script>
+<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 <!-- /theme JS files -->
 
 <body>

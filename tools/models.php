@@ -1413,6 +1413,7 @@ class LaboratoryAnalyzeModel extends Model
                                 <th>Анализ</th>
                                 <th style="width:10%">Норматив</th>
                                 <th style="width:10%">Результат</th>
+                                <th class="text-center" style="width:10%">Отклонение</th>
                                 <th class="text-center" style="width:25%">Примечание</th>
                             </tr>
                         </thead>
@@ -1420,9 +1421,9 @@ class LaboratoryAnalyzeModel extends Model
                             <?php
                             $i = 1;
                             foreach ($db->query("SELECT id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
-                                foreach ($db->query("SELECT la.id, la.result, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$row['id']}") as $row) {
+                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$row['id']}") as $row) {
                                     ?>
-                                    <tr>
+                                    <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                                         <td><?= $i++ ?></td>
                                         <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
                                         <td><?= $row['name'] ?></td>
@@ -1432,8 +1433,13 @@ class LaboratoryAnalyzeModel extends Model
                                             <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
-                                            <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+    										<label class="form-check-label">
+    											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-control cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
+    										</label>
                                         </td>
+                                        <th class="text-center" style="width:25%">
+                                            <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                        </th>
                                     </tr>
                                     <?php
                                 }
@@ -1452,6 +1458,16 @@ class LaboratoryAnalyzeModel extends Model
             </div>
 
         </form>
+        <script type="text/javascript">
+
+            $('.cek_a').on('click', function(event) {
+                if ($(this).is(':checked')) {
+                    $('#'+this.dataset.id).addClass("table-danger");
+                }else {
+                    $('#'+this.dataset.id).removeClass("table-danger");
+                }
+            });
+        </script>
         <?php
     }
 
@@ -1462,10 +1478,15 @@ class LaboratoryAnalyzeModel extends Model
         unset($this->post['end']);
         $user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-
+        // $this->test_mod();
         foreach ($this->post as $val) {
             $pk = $val['id'];
             unset($val['id']);
+            if ($val['deviation']) {
+                $val['deviation'] = 1;
+            }else {
+                $val['deviation'] = null;
+            }
             $object = Mixin\update($this->table, $val, $pk);
         }
         if ($object == 1){
@@ -1743,7 +1764,7 @@ class PatientStatsModel extends Model
 
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn btn-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>

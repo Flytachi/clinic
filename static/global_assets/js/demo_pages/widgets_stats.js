@@ -1099,6 +1099,18 @@ var StatisticWidgets = function() {
         // Initialize chart only if element exsists in the DOM
         if(element) {
 
+            // Basic my func
+            // ------------------------------
+            if ($(element+'_all').text()) {
+                var all = Number($(element+'_all').text());
+                var open = Number($(element+'_open').text());
+                var close = Number($(element+'_close').text());
+                if(open == all){
+                    end = 1;
+                }else {
+                    end = open/all;
+                }
+            }
 
             // Basic setup
             // ------------------------------
@@ -3555,9 +3567,9 @@ var StatisticWidgets = function() {
             _progressIcon('#progress_icon_four', 42, 2.5, "#673AB7", "#fff", 0.49, "icon-truck");
 
             _progressPercentage('#progress_percentage_one', 50, 3, "#039BE5", "#fff", 1);
-            _progressPercentage('#progress_percentage_two', 50, 3, "#eee", "#2196F3", 0.79);
-            _progressPercentage('#progress_percentage_three', 50, 3, "#eee", "#f11", 0.50);
-            _progressPercentage('#progress_percentage_four', 50, 3, "#eee", "#090", 0.27);
+            _progressPercentage('#progress_percentage_two', 50, 3, "#eee", "#2196F3", 1);
+            _progressPercentage('#progress_percentage_three', 50, 3, "#eee", "#f11", 1);
+            _progressPercentage('#progress_percentage_four', 50, 3, "#eee", "#090", 1);
 
             // _animatedPie("#pie_basic", 120);
             // _animatedPieWithLegend("#pie_basic_legend", 120);

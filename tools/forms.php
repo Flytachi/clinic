@@ -304,12 +304,12 @@ class VisitRoute extends Model
 
                 <div class="col-md-6">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" ><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
