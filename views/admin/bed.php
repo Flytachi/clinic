@@ -119,12 +119,12 @@ $header = "Койки";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query('SELECT * from beds') as $row) {
+                                    foreach($db->query('SELECT wd.floor, wd.ward, bd.bed, bd.types from beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id)') as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $row['floor'] ?> этаж</td>
                                             <td><?= $row['ward'] ?> палата</td>
-                                            <td><?= $row['num'] ?> койка</td>
+                                            <td><?= $row['bed'] ?> койка</td>
                                             <td>
                                                 <?php
                                                     $stmt = $db->query("SELECT * from bed_type where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);

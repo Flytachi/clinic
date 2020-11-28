@@ -1,5 +1,5 @@
 .siya {
-    animation: pulsate 2.4s linear infinite;
+    animation: pulsate 3.5s linear infinite;
     text-align: center;
     text-shadow:
         /* #E7D06D 0px 0px 10px,
@@ -32,4 +32,24 @@
 }
 @keyframes pulsate{
  50% { color: #fff; text-shadow: 0 -1px rgba(0,0,0,.3), 0 0 5px #ffd, 0 0 8px #fff; }
+}
+
+.siya-long {
+    animation: pulsate 5.4s linear infinite;
+    text-align: center;
+    text-shadow:
+        #ffffff 0px 0px 120px,
+        #ffffff 0px 0px 130px;
+    color: #ffffff;
+    font-variant: normal;
+    font-weight: normal;
+    font-stretch: normal;
+    font-size: 1,5rem;
+    line-height: 1.25;
+    font-family: 'Bickham Script Three', arial;
+    background-color: transparent;
+    text-decoration: none;
+    border-width: 0px;
+    border-color: #ffffff;
+    border-style: none;
 }

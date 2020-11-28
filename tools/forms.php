@@ -279,7 +279,7 @@ class VisitRoute extends Model
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
-                        }division
+                        }
                         ?>
                     </select>
                 </div>
@@ -293,12 +293,10 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
-                            if ($row['id'] != $_SESSION['session_id']) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
+                        foreach($db->query("SELECT * from users WHERE (user_level = 5 OR user_level = 6) AND id != {$_SESSION['session_id']}") as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
                         }
                         ?>
                     </select>
@@ -306,12 +304,12 @@ class VisitRoute extends Model
 
                 <div class="col-md-6">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
@@ -386,11 +384,9 @@ class VisitRoute extends Model
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
-                            if ($row['id'] != $_SESSION['session_id']) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
                         }
                         ?>
                     </select>
@@ -398,12 +394,12 @@ class VisitRoute extends Model
 
                 <div class="col-md-6">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
@@ -569,7 +565,7 @@ class PatientFailure extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger">Отказаться</button>
+                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger btn-sm">Отказаться</button>
             </div>
 
         </form>
@@ -584,9 +580,9 @@ class PatientFailure extends Model
                     data: $(this).serializeArray(),
                     success: function (result) {
                         $('#modal_failure').modal('hide');
-                        $('#'+result).css("background-color", "rgb(244, 67, 54)");
-                        $('#'+result).css("color", "white");
-                        $('#'+result).fadeOut(900, function() {
+                        $(result).css("background-color", "rgb(244, 67, 54)");
+                        $(result).css("color", "white");
+                        $(result).fadeOut(900, function() {
                             $(this).remove();
                         });
                     },
@@ -598,21 +594,22 @@ class PatientFailure extends Model
 
     public function update()
     {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if ($object == 1){
-                $this->success($pk);
-            }else{
-                $this->error($object);
-            }
-        }
+        // if($this->clean()){
+        //     $pk = $this->post['id'];
+        //     unset($this->post['id']);
+        //     $object = Mixin\update($this->table, $this->post, $pk);
+        //     if ($object == 1){
+        //         $this->success($pk);
+        //     }else{
+        //         $this->error($object);
+        //     }
+        // }
+        $this->success($this->post['id']);
     }
 
     public function success($pk)
     {
-        echo "PatientFailure_tr_$pk";
+        echo "#PatientFailure_tr_$pk";
     }
 
 }

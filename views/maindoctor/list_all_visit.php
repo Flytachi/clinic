@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
+is_auth(8);
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
@@ -42,7 +42,6 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                             </div>
                         </div>
                     </div>
-
 
                     <div class="card-body">
 
@@ -144,17 +143,18 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                     <tr class="bg-info">
                                         <th>№</th>
 			                            <th>Напрвитель</th>
-			                            <th>Тип визита</th>
 										<th>Дата визита</th>
 										<th>Дата завершения</th>
 			                            <th>Мед услуга</th>
+										<th>Тип визита</th>
+										<th>Статус</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.accept_date, vs.completed, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
+                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.accept_date, vs.status, vs.completed, sc.name, vs.laboratory FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} ORDER BY vs.add_date DESC") as $row) {
 										?>
                                         <tr>
                                             <td><?= $i++ ?></td>
@@ -162,12 +162,49 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
-											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= $row['name'] ?></td>
+											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
+											<td>
+												<?php
+												if ($row['completed']) {
+													?>
+													<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
+													<?php
+												} else {
+													switch ($row['status']):
+														case 1:
+															?>
+															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+															<?php
+															break;
+														case 2:
+															?>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+															<?php
+															break;
+														default:
+															?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+															<?php
+															break;
+													endswitch;
+												}
+												?>
+											</td>
                                             <td class="text-center">
-												<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+												<?php
+												if($row['laboratory']){
+													?>
+													<button onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<?php
+												}else {
+													?>
+													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<?php
+												}
+												?>
 											</td>
                                         </tr>
                                         <?php

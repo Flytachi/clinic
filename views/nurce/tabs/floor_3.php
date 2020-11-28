@@ -26,13 +26,13 @@
                 </thead>
                 <tbody>
                     <?php
-                    foreach($db->query("SELECT vs.id, bd.ward, bd.num, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND bd.floor = 3 AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
+                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = 3 AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
                         ?>
                         <tr>
                             <td><?= addZero($row['user_id']) ?></td>
                             <td>
                                 <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
-                                <div class="text-muted"><?= $row['ward']." палата ".$row['num']." койка"?></div>
+                                <div class="text-muted"><?= $row['ward']." палата ".$row['bed']." койка"?></div>
                             </td>
                             <td><?= date_diff(new \DateTime(), new \DateTime($row['dateBith']))->y ?></td>
                             <td><?= date('d.m.Y', strtotime($row['add_date'])) ?></td>
@@ -44,10 +44,7 @@
                             <td class="text-center">
                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-                                    <a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Осмотр Врача</a>
-                                    <a href="<?= viv('doctor/card/content_2') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Другие визити</a>
-                                    <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i> Добавить визит</a>
-                                    <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
+                                    <a href="<?= viv('nurce/card/content_1') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Обход</a>
                                 </div>
                             </td>
                         </tr>

@@ -25,6 +25,29 @@ var Select2Selects = function() {
         }
 
 
+        // Format icon
+        function priceFormat(price) {
+            var originalOption = price.element;
+            if (!price.id) { return price.text; }
+            if ($(price.element).data('name')) {
+                var $price = '<div class="d-flex justify-content-between"><span>'+ price.text +'</span>'+ $(price.element).data('name') +'<span>'+ $(price.element).data('price') +'</span></div>';
+            }else {
+                var $price = '<div class="d-flex justify-content-between"><span>'+ price.text +'</span><span>'+ $(price.element).data('price') +'</span></div>';
+            }
+            return $price;
+        }
+
+        // Initialize with options
+        $('.select-price').select2({
+            templateResult: priceFormat,
+            templateSelection: priceFormat,
+            escapeMarkup: function(m) { return m; }
+        });
+
+
+
+
+
         //
         // Basic examples
         //
