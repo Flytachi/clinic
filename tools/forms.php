@@ -309,7 +309,7 @@ class VisitRoute extends Model
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" ><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
