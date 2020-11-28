@@ -1,76 +1,85 @@
-<!-- Quick stats boxes -->
+<!-- Widgets with charts -->
 <div class="row">
+    <div class="col-sm-6 col-xl-3">
 
-    <div class="col-lg-4">
-
-        <!-- Members online -->
-        <div class="card bg-teal-400">
+        <!-- Area chart in colored card -->
+        <div class="card bg-indigo-400 has-bg-image">
             <div class="card-body">
                 <div class="d-flex">
-                    <h3 class="font-weight-semibold mb-0">Пациенты</h3>
-                    <span class="badge bg-teal-800 badge-pill align-self-center ml-auto" style="font-size: 1rem;">
-                        <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE status IS NOT NULL")->rowCount() ?>
-                    </span>
+                    <h3 class="font-weight-semibold mb-0">Все Пациенты</h3>
                 </div>
 
                 <div>
-                    <div class="font-size-sm opacity-75">avg</div>
+                    <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE status IS NOT NULL")->rowCount() ?>
+                </div>
+            </div>
+
+            <div id="chart_area_color"></div>
+        </div>
+        <!-- /area chart in colored card -->
+
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+
+        <!-- Line chart in colored card -->
+        <div class="card bg-blue-400 has-bg-image">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h3 class="font-weight-semibold mb-0">Амбулаторные Пациенты</h3>
+                </div>
+
+                <div>
+                    <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE status IS NOT NULL AND direction IS NULL")->rowCount() ?>
+                </div>
+            </div>
+
+            <div id="line_chart_color"></div>
+        </div>
+        <!-- /line chart in colored card -->
+
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+
+        <!-- Bar chart in colored card -->
+        <div class="card bg-danger-400 has-bg-image">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h3 class="font-weight-semibold mb-0">Стационарные Пациенты</h3>
+                </div>
+
+                <div>
+                    <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE status IS NOT NULL AND direction IS NOT NULL")->rowCount() ?>
                 </div>
             </div>
 
             <div class="container-fluid">
-                <div id="members-online"></div>
+                <div id="chart_bar_color"></div>
             </div>
         </div>
-        <!-- /members online -->
+        <!-- /bar chart in colored card -->
 
     </div>
 
-    <div class="col-lg-4">
+    <div class="col-sm-6 col-xl-3">
 
-        <!-- Today's revenue -->
-        <div class="card bg-blue-400">
+        <!-- Sparklines in colored card -->
+        <div class="card bg-success-400 has-bg-image">
             <div class="card-body">
                 <div class="d-flex">
-                    <h3 class="font-weight-semibold mb-0">Амбулаторные пациенты</h3>
-                    <span class="badge bg-teal-800 badge-pill align-self-center ml-auto" style="font-size: 1rem;">
-                        <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE status IS NOT NULL AND direction IS NULL")->rowCount() ?>
-                    </span>
+                    <h3 class="font-weight-semibold mb-0">Операционные Пациенты</h3>
                 </div>
 
                 <div>
-                    <div class="font-size-sm opacity-75">$37,578 avg</div>
+                    Нет данных
                 </div>
             </div>
 
-            <div id="today-revenue"></div>
+            <div id="sparklines_color"></div>
         </div>
-        <!-- /today's revenue -->
+        <!-- /sparklines in colored card -->
 
     </div>
-
-    <div class="col-lg-4">
-
-        <!-- Current server load -->
-        <div class="card bg-pink-400">
-            <div class="card-body">
-                <div class="d-flex">
-                    <h3 class="font-weight-semibold mb-0">Стационарные пациенты</h3>
-                    <span class="badge bg-teal-800 badge-pill align-self-center ml-auto" style="font-size: 1rem;">
-                        <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE status IS NOT NULL AND direction IS NOT NULL")->rowCount() ?>
-                    </span>
-                </div>
-
-                <div>
-                    <div class="font-size-sm opacity-75">34.6% avg</div>
-                </div>
-            </div>
-
-            <div id="server-load"></div>
-        </div>
-        <!-- /current server load -->
-
-    </div>
-
 </div>
-<!-- /quick stats boxes -->
+<!-- /widgets with charts -->

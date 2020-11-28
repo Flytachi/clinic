@@ -1,6 +1,6 @@
 <!-- Информация о койках -->
 <div class="mb-3">
-	<h6 class="mb-0 font-weight-semibold">Койки</h6>
+	<h4 class="mb-0 font-weight-semibold">Койки</h4>
 	<span class="text-muted d-block">Информация о койках</span>
 </div>
 
@@ -12,7 +12,7 @@
 			<div class="card-body">
 				<h6 class="font-weight-semibold mb-0 mt-1">Информация о койках</h6>
 				<div class="opacity-75 mb-3">539 invites sent</div>
-				<div class="svg-center position-relative mb-1" id="progress_percentage_three"></div>
+				<div class="svg-center position-relative mb-1" id="progress_percentage_one"></div>
 			</div>
 
 			<div class="card-body border-top-0 pt-0">
@@ -51,7 +51,7 @@
 			<div class="card-body">
 				<h6 class="font-weight-semibold mb-0 mt-1">1 Этаж</h6>
 				<div class="text-muted mb-3">539 invites sent</div>
-				<div class="svg-center position-relative mb-1" id="progress_percentage_one"></div>
+				<div class="svg-center position-relative mb-1" id="progress_percentage_two"></div>
 			</div>
 
 			<div class="card-body border-top-0 pt-0">
@@ -90,7 +90,7 @@
 			<div class="card-body">
 				<h6 class="font-weight-semibold mb-0 mt-1">2 Этаж</h6>
 				<div class="text-muted mb-3">893 tickets in total</div>
-				<div class="svg-center position-relative mb-1" id="progress_percentage_two"></div>
+				<div class="svg-center position-relative mb-1" id="progress_percentage_three"></div>
 			</div>
 
 			<div class="card-body border-top-0 pt-0">
@@ -165,7 +165,7 @@
 
 <!-- Информация о пациентах -->
 <div class="mb-3">
-	<h6 class="mb-0 font-weight-semibold">Пациенты</h6>
+	<h4 class="mb-0 font-weight-semibold">Пациенты</h4>
 	<span class="text-muted d-block">Информация о пациентах</span>
 </div>
 
