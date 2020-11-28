@@ -173,18 +173,11 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
-		function Check(events, imp='') {
+		function Check(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (data) {
-					if (imp) {
-						$('#modal_class_show').removeClass("modal-lg");
-						$('#modal_class_show').addClass("modal-full");
-					}else {
-						$('#modal_class_show').removeClass("modal-full");
-						$('#modal_class_show').addClass("modal-lg");
-					}
 					$('#modal_report_show').modal('show');
 					$('#report_show').html(data);
 				},

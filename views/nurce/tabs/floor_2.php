@@ -26,13 +26,13 @@
                 </thead>
                 <tbody>
                     <?php
-                    foreach($db->query("SELECT vs.id, bd.ward, bd.num, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND bd.floor = 2 AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
+                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = 2 AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
                         ?>
                         <tr>
                             <td><?= addZero($row['user_id']) ?></td>
                             <td>
                                 <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
-                                <div class="text-muted"><?= $row['ward']." палата ".$row['num']." койка"?></div>
+                                <div class="text-muted"><?= $row['ward']." палата ".$row['bed']." койка"?></div>
                             </td>
                             <td><?= date_diff(new \DateTime(), new \DateTime($row['dateBith']))->y ?></td>
                             <td><?= date('d.m.Y', strtotime($row['add_date'])) ?></td>

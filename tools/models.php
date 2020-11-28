@@ -269,7 +269,7 @@ class VisitModel extends Model
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
                         }
                         ?>
@@ -278,12 +278,12 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= $row['name'] ?></option>
+                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
@@ -391,12 +391,12 @@ class VisitModel extends Model
 
                 <div class="col-md-3">
                     <label>Койка:</label>
-                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from beds') as $row) {
+                        foreach($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row) {
                             ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['bed'] ?> койка</option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['bed'] ?> койка</option>
                             <?php
                         }
                         ?>

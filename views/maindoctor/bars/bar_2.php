@@ -59,21 +59,21 @@
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Все</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 1")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 1")->rowCount() ?>
 						</h5>
 					</div>
 
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Свободнае</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 1 AND user_id IS NULL")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 1 AND user_id IS NULL")->rowCount() ?>
 						</h5>
 					</div>
 
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Занятые</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 1 AND user_id IS NOT NULL")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 1 AND user_id IS NOT NULL")->rowCount() ?>
 						</h5>
 					</div>
 				</div>
@@ -98,21 +98,21 @@
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Все</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 2")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 2")->rowCount() ?>
 						</h5>
 					</div>
 
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Свободнае</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 2 AND user_id IS NULL")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 2 AND user_id IS NULL")->rowCount() ?>
 						</h5>
 					</div>
 
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Занятые</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 2 AND user_id IS NOT NULL")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 2 AND user_id IS NOT NULL")->rowCount() ?>
 						</h5>
 					</div>
 				</div>
@@ -137,21 +137,21 @@
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Все</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 3")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 3")->rowCount() ?>
 						</h5>
 					</div>
 
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Свободнае</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 3 AND user_id IS NULL")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 3 AND user_id IS NULL")->rowCount() ?>
 						</h5>
 					</div>
 
 					<div class="col-4">
 						<div class="text-uppercase font-size-xs">Занятые</div>
 						<h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
-							<?= $db->query("SELECT id FROM beds WHERE floor = 3 AND user_id IS NOT NULL")->rowCount() ?>
+							<?= $db->query("SELECT bd.id FROM wards wd LEFT JOIN beds bd ON(bd.ward_id=wd.id) WHERE wd.floor = 3 AND user_id IS NOT NULL")->rowCount() ?>
 						</h5>
 					</div>
 				</div>

@@ -137,8 +137,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 					<div class="card-body">
 
-						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
+						<div class="table-responsive card">
+                            <table class="table table-hover table-sm">
 								<thead>
                                     <tr class="bg-info">
                                         <th>№</th>

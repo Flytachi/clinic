@@ -7,11 +7,12 @@ $header = "Рабочий стол";
 <html lang="en">
 <?php include '../layout/head.php' ?>
 
+<!-- Theme JS files -->
 <script src="<?= stack('global_assets/js/plugins/visualization/d3/d3.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/visualization/d3/d3_tooltip.js') ?>"></script>
 
-<script src="<?= stack('global_assets/js/demo_pages/dashboard.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/widgets_stats.js') ?>"></script>
+<!-- /theme JS files -->
 
 <body>
 	<!-- Main navbar -->
