@@ -20,25 +20,31 @@
 	<script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
+	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 	<!-- /core JS files -->
 
-	<!-- Theme JS files -->
-	<script src="<?= stack('global_assets/js/plugins/notifications/sweet_alert.min.js') ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+	<!-- <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
-	<script src="<?= stack('global_assets/js/plugins/notifications/noty.min.js') ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/ui/moment/moment.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/pickers/daterangepicker.js") ?>"></script>
 
 	<script src="<?= stack("assets/js/app.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/dashboard.js") ?>"></script> -->
+
+	<!-- Theme JS files -->
+	<!-- <script src="<?= stack('global_assets/js/plugins/notifications/sweet_alert.min.js') ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+	<script src="<?= stack('global_assets/js/plugins/notifications/noty.min.js') ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script> -->
 	<!-- /theme JS files -->
 
-	<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
+	<!-- <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
 	<script src="<?= stack('global_assets/js/demo_pages/extra_sweetalert.js') ?>"></script>
-	<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script>
 	<script src="<?= stack('global_assets/js/demo_pages/extra_jgrowl_noty.js') ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script> -->
 
 	<!-- JS chained -->
-	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
-	<script src="<?= stack("vendors/js/box.js") ?>"></script>
+	<!-- <script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script> -->
 </head>
