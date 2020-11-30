@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(8);
+is_auth([5,8]);
 $header = "Все пациенты";
 ?>
 <!DOCTYPE html>
@@ -35,6 +35,14 @@ $header = "Все пациенты";
 					<div class="card-header text-dark header-elements-inline alpha-info">
 						<h6 class="card-title">Все пациенты</h6>
 						<div class="header-elements">
+							<form action="#" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 							<div class="list-icons">
 								<a class="list-icons-item" data-action="collapse"></a>
 							</div>
@@ -55,7 +63,7 @@ $header = "Все пациенты";
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="search_display">
                                     <?php
                                     // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC")->fetchAll());
 									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 ORDER BY us.add_date DESC") as $row) {
@@ -90,6 +98,21 @@ $header = "Все пациенты";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "search.php",
+				data: {
+					search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
+	</script>
 
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
