@@ -68,7 +68,7 @@ $header = "Пациент";
 														<?php
 													}else {
 														?>
-														<button onclick="CleanForm('<?= $row['id'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+														<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 														<?php
 													}
 													?>
@@ -116,10 +116,13 @@ $header = "Пациент";
 
 	<script type="text/javascript">
 
-		function CleanForm(id) {
+		function CleanForm(id, name) {
 			$('#report_editor').html('');
 			$('#rep_id').val(id);
 			$('#modal_report_add').modal('show');
+			if (name) {
+				$('#report_title').val(name);
+			}
 		}
 
 		function Check(events) {
@@ -133,7 +136,7 @@ $header = "Пациент";
 			});
 		};
 
-		function Update(events) {
+		function Update(events, name) {
 			$.ajax({
 				type: "GET",
 				url: events,

@@ -246,7 +246,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="" id="division2" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
@@ -409,7 +409,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="" id="division" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from division WHERE level = 5') as $row) {

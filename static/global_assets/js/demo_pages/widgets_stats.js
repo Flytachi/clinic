@@ -1107,6 +1107,9 @@ var StatisticWidgets = function() {
                 var close = Number($(element+'_close').text());
                 if(open == all){
                     end = 1;
+                }else if (close == all) {
+                    end = 0;
+                    backgroundColor =  '#f11';
                 }else {
                     end = open/all;
                 }
@@ -1114,11 +1117,11 @@ var StatisticWidgets = function() {
 
             if (!foregroundColor) {
                 if (end >= 0.6) {
-                    foregroundColor = '#2196F3'
+                    foregroundColor = '#2196F3';
                 }else if (end >= 0.3) {
-                    foregroundColor = '#f91'
+                    foregroundColor = '#f91';
                 }else {
-                    foregroundColor = '#f11'
+                    foregroundColor = '#f11';
                 }
             }
 
