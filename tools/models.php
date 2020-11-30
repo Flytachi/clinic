@@ -491,6 +491,18 @@ class VisitModel extends Model
         }
     }
 
+    public function clean()
+    {
+        global $db;
+        $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
+        if ($stat) {
+            $this->post['laboratory'] = True;
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
     public function delete(int $pk)
     {
         global $db;

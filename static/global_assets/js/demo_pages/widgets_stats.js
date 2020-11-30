@@ -1125,6 +1125,10 @@ var StatisticWidgets = function() {
                 }
             }
 
+            if (!backgroundColor) {
+                backgroundColor = '#eee';
+            }
+
             // Basic setup
             // ------------------------------
 
@@ -3580,9 +3584,9 @@ var StatisticWidgets = function() {
             _progressIcon('#progress_icon_four', 42, 2.5, "#673AB7", "#fff", 0.49, "icon-truck");
 
             _progressPercentage('#progress_percentage_one', 50, 3, "#039BE5", "#fff", 1);
-            _progressPercentage('#progress_percentage_two', 50, 3, "#eee", "", 1);
-            _progressPercentage('#progress_percentage_three', 50, 3, "#eee", "", 1);
-            _progressPercentage('#progress_percentage_four', 50, 3, "#eee", "", 1);
+            _progressPercentage('#progress_percentage_two', 50, 3, "", "", 1);
+            _progressPercentage('#progress_percentage_three', 50, 3, "", "", 1);
+            _progressPercentage('#progress_percentage_four', 50, 3, "", "", 1);
 
             // _animatedPie("#pie_basic", 120);
             // _animatedPieWithLegend("#pie_basic_legend", 120);

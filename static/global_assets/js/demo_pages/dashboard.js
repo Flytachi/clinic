@@ -47,18 +47,47 @@ var Dashboard = function () {
                 maxDate: '12/31/2019',
                 dateLimit: { days: 60 },
                 ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    'Сегодня': [moment(), moment()],
+                    'Вчера': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Последние 7 дней': [moment().subtract(6, 'days'), moment()],
+                    'Последние 30 дней': [moment().subtract(29, 'days'), moment()],
+                    'Этот месяц': [moment().startOf('month'), moment().endOf('month')],
+                    'Прошедший месяц': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 },
                 opens: $('html').attr('dir') == 'rtl' ? 'right' : 'left',
                 applyClass: 'btn-sm bg-slate-600 btn-block',
                 cancelClass: 'btn-sm btn-light btn-block',
                 locale: {
                     format: 'MM/DD/YYYY',
+                    "applyLabel": "Ок",
+                    "cancelLabel": "Отмена",
+                    "fromLabel": "От",
+                    "toLabel": "До",
+                    "customRangeLabel": "Произвольный",
+                    "daysOfWeek": [
+                        "Вс",
+                        "Пн",
+                        "Вт",
+                        "Ср",
+                        "Чт",
+                        "Пт",
+                        "Сб"
+                    ],
+                    "monthNames": [
+                        "Январь",
+                        "Февраль",
+                        "Март",
+                        "Апрель",
+                        "Май",
+                        "Июнь",
+                        "Июль",
+                        "Август",
+                        "Сентябрь",
+                        "Октябрь",
+                        "Ноябрь",
+                        "Декабрь"
+                    ],
+                    firstDay: 1,
                     direction: $('html').attr('dir') == 'rtl' ? 'rtl' : 'ltr'
                 }
             },
