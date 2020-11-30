@@ -1,0 +1,22 @@
+*{
+    font-family: 'DejaVu Sans' !important;
+}
+
+body {
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.my_hr-1 {
+    border: 2px solid black;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.my_hr-2 {
+    border: 0.1px solid black;
+    width: 100%;
+    margin-top: -7px;
+    margin-bottom: 10px;
+}

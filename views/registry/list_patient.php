@@ -36,7 +36,7 @@ $header = "Список пациентов";
 						<div class="header-elements">
 							<form action="#">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="search" class="form-control wmin-200" placeholder="Search...">
+									<input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -62,7 +62,7 @@ $header = "Список пациентов";
 										<th class="text-center">Действия</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody id="search_display">
 									<?php
 									$i = 1;
 									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC") as $row) {
@@ -156,7 +156,11 @@ $header = "Список пациентов";
 											}
 											?>
 											<td class="text-center">
-												<button onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple">Редактировать</button>
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													<a onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
+													<a href="<?= viv('doctor/list_all_visit') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
+                                                </div>
 											</td>
 										</tr>
 										<?php
@@ -208,6 +212,19 @@ $header = "Список пациентов";
 				},
 			});
 		};
+
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "search.php",
+				data: {
+					search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
 	</script>
 
 </body>

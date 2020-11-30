@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Ноя 27 2020 г., 17:08
+-- Время создания: Ноя 28 2020 г., 20:08
 -- Версия сервера: 10.5.8-MariaDB
--- Версия PHP: 7.4.12
+-- Версия PHP: 7.4.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,28 +29,25 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `beds` (
   `id` int(11) NOT NULL,
-  `floor` tinyint(4) NOT NULL,
-  `ward` int(11) NOT NULL,
-  `num` int(11) NOT NULL,
+  `ward_id` int(11) DEFAULT NULL,
+  `bed` int(11) NOT NULL,
   `types` tinyint(1) DEFAULT 0,
-  `user_id` int(11) DEFAULT NULL
+  `user_id` int(11) DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `beds`
 --
 
-INSERT INTO `beds` (`id`, `floor`, `ward`, `num`, `types`, `user_id`) VALUES
-(1, 1, 1, 1, 1, NULL),
-(2, 1, 1, 2, 1, NULL),
-(3, 1, 1, 3, 1, NULL),
-(4, 1, 1, 4, 1, NULL),
-(5, 1, 2, 1, 2, NULL),
-(6, 1, 2, 2, 2, NULL),
-(7, 1, 3, 1, 1, NULL),
-(8, 1, 3, 2, 1, NULL),
-(9, 2, 1, 1, 2, NULL),
-(10, 3, 1, 1, 2, NULL);
+INSERT INTO `beds` (`id`, `ward_id`, `bed`, `types`, `user_id`, `add_date`) VALUES
+(11, 1, 1, 1, NULL, '2020-11-28 02:25:43'),
+(13, 1, 2, 1, NULL, '2020-11-28 02:27:22'),
+(14, 1, 3, 1, NULL, '2020-11-28 02:27:30'),
+(15, 1, 4, 1, NULL, '2020-11-28 02:27:43'),
+(17, 4, 1, 2, 14, '2020-11-28 02:29:20'),
+(18, 4, 2, 2, NULL, '2020-11-28 02:29:30'),
+(19, 5, 1, 2, NULL, '2020-11-28 02:29:39');
 
 -- --------------------------------------------------------
 
@@ -157,8 +154,35 @@ CREATE TABLE `laboratory_analyze` (
   `visit_id` int(11) DEFAULT NULL,
   `analyze_id` int(11) DEFAULT NULL,
   `result` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `description` varchar(500) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL
+  `deviation` tinyint(1) DEFAULT NULL,
+  `description` varchar(300) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `laboratory_analyze`
+--
+
+INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `analyze_id`, `result`, `deviation`, `description`) VALUES
+(1, 13, 7, 5, '4-10', NULL, NULL),
+(2, 13, 7, 6, '3.8-5.2', NULL, NULL),
+(3, 13, 7, 7, '120-160g/L', NULL, NULL),
+(4, 13, 7, 8, '36-48 %', NULL, NULL),
+(5, 13, 7, 9, '80.0-94.0 fl', NULL, NULL),
+(6, 13, 7, 10, '27.0-31.0', NULL, NULL),
+(7, 13, 7, 11, '330-370', NULL, NULL),
+(8, 13, 7, 12, '11.0-19.0', NULL, NULL),
+(9, 13, 7, 13, '150.0-450.0', NULL, NULL),
+(10, 13, 7, 14, '9.4-12.4 um3', NULL, NULL),
+(11, 13, 7, 15, '50.0-75.0 %', NULL, NULL),
+(12, 13, 7, 16, '20.0-44.0%', NULL, NULL),
+(13, 13, 7, 17, '2.0-9.0', NULL, NULL),
+(14, 13, 7, 18, '0-5.0%', NULL, NULL),
+(15, 13, 7, 19, '0-1.0%', NULL, NULL),
+(16, 13, 7, 20, '0-20 mm/hr', NULL, NULL),
+(19, 14, 15, 1, '10', NULL, NULL),
+(20, 14, 15, 2, '7', NULL, NULL),
+(21, 14, 4, 1, '5', 1, '1111'),
+(22, 14, 4, 2, '7', NULL, '');
 
 -- --------------------------------------------------------
 
@@ -303,14 +327,16 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (4, NULL, 'laboratory', '80240dcecd105d50195cce7a318413dc013733e3', 'laboratory', 'laboratory', 'laboratory', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 7, 1, 10, NULL, '2020-11-18 15:56:33'),
 (5, NULL, 'doc_1', '4d5204a88e9f6e4e6d34292df53464549d51e86c', 'Jayson', 'Brody', 'Faker', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 6, 1, 7, NULL, '2020-11-18 15:57:39'),
 (6, NULL, 'doc_2', 'fe0c9097da6e3b417d97100d40c38561c295aeff', 'Фарход', 'Якубов', 'Хврвргврйцгв', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 2, 1, 7, NULL, '2020-11-18 15:58:42'),
-(12, 10, NULL, NULL, 'pasient 1', 'pasient 1', 'pasient 1', '2000-12-12', 'Олмазор', 'kjhjkhjkhk', 'nmm,nj,n,n', ',kn,knm,nm,n', '9998989899', 'ajkshdjkashd', 'jhjkh', 1, 15, NULL, NULL, 0, 'm,nm,nm,nm,n', '2020-11-18 16:05:52'),
-(13, 10, NULL, NULL, 'pasient 2', 'pasient 2', 'pasient 2', '2000-12-12', 'Миробод', 'kjklj', 'kn,knm,n', ',mn,mn,m', '98989898', 'iljiljklj', 'kjkljkl', NULL, 15, NULL, NULL, 0, 'm,nm,n', '2020-11-18 16:06:24'),
-(14, 2, NULL, NULL, 'Жасур', 'Рахматов', 'Илхомович', '2003-05-08', 'Ромитан', 'AC6453482', 'Хокимиат', 'Глава отдела', '+998934568052', 'Алпомыш', 'Алпомыш', 1, 15, NULL, NULL, 0, NULL, '2020-11-18 16:06:53'),
+(12, 10, NULL, NULL, 'pasient 1', 'pasient 1', 'pasient 1', '2000-12-12', 'Олмазор', 'kjhjkhjkhk', 'nmm,nj,n,n', ',kn,knm,nm,n', '9998989899', 'ajkshdjkashd', 'jhjkh', 1, 15, NULL, 1, 0, 'm,nm,nm,nm,n', '2020-11-18 16:05:52'),
+(13, 10, NULL, NULL, 'pasient 2', 'pasient 2', 'pasient 2', '2000-12-12', 'Миробод', 'kjklj', 'kn,knm,n', ',mn,mn,m', '98989898', 'iljiljklj', 'kjkljkl', NULL, 15, NULL, 1, 0, 'm,nm,n', '2020-11-18 16:06:24'),
+(14, 2, NULL, NULL, 'Жасур', 'Рахматов', 'Илхомович', '2003-05-08', 'Ромитан', 'AC6453482', 'Хокимиат', 'Глава отдела', '+998934568052', 'Алпомыш', 'Алпомыш', 1, 15, NULL, 1, 0, NULL, '2020-11-18 16:06:53'),
 (15, 10, NULL, NULL, 'pasient 3', 'pasient 3', 'pasient 3', '2000-12-12', 'Олмазор', 'jjjkhjk', 'm,nnm,nmbnm', 'nm,m,nm,n', '98098098098', ',jhknjj', 'jjnjjk', NULL, 15, NULL, NULL, 0, 'm,nm,nm,nm,n', '2020-11-18 16:07:03'),
 (17, 10, NULL, NULL, 'pasient 4', 'pasient 4', 'pasient 4', '1212-02-11', 'Олмазор', 'kljkljklj', 'kljkljklj', 'ljkljklj', '8909809809', 'iljljklj', 'lkjkljklj', NULL, 15, NULL, NULL, 0, 'lkjlkjkljkl', '2020-11-18 16:07:48'),
 (18, 10, NULL, NULL, 'pasient 5', 'pasient 5', 'pasient 5', '2122-03-12', 'Олмазор', 'jkhjkhjk', 'mnm,nm,nm,', 'm,nm,nm,n', '89098098098', 'kjhkljk', 'jkhjkhkjh', NULL, 15, NULL, NULL, 0, ',mn,mn,mn', '2020-11-18 16:08:21'),
 (21, 2, NULL, NULL, 'Pasient 6', 'Pasient 6', 'Pasient 6', '2019-11-06', 'Чилонзор', 'цуй321112312312', 'Pasient 6', 'Pasient 6', '2132132112312231', 'Pasient 6', 'Pasient 6', NULL, 15, NULL, NULL, 0, 'Pasient 6', '2020-11-18 16:13:53'),
-(22, 9, NULL, NULL, 'Алексей', 'Шевцов', 'Владимирович', '1999-11-24', 'Юнусобод', 'WE324234234', 'Ютуб', 'Блогер', '+998990989078', 'Украина Одесса', 'Украина Одесса', 1, 15, NULL, NULL, 0, 'Глупые люди', '2020-11-18 16:15:37');
+(22, 9, NULL, NULL, 'Алексей', 'Шевцов', 'Владимирович', '1999-11-24', 'Юнусобод', 'WE324234234', 'Ютуб', 'Блогер', '+998990989078', 'Украина Одесса', 'Украина Одесса', 1, 15, NULL, NULL, 0, 'Глупые люди', '2020-11-18 16:15:37'),
+(29, NULL, 'doc_h', '8171857a4e3fbc786dd873feb372a6189166f891', 'doc_h', 'doc_h', 'doc_h', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, 10, NULL, '2020-11-27 17:12:42'),
+(30, NULL, 'nurce_1', 'c000e8b0a3f6e91f586867365618581675fa20d7', 'nurce', 'nurce', 'nurce', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 1, NULL, '2020-11-28 08:23:45');
 
 -- --------------------------------------------------------
 
@@ -329,6 +355,13 @@ CREATE TABLE `user_stats` (
   `saturation` tinyint(4) DEFAULT NULL,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `user_stats`
+--
+
+INSERT INTO `user_stats` (`id`, `parent_id`, `visit_id`, `stat`, `pressure`, `pulse`, `temperature`, `saturation`, `add_date`) VALUES
+(1, 30, 3, 1, '180/20', 65, '36.3', 96, '2020-11-28 18:26:50');
 
 -- --------------------------------------------------------
 
@@ -359,6 +392,18 @@ CREATE TABLE `visit` (
   `completed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Дамп данных таблицы `visit`
+--
+
+INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `service_id`, `bed_id`, `direction`, `status`, `laboratory`, `complaint`, `failure`, `report_title`, `report_description`, `report_conclusion`, `add_date`, `accept_date`, `priced_date`, `discharge_date`, `completed`) VALUES
+(1, 12, 6, 6, 2, 5, NULL, NULL, 2, NULL, '5', NULL, NULL, NULL, NULL, '2020-11-28 21:28:22', '2020-11-28 21:30:06', '2020-11-28 21:29:19', NULL, NULL),
+(2, 13, 6, 6, 2, 6, NULL, NULL, 2, NULL, 'ww', NULL, NULL, NULL, NULL, '2020-11-28 21:28:39', '2020-11-28 21:30:08', '2020-11-28 21:29:27', NULL, NULL),
+(3, 14, 6, 6, 2, 1, 17, 1, 2, NULL, 'w', NULL, NULL, NULL, NULL, '2020-11-28 21:28:56', '2020-11-28 21:30:10', NULL, NULL, NULL),
+(4, 14, 6, 4, 6, 10, NULL, 1, NULL, 1, 'w', NULL, NULL, NULL, NULL, '2020-11-28 21:30:48', '2020-11-28 21:34:57', NULL, NULL, '2020-11-28 23:21:54'),
+(5, 14, 6, 5, 6, 8, NULL, 1, NULL, NULL, 'w', NULL, 'УЗИ Допплерография каротид', 'Признак ламинарного кровотока - наличие &quot;спектрального окна&quot;. Следует отметить, что при недостаточно точно скорригированном угле между лучом и потоком крови &quot;спектральное окно&quot; может отсутствовать и при ламинарном кровотоке. При допплерографии артерий шеи получается спектр, характерный для этих сосудов. При исследовании артерий конечностей выявляется магистральный тип кровотока. В норме стенки вен тонкие, стенка, прилежащая к артерии, может не визуализироваться. В просвете вен посторонних включений не определяется, в венах нижних конечностей визуализируются клапаны в виде тонких структур, колеблющихся в такт с дыханием. Кровоток в венах фазный, отмечается синхронизация его с фазами дыхательного цикла (рис. 2, 3). При проведении дыхательной пробы на бедренной вене и при проведении компрессионных проб на подколенной вене не должна регистрироваться ретроградная волна продолжительностью более 1,5 сек.', 'Эмболии. На сканограмме эмбол выглядит как плотная округлая структура. Просвет артерии выше и ниже эмбола однородный, эхонегативный, не содержит дополнительных включений. При оценке пульсации выявляется увеличение ее амплитуды проксимальнее эмболии и ее отсутствие дистальнее эмболии. При допплерографии ниже эмбола определяется измененный магистральный кровоток либо кровоток не выявляется.', '2020-11-28 21:30:59', '2020-11-28 21:33:12', NULL, NULL, '2020-11-28 21:34:36'),
+(6, 12, 6, 5, 6, 4, NULL, NULL, NULL, NULL, '5', NULL, 'MRT Головного мозга', 'МРТ головного мозга — это неинвазивное исследование, которое подразумевает использование мощных магнитных полей, высокочастотных импульсов, компьютерной системы и программного обеспечения, позволяющих получить детальное изображение мозга. Рентгеновское излучение при МРТ не используется. Именно поэтому на сегодняшний день МРТ — одно из наиболее безопасных и притом очень точных исследований. Качество визуализации при МРТ намного лучше, чем при рентгенологическом или ультразвуковом исследовании, компьютерной томографии. Магнитно-резонансная томография дает возможность обнаружить опухоли, аневризму и другие патологии сосудов, а также некоторые проблемы нервной системы. Словом, возможности метода очень широки. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Несмотря на то, что для разных методов диагностики (рентгеновской, радионуклидной, магнитно-резонансной, ультразвуковой) используются различные физические принципы и источники излучения, их объединяет применение правил математического моделирования при создании изображений. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', '2020-11-28 21:31:18', '2020-11-28 21:32:04', '2020-11-28 21:31:31', NULL, '2020-11-28 21:33:10');
+
 -- --------------------------------------------------------
 
 --
@@ -377,6 +422,39 @@ CREATE TABLE `visit_price` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
+-- Дамп данных таблицы `visit_price`
+--
+
+INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `add_date`) VALUES
+(1, 1, 3, '100000.0', NULL, NULL, NULL, '2020-11-28 16:29:19'),
+(2, 2, 3, '100000.0', '100000.0', NULL, NULL, '2020-11-28 16:29:27'),
+(3, 6, 3, '1000.0', NULL, NULL, NULL, '2020-11-28 16:31:31');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `wards`
+--
+
+CREATE TABLE `wards` (
+  `id` int(11) NOT NULL,
+  `floor` tinyint(4) DEFAULT NULL,
+  `ward` smallint(6) DEFAULT NULL,
+  `add_date` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `wards`
+--
+
+INSERT INTO `wards` (`id`, `floor`, `ward`, `add_date`) VALUES
+(1, 1, 1, '2020-11-28 02:12:45'),
+(2, 1, 2, '2020-11-28 02:13:16'),
+(3, 1, 3, '2020-11-28 02:13:21'),
+(4, 2, 1, '2020-11-28 02:13:43'),
+(5, 3, 1, '2020-11-28 02:13:49');
+
+--
 -- Индексы сохранённых таблиц
 --
 
@@ -384,7 +462,8 @@ CREATE TABLE `visit_price` (
 -- Индексы таблицы `beds`
 --
 ALTER TABLE `beds`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `bed` (`ward_id`,`bed`) USING BTREE;
 
 --
 -- Индексы таблицы `bed_type`
@@ -466,6 +545,13 @@ ALTER TABLE `visit_price`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `wards`
+--
+ALTER TABLE `wards`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `floor` (`floor`,`ward`) USING BTREE;
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -473,7 +559,7 @@ ALTER TABLE `visit_price`
 -- AUTO_INCREMENT для таблицы `beds`
 --
 ALTER TABLE `beds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT для таблицы `bed_type`
@@ -497,13 +583,13 @@ ALTER TABLE `division`
 -- AUTO_INCREMENT для таблицы `investment`
 --
 ALTER TABLE `investment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
@@ -533,25 +619,31 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT для таблицы `user_stats`
 --
 ALTER TABLE `user_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT для таблицы `wards`
+--
+ALTER TABLE `wards`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

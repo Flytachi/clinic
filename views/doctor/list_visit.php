@@ -167,7 +167,11 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td class="text-center">
-												<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye mr-2"></i> Просмотр</a>
+													<a href="<?= viv('prints/document_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+                                                </div>
 											</td>
                                         </tr>
                                         <?php

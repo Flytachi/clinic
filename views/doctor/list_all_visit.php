@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
+is_auth([5,2]);
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
@@ -194,17 +194,17 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												?>
 											</td>
                                             <td class="text-center">
-												<?php
-												if($row['laboratory']){
-													?>
-													<button onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<?php
-												}else {
-													?>
-													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-													<?php
-												}
-												?>
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													<?php if ($row['laboratory']): ?>
+														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye mr-2"></i> Просмотр</a>
+														<a href="<?= viv('prints/document_2') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+													<?php else: ?>
+														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye mr-2"></i> Просмотр</a>
+														<a href="<?= viv('prints/document_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<!-- <a onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a> -->
+													<?php endif; ?>
+                                                </div>
 											</td>
                                         </tr>
                                         <?php
@@ -236,6 +236,17 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	</div>
 
 	<script type="text/javascript">
+
+		// function Print(events) {
+		// 	$.ajax({
+		// 		type: "GET",
+		// 		url: events,
+		// 		success: function (data) {
+		// 			data.window.print();
+		// 		},
+		// 	});
+		// }
+
 		function Check(events) {
 			$.ajax({
 				type: "GET",
