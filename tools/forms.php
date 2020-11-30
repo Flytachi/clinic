@@ -196,7 +196,7 @@ class VisitReport extends Model
                 <div class="row">
                     <div class="col-md-6 offset-md-3">
                         <label class="col-form-label">Наименования отчета:</label>
-                        <input type="text" name="report_title" value="<?= $post['report_title'] ?>" class="form-control" placeholder="Названия отчета">
+                        <input type="text" name="report_title" id="report_title" value="<?= $post['report_title'] ?>" class="form-control" placeholder="Названия отчета">
                     </div>
 
                     <div class="col-md-10 offset-md-1">
@@ -438,7 +438,6 @@ class VisitRoute extends Model
         if ($stat) {
             $this->post['laboratory'] = True;
         }
-        unset($this->post['division_id']);
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

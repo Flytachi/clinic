@@ -30,6 +30,10 @@ function getDate()
     var minutes = date.getMinutes();
     var seconds = date.getSeconds();
     //По надобности условие ниже повторить с minutes и hours
+    if(minutes < 10)
+    {
+        minutes = '0' + minutes;
+    }
     if(seconds < 10)
     {
         seconds = '0' + seconds;

@@ -1,26 +1,38 @@
 <!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+    </head>
+    <body>
+
+    </body>
+</html>
+
+
+<!DOCTYPE html>
 <html style="background-color: #565656;">
     <head>
         <meta charset="utf-8" />
-        <title>qweqweqw</title>
+        <title>Document</title>
     </head>
-    <body lang="ru-RU" dir="LTR" style="margin-left:8%; margin-top: 1%; background-color: #FFFFFF; height:700px; padding-top: 2%; padding-bottom: 0.45in; padding-left: 0.85in; padding-right: 0.26in; width: 890px">
+    <body onload="//window.print();" lang="ru-RU" dir="LTR" style="margin-left:8%; margin-top: 1%; background-color: #FFFFFF; height:700px; padding-top: 2%; padding-bottom: 0.45in; padding-left: 0.85in; padding-right: 0.26in; width: 890px">
 
         <div style="border: 1px solid #00000a; padding: 1%; height: 700px;">
 
 
             <div class="western">
 
-                <div class="western" style="margin-bottom: 0in; float: left; width: 50%;"><img src="dc31712e93a28996ad51202750d6f49d_html_1c77d43e.jpg" name="Рисунок 6" align="LEFT" hspace="12" width="317" height="62" border="0" /><br /></div>
+                <div class="western" style="margin-bottom: 0in; float: left; width: 50%;"><img src="icon/company.jpg" name="Рисунок 6" align="LEFT" hspace="12" width="317" height="62" border="0" /><br /></div>
 
                 <div class="western" class="margin-bottom: 0in" style=" float: right; width: 50%;">
                     <font size="4">Медицинский оздоровительный комплекс</font><br>
                     <font size="4">г.Бухара, ул. М.Икбол, ( )тел: ( ) </font><br>
                     <font size="2" class="font-size: 11pt">
-                        <img src="dc31712e93a28996ad51202750d6f49d_html_8b3b0fec.png" name="Рисунок 3" width="25" height="25" border="0" /><span lang="en-US"><b>bot carmenplyus</b></span>
+                        <img src="icon/telegramm.png" name="Рисунок 3" width="25" height="25" border="0" /><span lang="en-US"><b>bot carmenplyus</b></span>
                     </font>
                     <font size="2" class="font-size: 11pt">
-                        <img src="dc31712e93a28996ad51202750d6f49d_html_532849b4.png" name="Рисунок 2" hspace="12" width="20" height="20" border="0" /><span lang="en-US"><b>carmenplyus.uz</b></span>
+                        <img src="icon/site.png" name="Рисунок 2" hspace="12" width="20" height="20" border="0" /><span lang="en-US"><b>carmenplyus.uz</b></span>
                     </font>
                 </div>
 

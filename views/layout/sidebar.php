@@ -209,7 +209,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('doctor/list_all') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('maindoctor/list_all') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Все пациенты</span>
                                 </a>
