@@ -127,12 +127,12 @@ class PatientForm extends Model
                         <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
                     </div>
 
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <div class="col-md-6">
                             <label>Аллергия:</label>
                             <textarea rows="4" cols="4" name="allergy" class="form-control" placeholder="Введите аллергия ..."><?= $post['allergy']?></textarea>
                         </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
@@ -213,6 +213,9 @@ class VisitReport extends Model
             </div>
 
             <div class="modal-footer">
+                <?php if (level() == 10): ?>
+                    <a href="<?= up_url($_GET['user_id'], 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента!')" class="btn btn-outline-danger">Завершить</a>
+                <?php endif; ?>
                 <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
@@ -242,9 +245,10 @@ class VisitUpStatus extends Model
 
     public function success()
     {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/doctor/$this->url");
-        exit;
+        render();
+        // global $PROJECT_NAME;
+        // header("location:/$PROJECT_NAME/views/doctor/$this->url");
+        // exit;
     }
 
 }
@@ -293,7 +297,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <option></option>
                         <?php
-                        foreach($db->query("SELECT * from users WHERE (user_level = 5 OR user_level = 6) AND id != {$_SESSION['session_id']}") as $row) {
+                        foreach($db->query("SELECT * from users WHERE (user_level = 5 OR user_level = 6 OR user_level = 10) AND id != {$_SESSION['session_id']}") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -307,22 +311,13 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
                     </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row" style="display: none;">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
                 </div>
 
             </div>
@@ -365,7 +360,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -383,7 +378,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -397,22 +392,13 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6  OR user_level = 10') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
                         }
                         ?>
                     </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row" style="display: none;">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."><?= $patient->complaint ?></textarea>
                 </div>
 
             </div>

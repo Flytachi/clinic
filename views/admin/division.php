@@ -75,7 +75,7 @@ $header = "Класификация персонала";
                                         ?>
                                         <tr>
                                             <td><?= $row['id'] ?></td>
-                                            <td><?= level_name($row['level']) ?></td>
+                                            <td><?= $PERSONAL[$row['level']] ?></td>
                                             <td><?= $row['title'] ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td>

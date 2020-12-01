@@ -27,5 +27,8 @@ switch (level()):
     case 9:
         render('coock/index');
         break;
+    case 10:
+        render('diagnostic/index');
+        break;
 endswitch;
 ?>

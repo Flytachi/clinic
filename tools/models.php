@@ -292,15 +292,6 @@ class VisitModel extends Model
 
             </div>
 
-            <div class="form-group row">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
-                </div>
-
-            </div>
-
             <div class="text-right">
                 <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
@@ -437,15 +428,6 @@ class VisitModel extends Model
 
             </div>
 
-            <div class="form-group row">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
-                </div>
-
-            </div>
-
             <div class="text-right">
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
@@ -489,6 +471,18 @@ class VisitModel extends Model
             }
 
         }
+    }
+
+    public function clean()
+    {
+        global $db;
+        $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
+        if ($stat) {
+            $this->post['laboratory'] = True;
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function delete(int $pk)
@@ -1433,9 +1427,11 @@ class LaboratoryAnalyzeModel extends Model
                                             <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
-    										<label class="form-check-label">
-    											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-control cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
-    										</label>
+                                            <div class="form-check">
+        										<label class="form-check-label">
+        											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
+        										</label>
+        									</div>
                                         </td>
                                         <th class="text-center" style="width:25%">
                                             <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>

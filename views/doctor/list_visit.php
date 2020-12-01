@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
+is_auth();
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
@@ -106,10 +106,10 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 				    							<?= ($patient->gender) ? "Мужской": "Женский" ?>
 				    						</div>
 
-				                            <label class="col-md-3"><b>Аллергия:</b></label>
+				                            <!-- <label class="col-md-3"><b>Аллергия:</b></label>
 				                            <div class="col-md-9 text-right">
 				                                <?= $patient->allergy ?>
-				                            </div>
+				                            </div> -->
 
 				    					</div>
 

@@ -62,8 +62,17 @@
 
 <!-- Информация об отделах -->
 <div class="mb-3">
-	<h4 class="mb-0 font-weight-semibold">Отделы</h4>
-	<span class="text-muted d-block">Информация об отделах</span>
+
+	<div class=" header-elements-sm-inline">
+		<h4 class="mb-0 font-weight-semibold">Отделы</h4>
+		<span class="text-muted d-block">Информация об отделах</span>
+		<div class="header-elements">
+			<a class="text-default daterange-ranges font-weight-semibold cursor-pointer dropdown-toggle">
+				<i class="icon-calendar3 mr-2"></i>
+				<span></span>
+			</a>
+    	</div>
+	</div>
 </div>
 
 <div class="row">
