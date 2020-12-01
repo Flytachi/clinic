@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth([5,8]);
+is_auth([2,5,8]);
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>

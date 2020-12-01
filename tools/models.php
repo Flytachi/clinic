@@ -1445,9 +1445,11 @@ class LaboratoryAnalyzeModel extends Model
                                             <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
-    										<label class="form-check-label">
-    											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-control cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
-    										</label>
+                                            <div class="form-check">
+        										<label class="form-check-label">
+        											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
+        										</label>
+        									</div>
                                         </td>
                                         <th class="text-center" style="width:25%">
                                             <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
