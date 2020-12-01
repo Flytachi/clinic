@@ -1,5 +1,5 @@
 <?php
-$sql = "SELECT us.id, vs.id 'visit_id', vs.grant_id, us.dateBith, vs.complaint, us.numberPhone, us.allergy, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, wd.floor, wd.ward, bd.bed FROM users us LEFT JOIN visit vs ON (vs.user_id = us.id) LEFT JOIN beds bd ON (bd.user_id=vs.user_id) LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE vs.status = 2 AND us.id = {$_GET['id']}";
+$sql = "SELECT us.id, vs.id 'visit_id', vs.grant_id, us.dateBith, us.numberPhone, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, wd.floor, wd.ward, bd.bed FROM users us LEFT JOIN visit vs ON (vs.user_id = us.id) LEFT JOIN beds bd ON (bd.user_id=vs.user_id) LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE vs.status = 2 AND us.id = {$_GET['id']}";
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($patient);
 ?>
@@ -76,10 +76,10 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     							<?= ($patient->gender) ? "Мужской": "Женский" ?>
     						</div>
 
-                            <label class="col-md-3"><b>Аллергия:</b></label>
+                            <!-- <label class="col-md-3"><b>Аллергия:</b></label>
                             <div class="col-md-9 text-right">
                                 <?= $patient->allergy ?>
-                            </div>
+                            </div> -->
 
     					</div>
 

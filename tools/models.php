@@ -292,15 +292,6 @@ class VisitModel extends Model
 
             </div>
 
-            <div class="form-group row">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
-                </div>
-
-            </div>
-
             <div class="text-right">
                 <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
@@ -433,15 +424,6 @@ class VisitModel extends Model
                         }
                         ?>
                     </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea rows="4" cols="4" name="complaint" class="form-control" placeholder="Введите жалобу ..."></textarea>
                 </div>
 
             </div>

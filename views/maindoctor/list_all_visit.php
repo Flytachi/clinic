@@ -105,10 +105,10 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 				    							<?= ($patient->gender) ? "Мужской": "Женский" ?>
 				    						</div>
 
-				                            <label class="col-md-3"><b>Аллергия:</b></label>
+				                            <!-- <label class="col-md-3"><b>Аллергия:</b></label>
 				                            <div class="col-md-9 text-right">
 				                                <?= $patient->allergy ?>
-				                            </div>
+				                            </div> -->
 
 				    					</div>
 
@@ -142,10 +142,11 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <thead>
                                     <tr class="bg-info">
                                         <th>№</th>
-			                            <th>Напрвитель</th>
+										<th>Специолист</th>
 										<th>Дата визита</th>
 										<th>Дата завершения</th>
 			                            <th>Мед услуга</th>
+										<th>Напрвитель</th>
 										<th>Тип визита</th>
 										<th>Статус</th>
                                         <th class="text-center" style="width:210px">Действия</th>
@@ -154,17 +155,21 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.accept_date, vs.status, vs.completed, sc.name, vs.laboratory FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} ORDER BY vs.add_date DESC") as $row) {
+                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.grant_id, vs.direction, vs.accept_date, vs.status, vs.completed, sc.name, vs.laboratory FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} ORDER BY vs.add_date DESC") as $row) {
 										?>
                                         <tr>
                                             <td><?= $i++ ?></td>
 											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												<?= level_name($row['grant_id']) ." ". division_name($row['grant_id']) ?>
+												<div class="text-muted"><?= get_full_name($row['grant_id']) ?></div>
 											</td>
 											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= $row['name'] ?></td>
+											<td>
+												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
+												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+											</td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 											<td>
 												<?php

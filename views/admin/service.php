@@ -78,8 +78,8 @@ $header = "Услуги";
                                   		<tr>
 											<td><?= $row['id'] ?></td>
 											<td><?= $row['name'] ?></td>
-	                                      	<td><?= level_name($row['user_level']) ?></td>
-	                                      	<td><?= division_name($row['division_id']) ?></td>
+	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
+	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT * FROM division WHERE id ={$row['division_id']}")->fetch()['name'] : "" ?></td>
 											<td><?= $row['price'] ?></td>
 	                                      	<td>
 												<div class="list-icons">
