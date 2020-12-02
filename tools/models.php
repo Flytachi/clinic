@@ -223,7 +223,7 @@ class VisitModel extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="NewNoty()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="0">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
@@ -249,7 +249,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND assist != 2') as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -293,8 +293,8 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <!-- <button type="button" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button> -->
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -302,8 +302,8 @@ class VisitModel extends Model
             $(function(){
                 $("#parent_id2").chained("#division2");
                 $("#service").chained("#division2");
-
             });
+
             let conn = new WebSocket("ws://192.168.1.114:8080");
             conn.onopen = function(e) {
                 console.log("Connection established!");
@@ -330,7 +330,7 @@ class VisitModel extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="NewNoty()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="1">
             <input type="hidden" name="status" value="1">
@@ -429,7 +429,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -519,15 +519,6 @@ class VisitModel extends Model
         }
     }
 
-    public function error($message)
-    {
-        echo '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-    }
 }
 
 class VisitPriceModel extends Model

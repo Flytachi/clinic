@@ -148,7 +148,7 @@ class Model
 
     public function success()
     {
-        echo "Успешно";
+        echo 1;
     }
 
     public function error($message)

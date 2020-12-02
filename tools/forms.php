@@ -19,7 +19,7 @@ class PatientForm extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="NewNoty()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
@@ -147,24 +147,14 @@ class PatientForm extends Model
 
     public function success()
     {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render('registry/index');
+        echo 1;
+        // render('registry/index');
     }
 
     public function error($message)
     {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
-        ';
-        render('registry/index');
+        echo $message;
+        // render('registry/index');
     }
 }
 
@@ -232,15 +222,20 @@ class VisitReport extends Model
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
         if(division_assist() == 2){
             if ($object['parent_id'] = $object['assist_id'] or $object['parent_id'] == $_SESSION['session_id']) {
-
                 if($object){
                     $this->set_post($object);
                     return $this->form($object['id']);
                 }else{
                     Mixin\error('404');
                 }
-
             }else {
+                Mixin\error('404');
+            }
+        }else {
+            if($object){
+                $this->set_post($object);
+                return $this->form($object['id']);
+            }else{
                 Mixin\error('404');
             }
         }
@@ -319,7 +314,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND assist != 2') as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -400,7 +395,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND assist != 2') as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php

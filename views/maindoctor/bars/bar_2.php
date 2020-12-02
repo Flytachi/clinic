@@ -11,7 +11,10 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL")->rowCount() ?>
+						<?php
+						// prit($db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchAll());
+						?>
+						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Общие пациенты</span>
 				</div>
@@ -28,7 +31,7 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Новые пациенты</span>
 				</div>
@@ -45,7 +48,7 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') != CURRENT_DATE()")->rowCount() ?>
+						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') != CURRENT_DATE()")->rowCount() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Постояные пациенты</span>
 				</div>
@@ -66,12 +69,7 @@
 	<div class=" header-elements-sm-inline">
 		<h4 class="mb-0 font-weight-semibold">Отделы</h4>
 		<span class="text-muted d-block">Информация об отделах</span>
-		<div class="header-elements">
-			<a class="text-default daterange-ranges font-weight-semibold cursor-pointer dropdown-toggle">
-				<i class="icon-calendar3 mr-2"></i>
-				<span></span>
-			</a>
-    	</div>
+		<h4 class="mb-0 font-weight-semibold"></h4>
 	</div>
 </div>
 
@@ -84,7 +82,7 @@
 				<div class="media">
 					<div class="media-body">
 						<h3 class="font-weight-semibold mb-0">
-							<?= $db->query("SELECT DISTINCT user_id FROM visit WHERE division_id = {$row['id']} AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+							<?= $db->query("SELECT DISTINCT user_id FROM visit WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
 						</h3>
 						<span class="text-uppercase font-size-sm text-muted"><?= $row['title'] ?></span>
 					</div>
