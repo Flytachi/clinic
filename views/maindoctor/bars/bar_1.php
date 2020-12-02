@@ -9,8 +9,13 @@
                     <h3 class="font-weight-semibold mb-0">Все Пациенты</h3>
                 </div>
 
-                <div>
-                    <?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL")->rowCount() ?>
+                <div class="row">
+                    <div class="col-md-6 text-left">
+                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL")->rowCount() ?></span>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <span class="badge badge-pill badge-success font-size-lg">+3</span>
+                    </div>
                 </div>
             </div>
 

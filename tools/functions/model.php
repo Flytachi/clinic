@@ -132,9 +132,17 @@ class Model
         exit;
     }
 
-    public function test_mod()
+    public function mod($mod=null)
     {
-        prit($this);
+        switch ($mod) {
+            case "test":
+                prit($this);
+                break;
+
+            default:
+                echo "Не назначен мод";
+                break;
+        }
         exit;
     }
 

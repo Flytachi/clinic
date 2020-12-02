@@ -57,15 +57,35 @@ $header = "Амбулаторные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+									if (division_assist() == 2) {
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC";
+
+									}else {
+										$sql = "SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC";
+									}
+                                    foreach($db->query($sql) as $row) {
+										if (division_assist() == 2) {
+											if ($row['parent_id'] == $row['assist_id']) {
+												$tr = "";
+											}elseif ($row['parent_id'] == $_SESSION['session_id']) {
+												$tr = "table-success";
+											}else {
+												$tr = "table-danger";
+											}
+										}
                                         ?>
-                                        <tr>
+                                        <tr class="<?= $tr ?>">
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
-                                                <?php
-                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL") as $serv) {
+												<?php
+												if (division_assist() == 2) {
+													$sql_ser = "SELECT * FROM service WHERE id = {$row['service_id']}";
+												}else {
+													$sql_ser = "SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL";
+												}
+                                                foreach ($db->query($sql_ser) as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>
@@ -75,13 +95,9 @@ $header = "Амбулаторные пациенты";
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
-                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Осмотр Врача</a>
-                                                    <a href="<?= viv('doctor/card/content_2') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Другие визити</a>
-                                                    <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i> Добавить визит</a>
-                                                    <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i> Анализи Лаборатория</a>
-                                                </div>
+												<?php if ($tr != "table-danger"): ?>
+													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+												<?php endif; ?>
                                             </td>
                                         </tr>
                                         <?php
@@ -105,8 +121,31 @@ $header = "Амбулаторные пациенты";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_result_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="modal_result_show_content">
+
+			</div>
+		</div>
+	</div>
+
 	<!-- Footer -->
-    <?php include '../layout/footer.php' ?>
-    <!-- /footer -->
+	<?php include '../layout/footer.php' ?>
+	<!-- /footer -->
+
+	<script type="text/javascript">
+
+		function ResultShow(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_result_show').modal('show');
+					$('#modal_result_show_content').html(result);
+				},
+			});
+		};
+
+	</script>
 </body>
 </html>

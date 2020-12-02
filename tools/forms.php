@@ -192,6 +192,9 @@ class VisitReport extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="id" id="rep_id" value="<?= $pk ?>">
+                <?php if (division_assist() == 2): ?>
+                    <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+                <?php endif; ?>
 
                 <div class="row">
                     <div class="col-md-6 offset-md-3">
@@ -223,6 +226,40 @@ class VisitReport extends Model
         <?php
     }
 
+    public function get_or_404($pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        if(division_assist() == 2){
+            if ($object['parent_id'] = $object['assist_id'] or $object['parent_id'] == $_SESSION['session_id']) {
+
+                if($object){
+                    $this->set_post($object);
+                    return $this->form($object['id']);
+                }else{
+                    Mixin\error('404');
+                }
+
+            }else {
+                Mixin\error('404');
+            }
+        }
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if ($object == 1){
+                $this->success();
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
     public function success()
     {
         header('location:'.$_SERVER['HTTP_REFERER']);
@@ -236,6 +273,9 @@ class VisitUpStatus extends Model
 
     public function get_or_404($pk)
     {
+        if(division_assist()){
+            $this->post['assist_id'] = $_SESSION['session_id'];
+        }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
@@ -279,7 +319,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND assist != 2') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -360,7 +400,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10') as $row) {
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND assist != 2') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -469,6 +509,12 @@ class VisitFinish extends Model
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $inf['user_id']);
                     $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
+                }
+            }
+            if ($inf['assist_id']) {
+                if (!$inf['direction']) {
+                    $this->post['grant_id'] = $_SESSION['session_id'];
+                    Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 }
             }
             $this->post['id'] = $inf['id'];

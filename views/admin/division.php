@@ -7,6 +7,11 @@ $header = "Класификация персонала";
 <html lang="en">
 <?php include '../layout/head.php' ?>
 
+<script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
+
+<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
@@ -77,7 +82,7 @@ $header = "Класификация персонала";
                                             <td><?= $row['id'] ?></td>
                                             <td><?= $PERSONAL[$row['level']] ?></td>
                                             <td><?= $row['title'] ?></td>
-                                            <td><?= $row['name'] ?></td>
+                                            <td><?= $row['name'] ?> <?= ($row['assist']) ? "\"Ассистент\"" : "" ?></td>
                                             <td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'DivisionModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>

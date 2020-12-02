@@ -249,7 +249,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND assist != 2') as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -267,7 +267,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
                             <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -281,7 +281,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
                             <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
@@ -865,12 +865,37 @@ class DivisionModel extends Model
                 <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $post['name']?>">
             </div>
 
+            <div class="form-group row">
+                <label class="col-form-label col-md-1">Ассистент</label>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-prepend ml-5">
+                            <span class="input-group-text">
+                                <input type="checkbox" class="form-control-switchery" name="assist" <?= ($post['assist']) ? "checked" : "" ?>>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
         <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['assist']) {
+            $this->post['assist'] = True;
+        }else {
+            $this->post['assist'] = False;
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()
