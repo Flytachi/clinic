@@ -104,7 +104,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         <div class="form-group row">
 
                             <label class="col-md-4"><b>Размещён:</b></label>
-                            <div class="col-md-8 text-right">
+                            <div class="col-md-8 text-right" id="patient_location">
                                 <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
                             </div>
 
@@ -139,6 +139,12 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <?= ($patient->discharge_date) ? date('d.m.Y  H:i', strtotime($patient->discharge_date)) : "Нет данных" ?>
                             </div>
 
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+                            <button data-grant_id="<?= $patient->grant_id ?>" data-parent="<?= get_full_name($_SESSION['session_id']) ?>" id="sweet_call_nurce" data-btn="Вызвать" data-question="Вы точно хотите срочно вызвать врача!" class="btn btn-outline-danger btn-md">Вызвать</button>
                         </div>
                     </div>
 
