@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Дек 03 2020 г., 13:43
+-- Время создания: Дек 03 2020 г., 17:44
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.13
 
@@ -79,20 +79,59 @@ CREATE TABLE `bypass` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `parent_id` int(11) DEFAULT NULL,
-  `preparat_id` int(11) DEFAULT NULL,
-  `type_up` tinyint(4) DEFAULT NULL,
-  `time_up` time DEFAULT NULL,
-  `type_down` tinyint(4) DEFAULT NULL,
-  `add_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `method` tinyint(4) DEFAULT NULL,
+  `description` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `update_date` datetime DEFAULT NULL,
+  `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Дамп данных таблицы `bypass`
 --
 
-INSERT INTO `bypass` (`id`, `user_id`, `parent_id`, `preparat_id`, `type_up`, `time_up`, `type_down`, `add_date`) VALUES
-(1, 14, 6, 1, 1, '16:30:00', 1, '2020-12-03 13:00:27'),
-(3, 14, 6, 1, 1, NULL, 1, '2020-12-03 13:26:13');
+INSERT INTO `bypass` (`id`, `user_id`, `parent_id`, `method`, `description`, `update_date`, `add_date`) VALUES
+(1, 14, 6, 1, '2 раза в день 1/2 таб', NULL, '2020-12-03 21:39:48');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `bypass_preparat`
+--
+
+CREATE TABLE `bypass_preparat` (
+  `id` int(11) NOT NULL,
+  `bypass_id` int(11) DEFAULT NULL,
+  `preparat_id` int(11) DEFAULT NULL,
+  `add_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `bypass_preparat`
+--
+
+INSERT INTO `bypass_preparat` (`id`, `bypass_id`, `preparat_id`, `add_date`) VALUES
+(1, 1, 1, '2020-12-03 16:39:48');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `bypass_time`
+--
+
+CREATE TABLE `bypass_time` (
+  `id` int(11) NOT NULL,
+  `bypass_id` int(11) DEFAULT NULL,
+  `time` time DEFAULT NULL,
+  `add_date` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `bypass_time`
+--
+
+INSERT INTO `bypass_time` (`id`, `bypass_id`, `time`, `add_date`) VALUES
+(1, 1, '01:00:00', '2020-12-03 16:39:48'),
+(2, 1, '07:00:00', '2020-12-03 16:39:48');
 
 -- --------------------------------------------------------
 
@@ -396,6 +435,13 @@ CREATE TABLE `user_stats` (
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Дамп данных таблицы `user_stats`
+--
+
+INSERT INTO `user_stats` (`id`, `parent_id`, `visit_id`, `stat`, `pressure`, `pulse`, `temperature`, `saturation`, `add_date`) VALUES
+(1, 30, 2, 2, '120/4 мм.рт.ст.', 88, '37.2', 34, '2020-12-03 16:30:47');
+
 -- --------------------------------------------------------
 
 --
@@ -549,6 +595,18 @@ ALTER TABLE `bypass`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `bypass_preparat`
+--
+ALTER TABLE `bypass_preparat`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `bypass_time`
+--
+ALTER TABLE `bypass_time`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Индексы таблицы `division`
 --
 ALTER TABLE `division`
@@ -642,7 +700,19 @@ ALTER TABLE `bed_type`
 -- AUTO_INCREMENT для таблицы `bypass`
 --
 ALTER TABLE `bypass`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT для таблицы `bypass_preparat`
+--
+ALTER TABLE `bypass_preparat`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT для таблицы `bypass_time`
+--
+ALTER TABLE `bypass_time`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `division`
@@ -696,7 +766,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `user_stats`
 --
 ALTER TABLE `user_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `visit`

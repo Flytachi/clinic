@@ -7,6 +7,8 @@ $header = "Пациент";
 <html lang="en">
 <?php include '../../layout/head.php' ?>
 
+<script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include '../../layout/navbar.php' ?>
@@ -48,7 +50,7 @@ $header = "Пациент";
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h6 class="card-title">Примечание Врача</h6>
+								<h6 class="card-title">Препараты</h6>
 								<div class="header-elements">
 									<div class="list-icons">
 										<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
@@ -59,13 +61,24 @@ $header = "Пациент";
 							</div>
 
 							<div class="table-responsive">
-								<table class="table table-hover table-sm">
+								<table class="table table-hover table-sm table-bordered">
 									<thead>
 										<tr class="bg-info">
-											<th style="width: 40px;">№</th>
-											<th>Дата и время</th>
-											<th>Записки врача</th>
-											<th class="text-center">Действия</th>
+											<th style="width: 40px !important;">№ ---</th>
+											<th class="text-center" style="width: 350px !important;">Препарат --------------------------------</th>
+											<th class="text-center" style="width: 200px !important;">Описание --------------------------</th>
+											<th class="text-center" style="width: 150px !important;">Метод введения ------------------------</th>
+											<th class="text-center" style="width: 90px !important;">Время -----------</th>
+											<th>01.21</th>
+											<th>02.21</th>
+											<th>03.21</th>
+											<th>04.21</th>
+											<th>05.21</th>
+											<th>06.21</th>
+											<th>07.21</th>
+											<th>08.21</th>
+											<th>09.21</th>
+											<th>10.21</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -73,10 +86,34 @@ $header = "Пациент";
 										$i=1;
 										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
 											?>
-											<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
-												<td><?= $i++ ?></td>
-												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-												<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
+											<tr>
+												<td onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')"><?= $i++ ?></td>
+												<td>
+													<?php
+													foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+														echo $serv['preparat_id']." Препарат -------------<br>";
+													}
+													?>
+												</td>
+												<td><?= $row['description'] ?></td>
+												<td><?= $row['method'] ?></td>
+												<td>
+													<?php
+													foreach ($db->query("SELECT * FROM bypass_time WHERE bypass_id = {$row['id']}") as $serv) {
+														echo date('H:i', strtotime($serv['time']))."<br>";
+													}
+													?>
+												</td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
+												<td><input type="checkbox" name="" value=""></td>
 											</tr>
 											<?php
 										}
@@ -101,60 +138,14 @@ $header = "Пациент";
 	<!-- /page content -->
 
 	<div id="modal_add" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-full">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info">
 				<div class="modal-header bg-info">
-					<h5 class="modal-title">Добавить примечание</h5>
+					<h5 class="modal-title">Назначить препарат</h5>
 					<button type="button" class="close" data-dismiss="modal">×</button>
 				</div>
 
-            	<div class="modal-body">
-					<div class="row">
-
-						<div class="col-md-10 offset-md-1">
-							<?= BypassModel::form() ?>
-						</div>
-
-						<div class="col-md-12">
-							<div class="table-responsive">
-								<table class="table table-hover table-sm table-bordered">
-									<thead>
-										<tr class="bg-info">
-											<th style="width: 40px;">№</th>
-											<th style="width: 600px;">Препарат</th>
-											<th>12.22</th>
-											<th>12.22</th>
-											<th>12.22</th>
-											<th>12.22</th>
-											<th>12.22</th>
-											<th>12.22</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php $i =1; foreach ($db as $key => $value): ?>
-
-										<?php endforeach; ?>
-										<tr>
-											<th>1</th>
-											<th>1</th>
-											<th>1</th>
-											<th>1</th>
-											<th>1</th>
-											<th>1</th>
-											<th>1</th>
-											<th>1</th>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-				<div class="modal-footer">
-	                <button class="btn btn-outline-info legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Закрыть</button>
-	            </div>
+				<?= BypassModel::form() ?>
 
 			</div>
 		</div>

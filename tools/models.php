@@ -458,10 +458,10 @@ class VisitModel extends Model
             }
             $this->post['grant_id'] = $this->post['parent_id'];
             $object = Mixin\insert($this->table, $this->post);
-            if ($object == 1){
+            if (intval($object)){
                 // Обновление статуса у пациента
                 $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
-                if ($object1 == 1){
+                if (intval($object1)){
                     $this->success();
                 }else {
                     $this->error($object1);
@@ -1526,7 +1526,7 @@ class LaboratoryAnalyzeModel extends Model
             }
             $object = Mixin\update($this->table, $val, $pk);
         }
-        if ($object == 1){
+        if (intval($object)){
             if ($end) {
                 foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
                     if ($row['grant_id'] == $row['parent_id']) {
@@ -1604,49 +1604,126 @@ class BypassModel extends Model
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 
-            <div class="form-group row">
+            <div class="modal-body">
 
-                    <div class="col-md-3">
+                <div class="form-group row">
+
+                    <div class="col-md-12">
                         <label>Препарат:</label>
-                        <select data-placeholder="Выбрать препарат" name="preparat_id" class="form-control form-control-select2" required>
-                            <option></option>
-                            <option value="1">1 Препарат</option>
-                            <option value="2">2 Препарат</option>
-                        </select>
+                        <select class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
+							<optgroup label="Уколы">
+								<option value="1">Analysis</option>
+								<option value="2">Linear Algebra</option>
+								<option value="3">Probability Theory</option>
+							</optgroup>
+							<optgroup label="Витамины">
+								<option value="4">Introduction to Programming</option>
+								<option value="5">Complexity Theory</option>
+								<option value="6">Software Engineering</option>
+							</optgroup>
+						</select>
                     </div>
 
-                    <div class="col-md-3">
-                        <label>Тип использования:</label>
-                        <select data-placeholder="Выбрать тип" name="type_up" class="form-control form-control-select2" required>
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-6">
+                        <label>Метод:</label>
+                        <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
                             <option></option>
                             <option value="1">Внутривенный</option>
                             <option value="2">Внутриартериальнаый</option>
                             <option value="3">Внутримышечный</option>
                         </select>
+
                     </div>
 
-                    <div class="col-md-2">
-                        <label>Время принятия:</label>
-                        <input type="time" name="time_up" class="form-control">
-                    </div>
-
-                    <div class="col-md-3">
-                        <label>*:</label>
-                        <select data-placeholder="Выбрать ..." name="type_down" class="form-control form-control-select2" required>
-                            <option></option>
-                            <option value="1">До обеда</option>
-                            <option value="2">Поле обеда</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-1 text-right">
-                        <button type="submit" class="btn btn-outline-success" style="margin-top:20px"><i class="icon-plus22"></i></button>
+                    <div class="col-md-6">
+                        <label>Описание:</label>
+                        <input type="text" class="form-control" name="description" placeholder="Введите описание" required>
                     </div>
 
                 </div>
 
+                <div class="form-group row">
+
+                    <div class="col-md-1 text-right">
+                        <button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm" style="margin-top:20px"><i class="icon-plus22 mr-2"></i>Добавить время</button>
+                    </div>
+
+                </div>
+
+                <div class="form-group row" id="time_div">
+                    <div class="col-md-3" id="time_input_0">
+                        <label>Время принятия:</label>
+                        <input type="time" name="time[0]" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+
+    		<div class="modal-footer">
+                <button class="btn btn-outline-info legitRipple" type="submit">Сохранить</button>
+            </div>
+
         </form>
+        <script type="text/javascript">
+            var i = 0;
+            function AddinputTime() {
+                i++;
+                $('#time_div').append(`
+                    <div class="col-md-3" id="time_input_`+ i +`">
+                        <label>Время принятия:</label>
+                        <input type="time" name="time[`+ i +`]" class="form-control">
+                    </div>
+                `);
+            }
+        </script>
         <?php
+    }
+
+    public function save()
+    {
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (intval($object)){
+                $this->set_table('bypass_preparat');
+                foreach ($this->post_preparat as $value) {
+                    $object1 = Mixin\insert($this->table, array(
+                        'bypass_id' => $object,
+                        'preparat_id' => $value,
+                    ));
+                    if (!intval($object1)) {
+                        $this->error($object1);
+                    }
+                }
+                $this->set_table('bypass_time');
+                foreach ($this->post_time as $value) {
+                    $object1 = Mixin\insert($this->table, array(
+                        'bypass_id' => $object,
+                        'time' => $value,
+                    ));
+                    if (!intval($object1)) {
+                        $this->error($object1);
+                    }
+                }
+                $this->success();
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function clean()
+    {
+        $this->post_preparat = $this->post['preparat'];
+        $this->post_time = $this->post['time'];
+        unset($this->post['preparat']);
+        unset($this->post['time']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()

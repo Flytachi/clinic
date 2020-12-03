@@ -87,7 +87,7 @@ class Model
     {
         if($this->clean()){
             $object = Mixin\insert($this->table, $this->post);
-            if ($object == 1){
+            if (intval($object)){
                 $this->success();
             }else{
                 $this->error($object);

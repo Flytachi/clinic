@@ -35,97 +35,71 @@ $header = "Пациент";
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
-				    <div class="card-body">
-				        <?php
-						include "content_tabs.php";
+					<div class="card-body">
 
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+					   <?php
+					   include "content_tabs.php";
+					   if($_SESSION['message']){
+						   echo $_SESSION['message'];
+						   unset($_SESSION['message']);
+					   }
+					   ?>
 
-						<div class="row">
+					   <div class="card">
 
-							<div class="col-md-6">
-								<div class="card">
-									<div class="card-header header-elements-inline">
-										<h5 class="card-title">Примечание Врача</h5>
-									</div>
-									<div class="table-responsive">
-										<table class="table">
-											<thead class="bg-info">
-												<tr>
-													<th style="width: 40px;">№</th>
-													<th>Дата и время</th>
-													<th>Записки врача</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->id") as $row) {
-													?>
-													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
-														<td><?= $i++ ?></td>
-														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
-													</tr>
-													<?php
-												}
-												?>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
+						   <div class="card-header header-elements-inline">
+							   <h6 class="card-title">Примечание Врача</h6>
+						   </div>
 
-							<div class="col-md-6">
-								<div class="card">
+						   <div class="table-responsive">
+							   <table class="table table-hover table-sm table-bordered">
+								   <thead>
+									   <tr class="bg-info">
+										   <th style="width: 40px;">№</th>
+										   <th>Препараты</th>
+										   <th>Описание</th>
+										   <th style="width: 150px;">Метод введения</th>
+										   <th style="width: 90px;">Время</th>
+										   <th style="width: 150px;" class="text-right">Действия</th>
+									   </tr>
+								   </thead>
+								   <tbody>
+									   <?php
+									   $i=1;
+									   foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
+										   ?>
+										   <tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
+											   <td><?= $i++ ?></td>
+											   <td>
+												   <?php
+												   foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+													   echo $serv['preparat_id']." Препарат<br>";
+												   }
+												   ?>
+											   </td>
+											   <td><?= $row['description'] ?></td>
+											   <td><?= $row['method'] ?></td>
+											   <td>
+												   <?php
+												   foreach ($db->query("SELECT * FROM bypass_time WHERE bypass_id = {$row['id']}") as $serv) {
+													   echo $serv['time']."<br>";
+												   }
+												   ?>
+											   </td>
+											   <td class="text-right">
+												   <button type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+											   </td>
+										   </tr>
+										   <?php
+									   }
+									   ?>
+								   </tbody>
+							   </table>
+						   </div>
 
-									<div class="card-header header-elements-inline">
-										<h5 class="card-title">Примечание Медсестры</h5>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									</div>
+					   </div>
 
-									<div class="table-responsive">
-										<table class="table">
-											<thead class="bg-info">
-												<tr>
-													<th style="width: 40px;">№</th>
-													<th>Дата и время</th>
-													<th>Записки медсестры</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->id") as $row) {
-													?>
-													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
-														<td><?= $i++ ?></td>
-														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
-													</tr>
-													<?php
-												}
-												?>
-											</tbody>
-										</table>
-									</div>
-
-								</div>
-							</div>
-
-						</div>
-
-				    </div>
+				   </div>
 
 				    <!-- /content wrapper -->
 				</div>
