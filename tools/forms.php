@@ -19,7 +19,7 @@ class PatientForm extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="NewNoty()">
+        <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
@@ -147,14 +147,24 @@ class PatientForm extends Model
 
     public function success()
     {
-        echo 1;
-        // render('registry/index');
+        $_SESSION['message'] = '
+        <div class="alert alert-info" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
     }
 
     public function error($message)
     {
-        echo $message;
-        // render('registry/index');
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render();
     }
 }
 

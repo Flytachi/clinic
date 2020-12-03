@@ -75,7 +75,6 @@
 
 <div class="row">
 
-
 	<?php foreach ($db->query("SELECT id, title FROM division ORDER BY level") as $row): ?>
 		<div class="col-sm-6 col-xl-4">
 			<div class="card card-body">

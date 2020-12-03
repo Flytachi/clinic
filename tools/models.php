@@ -223,7 +223,7 @@ class VisitModel extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="NewNoty()">
+        <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="0">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
@@ -330,7 +330,7 @@ class VisitModel extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="NewNoty()">
+        <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="1">
             <input type="hidden" name="status" value="1">
@@ -492,33 +492,58 @@ class VisitModel extends Model
         $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
         $object = Mixin\delete($this->table, $pk);
         if ($object) {
-            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id")->rowCount();
+            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
                 Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-                $this->success(1);
+               $this->success(2);
             }else {
-                $this->success();
+                $this->success(1);
             }
         } else {
-            $this->error($object);
+            $this->error($object, 1);
         }
 
     }
 
     public function success($stat=null)
     {
-        if ($stat) {
-            echo '
-            <div class="alert alert-primary" role="alert">
+        if ($stat == 2) {
+            echo '<div class="alert alert-info" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                Успешно
+            </div>';
+        }elseif ($stat == 1) {
+            echo 1;
+        }else {
+            $_SESSION['message'] = '
+            <div class="alert alert-info" role="alert">
                 <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
                 Успешно
             </div>
             ';
-        }else {
-            echo 1;
+            render();
         }
     }
 
+    public function error($message, $stat=null)
+    {
+        if ($stat) {
+            echo '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold"> '.$message.'</span>
+            </div>
+            ';
+        } else {
+            $_SESSION['message'] = '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold"> '.$message.'</span>
+            </div>
+            ';
+            render();
+        }
+    }
 }
 
 class VisitPriceModel extends Model
@@ -642,7 +667,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         // parad("Услуги", $db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
-        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price") as $row) {
+        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price") as $row) {
             $post = array(
                 'pricer_id' => $this->post['pricer_id'],
                 'sale' => $this->post['sale'],
@@ -727,12 +752,12 @@ class VisitPriceModel extends Model
     public function success()
     {
         $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-info" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
             Успешно
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 
     public function error($message)
@@ -743,7 +768,7 @@ class VisitPriceModel extends Model
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 }
 
@@ -791,12 +816,12 @@ class InvestmentModel extends Model
     public function success()
     {
         $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-info" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
             Успешно
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 
     public function error($message)
@@ -807,7 +832,7 @@ class InvestmentModel extends Model
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 }
 
@@ -1578,117 +1603,49 @@ class BypassModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="<?= (level() == 5) ?1:0 ?>">
 
-            <div class="modal-body">
+            <div class="form-group row">
 
-                <?php
-                if(permission(5)){
-                    ?>
-                    <div class="form-group">
-                        <label>Препорат:</label>
-                        <input type="number" class="form-control" name="preparat_id" placeholder="Введите препорат" required>
+                    <div class="col-md-3">
+                        <label>Препарат:</label>
+                        <select data-placeholder="Выбрать препарат" name="preparat_id" class="form-control form-control-select2" required>
+                            <option></option>
+                            <option value="1">1 Препарат</option>
+                            <option value="2">2 Препарат</option>
+                        </select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Количество:</label>
-                        <input type="number" class="form-control" step="1" name="count" placeholder="Введите кол-во" required>
+                    <div class="col-md-3">
+                        <label>Тип использования:</label>
+                        <select data-placeholder="Выбрать тип" name="type_up" class="form-control form-control-select2" required>
+                            <option></option>
+                            <option value="1">Внутривенный</option>
+                            <option value="2">Внутриартериальнаый</option>
+                            <option value="3">Внутримышечный</option>
+                        </select>
                     </div>
-                    <?php
-                }
-                ?>
 
-                <div class="form-group">
-                    <label>Примечание:</label>
-                    <textarea class="form-control" placeholder="Введите примечание" name="description" rows="3" cols="80"></textarea>
+                    <div class="col-md-2">
+                        <label>Время принятия:</label>
+                        <input type="time" name="time_up" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>*:</label>
+                        <select data-placeholder="Выбрать ..." name="type_down" class="form-control form-control-select2" required>
+                            <option></option>
+                            <option value="1">До обеда</option>
+                            <option value="2">Поле обеда</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-1 text-right">
+                        <button type="submit" class="btn btn-outline-success" style="margin-top:20px"><i class="icon-plus22"></i></button>
+                    </div>
+
                 </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
-            </div>
 
         </form>
-        <?php
-    }
-
-    public function table_form($pk = null)
-    {
-        global $db, $patient;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="<?= (level() == 5) ?1:0 ?>">
-
-            <div class="modal-body">
-
-                <div class="header-elements">
-                    <div class="list-icons">
-                        <a class="list-icons-item text-success" id="by_create_button">
-                            <i class="icon-plus22"></i>Добавить
-                        </a>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm table-bordered">
-                        <thead>
-                            <tr class="bg-info">
-                                <th>Припорат</th>
-                                <th>Примечание</th>
-                                <?php
-                                for ($i=0; $i < 10; $i++) {
-                                    ?>
-                                    <th><?php echo date('d M'); ?></th>
-                                    <?php
-                                }
-                                ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    qewqeqweqeqw
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" name="description">
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn btn-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
-            </div>
-
-        </form>
-        <script type="text/javascript">
-
-        </script>
         <?php
     }
 

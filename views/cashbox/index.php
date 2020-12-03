@@ -35,25 +35,70 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-highlight nav-justified">
-					<li class="nav-item"><a href="#highlighted-tab1" class="nav-link active" data-toggle="tab">Приём платежей</a></li>
-					<li class="nav-item"><a href="#highlighted-tab2" class="nav-link" data-toggle="tab">Стационар</a></li>
-				</ul>
-
+				<?php include 'tabs.php' ?>
 				<!-- Highlighted tabs -->
-				<div class="tab-content">
+				<div class="row">
 
-					<div class="tab-pane fade show active" id="highlighted-tab1">
-						<?php
-							include 'tabs/kassa_1.php';
-						?>
-					</div>
+				    <div class="col-md-5">
+				        <div class="card border-1 border-info">
 
-					<div class="tab-pane fade" id="highlighted-tab2">
-						<?php
-							include 'tabs/kassa_2.php';
-						?>
-					</div>
+				            <div class="card-body">
+				                <div class="form-group form-group-float">
+				                    <label class="form-group-float-label text-success font-weight-semibold animate">ID или имя пациента</label>
+				                    <div class="form-group-feedback form-group-feedback-right">
+				                        <input type="text" class="form-control border-success" id="search_input" placeholder="Введите ID или имя">
+				                        <div class="form-control-feedback text-success">
+				                            <i class="icon-search4"></i>
+				                        </div>
+				                    </div>
+				                    <span class="form-text text-success">Выбор пациента</span>
+				                </div>
+
+				                <div class="table-responsive">
+				                    <table class="table table-hover">
+				                        <thead>
+				                            <tr>
+				                                <th>ID</th>
+				                                <th class="text-center">ФИО</th>
+				                            </tr>
+				                        </thead>
+				                        <tbody id="search_display">
+				                            <?php
+				                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NULL AND priced_date IS NULL") as $row) {
+				                            ?>
+				                                <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>')">
+				                                    <td><?= addZero($row['id']) ?></td>
+				                                    <td class="text-center">
+				                                        <a>
+				                                            <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+				                                        </a>
+				                                    </td>
+				                                </tr>
+				                            <?php
+				                            }
+				                            ?>
+				                        </tbody>
+				                    </table>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+
+				    <div class="col-md-7">
+
+				        <div id="message_ses">
+				            <?php
+				            if($_SESSION['message']){
+				                echo $_SESSION['message'];
+				                unset($_SESSION['message']);
+				            }
+				            ?>
+				        </div>
+
+				        <div id="check_div">
+				        </div>
+
+				    </div>
 
 				</div>
 				<!-- /highlighted tabs -->
@@ -93,26 +138,51 @@ $header = "Рабочий стол";
 			sessionStorage['message_amb'] = '';
 		}
 
+		$('#sweet_visit_finish').on('click', function(event) {
+            event.preventDefault();
+            var url = this.dataset.href;
+            swal({
+                position: 'top',
+                title: 'Вы уверены?',
+                text: this.dataset.question,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: this.dataset.btn
+            }).then(function(ivi) {
+                if (ivi.value) {
+                    window.location = url;
+                }
+            });
+        });
+
 		function Delete(events, tr) {
-			if(confirm("Вы уверены?")){
-				$.ajax({
-					type: "GET",
-					url: events,
-					success: function (data) {
-						if (data == 1) {
-							$('#'+tr).css("background-color", "red");
-							$('#'+tr).css("color", "white");
-							$('#'+tr).fadeOut('slow', function() {
-							 	$(this).remove();
-								sumTo($('.total_cost'));
-							});
-						}else{
-							sessionStorage['message_amb'] = data;
-							location.reload();
-						}
-					},
-				});
-			}
+			swal({
+                position: 'top',
+                title: 'Вы уверены что хотоите отменить услугу?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: "Да"
+            }).then(function(ivi) {
+                if (ivi.value) {
+					$.ajax({
+						type: "GET",
+						url: events,
+						success: function (data) {
+							if (data == 1) {
+								$('#'+tr).css("background-color", "red");
+								$('#'+tr).css("color", "white");
+								$('#'+tr).fadeOut('slow', function() {
+								 	$(this).remove();
+									sumTo($('.total_cost'));
+								});
+							}else{
+								sessionStorage['message_amb'] = data;
+								location.reload();
+							}
+						},
+					});
+                }
+            });
 		};
 
 		function sumTo(arr) {
@@ -123,56 +193,47 @@ $header = "Рабочий стол";
 			$('#total_title').html(total);
 		}
 
-		function CheckAmb(events) {
+		function Check(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
-					$('#check-amb').html(result);
+					$('#check_div').html(result);
 					sumTo($('.total_cost'));
 				},
 			});
 		};
 
-		function CheckSt(events, pk) {
-			$.ajax({
-				type: "GET",
-				url: events+"&mod=st",
-				success: function (result) {
-					$('#check-st').html(result);
-					$('#user_st_id').val(pk);
-				},
-			});
-		};
-
-		$("#search_tab-1").keyup(function() {
+		$("#search_input").keyup(function() {
 			$.ajax({
 				type: "GET",
 				url: "search.php",
 				data: {
 					tab: 1,
-                    search: $("#search_tab-1").val(),
+                    search: $("#search_input").val(),
                 },
 				success: function (result) {
-					$('#displ_tab-1').html(result);
+					$('#search_display').html(result);
 				},
 			});
 		});
 
-		$("#search_tab-2").keyup(function() {
-			$.ajax({
-				type: "GET",
-				url: "search.php",
-				data: {
-					tab: 2,
-                    search: $("#search_tab-2").val(),
-                },
-				success: function (result) {
-					console.log(result);
-					$('#displ_tab-2').html(result);
-				},
-			});
-		});
+		function Downsum(input) {
+			input.attr("class", 'form-control');
+			input.val("");
+			var inp_s = $('.input_chek');
+			inp_s.val($('#total_price').val()/inp_s.length);
+		}
+
+		function Upsum(input) {
+			input.attr("class", 'form-control input_chek');
+			var inp_s = $('.input_chek');
+			var vas = 0;
+			for (let key of inp_s) {
+				vas += Number(key.value);
+			}
+			input.val($('#total_price').val()-vas);
+		}
 	</script>
 
 </body>

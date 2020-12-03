@@ -1,14 +1,65 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
+is_auth(2);
+$header = "Рабочий стол";
 ?>
-<div class="modal-header bg-info">
-    <h5 class="modal-title">Анализы: <?= get_full_name($_GET['id']) ?> </h5>
-    <button type="button" class="close" data-dismiss="modal">&times;</button>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<?php include '../layout/head.php' ?>
 
-<div id="modal_result_show_content">
+<body>
+	<!-- Main navbar -->
+	<?php include '../layout/navbar.php' ?>
+	<!-- /main navbar -->
 
-    <?php LaboratoryAnalyzeModel::table_form(); ?>
+	<!-- Page content -->
+	<div class="page-content">
+		<!-- Main sidebar -->
+		<?php include '../layout/sidebar.php' ?>
+		<!-- /main sidebar -->
 
-</div>
+
+		<!-- Main content -->
+		<div class="content-wrapper">
+
+			<!-- Page header -->
+			<?php include '../layout/header.php' ?>
+			<!-- /page header -->
+
+			<!-- Content area -->
+			<div class="content">
+
+				<?php include 'tabs.php' ?>
+
+				<div class="card border-1 border-info">
+
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">Стационарная</h6>
+						<div class="header-elements">
+							<div class="list-icons">
+		                		<a class="list-icons-item" data-action="collapse"></a>
+		                	</div>
+	                	</div>
+					</div>
+
+					<div class="card-body">
+						<?php VisitModel::form_sta(); ?>
+					</div>
+
+				</div>
+
+			</div>
+            <!-- /content area -->
+
+		</div>
+		<!-- /main content -->
+
+	</div>
+	<!-- /page content -->
+
+
+	<!-- Footer -->
+    <?php include '../layout/footer.php' ?>
+    <!-- /footer -->
+</body>
+</html>
