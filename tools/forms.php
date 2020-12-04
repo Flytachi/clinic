@@ -368,7 +368,6 @@ class VisitRoute extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query("SELECT * from users WHERE user_level = 5 AND id != {$_SESSION['session_id']}") as $row) {
                             ?>
@@ -449,7 +448,6 @@ class VisitRoute extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                             ?>
@@ -498,6 +496,7 @@ class VisitRoute extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="laboratory" value="1">
 
             <div class="form-group row">
 
@@ -527,7 +526,6 @@ class VisitRoute extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query("SELECT * from users WHERE user_level = 6") as $row) {
                             ?>
@@ -578,6 +576,7 @@ class VisitRoute extends Model
             <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="laboratory" value="1">
 
             <div class="form-group row">
 
@@ -607,7 +606,6 @@ class VisitRoute extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 6') as $row) {
                             ?>
@@ -656,6 +654,7 @@ class VisitRoute extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="diagnostic" value="1">
 
             <div class="form-group row">
 
@@ -686,7 +685,6 @@ class VisitRoute extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query("SELECT * from users WHERE (user_level = 10) AND id != {$_SESSION['session_id']}") as $row) {
                             ?>
@@ -737,6 +735,7 @@ class VisitRoute extends Model
             <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="diagnostic" value="1">
 
             <div class="form-group row">
 
@@ -767,7 +766,6 @@ class VisitRoute extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 10') as $row) {
                             ?>
@@ -806,18 +804,6 @@ class VisitRoute extends Model
             });
         </script>
         <?php
-    }
-
-    public function clean()
-    {
-        global $db;
-        $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
-        if ($stat) {
-            $this->post['laboratory'] = True;
-        }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        return True;
     }
 
     public function success()

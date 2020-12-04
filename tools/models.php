@@ -265,7 +265,6 @@ class VisitModel extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
@@ -415,7 +414,6 @@ class VisitModel extends Model
                 <div class="col-md-6">
                     <label>Специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                             ?>

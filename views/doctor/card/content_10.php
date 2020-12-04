@@ -37,10 +37,61 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-						<?php include "content_tabs.php"; ?>
+				        <?php include "content_tabs.php"; ?>
 
 						<div class="card">
-							<?php prit($patient); ?>
+
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Состояние</h5>
+							</div>
+
+							<div class="table-responsive">
+								<table class="table table-hover table-sm">
+									<thead>
+										<tr class="bg-info">
+											<th>Дата и время</th>
+											<th>Состояние пациента</th>
+											<th>Медсестра ФИО</th>
+											<th>Давление</th>
+											<th>Пульс</th>
+											<th>Температура</th>
+											<th>Сатурация</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
+											switch ($row['stat']):
+												case 1:
+													$stat = "Актив";
+													$class_tr = "table-success";
+													break;
+												case 2:
+													$stat = "Пассив";
+													$class_tr = "table-danger";
+													break;
+												default:
+													$stat = "Норма";
+													$class_tr = "";
+													break;
+											endswitch;
+											?>
+											<tr class="<?= $class_tr ?>">
+												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+												<td><?= $stat ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= $row['pressure'] ?></td>
+												<td><?= $row['pulse'] ?></td>
+												<td><?= $row['temperature'] ?></td>
+												<td><?= $row['saturation'] ?></td>
+											</tr>
+											<?php
+										}
+										?>
+									</tbody>
+								</table>
+							</div>
+
 						</div>
 
 				    </div>
