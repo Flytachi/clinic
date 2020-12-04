@@ -49,13 +49,15 @@ $header = "Пациент";
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Назначенные Визиты</h5>
-								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_route">
-											<i class="icon-plus22"></i>Добавить
-										</a>
+								<?php if (!$patient->direction or ($patient->direction and $patient->grant_id == $_SESSION['session_id'])): ?>
+									<div class="header-elements">
+										<div class="list-icons">
+											<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_route">
+												<i class="icon-plus22"></i>Добавить
+											</a>
+										</div>
 									</div>
-								</div>
+								<?php endif; ?>
 							</div>
 
 							<div class="table-responsive">
@@ -75,7 +77,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id = {$_SESSION['session_id']} AND vs.laboratory IS NULL ORDER BY vs.id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id = {$_SESSION['session_id']} AND vs.laboratory IS NULL AND vs.diagnostic IS NULL ORDER BY vs.id DESC") as $row) {
 										?>
 											<tr>
 												<td><?= $i++ ?></td>

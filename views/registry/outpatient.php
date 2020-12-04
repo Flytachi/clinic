@@ -41,7 +41,7 @@ $header = "Рабочий стол";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Регистрация</h6>
+						<h6 class="card-title">Амбулаторная</h6>
 						<div class="header-elements">
 							<div class="list-icons">
 		                		<a class="list-icons-item" data-action="collapse"></a>
@@ -49,8 +49,8 @@ $header = "Рабочий стол";
 	                	</div>
 					</div>
 
-					<div class="card-body" style="" id="form_up">
-						<?php PatientForm::form(); ?>
+					<div class="card-body">
+						<?php VisitModel::form_out(); ?>
 					</div>
 
 				</div>

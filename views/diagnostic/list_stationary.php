@@ -57,9 +57,27 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC") as $row) {
+									if (division_assist() == 2) {
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC";
+									}elseif (division_assist() == 1) {
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC";
+									}else {
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC";
+									}
+                                    foreach($db->query($sql) as $row) {
+										if (division_assist() == 2) {
+											if ($row['parent_id'] == $row['assist_id']) {
+												$tr = "";
+											}elseif ($row['parent_id'] == $_SESSION['session_id']) {
+												$tr = "table-success";
+											}else {
+												$tr = "table-danger";
+											}
+										}else {
+											$tr = "";
+										}
                                         ?>
-                                        <tr>
+                                        <tr class="<?= $tr ?>">
                                             <td><?= addZero($row['id']) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
@@ -74,7 +92,12 @@ $header = "Стационарные пациенты";
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
 												<?php
-                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL") as $serv) {
+												if (division_assist() == 2) {
+													$sql_ser = "SELECT * FROM service WHERE id = {$row['service_id']}";
+												}else {
+													$sql_ser = "SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL";
+												}
+                                                foreach ($db->query($sql_ser) as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>
@@ -84,7 +107,9 @@ $header = "Стационарные пациенты";
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
                                             <td class="text-center">
-												<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-users4"></i> Заключение</button>
+												<?php if ($tr != "table-danger"): ?>
+													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+												<?php endif; ?>
                                           	</td>
                                         </tr>
                                         <?php

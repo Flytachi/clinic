@@ -87,7 +87,7 @@ class Model
     {
         if($this->clean()){
             $object = Mixin\insert($this->table, $this->post);
-            if ($object == 1){
+            if (intval($object)){
                 $this->success();
             }else{
                 $this->error($object);
@@ -132,15 +132,23 @@ class Model
         exit;
     }
 
-    public function test_mod()
+    public function mod($mod=null)
     {
-        prit($this);
+        switch ($mod) {
+            case "test":
+                prit($this);
+                break;
+
+            default:
+                echo "Не назначен мод";
+                break;
+        }
         exit;
     }
 
     public function success()
     {
-        echo "Успешно";
+        echo 1;
     }
 
     public function error($message)

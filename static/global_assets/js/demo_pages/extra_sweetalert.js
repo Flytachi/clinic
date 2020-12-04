@@ -56,6 +56,29 @@ var SweetAlert = function () {
             });
         });
 
+        $('#sweet_call_nurce').on('click', function(event) {
+            event.preventDefault();
+            var grant_id = this.dataset.grant_id;
+            var parent = this.dataset.parent;
+            swal({
+                position: 'top',
+                title: 'Внимание!',
+                text: this.dataset.question,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: this.dataset.btn
+            }).then(function(ivi) {
+                if (ivi.value) {
+                    swal({
+                        position: 'top',
+                        title: 'Внимание! Срочный вызов!',
+                        type: 'warning',
+                        html: "<strong>Медсестра: </strong> "+parent+"<br> <strong>Расположение: </strong>"+$('#patient_location').text()
+                    });
+                }
+            });
+        });
+
 
 
         //

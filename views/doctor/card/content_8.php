@@ -6,6 +6,18 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('global_assets/js/plugins/ui/moment/moment.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js"') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+
+<!-- <script src="../../../../global_assets/js/demo_pages/picker_date.js"></script> -->
+
 
 <body>
 	<!-- Main navbar -->
@@ -36,93 +48,37 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-						<?php
-						include "content_tabs.php";
 
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+						<?php include "content_tabs.php"; ?>
 
-						<div class="row">
-
-							<div class="col-md-6">
-								<div class="card">
-									<div class="card-header header-elements-inline">
-										<h6 class="card-title">Примечание Врача</h6>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									</div>
-									<div class="table-responsive">
-										<table class="table">
-											<thead class="bg-info">
-												<tr>
-													<th style="width: 40px;">№</th>
-													<th>Дата и время</th>
-													<th>Записки врача</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->id") as $row) {
-													?>
-													<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
-														<td><?= $i++ ?></td>
-														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
-													</tr>
-													<?php
-												}
-												?>
-											</tbody>
-										</table>
-									</div>
-								</div>
+						<div class="card">
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Заметки</h5>
 							</div>
 
-							<div class="col-md-6">
-								<div class="card">
+							<?php NotesModel::form() ?>
 
-									<div class="card-header header-elements-inline">
-										<h6 class="card-title">Примечание медсестры</h6>
-									</div>
-
-									<div class="table-responsive">
-										<table class="table">
-											<thead class="bg-info">
-												<tr>
-													<th style="width: 40px;">№</th>
-													<th>Дата и время</th>
-													<th>Записки медсестры</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->id") as $row) {
-													?>
-													<tr onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')">
-														<td><?= $i++ ?></td>
-														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
-													</tr>
-													<?php
-												}
-												?>
-											</tbody>
-										</table>
-									</div>
-
-								</div>
-							</div>
-
+							<?php //prit($patient); ?>
+							<table id="data_table" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Date</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								?>
+								<tr id="<?php echo $developer ['id']; ?>">
+							   		<td><?php echo $developer ['id']; ?></td>
+								   	<td><?php echo $developer ['date']; ?></td>
+								   	<td><?php echo $developer ['description']; ?></td>
+							   	</tr>
+								<?php } ?>
+								</tbody>
+							</table>
 						</div>
 
 				    </div>
@@ -138,43 +94,137 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_add" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-header bg-info">
-					<h5 class="modal-title">Добавить примечание</h5>
-					<button type="button" class="close" data-dismiss="modal">×</button>
-				</div>
-
-				<?= BypassModel::form() ?>
-
-			</div>
-		</div>
-	</div>
-
-	<div id="modal_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content" id="modal_show_body">
-
-			</div>
-		</div>
-	</div>
-
-	<script type="text/javascript">
-		function Check(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					$('#modal_show').modal('show');
-					$('#modal_show_body').html(data);
-				},
-			});
-		};
-	</script>
-
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
     <!-- /footer -->
+    <script>
+
+    	let id = '<?= $_SESSION['session_id'] ?>';
+
+
+		function addZero(number){
+
+		    let strNumber = String(number);
+		    let newNumber = "";
+
+		    if(strNumber.length < 2){
+
+		        let countZero = 2 - strNumber.length;
+
+		        for ($i=0; $i < countZero; $i++) {
+
+		            newNumber += "0";
+		        }
+		        newNumber += strNumber;
+		        return newNumber;
+		    }
+
+		    return strNumber;
+		}
+
+    	var conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		conn.onopen = function(e) {
+		    console.log("Connection established!");
+		};
+
+		conn.onmessage = function(e) {
+			let d = JSON.parse(e.data)
+
+			let time = new Date();
+
+			let hour = addZero(time.getHours());
+
+			let mitune = addZero(time.getMinutes());
+
+			if(d.id == id || d.id_cli == id ){
+
+				if(d.id == id){
+					$(`ul[data-chatid=${d.id_cli}]`).append(`<li class="media media-chat-item-reverse">
+													<div class="media-body">
+														<div class="media-chat-item">${d.message}</div>
+														<div class="font-size-sm text-muted mt-2">
+															${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+														</div>
+													</div>
+
+													<div class="ml-3">
+														<a href="#">
+															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+														</a>
+													</div>
+												</li>`)
+				}else{
+
+					let active = $('a.show').attr('data-idChat');
+
+
+					if(active == d.id){
+					    $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
+															<div class="mr-3">
+																<a href="#">
+																	<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+																</a>
+															</div>
+
+															<div class="media-body">
+																<div class="media-chat-item"> ${d.message} </div>
+																<div class="font-size-sm text-muted mt-2">
+																	${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																</div>
+															</div>
+														</li>`)
+					}else{
+						let p = Number($(`p[data-idChat=${d.id}]`).text()) + 1;
+
+						let b = Number($(`b#noticeus`).text()) + 1;
+
+						$(`b#noticeus`).html(b);
+
+						$(`p[data-idChat=${d.id}]`).text(p)
+
+						console.log(p);
+					}
+				}
+			}
+
+		};
+
+		$('textarea').keypress(function(e){
+			console.log(e.keyCode);
+
+			if(e.keyCode == 13){
+				let id_cli = $(this).attr('data-inputid');
+				let word = $(this).val();
+				$(this).val('');
+				let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
+				conn.send(obj);
+			}
+		})
+
+		function sendMessage(body) {
+			let id_cli = body.dataset.buttonid;
+			let word = $(`textarea[data-inputid=${id_cli}]`).val();
+			console.log(word);
+			$(`textarea[data-inputid=${id_cli}]`).val('');
+			let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
+			conn.send(obj);
+		}
+
+		function deletNotice(body) {
+			let id1 = $(body).attr('data-idChat');
+			let count;
+
+			try{
+				console.log('--------------------------------')
+				count = Number($(`b#noticeus`).html()) - Number($(`p[data-idChat=${id1}]`).html());
+				$(`b#noticeus`).html(count);
+				$(`p[data-idChat=${id1}]`).html('');
+			}catch{
+				console.log('error')
+			}
+		}
+
+    </script>
+
 </body>
 </html>

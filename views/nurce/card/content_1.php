@@ -6,6 +6,11 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+
+<script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
+<script src="<?= stack('global_assets/js/demo_pages/form_checkboxes_radios.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -35,97 +40,63 @@ $header = "Пациент";
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
-				    <div class="card-body">
-				        <?php
-						include "content_tabs.php";
+					<div class="card-body">
 
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+					   <?php
+					   include "content_tabs.php";
+					   if($_SESSION['message']){
+						   echo $_SESSION['message'];
+						   unset($_SESSION['message']);
+					   }
+					   ?>
 
-						<div class="row">
+					   <div class="card">
 
-							<div class="col-md-6">
-								<div class="card">
-									<div class="card-header header-elements-inline">
-										<h5 class="card-title">Примечание Врача</h5>
-									</div>
-									<div class="table-responsive">
-										<table class="table">
-											<thead class="bg-info">
-												<tr>
-													<th style="width: 40px;">№</th>
-													<th>Дата и время</th>
-													<th>Записки врача</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NOT NULL AND user_id = $patient->id") as $row) {
-													?>
-													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
-														<td><?= $i++ ?></td>
-														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
-													</tr>
-													<?php
-												}
-												?>
-											</tbody>
-										</table>
-									</div>
-								</div>
-							</div>
+						   <div class="card-header header-elements-inline">
+							   <h6 class="card-title">Примечание Врача</h6>
+						   </div>
 
-							<div class="col-md-6">
-								<div class="card">
+						   <div class="table-responsive">
+ 							  <table class="table table-hover table-sm table-bordered">
+ 								  <thead>
+ 									  <tr class="bg-info">
+ 										  <th style="width: 40px !important;">№</th>
+ 										  <th style="width: 400px;">Препарат</th>
+ 										  <th>Описание</th>
+ 										  <th class="text-center" style="width: 150px;">Метод введения </th>
+ 										  <th class="text-right" style="width: 150px;">Действия</th>
+ 									  </tr>
+ 								  </thead>
+ 								  <tbody>
+ 									  <?php
+ 									  $i=1;
+ 									  foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
+ 										  ?>
+ 										  <tr>
+ 											  <td><?= $i++ ?></td>
+ 											  <td>
+ 												  <?php
+ 												  foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+ 													  echo $serv['preparat_id']." Препарат -------------<br>";
+ 												  }
+ 												  ?>
+ 											  </td>
+ 											  <td><?= $row['description'] ?></td>
+ 											  <td><?= $row['method'] ?></td>
+ 											  <td>
+ 												  <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-toggle="modal" data-target="#modal_test">Подробнее</button>
+ 											  </td>
+ 										  </tr>
+ 										  <?php
+ 									  }
+ 									  ?>
+ 								  </tbody>
+ 							  </table>
+ 						  </div>
 
-									<div class="card-header header-elements-inline">
-										<h5 class="card-title">Примечание Медсестры</h5>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									</div>
+					   </div>
 
-									<div class="table-responsive">
-										<table class="table">
-											<thead class="bg-info">
-												<tr>
-													<th style="width: 40px;">№</th>
-													<th>Дата и время</th>
-													<th>Записки медсестры</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$i=1;
-												foreach ($db->query("SELECT * FROM bypass WHERE status IS NULL AND user_id = $patient->id") as $row) {
-													?>
-													<tr onclick="Check('<?= viv('nurce/bypass') ?>?pk=<?= $row['id'] ?>')">
-														<td><?= $i++ ?></td>
-														<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-														<td class="text-primary"><?= get_full_name($row['parent_id']) ?></td>
-													</tr>
-													<?php
-												}
-												?>
-											</tbody>
-										</table>
-									</div>
-
-								</div>
-							</div>
-
-						</div>
-
-				    </div>
+				   </div>
 
 				    <!-- /content wrapper -->
 				</div>
@@ -138,40 +109,120 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_add" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
+	<div id="modal_test" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info">
 				<div class="modal-header bg-info">
-					<h5 class="modal-title">Добавить примечание</h5>
+					<h5 class="modal-title">Назначение</h5>
 					<button type="button" class="close" data-dismiss="modal">×</button>
 				</div>
 
-				<?= BypassModel::form() ?>
+				<div class="modal-body">
+
+					<!-- Circle empty -->
+					<div class="card card-body border-top-1 border-top-success">
+						<div class="list-feed list-feed-rhombus list-feed-solid">
+							<div class="list-feed-item border-info">
+								<strong>Врач: </strong>Якубов Фарход Хврвргврйцгв
+							</div>
+
+							<div class="list-feed-item border-info">
+								<strong>Метод: </strong>В/В
+							</div>
+
+							<div class="list-feed-item border-info">
+								<strong>Последнее обновление: </strong>21.03.2019 16:00
+							</div>
+
+							<div class="list-feed-item border-info">
+								<strong>Препарат: </strong>1 Препарат -------------
+							</div>
+
+							<div class="list-feed-item border-info">
+								<strong>Описание: </strong>2 раза в день 1/2 таб
+							</div>
+						</div>
+					</div>
+					<!-- /circle empty -->
+
+					<div class="table-responsive">
+						<table class="table table-xs table-bordered">
+							<thead>
+								<tr class="bg-info">
+									<th style="width: 50%">Дата</th>
+									<th style="width: 30%">Время</th>
+									<th colspan="2" class="text-center">Коструктор</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td rowspan="2">12.21.2019</td>
+									<td>01:00</td>
+									<td class="text-success text-center">
+										<i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+									</td>
+									<td class="text-center">
+										<div class="form-check form-check-right form-check-switchery">
+											<label class="form-check-label">
+												<input type="checkbox" class="form-check-input-switchery" checked data-fouc disabled>
+											</label>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>07:00</td>
+									<td class="text-success text-center">
+										<i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+									</td>
+									<td class="text-center">
+										<div class="form-check form-check-right form-check-switchery">
+											<label class="form-check-label">
+												<input type="checkbox" class="form-check-input-switchery" checked data-fouc>
+											</label>
+										</div>
+									</td>
+								</tr>
+
+								<tr>
+									<td rowspan="2">13.21.2019</td>
+									<td>01:00</td>
+									<td class="text-success text-center">
+		                                <i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+									</td>
+									<td class="text-center">
+										<div class="form-check form-check-right form-check-switchery">
+											<label class="form-check-label">
+												<input type="checkbox" class="form-check-input-switchery" data-fouc>
+											</label>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>07:00</td>
+									<td class="text-secondary text-center">
+		                                <i style="font-size:1.5rem;" class="icon-close2"></i>
+									</td>
+									<td class="text-center">
+										<div class="form-check form-check-right form-check-switchery">
+											<label class="form-check-label">
+												<input type="checkbox" class="form-check-input-switchery" data-fouc>
+											</label>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
+				</div>
 
 			</div>
 		</div>
 	</div>
-
-	<div id="modal_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content" id="modal_show_body">
-
-			</div>
-		</div>
-	</div>
-
-	<script type="text/javascript">
-		function Check(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					$('#modal_show').modal('show');
-					$('#modal_show_body').html(data);
-				},
-			});
-		};
-	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
