@@ -31,6 +31,8 @@ $header = "Рабочий стол";
 			<?php include '../layout/header.php' ?>
 			<!-- /page header -->
 
+			<script src="<?= stack("global_assets/js/demo_pages/dashboard.js") ?>"></script>
+
 			<!-- Content area -->
 			<div class="content">
 

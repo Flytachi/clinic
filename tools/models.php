@@ -194,7 +194,7 @@ class UserModel extends Model
             Успешно
         </div>
         ';
-        render('admin/index');
+        render();
     }
 
     public function error($message)
@@ -205,7 +205,7 @@ class UserModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/index');
+        render();
     }
 }
 
@@ -922,7 +922,7 @@ class DivisionModel extends Model
             Успешно
         </div>
         ';
-        render('admin/division');
+        render();
     }
 
     public function error($message)
@@ -933,7 +933,7 @@ class DivisionModel extends Model
             '.$message.'
         </div>
         ';
-        render('admin/division');
+        render();
     }
 }
 
@@ -993,7 +993,7 @@ class WardModel extends Model
             Успешно
         </div>
         ';
-        render('admin/ward');
+        render();
     }
 
     public function error($message)
@@ -1004,7 +1004,7 @@ class WardModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/ward');
+        render();
     }
 }
 
@@ -1097,7 +1097,7 @@ class BedModel extends Model
             Успешно
         </div>
         ';
-        render('admin/bed');
+        render();
     }
 
     public function error($message)
@@ -1108,7 +1108,7 @@ class BedModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/bed');
+        render();
     }
 }
 
@@ -1159,7 +1159,7 @@ class BedTypeModel extends Model
             Успешно
         </div>
         ';
-        render('admin/bed');
+        render();
     }
 
     public function error($message)
@@ -1170,7 +1170,7 @@ class BedTypeModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/bed');
+        render();
     }
 }
 
@@ -1265,7 +1265,7 @@ class ServiceModel extends Model
             Успешно
         </div>
         ';
-        render('admin/service');
+        render();
     }
 
     public function error($message)
@@ -1276,7 +1276,7 @@ class ServiceModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/service');
+        render();
     }
 }
 
@@ -1322,7 +1322,7 @@ class StorageTypeModel extends Model
             Успешно
         </div>
         ';
-        render('admin/storage');
+        render();
     }
 
     public function error($message)
@@ -1333,7 +1333,7 @@ class StorageTypeModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/storage');
+        render();
     }
 }
 
@@ -1403,7 +1403,7 @@ class LaboratoryAnalyzeTypeModel extends Model
             Успешно
         </div>
         ';
-        render('admin/analyze');
+        render();
     }
 
     public function error($message)
@@ -1414,7 +1414,7 @@ class LaboratoryAnalyzeTypeModel extends Model
             '.$message.'
         </div>
         ';
-        render('admin/analyze');
+        render();
     }
 }
 
@@ -1489,7 +1489,6 @@ class LaboratoryAnalyzeModel extends Model
             </div>
 
             <div class="modal-footer">
-                <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
                 <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -1515,7 +1514,6 @@ class LaboratoryAnalyzeModel extends Model
         unset($this->post['end']);
         $user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        // $this->test_mod();
         foreach ($this->post as $val) {
             $pk = $val['id'];
             unset($val['id']);

@@ -1,3 +1,7 @@
+<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 <ul class="nav nav-tabs nav-tabs-highlight">
     <li class="nav-item">
         <a href="<?= viv('nurce/card/content_1') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_1')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Обход<i class="icon-users4 ml-3"></i></a>

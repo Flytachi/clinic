@@ -6,6 +6,7 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 
 <script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/form_checkboxes_radios.js') ?>"></script>
@@ -79,7 +80,7 @@ $header = "Пациент";
 										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
 											?>
 											<tr>
-												<td onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')"><?= $i++ ?></td>
+												<td><?= $i++ ?></td>
 												<td>
 													<?php
 													foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
@@ -191,14 +192,6 @@ $header = "Пациент";
 		</div>
 	</div>
 
-	<div id="modal_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content" id="modal_show_body">
-
-			</div>
-		</div>
-	</div>
-
 	<div id="modal_test" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info">
@@ -225,6 +218,10 @@ $header = "Пациент";
 							</div>
 
 							<div class="list-feed-item border-info">
+								<strong>Препарат: </strong>1 Препарат -------------
+							</div>
+
+							<div class="list-feed-item border-info">
 								<strong>Описание: </strong>2 раза в день 1/2 таб
 							</div>
 						</div>
@@ -247,7 +244,7 @@ $header = "Пациент";
 									<td class="text-center">
 										<div class="form-check form-check-right form-check-switchery">
 											<label class="form-check-label">
-												<input type="checkbox" class="form-check-input-switchery" checked data-fouc>
+												<input type="checkbox" class="form-check-input-switchery" checked data-fouc disabled>
 											</label>
 										</div>
 									</td>
@@ -264,8 +261,8 @@ $header = "Пациент";
 											</label>
 										</div>
 									</td>
-									<td class="text-success text-center">
-										<i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+									<td class="text-secondary text-center">
+		                                <i style="font-size:1.5rem;" class="icon-close2"></i>
 									</td>
 								</tr>
 
@@ -273,16 +270,24 @@ $header = "Пациент";
 									<td rowspan="2">13.21.2019</td>
 									<td>01:00</td>
 									<td class="text-center">
-										<input type="checkbox" class="form-check-input-styled-success" checked data-fouc>
+										<div class="form-check form-check-right form-check-switchery">
+											<label class="form-check-label">
+												<input type="checkbox" class="form-check-input-switchery" checked data-fouc>
+											</label>
+										</div>
 									</td>
-									<td class="text-success text-center">
-		                                <i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+									<td class="text-secondary text-center">
+		                                <i style="font-size:1.5rem;" class="icon-close2"></i>
 									</td>
 								</tr>
 								<tr>
 									<td>07:00</td>
 									<td class="text-center">
-										<input type="checkbox" class="form-check-input-styled-success" checked data-fouc>
+										<div class="form-check form-check-right form-check-switchery">
+											<label class="form-check-label">
+												<input type="checkbox" class="form-check-input-switchery" data-fouc>
+											</label>
+										</div>
 									</td>
 									<td class="text-secondary text-center">
 		                                <i style="font-size:1.5rem;" class="icon-close2"></i>
@@ -302,18 +307,6 @@ $header = "Пациент";
 		</div>
 	</div>
 
-	<script type="text/javascript">
-		function Check(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					$('#modal_show').modal('show');
-					$('#modal_show_body').html(data);
-				},
-			});
-		};
-	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
