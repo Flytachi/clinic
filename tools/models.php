@@ -1604,7 +1604,7 @@ class BypassModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $methods;
         if($pk){
             $post = $this->post;
         }else{
@@ -1644,9 +1644,9 @@ class BypassModel extends Model
                         <label>Метод:</label>
                         <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
                             <option></option>
-                            <option value="1">Внутривенный</option>
-                            <option value="2">Внутриартериальнаый</option>
-                            <option value="3">Внутримышечный</option>
+                            <?php foreach ($methods as $key => $value): ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                            <?php endforeach; ?>
                         </select>
 
                     </div>

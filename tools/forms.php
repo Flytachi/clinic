@@ -976,6 +976,286 @@ class PatientFailure extends Model
 
 }
 
+class BypassDateModel extends Model
+{
+    public $table = 'bypass_date';
+
+    public function table_form_doc($pk = null)
+    {
+        global $db, $methods;
+        $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
+        $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
+        $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
+        $span = count($col);
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="text-right">
+                <button onclick="AddTrDate()" type="button" class="btn btn-outline-success btn-sm" style="margin-bottom:20px"><i class="icon-plus22 mr-2"></i>Добавить день</button>
+            </div>
+
+            <div id="error_div"></div>
+
+            <div class="table-responsive">
+                <table class="table table-xs table-bordered">
+                    <thead>
+                        <tr class="bg-info">
+                            <th style="width: 50px">№</th>
+                            <th style="width: 50%">Дата</th>
+                            <th style="width: 30%">Время</th>
+                            <th colspan="2" class="text-center">Коструктор</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <?php
+                        $day_show = 10;
+                        $s = 0;
+                        for ($i=-$first_date; $i < 30; $i++) {
+                            $s++;
+                            $row_stat = True;
+                            foreach ($col as $value) {
+                                ?>
+                                <tr <?= ($s>$day_show) ? 'class="table_date_hidden" style="display:none;"' : 'class="table_date"' ?>>
+                                    <?php if ($row_stat): ?>
+                                        <td rowspan="<?= $span ?>"><?= $s ?></td>
+                                        <td rowspan="<?= $span ?>">
+                                            <?php
+                                            $date = new \DateTime();
+                                            $date->modify("+$i day");
+                                            echo $date->format('d.m.Y');
+                                            ?>
+                                        </td>
+                                    <?php endif; ?>
+                                    <?php
+                                    $dat = $date->format('Y-m-d');
+                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND bypass_time_id = {$value['id']} AND date = '$dat'")->fetch();
+                                    ?>
+                                    <td>
+                                        <?= date('H:i', strtotime($value['time'])) ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($dat < $add_date): ?>
+                                            <input type="checkbox" class="swit" name="status" <?= ($post['status']) ? "checked" : "" ?> disabled>
+                                        <?php else: ?>
+                                            <input type="checkbox" class="swit" name="status" onchange="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" <?= ($post['status']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="<?= ($post['completed']) ? "text-success" : "text-secondary" ?> text-center">
+                                        <?php if ($post['completed']): ?>
+                                            <i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+                                        <?php else: ?>
+                                            <i style="font-size:1.5rem;" class="icon-circle"></i>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php
+                                $row_stat= False;
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            function AddTrDate() {
+                for (var i = 0; i < Number("<?= $span ?>"); i++) {
+                    var tr = $('.table_date_hidden').first();
+                    tr.removeClass("table_date_hidden");
+                    tr.addClass("table_date");
+                    tr.fadeIn();
+                }
+            }
+
+            function SwetDate() {
+                var form = $('#<?= __CLASS__ ?>_form');
+                if (event.target.checked) {
+                    $(event.target).val(1);
+                }else {
+                    $(event.target).val("");
+                }
+
+                if (event.target.dataset.id) {
+                    var data = {
+                        model: "<?= __CLASS__ ?>",
+                        bypass_id: "<?= $_GET['pk'] ?>",
+                        id: event.target.dataset.id,
+                        bypass_time_id: event.target.dataset.time,
+                        date: event.target.dataset.date,
+                        status: $(event.target).val()
+                    };
+                }else {
+                    var data = {
+                        model: "<?= __CLASS__ ?>",
+                        bypass_id: "<?= $_GET['pk'] ?>",
+                        bypass_time_id: event.target.dataset.time,
+                        date: event.target.dataset.date,
+                        status: $(event.target).val()
+                    };
+                }
+
+                $.ajax({
+                    type: form.attr("method"),
+                    url: form.attr("action"),
+                    data: data,
+                    success: function (result) {
+                        if (!Number(result)) {
+                            $('#error_div').html(result);
+                        }
+                    },
+                });
+            }
+        </script>
+        <?php
+    }
+
+    public function table_form_nurce($pk = null)
+    {
+        global $db, $methods;
+        $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
+        $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
+        $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
+        $span = count($col);
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="text-right">
+                <button onclick="AddTrDate()" type="button" class="btn btn-outline-success btn-sm" style="margin-bottom:20px"><i class="icon-plus22 mr-2"></i>Добавить день</button>
+            </div>
+
+            <div id="error_div"></div>
+
+            <div class="table-responsive">
+                <table class="table table-xs table-bordered">
+                    <thead>
+                        <tr class="bg-info">
+                            <th style="width: 50px">№</th>
+                            <th style="width: 50%">Дата</th>
+                            <th style="width: 30%">Время</th>
+                            <th colspan="2" class="text-center">Коструктор</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <?php
+                        $day_show = 10;
+                        $s = 0;
+                        for ($i=-$first_date; $i < 30; $i++) {
+                            $s++;
+                            $row_stat = True;
+                            foreach ($col as $value) {
+                                ?>
+                                <tr <?= ($s>$day_show) ? 'class="table_date_hidden" style="display:none;"' : 'class="table_date"' ?>>
+                                    <?php if ($row_stat): ?>
+                                        <td rowspan="<?= $span ?>"><?= $s ?></td>
+                                        <td rowspan="<?= $span ?>">
+                                            <?php
+                                            $date = new \DateTime();
+                                            $date->modify("+$i day");
+                                            echo $date->format('d.m.Y');
+                                            ?>
+                                        </td>
+                                    <?php endif; ?>
+                                    <?php
+                                    $dat = $date->format('Y-m-d');
+                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND bypass_time_id = {$value['id']} AND date = '$dat'")->fetch();
+                                    ?>
+                                    <td>
+                                        <?= date('H:i', strtotime($value['time'])) ?>
+                                    </td>
+                                    <td class="<?= ($post['status']) ? "text-success" : "text-secondary" ?> text-center">
+                                        <?php if ($post['status']): ?>
+                                            <i style="font-size:1.5rem;" class="icon-checkmark-circle2"></i>
+                                        <?php else: ?>
+                                            <i style="font-size:1.5rem;" class="icon-circle"></i>
+                                        <?php endif; ?>
+                                    </td>
+                                    <?php
+
+                                    ?>
+                                    <td>
+                                        <?php if ($dat < $add_date): ?>
+                                            <input type="checkbox" class="swit" name="status" <?= ($post['status']) ? "checked" : "" ?> disabled>
+                                        <?php else: ?>
+                                            <input type="checkbox" class="swit" name="completed" onchange="SwetDate()" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php
+                                $row_stat= False;
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            function AddTrDate() {
+                for (var i = 0; i < Number("<?= $span ?>"); i++) {
+                    var tr = $('.table_date_hidden').first();
+                    tr.removeClass("table_date_hidden");
+                    tr.addClass("table_date");
+                    tr.fadeIn();
+                }
+            }
+
+            function SwetDate() {
+                var form = $('#<?= __CLASS__ ?>_form');
+                if (event.target.checked) {
+                    $(event.target).val(1);
+                }else {
+                    $(event.target).val("");
+                }
+
+                $.ajax({
+                    type: form.attr("method"),
+                    url: form.attr("action"),
+                    data: {
+                        model: "<?= __CLASS__ ?>",
+                        bypass_id: "<?= $_GET['pk'] ?>",
+                        id: event.target.dataset.id,
+                        completed: $(event.target).val()
+                    },
+                    success: function (result) {
+                        if (!Number(result)) {
+                            $('#error_div').html(result);
+                        }
+                    },
+                });
+            }
+        </script>
+        <?php
+    }
+
+    public function clean()
+    {
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
+    public function success()
+    {
+        echo 1;
+    }
+
+    public function error($message)
+    {
+        echo '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+    }
+}
+
 class NotesModel extends Model
 {
 

@@ -19,6 +19,12 @@ $FLOOR = array(
     3 => "3 этаж",
 );
 
+$methods = array(
+    1 => "Внутривенный",
+    2 => "Внутриартериальнаый",
+    3 => "Внутримышечный",
+);
+
 require_once 'functions/connection.php';
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
