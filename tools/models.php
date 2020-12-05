@@ -1452,23 +1452,26 @@ class LaboratoryAnalyzeModel extends Model
                         </thead>
                         <tbody>
                             <?php
-                            $i = 1;
-                            foreach ($db->query("SELECT id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
-                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$row['id']}") as $row) {
+                            $i = 0;
+                            $s = 1;
+                            foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row_parent) {
+                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', lat.name, lat.standart, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
                                     ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
-                                        <td><?= $i++ ?></td>
-                                        <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
+                                        <td><?= $s++ ?></td>
+                                        <td><?= $row['ser_name'] ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td><?= $row['standart'] ?></td>
                                         <td>
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                            <input type="hidden" name="<?= $i ?>[analyze_id]" value="<?= $row['analyze_id'] ?>">
+                                            <input type="hidden" name="<?= $i ?>[visit_id]" value="<?= $row_parent['id'] ?>">
                                             <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
                                             <div class="form-check">
         										<label class="form-check-label">
-        											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
+        											<input data-id="TR_<?= $i ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
         										</label>
         									</div>
                                         </td>
@@ -1477,6 +1480,7 @@ class LaboratoryAnalyzeModel extends Model
                                         </th>
                                     </tr>
                                     <?php
+                                    $i++;
                                 }
                             }
                             ?>
@@ -1513,14 +1517,26 @@ class LaboratoryAnalyzeModel extends Model
         $user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
         foreach ($this->post as $val) {
-            $pk = $val['id'];
-            unset($val['id']);
-            if ($val['deviation']) {
-                $val['deviation'] = 1;
+            if ($val['id']) {
+                $pk = $val['id'];
+                unset($val['id']);
+                if ($val['deviation']) {
+                    $val['deviation'] = 1;
+                }else {
+                    $val['deviation'] = null;
+                }
+                $object = Mixin\update($this->table, $val, $pk);
             }else {
-                $val['deviation'] = null;
+                $val['user_id'] = $user_pk;
+                unset($val['id']);
+                if ($val['deviation']) {
+                    $val['deviation'] = 1;
+                }else {
+                    $val['deviation'] = null;
+                }
+                $val['service_id'] = $db->query("SELECT service_id FROM visit WHERE id = {$val['visit_id']}")->fetch()['service_id'];
+                $object = Mixin\insert('laboratory_analyze', $val);
             }
-            $object = Mixin\update($this->table, $val, $pk);
         }
         if (intval($object)){
             if ($end) {

@@ -6,6 +6,18 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('global_assets/js/plugins/ui/moment/moment.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js"') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+
+<!-- <script src="../../../../global_assets/js/demo_pages/picker_date.js"></script> -->
+
 
 <body>
 	<!-- Main navbar -->
@@ -37,61 +49,36 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-				        <?php include "content_tabs.php"; ?>
+						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
-
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Состояние</h5>
+								<h5 class="card-title">Заметки</h5>
 							</div>
 
-							<div class="table-responsive">
-								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
-											<th>Дата и время</th>
-											<th>Состояние пациента</th>
-											<th>Медсестра ФИО</th>
-											<th>Давление</th>
-											<th>Пульс</th>
-											<th>Температура</th>
-											<th>Сатурация</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
-											switch ($row['stat']):
-												case 1:
-													$stat = "Актив";
-													$class_tr = "table-success";
-													break;
-												case 2:
-													$stat = "Пассив";
-													$class_tr = "table-danger";
-													break;
-												default:
-													$stat = "Норма";
-													$class_tr = "";
-													break;
-											endswitch;
-											?>
-											<tr class="<?= $class_tr ?>">
-												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
-												<td><?= $stat ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= $row['pressure'] ?></td>
-												<td><?= $row['pulse'] ?></td>
-												<td><?= $row['temperature'] ?></td>
-												<td><?= $row['saturation'] ?></td>
-											</tr>
-											<?php
-										}
-										?>
-									</tbody>
-								</table>
-							</div>
+							<?php NotesModel::form() ?>
 
+							<?php //prit($patient); ?>
+							<table id="data_table" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Date</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								?>
+								<tr id="<?php echo $developer ['id']; ?>">
+							   		<td><?php echo $developer ['id']; ?></td>
+								   	<td><?php echo $developer ['date']; ?></td>
+								   	<td><?php echo $developer ['description']; ?></td>
+							   	</tr>
+								<?php } ?>
+								</tbody>
+							</table>
 						</div>
 
 				    </div>
@@ -110,5 +97,134 @@ $header = "Пациент";
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
     <!-- /footer -->
+    <script>
+
+    	let id = '<?= $_SESSION['session_id'] ?>';
+
+
+		function addZero(number){
+
+		    let strNumber = String(number);
+		    let newNumber = "";
+
+		    if(strNumber.length < 2){
+
+		        let countZero = 2 - strNumber.length;
+
+		        for ($i=0; $i < countZero; $i++) {
+
+		            newNumber += "0";
+		        }
+		        newNumber += strNumber;
+		        return newNumber;
+		    }
+
+		    return strNumber;
+		}
+
+    	var conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		conn.onopen = function(e) {
+		    console.log("Connection established!");
+		};
+
+		conn.onmessage = function(e) {
+			let d = JSON.parse(e.data)
+
+			let time = new Date();
+
+			let hour = addZero(time.getHours());
+
+			let mitune = addZero(time.getMinutes());
+
+			if(d.id == id || d.id_cli == id ){
+
+				if(d.id == id){
+					$(`ul[data-chatid=${d.id_cli}]`).append(`<li class="media media-chat-item-reverse">
+													<div class="media-body">
+														<div class="media-chat-item">${d.message}</div>
+														<div class="font-size-sm text-muted mt-2">
+															${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+														</div>
+													</div>
+
+													<div class="ml-3">
+														<a href="#">
+															<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+														</a>
+													</div>
+												</li>`)
+				}else{
+
+					let active = $('a.show').attr('data-idChat');
+
+
+					if(active == d.id){
+					    $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
+															<div class="mr-3">
+																<a href="#">
+																	<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+																</a>
+															</div>
+
+															<div class="media-body">
+																<div class="media-chat-item"> ${d.message} </div>
+																<div class="font-size-sm text-muted mt-2">
+																	${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																</div>
+															</div>
+														</li>`)
+					}else{
+						let p = Number($(`p[data-idChat=${d.id}]`).text()) + 1;
+
+						let b = Number($(`b#noticeus`).text()) + 1;
+
+						$(`b#noticeus`).html(b);
+
+						$(`p[data-idChat=${d.id}]`).text(p)
+
+						console.log(p);
+					}
+				}
+			}
+
+		};
+
+		$('textarea').keypress(function(e){
+			console.log(e.keyCode);
+
+			if(e.keyCode == 13){
+				let id_cli = $(this).attr('data-inputid');
+				let word = $(this).val();
+				$(this).val('');
+				let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
+				conn.send(obj);
+			}
+		})
+
+		function sendMessage(body) {
+			let id_cli = body.dataset.buttonid;
+			let word = $(`textarea[data-inputid=${id_cli}]`).val();
+			console.log(word);
+			$(`textarea[data-inputid=${id_cli}]`).val('');
+			let obj = JSON.stringify({ id : id, id_cli : id_cli, message : word });
+			conn.send(obj);
+		}
+
+		function deletNotice(body) {
+			let id1 = $(body).attr('data-idChat');
+			let count;
+
+			try{
+				console.log('--------------------------------')
+				count = Number($(`b#noticeus`).html()) - Number($(`p[data-idChat=${id1}]`).html());
+				$(`b#noticeus`).html(count);
+				$(`p[data-idChat=${id1}]`).html('');
+			}catch{
+				console.log('error')
+			}
+		}
+
+    </script>
+
 </body>
 </html>

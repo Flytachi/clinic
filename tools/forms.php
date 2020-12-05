@@ -889,10 +889,6 @@ class LaboratoryUpStatus extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $tip = $db->query("SELECT user_id, service_id FROM visit WHERE id=$pk")->fetch();
-        foreach ($db->query("SELECT * FROM laboratory_analyze_type WHERE service_id = {$tip['service_id']}") as $row) {
-            Mixin\insert( $this->table2, array('user_id' => $tip['user_id'], 'visit_id' => $pk, 'analyze_id' => $row['id']) );
-        }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
