@@ -185,6 +185,7 @@ CREATE TABLE `laboratory_analyze` (
   `id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `visit_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
   `analyze_id` int(11) DEFAULT NULL,
   `result` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `deviation` tinyint(1) DEFAULT NULL,
