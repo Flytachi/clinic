@@ -303,15 +303,8 @@ class VisitModel extends Model
                 $("#service").chained("#division2");
             });
 
-            let conn = new WebSocket("ws://192.168.1.114:8080");
-            conn.onopen = function(e) {
-                console.log("Connection established!");
-            };
-
             function submitAlert() {
-
               let id = $("#parent_id2").val();
-
               let obj = JSON.stringify({ type : 'alert',  id : id });
               console.log(obj);
               conn.send(obj);
