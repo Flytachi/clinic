@@ -1,7 +1,7 @@
 <?php
 
-require dirname(__DIR__) . '/vendor/autoload.php';
-require_once '/tools/functions/connection.php';
+require 'vendor/autoload.php';
+require_once 'tools/functions/connection.php';
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;
