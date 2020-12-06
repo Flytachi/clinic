@@ -12,6 +12,9 @@ switch (level()):
     case 3:
         render('cashbox/index');
         break;
+    case 4:
+        render('pharmacy/all_prep');
+        break;
     case 5:
         render('doctor/index');
         break;

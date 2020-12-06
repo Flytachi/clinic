@@ -1,7 +1,6 @@
 <?php
 namespace Mixin;
 
-
 function clean($value = "") {
     $value = trim($value);
     $value = stripslashes($value);
@@ -102,6 +101,11 @@ function error($url){
     header("location:/$PROJECT_NAME/error/$url.php");
     exit;
 }
+
+function es(){
+    echo "eee";
+}
+
 // function error_404(){
 //     global $PROJECT_NAME;
 //     header("location:/$PROJECT_NAME/error/404.php");
