@@ -1,4 +1,3 @@
-console.log('www');
 function addZero(number){
 
     let strNumber = String(number);
@@ -20,7 +19,7 @@ function addZero(number){
 }
 
 conn.onopen = function(e) {
-    console.log("Connection established!");
+    console.log("Connection success!");
 };
 
 conn.onmessage = function(e) {
