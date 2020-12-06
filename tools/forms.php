@@ -983,6 +983,7 @@ class BypassDateModel extends Model
     public function table_form_doc($pk = null)
     {
         global $db, $methods;
+        $this_date = new \DateTime();
         $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
@@ -1011,8 +1012,9 @@ class BypassDateModel extends Model
 
                         <?php
                         $day_show = 10;
+                        $max_day_show = 30;
                         $s = 0;
-                        for ($i=-$first_date; $i < 30; $i++) {
+                        for ($i=-$first_date; $i < $max_day_show; $i++) {
                             $s++;
                             $row_stat = True;
                             foreach ($col as $value) {
@@ -1036,7 +1038,7 @@ class BypassDateModel extends Model
                                         <?= date('H:i', strtotime($value['time'])) ?>
                                     </td>
                                     <td>
-                                        <?php if ($dat < $add_date): ?>
+                                        <?php if ($dat < $this_date->format('Y-m-d')): ?>
                                             <input type="checkbox" class="swit" name="status" <?= ($post['status']) ? "checked" : "" ?> disabled>
                                         <?php else: ?>
                                             <input type="checkbox" class="swit" name="status" onchange="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" <?= ($post['status']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
@@ -1115,6 +1117,7 @@ class BypassDateModel extends Model
     public function table_form_nurce($pk = null)
     {
         global $db, $methods;
+        $this_date = new \DateTime();
         $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
@@ -1143,8 +1146,9 @@ class BypassDateModel extends Model
 
                         <?php
                         $day_show = 10;
+                        $max_day_show = 30;
                         $s = 0;
-                        for ($i=-$first_date; $i < 30; $i++) {
+                        for ($i=-$first_date; $i < $max_day_show; $i++) {
                             $s++;
                             $row_stat = True;
                             foreach ($col as $value) {
@@ -1178,10 +1182,10 @@ class BypassDateModel extends Model
 
                                     ?>
                                     <td>
-                                        <?php if (($dat < $add_date) or ($dat > $add_date)): ?>
-                                            <input type="checkbox" class="swit" name="status" <?= ($post['completed']) ? "checked" : "" ?> disabled>
-                                        <?php else: ?>
+                                        <?php if ($dat == $this_date->format('Y-m-d')): ?>
                                             <input type="checkbox" class="swit" name="completed" onchange="SwetDate()" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
+                                        <?php else: ?>
+                                            <input type="checkbox" class="swit" name="status" <?= ($post['completed']) ? "checked" : "" ?> disabled>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
