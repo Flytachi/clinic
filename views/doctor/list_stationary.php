@@ -86,8 +86,10 @@ $header = "Стационарные пациенты";
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
-													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i> Осмотр Врача</a>
-                                                    <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i> Анализы</a>
+													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Осмотр Врача</a>
+													<a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
+													<a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+													<a href="<?= viv('doctor/card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
                                                     <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
                                                     <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>

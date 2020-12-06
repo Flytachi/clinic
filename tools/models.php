@@ -194,7 +194,7 @@ class UserModel extends Model
             Успешно
         </div>
         ';
-        render('admin/index');
+        render();
     }
 
     public function error($message)
@@ -205,7 +205,7 @@ class UserModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/index');
+        render();
     }
 }
 
@@ -249,7 +249,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -265,9 +265,8 @@ class VisitModel extends Model
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <option></option>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
                             <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -281,7 +280,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
                             <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
                             <?php
@@ -293,8 +292,13 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
+<<<<<<< HEAD
                 <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
                 <button type="submit" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+=======
+                <!-- <button type="button" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button> -->
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+>>>>>>> 43c94d35eb4b912e8ae88002d589a2c655de58c3
             </div>
 
         </form>
@@ -302,9 +306,13 @@ class VisitModel extends Model
             $(function(){
                 $("#parent_id2").chained("#division2");
                 $("#service").chained("#division2");
-
             });
+<<<<<<< HEAD
             let conn = new WebSocket("ws://192.168.1.103:8080");
+=======
+
+            let conn = new WebSocket("ws://192.168.1.114:8080");
+>>>>>>> 43c94d35eb4b912e8ae88002d589a2c655de58c3
             conn.onopen = function(e) {
                 console.log("Connection established!");
             };
@@ -415,7 +423,6 @@ class VisitModel extends Model
                 <div class="col-md-6">
                     <label>Специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                             ?>
@@ -429,7 +436,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -458,10 +465,10 @@ class VisitModel extends Model
             }
             $this->post['grant_id'] = $this->post['parent_id'];
             $object = Mixin\insert($this->table, $this->post);
-            if ($object == 1){
+            if (intval($object)){
                 // Обновление статуса у пациента
                 $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
-                if ($object1 == 1){
+                if (intval($object1)){
                     $this->success();
                 }else {
                     $this->error($object1);
@@ -492,41 +499,57 @@ class VisitModel extends Model
         $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
         $object = Mixin\delete($this->table, $pk);
         if ($object) {
-            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id")->rowCount();
+            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
                 Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-                $this->success(1);
+               $this->success(2);
             }else {
-                $this->success();
+                $this->success(1);
             }
         } else {
-            $this->error($object);
+            $this->error($object, 1);
         }
 
     }
 
     public function success($stat=null)
     {
-        if ($stat) {
-            echo '
-            <div class="alert alert-primary" role="alert">
+        if ($stat == 2) {
+            echo '<div class="alert alert-info" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                Успешно
+            </div>';
+        }elseif ($stat == 1) {
+            echo 1;
+        }else {
+            $_SESSION['message'] = '
+            <div class="alert alert-info" role="alert">
                 <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
                 Успешно
             </div>
             ';
-        }else {
-            echo 1;
+            render();
         }
     }
 
-    public function error($message)
+    public function error($message, $stat=null)
     {
-        echo '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
+        if ($stat) {
+            echo '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold"> '.$message.'</span>
+            </div>
+            ';
+        } else {
+            $_SESSION['message'] = '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold"> '.$message.'</span>
+            </div>
+            ';
+            render();
+        }
     }
 }
 
@@ -651,7 +674,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         // parad("Услуги", $db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
-        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price") as $row) {
+        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price") as $row) {
             $post = array(
                 'pricer_id' => $this->post['pricer_id'],
                 'sale' => $this->post['sale'],
@@ -736,12 +759,12 @@ class VisitPriceModel extends Model
     public function success()
     {
         $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-info" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
             Успешно
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 
     public function error($message)
@@ -752,7 +775,7 @@ class VisitPriceModel extends Model
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 }
 
@@ -800,12 +823,12 @@ class InvestmentModel extends Model
     public function success()
     {
         $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
+        <div class="alert alert-info" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
             Успешно
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 
     public function error($message)
@@ -816,7 +839,7 @@ class InvestmentModel extends Model
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>
         ';
-        render('cashbox/index');
+        render();
     }
 }
 
@@ -865,12 +888,37 @@ class DivisionModel extends Model
                 <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $post['name']?>">
             </div>
 
+            <div class="form-group row">
+                <label class="col-form-label col-md-1">Ассистент</label>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-prepend ml-5">
+                            <span class="input-group-text">
+                                <input type="checkbox" class="form-control-switchery" name="assist" <?= ($post['assist']) ? "checked" : "" ?>>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
         <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['assist']) {
+            $this->post['assist'] = True;
+        }else {
+            $this->post['assist'] = False;
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()
@@ -881,7 +929,7 @@ class DivisionModel extends Model
             Успешно
         </div>
         ';
-        render('admin/division');
+        render();
     }
 
     public function error($message)
@@ -892,7 +940,7 @@ class DivisionModel extends Model
             '.$message.'
         </div>
         ';
-        render('admin/division');
+        render();
     }
 }
 
@@ -952,7 +1000,7 @@ class WardModel extends Model
             Успешно
         </div>
         ';
-        render('admin/ward');
+        render();
     }
 
     public function error($message)
@@ -963,7 +1011,7 @@ class WardModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/ward');
+        render();
     }
 }
 
@@ -1056,7 +1104,7 @@ class BedModel extends Model
             Успешно
         </div>
         ';
-        render('admin/bed');
+        render();
     }
 
     public function error($message)
@@ -1067,7 +1115,7 @@ class BedModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/bed');
+        render();
     }
 }
 
@@ -1118,7 +1166,7 @@ class BedTypeModel extends Model
             Успешно
         </div>
         ';
-        render('admin/bed');
+        render();
     }
 
     public function error($message)
@@ -1129,7 +1177,7 @@ class BedTypeModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/bed');
+        render();
     }
 }
 
@@ -1224,7 +1272,7 @@ class ServiceModel extends Model
             Успешно
         </div>
         ';
-        render('admin/service');
+        render();
     }
 
     public function error($message)
@@ -1235,7 +1283,7 @@ class ServiceModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/service');
+        render();
     }
 }
 
@@ -1281,7 +1329,7 @@ class StorageTypeModel extends Model
             Успешно
         </div>
         ';
-        render('admin/storage');
+        render();
     }
 
     public function error($message)
@@ -1292,7 +1340,7 @@ class StorageTypeModel extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render('admin/storage');
+        render();
     }
 }
 
@@ -1362,7 +1410,7 @@ class LaboratoryAnalyzeTypeModel extends Model
             Успешно
         </div>
         ';
-        render('admin/analyze');
+        render();
     }
 
     public function error($message)
@@ -1373,7 +1421,7 @@ class LaboratoryAnalyzeTypeModel extends Model
             '.$message.'
         </div>
         ';
-        render('admin/analyze');
+        render();
     }
 }
 
@@ -1448,7 +1496,6 @@ class LaboratoryAnalyzeModel extends Model
             </div>
 
             <div class="modal-footer">
-                <!-- <a href="<?= up_url($_GET['id'], 'VisitLaboratoryFinish') ?>" onclick="ResultEND()" class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> Завершить</a> -->
                 <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -1474,7 +1521,6 @@ class LaboratoryAnalyzeModel extends Model
         unset($this->post['end']);
         $user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        // $this->test_mod();
         foreach ($this->post as $val) {
             $pk = $val['id'];
             unset($val['id']);
@@ -1485,7 +1531,7 @@ class LaboratoryAnalyzeModel extends Model
             }
             $object = Mixin\update($this->table, $val, $pk);
         }
-        if ($object == 1){
+        if (intval($object)){
             if ($end) {
                 foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
                     if ($row['grant_id'] == $row['parent_id']) {
@@ -1562,118 +1608,127 @@ class BypassModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="<?= (level() == 5) ?1:0 ?>">
 
             <div class="modal-body">
 
-                <?php
-                if(permission(5)){
-                    ?>
-                    <div class="form-group">
-                        <label>Препорат:</label>
-                        <input type="number" class="form-control" name="preparat_id" placeholder="Введите препорат" required>
+                <div class="form-group row">
+
+                    <div class="col-md-12">
+                        <label>Препарат:</label>
+                        <select class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
+							<optgroup label="Уколы">
+								<option value="1">Analysis</option>
+								<option value="2">Linear Algebra</option>
+								<option value="3">Probability Theory</option>
+							</optgroup>
+							<optgroup label="Витамины">
+								<option value="4">Introduction to Programming</option>
+								<option value="5">Complexity Theory</option>
+								<option value="6">Software Engineering</option>
+							</optgroup>
+						</select>
                     </div>
 
-                    <div class="form-group">
-                        <label>Количество:</label>
-                        <input type="number" class="form-control" step="1" name="count" placeholder="Введите кол-во" required>
-                    </div>
-                    <?php
-                }
-                ?>
+                </div>
 
-                <div class="form-group">
-                    <label>Примечание:</label>
-                    <textarea class="form-control" placeholder="Введите примечание" name="description" rows="3" cols="80"></textarea>
+                <div class="form-group row">
+
+                    <div class="col-md-6">
+                        <label>Метод:</label>
+                        <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
+                            <option></option>
+                            <option value="1">Внутривенный</option>
+                            <option value="2">Внутриартериальнаый</option>
+                            <option value="3">Внутримышечный</option>
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Описание:</label>
+                        <input type="text" class="form-control" name="description" placeholder="Введите описание" required>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-1 text-right">
+                        <button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm" style="margin-top:20px"><i class="icon-plus22 mr-2"></i>Добавить время</button>
+                    </div>
+
+                </div>
+
+                <div class="form-group row" id="time_div">
+                    <div class="col-md-3" id="time_input_0">
+                        <label>Время принятия:</label>
+                        <input type="time" name="time[0]" class="form-control">
+                    </div>
                 </div>
 
             </div>
 
-            <div class="modal-footer">
-                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn bg-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
-            </div>
-
-        </form>
-        <?php
-    }
-
-    public function table_form($pk = null)
-    {
-        global $db, $patient;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="<?= (level() == 5) ?1:0 ?>">
-
-            <div class="modal-body">
-
-                <div class="header-elements">
-                    <div class="list-icons">
-                        <a class="list-icons-item text-success" id="by_create_button">
-                            <i class="icon-plus22"></i>Добавить
-                        </a>
-                    </div>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm table-bordered">
-                        <thead>
-                            <tr class="bg-info">
-                                <th>Припорат</th>
-                                <th>Примечание</th>
-                                <?php
-                                for ($i=0; $i < 10; $i++) {
-                                    ?>
-                                    <th><?php echo date('d M'); ?></th>
-                                    <?php
-                                }
-                                ?>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    qewqeqweqeqw
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" name="description">
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn btn-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+    		<div class="modal-footer">
+                <button class="btn btn-outline-info legitRipple" type="submit">Сохранить</button>
             </div>
 
         </form>
         <script type="text/javascript">
-
+            var i = 0;
+            function AddinputTime() {
+                i++;
+                $('#time_div').append(`
+                    <div class="col-md-3" id="time_input_`+ i +`">
+                        <label>Время принятия:</label>
+                        <input type="time" name="time[`+ i +`]" class="form-control">
+                    </div>
+                `);
+            }
         </script>
         <?php
+    }
+
+    public function save()
+    {
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (intval($object)){
+                $this->set_table('bypass_preparat');
+                foreach ($this->post_preparat as $value) {
+                    $object1 = Mixin\insert($this->table, array(
+                        'bypass_id' => $object,
+                        'preparat_id' => $value,
+                    ));
+                    if (!intval($object1)) {
+                        $this->error($object1);
+                    }
+                }
+                $this->set_table('bypass_time');
+                foreach ($this->post_time as $value) {
+                    $object1 = Mixin\insert($this->table, array(
+                        'bypass_id' => $object,
+                        'time' => $value,
+                    ));
+                    if (!intval($object1)) {
+                        $this->error($object1);
+                    }
+                }
+                $this->success();
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function clean()
+    {
+        $this->post_preparat = $this->post['preparat'];
+        $this->post_time = $this->post['time'];
+        unset($this->post['preparat']);
+        unset($this->post['time']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()

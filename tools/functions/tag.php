@@ -46,9 +46,14 @@ function del_url($id, $model){
     return "/$PROJECT_NAME/model/delete.php?id=$id&model=$model";
 }
 
-function up_url($id, $model){
+function up_url($id, $model, $form=null){
     global $PROJECT_NAME;
-    return "/$PROJECT_NAME/model/get.php?id=$id&model=$model";
+    if ($form) {
+        $result = "/$PROJECT_NAME/model/get.php?id=$id&model=$model&form=$form";
+    }else {
+        $result = "/$PROJECT_NAME/model/get.php?id=$id&model=$model";
+    }
+    return $result;
 }
 
 ?>

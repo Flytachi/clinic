@@ -14,13 +14,22 @@
 </ul>
 
 
-<script src="<?= stack('global_assets/js/plugins/ui/moment/moment.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
 
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+<script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>

@@ -8,6 +8,8 @@
 <script src="<?= stack('global_assets/js/plugins/notifications/noty.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/forms/inputs/duallistbox/duallistbox.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/extensions/jquery_ui/interactions.min.js') ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/pickers/daterangepicker.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 <!-- /theme JS files -->
 
 
@@ -19,3 +21,16 @@
 <script src="<?= stack('global_assets/js/demo_pages/form_select2.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/form_dual_listboxes.js') ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/dashboard.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/plugins/forms/validation/validate.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/inputs/touchspin.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_validation.js") ?>"></script>

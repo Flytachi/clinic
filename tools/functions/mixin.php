@@ -33,7 +33,7 @@ function insert($tb, $post)
     $sql = "INSERT INTO $tb ($col) VALUES ($val)";
     try{
         $stm = $db->prepare($sql)->execute($post);
-        return $stm;
+        return $db->lastInsertId();
     }
     catch (\PDOException $ex) {
         return $ex->getMessage();

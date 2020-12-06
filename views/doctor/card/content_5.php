@@ -42,6 +42,15 @@ $header = "Пациент";
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Анализы Пациента</h5>
+								<?php if (!$patient->direction or ($patient->direction and $patient->grant_id == $_SESSION['session_id'])): ?>
+									<div class="header-elements">
+										<div class="list-icons">
+											<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_route">
+												<i class="icon-plus22"></i>Добавить
+											</a>
+										</div>
+									</div>
+								<?php endif; ?>
 							</div>
 
 							<div class="table-responsive">
@@ -125,6 +134,30 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_route" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Назначить анализ</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<div class="modal-body">
+
+					<?php
+					if ($patient->direction) {
+						VisitRoute::form_sta_labaratory();
+					} else {
+						VisitRoute::form_out_labaratory();
+					}
+					?>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg" id="modal_class_show">

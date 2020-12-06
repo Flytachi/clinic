@@ -60,7 +60,7 @@ $header = "Пациент";
 				                    <tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id != {$_SESSION['session_id']} AND vs.parent_id != {$_SESSION['session_id']} AND vs.completed IS NOT NULL AND vs.laboratory IS NULL ORDER BY id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id != {$_SESSION['session_id']} AND vs.parent_id != {$_SESSION['session_id']} AND vs.completed IS NOT NULL AND vs.laboratory IS NULL AND vs.diagnostic IS NULL ORDER BY id DESC") as $row) {
 										?>
 											<tr>
 												<td><?= $i++ ?></td>
