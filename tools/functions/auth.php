@@ -7,6 +7,12 @@ function is_auth($arr = null){
         header("location:/$PROJECT_NAME/auth/login.php");
     }
     if ($arr){
+        ?>
+        <script>
+            let id = '<?= $_SESSION['session_id'] ?>';
+            let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+        </script>
+        <?php
         $perk =level();
         if (is_array($arr)){
             if(!in_array($perk, $arr)){
