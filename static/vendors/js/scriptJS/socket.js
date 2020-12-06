@@ -119,10 +119,13 @@ conn.onmessage = function(e) {
   		}
   	}
 
-  }else{
-
+  }else if (d.type == "alert_new_patient"){
     if(d.id == id){
-        alert('Новый пациунт');
+        alert('Новый пациeнт');
+    }
+  }else if (d.type == "call_nurce_to_doc"){
+    if(d.id == id){
+        alert('Вас вызывают');
     }
   }
 
