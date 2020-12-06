@@ -9,7 +9,6 @@ $header = "Класификация персонала";
 
 <script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 

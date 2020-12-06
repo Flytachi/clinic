@@ -851,6 +851,8 @@ class DivisionModel extends Model
             unset($_SESSION['message']);
         }
         ?>
+        <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+        <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
@@ -882,13 +884,14 @@ class DivisionModel extends Model
             <div class="form-group row">
                 <label class="col-form-label col-md-1">Ассистент</label>
                 <div class="col-md-3">
-                    <div class="input-group">
-                        <span class="input-group-prepend ml-5">
-                            <span class="input-group-text">
-                                <input type="checkbox" class="form-control-switchery" name="assist" <?= ($post['assist']) ? "checked" : "" ?>>
-                            </span>
-                        </span>
-                    </div>
+                    <input type="checkbox" class="swit" name="assist" <?= ($post['assist']==1) ? "checked" : "" ?>>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-md-1">Радиолог</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="swit" name="assist" <?= ($post['assist']==2) ? "checked" : "" ?>>
                 </div>
             </div>
 

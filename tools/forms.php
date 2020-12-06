@@ -1178,8 +1178,8 @@ class BypassDateModel extends Model
 
                                     ?>
                                     <td>
-                                        <?php if ($dat < $add_date): ?>
-                                            <input type="checkbox" class="swit" name="status" <?= ($post['status']) ? "checked" : "" ?> disabled>
+                                        <?php if (($dat < $add_date) or ($dat > $add_date)): ?>
+                                            <input type="checkbox" class="swit" name="status" <?= ($post['completed']) ? "checked" : "" ?> disabled>
                                         <?php else: ?>
                                             <input type="checkbox" class="swit" name="completed" onchange="SwetDate()" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
                                         <?php endif; ?>
