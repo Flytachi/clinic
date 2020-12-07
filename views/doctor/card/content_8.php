@@ -76,7 +76,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i=1;
-										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
+										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id") as $row) {
 											?>
 											<tr>
 												<td><?= $i++ ?></td>

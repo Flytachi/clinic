@@ -1606,10 +1606,12 @@ class BypassModel extends Model
         }else{
             $post = array();
         }
+        prit($patient);
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="modal-body">
