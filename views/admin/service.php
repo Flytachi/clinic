@@ -41,6 +41,26 @@ $header = "Услуги";
 				<div class="card">
 
           			<div class="card-header header-elements-inline">
+		              	<h5 class="card-title">Шаблон</h5>
+		              	<div class="header-elements">
+	                  		<div class="list-icons">
+								<a href="../templates/service.xlsx" class="btn" download>Шаблон</a>
+		                      	<a class="list-icons-item" data-action="collapse"></a>
+		                  	</div>
+		              	</div>
+		          	</div>
+
+		          	<div class="card-body">
+						<?php ServiceModel::form_template(); ?>
+		          	</div>
+
+	        	</div>
+
+
+
+				<div class="card">
+
+          			<div class="card-header header-elements-inline">
 		              	<h5 class="card-title">Добавить Услугу</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
@@ -71,7 +91,7 @@ $header = "Услуги";
 	                      	<table class="table table-hover">
 	                          	<thead>
 	                              	<tr class="bg-blue">
-										<th style="width:8%">Id</th>
+										<th style="width:10%">Код</th>
 										<th style="width:40%">Название</th>
 										<th>Роль</th>
 										<th>Отдел</th>
@@ -84,7 +104,7 @@ $header = "Услуги";
 	                              	foreach($db->query('SELECT * from service') as $row) {
 	                                  	?>
                                   		<tr>
-											<td><?= $row['id'] ?></td>
+											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
 	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT * FROM division WHERE id ={$row['division_id']}")->fetch()['name'] : "" ?></td>

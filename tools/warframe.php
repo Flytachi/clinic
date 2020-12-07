@@ -173,4 +173,15 @@ function division_assist($id = null) {
     }
 	return $stmt;
 }
+
+function read_excel($filepath){
+    require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
+
+    $ar=array(); // инициализируем массив
+    $inputFileType = PHPExcel_IOFactory::identify($filepath); // узнаем тип файла, excel может хранить файлы в разных форматах, xls, xlsx и другие
+    $objReader = PHPExcel_IOFactory::createReader($inputFileType); // создаем объект для чтения файла
+    $objPHPExcel = $objReader->load($filepath); // загружаем данные файла в объект
+    $ar = $objPHPExcel->getActiveSheet()->toArray(); // выгружаем данные из объекта в массив
+    return $ar; //возвращаем массив
+}
 ?>

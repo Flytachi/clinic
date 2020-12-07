@@ -18,41 +18,35 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                // Инвестиции
-                $sql = "SELECT SUM(price) 'total_price' FROM investment WHERE user_id = $pk ";
-                $invests = $db->query($sql)->fetch()['total_price'];
+                $sql = "SELECT
+                            SUM(iv.price) 'investment',
+                            ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
+                            (SELECT SUM(sc.price) 'cost' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service'
+                            -- bdt.price 'bed_price',
+                            -- vs.add_date
+                        FROM users us
+                            LEFT JOIN investment iv ON(iv.user_id = us.id)
+                            LEFT JOIN beds bd ON(bd.user_id = us.id)
+                            LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                            LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                        WHERE us.id = $pk";
+                $price = $db->query($sql)->fetch();
 
-                // Время прёма
-                $sql_1 = "SELECT add_date FROM visit WHERE user_id = $pk AND priced_date IS NULL AND grant_id=parent_id";
-                $cost_time = $db->query($sql_1)->fetch()['add_date'];
+                prit($price);
+                // parad("Инвестиции",$price['investment']);
+                // parad("Стоимость кровати",$price['cost_bed']);
+                // parad("Стоимость услуг",$price['cost_service']);
 
-                // Стоимость койки
-                $sql_2 = "SELECT bdt.price FROM beds bd LEFT JOIN bed_type bdt ON(bdt.id=bd.types) WHERE bd.user_id = $pk";
-                $cost_bed = $db->query($sql_2)->fetch()['price'];
-
-                // Сумма койка -> день
-                $cost_bed_time = $cost_bed * intval(date_diff(new \DateTime(), new \DateTime($cost_time))->days);
-
-                // Стоимость услуг
-                $sql_3 = "SELECT SUM(sc.price) 'cost' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL";
-                $cost_service = $db->query($sql_3)->fetch()['cost'];
-
-                // prit($invests);
-                // prit($cost_time);
-                // prit($cost_bed);
-                // prit($cost_service);
-                // prit($cost_bed_time);
-
-                $total_cost -= $cost_service + $cost_bed_time;
+                $price_cost -= $price['cost_service'] + $price['cost_bed'];
                 ?>
                 <div class="form-group form-group-float">
                     <div class="form-group-feedback form-group-feedback-right">
                         <?php if (($invests + $total_cost) > 0): ?>
-                            <input type="text" class="form-control border-success" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                            <input type="text" class="form-control border-success" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
                         <?php elseif(($invests + $total_cost) < 0): ?>
-                            <input type="text" class="form-control border-danger" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                            <input type="text" class="form-control border-danger" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
                         <?php else: ?>
-                            <input type="text" class="form-control border-dark" value="<?= number_format($invests + $total_cost) ?>" disabled>
+                            <input type="text" class="form-control border-dark" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
                         <?php endif; ?>
                     </div>
                 </div>

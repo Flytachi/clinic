@@ -1172,6 +1172,26 @@ class ServiceModel extends Model
 {
     public $table = 'service';
 
+
+    public function form_template($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>" onsubmit="//TempFunc()" enctype="multipart/form-data">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="form-group">
+                <label>Шаблон:</label>
+                <input type="file" class="form-control" name="template" required id="url_template">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function form($pk = null)
     {
         global $db, $PERSONAL;
@@ -1219,6 +1239,11 @@ class ServiceModel extends Model
             </div>
 
             <div class="form-group">
+                <label>Код:</label>
+                <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
+            </div>
+
+            <div class="form-group">
                 <label>Название:</label>
                 <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
             </div>
@@ -1243,12 +1268,68 @@ class ServiceModel extends Model
 
     public function clean()
     {
+        if($_FILES['template']){
+            $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
+            $this->save_excel();
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         if($this->post['user_level'] and !$this->post['division_id']){
             $this->post['division_id'] = null;
         }
         return True;
+    }
+
+    public function clean_excel()
+    {
+        if ($this->post['user_level']) {
+            switch ($this->post['user_level']) {
+                case 'A':
+                    $this->post['user_level'] = 1;
+                    break;
+                case 'B':
+                    $this->post['user_level'] = 5;
+                    break;
+                case 'D':
+                    $this->post['user_level'] = 10;
+                    break;
+                case 'L':
+                    $this->post['user_level'] = 6;
+                    break;
+            }
+        }
+        return True;
+    }
+
+    public function save_excel()
+    {
+        foreach ($this->post['template'] as $key_p => $value_p) {
+            if ($key_p) {
+                foreach ($value_p as $key => $value) {
+                    $pick = $pirst[$key];
+                    switch ($pick) {
+                        case 'role':
+                            $pick = "user_level";
+                            break;
+                        case 'service':
+                            $pick = "name";
+                            break;
+                    }
+                    $this->post[$pick] = $value;
+                }
+                if($this->clean_excel()){
+                    prit($this->post);
+                    $object = Mixin\insert($this->table, $this->post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
+                }
+            }else {
+                $pirst = $value_p;
+                unset($this->post['template']);
+            }
+        }
+        $this->success();
     }
 
     public function success()
