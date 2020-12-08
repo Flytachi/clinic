@@ -1275,7 +1275,8 @@ class NotesModel extends Model
             <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 
-             <div class="card-body">
+            <div class="modal-body">
+
                 <div class="row">
                     <div class="col-md-6">
                         <label>Выберите дату:</label>
@@ -1286,9 +1287,15 @@ class NotesModel extends Model
                         <input type="text" class="form-control" name="description">
                     </div>
                 </div>
+
+            </div>
+
+             <div class="modal-footer">
+
                 <div class="text-right" style="margin-top: 1%;">
-                    <button type="submit" class="btn btn-primary legitRipple">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                    <button type="submit" class="btn btn-outline-info legitRipple">Сохранить</button>
                 </div>
+                
             </div>
 
          </form>

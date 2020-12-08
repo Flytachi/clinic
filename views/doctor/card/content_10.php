@@ -80,14 +80,16 @@ $header = "Пациент";
 								</thead>
 								<tbody>
 								<?php
-								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
 								?>
-								<tr id="<?php echo $developer ['id']; ?>">
-							   		<td><?php echo $developer ['id']; ?></td>
-								   	<td><?php echo $developer ['date']; ?></td>
-								   	<td><?php echo $developer ['description']; ?></td>
-							   	</tr>
-								<?php } ?>
+									<tr id="<?php echo $row['id']; ?>">
+								   		<td><?php echo $row['id']; ?></td>
+									   	<td><?php echo $row['date']; ?></td>
+									   	<td><?php echo $row['description']; ?></td>
+								   	</tr>
+								<?php
+								}
+								?>
 								</tbody>
 							</table>
 						</div>
@@ -113,11 +115,8 @@ $header = "Пациент";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<div class="modal-body">
+				<?php NotesModel::form() ?>
 
-					<?php NotesModel::form() ?>
-
-				</div>
 			</div>
 		</div>
 	</div>
