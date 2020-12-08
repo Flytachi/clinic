@@ -1295,7 +1295,7 @@ class NotesModel extends Model
                 <div class="text-right" style="margin-top: 1%;">
                     <button type="submit" class="btn btn-outline-info legitRipple">Сохранить</button>
                 </div>
-                
+
             </div>
 
          </form>
