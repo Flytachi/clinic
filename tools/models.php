@@ -1687,7 +1687,6 @@ class BypassModel extends Model
         }else{
             $post = array();
         }
-        prit($patient);
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
