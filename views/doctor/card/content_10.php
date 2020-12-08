@@ -49,7 +49,13 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-						<?php include "content_tabs.php"; ?>
+						<?php
+						include "content_tabs.php";
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						?>
 
 						<div class="card">
 							<div class="card-header header-elements-inline">
