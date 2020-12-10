@@ -19,7 +19,7 @@ if ($_GET['pk']) {
 
                 <?php
                 $sql = "SELECT
-                            SUM(iv.price) 'investment',
+                            SUM(iv.balance) 'balance',
                             ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
                             (SELECT SUM(sc.price) 'cost' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service'
                             -- bdt.price 'bed_price',
@@ -33,7 +33,7 @@ if ($_GET['pk']) {
                 $price = $db->query($sql)->fetch();
 
                 prit($price);
-                // parad("Инвестиции",$price['investment']);
+                // parad("Инвестиции",$price['balance']);
                 // parad("Стоимость кровати",$price['cost_bed']);
                 // parad("Стоимость услуг",$price['cost_service']);
 
@@ -41,12 +41,12 @@ if ($_GET['pk']) {
                 ?>
                 <div class="form-group form-group-float">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <?php if (($price['investment'] + $price_cost) > 0): ?>
-                            <input type="text" class="form-control border-success" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
-                        <?php elseif(($price['investment']   + $price_cost) < 0): ?>
-                            <input type="text" class="form-control border-danger" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
+                        <?php if (($price['balance'] + $price_cost) > 0): ?>
+                            <input type="text" class="form-control border-success" value="<?= number_format($price['balance'] + $price_cost) ?>" disabled>
+                        <?php elseif(($price['balance']   + $price_cost) < 0): ?>
+                            <input type="text" class="form-control border-danger" value="<?= number_format($price['balance'] + $price_cost) ?>" disabled>
                         <?php else: ?>
-                            <input type="text" class="form-control border-dark" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
+                            <input type="text" class="form-control border-dark" value="<?= number_format($price['balance'] + $price_cost) ?>" disabled>
                         <?php endif; ?>
                     </div>
                 </div>

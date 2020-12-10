@@ -246,7 +246,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
@@ -264,7 +264,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
@@ -277,7 +277,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
@@ -292,21 +292,18 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <!-- <button type="button" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button> -->
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
         <script type="text/javascript">
             $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
+                $("#parent_id").chained("#division_id");
+                $("#service_id").chained("#division_id");
             });
 
             function submitAlert() {
-              let id = $("#parent_id2").val();
-              let obj = JSON.stringify({ type : 'alert',  id : id });
-              console.log(obj);
+              let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val() });
               conn.send(obj);
             }
 
@@ -392,7 +389,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
@@ -420,7 +417,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -428,8 +425,12 @@ class VisitModel extends Model
             $(function(){
                 $("#ward").chained("#floor");
                 $("#bed").chained("#ward");
-                $("#parent_id").chained("#division");
+                $("#parent_id").chained("#division_id");
             });
+            function submitAlert() {
+              let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val() });
+              conn.send(obj);
+            }
         </script>
         <?php
     }
@@ -780,7 +781,7 @@ class InvestmentModel extends Model
 
                 <div class="col-md-6">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" name="price" placeholder="Предоплата" required>
+                        <input type="text" class="form-control border-success" name="balance" placeholder="Предоплата">
                         <div class="form-control-feedback text-success">
                             <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
                                 <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
@@ -793,7 +794,9 @@ class InvestmentModel extends Model
                     <div class="form-group-feedback form-group-feedback-right">
                         <input type="text" class="form-control border-danger" placeholder="Возврат">
                         <div class="form-control-feedback text-danger">
-                            <i style="font-size: 23px;" class="icon-history" data-toggle="modal" data-target="#modal_default2"></i>
+                            <button type="submit" class="btn btn-outline-danger border-transparent legitRipple">
+                                <i style="font-size: 23px;" class="icon-history"></i>
+                            </button>
                         </div>
                     </div>
                 </div>

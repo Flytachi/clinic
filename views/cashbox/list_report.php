@@ -70,7 +70,7 @@ $header = "Отчёт";
                                 <div class="col-md-3">
                                     <label>Дата визита:</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control daterange-locale" name="date">
+										<input type="text" class="form-control daterange-locale" name="date" value="<?= ($_POST['date']) ? $_POST['date'] : "" ?>">
                                         <span class="input-group-append">
                                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
                                         </span>
@@ -81,7 +81,7 @@ $header = "Отчёт";
                                     <label>Кассир:</label>
                                     <select class="form-control multiselect-full-featured" data-placeholder="Выбрать кассира" name="priser_id[]" multiple="multiple" required data-fouc>
                                         <?php foreach ($db->query("SELECT * from users WHERE user_level = 3") as $row): ?>
-                                            <option value="<?= $row['id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $_POST['priser_id'])) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
                                         <?php endforeach; ?>
             						</select>
                                 </div>
@@ -113,8 +113,35 @@ $header = "Отчёт";
                         <div class="card-body">
 
                             <?php
-                            parad("POST", $_POST);
-                            list($month, $day) = split('[/.-]', $_POST['date']);
+                            $_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
+                            $_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
+                            $sql = "SELECT
+                                        vsp.pricer_id,
+                                        vs.user_id,
+                                        (vsp.price_cash + vsp.price_card + vsp.price_transfer) 'price',
+                                        vsp.price_cash,
+                                        vsp.price_card,
+                                        vsp.price_transfer,
+										vsp.refund,
+                                        vsp.add_date
+                                    FROM visit_price vsp
+                                        LEFT JOIN visit vs ON(vs.id=vsp.visit_id)
+                                    WHERE
+                                        (DATE_FORMAT(vsp.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+                                        vsp.pricer_id IN (".implode($_POST['priser_id']).")
+                                    ";
+
+							$sql2 = "SELECT
+                                        iv.pricer_id,
+                                        iv.user_id,
+                                        iv.balance,
+                                        iv.add_date
+                                    FROM investment iv
+                                    WHERE
+                                        (DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+                                        iv.pricer_id IN (".implode($_POST['priser_id']).")
+                                    ";
+							// prit($db->query($sql2)->fetchAll());
                             ?>
 
                             <div class="table-responsive card">
@@ -125,17 +152,42 @@ $header = "Отчёт";
                                             <th>Дата</th>
                                             <th>Кассир</th>
                                             <th>Пациент</th>
-                                            <th>Баланс пациента</th>
                                             <th>Сумма оплаты</th>
                                             <th>Наличные</th>
                                             <th>Терминал</th>
                                             <th>Перечисление</th>
+											<th>Предоплата</th>
                                             <th>Возврат</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($variable as $key => $value): ?>
-
+                                        <?php $i=1; foreach ($db->query($sql) as $row): ?>
+                                            <tr>
+                                                <th><?= $i++ ?></th>
+                                                <th><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></th>
+                                                <th><?= get_full_name($row['pricer_id']) ?></th>
+                                                <th><?= get_full_name($row['user_id'])  ?></th>
+                                                <th><?= $row['price'] ?></th>
+                                                <th><?= $row['price_cash'] ?></th>
+                                                <th><?= $row['price_card'] ?></th>
+                                                <th><?= $row['price_transfer'] ?></th>
+												<th>0</th>
+												<th><?= $row['refund'] ?></th>
+                                            </tr>
+                                        <?php endforeach; ?>
+										<?php foreach ($db->query($sql2) as $row): ?>
+                                            <tr>
+                                                <th><?= $i++ ?></th>
+                                                <th><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></th>
+                                                <th><?= get_full_name($row['pricer_id']) ?></th>
+                                                <th><?= get_full_name($row['user_id'])  ?></th>
+												<th>0</th>
+                                                <th>0</th>
+                                                <th>0</th>
+                                                <th>0</th>
+												<th><?= ($row['balance'] > 0) ? $row['balance'] : 0 ?></th>
+												<th><?= ($row['balance'] < 0) ? $row['balance'] : 0 ?></th>
+                                            </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>

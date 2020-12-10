@@ -121,11 +121,19 @@ conn.onmessage = function(e) {
 
   }else if (d.type == "alert_new_patient"){
     if(d.id == id){
-        alert('Новый пациeнт');
+        new Noty({
+            text: 'У вас новый пациент!',
+            type: 'info'
+        }).show();
     }
   }else if (d.type == "call_nurce_to_doc"){
     if(d.id == id){
-        alert('Вас вызывают');
+        swal({
+            position: 'top',
+            title: 'Внимание! Срочный вызов!',
+            type: 'warning',
+            html: d.message
+        });
     }
   }
 
