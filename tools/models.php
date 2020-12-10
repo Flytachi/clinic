@@ -293,7 +293,7 @@ class VisitModel extends Model
 
             <div class="text-right">
                 <!-- <button type="button" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button> -->
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info" onclick="submitAlert()" >Сохранить</button>
             </div>
 
         </form>
@@ -305,7 +305,7 @@ class VisitModel extends Model
 
             function submitAlert() {
               let id = $("#parent_id2").val();
-              let obj = JSON.stringify({ type : 'alert',  id : id });
+              let obj = JSON.stringify({ type : 'alert_new_patient',  id : id });
               console.log(obj);
               conn.send(obj);
             }

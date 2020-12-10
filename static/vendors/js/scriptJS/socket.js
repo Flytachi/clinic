@@ -1,3 +1,5 @@
+
+
 function addZero(number){
 
     let strNumber = String(number);
@@ -122,6 +124,7 @@ conn.onmessage = function(e) {
   }else if (d.type == "alert_new_patient"){
     if(d.id == id){
         alert('Новый пациeнт');
+        Noty({text: 'Успешно!',type: 'success'}).show();
     }
   }else if (d.type == "call_nurce_to_doc"){
     if(d.id == id){
