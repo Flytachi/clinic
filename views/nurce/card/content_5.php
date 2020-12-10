@@ -69,6 +69,9 @@ $header = "Пациент";
 											<th>Пульс</th>
 											<th>Температура</th>
 											<th>Сатурация</th>
+											<th>Дыхание</th>
+											<th>Вес</th>
+											<th>Моча</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -97,6 +100,9 @@ $header = "Пациент";
 												<td><?= $row['pulse'] ?></td>
 												<td><?= $row['temperature'] ?></td>
 												<td><?= $row['saturation'] ?></td>
+												<td><?= $row['breath'] ?></td>
+												<td><?= $row['weight'] ?></td>
+												<td><?= $row['urine'] ?></td>
 											</tr>
 											<?php
 										}

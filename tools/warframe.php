@@ -20,9 +20,15 @@ $FLOOR = array(
 );
 
 $methods = array(
-    1 => "Внутривенный",
-    2 => "Внутриартериальнаый",
-    3 => "Внутримышечный",
+    1 => "Через рот",
+    2 => "Внутримышечный (в/м)",
+    3 => "Подкожный (п/к)",
+    4 => "Внутривенный (в/в)",
+    5 => "Внутривенный капельный (в/в кап)",
+    6 => "Ректальный",
+    7 => "Вагинальный",
+    8 => "Ингаляционный",
+    9 => "Поверхностное натирание",
 );
 
 require_once 'functions/connection.php';
@@ -141,6 +147,21 @@ function addZero($number){
     }
 
     return $strNumber;
+}
+
+function division($id = null) {
+    global $db, $PERSONAL;
+    if(empty($id)){
+        $id = $_SESSION['session_id'];
+    }
+    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    try{
+        $stmt = $db->query("SELECT id from division where id = $id")->fetchColumn();
+    }
+    catch (PDOException $ex) {
+        $stmt = null;
+    }
+	return $stmt;
 }
 
 

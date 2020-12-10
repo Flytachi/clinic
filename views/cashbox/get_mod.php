@@ -41,9 +41,9 @@ if ($_GET['pk']) {
                 ?>
                 <div class="form-group form-group-float">
                     <div class="form-group-feedback form-group-feedback-right">
-                        <?php if (($invests + $total_cost) > 0): ?>
+                        <?php if (($price['investment'] + $price_cost) > 0): ?>
                             <input type="text" class="form-control border-success" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
-                        <?php elseif(($invests + $total_cost) < 0): ?>
+                        <?php elseif(($price['investment']   + $price_cost) < 0): ?>
                             <input type="text" class="form-control border-danger" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>
                         <?php else: ?>
                             <input type="text" class="form-control border-dark" value="<?= number_format($price['investment'] + $price_cost) ?>" disabled>

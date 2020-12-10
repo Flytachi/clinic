@@ -1698,19 +1698,17 @@ class BypassModel extends Model
 
                 <div class="form-group row">
 
-                    <div class="col-md-12">
+                    <div class="col-md-9">
+
                         <label>Препарат:</label>
                         <select class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
-							<optgroup label="Уколы">
-								<option value="1">Analysis</option>
-								<option value="2">Linear Algebra</option>
-								<option value="3">Probability Theory</option>
-							</optgroup>
-							<optgroup label="Витамины">
-								<option value="4">Introduction to Programming</option>
-								<option value="5">Complexity Theory</option>
-								<option value="6">Software Engineering</option>
-							</optgroup>
+                            <?php foreach ($db->query("SELECT * FROM pharmacy_category") as $row): ?>
+                                <optgroup label="<?= $row['name'] ?>">
+                                    <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = {$row['id']}") as $row2): ?>
+                                        <option value="<?= $row2['product_id'] ?>"><?= $row2['product_code'] ?> (<?= $row2['qty'] ?>)</option>
+                                    <?php endforeach; ?>
+    							</optgroup>
+                            <?php endforeach; ?>
 						</select>
                     </div>
 
@@ -1872,7 +1870,7 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-6">
                         <label>Давление:</label>
-                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление" required>
+                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление">
                     </div>
 
                 </div>
@@ -1892,6 +1890,25 @@ class PatientStatsModel extends Model
                     <div class="col-md-4">
                         <label>Сатурация:</label>
                         <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-4">
+                        <label>Дыхание:</label>
+                        <input type="number" class="form-control" name="breath" min="10" step="1" max="50" placeholder="Введите дыхание">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Вес:</label>
+                        <input type="number" class="form-control" name="weight" min="30" step="1" max="200"  placeholder="Введите вес">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Моча:</label>
+                        <input type="number" class="form-control" name="urine" min="0" step="0.1" max="5">
                     </div>
 
                 </div>

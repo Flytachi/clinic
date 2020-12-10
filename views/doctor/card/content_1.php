@@ -37,12 +37,27 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-				        <?php include "content_tabs.php"; ?>
+						<?php
+						include "content_tabs.php";
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						?>
 
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Осмотр</h5>
+								<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+									<div class="header-elements">
+										<div class="list-icons">
+											<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+												<i class="icon-plus22"></i>Добавить
+											</a>
+										</div>
+									</div>
+								<?php endif; ?>
 							</div>
 
 							<div class="table-responsive">
@@ -105,6 +120,24 @@ $header = "Пациент";
 			</div>
 		</div>
 	</div>
+
+	<div id="modal_add" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Назначить услугу</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<div class="modal-body">
+
+					<?php VisitRoute::form_sta_doc() ?>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">

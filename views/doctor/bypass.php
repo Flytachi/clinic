@@ -26,8 +26,8 @@ $bypass = $db->query("SELECT * FROM bypass WHERE id= {$_GET['pk']}")->fetch();
             <div class="list-feed-item border-info">
                 <strong>Препарат: </strong>
                 <?php
-                foreach ($db->query("SELECT preparat_id FROM bypass_preparat WHERE bypass_id = {$bypass['id']}") as $serv) {
-                    echo $serv['preparat_id']." Препарат, ";
+                foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$bypass['id']}") as $serv) {
+                    echo $serv['product_code'].", ";
                 }
                 ?>
             </div>

@@ -806,6 +806,57 @@ class VisitRoute extends Model
         <?php
     }
 
+    public function form_sta_doc($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="2">
+            <input type="hidden" name="accept_date" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="division_id" value="<?= division() ?>">
+            <input type="hidden" name="division_id" value="<?= division() ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-12">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query("SELECT * from service WHERE user_level = ".level()." AND division_id =".division()) as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['accept_date']) {
+            $this->post['accept_date'] = date('Y-m-d H:i:s');
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -1011,7 +1062,7 @@ class BypassDateModel extends Model
                     <tbody>
 
                         <?php
-                        $day_show = 10;
+                        $day_show = 5;
                         $max_day_show = 30;
                         $s = 0;
                         for ($i=-$first_date; $i < $max_day_show; $i++) {
@@ -1145,7 +1196,7 @@ class BypassDateModel extends Model
                     <tbody>
 
                         <?php
-                        $day_show = 10;
+                        $day_show = 5;
                         $max_day_show = 30;
                         $s = 0;
                         for ($i=-$first_date; $i < $max_day_show; $i++) {

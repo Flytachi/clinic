@@ -82,8 +82,8 @@ $header = "Пациент";
 												<td><?= $i++ ?></td>
 												<td>
 													<?php
-													foreach ($db->query("SELECT preparat_id FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
-														echo $serv['preparat_id']." Препарат -------------<br>";
+													foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
+														echo $serv['product_code']."<br>";
 													}
 													?>
 												</td>
@@ -92,68 +92,6 @@ $header = "Пациент";
 												<td>
 													<button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
 												</td>
-											</tr>
-											<?php
-										}
-										?>
-									</tbody>
-								</table>
-							</div>
-
-							<div class="table-responsive" style="display:none;">
-								<table class="table table-hover table-sm table-bordered">
-									<thead>
-										<tr class="bg-info">
-											<th style="width: 40px !important;">№ ---</th>
-											<th class="text-center" style="width: 350px !important;">Препарат --------------------------------</th>
-											<th class="text-center" style="width: 200px !important;">Описание --------------------------</th>
-											<th class="text-center" style="width: 150px !important;">Метод введения ------------------------</th>
-											<th class="text-center" style="width: 90px !important;">Время -----------</th>
-											<th>01.21</th>
-											<th>02.21</th>
-											<th>03.21</th>
-											<th>04.21</th>
-											<th>05.21</th>
-											<th>06.21</th>
-											<th>07.21</th>
-											<th>08.21</th>
-											<th>09.21</th>
-											<th>10.21</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										$i=1;
-										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
-											?>
-											<tr>
-												<td onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')"><?= $i++ ?></td>
-												<td>
-													<?php
-													foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
-														echo $serv['preparat_id']." Препарат -------------<br>";
-													}
-													?>
-												</td>
-												<td><?= $row['description'] ?></td>
-												<td><?= $row['method'] ?></td>
-												<td>
-													<?php
-													foreach ($db->query("SELECT * FROM bypass_time WHERE bypass_id = {$row['id']}") as $serv) {
-														echo date('H:i', strtotime($serv['time']))."<br>";
-													}
-													?>
-												</td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
-												<td><input type="checkbox" name="" value=""></td>
 											</tr>
 											<?php
 										}
