@@ -150,6 +150,12 @@
                                     <span>Инвестиции</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/list_report') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Отчёт</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 4:
