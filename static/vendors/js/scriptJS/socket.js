@@ -122,7 +122,7 @@ conn.onmessage = function(e) {
   }else if (d.type == "alert_new_patient"){
     if(d.id == id){
         new Noty({
-            text: 'У вас новый пациент!',
+            text: d.message,
             type: 'info'
         }).show();
     }

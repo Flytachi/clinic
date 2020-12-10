@@ -292,7 +292,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -301,12 +301,6 @@ class VisitModel extends Model
                 $("#parent_id").chained("#division_id");
                 $("#service_id").chained("#division_id");
             });
-
-            function submitAlert() {
-              let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val() });
-              conn.send(obj);
-            }
-
         </script>
         <?php
     }
@@ -428,8 +422,8 @@ class VisitModel extends Model
                 $("#parent_id").chained("#division_id");
             });
             function submitAlert() {
-              let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val() });
-              conn.send(obj);
+                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val(), message: "У вас новый стационарный пациент!" });
+                conn.send(obj);
             }
         </script>
         <?php
@@ -618,7 +612,7 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-    			<button type="submit" class="btn btn-outline-info">Печать</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button>
     		</div>
 
         </form>
@@ -632,6 +626,13 @@ class VisitPriceModel extends Model
                     input.removeAttr("disabled");
                     Upsum(input);
                 }
+            }
+            function submitAlert() {
+                var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                parent_id.forEach(function(events) {
+                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                    conn.send(obj);
+                });
             }
         </script>
         <?php

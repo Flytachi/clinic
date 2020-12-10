@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Дек 10 2020 г., 15:50
+-- Время создания: Дек 10 2020 г., 20:14
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.13
 
@@ -298,7 +298,7 @@ CREATE TABLE `investment` (
   `id` int(11) NOT NULL,
   `pricer_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `price` decimal(65,1) DEFAULT NULL,
+  `balance` decimal(65,1) NOT NULL,
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -306,7 +306,7 @@ CREATE TABLE `investment` (
 -- Дамп данных таблицы `investment`
 --
 
-INSERT INTO `investment` (`id`, `pricer_id`, `user_id`, `price`, `add_date`) VALUES
+INSERT INTO `investment` (`id`, `pricer_id`, `user_id`, `balance`, `add_date`) VALUES
 (1, 3, 15, '50000.0', '2020-12-08 01:13:05'),
 (2, 3, 15, '15000.0', '2020-12-08 01:17:08');
 
@@ -332,7 +332,8 @@ CREATE TABLE `laboratory_analyze` (
 --
 
 INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `service_id`, `analyze_id`, `result`, `deviation`, `description`) VALUES
-(1, 16, 3, 26, 4, '15', NULL, 'w');
+(1, 16, 3, 26, 4, '15', NULL, 'w'),
+(2, 19, 7, 26, 4, '15', NULL, 'weqw');
 
 -- --------------------------------------------------------
 
@@ -689,7 +690,8 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (15, 2, NULL, NULL, 'Бемор 1', 'Бемор 1', 'ххх', '2001-12-04', 'Ромитан', 'АА12345678', 'Химчан', 'ИТ', '998912474353', 'Кучабог 8', 'Рухшобод', NULL, 15, NULL, 1, 0, NULL, '2020-12-05 01:59:59'),
 (16, 2, NULL, NULL, 'Бемор-2', 'Бемор-2', 'ххх', '2001-10-03', 'Олмазор', 'АА1234567', 'ААА', 'ААА', '998912474353', 'ААА', 'ААА', 1, 15, NULL, 1, 0, NULL, '2020-12-05 02:53:03'),
 (17, NULL, 'farm', '36a3bbe0659d5cf5e918a70a1da0c90ff6a33ba9', 'farm', 'farm', 'farm', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, NULL, '2020-12-06 16:30:42'),
-(18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, 1, NULL, '2020-12-07 12:56:02');
+(18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, 1, NULL, '2020-12-07 12:56:02'),
+(19, 2, NULL, NULL, 'qweqwe', 'eqweqw', 'eqweqw', '2020-12-02', 'Ромитан', '21321321312', 'eqweqw', 'eqweqw', '231312321313123', 'eqweqw', 'eqweqw', 1, 15, NULL, NULL, 0, NULL, '2020-12-10 16:01:05');
 
 -- --------------------------------------------------------
 
@@ -760,7 +762,9 @@ INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `assi
 (3, 16, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, '2020-12-08 21:40:38', '2020-12-08 21:41:02', '2020-12-08 21:40:55', NULL, '2020-12-08 21:55:52'),
 (4, 16, 5, 5, 2, NULL, 10, 32, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-09 18:04:39', '2020-12-09 18:04:57', '2020-12-09 18:04:49', NULL, NULL),
 (5, 16, 5, 11, 5, NULL, 14, 43, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-09 18:06:00', '2020-12-09 18:06:20', '2020-12-09 18:06:13', NULL, NULL),
-(6, 15, NULL, 5, 5, NULL, 10, 34, NULL, 1, 2, NULL, NULL, NULL, 'Раны грудной клетки', 'Раны грудной клетки', 'Раны грудной клетки', '2020-12-09 18:28:59', '2020-12-09 18:30:13', NULL, NULL, NULL);
+(6, 15, NULL, 5, 5, NULL, 10, 34, NULL, 1, 2, NULL, NULL, NULL, 'Раны грудной клетки', 'Раны грудной клетки', 'Раны грудной клетки', '2020-12-09 18:28:59', '2020-12-09 18:30:13', NULL, NULL, NULL),
+(7, 19, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, '2020-12-10 21:01:19', '2020-12-11 00:23:04', '2020-12-10 21:01:27', NULL, '2020-12-11 00:23:19'),
+(11, 16, 5, 12, 5, NULL, 13, 42, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-11 01:01:28', NULL, '2020-12-11 01:13:10', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -772,10 +776,11 @@ CREATE TABLE `visit_price` (
   `id` int(11) NOT NULL,
   `visit_id` int(11) NOT NULL,
   `pricer_id` int(11) DEFAULT NULL,
-  `price_cash` decimal(65,1) DEFAULT NULL,
-  `price_card` decimal(65,1) DEFAULT NULL,
-  `price_transfer` decimal(65,1) DEFAULT NULL,
+  `price_cash` decimal(65,1) NOT NULL DEFAULT 0.0,
+  `price_card` decimal(65,1) NOT NULL DEFAULT 0.0,
+  `price_transfer` decimal(65,1) NOT NULL DEFAULT 0.0,
   `sale` tinyint(4) DEFAULT NULL,
+  `refund` decimal(65,1) NOT NULL DEFAULT 0.0,
   `add_date` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -783,10 +788,12 @@ CREATE TABLE `visit_price` (
 -- Дамп данных таблицы `visit_price`
 --
 
-INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `add_date`) VALUES
-(1, 3, 3, '30000.0', NULL, NULL, NULL, '2020-12-08 16:40:55'),
-(2, 4, 3, '50000.0', NULL, NULL, NULL, '2020-12-09 13:04:49'),
-(3, 5, 3, '60000.0', NULL, NULL, NULL, '2020-12-09 13:06:13');
+INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `refund`, `add_date`) VALUES
+(1, 3, 3, '30000.0', '0.0', '0.0', NULL, '0.0', '2020-12-08 16:40:55'),
+(2, 4, 3, '50000.0', '0.0', '0.0', NULL, '0.0', '2020-12-09 13:04:49'),
+(3, 5, 3, '60000.0', '0.0', '0.0', NULL, '0.0', '2020-12-09 13:06:13'),
+(4, 7, 3, '30000.0', '0.0', '0.0', NULL, '0.0', '2020-12-10 16:01:27'),
+(5, 11, 3, '80000.0', '0.0', '0.0', NULL, '0.0', '2020-12-10 20:13:10');
 
 -- --------------------------------------------------------
 
@@ -1074,13 +1081,13 @@ ALTER TABLE `goods`
 -- AUTO_INCREMENT для таблицы `investment`
 --
 ALTER TABLE `investment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
@@ -1158,7 +1165,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT для таблицы `user_stats`
@@ -1170,13 +1177,13 @@ ALTER TABLE `user_stats`
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `wards`

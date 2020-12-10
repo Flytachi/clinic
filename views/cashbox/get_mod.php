@@ -77,9 +77,10 @@ if ($_GET['pk']) {
                         </thead>
                         <tbody>
                             <?php
-                            foreach($db->query("SELECT vs.id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL") as $row) {
+                            foreach($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL") as $row) {
                                 ?>
                                     <tr id="tr_VisitModel_<?= $row['id'] ?>">
+                                        <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
                                         <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td class="text-right total_cost"><?= $row['price'] ?></td>
