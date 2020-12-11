@@ -290,9 +290,7 @@ class VisitModel extends Model
                 </div>
 
             </div>
-
-                <!-- <button type="button" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button> -->
-                <button type="submit" class="btn btn-outline-info" onclick="submitAlert()" >Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -301,12 +299,6 @@ class VisitModel extends Model
                 $("#parent_id").chained("#division_id");
                 $("#service_id").chained("#division_id");
             });
-            function submitAlert() {
-              let id = $("#parent_id2").val();
-              let obj = JSON.stringify({ type : 'alert_new_patient',  id : id });
-              console.log(obj);
-              conn.send(obj);
-            }
         </script>
         <?php
     }
@@ -417,7 +409,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>

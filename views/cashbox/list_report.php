@@ -15,6 +15,9 @@ $header = "Отчёт";
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
 
+<script src="<?= stack("global_assets/js/plugins/tables/datatables/datatables.min.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
 
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
@@ -144,8 +147,7 @@ $header = "Отчёт";
 							// prit($db->query($sql2)->fetchAll());
                             ?>
 
-                            <div class="table-responsive card">
-                                <table class="table table-hover table-sm">
+                            <table class="table table-hover datatable-basic table-sm">
                                     <thead>
                                         <tr class="bg-info">
                                             <th>№</th>
@@ -191,7 +193,6 @@ $header = "Отчёт";
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
-                            </div>
 
                         </div>
 

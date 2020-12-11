@@ -1,5 +1,3 @@
-
-
 function addZero(number){
 
     let strNumber = String(number);
@@ -123,25 +121,19 @@ conn.onmessage = function(e) {
 
   }else if (d.type == "alert_new_patient"){
     if(d.id == id){
-        (function (){
-          new PNotify({
-            title : "Новый пациeнт",
-            text : "У вас новый пациeнт",
-            icon : "icon-checkmark3",
-            type : "success",
-          })
-        })();
+        new Noty({
+            text: d.message,
+            type: 'info'
+        }).show();
     }
   }else if (d.type == "call_nurce_to_doc"){
     if(d.id == id){
-        alert('Вас вызывают');
-        (function (){
-          new PNotify({
-              title: 'Срочно',
-              text: 'Вас вызывают к пациeнту',
-              addclass: 'bg-danger border-danger'
-          })
-        })();
+        swal({
+            position: 'top',
+            title: 'Внимание! Срочный вызов!',
+            type: 'warning',
+            html: d.message
+        });
     }
   }
 
@@ -189,4 +181,3 @@ function deletNotice(body) {
 		console.log('error')
 	}
 }
-

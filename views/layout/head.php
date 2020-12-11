@@ -47,5 +47,4 @@
 			let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 	</script>
 	<script src="<?= stack("vendors/js/scriptJS/socket.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/notifications/pnotify.min.js")?>"></script>
 </head>

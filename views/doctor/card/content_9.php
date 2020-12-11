@@ -6,6 +6,8 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack("global_assets/js/plugins/visualization/echarts/echarts.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/charts/echarts/lines.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -39,10 +41,36 @@ $header = "Пациент";
 
 				        <?php include "content_tabs.php"; ?>
 
+						<!-- Zoom option -->
+						<div class="card">
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Диограмма состояния</h5>
+								<div class="header-elements">
+									<div class="list-icons">
+										<a class="list-icons-item" data-action="collapse"></a>
+									</div>
+								</div>
+							</div>
+
+							<div class="card-body">
+								<div class="chart-container">
+									<div class="chart has-fixed-height" id="line_stat"></div>
+								</div>
+							</div>
+						</div>
+						<!-- /zoom option -->
+
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Состояние</h5>
+								<div class="header-elements">
+									<div class="list-icons">
+										<a class="list-icons-item text-primary" data-toggle="modal" data-target="#modal_chart">
+											<i class="icon-pulse2 mr-2"></i>Диограмма
+										</a>
+									</div>
+								</div>
 							</div>
 
 							<div class="table-responsive">
@@ -56,6 +84,9 @@ $header = "Пациент";
 											<th>Пульс</th>
 											<th>Температура</th>
 											<th>Сатурация</th>
+											<th>Дыхание</th>
+											<th>Вес</th>
+											<th>Моча</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -77,13 +108,16 @@ $header = "Пациент";
 											endswitch;
 											?>
 											<tr class="<?= $class_tr ?>">
-												<td><?= date('d.m.Y  H:i', strtotime($row['add_date'])) ?></td>
+												<td class="chart_date"><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 												<td><?= $stat ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= $row['pressure'] ?></td>
-												<td><?= $row['pulse'] ?></td>
-												<td><?= $row['temperature'] ?></td>
-												<td><?= $row['saturation'] ?></td>
+												<td class="chart_pressure"><?= $row['pressure'] ?></td>
+												<td class="chart_pulse"><?= $row['pulse'] ?></td>
+												<td class="chart_temperature"><?= $row['temperature'] ?></td>
+												<td class="chart_saturation"><?= $row['saturation'] ?></td>
+												<td><?= $row['breath'] ?></td>
+												<td><?= $row['weight'] ?></td>
+												<td><?= $row['urine'] ?></td>
 											</tr>
 											<?php
 										}

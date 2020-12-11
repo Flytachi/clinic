@@ -149,16 +149,6 @@ $header = "Пациент";
 
 	<script type="text/javascript">
 
-
-			$(document).ready(function () {
-			  new PNotify({
-			      title : "Новый пациeнт",
-			      text : "У вас новый пациeнт",
-			      icon : "icon-checkmark3",
-			      type : "success",
-			    })
-			})
-
 		function CleanForm(id, name) {
 			$('#report_editor').html('');
 			$('#rep_id').val(id);
