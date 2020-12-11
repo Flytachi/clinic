@@ -6,6 +6,7 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<link href="<?= stack("global_assets/js/plugins/datetimepicker-master/jquery.datetimepicker.css") ?>" rel="stylesheet" type="text/css">
 <script src="<?= stack('global_assets/js/plugins/ui/moment/moment.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js"') ?>"></script>
@@ -82,10 +83,10 @@ $header = "Пациент";
 								<?php
 								foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
 								?>
-									<tr id="<?php echo $row['id']; ?>">
+									<tr data-id="<?php echo $row['id']; ?>">
 								   		<td><?php echo $row['id']; ?></td>
-									   	<td><?php echo $row['date']; ?></td>
-									   	<td><?php echo $row['description']; ?></td>
+									   	<td class="pass_d" data-id="<?= $row['id'] ?>"><?php echo $row['date']; ?></td>
+									   	<td class="pass_e"><?php echo $row['description']; ?></td>
 								   	</tr>
 								<?php
 								}
@@ -120,6 +121,78 @@ $header = "Пациент";
 			</div>
 		</div>
 	</div>
+	<script src="<?= stack('global_assets/js/plugins/datetimepicker-master/build/jquery.datetimepicker.full.js') ?>"></script>
+
+
+	<script>
+
+		<?php
+		foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
+		?>
+		$(document).on('click', '.datati', function function_name() {
+
+
+			$('#<?= $row['id'] ?>').AnyTime_picker({
+	            format: '%M %D %H:%i',
+	        });
+		});
+		<?php
+		}
+		?>
+
+		$(document).on('click', '.pass_e', function function_name() {
+			word = $(this).text();
+			$(this).text('');
+			$(this).attr('class', 'activ_e');
+			$(this).append(`<input class="form-control inpt" type="text" value="${word}">`);
+
+		});
+
+		$(document).on('keypress', '.inpt', function(e) {
+			if(e.keyCode == 13){
+				$('.activ_e').text(`${$(this).val()}`)
+				$('.activ_e').attr('class', 'pass_e');
+			}
+		});
+
+		$(document).on('click', '.pass_d', function function_name() {
+			word = $(this).text();
+			$(this).text('');
+			$(this).attr('class', 'activ_d');
+			id = $(this).attr('data-id');
+			$(this).append(`<input type="text" class="form-control datati" value="${0}" id="${id}">`);	
+		});
+
+		$(document).on('keypress', '.datati', function(e) {
+			alert(e.keyCode);
+			if(e.keyCode == 115){
+				alert('d');
+				$('.activ_d').text(`${$(this).val()}`)
+				$('.activ_d').attr('class', 'pass_d');
+			}
+		});
+
+	</script>
+
+
+	<script>
+		
+
+		<?php
+		foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
+		?>
+		$(document).on('keypress', '#AnyTime--<?= $row['id'] ?>', function function_name(e) {
+			alert(e.keyCode);
+			if(e.keyCode == 115){
+				alert('d');
+				$('.activ_d').text(`${$(this).val()}`)
+				$('.activ_d').attr('class', 'pass_d');
+			}
+		});
+		<?php
+		}
+		?>
+	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
