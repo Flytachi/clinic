@@ -1233,9 +1233,9 @@ class BypassDateModel extends Model
                                     <?php
 
                                     ?>
-                                    <td>
+                                    <td id="tr_<?= $i ?>">
                                         <?php if ($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
-                                            <input type="checkbox" class="swit" name="completed" onchange="SwetDate()" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
+                                            <input type="checkbox" class="swit" name="completed" onchange="SwetDate('#tr_<?= $i ?>')" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
                                         <?php else: ?>
                                             <input type="checkbox" class="swit" name="status" <?= ($post['completed']) ? "checked" : "" ?> disabled>
                                         <?php endif; ?>
@@ -1270,9 +1270,8 @@ class BypassDateModel extends Model
                 });
                 if (event.target.checked) {
                     $(event.target).val(1);
-                }else {
-                    $(event.target).val("");
                 }
+                $(tr).html('<i style="font-size:1.5rem;" class=" text-success icon-checkmark-circle2"></i>');
 
                 $.ajax({
                     type: form.attr("method"),
