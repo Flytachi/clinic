@@ -62,7 +62,7 @@ $header = "Инвестиции ". addZero($_GET['pk']);
                                         <tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-                                            <td><?= $row['price'] ?></td>
+                                            <td><?= $row['balance'] ?></td>
 											<td><?= get_full_name($row['pricer_id']) ?></td>
                                             <td class="text-center">
 												<a href="#" type="button" class="btn btn-outline-info btn-sm legitRipple">PDF</button>

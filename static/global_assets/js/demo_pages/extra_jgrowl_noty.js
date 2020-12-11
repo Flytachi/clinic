@@ -29,7 +29,7 @@ var NotyJgrowl = function() {
             theme: 'limitless',
             layout: 'topRight',
             type: 'alert',
-            timeout: 2500
+            timeout: 4000
         });
 
 

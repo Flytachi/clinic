@@ -16,7 +16,7 @@
                     Support
                 </a>
 
-                <div class="breadcrumb-elements-item dropdown p-0">
+                <!-- <div class="breadcrumb-elements-item dropdown p-0">
                     <a href="#" class="breadcrumb-elements-item dropdown-toggle" data-toggle="dropdown">
                         <i class="icon-gear mr-2"></i>
                         Settings
@@ -29,7 +29,7 @@
                         <div class="dropdown-divider"></div>
                         <a href="#" class="dropdown-item"><i class="icon-gear"></i> All settings</a>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
