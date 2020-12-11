@@ -123,12 +123,25 @@ conn.onmessage = function(e) {
 
   }else if (d.type == "alert_new_patient"){
     if(d.id == id){
-        alert('Новый пациeнт');
-        Noty({text: 'Успешно!',type: 'success'}).show();
+        (function (){
+          new PNotify({
+            title : "Новый пациeнт",
+            text : "У вас новый пациeнт",
+            icon : "icon-checkmark3",
+            type : "success",
+          })
+        })();
     }
   }else if (d.type == "call_nurce_to_doc"){
     if(d.id == id){
         alert('Вас вызывают');
+        (function (){
+          new PNotify({
+              title: 'Срочно',
+              text: 'Вас вызывают к пациeнту',
+              addclass: 'bg-danger border-danger'
+          })
+        })();
     }
   }
 
@@ -176,3 +189,4 @@ function deletNotice(body) {
 		console.log('error')
 	}
 }
+
