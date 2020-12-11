@@ -1090,14 +1090,28 @@ class BypassDateModel extends Model
                                     </td>
                                     <td>
                                         <?php if ($dat < $this_date->format('Y-m-d')): ?>
-                                            <input type="checkbox" class="swit" name="status" <?= ($post['status']) ? "checked" : "" ?> disabled>
+                                            <?php if ($post['status']): ?>
+                                                <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
+                                            <?php else: ?>
+                                                <i style="font-size:1.5rem;" class="icon-circle"></i>
+                                            <?php endif; ?>
                                         <?php else: ?>
-                                            <input type="checkbox" class="swit" name="status" onchange="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" <?= ($post['status']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
+                                            <?php if ($post['completed']): ?>
+                                                <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
+                                            <?php else: ?>
+                                                <?php if ($post['status']): ?>
+                                                    <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
+                                                <?php else: ?>
+                                                    <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+
+                                            <!-- <input type="checkbox" class="swit" name="status" onchange="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" <?= ($post['status']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>> -->
                                         <?php endif; ?>
                                     </td>
-                                    <td class="<?= ($post['completed']) ? "text-success" : "text-secondary" ?> text-center">
+                                    <td class="text-center">
                                         <?php if ($post['completed']): ?>
-                                            <i style="font-size:1.5rem;" class="icon-checkmark-circle2" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
+                                            <i style="font-size:1.5rem;" class="icon-checkmark-circle" data-popup="tooltip" data-placement="bottom" data-original-title="Комментарий медсестры"></i>
                                         <?php else: ?>
                                             <i style="font-size:1.5rem;" class="icon-circle"></i>
                                         <?php endif; ?>
@@ -1125,12 +1139,6 @@ class BypassDateModel extends Model
 
             function SwetDate() {
                 var form = $('#<?= __CLASS__ ?>_form');
-                if (event.target.checked) {
-                    $(event.target).val(1);
-                }else {
-                    $(event.target).val("");
-                }
-
                 if (event.target.dataset.id) {
                     var data = {
                         model: "<?= __CLASS__ ?>",
@@ -1138,7 +1146,7 @@ class BypassDateModel extends Model
                         id: event.target.dataset.id,
                         bypass_time_id: event.target.dataset.time,
                         date: event.target.dataset.date,
-                        status: $(event.target).val()
+                        status: event.target.dataset.val
                     };
                 }else {
                     var data = {
@@ -1146,8 +1154,17 @@ class BypassDateModel extends Model
                         bypass_id: "<?= $_GET['pk'] ?>",
                         bypass_time_id: event.target.dataset.time,
                         date: event.target.dataset.date,
-                        status: $(event.target).val()
+                        status: event.target.dataset.val
                     };
+                }
+                if (event.target.dataset.val == 1) {
+                    $(event.target).removeClass('icon-circle');
+                    $(event.target).addClass('icon-checkmark-circle');
+                    event.target.dataset.val = "";
+                }else if(event.target.dataset.val == ""){
+                    $(event.target).removeClass('icon-checkmark-circle');
+                    $(event.target).addClass('icon-circle');
+                    event.target.dataset.val = 1;
                 }
 
                 $.ajax({
@@ -1200,10 +1217,12 @@ class BypassDateModel extends Model
                         $day_show = 5;
                         $max_day_show = 30;
                         $s = 0;
+                        $tr = 0;
                         for ($i=-$first_date; $i < $max_day_show; $i++) {
                             $s++;
                             $row_stat = True;
                             foreach ($col as $value) {
+                                $tr++;
                                 ?>
                                 <tr <?= ($s>$day_show) ? 'class="table_date_hidden" style="display:none;"' : 'class="table_date"' ?>>
                                     <?php if ($row_stat): ?>
@@ -1223,21 +1242,20 @@ class BypassDateModel extends Model
                                     <td>
                                         <?= date('H:i', strtotime($value['time'])) ?>
                                     </td>
-                                    <td class="<?= ($post['status']) ? "text-success" : "text-secondary" ?> text-center">
+                                    <td class="<?= ($post['status']) ? "text-success" : "text-dark" ?> text-center">
                                         <?php if ($post['status']): ?>
-                                            <i style="font-size:1.5rem;" class="icon-checkmark-circle2"></i>
+                                            <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                         <?php else: ?>
                                             <i style="font-size:1.5rem;" class="icon-circle"></i>
                                         <?php endif; ?>
                                     </td>
-                                    <?php
-
-                                    ?>
-                                    <td id="tr_<?= $i ?>">
-                                        <?php if ($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
-                                            <input type="checkbox" class="swit" name="completed" onchange="SwetDate('#tr_<?= $i ?>')" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
+                                    <td id="tr_<?= $tr ?>">
+                                        <?php if ($post['completed']): ?>
+                                            <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle"></i>
+                                        <?php elseif($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
+                                            <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate('#tr_<?= $tr ?>')" data-id="<?= $post['id'] ?>" data-value="1"></i>
                                         <?php else: ?>
-                                            <input type="checkbox" class="swit" name="status" <?= ($post['completed']) ? "checked" : "" ?> disabled>
+                                            <i style="font-size:1.5rem;" class="text-dark icon-circle"></i>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -1268,10 +1286,7 @@ class BypassDateModel extends Model
                     products[i] = $(events).val();
                     i++;
                 });
-                if (event.target.checked) {
-                    $(event.target).val(1);
-                }
-                $(tr).html('<i style="font-size:1.5rem;" class=" text-success icon-checkmark-circle2"></i>');
+                $(tr).html('<i style="font-size:1.5rem;" class="text-success icon-checkmark-circle"></i>');
 
                 $.ajax({
                     type: form.attr("method"),
@@ -1280,7 +1295,7 @@ class BypassDateModel extends Model
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
                         id: event.target.dataset.id,
-                        completed: $(event.target).val(),
+                        completed: event.target.dataset.value,
                         user_id: "<?= $bypass['user_id'] ?>",
                         products: products
                     },
@@ -1298,7 +1313,6 @@ class BypassDateModel extends Model
     public function clean()
     {
         global $db;
-        // $this->mod('test');
         if ($this->post['products']) {
             $user_pk = $this->post['user_id'];
             if ($this->post['completed']) {
