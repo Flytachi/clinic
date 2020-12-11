@@ -21,7 +21,8 @@ if ($_GET['pk']) {
                 $sql = "SELECT
                             SUM(iv.balance) 'balance',
                             ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
-                            (SELECT SUM(sc.price) 'cost' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service'
+                            (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service',
+                            (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0) 'cost_preparat'
                             -- bdt.price 'bed_price',
                             -- vs.add_date
                         FROM users us
@@ -37,7 +38,7 @@ if ($_GET['pk']) {
                 // parad("Стоимость кровати",$price['cost_bed']);
                 // parad("Стоимость услуг",$price['cost_service']);
 
-                $price_cost -= $price['cost_service'] + $price['cost_bed'];
+                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_preparat'];
                 ?>
                 <div class="form-group form-group-float">
                     <div class="form-group-feedback form-group-feedback-right">

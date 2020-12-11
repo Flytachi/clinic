@@ -1169,7 +1169,8 @@ class BypassDateModel extends Model
     {
         global $db, $methods;
         $this_date = new \DateTime();
-        $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
+        $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
+        $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
         $span = count($col);
@@ -1233,7 +1234,7 @@ class BypassDateModel extends Model
 
                                     ?>
                                     <td>
-                                        <?php if ($dat == $this_date->format('Y-m-d')): ?>
+                                        <?php if ($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
                                             <input type="checkbox" class="swit" name="completed" onchange="SwetDate()" data-id="<?= $post['id'] ?>"  <?= ($post['completed']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>>
                                         <?php else: ?>
                                             <input type="checkbox" class="swit" name="status" <?= ($post['completed']) ? "checked" : "" ?> disabled>
@@ -1260,8 +1261,13 @@ class BypassDateModel extends Model
                 }
             }
 
-            function SwetDate() {
+            function SwetDate(tr) {
                 var form = $('#<?= __CLASS__ ?>_form');
+                var products = [], i = 0;
+                document.querySelectorAll('.products').forEach(function(events) {
+                    products[i] = $(events).val();
+                    i++;
+                });
                 if (event.target.checked) {
                     $(event.target).val(1);
                 }else {
@@ -1275,7 +1281,9 @@ class BypassDateModel extends Model
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
                         id: event.target.dataset.id,
-                        completed: $(event.target).val()
+                        completed: $(event.target).val(),
+                        user_id: "<?= $bypass['user_id'] ?>",
+                        products: products
                     },
                     success: function (result) {
                         if (!Number(result)) {
@@ -1290,6 +1298,30 @@ class BypassDateModel extends Model
 
     public function clean()
     {
+        global $db;
+        // $this->mod('test');
+        if ($this->post['products']) {
+            $user_pk = $this->post['user_id'];
+            if ($this->post['completed']) {
+
+                foreach ($this->post['products'] as $value){
+                    $post = $db->query("SELECT $user_pk 'user_id', product_id 'product', qty, 0 'amount', 0 'profit', product_code, gen_name, product_name 'name', price FROM products WHERE product_id = $value")->fetch();
+                    $object = Mixin\update('products', array('qty' => $post['qty']-1), array('product_id' => $value));
+                    if (intval($object)) {
+                        $post['qty'] = 1;
+                        $object1 = Mixin\insert('sales_order', $post);
+                        if (!intval($object1)) {
+                            $this->error('sales_order'.$object1);
+                        }
+                    }else {
+                        $this->error('products'.$object);
+                    }
+                }
+
+            }
+            unset($this->post['user_id']);
+            unset($this->post['products']);
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
