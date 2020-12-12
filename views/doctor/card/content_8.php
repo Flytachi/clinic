@@ -52,13 +52,15 @@ $header = "Пациент";
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h6 class="card-title">Препараты</h6>
+								<h6 class="card-title">Лист назначений</h6>
 								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-											<i class="icon-plus22"></i>Добавить
-										</a>
-									</div>
+									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+										<div class="list-icons">
+											<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+												<i class="icon-plus22"></i>Добавить
+											</a>
+										</div>
+									<?php endif; ?>
 								</div>
 							</div>
 

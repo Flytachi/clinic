@@ -2,6 +2,11 @@
 require_once '../../tools/warframe.php';
 is_auth([5,7]);
 $bypass = $db->query("SELECT * FROM bypass WHERE id= {$_GET['pk']}")->fetch();
+$grant_id = $db->query("SELECT grant_id FROM visit WHERE id= {$bypass['visit_id']}")->fetch()['grant_id'];
+$grant = false;
+if ($grant_id == $_SESSION['session_id']) {
+    $grant = true;
+}
 ?>
 <?php include '../../layout/head.php' ?>
 <script src="<?= stack("vendors/js/custom.js") ?>"></script>

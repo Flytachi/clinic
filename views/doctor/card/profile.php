@@ -10,7 +10,7 @@ $sql = "SELECT
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
             LEFT JOIN wards wd ON(wd.id=bd.ward_id)
-        WHERE vs.status = 2 AND us.id = {$_GET['id']}";
+        WHERE vs.status = 2 AND us.id = {$_GET['id']} ORDER BY add_date ASC";
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($patient);

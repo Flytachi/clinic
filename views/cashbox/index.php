@@ -133,6 +133,7 @@ $header = "Рабочий стол";
     <!-- /footer -->
 
 	<script type="text/javascript">
+
 		if (sessionStorage['message_amb']) {
 			$('#message_ses').html(sessionStorage['message_amb']);
 			sessionStorage['message_amb'] = '';

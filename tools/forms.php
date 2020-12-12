@@ -892,7 +892,7 @@ class VisitFinish extends Model
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_conclusion IS NOT NULL)") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id']) {
+            if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $inf['user_id']);
@@ -1033,7 +1033,7 @@ class BypassDateModel extends Model
 
     public function table_form_doc($pk = null)
     {
-        global $db, $methods;
+        global $db, $methods, $grant;
         $this_date = new \DateTime();
         $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
@@ -1099,14 +1099,20 @@ class BypassDateModel extends Model
                                             <?php if ($post['completed']): ?>
                                                 <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                             <?php else: ?>
-                                                <?php if ($post['status']): ?>
-                                                    <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
+                                                <?php if ($grant): ?>
+                                                    <?php if ($post['status']): ?>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
+                                                    <?php else: ?>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
+                                                    <?php endif; ?>
                                                 <?php else: ?>
-                                                    <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
+                                                    <?php if ($post['status']): ?>
+                                                        <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
+                                                    <?php else: ?>
+                                                        <i style="font-size:1.5rem;" class="icon-circle"></i>
+                                                    <?php endif; ?>
                                                 <?php endif; ?>
                                             <?php endif; ?>
-
-                                            <!-- <input type="checkbox" class="swit" name="status" onchange="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" <?= ($post['status']) ? "checked" : "" ?> <?= ($post['completed']) ? "disabled" : "" ?>> -->
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center">
@@ -1242,7 +1248,7 @@ class BypassDateModel extends Model
                                     <td>
                                         <?= date('H:i', strtotime($value['time'])) ?>
                                     </td>
-                                    <td class="<?= ($post['status']) ? "text-success" : "text-dark" ?> text-center">
+                                    <td class="text-dar text-center">
                                         <?php if ($post['status']): ?>
                                             <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                         <?php else: ?>
@@ -1250,12 +1256,22 @@ class BypassDateModel extends Model
                                         <?php endif; ?>
                                     </td>
                                     <td id="tr_<?= $tr ?>">
-                                        <?php if ($post['completed']): ?>
-                                            <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle"></i>
-                                        <?php elseif($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
-                                            <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate('#tr_<?= $tr ?>')" data-id="<?= $post['id'] ?>" data-value="1"></i>
+                                        <?php if ($dat < $this_date->format('Y-m-d')): ?>
+                                            <?php if ($post['completed']): ?>
+                                                <i style="font-size:1.5rem;" class="text-dark icon-checkmark-circle"></i>
+                                            <?php elseif($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
+                                                <i style="font-size:1.5rem;" class="text-dark icon-circle"></i>
+                                            <?php else: ?>
+                                                <i style="font-size:1.5rem;" class="text-dark icon-circle"></i>
+                                            <?php endif; ?>
                                         <?php else: ?>
-                                            <i style="font-size:1.5rem;" class="text-dark icon-circle"></i>
+                                            <?php if ($post['completed']): ?>
+                                                <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle"></i>
+                                            <?php elseif($post['status'] and $dat == $this_date->format('Y-m-d')): ?>
+                                                <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate('#tr_<?= $tr ?>')" data-id="<?= $post['id'] ?>" data-value="1"></i>
+                                            <?php else: ?>
+                                                <i style="font-size:1.5rem;" class="text-dark icon-circle"></i>
+                                            <?php endif; ?>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

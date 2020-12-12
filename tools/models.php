@@ -610,11 +610,24 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button>
+                <!-- <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button> -->
+                <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button>
+                <!-- <a href="<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
     		</div>
 
         </form>
         <script type="text/javascript">
+            function checkBody(urls) {
+                window.location = urls;
+                // $.ajax({
+                // 	type: "GET",
+                // 	url: urls,
+                // 	success: function (result) {
+                //         checkPrint(result);
+                // 	},
+                // });
+            }
+
             function Checkert(event) {
                 var input = $('#input_'+event.id);
                 if(!input.prop('disabled')){
@@ -738,6 +751,65 @@ class VisitPriceModel extends Model
             $this->price();
             $this->success();
         }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-info" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+}
+
+class VisitInspectionModel extends Model
+{
+    public $table = 'visit_inspection';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"><?= $post['report_conclusion'] ?></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
     }
 
     public function success()

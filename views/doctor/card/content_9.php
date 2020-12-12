@@ -44,7 +44,7 @@ $header = "Пациент";
 						<!-- Zoom option -->
 						<div class="card">
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Диограмма состояния</h5>
+								<h5 class="card-title">Динамика показателей</h5>
 								<div class="header-elements">
 									<div class="list-icons">
 										<a class="list-icons-item" data-action="collapse"></a>
@@ -63,7 +63,7 @@ $header = "Пациент";
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Состояние</h5>
+								<h5 class="card-title">Состояние пациента</h5>
 								<div class="header-elements">
 									<div class="list-icons">
 										<a class="list-icons-item text-primary" data-toggle="modal" data-target="#modal_chart">

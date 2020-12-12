@@ -43,17 +43,32 @@ $header = "Пациент";
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
+
+						if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
+							$title = "Обход";
+							$table_label = "Мед Услуга / Дата и время осмотра";
+							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.service_id != 1 AND accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_tr = "table-info";
+						} else {
+							$title = "Осмотр";
+							$table_label = "Мед Услуга";
+							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_tr = "";
+						}
 						?>
 
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Осмотр</h5>
+								<h5 class="card-title"><?= $title ?></h5>
 								<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
 									<div class="header-elements">
 										<div class="list-icons">
-											<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-												<i class="icon-plus22"></i>Добавить
+											<a class="list-icons-item text-success mr-3" data-toggle="modal" data-target="#modal_add_service">
+												<i class="icon-plus22"></i>Услуга
+											</a>
+											<a class="list-icons-item text-info mr-1" data-toggle="modal" data-target="#modal_add_inspection">
+												<i class="icon-plus22"></i>Осмотр
 											</a>
 										</div>
 									</div>
@@ -62,38 +77,40 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
-	                                <thead>
-	                                    <tr class="bg-info">
-	                                        <th>Мед Услуга</th>
-											<th class="text-right" style="width: 25%">Действия</th>
-	                                    </tr>
-	                                </thead>
-	                                <tbody>
-										<?php
-										foreach ($db->query("SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL") as $row) {
-										?>
-		                                    <tr>
-		                                        <td><?= $row['name'] ?></td>
+									<thead>
+										<tr class="bg-info">
+											<th><?= $table_label ?></th>
+											<th class="text-right" style="width: 50%">Действия</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php foreach ($db->query($table_sql) as $row): ?>
+											<tr class="<?= $table_tr ?>">
+												<td><?= $row['name'] ?></td>
 												<td class="text-right">
-													<?php
-													if ($row['report_description']) {
-														?>
+													<?php if ($row['report_description']): ?>
 														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 														<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
-														<?php
-													}else {
-														?>
+													<?php else: ?>
 														<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
-														<?php
-													}
-													?>
-	                                            </td>
-		                                    </tr>
-										<?php
-										}
-									 	?>
-	                                </tbody>
-	                            </table>
+													<?php endif; ?>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+
+										<?php if ($table_tr): ?>
+											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
+												<tr>
+													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+													<td class="text-right">
+														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													</td>
+												</tr>
+											<?php endforeach; ?>
+										<?php endif; ?>
+
+									</tbody>
+								</table>
 							</div>
 
 						</div>
@@ -121,7 +138,7 @@ $header = "Пациент";
 		</div>
 	</div>
 
-	<div id="modal_add" class="modal fade" tabindex="-1">
+	<div id="modal_add_service" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header bg-info">
@@ -138,6 +155,19 @@ $header = "Пациент";
 		</div>
 	</div>
 
+	<div id="modal_add_inspection" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Осмотр</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?php VisitInspectionModel::form() ?>
+
+			</div>
+		</div>
+	</div>
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
