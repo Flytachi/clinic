@@ -61,10 +61,3 @@
         <a href="<?= viv('doctor/card/content_10') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_10')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Заметки<i class="icon-clipboard3 ml-3"></i></a>
     </li>
 </ul>
-
-<script>
-    let id = '<?= $_SESSION['session_id'] ?>';
-    let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
-</script>
-<!-- /footer -->
-<script src="scriptJS/socket.js"></script>

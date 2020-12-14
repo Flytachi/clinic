@@ -50,6 +50,9 @@ $header = "Инвестиции ". addZero($_GET['pk']);
                                         <th>№</th>
                                         <th>Дата платежа</th>
                                         <th>Сумма</th>
+										<th>Наличные</th>
+                                        <th>Пластик</th>
+                                        <th>Перечисление</th>
 										<th>Кассир</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
@@ -57,12 +60,15 @@ $header = "Инвестиции ". addZero($_GET['pk']);
                                 <tbody>
                                     <?php
                                     $i = 1;
-									foreach($db->query("SELECT * FROM investment WHERE user_id = {$_GET['pk']} ORDER BY add_date DESC") as $row) {
+									foreach($db->query("SELECT *, balance_cash+balance_card+balance_transfer 'balance' FROM investment WHERE user_id = {$_GET['pk']} ORDER BY add_date DESC") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td><?= $row['balance'] ?></td>
+											<td><?= $row['balance_cash'] ?></td>
+											<td><?= $row['balance_card'] ?></td>
+											<td><?= $row['balance_transfer'] ?></td>
 											<td><?= get_full_name($row['pricer_id']) ?></td>
                                             <td class="text-center">
 												<a href="#" type="button" class="btn btn-outline-info btn-sm legitRipple">PDF</button>

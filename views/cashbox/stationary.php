@@ -109,12 +109,52 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_invest" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Оплата</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?php InvestmentModel::form(); ?>
+
+			</div>
+		</div>
+	</div>
 
 	<!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		function Detail(events) {
+			if (event.target.dataset.show == 1) {
+				$(event.target).addClass('btn-primary');
+				$(event.target).removeClass('btn-outline-primary');
+				event.target.dataset.show = 0;
+				$.ajax({
+					type: "GET",
+					url: events,
+					success: function (result) {
+						$('#detail_div').html(result);
+					},
+				});
+			}else {
+				$(event.target).addClass('btn-outline-primary');
+				$(event.target).removeClass('btn-primary');
+				event.target.dataset.show = 1;
+				$('#detail_div').html("");
+			}
+		}
+
+		function Invest(status) {
+			$('#modal_invest').modal('show');
+			$('#input_balance').text(event.target.dataset.balance);
+			$('#balance_name').text(event.target.dataset.name);
+			$('#price_type').val(status);
+		}
 
 		function Check(events, pk) {
 			$.ajax({
@@ -123,6 +163,14 @@ $header = "Рабочий стол";
 				success: function (result) {
 					$('#check_div').html(result);
 					$('#user_st_id').val(pk);
+	                document.querySelectorAll('.input_check').forEach(function(events) {
+						$(events).val("");
+	                });
+					document.querySelectorAll('.swit_check').forEach(function(events) {
+						if (events.checked) {
+							$(events).trigger('click');
+						}
+				   	});
 				},
 			});
 		};

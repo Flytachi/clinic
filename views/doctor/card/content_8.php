@@ -8,8 +8,8 @@ $header = "Пациент";
 <?php include '../../layout/head.php' ?>
 <script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 
-<script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
-<script src="<?= stack('global_assets/js/demo_pages/form_checkboxes_radios.js') ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->

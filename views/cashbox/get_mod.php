@@ -19,7 +19,7 @@ if ($_GET['pk']) {
 
                 <?php
                 $sql = "SELECT
-                            SUM(iv.balance) 'balance',
+                            SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
                             ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
                             (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service',
                             (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0) 'cost_preparat'
@@ -33,26 +33,40 @@ if ($_GET['pk']) {
                         WHERE us.id = $pk";
                 $price = $db->query($sql)->fetch();
 
-                prit($price);
-                // parad("Инвестиции",$price['balance']);
-                // parad("Стоимость кровати",$price['cost_bed']);
-                // parad("Стоимость услуг",$price['cost_service']);
+                // prit($price);
 
                 $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_preparat'];
                 ?>
-                <div class="form-group form-group-float">
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <?php if (($price['balance'] + $price_cost) > 0): ?>
-                            <input type="text" class="form-control border-success" value="<?= number_format($price['balance'] + $price_cost) ?>" disabled>
-                        <?php elseif(($price['balance']   + $price_cost) < 0): ?>
-                            <input type="text" class="form-control border-danger" value="<?= number_format($price['balance'] + $price_cost) ?>" disabled>
-                        <?php else: ?>
-                            <input type="text" class="form-control border-dark" value="<?= number_format($price['balance'] + $price_cost) ?>" disabled>
-                        <?php endif; ?>
-                    </div>
+                <table class="table table-hover">
+                    <tbody>
+                        <tr class="table-secondary">
+                            <td>Баланс</td>
+                            <td class="text-right text-success"><?= number_format($price['balance']) ?></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Сумма к оплате</td>
+                            <td class="text-right text-danger"><?= number_format($price_cost) ?></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Разница</td>
+                            <?php if (($price['balance'] + $price_cost) > 0): ?>
+                                <td class="text-right text-success"><?= number_format($price['balance'] + $price_cost) ?></td>
+                            <?php elseif(($price['balance'] + $price_cost) < 0): ?>
+                                <td class="text-right text-danger"><?= number_format($price['balance'] + $price_cost) ?></td>
+                            <?php else: ?>
+                                <td class="text-right text-dark"><?= number_format($price['balance'] + $price_cost) ?></td>
+                            <?php endif; ?>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-right mt-3">
+                    <button onclick="Invest(1)" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success">Предоплата</button>
+                    <button onclick="Invest(0)" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger">Возврат</button>
+                    <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" class="btn btn-outline-primary" data-show="1">Детально</button>
                 </div>
 
-                <?php InvestmentModel::form(); ?>
+                <div id="detail_div"></div>
 
             </div>
         </div>
@@ -86,7 +100,7 @@ if ($_GET['pk']) {
                                         <td><?= $row['name'] ?></td>
                                         <td class="text-right total_cost"><?= $row['price'] ?></td>
                                         <th class="text-center">
-                                            <a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn list-icons-item border-danger text-danger"><i class="icon-minus2"></i></a>
+                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
                                         </th>
                                     </tr>
                                 <?php

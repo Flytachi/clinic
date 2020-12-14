@@ -610,9 +610,8 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <!-- <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button> -->
-                <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button>
-                <!-- <a href="<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button>
+                <!-- <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
     		</div>
 
         </form>
@@ -843,61 +842,144 @@ class InvestmentModel extends Model
     {
         global $db;
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="Subi()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" id="user_st_id">
+            <input type="hidden" name="price_type" id="price_type">
 
-            <div class="form-group form-group-float row">
+            <div class="modal-body">
+                <table class="table table-hover mb-2">
+                    <tbody>
+                        <tr class="table-secondary">
+                            <td id="balance_name"></td>
+                            <td class="text-right" id="input_balance"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                <div class="col-md-6">
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" name="balance" placeholder="Предоплата">
-                        <div class="form-control-feedback text-success">
-                            <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
-                                <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
-                            </button>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Наличный</label>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="balance_cash" id="input_chek_1" step="0.5" class="form-control input_check" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery swit_check" data-fouc id="chek_1" onchange="Checkert(this)">
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-danger" placeholder="Возврат">
-                        <div class="form-control-feedback text-danger">
-                            <button type="submit" class="btn btn-outline-danger border-transparent legitRipple">
-                                <i style="font-size: 23px;" class="icon-history"></i>
-                            </button>
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Пластиковый</label>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="balance_card" id="input_chek_2" step="0.5" class="form-control input_check" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery swit_check" data-fouc id="chek_2" onchange="Checkert(this)">
+                                </span>
+                            </span>
                         </div>
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Перечисление</label>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="balance_transfer" id="input_chek_3" step="0.5" class="form-control input_check" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery swit_check" data-fouc id="chek_3" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <div class="modal-footer">
+    			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-outline-info">Печать</button>
+    		</div>
+
         </form>
+        <script type="text/javascript">
+
+            $('.input_check').keyup(function (num) {
+                var n = $(this).val().length;
+                // if (n % 3 == 0) {
+                //     $(this).val($(this).val()+" ");
+                // }
+            });
+
+            function Subi() {
+                event.preventDefault();
+                $.ajax({
+                    type: $(event.target).attr("method"),
+                    url: $(event.target).attr("action"),
+                    data: $(event.target).serializeArray(),
+                    success: function (result) {
+                        if (result == 1) {
+                            new Noty({
+                                text: 'Успешно!',
+                                type: 'success'
+                            }).show();
+                        }else {
+                            new Noty({
+                                text: result,
+                                type: 'error'
+                            }).show();
+                        }
+                        $('#modal_invest').modal('hide');
+                        Check('get_mod.php?pk='+$('#user_st_id').val() ,$('#user_st_id').val());
+                    },
+                });
+            }
+
+            function Checkert(event) {
+                var input = $('#input_'+event.id);
+                if(!input.prop('disabled')){
+                    input.attr("disabled", "disabled");
+                }else {
+                    input.removeAttr("disabled");
+                }
+            }
+
+        </script>
         <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['price_type'] == 0) {
+            if ($this->post['balance_cash']) {
+                $this->post['balance_cash'] *= -1;
+            }
+            if ($this->post['balance_card']) {
+                $this->post['balance_card'] *= -1;
+            }
+            if ($this->post['balance_transfer']) {
+                $this->post['balance_transfer'] *= -1;
+            }
+        }
+        unset($this->post['price_type']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()
     {
-        $_SESSION['message'] = '
-        <div class="alert alert-info" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
+        echo 1;
     }
 
     public function error($message)
     {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
+        echo $message;
     }
 }
 
