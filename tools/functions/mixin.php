@@ -113,12 +113,3 @@ function error($url){
     exit;
 }
 
-function es(){
-    echo "eee";
-}
-
-// function error_404(){
-//     global $PROJECT_NAME;
-//     header("location:/$PROJECT_NAME/error/404.php");
-//     exit;
-// }
