@@ -99,6 +99,7 @@ is_auth(4);
 							<div class="col-md-2">
 								<a href="revision.php">
 									<button type="button" class="btn btn-info">ПЕЧАТЬ </button>
+
 								</a>
 							</div>
 
@@ -112,11 +113,13 @@ is_auth(4);
 					<div class="card-body">
 							<div class="row">
 								<div class="col-md-10">
+
 									<input type="text" name="qty" id="qty"  class="form-control">
 								</div>
 								<div class="col-md-2">
 
 									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_form_vertical" />Добавить</button>
+
 
 									<div id="modal_form_vertical" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
 										<div class="modal-dialog">
@@ -136,10 +139,13 @@ is_auth(4);
 																		<option></option>
 
 																		<?php
+
 																		$result = $db->query("SELECT * FROM goods");
 																		for($i=0; $row = $result->fetch(); $i++){
 																		?>
 																			<option value="<?= $row['goodname'] ?>" ><?= $row['goodname'] ?></option>
+
+
 
 																		<?php
 																			}
@@ -149,7 +155,9 @@ is_auth(4);
 
 																<div class="col-md-2">
 																	<a href="newpr.php">
+
 																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
+
 																	</a>
 																</div>
 															</div>
@@ -163,10 +171,12 @@ is_auth(4);
 																		<option></option>
 
 																		<?php
+
 																		$result = $db->query("SELECT * FROM supliers");
 																		for($i=0; $row = $result->fetch(); $i++){
 																		?>
 																			<option value="<?= $row['suplier_name'] ?>" ><?= $row['suplier_name'] ?></option>
+
 
 																		<?php
 																			}
@@ -175,8 +185,10 @@ is_auth(4);
 																</div>
 																<div class="col-md-2">
 																	<a href="supplier.php">
+
 																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
 																	</a>
+
 																</div>
 															</div>
 														</div>
@@ -280,6 +292,7 @@ is_auth(4);
 																</div>
 															</div>
 														</div>
+
 														<div class="form-group">
 															<div class="row">
 																<div class="col-md-12">
@@ -293,6 +306,7 @@ is_auth(4);
 																</div>
 															</div>
 														</div>
+
 														<div class="form-group">
 															<div class="row">
 																<div class="col-md-12">
@@ -304,6 +318,7 @@ is_auth(4);
 														<div class="form-group">
 															<div class="row">
 																<div class="col-md-12">
+
 																	<label>Срок годности</label>
 																	<input class="form-control" name="expiry_date" type="date" name="date">
 																</div>
@@ -341,6 +356,8 @@ is_auth(4);
 
 					</div>
 
+
+
 				</div>
 
 				<div class="card">
@@ -376,6 +393,7 @@ is_auth(4);
 										<th>Число.от</th>
 										<th>Ед.изм</th>
 										<th>Действия</th>
+
 				                    </tr>
 				                </thead>
 				                <tbody>
@@ -394,6 +412,7 @@ is_auth(4);
 										}
 									?>
 
+
 										<td><?= $row['product_code']; ?></td>
 										<td><?= $row['gen_name']; ?></td>
 										<td><?= $row['product_name']; ?></td>
@@ -409,6 +428,7 @@ is_auth(4);
 										<td><?= $row['fakturanumber']; ?></td>
 										<td><?= $row['sdate']; ?></td>
 										<td><?= $row['ediz']; ?></td>
+
 										<td>
 											<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#a<?= $row['product_id'] ?>"><i class="icon-pencil3"></i></button>
 										<a href="deletproducts.php?id=<?= $row['product_id']; ?>" id="" class="delbutton" title="Удалить"><button class="btn btn-danger"><i class="icon-trash"></i></button></a></td>
@@ -421,6 +441,7 @@ is_auth(4);
 										<td colspan="9">ИТОГ : </td>
 										<td><?= $db->query("SELECT SUM(qty_sold) FROM products")->fetch()[0] ?></td>
 										<td><?= $db->query("SELECT SUM(qty) FROM products")->fetch()[0] ?></td>
+
 
 										<td colspan="5"></td>
 
@@ -445,6 +466,7 @@ is_auth(4);
 	</div>
 
 	<?php
+
 		$result1 = $db->query("SELECT *, price * qty as total FROM products ORDER BY product_id DESC");
 		while($row1 = $result1->fetch()) {
 	?>
@@ -468,10 +490,13 @@ is_auth(4);
 										<option value="<?= $row1['product_code'] ?>"><?= $row1['product_code'] ?></option>
 
 										<?php
+
 										$result = $db->query("SELECT * FROM goods");
 										for($i=0; $row = $result->fetch(); $i++){
 										?>
 											<option value="<?= $row['goodname'] ?>" ><?= $row['goodname'] ?></option>
+
+
 
 										<?php
 											}
@@ -481,7 +506,9 @@ is_auth(4);
 
 								<div class="col-md-2">
 									<a href="newpr.php">
+
 										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
+
 									</a>
 								</div>
 							</div>
@@ -495,10 +522,13 @@ is_auth(4);
 										<option value="<?= $row1['supplier'] ?>"><?= $row1['supplier'] ?></option>
 
 										<?php
+
 										$result = $db->query("SELECT * FROM supliers");
 										for($i=0; $row = $result->fetch(); $i++){
 										?>
 											<option value="<?= $row['suplier_name'] ?>" ><?= $row['suplier_name'] ?></option>
+
+
 
 										<?php
 											}
@@ -507,8 +537,10 @@ is_auth(4);
 								</div>
 								<div class="col-md-2">
 									<a href="supplier.php">
+
 										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
 									</a>
+
 								</div>
 							</div>
 						</div>
@@ -612,6 +644,7 @@ is_auth(4);
 								</div>
 							</div>
 						</div>
+
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-12">
@@ -625,6 +658,7 @@ is_auth(4);
 								</div>
 							</div>
 						</div>
+
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-12">
@@ -692,6 +726,7 @@ is_auth(4);
 
 			$('#e9').val( Number( $('#e8').val() ) - Number( $('#e6').val() )  );
 		});
+
 
 	</script>
 

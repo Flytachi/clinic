@@ -45,6 +45,7 @@ is_auth(4);
 		<!-- Main sidebar -->
 		<?php include '../layout/sidebar.php' ?>
 
+
 		<!-- /main sidebar -->
 
 
@@ -70,17 +71,20 @@ is_auth(4);
 
 									<div class="row">
 
+
 										<div id="sel" class="col-md-6" >
 											<select class="form-control  select-search select2-hidden-accessible" data-placeholder="Введите название или отсканируйте баркод" name="product" data-fouc="true">
 												<option></option>
 
 												<?php
+
 												$result = $db->query("SELECT * FROM products WHERE qty >0");
 													// $result->bindParam(':userid', $res);
 													// $result->execute();
 												for($i=0; $row = $result->fetch(); $i++){
 												?>
 													<option value="<?php echo $row['product_id'];?>" ><?php echo $row['product_code']; ?> - <?php echo $row['gen_name']; ?> -Остаток <?php echo $row['qty']; ?> |  Код продукта <?php echo $row['shcod']; ?> | Годен до: <?php echo $row['expiry_date']; ?></option>
+
 
 												<?php
 													}
@@ -110,19 +114,24 @@ is_auth(4);
 									</div>
 
 
+
+
 									<input type="hidden" name="nall" id = "nall" value="111"/>
 									<input type="hidden" name="discount" value="" autocomplete="off" style="width: 68px; height:30px; padding-top:6px; padding-bottom: 4px; margin-right: 4px; font-size:15px;" />
 									<input type="hidden" name="date" value="<?php echo date("m/d/y"); ?>" />
 								</div>
 								<div class="col-md-1">
+
 									<input type="text" name="qty" id="qty" value="1" class="form-control">
 								</div>
 								<div class="col-md-2">
 									<button type="submit" class="btn btn-info">Добавить</button>
+
 								</div>
 							</div>
 						</form>
 					</div>
+
 
 				</div>
 
@@ -145,14 +154,18 @@ is_auth(4);
 										<th> Количество: </th>
 										<th> Цена: </th>
 										<th> Прибыль: </th>
+
 										<!-- <th> Действия: </th> -->
+
 				                    </tr>
 				                </thead>
 				                <tbody>
 
 				                	<?php
 									$id=$_GET['invoice'];
+
 									$result = $db->prepare("SELECT * FROM sales_order");
+
 									$result->bindParam(':userid', $id);
 									$result->execute();
 									for($i=1; $row = $result->fetch(); $i++){
@@ -173,7 +186,9 @@ is_auth(4);
 									<td>
 									<?= formatMoney($row['profit'], true);?>
 									</td>
+
 									<!-- <td><a href="delete.php?id=<?= $row['transaction_id']; ?>&invoice=<?= $_GET['invoice']; ?>&dle=<?= $_GET['id']; ?>&qty=<?= $row['qty'];?>&code=<?= $row['product'];?>"><button class="btn btn-mini btn-warning"><i class="icon-cross2"></i></button></a></td> -->
+
 								</tr>
 								<?php
 									}
@@ -183,7 +198,9 @@ is_auth(4);
 									<th colspan="5"></th>
 									<td>Общая цена: </td>
 									<td>Общая прибыль: </td>
+
 									<!-- <th></th> -->
+
 								</tr>
 
 								<tr>
@@ -192,7 +209,9 @@ is_auth(4);
 									<td colspan="1"><strong style="font-size: 12px; color: #222222;">
 									<?php
 									$sdsd=$_GET['invoice'];
+
 									$resultas = $db->prepare("SELECT sum(amount) FROM sales_order");
+
 									$resultas->bindParam(':a', $sdsd);
 									$resultas->execute();
 									for($i=0; $rowas = $resultas->fetch(); $i++){
@@ -202,8 +221,10 @@ is_auth(4);
 									?>
 									</strong></td>
 									<td colspan="1"><strong style="font-size: 12px; color: #222222;">
+
 								<?php
 									$resulta = $db->prepare("SELECT sum(profit) FROM sales_order");
+
 									$resulta->bindParam(':b', $sdsd);
 									$resulta->execute();
 									for($i=0; $qwe = $resulta->fetch(); $i++){
@@ -215,6 +236,7 @@ is_auth(4);
 									</td>
 									<!-- <th></th> -->
 								</tr>
+
 
 				                </tbody>
 				            </table>
@@ -260,6 +282,8 @@ is_auth(4);
  -->
 
 
+
+
 <?php
  	//onclick="$('.select2-container')[2].remove(); $('.select2-container')[2].remove(); $('#sel').attr('onclick', '')"
 ?>
@@ -273,6 +297,7 @@ is_auth(4);
 		window.onload = function() {
 		   // Ваш скрипт
 
+
 			// [0].mousedown();
 
 			$('.select2-container')[0].dispatchEvent(new MouseEvent('mouseleave'))
@@ -280,6 +305,7 @@ is_auth(4);
 
 			// $('#qty').focus();
 		};
+
 
 
 

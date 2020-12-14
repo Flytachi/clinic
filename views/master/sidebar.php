@@ -6,8 +6,7 @@
         <div class="sidebar-user-material">
 			<div class="sidebar-user-material-body">
 				<div class="card-body text-center">
-					<h4 class="mb-0 text-white text-shadow-dark siya"><?= get_full_name() ?></h4>
-					<span class="font-size-sm text-white text-shadow-dark siya"><?= level_name() ." ". division_name() ?></span>
+					<h4 class="mb-0 text-white text-shadow-dark siya">Master</h4>
 				</div>
 
 				<div class="sidebar-user-material-footer">
@@ -17,31 +16,6 @@
 
 			<div class="collapse" id="user-nav">
 				<ul class="nav nav-sidebar">
-					<li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-user-plus"></i>
-							<span>My profile</span>
-						</a>
-					</li>
-					<!-- <li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-coins"></i>
-							<span>My balance</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-comment-discussion"></i>
-							<span>Messages</span>
-							<span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-cog5"></i>
-							<span>Account settings</span>
-						</a>
-					</li> -->
 					<li class="nav-item">
 						<a href="<?= logout() ?>" class="nav-link">
 							<i class="icon-switch2"></i>
@@ -154,52 +128,6 @@
                                 <a href="<?= viv('cashbox/list_report') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Отчёт</span>
-                                </a>
-                            </li>
-                            <?php
-                            break;
-                        case 4:
-                            ?>
-                            <li class="nav-item">
-                                <a href="sales.php?id=cash&invoice" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Продажа</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="products.php" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Препараты (товары)</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="customer.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Клиенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="supplier.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Поставщики</span>
-                                </a>
-                            </li>
-                            <!-- <li class="nav-item">
-                                <a href="#" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Отчет продаж</span>
-                                </a>
-                            </li> -->
-                            <li class="nav-item">
-                                <a href="sales_inventory.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Инвентаризация продаж</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="all_prep.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Все наименования</span>
                                 </a>
                             </li>
                             <?php
