@@ -36,7 +36,13 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-				        <?php include "content_tabs.php"; ?>
+						<?php
+						include "content_tabs.php";
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						?>
 
 						<div class="card">
 

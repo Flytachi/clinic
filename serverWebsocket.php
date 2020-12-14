@@ -1,9 +1,7 @@
 <?php
 
-echo 'olllllllll';
-
-require dirname(__DIR__) . '/vendor/autoload.php';
-require_once '../tools/functions/connection.php';
+require 'vendor/autoload.php';
+require_once 'tools/functions/connection.php';
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;
@@ -36,35 +34,45 @@ class Chat implements MessageComponentInterface {
 
             var_dump($mas);
 
-            $id_push = $mas->{"id"};
-            $id_pull = $mas->{"id_cli"};
-            $message = $mas->{"message"};
+            $type = $mas->{'type'};
 
-
+            if($type == "messages"){
+              $id_push = $mas->{"id"};
+              $id_pull = $mas->{"id_cli"};
+              $message = $mas->{"message"};
+              $type = $mas->{'type'};
+            }else{
+                $type = $mas->{'type'};
+            }
         }
 
         global $db;
 
-        $hour = date('H');
+        if($type == "messages"){
+          $hour = date('H');
 
-        $minute = date('i');
+          $minute = date('i');
 
-        $year = date('Y');
+          $year = date('Y');
 
-        $month = date('m');
+          $month = date('m');
 
-        $day = date('d');
+          $day = date('d');
 
-        $date = $year .".". $month .".". $day;
+          $date = $year .".". $month .".". $day;
 
-        $time = $hour .":". $minute;
+          $time = $hour .":". $minute;
 
 
-        $sql = "INSERT INTO `chat` (`id`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$id_push', '$id_pull', '$message', '$date', '$time')";
+          $sql = "INSERT INTO `chat` (`id`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$id_push', '$id_pull', '$message', '$date', '$time')";
 
-        echo $sql;
+          echo $sql;
 
-        $db->query($sql);
+          $db->query($sql);
+        }else{
+          echo $type;
+        }
+
     }
 
     public function onClose(ConnectionInterface $conn) {

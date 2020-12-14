@@ -99,7 +99,7 @@ $header = "Анализы";
                                             <td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a href="<?= del_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
                                             </td>
                                         </tr>

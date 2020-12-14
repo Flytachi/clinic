@@ -69,12 +69,9 @@ var SweetAlert = function () {
                 confirmButtonText: this.dataset.btn
             }).then(function(ivi) {
                 if (ivi.value) {
-                    swal({
-                        position: 'top',
-                        title: 'Внимание! Срочный вызов!',
-                        type: 'warning',
-                        html: "<strong>Медсестра: </strong> "+parent+"<br> <strong>Расположение: </strong>"+$('#patient_location').text()
-                    });
+                    let mess = "<strong>Медсестра: </strong> "+parent+"<br> <strong>Расположение: </strong>"+$('#patient_location').text();
+                    let obj = JSON.stringify({ type : 'call_nurce_to_doc',  id : grant_id, message: mess });
+                    conn.send(obj);
                 }
             });
         });

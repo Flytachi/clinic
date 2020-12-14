@@ -1,24 +1,57 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
-$byp = $db->query("SELECT * FROM bypass WHERE id= {$_GET['pk']}")->fetch();
+is_auth([5,7]);
+$bypass = $db->query("SELECT * FROM bypass WHERE id= {$_GET['pk']}")->fetch();
+$grant_id = $db->query("SELECT grant_id FROM visit WHERE id= {$bypass['visit_id']}")->fetch()['grant_id'];
+$grant = false;
+if ($grant_id == $_SESSION['session_id']) {
+    $grant = true;
+}
 ?>
-<div class="modal-header">
-    <h5 class="modal-title"><i class="icon-menu7 mr-2"></i> <?= get_full_name($byp['parent_id']) ?></h5>
+<?php include '../../layout/head.php' ?>
+<script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
+<script src="<?= stack("vendors/js/custom.js") ?>"></script>
+
+<div class="modal-header bg-info">
+    <h5 class="modal-title">Назначение <?= get_full_name($bypass['user_id']) ?></h5>
     <button type="button" class="close" data-dismiss="modal">×</button>
 </div>
 
 <div class="modal-body">
-    <div class="alert alert-info alert-dismissible alert-styled-left border-top-0 border-bottom-0 border-right-0">
-        <span class="font-weight-semibold">Примечание!</span> <?= $byp['description'] ?>.
-        <button type="button" class="close" data-dismiss="alert">×</button>
-    </div>
+    <!-- Circle empty -->
+    <div class="card card-body border-top-1 border-top-success">
+        <div class="list-feed list-feed-rhombus list-feed-solid">
+            <div class="list-feed-item border-info">
+                <strong>Врач: </strong><?= get_full_name($bypass['parent_id']) ?>
+            </div>
 
-    <h6 class="font-weight-semibold"><i class="icon-law mr-2"></i>Препорат: <?= $byp['preparat_id'] ?></h6>
+            <div class="list-feed-item border-info">
+                <strong>Метод: </strong><?= $methods[$bypass['method']] ?>
+            </div>
+
+            <div class="list-feed-item border-info">
+                <strong>Препарат: </strong>
+                <?php foreach ($db->query("SELECT pt.product_id, pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$bypass['id']}") as $serv): ?>
+                    <?= $serv['product_code'] ?>,
+                    <input type="hidden" class="products" value="<?= $serv['product_id'] ?>">
+                <?php endforeach; ?>
+            </div>
+
+            <div class="list-feed-item border-info">
+                <strong>Описание: </strong><?= $bypass['description'] ?>
+            </div>
+        </div>
+    </div>
+    <!-- /circle empty -->
+
+    <?php if (permission(5)): ?>
+        <?php BypassDateModel::table_form_doc() ?>
+    <?php elseif (permission(7)): ?>
+        <?php BypassDateModel::table_form_nurce() ?>
+    <?php endif; ?>
 
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-    <button class="btn bg-info legitRipple"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+    <button class="btn btn-outline-info legitRipple btn-sm" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i>Закрыть</button>
 </div>

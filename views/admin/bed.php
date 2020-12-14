@@ -84,7 +84,7 @@ $header = "Койки";
                                                 <td>
 													<div class="list-icons">
 														<a onclick="Update2('<?= up_url($row['id'], 'BedTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-														<a href="<?= del_url($row['id'], 'BedTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+														<a href="<?= del_url($row['id'], 'BedTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить тип койки?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													</div>
                                                 </td>
                                             </tr>

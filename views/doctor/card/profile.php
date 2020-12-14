@@ -1,5 +1,17 @@
 <?php
-$sql = "SELECT us.id, vs.id 'visit_id', vs.grant_id, us.dateBith, us.numberPhone, us.gender, us.region, us.residenceAddress, us.registrationAddress, vs.accept_date, vs.direction, vs.add_date, vs.discharge_date, wd.floor, wd.ward, bd.bed FROM users us LEFT JOIN visit vs ON (vs.user_id = us.id) LEFT JOIN beds bd ON (bd.user_id=vs.user_id) LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE vs.status = 2 AND us.id = {$_GET['id']}";
+$sql = "SELECT
+            us.id, vs.id 'visit_id', vs.grant_id,
+            us.dateBith, us.numberPhone, us.gender,
+            us.region, us.residenceAddress,
+            us.registrationAddress, vs.accept_date,
+            vs.direction, vs.add_date, vs.discharge_date,
+            wd.floor, wd.ward, bd.bed
+        FROM users us
+            LEFT JOIN visit vs ON (vs.user_id = us.id)
+            LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
+            LEFT JOIN wards wd ON(wd.id=bd.ward_id)
+        WHERE vs.status = 2 AND us.id = {$_GET['id']} ORDER BY add_date ASC";
+
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($patient);
 ?>
@@ -173,7 +185,9 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $button_inner = "Завершить";
                     }
                     ?>
-                    <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> <?= $button_inner ?></button>
+                    <?php if (!$patient->direction): ?>
+                        <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> <?= $button_inner ?></button>
+                    <?php endif; ?>
                 </div>
             </div>
 

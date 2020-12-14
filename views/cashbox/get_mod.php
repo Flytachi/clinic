@@ -18,46 +18,55 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                // Инвестиции
-                $sql = "SELECT SUM(price) 'total_price' FROM investment WHERE user_id = $pk ";
-                $invests = $db->query($sql)->fetch()['total_price'];
+                $sql = "SELECT
+                            SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
+                            ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
+                            (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service',
+                            (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0) 'cost_preparat'
+                            -- bdt.price 'bed_price',
+                            -- vs.add_date
+                        FROM users us
+                            LEFT JOIN investment iv ON(iv.user_id = us.id)
+                            LEFT JOIN beds bd ON(bd.user_id = us.id)
+                            LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                            LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                        WHERE us.id = $pk";
+                $price = $db->query($sql)->fetch();
 
-                // Время прёма
-                $sql_1 = "SELECT add_date FROM visit WHERE user_id = $pk AND priced_date IS NULL AND grant_id=parent_id";
-                $cost_time = $db->query($sql_1)->fetch()['add_date'];
+                // prit($price);
 
-                // Стоимость койки
-                $sql_2 = "SELECT bdt.price FROM beds bd LEFT JOIN bed_type bdt ON(bdt.id=bd.types) WHERE bd.user_id = $pk";
-                $cost_bed = $db->query($sql_2)->fetch()['price'];
-
-                // Сумма койка -> день
-                $cost_bed_time = $cost_bed * intval(date_diff(new \DateTime(), new \DateTime($cost_time))->days);
-
-                // Стоимость услуг
-                $sql_3 = "SELECT SUM(sc.price) 'cost' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL";
-                $cost_service = $db->query($sql_3)->fetch()['cost'];
-
-                // prit($invests);
-                // prit($cost_time);
-                // prit($cost_bed);
-                // prit($cost_service);
-                // prit($cost_bed_time);
-
-                $total_cost -= $cost_service + $cost_bed_time;
+                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_preparat'];
                 ?>
-                <div class="form-group form-group-float">
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <?php if (($invests + $total_cost) > 0): ?>
-                            <input type="text" class="form-control border-success" value="<?= number_format($invests + $total_cost) ?>" disabled>
-                        <?php elseif(($invests + $total_cost) < 0): ?>
-                            <input type="text" class="form-control border-danger" value="<?= number_format($invests + $total_cost) ?>" disabled>
-                        <?php else: ?>
-                            <input type="text" class="form-control border-dark" value="<?= number_format($invests + $total_cost) ?>" disabled>
-                        <?php endif; ?>
-                    </div>
+                <table class="table table-hover">
+                    <tbody>
+                        <tr class="table-secondary">
+                            <td>Баланс</td>
+                            <td class="text-right text-success"><?= number_format($price['balance']) ?></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Сумма к оплате</td>
+                            <td class="text-right text-danger"><?= number_format($price_cost) ?></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Разница</td>
+                            <?php if (($price['balance'] + $price_cost) > 0): ?>
+                                <td class="text-right text-success"><?= number_format($price['balance'] + $price_cost) ?></td>
+                            <?php elseif(($price['balance'] + $price_cost) < 0): ?>
+                                <td class="text-right text-danger"><?= number_format($price['balance'] + $price_cost) ?></td>
+                            <?php else: ?>
+                                <td class="text-right text-dark"><?= number_format($price['balance'] + $price_cost) ?></td>
+                            <?php endif; ?>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="text-right mt-3">
+                    <button onclick="Invest(1)" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success">Предоплата</button>
+                    <button onclick="Invest(0)" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger">Возврат</button>
+                    <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" class="btn btn-outline-primary" data-show="1">Детально</button>
                 </div>
 
-                <?php InvestmentModel::form(); ?>
+                <div id="detail_div"></div>
 
             </div>
         </div>
@@ -83,14 +92,15 @@ if ($_GET['pk']) {
                         </thead>
                         <tbody>
                             <?php
-                            foreach($db->query("SELECT vs.id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL") as $row) {
+                            foreach($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL") as $row) {
                                 ?>
                                     <tr id="tr_VisitModel_<?= $row['id'] ?>">
+                                        <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
                                         <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td class="text-right total_cost"><?= $row['price'] ?></td>
                                         <th class="text-center">
-                                            <a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn list-icons-item border-danger text-danger"><i class="icon-minus2"></i></a>
+                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
                                         </th>
                                     </tr>
                                 <?php

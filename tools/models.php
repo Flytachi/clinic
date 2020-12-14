@@ -246,7 +246,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
@@ -264,7 +264,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
                             ?>
@@ -277,7 +277,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
@@ -290,42 +290,15 @@ class VisitModel extends Model
                 </div>
 
             </div>
-
-            <div class="text-right">
-<<<<<<< HEAD
-                <!-- <button type="button" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
-                <button type="submit" onclick="submitAlert()" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
-=======
-                <!-- <button type="button" onclick="submitAlert()" class="btn btn-outline-info">Сохранить</button> -->
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
->>>>>>> 43c94d35eb4b912e8ae88002d589a2c655de58c3
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
         <script type="text/javascript">
             $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
+                $("#parent_id").chained("#division_id");
+                $("#service_id").chained("#division_id");
             });
-<<<<<<< HEAD
-            let conn = new WebSocket("ws://192.168.1.103:8080");
-=======
-
-            let conn = new WebSocket("ws://192.168.1.114:8080");
->>>>>>> 43c94d35eb4b912e8ae88002d589a2c655de58c3
-            conn.onopen = function(e) {
-                console.log("Connection established!");
-            };
-
-            function submitAlert() {
-
-              let id = $("#parent_id2").val();
-
-              let obj = JSON.stringify({ type : 'alert',  id : id });
-              console.log(obj);
-              conn.send(obj);
-            }
-
         </script>
         <?php
     }
@@ -408,7 +381,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
@@ -436,7 +409,7 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -444,8 +417,12 @@ class VisitModel extends Model
             $(function(){
                 $("#ward").chained("#floor");
                 $("#bed").chained("#ward");
-                $("#parent_id").chained("#division");
+                $("#parent_id").chained("#division_id");
             });
+            function submitAlert() {
+                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val(), message: "У вас новый стационарный пациент!" });
+                conn.send(obj);
+            }
         </script>
         <?php
     }
@@ -633,11 +610,23 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-    			<button type="submit" class="btn btn-outline-info">Печать</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button>
+                <!-- <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
     		</div>
 
         </form>
         <script type="text/javascript">
+            function checkBody(urls) {
+                window.location = urls;
+                // $.ajax({
+                // 	type: "GET",
+                // 	url: urls,
+                // 	success: function (result) {
+                //         checkPrint(result);
+                // 	},
+                // });
+            }
+
             function Checkert(event) {
                 var input = $('#input_'+event.id);
                 if(!input.prop('disabled')){
@@ -647,6 +636,13 @@ class VisitPriceModel extends Model
                     input.removeAttr("disabled");
                     Upsum(input);
                 }
+            }
+            function submitAlert() {
+                var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                parent_id.forEach(function(events) {
+                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                    conn.send(obj);
+                });
             }
         </script>
         <?php
@@ -779,41 +775,36 @@ class VisitPriceModel extends Model
     }
 }
 
-class InvestmentModel extends Model
+class VisitInspectionModel extends Model
 {
-    public $table = 'investment';
+    public $table = 'visit_inspection';
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $patient;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="user_id" id="user_st_id">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
 
-            <div class="form-group form-group-float row">
+            <div class="modal-body">
 
-                <div class="col-md-6">
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-success" name="price" placeholder="Предоплата" required>
-                        <div class="form-control-feedback text-success">
-                            <button type="submit" class="btn btn-outline-success border-transparent legitRipple">
-                                <i style="font-size: 23px;" class="icon-checkmark-circle2"></i>
-                            </button>
-                        </div>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"><?= $post['report_conclusion'] ?></textarea>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group-feedback form-group-feedback-right">
-                        <input type="text" class="form-control border-danger" placeholder="Возврат">
-                        <div class="form-control-feedback text-danger">
-                            <i style="font-size: 23px;" class="icon-history" data-toggle="modal" data-target="#modal_default2"></i>
-                        </div>
-                    </div>
-                </div>
+            </div>
 
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
             </div>
 
         </form>
@@ -843,6 +834,155 @@ class InvestmentModel extends Model
     }
 }
 
+class InvestmentModel extends Model
+{
+    public $table = 'investment';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>" onsubmit="Subi()">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="user_id" id="user_st_id">
+            <input type="hidden" name="price_type" id="price_type">
+
+            <div class="modal-body">
+                <table class="table table-hover mb-2">
+                    <tbody>
+                        <tr class="table-secondary">
+                            <td id="balance_name"></td>
+                            <td class="text-right" id="input_balance"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Наличный</label>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="balance_cash" id="input_chek_1" step="0.5" class="form-control input_check" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery swit_check" data-fouc id="chek_1" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Пластиковый</label>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="balance_card" id="input_chek_2" step="0.5" class="form-control input_check" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery swit_check" data-fouc id="chek_2" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Перечисление</label>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="balance_transfer" id="input_chek_3" step="0.5" class="form-control input_check" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery swit_check" data-fouc id="chek_3" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+    			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-outline-info">Печать</button>
+    		</div>
+
+        </form>
+        <script type="text/javascript">
+
+            $('.input_check').keyup(function (num) {
+                var n = $(this).val().length;
+                // if (n % 3 == 0) {
+                //     $(this).val($(this).val()+" ");
+                // }
+            });
+
+            function Subi() {
+                event.preventDefault();
+                $.ajax({
+                    type: $(event.target).attr("method"),
+                    url: $(event.target).attr("action"),
+                    data: $(event.target).serializeArray(),
+                    success: function (result) {
+                        if (result == 1) {
+                            new Noty({
+                                text: 'Успешно!',
+                                type: 'success'
+                            }).show();
+                        }else {
+                            new Noty({
+                                text: result,
+                                type: 'error'
+                            }).show();
+                        }
+                        $('#modal_invest').modal('hide');
+                        Check('get_mod.php?pk='+$('#user_st_id').val() ,$('#user_st_id').val());
+                    },
+                });
+            }
+
+            function Checkert(event) {
+                var input = $('#input_'+event.id);
+                if(!input.prop('disabled')){
+                    input.attr("disabled", "disabled");
+                }else {
+                    input.removeAttr("disabled");
+                }
+            }
+
+        </script>
+        <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['price_type'] == 0) {
+            if ($this->post['balance_cash']) {
+                $this->post['balance_cash'] *= -1;
+            }
+            if ($this->post['balance_card']) {
+                $this->post['balance_card'] *= -1;
+            }
+            if ($this->post['balance_transfer']) {
+                $this->post['balance_transfer'] *= -1;
+            }
+        }
+        unset($this->post['price_type']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
+    public function success()
+    {
+        echo 1;
+    }
+
+    public function error($message)
+    {
+        echo $message;
+    }
+}
+
 class DivisionModel extends Model
 {
     public $table = 'division';
@@ -860,6 +1000,8 @@ class DivisionModel extends Model
             unset($_SESSION['message']);
         }
         ?>
+        <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+        <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
@@ -891,13 +1033,14 @@ class DivisionModel extends Model
             <div class="form-group row">
                 <label class="col-form-label col-md-1">Ассистент</label>
                 <div class="col-md-3">
-                    <div class="input-group">
-                        <span class="input-group-prepend ml-5">
-                            <span class="input-group-text">
-                                <input type="checkbox" class="form-control-switchery" name="assist" <?= ($post['assist']) ? "checked" : "" ?>>
-                            </span>
-                        </span>
-                    </div>
+                    <input type="checkbox" class="swit" name="assist" <?= ($post['assist']==1) ? "checked" : "" ?>>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-form-label col-md-1">Радиолог</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="swit" name="assist" <?= ($post['assist']==2) ? "checked" : "" ?>>
                 </div>
             </div>
 
@@ -1185,6 +1328,26 @@ class ServiceModel extends Model
 {
     public $table = 'service';
 
+
+    public function form_template($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>" onsubmit="//TempFunc()" enctype="multipart/form-data">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="form-group">
+                <label>Шаблон:</label>
+                <input type="file" class="form-control" name="template" required id="url_template">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function form($pk = null)
     {
         global $db, $PERSONAL;
@@ -1232,6 +1395,11 @@ class ServiceModel extends Model
             </div>
 
             <div class="form-group">
+                <label>Код:</label>
+                <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
+            </div>
+
+            <div class="form-group">
                 <label>Название:</label>
                 <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
             </div>
@@ -1256,12 +1424,68 @@ class ServiceModel extends Model
 
     public function clean()
     {
+        if($_FILES['template']){
+            $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
+            $this->save_excel();
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         if($this->post['user_level'] and !$this->post['division_id']){
             $this->post['division_id'] = null;
         }
         return True;
+    }
+
+    public function clean_excel()
+    {
+        if ($this->post['user_level']) {
+            switch ($this->post['user_level']) {
+                case 'A':
+                    $this->post['user_level'] = 1;
+                    break;
+                case 'B':
+                    $this->post['user_level'] = 5;
+                    break;
+                case 'D':
+                    $this->post['user_level'] = 10;
+                    break;
+                case 'L':
+                    $this->post['user_level'] = 6;
+                    break;
+            }
+        }
+        return True;
+    }
+
+    public function save_excel()
+    {
+        foreach ($this->post['template'] as $key_p => $value_p) {
+            if ($key_p) {
+                foreach ($value_p as $key => $value) {
+                    $pick = $pirst[$key];
+                    switch ($pick) {
+                        case 'role':
+                            $pick = "user_level";
+                            break;
+                        case 'service':
+                            $pick = "name";
+                            break;
+                    }
+                    $this->post[$pick] = $value;
+                }
+                if($this->clean_excel()){
+                    prit($this->post);
+                    $object = Mixin\insert($this->table, $this->post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
+                }
+            }else {
+                $pirst = $value_p;
+                unset($this->post['template']);
+            }
+        }
+        $this->success();
     }
 
     public function success()
@@ -1461,23 +1685,26 @@ class LaboratoryAnalyzeModel extends Model
                         </thead>
                         <tbody>
                             <?php
-                            $i = 1;
-                            foreach ($db->query("SELECT id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
-                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$row['id']}") as $row) {
+                            $i = 0;
+                            $s = 1;
+                            foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row_parent) {
+                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', lat.name, lat.standart, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
                                     ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
-                                        <td><?= $i++ ?></td>
-                                        <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
+                                        <td><?= $s++ ?></td>
+                                        <td><?= $row['ser_name'] ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td><?= $row['standart'] ?></td>
                                         <td>
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
+                                            <input type="hidden" name="<?= $i ?>[analyze_id]" value="<?= $row['analyze_id'] ?>">
+                                            <input type="hidden" name="<?= $i ?>[visit_id]" value="<?= $row_parent['id'] ?>">
                                             <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
                                             <div class="form-check">
         										<label class="form-check-label">
-        											<input data-id="TR_<?= $i-1 ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
+        											<input data-id="TR_<?= $i ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
         										</label>
         									</div>
                                         </td>
@@ -1486,6 +1713,7 @@ class LaboratoryAnalyzeModel extends Model
                                         </th>
                                     </tr>
                                     <?php
+                                    $i++;
                                 }
                             }
                             ?>
@@ -1522,14 +1750,26 @@ class LaboratoryAnalyzeModel extends Model
         $user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
         foreach ($this->post as $val) {
-            $pk = $val['id'];
-            unset($val['id']);
-            if ($val['deviation']) {
-                $val['deviation'] = 1;
+            if ($val['id']) {
+                $pk = $val['id'];
+                unset($val['id']);
+                if ($val['deviation']) {
+                    $val['deviation'] = 1;
+                }else {
+                    $val['deviation'] = null;
+                }
+                $object = Mixin\update($this->table, $val, $pk);
             }else {
-                $val['deviation'] = null;
+                $val['user_id'] = $user_pk;
+                unset($val['id']);
+                if ($val['deviation']) {
+                    $val['deviation'] = 1;
+                }else {
+                    $val['deviation'] = null;
+                }
+                $val['service_id'] = $db->query("SELECT service_id FROM visit WHERE id = {$val['visit_id']}")->fetch()['service_id'];
+                $object = Mixin\insert('laboratory_analyze', $val);
             }
-            $object = Mixin\update($this->table, $val, $pk);
         }
         if (intval($object)){
             if ($end) {
@@ -1597,7 +1837,7 @@ class BypassModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $methods;
         if($pk){
             $post = $this->post;
         }else{
@@ -1607,25 +1847,24 @@ class BypassModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="modal-body">
 
                 <div class="form-group row">
 
-                    <div class="col-md-12">
+                    <div class="col-md-9">
+
                         <label>Препарат:</label>
                         <select class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
-							<optgroup label="Уколы">
-								<option value="1">Analysis</option>
-								<option value="2">Linear Algebra</option>
-								<option value="3">Probability Theory</option>
-							</optgroup>
-							<optgroup label="Витамины">
-								<option value="4">Introduction to Programming</option>
-								<option value="5">Complexity Theory</option>
-								<option value="6">Software Engineering</option>
-							</optgroup>
+                            <?php foreach ($db->query("SELECT * FROM pharmacy_category") as $row): ?>
+                                <optgroup label="<?= $row['name'] ?>">
+                                    <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = {$row['id']}") as $row2): ?>
+                                        <option value="<?= $row2['product_id'] ?>"><?= $row2['product_code'] ?> (<?= $row2['qty'] ?>)</option>
+                                    <?php endforeach; ?>
+    							</optgroup>
+                            <?php endforeach; ?>
 						</select>
                     </div>
 
@@ -1637,9 +1876,9 @@ class BypassModel extends Model
                         <label>Метод:</label>
                         <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
                             <option></option>
-                            <option value="1">Внутривенный</option>
-                            <option value="2">Внутриартериальнаый</option>
-                            <option value="3">Внутримышечный</option>
+                            <?php foreach ($methods as $key => $value): ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                            <?php endforeach; ?>
                         </select>
 
                     </div>
@@ -1787,7 +2026,7 @@ class PatientStatsModel extends Model
 
                     <div class="col-md-6">
                         <label>Давление:</label>
-                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление" required>
+                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление">
                     </div>
 
                 </div>
@@ -1807,6 +2046,25 @@ class PatientStatsModel extends Model
                     <div class="col-md-4">
                         <label>Сатурация:</label>
                         <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-4">
+                        <label>Дыхание:</label>
+                        <input type="number" class="form-control" name="breath" min="10" step="1" max="50" placeholder="Введите дыхание">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Вес:</label>
+                        <input type="number" class="form-control" name="weight" min="30" step="1" max="200"  placeholder="Введите вес">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Моча:</label>
+                        <input type="number" class="form-control" name="urine" min="0" step="0.1" max="5">
                     </div>
 
                 </div>

@@ -21,6 +21,18 @@ $FLOOR = array(
     3 => "3 этаж",
 );
 
+$methods = array(
+    1 => "Через рот",
+    2 => "Внутримышечный (в/м)",
+    3 => "Подкожный (п/к)",
+    4 => "Внутривенный (в/в)",
+    5 => "Внутривенный капельный (в/в кап)",
+    6 => "Ректальный",
+    7 => "Вагинальный",
+    8 => "Ингаляционный",
+    9 => "Поверхностное натирание",
+);
+
 require_once 'functions/connection.php';
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
@@ -138,6 +150,21 @@ function addZero($number){
     return $strNumber;
 }
 
+function division($id = null) {
+    global $db, $PERSONAL;
+    if(empty($id)){
+        $id = $_SESSION['session_id'];
+    }
+    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    try{
+        $stmt = $db->query("SELECT id from division where id = $id")->fetchColumn();
+    }
+    catch (PDOException $ex) {
+        $stmt = null;
+    }
+	return $stmt;
+}
+
 
 function division_name($id = null) {
     global $db, $PERSONAL;
@@ -167,5 +194,16 @@ function division_assist($id = null) {
         $stmt = null;
     }
 	return $stmt;
+}
+
+function read_excel($filepath){
+    require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
+
+    $ar=array(); // инициализируем массив
+    $inputFileType = PHPExcel_IOFactory::identify($filepath); // узнаем тип файла, excel может хранить файлы в разных форматах, xls, xlsx и другие
+    $objReader = PHPExcel_IOFactory::createReader($inputFileType); // создаем объект для чтения файла
+    $objPHPExcel = $objReader->load($filepath); // загружаем данные файла в объект
+    $ar = $objPHPExcel->getActiveSheet()->toArray(); // выгружаем данные из объекта в массив
+    return $ar; //возвращаем массив
 }
 ?>

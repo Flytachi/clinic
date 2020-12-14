@@ -1,4 +1,3 @@
-console.log('www');
 function addZero(number){
 
     let strNumber = String(number);
@@ -20,7 +19,7 @@ function addZero(number){
 }
 
 conn.onopen = function(e) {
-    console.log("Connection established!");
+    console.log("Connection success!");
 };
 
 conn.onmessage = function(e) {
@@ -120,10 +119,21 @@ conn.onmessage = function(e) {
   		}
   	}
 
-  }else{
-
+  }else if (d.type == "alert_new_patient"){
     if(d.id == id){
-        alert('Новый пациунт');
+        new Noty({
+            text: d.message,
+            type: 'info'
+        }).show();
+    }
+  }else if (d.type == "call_nurce_to_doc"){
+    if(d.id == id){
+        swal({
+            position: 'top',
+            title: 'Внимание! Срочный вызов!',
+            type: 'warning',
+            html: d.message
+        });
     }
   }
 

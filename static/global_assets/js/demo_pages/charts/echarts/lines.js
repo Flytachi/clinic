@@ -31,11 +31,235 @@ var EchartsLines = function() {
         var line_multiple_element = document.getElementById('line_multiple');
         var line_values_element = document.getElementById('line_values');
         var line_zoom_element = document.getElementById('line_zoom');
+        var line_stat_element = document.getElementById('line_stat');
 
 
         //
         // Charts configuration
         //
+
+        // Stat option
+        if (line_stat_element) {
+
+            // Date
+            var date_list = document.querySelectorAll('.chart_date');
+            var date_x = [], i = 0;
+            date_list.forEach(function(events) {
+                date_x[i] = $(events).text();
+                i++;
+            });
+
+            // pressure
+            var pressures = document.querySelectorAll('.chart_pressure');
+            var pressure_1 = [], pressure_2 = [], i = 0;
+            pressures.forEach(function(events) {
+                pressure_1[i] = $(events).text().split('/')[0];
+                pressure_2[i] = $(events).text().split('/')[1];
+                i++;
+            });
+            // pulse
+            var pulses = document.querySelectorAll('.chart_pulse');
+            var pulse = [], i = 0;
+            pulses.forEach(function(events) {
+                pulse[i] = $(events).text();
+                i++;
+            });
+            // temperature
+            var temperatures = document.querySelectorAll('.chart_temperature');
+            var temperature = [], i = 0;
+            temperatures.forEach(function(events) {
+                temperature[i] = $(events).text();
+                i++;
+            });
+            // saturation
+            var saturations = document.querySelectorAll('.chart_saturation');
+            var saturation = [], i = 0;
+            saturations.forEach(function(events) {
+                saturation[i] = $(events).text();
+                i++;
+            });
+
+            // Initialize chart
+            var line_stat = echarts.init(line_stat_element);
+
+
+            //
+            // Chart config
+            //
+
+            // Options
+            line_stat.setOption({
+
+                // Define colors
+                color: ['#EF5350', "#424956", '#0092ff', "#7E57C2"], // '#66BB6A' Зелёный
+
+                // Global text styles
+                textStyle: {
+                    fontFamily: 'Roboto, Arial, Verdana, sans-serif',
+                    fontSize: 13
+                },
+
+                // Chart animation duration
+                animationDuration: 750,
+
+                // Setup grid
+                grid: {
+                    left: 0,
+                    right: 40,
+                    top: 35,
+                    bottom: 60,
+                    containLabel: true
+                },
+
+                // Add legend
+                legend: {
+                    display: false,
+                    data: ['Давление', 'Пульс', 'Температура', 'Сатурация'],
+                    itemHeight: 8,
+                    itemGap: 20
+                },
+
+                // Add tooltip
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(0,0,0,0.75)',
+                    padding: [10, 15],
+                    textStyle: {
+                        fontSize: 13,
+                        fontFamily: 'Roboto, sans-serif'
+                    }
+                },
+
+                // Horizontal axis
+                xAxis: [{
+                    type: 'category',
+                    boundaryGap: false,
+                    axisLabel: {
+                        color: '#333'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#999'
+                        }
+                    },
+                        data: date_x
+                }],
+
+                // Vertical axis
+                yAxis: [{
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} ',
+                        color: '#333'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#999'
+                        }
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: ['#eee']
+                        }
+                    },
+                    splitArea: {
+                        show: true,
+                        areaStyle: {
+                            color: ['rgba(250,250,250,0.1)', 'rgba(0,0,0,0.01)']
+                        }
+                    }
+                }],
+
+                // Zoom control
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 30,
+                        end: 70
+                    },
+                    {
+                        show: true,
+                        type: 'slider',
+                        start: 30,
+                        end: 70,
+                        height: 40,
+                        bottom: 0,
+                        borderColor: '#ccc',
+                        fillerColor: 'rgba(0,0,0,0.05)',
+                        handleStyle: {
+                            color: '#585f63'
+                        }
+                    }
+                ],
+
+                // Add series
+                series: [
+                    {
+                        name: 'Давление',
+                        type: 'line',
+                        smooth: true,
+                        symbolSize: 6,
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 2
+                            }
+                        },
+                        data: pressure_1
+                    },
+                    {
+                        name: 'Давление',
+                        type: 'line',
+                        color: "#66BB6A",
+                        smooth: true,
+                        symbolSize: 6,
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 2
+                            }
+                        },
+                        data: pressure_2
+                    },
+                    {
+                        name: 'Пульс',
+                        type: 'line',
+                        smooth: true,
+                        symbolSize: 6,
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 2
+                            }
+                        },
+                        data: pulse
+                    },
+                    {
+                        name: 'Температура',
+                        type: 'line',
+                        smooth: true,
+                        symbolSize: 6,
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 2
+                            }
+                        },
+                        data: temperature
+                    },
+                    {
+                        name: 'Сатурация',
+                        type: 'line',
+                        smooth: true,
+                        symbolSize: 6,
+                        itemStyle: {
+                            normal: {
+                                borderWidth: 2
+                            }
+                        },
+                        data: saturation
+                    }
+                ]
+            });
+        }
+
+
 
         // Basic line chart
         if (line_basic_element) {
@@ -819,7 +1043,7 @@ var EchartsLines = function() {
                         label: {
                             normal: {
                                 show: true
-                            } 
+                            }
                         },
                         itemStyle: {
                             normal: {
@@ -836,7 +1060,7 @@ var EchartsLines = function() {
                         label: {
                             normal: {
                                 show: true
-                            } 
+                            }
                         },
                         itemStyle: {
                             normal: {
@@ -1018,6 +1242,7 @@ var EchartsLines = function() {
             line_multiple_element && line_multiple.resize();
             line_values_element && line_values.resize();
             line_zoom_element && line_zoom.resize();
+            line_stat_element && line_stat.resize();
         };
 
         // On sidebar width change

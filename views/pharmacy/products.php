@@ -57,22 +57,18 @@ is_auth(4);
 			<div class="content">
 
 				<div class="card">
-					
+
 					<div class="card-body">
-						
-						<?php 
+
+						<?php
 							$rowcount = $db->query("SELECT * FROM products ORDER BY qty_sold DESC")->rowcount();
-						?>
-						<?php 
+
 							$rowcount123 = $db->query("SELECT * FROM products where qty < 10 ORDER BY product_id DESC")->rowcount();
-						?>
-					    <?php 
+
 							$rowcountjnvls = $db->query("SELECT `catg`, `qty` FROM `products` WHERE `catg` = 'ОЛСИМН' && `qty` < 10;")->rowcount();
-						?>
-					    <?php 
+
 							$rowcountfixed = $db->query("SELECT `catg`, `qty` FROM `products` WHERE `catg` = 'Фиксированная' && `qty` < 10;")->rowcount();
-						?>
-					    <?php 
+
 							$d1 = strtotime('+120 days');
 					        $d2 = date('Y-m-d', $d1);
 							$result = $db->prepare("SELECT * FROM products WHERE expiry_date BETWEEN :a AND :b ORDER by product_id DESC ");
@@ -96,13 +92,14 @@ is_auth(4);
 				</div>
 
 				<div class="card">
-					
+
 					<div class="card-body">
 
 						<div class="row">
 							<div class="col-md-2">
 								<a href="revision.php">
-									<button type="button" class="btn btn-info">ПЕЧАТЬ </button>	
+									<button type="button" class="btn btn-info">ПЕЧАТЬ </button>
+
 								</a>
 							</div>
 
@@ -116,11 +113,13 @@ is_auth(4);
 					<div class="card-body">
 							<div class="row">
 								<div class="col-md-10">
-									<input type="text" name="qty" id="qty"  class="form-control">	
+
+									<input type="text" name="qty" id="qty"  class="form-control">
 								</div>
 								<div class="col-md-2">
-				            			
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_form_vertical" />Добавить</button>	
+
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_form_vertical" />Добавить</button>
+
 
 									<div id="modal_form_vertical" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
 										<div class="modal-dialog">
@@ -139,12 +138,15 @@ is_auth(4);
 																	<select name="product_code" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
 																		<option></option>
 
-																		<?php 
+																		<?php
+
 																		$result = $db->query("SELECT * FROM goods");
 																		for($i=0; $row = $result->fetch(); $i++){
 																		?>
 																			<option value="<?= $row['goodname'] ?>" ><?= $row['goodname'] ?></option>
-																	        
+
+
+
 																		<?php
 																			}
 																		?>
@@ -153,7 +155,9 @@ is_auth(4);
 
 																<div class="col-md-2">
 																	<a href="newpr.php">
-																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>	
+
+																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
+
 																	</a>
 																</div>
 															</div>
@@ -166,12 +170,14 @@ is_auth(4);
 																	<select name="supplier" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
 																		<option></option>
 
-																		<?php 
+																		<?php
+
 																		$result = $db->query("SELECT * FROM supliers");
 																		for($i=0; $row = $result->fetch(); $i++){
 																		?>
 																			<option value="<?= $row['suplier_name'] ?>" ><?= $row['suplier_name'] ?></option>
-																	        
+
+
 																		<?php
 																			}
 																		?>
@@ -179,8 +185,10 @@ is_auth(4);
 																</div>
 																<div class="col-md-2">
 																	<a href="supplier.php">
-																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>	
-																	</a>	
+
+																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
+																	</a>
+
 																</div>
 															</div>
 														</div>
@@ -284,14 +292,21 @@ is_auth(4);
 																</div>
 															</div>
 														</div>
-								<!-- 						<div class="form-group">
+
+														<div class="form-group">
 															<div class="row">
 																<div class="col-md-12">
 																	<label>Категория</label>
-																	<input type="text" placeholder="Munich" class="form-control">
+																	<select name="catg" class="form-control select select2-hidden-accessible"  data-fouc="" tabindex="-1" aria-hidden="true">
+																		<option></option>
+																		<?php foreach ($db->query("SELECT * FROM pharmacy_category") as $row): ?>
+																			<option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+											                            <?php endforeach; ?>
+																	</select>
 																</div>
 															</div>
-														</div> -->
+														</div>
+
 														<div class="form-group">
 															<div class="row">
 																<div class="col-md-12">
@@ -303,14 +318,7 @@ is_auth(4);
 														<div class="form-group">
 															<div class="row">
 																<div class="col-md-12">
-																	<label>Накладная № </label>
-																	<input type="text" name="nnak" placeholder="Munich" class="form-control">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
+
 																	<label>Срок годности</label>
 																	<input class="form-control" name="expiry_date" type="date" name="date">
 																</div>
@@ -347,7 +355,9 @@ is_auth(4);
 							</div>
 
 					</div>
-					
+
+
+
 				</div>
 
 				<div class="card">
@@ -382,6 +392,8 @@ is_auth(4);
 										<th>№ Сч/Факт</th>
 										<th>Число.от</th>
 										<th>Ед.изм</th>
+										<th>Действия</th>
+
 				                    </tr>
 				                </thead>
 				                <tbody>
@@ -399,7 +411,8 @@ is_auth(4);
 										echo '<tr class="record">';
 										}
 									?>
-							
+
+
 										<td><?= $row['product_code']; ?></td>
 										<td><?= $row['gen_name']; ?></td>
 										<td><?= $row['product_name']; ?></td>
@@ -415,7 +428,7 @@ is_auth(4);
 										<td><?= $row['fakturanumber']; ?></td>
 										<td><?= $row['sdate']; ?></td>
 										<td><?= $row['ediz']; ?></td>
-							            <td><?= $row['nnak']; ?></td>			
+
 										<td>
 											<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#a<?= $row['product_id'] ?>"><i class="icon-pencil3"></i></button>
 										<a href="deletproducts.php?id=<?= $row['product_id']; ?>" id="" class="delbutton" title="Удалить"><button class="btn btn-danger"><i class="icon-trash"></i></button></a></td>
@@ -428,7 +441,10 @@ is_auth(4);
 										<td colspan="9">ИТОГ : </td>
 										<td><?= $db->query("SELECT SUM(qty_sold) FROM products")->fetch()[0] ?></td>
 										<td><?= $db->query("SELECT SUM(qty) FROM products")->fetch()[0] ?></td>
-							
+
+
+										<td colspan="5"></td>
+
 									</tr>
 
 				                </tbody>
@@ -449,7 +465,8 @@ is_auth(4);
 
 	</div>
 
-	<?php 
+	<?php
+
 		$result1 = $db->query("SELECT *, price * qty as total FROM products ORDER BY product_id DESC");
 		while($row1 = $result1->fetch()) {
 	?>
@@ -472,12 +489,15 @@ is_auth(4);
 									<select name="product_code" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
 										<option value="<?= $row1['product_code'] ?>"><?= $row1['product_code'] ?></option>
 
-										<?php 
+										<?php
+
 										$result = $db->query("SELECT * FROM goods");
 										for($i=0; $row = $result->fetch(); $i++){
 										?>
 											<option value="<?= $row['goodname'] ?>" ><?= $row['goodname'] ?></option>
-									        
+
+
+
 										<?php
 											}
 										?>
@@ -486,7 +506,9 @@ is_auth(4);
 
 								<div class="col-md-2">
 									<a href="newpr.php">
-										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>	
+
+										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
+
 									</a>
 								</div>
 							</div>
@@ -499,12 +521,15 @@ is_auth(4);
 									<select name="supplier" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
 										<option value="<?= $row1['supplier'] ?>"><?= $row1['supplier'] ?></option>
 
-										<?php 
+										<?php
+
 										$result = $db->query("SELECT * FROM supliers");
 										for($i=0; $row = $result->fetch(); $i++){
 										?>
 											<option value="<?= $row['suplier_name'] ?>" ><?= $row['suplier_name'] ?></option>
-									        
+
+
+
 										<?php
 											}
 										?>
@@ -512,8 +537,10 @@ is_auth(4);
 								</div>
 								<div class="col-md-2">
 									<a href="supplier.php">
-										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>	
-									</a>	
+
+										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
+									</a>
+
 								</div>
 							</div>
 						</div>
@@ -617,27 +644,26 @@ is_auth(4);
 								</div>
 							</div>
 						</div>
-<!-- 						<div class="form-group">
+
+						<div class="form-group">
 							<div class="row">
 								<div class="col-md-12">
 									<label>Категория</label>
-									<input type="text" placeholder="Munich" class="form-control">
+									<select name="catg" class="form-control select select2-hidden-accessible"  data-fouc="" tabindex="-1" aria-hidden="true">
+										<option></option>
+										<?php foreach ($db->query("SELECT * FROM pharmacy_category") as $row): ?>
+											<option value="<?= $row['id'] ?>" <?= ($row1['catg']==$row['id']) ? "selected" : ""?>><?= $row['name'] ?></option>
+										<?php endforeach; ?>
+									</select>
 								</div>
 							</div>
-						</div> -->
+						</div>
+
 						<div class="form-group">
 							<div class="row">
 								<div class="col-md-12">
 									<label>Дата получения</label>
 									<input class="form-control" name="date_arrival" value="<?= $row1['date_arrival'] ?>"  type="date" name="date">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Накладная № </label>
-									<input type="text" name="nnak" value="<?= $row1['nnak'] ?>" placeholder="Munich" class="form-control">
 								</div>
 							</div>
 						</div>
@@ -681,7 +707,7 @@ is_auth(4);
 	?>
 
 	<script>
-		
+
 		$('.mult').focusout(function() {
 			$('#e4').val( Number( $('#e1').val() ) * Number( $('#e3').val() ) + Number( $('#e2').val() ) );
 			$('#e6').val( Number( $('#e5').val() ) / Number( $('#e3').val() ) );
@@ -699,7 +725,8 @@ is_auth(4);
 		$('#e8').focusout(function() {
 
 			$('#e9').val( Number( $('#e8').val() ) - Number( $('#e6').val() )  );
-		});		
+		});
+
 
 	</script>
 

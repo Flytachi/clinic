@@ -3583,10 +3583,10 @@ var StatisticWidgets = function() {
             _progressIcon('#progress_icon_three', 42, 2.5, "#00897B", "#fff", 0.73, "icon-bag");
             _progressIcon('#progress_icon_four', 42, 2.5, "#673AB7", "#fff", 0.49, "icon-truck");
 
-            _progressPercentage('#progress_percentage_one', 50, 3, "#039BE5", "#fff", 1);
-            _progressPercentage('#progress_percentage_two', 50, 3, "", "", 1);
-            _progressPercentage('#progress_percentage_three', 50, 3, "", "", 1);
-            _progressPercentage('#progress_percentage_four', 50, 3, "", "", 1);
+            _progressPercentage('#progress_percentage', 50, 3, "#039BE5", "#fff", 1);
+            _progressPercentage('#progress_percentage_1', 50, 3, "", "", 1);
+            _progressPercentage('#progress_percentage_2', 50, 3, "", "", 1);
+            _progressPercentage('#progress_percentage_3', 50, 3, "", "", 1);
 
             // _animatedPie("#pie_basic", 120);
             // _animatedPieWithLegend("#pie_basic_legend", 120);

@@ -50,7 +50,18 @@ function update($tb, $post, $pk)
             $col = $key."=:".$key;
         }
     }
-    $sql = "UPDATE $tb SET $col WHERE id = $pk";
+    if (is_array($pk)) {
+        foreach ($pk as $key => $value) {
+            if (isset($filter)) {
+                $filter .= ", ".$key."=".$value;
+            }else{
+                $filter = $key."=".$value;
+            }
+        }
+        $sql = "UPDATE $tb SET $col WHERE $filter";
+    }else {
+        $sql = "UPDATE $tb SET $col WHERE id = $pk";
+    }
     try{
         $stm = $db->prepare($sql)->execute($post);
         return $stm;

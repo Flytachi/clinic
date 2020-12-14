@@ -81,7 +81,7 @@
 				<div class="media">
 					<div class="media-body">
 						<h3 class="font-weight-semibold mb-0">
-							<?= $db->query("SELECT DISTINCT user_id FROM visit WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+							<?= $db->query("SELECT id FROM visit WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
 						</h3>
 						<span class="text-uppercase font-size-sm text-muted"><?= $row['title'] ?></span>
 					</div>
