@@ -1,7 +1,5 @@
 <?php
 
-session_start();
-
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",
@@ -39,6 +37,7 @@ require_once 'functions/tag.php';
 require_once 'models.php';
 require_once 'forms.php';
 require_once 'forms_2.php';
+
 
 function get_full_name($id = null) {
     global $db;
