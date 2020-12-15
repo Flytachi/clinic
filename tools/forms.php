@@ -1390,11 +1390,15 @@ class NotesModel extends Model
             <div class="modal-body">
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label>Выберите дату:</label>
-                        <input type="text" class="form-control" name="date_text" id="anytime-both" value="June 4th 08:47" readonly="">
+                        <input type="date" class="form-control" name="date_text">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label>Выберите время:</label>
+                        <input type="time" class="form-control" name="time_text">
+                    </div>
+                    <div class="col-md-4">
                         <label>Введите описание:</label>
                         <input type="text" class="form-control" name="description">
                     </div>

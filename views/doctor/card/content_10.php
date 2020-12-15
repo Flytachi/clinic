@@ -83,10 +83,18 @@ $header = "Пациент";
 								<?php
 								foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
 								?>
-									<tr data-id="<?php echo $row['id']; ?>">
+									<tr>
 								   		<td><?php echo $row['id']; ?></td>
-									   	<td class="pass_d" data-id="<?= $row['id'] ?>"><?php echo $row['date']; ?></td>
-									   	<td class="pass_e"><?php echo $row['description']; ?></td>
+									   	<td class="pass_d" data-id="<?= $row['id']?>">
+
+									   		<div class="date" data-id="<?= $row['id']?>"><?= $row['date_text']; ?></div>
+
+
+									   		<div class="time" data-id="<?= $row['id']?>"><?= $row['time_text']; ?></div>
+
+									   			
+								   		</td>
+									   	<td class="pass_e" data-id="<?= $row['id']?>"><?= $row['description']; ?></td>
 								   	</tr>
 								<?php
 								}
@@ -126,72 +134,117 @@ $header = "Пациент";
 
 	<script>
 
-		<?php
-		foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
-		?>
-		$(document).on('click', '.datati', function function_name() {
-
-
-			$('#<?= $row['id'] ?>').AnyTime_picker({
-	            format: '%M %D %H:%i',
-	        });
-		});
-		<?php
-		}
-		?>
 
 		$(document).on('click', '.pass_e', function function_name() {
 			word = $(this).text();
+
+			
+
+			id = $(this).attr('data-id');
 			$(this).text('');
 			$(this).attr('class', 'activ_e');
-			$(this).append(`<input class="form-control inpt" type="text" value="${word}">`);
+			$(this).append(`<input class="form-control inpt" type="text" value="${word}" data-id="${id}">`);
 
 		});
 
 		$(document).on('keypress', '.inpt', function(e) {
+			id = $(this).attr('data-id');
 			if(e.keyCode == 13){
-				$('.activ_e').text(`${$(this).val()}`)
-				$('.activ_e').attr('class', 'pass_e');
+
+				$.ajax({
+			        type: "POST",
+
+			        url: "ajax/upadateNotes.php",
+
+			        data: { id: id, description : $(this).val()}
+
+			    });
+
+				$(`.activ_e[data-id="${id}"]`).text(`${$(this).val()}`)
+				$(`.activ_e[data-id="${id}"]`).attr('class', 'pass_e');
 			}
 		});
 
 		$(document).on('click', '.pass_d', function function_name() {
-			word = $(this).text();
-			$(this).text('');
-			$(this).attr('class', 'activ_d');
+
 			id = $(this).attr('data-id');
-			$(this).append(`<input type="text" class="form-control datati" value="${0}" id="${id}">`);	
+
+			date = $(`.date[data-id="${id}"]`).text();
+
+			time = $(`.time[data-id="${id}"]`).text();
+
+			$(this).text('');
+
+			$(this).attr('class', 'activ_d');
+
+			$(this).append(`<input type="date" class="form-control date1" value="${date}" data-id="${id}">`);
+
+			$(this).append(`<input type="time" class="form-control time1" value="${time}"" data-id="${id}">`);
+
 		});
 
-		$(document).on('keypress', '.datati', function(e) {
-			alert(e.keyCode);
-			if(e.keyCode == 115){
-				alert('d');
-				$('.activ_d').text(`${$(this).val()}`)
-				$('.activ_d').attr('class', 'pass_d');
+		$(document).on('keypress', '.date1', function(e) {
+			id = $(this).attr('data-id');
+
+			if (e.keyCode == 13) {
+
+				date = $(`.date1[data-id="${id}"]`).val();
+
+				time = $(`.time1[data-id="${id}"]`).val();
+
+				$.ajax({
+			        type: "POST",
+
+			        url: "ajax/upadateNotes.php",
+
+			        data: { id: id, date_text : date, time_text : time }
+
+			    });
+
+				$(`.date1[data-id="${id}"]`).remove();
+
+				$(`.time1[data-id="${id}"]`).remove();
+
+				$(`.activ_d[data-id="${id}"]`).append(`<div class="date" data-id="${id}">${date}</div>`);
+
+				$(`.activ_d[data-id="${id}"]`).append(`<div class="time" data-id="${id}">${time}</div>`);
+
+
+				$(`.activ_d[data-id="${id}"]`).attr('class', 'pass_d');
 			}
+				
 		});
 
-	</script>
+		$(document).on('keypress', '.time1', function(e) {
+			id = $(this).attr('data-id');
 
+			if (e.keyCode == 13) {
 
-	<script>
-		
+				date = $(`.date1[data-id="${id}"]`).val();
 
-		<?php
-		foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
-		?>
-		$(document).on('keypress', '#AnyTime--<?= $row['id'] ?>', function function_name(e) {
-			alert(e.keyCode);
-			if(e.keyCode == 115){
-				alert('d');
-				$('.activ_d').text(`${$(this).val()}`)
-				$('.activ_d').attr('class', 'pass_d');
+				time = $(`.time1[data-id="${id}"]`).val();
+
+				$.ajax({
+			        type: "POST",
+
+			        url: "ajax/upadateNotes.php",
+
+			        data: { id: id, date_text : date, time_text : time }
+
+			    });
+
+				$(`.date1[data-id="${id}"]`).remove();
+
+				$(`.time1[data-id="${id}"]`).remove();
+
+				$(`.activ_d[data-id="${id}"]`).append(`<div class="date" data-id="${id}">${date}</div>`);
+
+				$(`.activ_d[data-id="${id}"]`).append(`<div class="time" data-id="${id}">${time}</div>`);
+
+				$(`.activ_d[data-id="${id}"]`).attr('class', 'pass_d');
 			}
+				
 		});
-		<?php
-		}
-		?>
 	</script>
 
     <!-- Footer -->
