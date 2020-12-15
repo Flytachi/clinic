@@ -46,7 +46,6 @@ is_auth(4);
 
 
 		<!-- Main content -->
-
 		<div class="content-wrapper">
 
 			<!-- Page header -->

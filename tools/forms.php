@@ -138,7 +138,7 @@ class PatientForm extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
 
         </form>
@@ -204,13 +204,19 @@ class VisitReport extends Model
 
                     <div class="col-md-10 offset-md-1">
                         <label class="col-form-label">Описание:</label>
-                        <textarea rows="8" cols="3" name="report_description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                        <textarea rows="5" cols="3" name="report_description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
                     </div>
 
                     <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Заключение:</label>
-                        <textarea rows="3" cols="3" name="report_conclusion" class="form-control" placeholder="Заключения"><?= $post['report_conclusion'] ?></textarea>
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="report_diagnostic" class="form-control" placeholder="Заключения"><?= $post['report_diagnostic'] ?></textarea>
                     </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="report_recommendation" class="form-control" placeholder="Заключения"><?= $post['report_recommendation'] ?></textarea>
+                    </div>
+
                 </div>
 
             </div>
@@ -220,7 +226,7 @@ class VisitReport extends Model
                     <!-- <a href="<?= up_url($_GET['user_id'], 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента!')" class="btn btn-outline-danger">Завершить</a> -->
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php endif; ?>
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -395,7 +401,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -475,7 +481,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -553,7 +559,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -633,7 +639,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -712,7 +718,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -793,7 +799,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -840,7 +846,7 @@ class VisitRoute extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -891,7 +897,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_conclusion IS NOT NULL)") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){
             if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {
@@ -1390,6 +1396,7 @@ class NotesModel extends Model
             <div class="modal-body">
 
                 <div class="row">
+
                     <div class="col-md-4">
                         <label>Выберите дату:</label>
                         <input type="date" class="form-control" name="date_text">
@@ -1409,7 +1416,7 @@ class NotesModel extends Model
              <div class="modal-footer">
 
                 <div class="text-right" style="margin-top: 1%;">
-                    <button type="submit" class="btn btn-outline-info legitRipple">Сохранить</button>
+                    <button type="submit" class="btn btn-outline-info btn-sm legitRipple">Сохранить</button>
                 </div>
 
             </div>

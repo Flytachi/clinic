@@ -42,8 +42,8 @@ $header = "Пациент";
 				        <?php include "content_tabs.php"; ?>
 
 						<!-- Zoom option -->
-						<div class="card">
-							<div class="card-header header-elements-inline">
+						<div class="card border-1 border-warning">
+							<div class="card-header header-elements-inline alpha-warning">
 								<h5 class="card-title">Динамика показателей</h5>
 								<div class="header-elements">
 									<div class="list-icons">
@@ -64,13 +64,6 @@ $header = "Пациент";
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Состояние пациента</h5>
-								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item text-primary" data-toggle="modal" data-target="#modal_chart">
-											<i class="icon-pulse2 mr-2"></i>Диограмма
-										</a>
-									</div>
-								</div>
 							</div>
 
 							<div class="table-responsive">
@@ -85,7 +78,6 @@ $header = "Пациент";
 											<th>Температура</th>
 											<th>Сатурация</th>
 											<th>Дыхание</th>
-											<th>Вес</th>
 											<th>Моча</th>
 										</tr>
 									</thead>
@@ -116,7 +108,6 @@ $header = "Пациент";
 												<td class="chart_temperature"><?= $row['temperature'] ?></td>
 												<td class="chart_saturation"><?= $row['saturation'] ?></td>
 												<td><?= $row['breath'] ?></td>
-												<td><?= $row['weight'] ?></td>
 												<td><?= $row['urine'] ?></td>
 											</tr>
 											<?php

@@ -290,6 +290,8 @@ class VisitModel extends Model
                 </div>
 
             </div>
+
+            <div class="text-right">
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
@@ -460,9 +462,11 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
-        $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
-        if ($stat) {
-            $this->post['laboratory'] = True;
+        if ($this->post['division_id']) {
+            $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
+            if ($stat) {
+                $this->post['laboratory'] = True;
+            }
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
@@ -610,7 +614,7 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info">Печать</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
                 <!-- <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
     		</div>
 
@@ -792,19 +796,19 @@ class VisitInspectionModel extends Model
                 <div class="row">
                     <div class="col-md-10 offset-md-1">
                         <label class="col-form-label">Описание:</label>
-                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
                     </div>
 
                     <div class="col-md-10 offset-md-1">
                         <label class="col-form-label">Рекомендации:</label>
-                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"><?= $post['report_conclusion'] ?></textarea>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
                     </div>
                 </div>
 
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
@@ -903,7 +907,7 @@ class InvestmentModel extends Model
 
             <div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" class="btn btn-outline-info">Печать</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
     		</div>
 
         </form>
@@ -1908,7 +1912,7 @@ class BypassModel extends Model
             </div>
 
     		<div class="modal-footer">
-                <button class="btn btn-outline-info legitRipple" type="submit">Сохранить</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit">Сохранить</button>
             </div>
 
         </form>
@@ -2052,17 +2056,12 @@ class PatientStatsModel extends Model
 
                 <div class="form-group row">
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label>Дыхание:</label>
                         <input type="number" class="form-control" name="breath" min="10" step="1" max="50" placeholder="Введите дыхание">
                     </div>
 
-                    <div class="col-md-4">
-                        <label>Вес:</label>
-                        <input type="number" class="form-control" name="weight" min="30" step="1" max="200"  placeholder="Введите вес">
-                    </div>
-
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label>Моча:</label>
                         <input type="number" class="form-control" name="urine" min="0" step="0.1" max="5">
                     </div>
@@ -2073,7 +2072,7 @@ class PatientStatsModel extends Model
 
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn btn-outline-info legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>

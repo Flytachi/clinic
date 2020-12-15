@@ -8,11 +8,13 @@
 
     <div class="navbar-collapse collapse" id="navbar-footer">
         <span class="navbar-text">
-            &copy; 2015 - 2018. <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+            &copy; 2020 - 2021. <span class="text-primary">Автор проекта Я.Фарход. +998 91 247 43 53</span>
         </span>
 
         <ul class="navbar-nav ml-lg-auto">
-            <li class="nav-item"><a href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400"><i class="icon-cart2 mr-2"></i> Purchase</span></a></li>
+            <li class="nav-item">
+                <a href="http://medpomosh.uz/" target="_blank" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400">Medpomosh.uz</span></a>
+            </li>
         </ul>
     </div>
 </div>

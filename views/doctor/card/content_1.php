@@ -44,7 +44,7 @@ $header = "Пациент";
 				            unset($_SESSION['message']);
 				        }
 
-						if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
+						if ($patient->direction) {
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
 							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.service_id != 1 AND accept_date IS NOT NULL AND vs.completed IS NULL";
@@ -64,7 +64,7 @@ $header = "Пациент";
 								<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
 									<div class="header-elements">
 										<div class="list-icons">
-											<a class="list-icons-item text-success mr-3" data-toggle="modal" data-target="#modal_add_service">
+											<a class="list-icons-item <?= $class_color_add ?> mr-3" data-toggle="modal" data-target="#modal_add_service">
 												<i class="icon-plus22"></i>Услуга
 											</a>
 											<a class="list-icons-item text-info mr-1" data-toggle="modal" data-target="#modal_add_inspection">
@@ -98,7 +98,7 @@ $header = "Пациент";
 											</tr>
 										<?php endforeach; ?>
 
-										<?php if ($table_tr): ?>
+										<?php if ($patient->direction): ?>
 											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
 												<tr>
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
