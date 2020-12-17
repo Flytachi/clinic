@@ -142,7 +142,7 @@ var EchartsLines = function() {
                             color: '#999'
                         }
                     },
-                        data: date_x
+                        data: date_x.reverse()
                 }],
 
                 // Vertical axis
@@ -204,7 +204,7 @@ var EchartsLines = function() {
                                 borderWidth: 2
                             }
                         },
-                        data: pressure_1
+                        data: pressure_1.reverse()
                     },
                     {
                         name: 'Давление',
@@ -217,7 +217,7 @@ var EchartsLines = function() {
                                 borderWidth: 2
                             }
                         },
-                        data: pressure_2
+                        data: pressure_2.reverse()
                     },
                     {
                         name: 'Пульс',
@@ -229,7 +229,7 @@ var EchartsLines = function() {
                                 borderWidth: 2
                             }
                         },
-                        data: pulse
+                        data: pulse.reverse()
                     },
                     {
                         name: 'Температура',
@@ -241,7 +241,7 @@ var EchartsLines = function() {
                                 borderWidth: 2
                             }
                         },
-                        data: temperature
+                        data: temperature.reverse()
                     },
                     {
                         name: 'Сатурация',
@@ -253,7 +253,7 @@ var EchartsLines = function() {
                                 borderWidth: 2
                             }
                         },
-                        data: saturation
+                        data: saturation.reverse()
                     }
                 ]
             });

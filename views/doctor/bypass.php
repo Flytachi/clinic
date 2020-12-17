@@ -9,7 +9,6 @@ if ($grant_id == $_SESSION['session_id']) {
 }
 ?>
 <?php include '../../layout/head.php' ?>
-<script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
 <script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <div class="modal-header bg-info">
@@ -38,7 +37,7 @@ if ($grant_id == $_SESSION['session_id']) {
             </div>
 
             <div class="list-feed-item border-info">
-                <strong>Описание: </strong><?= $bypass['description'] ?>
+                <strong >Описание: </strong><?= $bypass['description'] ?>
             </div>
         </div>
     </div>

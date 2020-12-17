@@ -53,7 +53,7 @@ $header = "Пациент";
 					   <div class="card">
 
 						   <div class="card-header header-elements-inline">
-							   <h6 class="card-title">Примечание Врача</h6>
+							   <h6 class="card-title">Лист назначений</h6>
 						   </div>
 
 						   <div class="table-responsive">
