@@ -10,7 +10,7 @@ is_auth();
 
 <div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
-$pack = $db->query("SELECT report_title, report_description, report_conclusion FROM visit WHERE id= {$_GET['pk']}")->fetch();
+$pack = $db->query("SELECT report_title, report_description, report_diagnostic, report_recommendation FROM visit WHERE id= {$_GET['pk']}")->fetch();
 ?>
     <h3 class="text-center"><?= $pack['report_title'] ?></h3>
     <p>
@@ -18,8 +18,12 @@ $pack = $db->query("SELECT report_title, report_description, report_conclusion F
         <?= $pack['report_description'] ?>
     </p>
     <p>
-        <b style="font-size: 1.1rem">Заключение:</b>
-        <?= $pack['report_conclusion'] ?>
+        <b style="font-size: 1.1rem">Диагноз:</b>
+        <?= $pack['report_diagnostic'] ?>
+    </p>
+    <p>
+        <b style="font-size: 1.1rem">Рекомендации:</b>
+        <?= $pack['report_recommendation'] ?>
     </p>
 </div>
 

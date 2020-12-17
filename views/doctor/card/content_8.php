@@ -56,7 +56,7 @@ $header = "Пациент";
 								<div class="header-elements">
 									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
 										<div class="list-icons">
-											<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+											<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
 												<i class="icon-plus22"></i>Добавить
 											</a>
 										</div>

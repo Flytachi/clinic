@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+is_auth();
 $header = "Персонал";
 ?>
 <!DOCTYPE html>

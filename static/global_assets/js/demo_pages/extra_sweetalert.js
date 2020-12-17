@@ -76,8 +76,6 @@ var SweetAlert = function () {
             });
         });
 
-
-
         //
         // Basic options
         //

@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 is_auth();
 
-$docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_title, vs.report_description, vs.report_conclusion, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+$docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_title, vs.report_description, vs.report_diagnostic, vs.report_recommendation, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,8 +46,12 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
                     <?= $docs->report_description ?>
                 </p>
                 <p>
-                    <span class="h2"><b>Заключение:</b></span>
-                    <?= $docs->report_conclusion ?>
+                    <span class="h2"><b>Диагноз:</b></span>
+                    <?= $docs->report_diagnostic ?>
+                </p>
+                <p>
+                    <span class="h2"><b>Рекомендации:</b></span>
+                    <?= $docs->report_recommendation ?>
                 </p>
             </div>
 

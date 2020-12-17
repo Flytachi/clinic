@@ -108,25 +108,45 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 </fieldset>
 
                 <?php
+                $class_color_add = "text-success";
                 if ($patient->direction) {
+                    $sql = "SELECT
+                                SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) -
+                                (
+                                    ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
+                                    (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $patient->id AND vs.priced_date IS NULL) +
+                                    (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0)
+                                )
+                                 'balance'
+                                -- bdt.price 'bed_price',
+                                -- vs.add_date
+                            FROM users us
+                                LEFT JOIN investment iv ON(iv.user_id = us.id)
+                                LEFT JOIN beds bd ON(bd.user_id = us.id)
+                                LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                            WHERE us.id = $patient->id";
+                    $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+                    if ($price->balance >= 0) {
+                        $class_card_balance = "text-success";
+                        $class_color_add = "cl_btn_balance text-success";
+                        $id_selector_balance = "1";
+                    }else {
+                        $class_card_balance = "text-danger";
+                        $class_color_add = "cl_btn_balance text-danger";
+                        $id_selector_balance = "0";
+                    }
                     ?>
-
                     <fieldset class="mb-3 row" style="margin-top: -40px; ">
                         <legend></legend>
 
-                        <div class="col-md-12">
-                            <div class="form-group row">
-
-                                <label class="col-md-4"><b>Ответственный врач:</b></label>
-                                <div class="col-md-8 text-right">
-                                    <?= get_full_name($patient->grant_id) ?>
-                                </div>
-
-                            </div>
-                        </div>
-
                         <div class="col-md-6">
                             <div class="form-group row">
+
+                                <label class="col-md-5"><b>Ответственный врач:</b></label>
+                                <div class="col-md-7 text-right <?= ($patient->grant_id == $_SESSION['session_id']) ? "text-success" : "text-primary" ?>">
+                                    <?= get_full_name($patient->grant_id) ?>
+                                </div>
 
                                 <label class="col-md-4"><b>Размещён:</b></label>
                                 <div class="col-md-8 text-right">
@@ -143,10 +163,16 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         <div class="col-md-6">
                             <div class="form-group row">
 
+                                <label class="col-md-4"><b>Баланс:</b></label>
+                                <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
+                                    <?= number_format($price->balance) ?>
+                                </div>
+
                                 <label class="col-md-3"><b>Прибывание:</b></label>
                                 <div class="col-md-9 text-right">
                                     <?php
-                                    $end_date = date_diff(new \DateTime(), new \DateTime($patient->add_date))->days;
+                                    $dr= date_diff(new \DateTime(), new \DateTime($patient->add_date));
+                                    $end_date = $dr->days + round($dr->h/24);
                                     if ($end_date == 1) {
                                         echo $end_date." день";
                                     }elseif (in_array($end_date, [2,3,4])) {
@@ -160,9 +186,15 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 </div>
 
                                 <label class="col-md-4"><b>Дата выписки:</b></label>
-                                <div class="col-md-8 text-right">
-                                    <?= ($patient->discharge_date) ? date('d.m.Y  H:i', strtotime($patient->discharge_date)) : "Нет данных" ?>
-                                </div>
+                                <?php if ($patient->grant_id == $_SESSION['session_id']): ?>
+                                    <div class="col-md-8 text-right text-primary" data-toggle="modal" data-target="#modal_discharge_date">
+                                        <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Назначить дату выписки" ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="col-md-8 text-right <?= ($patient->discharge_date) ? "text-primary" : "text-danger" ?>">
+                                        <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Не назначено" ?>
+                                    </div>
+                                <?php endif; ?>
 
                             </div>
                         </div>
@@ -173,6 +205,38 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 ?>
 
             </div>
+
+            <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+                <div id="modal_discharge_date" class="modal fade" tabindex="-1">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info">
+                                <h6 class="modal-title">Назначить дату выписки</h6>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <form method="post" action="<?= add_url() ?>">
+                                <input type="hidden" name="model" value="VisitModel">
+                                <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
+
+                                <div class="modal-body">
+
+                                    <div class="form-group">
+                                        <input type="date" name="discharge_date" class="form-control daterange-single" value="<?= $patient->discharge_date ?>" required>
+                                    </div>
+
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <div class="col-md-12">
                 <div class="text-right">
@@ -185,9 +249,9 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $button_inner = "Завершить";
                     }
                     ?>
-                    <?php if (!$patient->direction): ?>
-                        <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-md"><i class="icon-paste2"></i> <?= $button_inner ?></button>
-                    <?php endif; ?>
+                    <button <?= ($patient->grant_id == $_SESSION['session_id']) ? "disabled" : "" ?> data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                        <i class="icon-paste2"></i> <?= $button_inner ?>
+                    </button>
                 </div>
             </div>
 
@@ -196,3 +260,15 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     </div>
 
 </div>
+<script type="text/javascript">
+    $( document ).ready(function() {
+        $('.cl_btn_balance').click(function(events) {
+            if (document.getElementById('id_selector_balance').dataset.balance_status != 1) {
+                new Noty({
+                    text: '<strong>Предупреждение!</strong><br>У пациента недостаточно средств.',
+                    type: 'error'
+                }).show();
+            }
+        });
+    });
+</script>
