@@ -2,6 +2,13 @@
 
 session_start();
 
+define('ROOT_DIR', "/".basename(dirname(__DIR__)));
+if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
+    define('DIR', "");
+}else {
+    define('DIR', ROOT_DIR);
+}
+
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",

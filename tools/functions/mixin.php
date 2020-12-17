@@ -108,8 +108,6 @@ function delete($tb, $pk){
 }
 
 function error($url){
-    global $PROJECT_NAME;
-    header("location:/$PROJECT_NAME/error/$url.php");
+    header("location:".DIR."/error/$url.php");
     exit;
 }
-

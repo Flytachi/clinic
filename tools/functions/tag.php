@@ -1,6 +1,5 @@
 <?php
 
-
 function parad($title, $value) {
     echo "<strong>$title</strong>";
     echo "<pre>";
@@ -17,8 +16,7 @@ function prit($value) {
 
 function render($url=null){
     if ($url) {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/$url.php");
+        header("location:".DIR."/views/$url.php");
     }else {
         header("location:".$_SERVER['HTTP_REFERER']);
     }
@@ -26,32 +24,27 @@ function render($url=null){
 }
 
 function viv($url){
-    global $PROJECT_NAME;
-    return "/$PROJECT_NAME/views/$url.php";
+    return DIR."/views/$url.php";
 }
 
 function stack($url){
-    global $PROJECT_NAME;
-    return "/$PROJECT_NAME/static/$url";
+    return DIR."/static/$url";
 }
 
 
 function add_url(){
-    global $PROJECT_NAME;
-    return "/$PROJECT_NAME/model/create_to_update.php?";
+    return DIR."/model/create_to_update.php?";
 }
 
 function del_url($id, $model){
-    global $PROJECT_NAME;
-    return "/$PROJECT_NAME/model/delete.php?id=$id&model=$model";
+    return DIR."/model/delete.php?id=$id&model=$model";
 }
 
 function up_url($id, $model, $form=null){
-    global $PROJECT_NAME;
     if ($form) {
-        $result = "/$PROJECT_NAME/model/get.php?id=$id&model=$model&form=$form";
+        $result = DIR."/model/get.php?id=$id&model=$model&form=$form";
     }else {
-        $result = "/$PROJECT_NAME/model/get.php?id=$id&model=$model";
+        $result = DIR."/model/get.php?id=$id&model=$model";
     }
     return $result;
 }

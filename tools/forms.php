@@ -325,7 +325,6 @@ class VisitUpStatus extends Model
     public function success()
     {
         render();
-        // global $PROJECT_NAME;
         // header("location:/$PROJECT_NAME/views/doctor/$this->url");
         // exit;
     }
@@ -931,9 +930,7 @@ class VisitFinish extends Model
 
     public function success()
     {
-        global $PROJECT_NAME;
-        header("location:/$PROJECT_NAME/views/doctor/index.php");
-        exit;
+        render("doctor/index");
     }
 
 }
