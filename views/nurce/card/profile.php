@@ -1,8 +1,8 @@
 <?php
 $sql = "SELECT
-            us.id, vs.id 'visit_id',
-            vs.grant_id, us.dateBith, us.numberPhone,
-            us.gender, us.region, us.residenceAddress,
+            us.id, vs.id 'visit_id', vs.grant_id,
+            us.dateBith, us.numberPhone, us.gender,
+            us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
             wd.floor, wd.ward, bd.bed
@@ -10,7 +10,8 @@ $sql = "SELECT
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
             LEFT JOIN wards wd ON(wd.id=bd.ward_id)
-        WHERE vs.status = 2 AND us.id = {$_GET['id']}";
+        WHERE vs.status = 2 AND us.id = {$_GET['id']} ORDER BY add_date ASC";
+
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 ?>
 <div class="card border-1 border-info">
@@ -96,63 +97,102 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     </div>
                 </fieldset>
 
-                <fieldset class="mb-3 row" style="margin-top: -40px; ">
-                    <legend></legend>
+                <?php
+                $class_color_add = "text-success";
+                if ($patient->direction) {
+                    $sql = "SELECT
+                                SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) -
+                                (
+                                    ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
+                                    (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $patient->id AND vs.priced_date IS NULL) +
+                                    (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0)
+                                )
+                                 'balance'
+                                -- bdt.price 'bed_price',
+                                -- vs.add_date
+                            FROM users us
+                                LEFT JOIN investment iv ON(iv.user_id = us.id)
+                                LEFT JOIN beds bd ON(bd.user_id = us.id)
+                                LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                            WHERE us.id = $patient->id";
+                    $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+                    if ($price->balance >= 0) {
+                        $class_card_balance = "text-success";
+                        $class_color_add = "cl_btn_balance text-success";
+                        $id_selector_balance = "1";
+                    }else {
+                        $class_card_balance = "text-danger";
+                        $class_color_add = "cl_btn_balance text-danger";
+                        $id_selector_balance = "0";
+                    }
+                    ?>
+                    <fieldset class="mb-3 row" style="margin-top: -40px; ">
+                        <legend></legend>
 
-                    <div class="col-md-12">
-                        <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
 
-                            <label class="col-md-4"><b>Ответственный врач:</b></label>
-                            <div class="col-md-8 text-right">
-                                <div class="font-weight-semibold"><?= get_full_name($patient->grant_id) ?></div>
+                                <label class="col-md-5"><b>Ответственный врач:</b></label>
+                                <div class="col-md-7 text-right <?= ($patient->grant_id == $_SESSION['session_id']) ? "text-success" : "text-primary" ?>">
+                                    <?= get_full_name($patient->grant_id) ?>
+                                </div>
+
+                                <label class="col-md-4"><b>Размещён:</b></label>
+                                <div class="col-md-8 text-right">
+                                    <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
+                                </div>
+
+                                <label class="col-md-4"><b>Дата размещёния:</b></label>
+                                <div class="col-md-8 text-right">
+                                    <?= date('d.m.Y  H:i', strtotime($patient->add_date)) ?>
+                                </div>
+
                             </div>
-
                         </div>
-                    </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
 
-                    <div class="col-md-6">
-                        <div class="form-group row">
+                                <label class="col-md-4"><b>Баланс:</b></label>
+                                <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
+                                    <?= number_format($price->balance) ?>
+                                </div>
 
-                            <label class="col-md-4"><b>Размещён:</b></label>
-                            <div class="col-md-8 text-right" id="patient_location">
-                                <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
+                                <label class="col-md-3"><b>Прибывание:</b></label>
+                                <div class="col-md-9 text-right">
+                                    <?php
+                                    $dr= date_diff(new \DateTime(), new \DateTime($patient->add_date));
+                                    $end_date = $dr->days + round($dr->h/24);
+                                    if ($end_date == 1) {
+                                        echo $end_date." день";
+                                    }elseif (in_array($end_date, [2,3,4])) {
+                                        echo $end_date." дня";
+                                    }elseif ($end_date >= 5) {
+                                        echo $end_date." дней";
+                                    }else {
+                                        echo "Прибыл сегодня";
+                                    }
+                                    ?>
+                                </div>
+
+                                <label class="col-md-4"><b>Дата выписки:</b></label>
+                                <?php if ($patient->grant_id == $_SESSION['session_id']): ?>
+                                    <div class="col-md-8 text-right text-primary" data-toggle="modal" data-target="#modal_discharge_date">
+                                        <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Назначить дату выписки" ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="col-md-8 text-right <?= ($patient->discharge_date) ? "text-primary" : "text-danger" ?>">
+                                        <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Не назначено" ?>
+                                    </div>
+                                <?php endif; ?>
+
                             </div>
-
-                            <label class="col-md-4"><b>Дата размещёния:</b></label>
-                            <div class="col-md-8 text-right">
-                                <?= date('d.m.Y  H:i', strtotime($patient->add_date)) ?>
-                            </div>
-
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group row">
 
-                            <label class="col-md-3"><b>Прибывание:</b></label>
-                            <div class="col-md-9 text-right">
-                                <?php
-                                $end_date = date_diff(new \DateTime(), new \DateTime($patient->add_date))->days;
-                                if ($end_date == 1) {
-                                    echo $end_date." день";
-                                }elseif (in_array($end_date, [2,3,4])) {
-                                    echo $end_date." дня";
-                                }elseif ($end_date >= 5) {
-                                    echo $end_date." дней";
-                                }else {
-                                    echo "Прибыл сегодня";
-                                }
-                                ?>
-                            </div>
-
-                            <label class="col-md-4"><b>Дата выписки:</b></label>
-                            <div class="col-md-8 text-right">
-                                <?= ($patient->discharge_date) ? date('d.m.Y  H:i', strtotime($patient->discharge_date)) : "Нет данных" ?>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </fieldset>
+                    </fieldset>
+                    <?php
+                }
+                ?>
 
             </div>
 

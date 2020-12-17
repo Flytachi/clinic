@@ -4,7 +4,6 @@ $ini =  parse_ini_file("setting.ini", true);
 $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
 // Site Constants
 date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
-$PROJECT_NAME = $ini['GLOBAL_SETTING']['PROJECT_NAME'];
 // print_r(PDO::getAvailableDrivers());
 try {
     $db = new PDO($DNS, $ini['DATABASE']['USER'], $ini['DATABASE']['PASS']);
@@ -17,4 +16,3 @@ try {
     // die(include "error_db_connect.php");
 }
 ?>
-

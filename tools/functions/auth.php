@@ -1,10 +1,9 @@
 <?php
 
 function is_auth($arr = null){
-    global $PROJECT_NAME;
     session_start();
     if (!$_SESSION['session_id']) {
-        header("location:/auth/login.php");
+        header("location:".DIR."/auth/login.php");
     }
     if ($arr){
         $perk =level();
@@ -21,7 +20,6 @@ function is_auth($arr = null){
 }
 
 function logout(){
-    global $PROJECT_NAME;
     return ("/auth/logout.php");
 }
 

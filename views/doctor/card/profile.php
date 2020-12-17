@@ -143,8 +143,8 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         <div class="col-md-6">
                             <div class="form-group row">
 
-                                <label class="col-md-4"><b>Ответственный врач:</b></label>
-                                <div class="col-md-8 text-right <?= ($patient->grant_id == $_SESSION['session_id']) ? "text-success" : "text-primary" ?>">
+                                <label class="col-md-5"><b>Ответственный врач:</b></label>
+                                <div class="col-md-7 text-right <?= ($patient->grant_id == $_SESSION['session_id']) ? "text-success" : "text-primary" ?>">
                                     <?= get_full_name($patient->grant_id) ?>
                                 </div>
 
