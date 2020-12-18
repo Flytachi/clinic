@@ -83,7 +83,7 @@ $header = "Пациент";
 									</thead>
 									<tbody>
 										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id") as $row) {
+										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id ORDER BY add_date DESC") as $row) {
 											switch ($row['stat']):
 												case 1:
 													$stat = "Актив";
@@ -99,7 +99,7 @@ $header = "Пациент";
 													break;
 											endswitch;
 											?>
-											<tr class="<?= $class_tr ?>">
+											<tr class="<?= $class_tr ?> tolltip" data-popup="tooltip" title="<?= $row['description'] ?>">
 												<td class="chart_date"><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 												<td><?= $stat ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>

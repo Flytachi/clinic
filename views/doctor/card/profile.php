@@ -78,6 +78,13 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     							<?= addZero($patient->id) ?>
     						</div>
 
+                            <?php if ($patient->direction): ?>
+                                <label class="col-md-6"><b>№ истории болезни:</b></label>
+                                <div class="col-md-6 text-right">
+                                    <?= addZero($patient->visit_id) ?>
+                                </div>
+                            <?php endif; ?>
+
                             <label class="col-md-3"><b>Телефон:</b></label>
     						<div class="col-md-9 text-right">
     							<?= $patient->numberPhone ?>
@@ -137,13 +144,13 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $id_selector_balance = "0";
                     }
                     ?>
-                    <fieldset class="mb-3 row" style="margin-top: -40px; ">
+                    <fieldset class="mb-3 row" style="margin-top: -50px; ">
                         <legend></legend>
 
                         <div class="col-md-6">
                             <div class="form-group row">
 
-                                <label class="col-md-5"><b>Ответственный врач:</b></label>
+                                <label class="col-md-5"><b>Лечащий врач:</b></label>
                                 <div class="col-md-7 text-right <?= ($patient->grant_id == $_SESSION['session_id']) ? "text-success" : "text-primary" ?>">
                                     <?= get_full_name($patient->grant_id) ?>
                                 </div>

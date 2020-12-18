@@ -76,6 +76,11 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     						<div class="col-md-9 text-right">
     							<?= addZero($patient->id) ?>
     						</div>
+                            
+                            <label class="col-md-6"><b>№ истории болезни:</b></label>
+                            <div class="col-md-6 text-right">
+                                <?= addZero($patient->visit_id) ?>
+                            </div>
 
                             <label class="col-md-3"><b>Телефон:</b></label>
     						<div class="col-md-9 text-right">

@@ -6,7 +6,6 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
-<script src="<?= stack('ckeditor/ckeditor.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->

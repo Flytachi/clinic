@@ -800,6 +800,11 @@ class VisitInspectionModel extends Model
                     </div>
 
                     <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
                         <label class="col-form-label">Рекомендации:</label>
                         <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
                     </div>
@@ -2064,6 +2069,15 @@ class PatientStatsModel extends Model
                     <div class="col-md-6">
                         <label>Моча:</label>
                         <input type="number" class="form-control" name="urine" min="0" step="0.1" max="5">
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-12">
+                        <label class="col-form-label">Примечание:</label>
+                        <textarea rows="3" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
                     </div>
 
                 </div>
