@@ -1678,3 +1678,95 @@ class NotesModel extends Model
         render();
      }
  }
+
+class SalesOrderAdd extends Model
+{
+    public $table = 'sales_order';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+                <div class="form-group row">
+                    <label>Расходные материалы:</label>
+                    <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 1") as $row): ?>
+                            <option value="<?= $row['product_id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['product_code'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group row">
+                    <label>Количество:</label>
+                    <input type="number" name="qtys" value="1" class="form-control">
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function save()
+    {
+        global $db;
+        $object = $db->query("SELECT product_code, gen_name, product_name, price, qty FROM products WHERE product_id = {$this->post['product']}")->fetch();
+        $this->post['product_code'] = $object['product_code'];
+        $this->post['gen_name'] = $object['gen_name'];
+        $this->post['name'] = $object['product_name'];
+        $this->post['price'] = $object['price'];
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        $this->post['amount'] = 0;
+        $this->post['profit'] = 0;
+        $qt = $this->post['qtys'];
+        unset($this->post['qtys']);
+        $object2 = Mixin\update('products', array('qty' => $object['qty']-$qt), array('product_id' => $this->post['product']));
+        if (intval($object2)){
+            $this->post['qty'] = 1;
+            for ($i=0; $i < $qt; $i++) {
+                $object = Mixin\insert($this->table, $this->post);
+                if (!intval($object)){
+                    $this->error($object);
+                }
+            }
+            $this->success();
+        }else {
+            $this->error($object2);
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}

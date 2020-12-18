@@ -20,7 +20,7 @@ function is_auth($arr = null){
 }
 
 function logout(){
-    return ("/auth/logout.php");
+    return (DIR."/auth/logout.php");
 }
 
 ?>
