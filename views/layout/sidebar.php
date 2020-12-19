@@ -388,6 +388,12 @@
                                     ?>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Склад</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 8:

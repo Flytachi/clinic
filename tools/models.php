@@ -2123,89 +2123,67 @@ class StoragePreparatModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
-            <div class="card-header header-elements-inline">
-                <h5 class="card-title">Список лекарств пациента</h5>
-                <div class="header-elements">
-                    <div class="list-icons">
-                        <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
-                            <option></option>
-                            <?php
-                            foreach($db->query('SELECT * from users WHERE user_level = 7') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
+            <div class="card border-1 border-info">
+
+                <div class="card-header text-dark header-elements-inline alpha-info">
+                    <h6 class="card-title">Список лекарств пациента</h6>
+                    <div class="header-elements">
+                        <div class="list-icons">
+                            <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
+                                <option></option>
                                 <?php
-                            }
-                            ?>
-                        </select>
+                                foreach($db->query('SELECT * from users WHERE user_level = 7') as $row) {
+                                    ?>
+                                    <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
+                                    <?php
+                                }
+                                ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card-body">
+                <div class="card-body">
 
-                <div class="table-responsive card">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr class="bg-blue">
-                                <th>Id</th>
-                                <th>Лекарства</th>
-                                <th>Количество</th>
-                                <th>Цена ед.</th>
-                                <th>Сумма</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $sql = "SELECT
-                                        pt.product_id,
-                                        pt.product_code,
-                                        pt.price,
-                                        1 'qty'
-                                    FROM bypass bp
-                                        LEFT JOIN bypass_date bpd ON(bpd.bypass_id=bp.id)
-                                        LEFT JOIN bypass_preparat bpr ON(bpr.bypass_id=bp.id)
-                                        LEFT JOIN products pt ON(pt.product_id=bpr.preparat_id)
-                                    WHERE
-                                        bp.user_id = $pk AND
-                                        bpd.status IS NOT NULL AND
-                                        bpd.date = CURRENT_DATE()";
-                            $array = $db->query($sql)->fetchAll();
-                            $table_arr = array();
-                            $total_cost = 0;
-                            foreach ($array as $value) {
-                                if ($table_arr[$value['product_id']]) {
-                                    $table_arr[$value['product_id']]['qty'] += 1;
-                                    $table_arr[$value['product_id']]['total_price'] += $table_arr[$value['product_id']]['price'];
-                                }else {
-                                    $table_arr[$value['product_id']] = $value;
-                                    $table_arr[$value['product_id']]['total_price'] = $table_arr[$value['product_id']]['price'];
-                                }
-                                $total_cost += $table_arr[$value['product_id']]['price'];
-                            }
-                            ?>
-                            <?php foreach ($table_arr as $row): ?>
-                                <tr>
-                                    <input type="hidden" name="products[<?=$row['product_id'] ?>]" value="<?= $row['qty'] ?>">
-                                    <td><?= $row['product_id'] ?></td>
-                                    <td><?= $row['product_code'] ?></td>
-                                    <td><?= $row['qty'] ?></td>
-                                    <td><?= number_format($row['price']) ?></td>
-                                    <td class="text-left"><?= number_format($row['total_price']) ?></td>
+                    <div class="table-responsive card">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-blue">
+                                    <th style="width: 100px">№</th>
+                                    <th>Лекарства</th>
+                                    <th>Количество</th>
+                                    <th>Цена ед.</th>
+                                    <th>Сумма</th>
                                 </tr>
-                            <?php endforeach; ?>
-                            <tr>
-                                <td colspan="4" class="text-right"><b>Итого:</b></td>
-                                <td class="text-left"><b><?= number_format($total_cost) ?></b></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, pt.product_code 'preparat_code', sr.qty, pt.price, sr.qty*pt.price 'total_price' FROM storage_orders sr LEFT JOIN products pt ON(pt.product_id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
+                                    <tr>
+                                        <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
+                                        <td><?= $i++ ?></td>
+                                        <td><?= $row['preparat_code'] ?></td>
+                                        <td><?= $row['qty'] ?></td>
+                                        <td><?= number_format($row['price']) ?></td>
+                                        <td class="text-left">
+                                            <?php
+                                            $total_cost += $row['total_price'];
+                                            echo number_format($row['total_price']);
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <tr>
+                                    <td colspan="4" class="text-right"><b>Итого:</b></td>
+                                    <td class="text-left"><b><?= number_format($total_cost) ?></b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="text-right">
-                    <button type="submit" class="btn btn-outline-success btn-sm">Отправить</button>
                 </div>
 
             </div>
+
         </form>
         <?php
     }
@@ -2213,14 +2191,15 @@ class StoragePreparatModel extends Model
     public function clean()
     {
         global $db;
-        foreach ($this->post['products'] as $prod => $qty) {
-            $post = $db->query("SELECT {$this->post['parent_id']} 'user_id', product_id 'product', qty, profit, product_code, gen_name, product_name 'name', price FROM products WHERE product_id = $prod")->fetch();
+        foreach ($this->post['orders'] as $order_pk => $qty) {
+            $order = $db->query("SELECT * FROM storage_orders WHERE id=$order_pk")->fetch();
+            $post = $db->query("SELECT {$this->post['parent_id']} 'user_id', product_id 'product', qty, profit, product_code, gen_name, product_name 'name', price FROM products WHERE product_id = {$order['preparat_id']}")->fetch();
             $post['amount'] = $qty * $post['price'];
             $post['profit'] = $qty * $post['profit'];
             if($post['qty'] < $qty){
-                $this->error('В аптеке не хватает этого припарата');
+                $this->error("В аптеке не хватает \"{$post['product_code']}\"!");
             }
-            $object = Mixin\update('products', array('qty' => $post['qty']-$qty), array('product_id' => $prod));
+            $object = Mixin\update('products', array('qty' => $post['qty']-$qty), array('product_id' => $order['preparat_id']));
             if (intval($object)) {
                 $post['qty'] = $qty;
                 $object1 = Mixin\insert('sales_order', $post);
@@ -2237,7 +2216,7 @@ class StoragePreparatModel extends Model
             $post2['qty'] = $qty;
             $post2['price'] = $post['price'];
             $post2['amount'] = $qty * $post['price'];
-            $infod = $db->query("SELECT id, first_qty, qty, amount FROM storage_preparat WHERE preparat_id = $prod AND price = {$post['price']}")->fetch();
+            $infod = $db->query("SELECT id, first_qty, qty, amount FROM storage_preparat WHERE preparat_id = {$order['preparat_id']} AND price = {$post['price']}")->fetch();
             if ($infod) {
                 $infod_pk = $infod['id'];
                 unset($infod['id']);
@@ -2251,9 +2230,9 @@ class StoragePreparatModel extends Model
             if (!intval($object)) {
                 $this->error($object);
             }
-
+            $object = Mixin\delete('storage_orders', $order_pk);
         }
-        $this->mod('test');
+        $this->success();
     }
 
     public function success()

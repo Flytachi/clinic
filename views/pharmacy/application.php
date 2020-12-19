@@ -38,21 +38,21 @@ $header = "Заявки";
 				}
 				?>
 
-				<div class="card">
+				<div class="card border-1 border-info">
 
-				    <div class="card-header header-elements-inline">
-				        <h5 class="card-title">Список Пациентов</h5>
-				        <div class="header-elements">
-				            <div class="list-icons">
-				                <a class="list-icons-item" data-action="collapse"></a>
-				            </div>
-				        </div>
-				    </div>
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">Список Пациентов</h6>
+						<div class="header-elements">
+							<div class="list-icons">
+								<a class="list-icons-item" data-action="collapse"></a>
+							</div>
+						</div>
+					</div>
 
-				    <div class="card-body">
+					<div class="card-body">
 
-				        <div class="table-responsive card">
-				            <table class="table table-hover">
+						<div class="table-responsive card">
+				            <table class="table table-hover table-sm">
 				                <thead>
 				                    <tr class="bg-blue">
 				                        <th>ID</th>
@@ -74,7 +74,7 @@ $header = "Заявки";
 				            </table>
 				        </div>
 
-				    </div>
+					</div>
 
 				</div>
 
