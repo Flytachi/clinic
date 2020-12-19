@@ -26,7 +26,7 @@ if ($_GET['pk']) {
             <thead>
                 <tr class="bg-blue">
                     <th class="text-left">Дата и время</th>
-                    <th>Наименование</th>
+                    <th colspan="2">Наименование</th>
                     <th class="text-right">Сумма</th>
                     <!-- <th class="text-center" style="width: 150px">Оплатить</th> -->
                 </tr>
@@ -34,19 +34,19 @@ if ($_GET['pk']) {
             <tbody>
                 <tr class="table-warning">
                     <td>Койка (<?= $price['bed_days'] ?> дней)</td>
-                    <td><?= $price['bed_type'] ?> (<?= number_format($price['bed_price']) ?>)</td>
+                    <td colspan="2"><?= $price['bed_type'] ?> (<?= number_format($price['bed_price']) ?>)</td>
                     <td class="text-right"><?= number_format($price['cost_bed']) ?></td>
                 </tr>
 
                 <tr class="text-center table-primary">
-                    <td colspan="2">Мед услуги</td>
+                    <td colspan="3">Мед услуги</td>
                     <td class="text-right"><?= number_format($price['cost_service']) ?></td>
                 </tr>
                 <?php foreach ($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL AND vs.service_id != 1") as $row): ?>
                     <tr>
                         <!-- <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>"> -->
                         <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-                        <td><?= $row['name'] ?></td>
+                        <td colspan="2"><?= $row['name'] ?></td>
                         <td class="text-right total_cost"><?= number_format($row['price']) ?></td>
                         <!-- <td class="text-center">
                             <button onclick="alert('в разработке')" class="btn btn-outline-success"><i class="icon"></i></button>
@@ -54,14 +54,17 @@ if ($_GET['pk']) {
                     </tr>
                 <?php endforeach; ?>
 
-                <tr class="text-center table-primary">
-                    <td colspan="2">Препараты</td>
+                <tr class="table-primary">
+                    <td>Препараты</td>
+                    <td>Количество</td>
+                    <td>Цена ед.</td>
                     <td class="text-right"><?= number_format($price['cost_preparat']) ?></td>
                 </tr>
                 <?php foreach ($db->query("SELECT DISTINCT so.product, so.product_code, (SELECT COUNT(product) FROM sales_order so2 WHERE so2.product = so.product AND so2.user_id = $pk AND so2.amount = 0 AND so2.profit = 0) 'count', so.price FROM sales_order so WHERE so.user_id = $pk AND so.amount = 0 AND so.profit = 0") as $row): ?>
                     <tr>
                         <td><?= $row['product_code'] ?></td>
                         <td><?= $row['count'] ?></td>
+                        <td><?= number_format($row['price']) ?></td>
                         <td class="text-right"><?= number_format($row['count'] * $row['price']) ?></td>
                     </tr>
                 <?php endforeach; ?>

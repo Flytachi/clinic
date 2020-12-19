@@ -18,6 +18,10 @@ $pack = $db->query("SELECT * FROM visit_inspection WHERE id= {$_GET['pk']}")->fe
         <?= $pack['description'] ?>
     </p>
     <p>
+        <b style="font-size: 1.1rem">Диагноз:</b>
+        <?= $pack['diagnostic'] ?>
+    </p>
+    <p>
         <b style="font-size: 1.1rem">Рекомендации:</b>
         <?= $pack['recommendation'] ?>
     </p>

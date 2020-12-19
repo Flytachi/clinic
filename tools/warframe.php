@@ -139,12 +139,13 @@ function form($name) //Функция title
 
 function addZero($number){
 
+    $max_item = 6;
     $strNumber = strval($number);
     $newNumber = "";
 
-    if(strlen($strNumber) < 5){
+    if(strlen($strNumber) < $max_item){
 
-        $countZero = 5 - strlen($strNumber);
+        $countZero = $max_item - strlen($strNumber);
 
         for ($i=0; $i < $countZero; $i++) {
 
