@@ -58,10 +58,10 @@ is_auth(4);
 			<div class="content">
 
 				<div class="card">
-					
+
 					<div class="card-body">
-						
-						<?php 
+
+						<?php
 							$rowcount = $db->query("SELECT * FROM customer ORDER BY customer_id DESC")->rowcount();
 						?>
 
@@ -80,16 +80,16 @@ is_auth(4);
 						<form action="incoming.php" method="post" >
 							<div class="row">
 								<div class="col-md-10">
-									<input type="text" name="qty" id="qty"  class="form-control">	
+									<input type="text" name="qty" id="qty"  class="form-control">
 								</div>
 								<div class="col-md-2">
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_form_vertical" />Добавить</button>	
+									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_form_vertical" />Добавить</button>
 									<!-- <button type="button" class="btn btn-light legitRipple" data-toggle="modal" data-target="#modal_form_vertical">Launch <i class="icon-play3 ml-2"></i></button> -->
 								</div>
 							</div>
 						</form>
 					</div>
-					
+
 				</div>
 
 				<div class="card">
@@ -124,7 +124,7 @@ is_auth(4);
 				                	$result = $db->query("SELECT * FROM sales ORDER BY transaction_id DESC");
 									while($row = $result->fetch(PDO::FETCH_ASSOC)) {
 									?>
-							
+
 									<tr class="record">
 										<td>STI-00<?= $row['transaction_id']; ?></td>
 										<td><?= $row['date']; ?></td>

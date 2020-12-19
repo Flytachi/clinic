@@ -1038,7 +1038,8 @@ class BypassDateModel extends Model
     {
         global $db, $methods, $grant;
         $this_date = new \DateTime();
-        $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
+        $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
+        $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
         $span = count($col);
@@ -1104,9 +1105,9 @@ class BypassDateModel extends Model
                                             <?php else: ?>
                                                 <?php if ($grant): ?>
                                                     <?php if ($post['status']): ?>
-                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
                                                     <?php else: ?>
-                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
                                                     <?php endif; ?>
                                                 <?php else: ?>
                                                     <?php if ($post['status']): ?>
@@ -1157,34 +1158,44 @@ class BypassDateModel extends Model
                 }
             }
 
-            function SwetDate() {
+            function SwetDate(swet_input) {
                 var form = $('#<?= __CLASS__ ?>_form');
-                if (event.target.dataset.id) {
+                var products = [], i = 0;
+                document.querySelectorAll('.products').forEach(function(events) {
+                    products[i] = $(events).val();
+                    i++;
+                });
+
+                if (swet_input.dataset.id) {
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
-                        id: event.target.dataset.id,
-                        bypass_time_id: event.target.dataset.time,
-                        date: event.target.dataset.date,
-                        status: event.target.dataset.val
+                        id: swet_input.dataset.id,
+                        user_id: "<?= $bypass['user_id'] ?>",
+                        bypass_time_id: swet_input.dataset.time,
+                        date: swet_input.dataset.date,
+                        status: swet_input.dataset.val,
+                        products: products
                     };
                 }else {
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
-                        bypass_time_id: event.target.dataset.time,
-                        date: event.target.dataset.date,
-                        status: event.target.dataset.val
+                        user_id: "<?= $bypass['user_id'] ?>",
+                        bypass_time_id: swet_input.dataset.time,
+                        date: swet_input.dataset.date,
+                        status: swet_input.dataset.val,
+                        products: products
                     };
                 }
-                if (event.target.dataset.val == 1) {
-                    $(event.target).removeClass('icon-circle');
-                    $(event.target).addClass('icon-checkmark-circle');
-                    event.target.dataset.val = "";
-                }else if(event.target.dataset.val == ""){
-                    $(event.target).removeClass('icon-checkmark-circle');
-                    $(event.target).addClass('icon-circle');
-                    event.target.dataset.val = 1;
+                if (swet_input.dataset.val == 1) {
+                    $(swet_input).removeClass('icon-circle');
+                    $(swet_input).addClass('icon-checkmark-circle');
+                    swet_input.dataset.val = "";
+                }else if(swet_input.dataset.val == ""){
+                    $(swet_input).removeClass('icon-checkmark-circle');
+                    $(swet_input).addClass('icon-circle');
+                    swet_input.dataset.val = 1;
                 }
 
                 $.ajax({
@@ -1192,219 +1203,14 @@ class BypassDateModel extends Model
                     url: form.attr("action"),
                     data: data,
                     success: function (result) {
-                        if (!Number(result)) {
+                        if (!Number(result) && result != "success") {
                             $('#error_div').html(result);
+                        }else if(Number(result)){
+                            swet_input.dataset.id = result;
                         }
                     },
                 });
             }
-            /* ------------------------------------------------------------------------------
-             *
-             *  # Tooltips and popovers
-             *
-             *  Demo JS code for components_popups.html page
-             *
-             * ---------------------------------------------------------------------------- */
-
-
-            // Setup module
-            // ------------------------------
-
-            var Popups = function () {
-
-
-                //
-                // Setup module components
-                //
-
-                // Custom tooltip color
-                var _componentTooltipCustomColor = function() {
-            		$('[data-popup=tooltip-custom]').tooltip({
-            			template: '<div class="tooltip"><div class="arrow border-teal"></div><div class="tooltip-inner bg-teal"></div></div>'
-            		});
-                };
-
-                // Tooltip events
-                var _componentTooltipEvents = function() {
-
-            		// onShow event
-            		$('#tooltip-show').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('show.bs.tooltip', function() {
-            			alert('Show event fired.');
-            		});
-
-            		// onShown event
-            		$('#tooltip-shown').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('shown.bs.tooltip', function() {
-            			alert('Shown event fired.');
-            		});
-
-            		// onHide event
-            		$('#tooltip-hide').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('hide.bs.tooltip', function() {
-            			alert('Hide event fired.');
-            		});
-
-            		// onHidden event
-            		$('#tooltip-hidden').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('hidden.bs.tooltip', function() {
-            			alert('Hidden event fired.');
-            		});
-                };
-
-                // Tooltip methods
-                var _componentTooltipMethods = function() {
-
-            		// Show method
-            		$('#show-tooltip-method').on('click', function() {
-            			$('#show-tooltip-method-target').tooltip('show');
-            		});
-
-            		// Hide method
-            		$('#hide-tooltip-method-target').on('mouseenter', function() {
-            			$(this).tooltip('show')
-            		});
-            		$('#hide-tooltip-method').on('click', function() {
-            			$('#hide-tooltip-method-target').tooltip('hide');
-            		});
-
-            		// Toggle method
-            		$('#toggle-tooltip-method').on('click', function() {
-            			$('#toggle-tooltip-method-target').tooltip('toggle');
-            		})
-
-            		// Dispose method
-            		$('#dispose-tooltip-method').on('click', function() {
-            			$('#dispose-tooltip-method-target').tooltip('dispose');
-            		});
-
-            		// Toggle enable method
-            		$('#toggle-enabled-tooltip-method').on('click', function() {
-            			$('#toggle-enabled-tooltip-method-target').tooltip('toggleEnabled');
-            		});
-                };
-
-
-                // Custom popover color
-                var _componentPopoverCustomHeaderColor = function() {
-            		$('[data-popup=popover-custom]').popover({
-            			template: '<div class="popover border-teal"><div class="arrow"></div><h3 class="popover-header bg-teal"></h3><div class="popover-body"></div></div>'
-            		});
-                };
-
-                // Custom popover background color
-                var _componentPopoverCustomBackgroundColor = function() {
-            		$('[data-popup=popover-solid]').popover({
-            			template: '<div class="popover bg-primary border-primary"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body text-white"></div></div>'
-            		});
-                };
-
-                // Popover events
-                var _componentPopoverEvents = function() {
-
-            		// onShow event
-            		$('#popover-show').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			trigger: 'click'
-            		}).on('show.bs.popover', function() {
-            			alert('Show event fired.');
-            		});
-
-            		// onShown event
-            		$('#popover-shown').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			trigger: 'click'
-            		}).on('shown.bs.popover', function() {
-            			alert('Shown event fired.');
-            		});
-
-            		// onHide event
-            		$('#popover-hide').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			placement: 'top',
-            			trigger: 'click'
-            		}).on('hide.bs.popover', function() {
-            			alert('Hide event fired.');
-            		});
-
-            		// onHidden event
-            		$('#popover-hidden').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			trigger: 'click'
-            		}).on('hidden.bs.popover', function() {
-            			alert('Hidden event fired.');
-            		});
-                };
-
-                // Popover methods
-                var _componentPopoverMethods = function() {
-
-            		// Show method
-            		$('#show-popover-method').on('click', function() {
-            			$('#show-popover-method-target').popover('show');
-            		})
-
-            		// Hide method
-            		$('#hide-popover-method-target').on('mouseenter', function() {
-            			$(this).popover('show')
-            		});
-            		$('#hide-popover-method').on('click', function() {
-            			$('#hide-popover-method-target').popover('hide');
-            		});
-
-            		// Toggle method
-            		$('#toggle-popover-method').on('click', function() {
-            			$('#toggle-popover-method-target').popover('toggle');
-            		})
-
-            		// Dispose method
-            		$('#dispose-popover-method').on('click', function() {
-            			$('#dispose-popover-method-target').popover('dispose');
-            		});
-
-            		// Toggle enable method
-            		$('#toggle-enabled-popover-method').on('click', function() {
-            			$('#toggle-enabled-popover-method-target').popover('toggleEnabled');
-            		});
-                };
-
-
-                //
-                // Return objects assigned to module
-                //
-
-                return {
-                    init: function() {
-                        _componentTooltipCustomColor();
-                        _componentTooltipEvents();
-                        _componentTooltipMethods();
-                        _componentPopoverCustomHeaderColor();
-                        _componentPopoverCustomBackgroundColor();
-                        _componentPopoverEvents();
-                        _componentPopoverMethods();
-                    }
-                }
-            }();
-
-
-            // Initialize module
-            // ------------------------------
-
-            document.addEventListener('DOMContentLoaded', function() {
-                Popups.init();
-            });
         </script>
         <?php
     }
@@ -1550,8 +1356,11 @@ class BypassDateModel extends Model
                     url: form.attr("action"),
                     data: data,
                     success: function (result) {
+                        console.log(result);
                         if (!Number(result)) {
-                            $('#error_div').html(result);
+                            if (result != "success") {
+                                $('#error_div').html(result);
+                            }
                         }
                     },
                 });
@@ -1563,7 +1372,7 @@ class BypassDateModel extends Model
 
     public function clean()
     {
-        global $db;
+        global $db, $patient;
         if ($this->post['products']) {
             $user_pk = $this->post['user_id'];
             if ($this->post['completed']) {
@@ -1581,7 +1390,50 @@ class BypassDateModel extends Model
                         $this->error('products'.$object);
                     }
                 }
+            }else {
+                if ($this->post['status']) {
 
+                    foreach ($this->post['products'] as $value){
+                        $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
+                        if ($post) {
+                            $post_pk = $post['id'];
+                            unset($post['id']);
+                            $post['qty'] ++;
+                            $post['date'] = $this->post['date'];
+                            $object = Mixin\update('storage_orders', $post, $post_pk);
+                        }else {
+                            $post = array(
+                                'user_id' => $this->post['user_id'],
+                                'parent_id' => $_SESSION['session_id'],
+                                'preparat_id' => $value,
+                                'qty' => 1,
+                                'date' => $this->post['date']
+                            );
+                            $object = Mixin\insert('storage_orders', $post);
+                        }
+                        if (!intval($object)) {
+                            $this->error('storage_orders: '.$object);
+                        }
+                    }
+
+                } else {
+
+                    foreach ($this->post['products'] as $value){
+                        $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
+                        if ($post['qty'] > 1) {
+                            $post_pk = $post['id'];
+                            unset($post['id']);
+                            $post['qty'] --;
+                            $object = Mixin\update('storage_orders', $post, $post_pk);
+                        }else {
+                            $object = Mixin\delete('storage_orders', $post['id']);
+                        }
+                        if (!intval($object)) {
+                            $this->error('storage_orders: '.$object);
+                        }
+                    }
+
+                }
             }
             unset($this->post['user_id']);
             unset($this->post['products']);
@@ -1591,9 +1443,25 @@ class BypassDateModel extends Model
         return True;
     }
 
-    public function success()
+    public function save()
     {
-        echo 1;
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (intval($object)){
+                $this->success($object);
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function success($message=null)
+    {
+        if ($message) {
+            echo $message;
+        }else {
+            echo "success";
+        }
     }
 
     public function error($message)

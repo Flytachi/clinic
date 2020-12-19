@@ -161,6 +161,12 @@
                         case 4:
                             ?>
                             <li class="nav-item">
+                                <a href="application.php" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Пациенты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="sales.php?id=cash&invoice" class="nav-link legitRipple">
                                     <i class="icon-users"></i>
                                     <span>Продажа</span>

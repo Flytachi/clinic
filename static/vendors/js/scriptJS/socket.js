@@ -135,8 +135,16 @@ conn.onmessage = function(e) {
             html: d.message
         });
     }
+  }else if (d.type == "alert_pharmacy_call"){
+    if(d.id == id){
+        swal({
+            position: 'top',
+            title: 'Вас вызывют в аптеку!',
+            type: 'info',
+            html: d.message
+        });
+    }
   }
-
 
 };
 

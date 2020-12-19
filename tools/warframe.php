@@ -189,6 +189,21 @@ function division_name($id = null) {
 	return $stmt;
 }
 
+function division_title($id = null) {
+    global $db, $PERSONAL;
+    if(empty($id)){
+        $id = $_SESSION['session_id'];
+    }
+    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    try{
+        $stmt = $db->query("SELECT title from division where id = $id")->fetchColumn();
+    }
+    catch (PDOException $ex) {
+        $stmt = null;
+    }
+	return $stmt;
+}
+
 function division_assist($id = null) {
     global $db, $PERSONAL;
     if(empty($id)){
