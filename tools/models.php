@@ -674,7 +674,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         // parad("Услуги", $db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
-        foreach ($db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price") as $row) {
+        foreach ($db->query("SELECT vs.id, sc.price, sc.name FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price") as $row) {
             $post = array(
                 'pricer_id' => $this->post['pricer_id'],
                 'sale' => $this->post['sale'],
@@ -731,8 +731,10 @@ class VisitPriceModel extends Model
                     $this->error("Ошибка в price transfer");
                 }
             }
-            // parad("Оплачено", $post);
-            // parad("Остаток", $this->post);
+            $post['item_id'] = $row['id'];
+            $post['item_type'] = 1;
+            $post['item_cost'] = $row['price'];
+            $post['item_name'] = $row['name'];
             $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
             if(intval($object)){
                 $post['visit_id'] = $row['id'];
@@ -2178,6 +2180,10 @@ class StoragePreparatModel extends Model
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-success btn-sm">Отправить</button>
                     </div>
 
                 </div>

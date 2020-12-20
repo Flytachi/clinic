@@ -1219,7 +1219,7 @@ class BypassDateModel extends Model
     {
         global $db, $methods;
         $this_date = new \DateTime();
-        $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
+        $bypass = $db->query("SELECT user_id, visit_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
@@ -1332,6 +1332,7 @@ class BypassDateModel extends Model
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
+                        visit_id: "<?= $bypass['visit_id'] ?>",
                         id: event.target.dataset.id,
                         completed: event.target.dataset.value,
                         user_id: "<?= $bypass['user_id'] ?>",
@@ -1343,6 +1344,7 @@ class BypassDateModel extends Model
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
+                        visit_id: "<?= $bypass['visit_id'] ?>",
                         id: event.target.dataset.id,
                         completed: event.target.dataset.value,
                         user_id: "<?= $bypass['user_id'] ?>",
@@ -1376,21 +1378,32 @@ class BypassDateModel extends Model
         if ($this->post['products']) {
             $user_pk = $this->post['user_id'];
             if ($this->post['completed']) {
-
+                // Медсестра
                 foreach ($this->post['products'] as $value){
-                    $post = $db->query("SELECT $user_pk 'user_id', product_id 'product', qty, 0 'amount', 0 'profit', product_code, gen_name, product_name 'name', price FROM products WHERE product_id = $value")->fetch();
-                    $object = Mixin\update('products', array('qty' => $post['qty']-1), array('product_id' => $value));
+                    $post = $db->query("SELECT id, preparat_id 'item_id', price 'item_cost', preparat_code 'item_name', qty FROM storage_preparat WHERE preparat_id = $value")->fetch();
+                    if(!$post){
+                        $this->error("Не осталось препарата ".$value);
+                    }
+                    $post['visit_id'] = $this->post['visit_id'];
+                    $post['item_type'] = 2;
+                    if ($post['qty'] <= 1) {
+                        $object = Mixin\delete('storage_preparat', $post['id']);
+                    }else {
+                        $object = Mixin\update('storage_preparat', array('qty' => $post['qty']-1), array('preparat_id' => $value));
+                    }
                     if (intval($object)) {
-                        $post['qty'] = 1;
-                        $object1 = Mixin\insert('sales_order', $post);
+                        unset($post['qty']);
+                        unset($post['id']);
+                        $object1 = Mixin\insert('visit_price', $post);
                         if (!intval($object1)) {
-                            $this->error('sales_order'.$object1);
+                            $this->error('visit_price'.$object1);
                         }
                     }else {
-                        $this->error('products'.$object);
+                        $this->error('storage_preparat'.$object);
                     }
                 }
             }else {
+                // ДОктор
                 if ($this->post['status']) {
 
                     foreach ($this->post['products'] as $value){
@@ -1428,15 +1441,15 @@ class BypassDateModel extends Model
                         }else {
                             $object = Mixin\delete('storage_orders', $post['id']);
                         }
-                        if (!intval($object)) {
-                            $this->error('storage_orders: '.$object);
-                        }
                     }
 
                 }
             }
             unset($this->post['user_id']);
             unset($this->post['products']);
+            if ($this->post['visit_id']) {
+                unset($this->post['visit_id']);
+            }
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
