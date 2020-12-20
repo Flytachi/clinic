@@ -6,6 +6,12 @@ $header = "Рабочий стол";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../layout/head.php' ?>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -35,12 +41,21 @@ $header = "Рабочий стол";
 						<h6 class="card-title">Склад</h6>
 						<div class="header-elements">
 							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
+								<a class="list-icons-item text-dark" data-toggle="modal" data-target="#modal_add">
+									<i class="icon-plus22"></i>Добавить
+								</a>
 							</div>
 						</div>
 					</div>
 
 					<div class="card-body">
+
+						<?php
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						?>
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm">
@@ -83,6 +98,19 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_add" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Заказ</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?php StorageOrdersModel::form() ?>
+
+			</div>
+		</div>
+	</div>
 
 	<!-- Footer -->
     <?php include '../layout/footer.php' ?>

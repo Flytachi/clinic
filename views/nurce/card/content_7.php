@@ -71,46 +71,43 @@ $header = "Пациент";
  									  </tr>
  								  </thead>
  								  <tbody>
- 									  <?php
- 									  $i=1;
-                                      $total_count_every = 0;
-                                      $total_count_all = 0;
-                                      $total_total_price = 0;
-                                      $sql = "SELECT DISTINCT so.product,
-                                                    so.product_code,
-                                                    so.price,
-                                                    (SELECT COUNT(*) FROM sales_order so2 WHERE so2.product=so.product AND DATE_FORMAT(so2.add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
-                                                    (SELECT COUNT(*) FROM sales_order so2 WHERE so2.product=so.product) 'count_all',
-                                                    (SELECT COUNT(*) FROM sales_order so2 WHERE so2.product=so.product) * so.price 'total_price'
-                                                FROM sales_order so WHERE so.user_id = $patient->id";
- 									  foreach ($db->query($sql) as $row) {
- 										  ?>
- 										  <tr>
+							  		  <?php
+									  $sql = "SELECT DISTINCT vp.item_id,
+									  			vp.item_name,
+												vp.item_cost,
+												vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'price',
+												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
+												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'total_count_all'
+								  			FROM visit_price vp
+											WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 3";
+									  $total_total_price = $total_count_every = $total_count_all = 0;
+									  ?>
+									  <?php $i=1; foreach ($db->query($sql) as $row): ?>
+										  <tr>
                                               <td><?= $i++ ?></td>
-                                              <td><?= $row['product_code'] ?></td>
-                                              <td><?= $row['price'] ?></td>
-                                              <td>
-                                                  <?php
-                                                  $total_total_price += $row['total_price'];
-                                                  echo number_format($row['total_price'])
-                                                  ?>
-                                              </td>
-                                              <td>
-                                                  <?php
-                                                  $total_count_every += $row['count_every'];
-                                                  echo number_format($row['count_every'])
-                                                  ?>
-                                              </td>
-                                              <td>
-                                                  <?php
-                                                  $total_count_all += $row['count_all'];
-                                                  echo number_format($row['count_all'])
-                                                  ?>
-                                              </td>
+											  <td><?= $row['item_name'] ?></td>
+                                              <td><?= $row['item_cost'] ?></td>
+											  <td>
+											  	<?php
+													$total_total_price += $row['price'];
+													echo number_format($row['price']);
+												?>
+											  </td>
+											  <td>
+												<?php
+	  												$total_count_every += $row['count_every'];
+	  												echo number_format($row['count_every']);
+  												?>
+											  </td>
+											  <td>
+												  <?php
+  	  												$total_count_all += $row['total_count_all'];
+  	  												echo number_format($row['total_count_all']);
+    												?>
+											  </td>
  										  </tr>
- 										  <?php
- 									  }
- 									  ?>
+									  <?php endforeach; ?>
+
                                       <tr class="table-primary">
                                           <td colspan="3">Итог:</td>
                                           <td><?= number_format($total_total_price) ?></td>
@@ -137,14 +134,14 @@ $header = "Пациент";
 	<!-- /page content -->
 
     <div id="modal_add" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content border-3 border-info">
                 <div class="modal-header bg-info">
                     <h5 class="modal-title">Добавить расходный материал</h5>
                     <button type="button" class="close" data-dismiss="modal">×</button>
                 </div>
 
-                <?= SalesOrderAdd::form() ?>
+                <?= StoragePreparatForm::form() ?>
 
             </div>
         </div>

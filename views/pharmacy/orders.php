@@ -55,19 +55,19 @@ $header = "Заявки";
 				            <table class="table table-hover table-sm">
 				                <thead>
 				                    <tr class="bg-blue">
-				                        <th>ID</th>
-				                        <th>ФИО</th>
-				                        <th>Отдел</th>
-                                        <th>Лечащий врач</th>
+                                        <th>№</th>
+                                        <th>ФИО</th>
+				                        <th>Роль</th>
+                                        <th>Отдел</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
-                                    <?php foreach ($db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NOT NULL") as $row): ?>
-                                        <tr onclick="Check('<?= viv('pharmacy/application_preparat') ?>?pk=<?= $row['user_id'] ?>')">
-                                            <td><?= addZero($row['user_id']) ?></td>
-                                            <td><?= get_full_name($row['user_id']) ?></td>
-                                            <td><?= division_title($row['parent_id']) ?></td>
+                                    <?php $i=1; foreach ($db->query("SELECT DISTINCT parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NULL") as $row): ?>
+                                        <tr onclick="Check('<?= viv('pharmacy/orders_preparat') ?>?pk=<?= $row['parent_id'] ?>')">
+                                            <td><?= $i++ ?></td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>
+                                            <td><?= level_name($row['parent_id']) ?></td>
+                                            <td><?= division_title($row['parent_id']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
 				                </tbody>

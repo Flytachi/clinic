@@ -2128,7 +2128,7 @@ class StoragePreparatModel extends Model
             <div class="card border-1 border-info">
 
                 <div class="card-header text-dark header-elements-inline alpha-info">
-                    <h6 class="card-title">Список лекарств пациента</h6>
+                    <h5 class="card-title">Список лекарств пациента</h5>
                     <div class="header-elements">
                         <div class="list-icons">
                             <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
@@ -2160,6 +2160,74 @@ class StoragePreparatModel extends Model
                             </thead>
                             <tbody>
                                 <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, pt.product_code 'preparat_code', sr.qty, pt.price, sr.qty*pt.price 'total_price' FROM storage_orders sr LEFT JOIN products pt ON(pt.product_id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
+                                    <tr>
+                                        <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
+                                        <td><?= $i++ ?></td>
+                                        <td><?= $row['preparat_code'] ?></td>
+                                        <td><?= $row['qty'] ?></td>
+                                        <td><?= number_format($row['price']) ?></td>
+                                        <td class="text-left">
+                                            <?php
+                                            $total_cost += $row['total_price'];
+                                            echo number_format($row['total_price']);
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <tr>
+                                    <td colspan="4" class="text-right"><b>Итого:</b></td>
+                                    <td class="text-left"><b><?= number_format($total_cost) ?></b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-success btn-sm">Отправить</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function form_order($pk = null)
+    {
+        global $db, $pk;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="parent_id" value="<?= $pk ?>">
+
+            <div class="card border-1 border-info">
+
+                <div class="card-header text-dark header-elements-inline alpha-info">
+                    <h5 class="card-title">Список лекарств</h5>
+                    <div class="header-elements">
+                        <div class="list-icons">
+                            <button type="button" class="btn list-icons-item text-danger" onclick="CallMed(<?= $pk ?>)">Вызвать</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="table-responsive card">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-blue">
+                                    <th style="width: 100px">№</th>
+                                    <th>Лекарства</th>
+                                    <th>Количество</th>
+                                    <th>Цена ед.</th>
+                                    <th>Сумма</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, pt.product_code 'preparat_code', sr.qty, pt.price, sr.qty*pt.price 'total_price' FROM storage_orders sr LEFT JOIN products pt ON(pt.product_id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.parent_id = $pk ORDER BY sr.preparat_id") as $row): ?>
                                     <tr>
                                         <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
                                         <td><?= $i++ ?></td>
