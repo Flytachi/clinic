@@ -152,6 +152,7 @@ is_auth(4);
 										<th> Серия:</th>
 										<th> Цена за единицу: </th>
 										<th> Количество: </th>
+										<th> Дата: </th>
 										<th> Цена: </th>
 										<th> Прибыль: </th>
 
@@ -181,6 +182,9 @@ is_auth(4);
 									</td>
 									<td><?= $row['qty']; ?></td>
 									<td>
+									<?= date('d.m.Y', strtotime($row['add_date']))?>
+									</td>
+									<td>
 									<?= formatMoney($row['amount'], true);?>
 									</td>
 									<td>
@@ -195,7 +199,7 @@ is_auth(4);
 								?>
 
 								<tr>
-									<th colspan="5"></th>
+									<th colspan="6"></th>
 									<td>Общая цена: </td>
 									<td>Общая прибыль: </td>
 
@@ -204,7 +208,7 @@ is_auth(4);
 								</tr>
 
 								<tr>
-									<td colspan="4"></td>
+									<td colspan="5"></td>
 									<td><strong style="font-size: 12px; color: #222222;">Всего:</strong></td>
 									<td colspan="1"><strong style="font-size: 12px; color: #222222;">
 									<?php
