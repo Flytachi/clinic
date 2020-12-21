@@ -3,14 +3,17 @@ require_once '../../tools/warframe.php';
 is_auth(3);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
+    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND completed IS NULL AND service_id != 1")->fetchAll();
     $sql = "SELECT
+                vs.id,
                 SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
                 ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) 'bed_days',
                 bdt.name 'bed_type',
                 bdt.price 'bed_price',
                 ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
-                (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service',
-                (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0) 'cost_preparat'
+                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 1) 'cost_service',
+                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 2) 'cost_item_2',
+                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                 -- vs.add_date
             FROM users us
                 LEFT JOIN investment iv ON(iv.user_id = us.id)
@@ -19,14 +22,20 @@ if ($_GET['pk']) {
                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
             WHERE us.id = $pk";
     $price = $db->query($sql)->fetch();
+    foreach ($serv_id as $value) {
+        $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+        foreach ($item_service as $pri_ze) {
+            $price['cost_service'] += $pri_ze['price'];
+        }
+    }
     // prit($price);
     ?>
     <div class="table-responsive mt-3">
         <table class="table table-hover">
             <thead>
                 <tr class="bg-blue">
-                    <th class="text-left">Дата и время</th>
-                    <th colspan="2">Наименование</th>
+                    <th class="text-left" colspan="2">Наименование</th>
+                    <th>Дата и время</th>
                     <th class="text-right">Сумма</th>
                     <!-- <th class="text-center" style="width: 150px">Оплатить</th> -->
                 </tr>
@@ -39,33 +48,50 @@ if ($_GET['pk']) {
                 </tr>
 
                 <tr class="text-center table-primary">
-                    <td colspan="3">Мед услуги</td>
+                    <td colspan="3" class="text-left">Мед услуги</td>
                     <td class="text-right"><?= number_format($price['cost_service']) ?></td>
                 </tr>
-                <?php foreach ($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL AND vs.service_id != 1") as $row): ?>
-                    <tr>
-                        <!-- <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>"> -->
-                        <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-                        <td colspan="2"><?= $row['name'] ?></td>
-                        <td class="text-right total_cost"><?= number_format($row['price']) ?></td>
-                        <!-- <td class="text-center">
-                            <button onclick="alert('в разработке')" class="btn btn-outline-success"><i class="icon"></i></button>
-                        </td> -->
-                    </tr>
+                <?php foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND completed IS NULL") as $val): ?>
+                    <?php foreach ($db->query("SELECT * FROM visit_price WHERE visit_id = {$val['id']} AND item_type = 1") as $row): ?>
+                        <tr>
+                            <!-- <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>"> -->
+                            <td colspan="2"><?= $row['item_name'] ?></td>
+                            <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                            <td class="text-right total_cost"><?= number_format($row['item_cost']) ?></td>
+                            <!-- <td class="text-center">
+                                <button onclick="alert('в разработке')" class="btn btn-outline-success"><i class="icon"></i></button>
+                            </td> -->
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
 
                 <tr class="table-primary">
                     <td>Препараты</td>
                     <td>Количество</td>
                     <td>Цена ед.</td>
-                    <td class="text-right"><?= number_format($price['cost_preparat']) ?></td>
+                    <td class="text-right"><?= number_format($price['cost_item_2']) ?></td>
                 </tr>
-                <?php foreach ($db->query("SELECT DISTINCT so.product, so.product_code, (SELECT COUNT(product) FROM sales_order so2 WHERE so2.product = so.product AND so2.user_id = $pk AND so2.amount = 0 AND so2.profit = 0) 'count', so.price FROM sales_order so WHERE so.user_id = $pk AND so.amount = 0 AND so.profit = 0") as $row): ?>
+                <?php foreach ($db->query("SELECT DISTINCT vp.item_name, vp.item_cost, (SELECT COUNT(*) FROM visit_price WHERE visit_id = {$price['id']} AND item_type = 2 AND item_id=vp.item_id) 'count' FROM visit_price vp WHERE vp.visit_id = {$price['id']} AND vp.item_type = 2") as $row): ?>
                     <tr>
-                        <td><?= $row['product_code'] ?></td>
+                        <td><?= $row['item_name'] ?></td>
                         <td><?= $row['count'] ?></td>
-                        <td><?= number_format($row['price']) ?></td>
-                        <td class="text-right"><?= number_format($row['count'] * $row['price']) ?></td>
+                        <td><?= number_format($row['item_cost']) ?></td>
+                        <td class="text-right"><?= number_format($row['count'] * $row['item_cost']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+
+                <tr class="table-primary">
+                    <td>Расходные материалы</td>
+                    <td>Количество</td>
+                    <td>Цена ед.</td>
+                    <td class="text-right"><?= number_format($price['cost_item_3']) ?></td>
+                </tr>
+                <?php foreach ($db->query("SELECT DISTINCT vp.item_name, vp.item_cost, (SELECT COUNT(*) FROM visit_price WHERE visit_id = {$price['id']} AND item_type = 3 AND item_id=vp.item_id) 'count' FROM visit_price vp WHERE vp.visit_id = {$price['id']} AND vp.item_type = 3") as $row): ?>
+                    <tr>
+                        <td><?= $row['item_name'] ?></td>
+                        <td><?= $row['count'] ?></td>
+                        <td><?= number_format($row['item_cost']) ?></td>
+                        <td class="text-right"><?= number_format($row['count'] * $row['item_cost']) ?></td>
                     </tr>
                 <?php endforeach; ?>
 

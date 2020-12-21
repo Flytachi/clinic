@@ -437,7 +437,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 5 AND id != ".division()) as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -454,7 +454,7 @@ class VisitRoute extends Model
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                        foreach($db->query("SELECT * from users WHERE user_level = 5 AND id != {$_SESSION['session_id']}") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -860,6 +860,30 @@ class VisitRoute extends Model
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function save()
+    {
+        global $db;
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (intval($object)){
+                $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
+                $post['visit_id'] = $object;
+                $post['item_type'] = 1;
+                $post['item_id'] = $this->post['service_id'];
+                $post['item_cost'] = $service['price'];
+                $post['item_name'] = $service['name'];
+                $object = Mixin\insert('visit_price', $post);
+                if (intval($object)){
+                    $this->success();
+                }else{
+                    $this->error($object);
+                }
+            }else{
+                $this->error($object);
+            }
+        }
     }
 
     public function success()

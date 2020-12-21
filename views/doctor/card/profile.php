@@ -117,16 +117,25 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 <?php
                 $class_color_add = "text-success";
                 if ($patient->direction) {
+
+                    // Баланс пациента
+                    $pl = 0;
+                    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
+                    foreach ($serv_id as $value) {
+                        $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+                        foreach ($item_service as $pri_ze) {
+                            $pl += $pri_ze['price'];
+                        }
+                    }
                     $sql = "SELECT
                                 SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) -
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
-                                    (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $patient->id AND vs.priced_date IS NULL) +
-                                    (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0)
+                                    $pl +
+                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 2) +
+                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
                                 )
                                  'balance'
-                                -- bdt.price 'bed_price',
-                                -- vs.add_date
                             FROM users us
                                 LEFT JOIN investment iv ON(iv.user_id = us.id)
                                 LEFT JOIN beds bd ON(bd.user_id = us.id)
@@ -134,6 +143,8 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
                             WHERE us.id = $patient->id";
                     $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+                    // prit($price);
+
                     if ($price->balance >= 0) {
                         $class_card_balance = "text-success";
                         $class_color_add = "cl_btn_balance text-success";
