@@ -349,9 +349,21 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="<?= viv('nurce/list_task') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Задания</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Склад</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('journal/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
                                 </a>
                             </li>
                             <?php

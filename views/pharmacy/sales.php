@@ -147,12 +147,12 @@ is_auth(4);
 				            <table class="table table-hover">
 				                <thead>
 				                    <tr class="bg-blue">
+										<th> Дата: </th>
 				                        <th> Наименование: </th>
 										<th> Производитель:</th>
 										<th> Серия:</th>
 										<th> Цена за единицу: </th>
 										<th> Количество: </th>
-										<th> Дата: </th>
 										<th> Цена: </th>
 										<th> Прибыль: </th>
 
@@ -173,6 +173,9 @@ is_auth(4);
 								?>
 								<tr>
 									<td hidden><?= $row['product']; ?></td>
+									<td>
+										<?= date('d.m.Y H:i', strtotime($row['add_date']))?>
+									</td>
 									<td><?= $row['product_code']; ?></td>
 									<td><?= $row['gen_name']; ?></td>
 									<td><?= $row['name']; ?></td>
@@ -181,9 +184,6 @@ is_auth(4);
 									?>
 									</td>
 									<td><?= $row['qty']; ?></td>
-									<td>
-									<?= date('d.m.Y', strtotime($row['add_date']))?>
-									</td>
 									<td>
 									<?= formatMoney($row['amount'], true);?>
 									</td>

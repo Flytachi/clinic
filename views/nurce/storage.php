@@ -38,7 +38,7 @@ $header = "Рабочий стол";
                 <div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Склад</h6>
+						<h5 class="card-title">Склад</h5>
 						<div class="header-elements">
 							<div class="list-icons">
 								<a class="list-icons-item text-dark" data-toggle="modal" data-target="#modal_add">
