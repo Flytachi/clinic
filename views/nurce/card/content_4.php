@@ -18,7 +18,6 @@ $header = "Пациент";
 		<?php include '../../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -39,49 +38,80 @@ $header = "Пациент";
 				    <div class="card-body">
 				        <?php include "content_tabs.php"; ?>
 
-						<h4 class="card-title">Мои Заключение</h4>
-						<div class="table-responsive">
-			                <table class="table table-hover table-columned">
-			                    <thead>
-			                        <tr class="bg-blue text-center">
-			                            <th>№</th>
-			                            <th>Мед услуга</th>
-			                            <th>Тип визита</th>
-										<th>Дата визита</th>
-										<th>Дата завершения</th>
-			                            <th class="text-center">Действия</th>
-			                        </tr>
-			                    </thead>
-			                    <tbody>
-									<?php
-									$i = 1;
-									foreach ($db->query("SELECT id, parent_id, direction, accept_date, completed FROM visit WHERE user_id = $patient->user_id AND completed IS NOT NULL AND parent_id = {$_SESSION['session_id']} ORDER BY id DESC") as $row) {
-									?>
-										<tr class="text-center">
-											<td><?= $i++ ?></td>
-											<td>
-                                                <?php
-                                                foreach ($db->query("SELECT sr.name FROM visit_service vsr LEFT JOIN service sr ON (vsr.service_id = sr.id) WHERE visit_id = {$row['id']}") as $serv) {
-                                                    echo $serv['name']."<br>";
-                                                }
-                                                ?>
-                                            </td>
-											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
-											<td class="text-center">
-												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
-												<div class="dropdown-menu dropdown-menu-right">
-													<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-paste2"></i>Заключения врача</a>
-												</div>
-											</td>
+						<div class="card">
+
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Анализы Пациента</h5>
+							</div>
+
+							<div class="table-responsive">
+								<table class="table table-hover table-sm">
+									<thead>
+										<tr class="bg-info">
+											<th>№</th>
+				                            <th>Специалист</th>
+											<th>Дата визита</th>
+											<th>Дата завершения</th>
+				                            <th>Мед услуга</th>
+											<th>Тип визита</th>
+											<th>Статус</th>
+											<th class="text-center">Действия</th>
 										</tr>
-									<?php
-									}
-								 	?>
-			                    </tbody>
-			                </table>
-			            </div>
+									</thead>
+									<tbody>
+										<?php
+										$i = 1;
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.laboratory IS NOT NULL ORDER BY vs.id DESC") as $row) {
+										?>
+											<tr>
+												<td><?= $i++ ?></td>
+												<td>
+													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
+													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
+												</td>
+												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не принят</span>'?></td>
+												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не завершён</span>'?></td>
+												<td><?= $row['name'] ?></td>
+												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
+												<td>
+													<?php
+													if ($row['completed']) {
+														?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
+														<?php
+													} else {
+														switch ($row['status']):
+															case 1:
+																?>
+																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+																<?php
+																break;
+															case 2:
+																?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+																<?php
+																break;
+															default:
+																?>
+																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+																<?php
+																break;
+														endswitch;
+													}
+													?>
+												</td>
+												<td class="text-center">
+													<button onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+												</td>
+											</tr>
+										<?php
+										}
+									 	?>
+									</tbody>
+								</table>
+							</div>
+
+						</div>
 
 				    </div>
 
@@ -97,7 +127,7 @@ $header = "Пациент";
 	<!-- /page content -->
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-lg" id="modal_class_show">
 			<div class="modal-content border-3 border-info" id="report_show">
 
 			</div>
@@ -105,7 +135,7 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
-		function Check(events) {
+		function Check(events, imp='') {
 			$.ajax({
 				type: "GET",
 				url: events,

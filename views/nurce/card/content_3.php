@@ -41,27 +41,26 @@ $header = "Пациент";
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Анализы Пациента</h5>
+								<h5 class="card-title">История Осмотров</h5>
 							</div>
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
 									<thead>
-										<tr class="bg-info">
-											<th>№</th>
+				                        <tr class="bg-info">
+				                            <th>№</th>
 				                            <th>Специалист</th>
+				                            <th>Тип визита</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
 				                            <th>Мед услуга</th>
-											<th>Тип визита</th>
-											<th>Статус</th>
-											<th class="text-center">Действия</th>
-										</tr>
-									</thead>
-									<tbody>
+				                            <th class="text-center">Действия</th>
+				                        </tr>
+				                    </thead>
+				                    <tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.laboratory IS NOT NULL ORDER BY vs.id DESC") as $row) {
+										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.completed IS NOT NULL AND vs.laboratory IS NULL ORDER BY id DESC") as $row) {
 										?>
 											<tr>
 												<td><?= $i++ ?></td>
@@ -69,45 +68,18 @@ $header = "Пациент";
 													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
 													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
 												</td>
-												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не принят</span>'?></td>
-												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не завершён</span>'?></td>
-												<td><?= $row['name'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td>
-													<?php
-													if ($row['completed']) {
-														?>
-														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-														<?php
-													} else {
-														switch ($row['status']):
-															case 1:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-																<?php
-																break;
-															case 2:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
-																<?php
-																break;
-															default:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-																<?php
-																break;
-														endswitch;
-													}
-													?>
-												</td>
+												<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
+												<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
+												<td><?= $row['name'] ?></td>
 												<td class="text-center">
-													<button onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 												</td>
 											</tr>
 										<?php
 										}
 									 	?>
-									</tbody>
+				                    </tbody>
 								</table>
 							</div>
 
@@ -135,7 +107,7 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
-		function Check(events, imp='') {
+		function Check(events) {
 			$.ajax({
 				type: "GET",
 				url: events,

@@ -36,69 +36,46 @@ $header = "Пациент";
 				<?php include "profile.php"; ?>
 
 				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
-				        <h6 class="card-title">Просмотр визита</h6>
-				    </div>
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">Просмотр визита</h6>
+					</div>
 
 					<div class="card-body">
 
-					   <?php
-					   include "content_tabs.php";
-					   if($_SESSION['message']){
-						   echo $_SESSION['message'];
-						   unset($_SESSION['message']);
-					   }
-					   ?>
+						<?php include "content_tabs.php"; ?>
 
-					   <div class="card">
+						<div class="card">
 
-						   <div class="card-header header-elements-inline">
-							   <h6 class="card-title">Лист назначений</h6>
-						   </div>
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Обход</h5>
+							</div>
 
-						   <div class="table-responsive">
-							   <table class="table table-hover table-sm table-bordered">
- 								  <thead>
- 									  <tr class="bg-info">
- 										  <th style="width: 40px !important;">№</th>
- 										  <th style="width: 400px;">Препарат</th>
- 										  <th>Описание</th>
- 										  <th class="text-center" style="width: 150px;">Метод введения </th>
- 										  <th class="text-right" style="width: 150px;">Действия</th>
- 									  </tr>
- 								  </thead>
- 								  <tbody>
- 									  <?php
- 									  $i=1;
- 									  foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
- 										  ?>
- 										  <tr>
- 											  <td><?= $i++ ?></td>
- 											  <td>
-												  <?php
-												  foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
-													  echo $serv['product_code']."<br>";
-												  }
-												  ?>
- 											  </td>
- 											  <td><?= $row['description'] ?></td>
- 											  <td><?= $methods[$row['method']] ?></td>
- 											  <td>
- 												  <button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
- 											  </td>
- 										  </tr>
- 										  <?php
- 									  }
- 									  ?>
- 								  </tbody>
- 							  </table>
- 						  </div>
+							<div class="table-responsive">
+								<table class="table table-hover table-sm">
+									<thead>
+										<tr class="bg-info">
+											<th>Дата и время осмотра</th>
+											<th class="text-right" style="width: 50%">Действия</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
+											<tr>
+												<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+												<td class="text-right">
+													<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+									</tbody>
+								</table>
+							</div>
 
-					   </div>
+						</div>
 
-				   </div>
+					</div>
 
-				    <!-- /content wrapper -->
+					<!-- /content wrapper -->
 				</div>
 
 			</div>

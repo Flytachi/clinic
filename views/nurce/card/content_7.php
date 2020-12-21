@@ -6,6 +6,8 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack('vendors/js/jquery.tabledit.js') ?>"></script>
+<script src="<?= stack('vendors/js/custom_table_edit.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -30,97 +32,44 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-                <div class="card border-1 border-info">
+				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
-					<div class="card-body">
+				    <div class="card-body">
 
-					   <?php
-					   include "content_tabs.php";
-					   if($_SESSION['message']){
-						   echo $_SESSION['message'];
-						   unset($_SESSION['message']);
-					   }
-					   ?>
+						<?php include "content_tabs.php"; ?>
 
-					   <div class="card">
+						<div class="card">
+							<div class="card-header header-elements-inline">
+								<h5 class="card-title">Заметки</h5>
+							</div>
 
-						   <div class="card-header header-elements-inline">
-							   <h6 class="card-title">Расходные материалы</h6>
-                               <div class="header-elements">
-                                   <div class="list-icons">
-                                       <a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-                                           <i class="icon-plus22"></i>Добавить
-                                       </a>
-                                   </div>
-                               </div>
-						   </div>
+							<?php //prit($patient); ?>
+							<table id="data_table" class="table table-striped">
+								<thead>
+									<tr>
+										<th>Id</th>
+										<th>Date</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+								<?php
+								foreach ($db->query("SELECT * FROM notes") as $developer) {
+								?>
+								<tr id="<?php echo $developer ['id']; ?>">
+							   		<td><?php echo $developer ['id']; ?></td>
+								   	<td><?php echo $developer ['date']; ?></td>
+								   	<td><?php echo $developer ['description']; ?></td>
+							   	</tr>
+								<?php } ?>
+								</tbody>
+							</table>
+						</div>
 
-						   <div class="table-responsive">
-							   <table class="table table-hover table-sm table-bordered">
- 								  <thead>
- 									  <tr class="bg-info">
- 										  <th style="width: 40px !important;">№</th>
- 										  <th>Препарат</th>
-                                          <th style="width: 200px;">Цена ед.</th>
-                                          <th style="width: 200px;">Сумма</th>
-                                          <th style="width: 100px;">Сегоня</th>
- 										  <th style="width: 100px;">Всего</th>
- 									  </tr>
- 								  </thead>
- 								  <tbody>
-							  		  <?php
-									  $sql = "SELECT DISTINCT vp.item_id,
-									  			vp.item_name,
-												vp.item_cost,
-												vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'price',
-												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
-												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'total_count_all'
-								  			FROM visit_price vp
-											WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 3";
-									  $total_total_price = $total_count_every = $total_count_all = 0;
-									  ?>
-									  <?php $i=1; foreach ($db->query($sql) as $row): ?>
-										  <tr>
-                                              <td><?= $i++ ?></td>
-											  <td><?= $row['item_name'] ?></td>
-                                              <td><?= $row['item_cost'] ?></td>
-											  <td>
-											  	<?php
-													$total_total_price += $row['price'];
-													echo number_format($row['price']);
-												?>
-											  </td>
-											  <td>
-												<?php
-	  												$total_count_every += $row['count_every'];
-	  												echo number_format($row['count_every']);
-  												?>
-											  </td>
-											  <td>
-												  <?php
-  	  												$total_count_all += $row['total_count_all'];
-  	  												echo number_format($row['total_count_all']);
-    												?>
-											  </td>
- 										  </tr>
-									  <?php endforeach; ?>
-
-                                      <tr class="table-primary">
-                                          <td colspan="3">Итог:</td>
-                                          <td><?= number_format($total_total_price) ?></td>
-                                          <td><?= $total_count_every ?></td>
-                                          <td><?= $total_count_all ?></td>
-                                      </tr>
- 								  </tbody>
- 							  </table>
- 						  </div>
-
-					   </div>
-
-				   </div>
+				    </div>
 
 				    <!-- /content wrapper -->
 				</div>
@@ -132,20 +81,6 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
-
-    <div id="modal_add" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-3 border-info">
-                <div class="modal-header bg-info">
-                    <h5 class="modal-title">Добавить расходный материал</h5>
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                </div>
-
-                <?= StoragePreparatForm::form() ?>
-
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
