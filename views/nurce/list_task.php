@@ -48,7 +48,7 @@ $header = "Рабочий стол";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($db->query("SELECT DISTINCT b.user_id FROM bypass_date bd LEFT JOIN bypass b ON(b.id=bd.bypass_id) WHERE bd.date = CURRENT_DATE() AND bd.completed IS NULL") as $row): ?>
+                                        <?php foreach ($db->query("SELECT DISTINCT b.user_id FROM bypass_date bd LEFT JOIN bypass b ON(b.id=bd.bypass_id) WHERE bd.date = CURRENT_DATE() AND status IS NOT NULL AND bd.completed IS NULL") as $row): ?>
                                             <tr onclick="Check('<?= viv('nurce/task') ?>?pk=<?= $row['user_id'] ?>')">
                                                 <td><?= addZero($row['user_id']) ?></td>
                                                 <td><?= get_full_name($row['user_id']) ?></td>

@@ -1407,6 +1407,7 @@ class BypassDateModel extends Model
                     $post = $db->query("SELECT id, preparat_id 'item_id', price 'item_cost', preparat_code 'item_name', qty FROM storage_preparat WHERE preparat_id = $value")->fetch();
                     if(!$post){
                         $this->error("Не осталось препарата ".$value);
+                        $this->stop();
                     }
                     $post['visit_id'] = $this->post['visit_id'];
                     $post['item_type'] = 2;

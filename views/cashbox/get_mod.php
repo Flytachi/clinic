@@ -18,7 +18,7 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND priced_date IS NULL AND service_id != 1")->fetchAll();
+                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1")->fetchAll();
                 $sql = "SELECT
                             vs.id,
                             SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',

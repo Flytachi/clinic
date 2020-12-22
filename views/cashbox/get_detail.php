@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 is_auth(3);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
-    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND completed IS NULL AND service_id != 1")->fetchAll();
+    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1")->fetchAll();
     $sql = "SELECT
                 vs.id,
                 SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
@@ -51,7 +51,7 @@ if ($_GET['pk']) {
                     <td colspan="3" class="text-left">Мед услуги</td>
                     <td class="text-right"><?= number_format($price['cost_service']) ?></td>
                 </tr>
-                <?php foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND completed IS NULL") as $val): ?>
+                <?php foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk") as $val): ?>
                     <?php foreach ($db->query("SELECT * FROM visit_price WHERE visit_id = {$val['id']} AND item_type = 1") as $row): ?>
                         <tr>
                             <!-- <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>"> -->
