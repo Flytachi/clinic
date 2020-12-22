@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(7);
+is_auth(11);
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
@@ -71,7 +71,7 @@ $header = "Рабочий стол";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($db->query("SELECT st.* FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 7") as $row): ?>
+                                    <?php foreach ($db->query("SELECT st.* FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 11") as $row): ?>
                                         <tr>
                                             <td><?= $row['preparat_code'] ?></td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>

@@ -1410,7 +1410,7 @@ class BypassDateModel extends Model
                         $this->stop();
                     }
                     $post['visit_id'] = $this->post['visit_id'];
-                    $post['item_type'] = 2;
+                    $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$post['item_id']}")->fetch()['catg'];
                     if ($post['qty'] <= 1) {
                         $object = Mixin\delete('storage_preparat', $post['id']);
                     }else {
@@ -1605,7 +1605,7 @@ class StoragePreparatForm extends Model
                         <label>Расходные материалы:</label>
                         <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
                             <option></option>
-                            <?php foreach ($db->query("SELECT id, preparat_code, qty FROM storage_preparat") as $row): ?>
+                            <?php foreach ($db->query("SELECT st.id, st.preparat_code, st.qty FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 7") as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['preparat_code'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -1636,7 +1636,102 @@ class StoragePreparatForm extends Model
         $order = $db->query("SELECT * FROM $this->table WHERE id={$this->post['product']}")->fetch();
         $post['visit_id'] = $this->post['visit_id'];
         $post['item_id'] = $order['preparat_id'];
-        $post['item_type'] = 3;
+        $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$order['preparat_id']}")->fetch()['catg'];
+        $post['item_cost'] = $order['price'];
+        $post['item_name'] = $order['preparat_code'];
+        for ($i=0; $i < $this->post['qty']; $i++) {
+            $object = Mixin\insert('visit_price', $post);
+        }
+        if (!intval($object)) {
+            $this->error('visit_price: '.$object);
+        }
+        if ($order['qty'] > $this->post['qty']) {
+            $object = Mixin\update('storage_preparat', array('qty' => $order['qty']-$this->post['qty']), $this->post['product']);
+        } else {
+            $object = Mixin\delete('storage_preparat', $this->post['product']);
+        }
+        if (!intval($object)) {
+            $this->error('storage_preparat: '.$object);
+        }
+        $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}
+
+class StoragePreparatAnestForm extends Model
+{
+    public $table = 'storage_preparat';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+
+                <div class="form-group row">
+
+                    <div class="col-md-8">
+                        <label>Расходные материалы:</label>
+                        <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT st.id, st.preparat_code, st.qty FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 11") as $row): ?>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['preparat_code'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label>Количество:</label>
+                            <input type="number" name="qty" value="1" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        global $db;
+        $order = $db->query("SELECT * FROM $this->table WHERE id={$this->post['product']}")->fetch();
+        $post['visit_id'] = $this->post['visit_id'];
+        $post['item_id'] = $order['preparat_id'];
+        $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$order['preparat_id']}")->fetch()['catg'];
         $post['item_cost'] = $order['price'];
         $post['item_name'] = $order['preparat_code'];
         for ($i=0; $i < $this->post['qty']; $i++) {
@@ -1700,7 +1795,7 @@ class StorageOrdersModel extends Model
                         <label>Расходные материалы:</label>
                         <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required data-fouc>
                             <option></option>
-                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 1") as $row): ?>
+                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products") as $row): ?>
                                 <option value="<?= $row['product_id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['product_code'] ?></option>
                             <?php endforeach; ?>
                         </select>

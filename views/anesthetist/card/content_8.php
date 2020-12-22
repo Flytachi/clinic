@@ -43,27 +43,12 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-						<?php
-						include "content_tabs.php";
-						if($_SESSION['message']){
-							echo $_SESSION['message'];
-							unset($_SESSION['message']);
-						}
-						?>
+						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
 
 							<div class="card-header header-elements-inline">
-								<h6 class="card-title">Лист назначений</h6>
-								<div class="header-elements">
-									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-										<div class="list-icons">
-											<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
-												<i class="icon-plus22"></i>Добавить
-											</a>
-										</div>
-									<?php endif; ?>
-								</div>
+								<h5 class="card-title">Лист назначений</h5>
 							</div>
 
 							<div class="table-responsive">

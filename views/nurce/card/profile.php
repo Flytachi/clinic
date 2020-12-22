@@ -120,7 +120,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
                                     $pl +
-                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 2) +
+                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) +
                                     (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
                                 )
                                  'balance'
