@@ -178,6 +178,20 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_add" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Добавить расходный материал</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<?= StoragePreparatAnestForm::form() ?>
+
+			</div>
+		</div>
+	</div>
+
 	<div id="modal_add_inspection" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
