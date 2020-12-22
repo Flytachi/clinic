@@ -55,13 +55,15 @@ $header = "Пациент";
 									<thead>
 										<tr class="bg-info">
 											<th>Дата и время осмотра</th>
+											<th>Врач</th>
 											<th class="text-right" style="width: 50%">Действия</th>
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
+										<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status_anest IS NULL ORDER BY add_date DESC") as $row): ?>
 											<tr>
 												<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td class="text-right">
 													<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 												</td>

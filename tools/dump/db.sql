@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Дек 21 2020 г., 17:05
+-- Время создания: Дек 22 2020 г., 17:08
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.13
 
@@ -140,14 +140,14 @@ CREATE TABLE `bypass_date` (
 
 INSERT INTO `bypass_date` (`id`, `bypass_id`, `bypass_time_id`, `parent_id`, `custom_time`, `date`, `comment`, `status`, `completed`, `add_date`) VALUES
 (71, 1, 2, NULL, NULL, '2020-12-21', NULL, 1, 1, '2020-12-21 13:19:03'),
-(72, 1, 1, NULL, NULL, '2020-12-22', NULL, 1, NULL, '2020-12-21 13:19:03'),
+(72, 1, 1, 14, NULL, '2020-12-22', 'swqeqeq', 1, 1, '2020-12-21 13:19:03'),
 (73, 1, 2, NULL, NULL, '2020-12-22', NULL, NULL, NULL, '2020-12-21 13:19:04'),
 (74, 3, 8, 14, NULL, '2020-12-21', 'qwq', 1, 1, '2020-12-21 13:19:07'),
 (75, 3, 9, 14, NULL, '2020-12-21', 'qswqwq qwq qw q q', 1, 1, '2020-12-21 13:19:08'),
-(76, 3, 6, NULL, NULL, '2020-12-22', NULL, 1, NULL, '2020-12-21 13:19:09'),
-(77, 4, 10, NULL, NULL, '2020-12-22', NULL, 1, NULL, '2020-12-21 13:19:14'),
+(76, 3, 6, 14, NULL, '2020-12-22', NULL, 1, 1, '2020-12-21 13:19:09'),
+(77, 4, 10, 14, NULL, '2020-12-22', 'qwewqeqw', 1, 1, '2020-12-21 13:19:14'),
 (78, 4, 11, 14, NULL, '2020-12-21', NULL, 1, 1, '2020-12-21 13:19:17'),
-(79, 4, 11, NULL, NULL, '2020-12-22', NULL, 1, NULL, '2020-12-21 13:19:18');
+(79, 4, 11, 14, NULL, '2020-12-22', 'lll', 1, 1, '2020-12-21 13:19:18');
 
 -- --------------------------------------------------------
 
@@ -384,7 +384,8 @@ CREATE TABLE `investment` (
 INSERT INTO `investment` (`id`, `pricer_id`, `user_id`, `balance_cash`, `balance_card`, `balance_transfer`, `add_date`) VALUES
 (1, 3, 15, '100000.0', '50000.0', '0.0', '2020-12-14 23:11:13'),
 (2, 3, 15, '80000.0', '1000000.0', '400000.0', '2020-12-15 18:19:17'),
-(3, 3, 15, '-900.0', '0.0', '0.0', '2020-12-15 19:51:43');
+(3, 3, 15, '-900.0', '0.0', '0.0', '2020-12-15 19:51:43'),
+(4, 3, 15, '200000.0', '1000000.0', '0.0', '2020-12-22 17:24:02');
 
 -- --------------------------------------------------------
 
@@ -506,11 +507,12 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `product_code`, `gen_name`, `product_name`, `cost`, `o_price`, `price`, `profit`, `supplier`, `catg`, `onhand_qty`, `qty`, `qty_sold`, `sdate`, `ediz`, `expiry_date`, `date_arrival`, `fakturanumber`, `qtyu`, `shcod`) VALUES
-(158, 'Шприц 2 мг 1 шт', 'wqeqwe', '1231232', NULL, '1000', '1030', '30', 'STeam', '1', NULL, 15, NULL, '1231-03-13', 'УП', '2020-12-10', '2020-12-10', '213213', '20', '132132131231231232'),
-(159, 'Волшебные таблетки', 'Жасур', '213213', NULL, '5000', '5500', '500', 'STeam', '1', NULL, 11, NULL, '2020-12-04', 'ШТ', '2020-12-18', '2020-12-10', '12312', '2', 'йцуйцуйцу'),
-(161, 'Бисопролол 2,5 мг\r\n', '112', '2232', NULL, '4000', '4600', '600', 'STeam', '0', NULL, 48, NULL, '2020-12-02', 'ШТ', '2020-12-10', '2020-12-11', 'wwww', '10', 'qwerqwerwere'),
-(162, 'Глимепирид таблетки 1 мг\r\n', 'wwww', 'wwww', NULL, '25000', '28750', '3750', 'STeam', '0', NULL, 76, NULL, '2020-12-10', 'ШТ', '2021-06-18', '2020-12-11', '222', '20', 'wwwww'),
-(163, 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', NULL, '6000', '6900', '900', 'STeam', '0', NULL, 94, NULL, '2020-12-02', 'ШТ', '2020-12-03', '2020-12-10', '3223', '20', 'wewqeqweqw');
+(158, 'Шприц 2 мг 1 шт', 'wqeqwe', '1231232', NULL, '1000', '1030', '30', 'STeam', '3', NULL, 13, NULL, '1231-03-13', 'УП', '2020-12-10', '2020-12-10', '213213', '20', '132132131231231232'),
+(159, 'Волшебные таблетки', 'Жасур', '213213', NULL, '5000', '5500', '500', 'STeam', '3', NULL, 11, NULL, '2020-12-04', 'ШТ', '2020-12-18', '2020-12-10', '12312', '2', 'йцуйцуйцу'),
+(161, 'Бисопролол 2,5 мг\r\n', '112', '2232', NULL, '4000', '4600', '600', 'STeam', '2', NULL, 47, NULL, '2020-12-02', 'ШТ', '2020-12-10', '2020-12-11', 'wwww', '10', 'qwerqwerwere'),
+(162, 'Глимепирид таблетки 1 мг\r\n', 'wwww', 'wwww', NULL, '25000', '28750', '3750', 'STeam', '2', NULL, 75, NULL, '2020-12-10', 'ШТ', '2021-06-18', '2020-12-11', '222', '20', 'wwwww'),
+(163, 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', NULL, '6000', '6900', '900', 'STeam', '2', NULL, 91, NULL, '2020-12-02', 'ШТ', '2020-12-03', '2020-12-10', '3223', '20', 'wewqeqweqw'),
+(164, 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2333', 'ww', NULL, '10000', '11500', '1500', 'STeam', '4', NULL, 20, NULL, '2020-12-02', 'ШТ', '2020-12-24', '2020-12-10', 'weewq', '5', 'wwwwwww');
 
 -- --------------------------------------------------------
 
@@ -588,7 +590,12 @@ INSERT INTO `sales_order` (`transaction_id`, `user_id`, `product`, `qty`, `amoun
 (32, 14, '161', '1', '4600', '600', 'Бисопролол 2,5 мг\r\n', '112', '2232', '4600', NULL, '2020-12-21 18:19:40'),
 (33, 14, '162', '2', '57500', '7500', 'Глимепирид таблетки 1 мг\r\n', 'wwww', 'wwww', '28750', NULL, '2020-12-21 18:19:40'),
 (34, 14, '163', '3', '20700', '2700', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', '6900', NULL, '2020-12-21 18:19:40'),
-(35, 14, '159', '6', '33000', '3000', 'Волшебные таблетки', 'Жасур', '213213', '5500', NULL, '2020-12-21 18:45:15');
+(35, 14, '159', '6', '33000', '3000', 'Волшебные таблетки', 'Жасур', '213213', '5500', NULL, '2020-12-21 18:45:15'),
+(36, 14, '161', '1', '4600', '600', 'Бисопролол 2,5 мг\r\n', '112', '2232', '4600', NULL, '2020-12-22 17:17:12'),
+(37, 14, '162', '1', '28750', '3750', 'Глимепирид таблетки 1 мг\r\n', 'wwww', 'wwww', '28750', NULL, '2020-12-22 17:17:12'),
+(38, 14, '163', '3', '20700', '2700', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', '6900', NULL, '2020-12-22 17:17:12'),
+(39, 21, '158', '2', '2060', '60', 'Шприц 2 мг 1 шт', 'wqeqwe', '1231232', '1030', NULL, '2020-12-22 19:08:42'),
+(40, 21, '164', '15', '172500', '22500', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2333', 'ww', '11500', NULL, '2020-12-22 19:47:22');
 
 -- --------------------------------------------------------
 
@@ -671,15 +678,6 @@ CREATE TABLE `storage_orders` (
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `storage_orders`
---
-
-INSERT INTO `storage_orders` (`id`, `user_id`, `parent_id`, `preparat_id`, `qty`, `date`) VALUES
-(77, 15, 5, 161, 1, '2020-12-22'),
-(80, 15, 5, 162, 1, '2020-12-22'),
-(81, 15, 5, 163, 3, '2020-12-22');
-
 -- --------------------------------------------------------
 
 --
@@ -704,7 +702,9 @@ CREATE TABLE `storage_preparat` (
 --
 
 INSERT INTO `storage_preparat` (`id`, `division_id`, `parent_id`, `preparat_id`, `preparat_code`, `first_qty`, `qty`, `price`, `amount`, `add_date`) VALUES
-(23, NULL, 14, 159, 'Волшебные таблетки', 6, 4, '5500.0', '33000.0', '2020-12-21 18:45:15');
+(23, NULL, 14, 159, 'Волшебные таблетки', 6, 4, '5500.0', '33000.0', '2020-12-21 18:45:15'),
+(27, NULL, 21, 158, 'Шприц 2 мг 1 шт', 2, 1, '1030.0', '2060.0', '2020-12-22 19:08:42'),
+(28, NULL, 21, 164, 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', 15, 14, '11500.0', '172500.0', '2020-12-22 19:47:22');
 
 -- --------------------------------------------------------
 
@@ -804,7 +804,8 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (17, NULL, 'farm', '36a3bbe0659d5cf5e918a70a1da0c90ff6a33ba9', 'farm', 'farm', 'farm', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, NULL, '2020-12-06 16:30:42'),
 (18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, 1, NULL, '2020-12-07 12:56:02'),
 (19, 2, NULL, NULL, 'qweqwe', 'eqweqw', 'eqweqw', '2020-12-02', 'Ромитан', '21321321312', 'eqweqw', 'eqweqw', '231312321313123', 'eqweqw', 'eqweqw', 1, 15, NULL, NULL, 0, NULL, '2020-12-10 16:01:05'),
-(20, 2, NULL, NULL, 'Test', 'Test', 'Test', '2000-12-12', 'Ромитан', 'АА454545', 'аап', 'апапап', '998912474353', 'г .Бухара', 'Кучабох 8', 1, 15, NULL, NULL, 0, NULL, '2020-12-13 10:59:40');
+(20, 2, NULL, NULL, 'Test', 'Test', 'Test', '2000-12-12', 'Ромитан', 'АА454545', 'аап', 'апапап', '998912474353', 'г .Бухара', 'Кучабох 8', 1, 15, NULL, NULL, 0, NULL, '2020-12-13 10:59:40'),
+(21, NULL, 'any', 'c5fe0200d1c7a5139bd18fd22268c4ca8bf45e90', 'any', 'any', 'any', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, NULL, 1, 11, NULL, '2020-12-22 12:46:42');
 
 -- --------------------------------------------------------
 
@@ -890,7 +891,8 @@ INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `assi
 (26, 16, 5, 7, 11, 7, 2, 2, NULL, NULL, 2, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-13 16:26:51', '2020-12-21 22:00:06', '2020-12-21 15:53:19', NULL, NULL),
 (29, 15, NULL, 5, 5, NULL, 10, 34, NULL, 1, 2, NULL, NULL, NULL, 'Раны грудной клетки', 'e qwew qwe q qwe qqwe qwqwe qwqw', 'ewqe wq  qwew', 'e qweqw qeq', '2020-12-21 20:50:52', '2020-12-21 20:50:52', NULL, NULL, NULL),
 (30, 15, 5, 11, 5, NULL, 14, 43, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-21 21:33:11', NULL, NULL, NULL, NULL),
-(31, 15, 5, 18, 5, 7, 2, 3, NULL, 1, 0, 1, NULL, NULL, '12131232132', '213 12eqw', 'qweqw q', 'qweqw qwe qweqwe', '2020-12-21 21:59:15', '2020-12-21 22:00:05', NULL, NULL, '2020-12-21 22:01:04');
+(31, 15, 5, 18, 5, 7, 2, 3, NULL, 1, 0, 1, NULL, NULL, '12131232132', '213 12eqw', 'qweqw q', 'qweqw qwe qweqwe', '2020-12-21 21:59:15', '2020-12-21 22:00:05', NULL, NULL, '2020-12-21 22:01:04'),
+(35, 15, 5, 6, 5, NULL, 8, 26, NULL, 1, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, '2020-12-22 17:03:52', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -901,9 +903,11 @@ INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `assi
 CREATE TABLE `visit_inspection` (
   `id` int(11) NOT NULL,
   `visit_id` int(11) NOT NULL,
+  `parent_id` int(11) NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `diagnostic` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `recommendation` varchar(700) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status_anest` tinyint(1) DEFAULT NULL,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -911,12 +915,14 @@ CREATE TABLE `visit_inspection` (
 -- Дамп данных таблицы `visit_inspection`
 --
 
-INSERT INTO `visit_inspection` (`id`, `visit_id`, `description`, `diagnostic`, `recommendation`, `add_date`) VALUES
-(1, 1, 'qwwqwq', NULL, 'qw123 323 12 313 1', '2020-12-12 16:52:45'),
-(2, 1, 'test1', NULL, 'test', '2020-12-12 17:09:28'),
-(3, 1, 'hdihqidhid', NULL, 'dhwihqidhqwid', '2020-12-12 17:14:34'),
-(4, 1, 'dfdbdfbdf', NULL, 'dfbdfbdfb', '2020-12-13 11:11:27'),
-(5, 1, 'wew qeqwe', 'qw eqweq weqwe', 'weqwe qweqweq weqw', '2020-12-17 15:51:57');
+INSERT INTO `visit_inspection` (`id`, `visit_id`, `parent_id`, `description`, `diagnostic`, `recommendation`, `status_anest`, `add_date`) VALUES
+(1, 1, 5, 'qwwqwq', NULL, 'qw123 323 12 313 1', NULL, '2020-12-12 16:52:45'),
+(2, 1, 5, 'test1', NULL, 'test', NULL, '2020-12-12 17:09:28'),
+(3, 1, 5, 'hdihqidhid', NULL, 'dhwihqidhqwid', NULL, '2020-12-12 17:14:34'),
+(4, 1, 5, 'dfdbdfbdf', NULL, 'dfbdfbdfb', NULL, '2020-12-13 11:11:27'),
+(5, 1, 5, 'wew qeqwe', 'qw eqweq weqwe', 'weqwe qweqweq weqw', NULL, '2020-12-17 15:51:57'),
+(6, 1, 21, 'wqewqe', 'qwewqewq', 'qwewq', 1, '2020-12-22 16:50:40'),
+(7, 1, 5, 'pick', 'pick', 'pick', NULL, '2020-12-22 16:54:19');
 
 -- --------------------------------------------------------
 
@@ -970,7 +976,17 @@ INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_c
 (46, 90, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 42, '80000.0', 'Кольпоскопия', '2020-12-21 15:31:32'),
 (48, 29, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 34, '60000.0', 'Раны грудной клетки', '2020-12-21 15:50:52'),
 (49, 30, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 43, '60000.0', 'Первичная консультация невропатолога', '2020-12-21 16:33:11'),
-(50, 31, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 3, '200000.0', 'Шейный отдел позвоночника', '2020-12-21 16:59:15');
+(50, 31, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 3, '200000.0', 'Шейный отдел позвоночника', '2020-12-21 16:59:15'),
+(51, 32, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 15, '120000.0', 'Оба Пальцев Передне-задняя/Боковая', '2020-12-22 11:34:01'),
+(52, 34, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 26, '30000.0', 'Общий белок', '2020-12-22 11:36:24'),
+(53, 35, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 26, '30000.0', 'Общий белок', '2020-12-22 12:03:52'),
+(54, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 2, 161, '4600.0', 'Бисопролол 2,5 мг\r\n', '2020-12-22 12:17:41'),
+(55, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 2, 162, '28750.0', 'Глимепирид таблетки 1 мг\r\n', '2020-12-22 12:17:46'),
+(56, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '2020-12-22 12:17:46'),
+(57, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '2020-12-22 12:17:51'),
+(58, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '2020-12-22 12:21:33'),
+(59, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 4, 164, '11500.0', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2020-12-22 15:42:00'),
+(60, 1, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 3, 158, '1030.0', 'Шприц 2 мг 1 шт', '2020-12-22 16:10:49');
 
 -- --------------------------------------------------------
 
@@ -1252,7 +1268,7 @@ ALTER TABLE `goods`
 -- AUTO_INCREMENT для таблицы `investment`
 --
 ALTER TABLE `investment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
@@ -1282,7 +1298,7 @@ ALTER TABLE `pharmacy_category`
 -- AUTO_INCREMENT для таблицы `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=164;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT для таблицы `purchases`
@@ -1306,7 +1322,7 @@ ALTER TABLE `sales`
 -- AUTO_INCREMENT для таблицы `sales_order`
 --
 ALTER TABLE `sales_order`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
@@ -1318,13 +1334,13 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT для таблицы `storage_orders`
 --
 ALTER TABLE `storage_orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_preparat`
 --
 ALTER TABLE `storage_preparat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_type`
@@ -1336,7 +1352,7 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT для таблицы `user_stats`
@@ -1348,19 +1364,19 @@ ALTER TABLE `user_stats`
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_inspection`
 --
 ALTER TABLE `visit_inspection`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT для таблицы `wards`

@@ -792,6 +792,46 @@ class VisitInspectionModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function form_anest($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status_anest" value="1">
 
             <div class="modal-body">
 
