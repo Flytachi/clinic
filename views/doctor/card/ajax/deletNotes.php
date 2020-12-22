@@ -6,4 +6,4 @@
 
 	unset($_POST['id']);
 
-	Mixin\update('notes', $_POST, $id);
+	Mixin\delete('notes', $id);

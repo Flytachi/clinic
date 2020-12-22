@@ -217,15 +217,14 @@ $header = "Пациент";
 		$(document).on('click', 'button', function() {
 			id = $(this).attr('data-id');
 		
-			// alert('d')
-			// $.ajax({
-		 //        type: "POST",
+			$.ajax({
+		        type: "POST",
 
-		 //        url: "ajax/deletNotes.php",
+		        url: "ajax/deletNotes.php",
 
-		 //        data: { id: id}
+		        data: { id: id}
 
-		 //    });
+		    });
 
 		    $(`tr[data-id="${id}"]`).remove();
 		});
