@@ -27,7 +27,7 @@ if ($_GET['pk']) {
                             bdt.price 'bed_price',
                             ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 1) 'cost_service',
-                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 2) 'cost_item_2',
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) 'cost_item_2',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                             -- vs.add_date
                         FROM users us

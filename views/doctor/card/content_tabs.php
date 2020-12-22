@@ -64,7 +64,7 @@
     if ($patient->direction) {
         ?>
         <li class="nav-item">
-            <a href="<?= viv('doctor/card/content_11') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_11')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Операционная<i class="icon-magazine ml-3"></i></a>
+            <a href="<?= viv('doctor/card/content_11') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_11')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Операционный блок<i class="icon-magazine ml-3"></i></a>
         </li>
         <?php
     }

@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth(7);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -39,41 +39,6 @@ $header = "Пациент";
 				        <?php include "content_tabs.php"; ?>
 
 						<div class="row">
-
-							<div class="col-md-12">
-
-								<div class="card">
-
-									<div class="card-header header-elements-inline">
-										<h5 class="card-title"><?= $title ?></h5>
-									</div>
-
-									<div class="table-responsive">
-										<table class="table table-hover table-sm">
-											<thead>
-												<tr class="bg-info">
-													<th>1212</th>
-													<th>1212</th>
-													<th class="text-right" style="width: 50px">Действия</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php for($i=0; $i < 1; $i++): ?>
-													<tr>
-														<td>1212</td>
-														<td>1212</td>
-														<td>
-															<button class="btn btn-outline-info btn-sm">Подробнее</button>
-														</td>
-													</tr>
-												<?php endfor; ?>
-											</tbody>
-										</table>
-									</div>
-
-								</div>
-
-							</div>
 
 							<div class="col-md-6">
 

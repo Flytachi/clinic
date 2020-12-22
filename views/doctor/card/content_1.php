@@ -80,13 +80,16 @@ $header = "Пациент";
 									<thead>
 										<tr class="bg-info">
 											<th><?= $table_label ?></th>
+											<?php if ($patient->direction): ?>
+												<th>Врач</th>
+											<?php endif; ?>
 											<th class="text-right" style="width: 50%">Действия</th>
 										</tr>
 									</thead>
 									<tbody>
 										<?php foreach ($db->query($table_sql) as $row): ?>
 											<tr class="<?= $table_tr ?>">
-												<td><?= $row['name'] ?></td>
+												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
 													<?php if ($row['report_description']): ?>
 														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -99,9 +102,10 @@ $header = "Пациент";
 										<?php endforeach; ?>
 
 										<?php if ($patient->direction): ?>
-											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
+											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status_anest IS NULL ORDER BY add_date DESC") as $row): ?>
 												<tr>
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+													<td><?= get_full_name($row['parent_id']) ?></td>
 													<td class="text-right">
 														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 													</td>

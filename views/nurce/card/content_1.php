@@ -59,7 +59,7 @@ $header = "Пациент";
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
+										<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status_anest IS NULL ORDER BY add_date DESC") as $row): ?>
 											<tr>
 												<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 												<td class="text-right">

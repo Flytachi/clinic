@@ -301,25 +301,25 @@ is_auth(4);
 															</div>
 														</div>
 
-															
+
 																<div class="form-group pt-2">
 									<label>Категория</label>
 									<div class="form-check">
 										<label class="form-check-label">
-											<input type="radio" class="form-check-input-styled" name="catg" value="0" checked data-fouc>
+											<input type="radio" class="form-check-input-styled" name="catg" value="2" checked data-fouc>
 											Препарат
 										</label>
 									</div>
 									<div class="form-check">
 										<label class="form-check-label">
-											<input type="radio" class="form-check-input-styled" name="catg" value="1" data-fouc>
+											<input type="radio" class="form-check-input-styled" name="catg" value="3" data-fouc>
 											Расходный материал
 										</label>
 									</div>
 
 									<div class="form-check">
 										<label class="form-check-label">
-											<input type="radio" class="form-check-input-styled" name="catg" value="1" data-fouc>
+											<input type="radio" class="form-check-input-styled" name="catg" value="4" data-fouc>
 											Анестезия
 										</label>
 									</div>
