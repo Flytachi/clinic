@@ -1909,7 +1909,7 @@ class BypassModel extends Model
 
                         <label>Препарат:</label>
                         <select class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
-                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 0") as $row2): ?>
+                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 2") as $row2): ?>
                                 <option value="<?= $row2['product_id'] ?>"><?= $row2['product_code'] ?> (<?= $row2['qty'] ?>)</option>
                             <?php endforeach; ?>
 						</select>

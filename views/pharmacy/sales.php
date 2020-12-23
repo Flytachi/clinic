@@ -165,7 +165,7 @@ is_auth(4);
 				                	<?php
 									$id=$_GET['invoice'];
 
-									$result = $db->prepare("SELECT * FROM sales_order");
+									$result = $db->prepare("SELECT * FROM sales_order ORDER BY add_date DESC");
 
 									$result->bindParam(':userid', $id);
 									$result->execute();

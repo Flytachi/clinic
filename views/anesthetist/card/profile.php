@@ -131,9 +131,9 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) -
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
-                                    $pl +
-                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) +
-                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
+                                    IFNULL($pl, 0) +
+                                    (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) +
+                                    (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
                                 )
                                  'balance'
                             FROM users us
