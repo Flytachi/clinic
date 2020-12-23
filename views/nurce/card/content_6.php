@@ -38,14 +38,7 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-						<?php
-	 	   				include "content_tabs.php";
-
-	 	   				if($_SESSION['message']){
-	 	   					echo $_SESSION['message'];
-	 	   					unset($_SESSION['message']);
-	 	   				}
-	 	   				?>
+						<?php include "content_tabs.php"; ?>
 
 						<!-- Zoom option -->
 						<div class="card border-1 border-warning">

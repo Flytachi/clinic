@@ -497,6 +497,7 @@
                                 </a>
                             </li>
                             <?php
+                            break;
                         case 11:
                             ?>
                             <li class="nav-item">

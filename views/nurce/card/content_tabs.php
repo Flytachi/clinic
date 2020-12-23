@@ -31,3 +31,10 @@
         <a href="<?= viv('nurce/card/content_9') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_9')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" >Операционный блок</a>
     </li>
 </ul>
+
+<?php
+if($_SESSION['message']){
+    echo $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
