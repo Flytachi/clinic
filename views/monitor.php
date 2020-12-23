@@ -4,14 +4,64 @@ $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include 'layout/head.php' ?>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title><?= ShowTitle() ?></title>
 
+	<!-- Global stylesheets -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("vendors/css/style.css") ?>" rel="stylesheet" type="text/css">
+	<!-- /global stylesheets -->
 
+	<!-- Core JS files -->
+	<script src="<?= stack("global_assets/js/main/jquery.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
+	<script src="<?= stack("vendors/js/box.js") ?>"></script>
+	<!-- /core JS files -->
+
+	<script src="<?= stack("global_assets/js/plugins/notifications/jgrowl.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/notifications/noty.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/notifications/sweet_alert.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
+	<!-- Theme JS files -->
+	<script src="<?= stack("global_assets/js/plugins/ui/moment/moment.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3_tooltip.js") ?>"></script>
+	<!-- /theme JS files -->
+
+	<script src="<?= stack("assets/js/app.js") ?>"></script>
+
+	<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
+
+	<!-- JS chained -->
+	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
+
+	<script>
+			let id = '1983';
+			let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+	</script>
+	<script src="<?= stack("vendors/js/scriptJS/socket.js") ?>"></script>
 	<!-- Theme JS files -->
 	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js")?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js")?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/components_dropdowns.js")?>"></script>
 	<!-- /theme JS files -->
+</head>
+
+
+
 
 <!-- Theme JS files -->
 <!-- /theme JS files -->
@@ -80,7 +130,9 @@ $header = "Рабочий стол";
 	        	let we = "";
 
 	        	$(document).on('click', '.chew', function () {
-	        		id = $(this).attr('data-chatid');
+	        		id1 = $(this).attr('data-chatid');
+
+	        		// alert($(''))
 
 	        		$(this).attr('class', "dele");
 
@@ -89,12 +141,14 @@ $header = "Рабочий стол";
 
 				        url: "visit.php",
 
-				        data: { id: id},
+				        data: { id: id1},
 
 				        success : function (data) {
 
 				        	let d = JSON.parse(data);
 				        	console.log(d);
+
+				        	cout = Number($("#dd").attr("data-cout"));
 
 				        	let queue = d.queue;
 
@@ -109,15 +163,16 @@ $header = "Рабочий стол";
 
 
 				        	for (let i = 0; i < queue.length; i++) {
-				        		we += `<tr style=" background-color: #E3E64C;">
-				        				<td>${ queue[i].id }</td>
+				        		we += `<tr style=" background-color: #E3E64C;" data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
+				        				<td>${ queue[i].user_id }</td>
 				        				<td>${ queue[i].last_name } - ${ queue[i].first_name }</td>
 				        				</tr>`
 				        	}
-				        	
-				        	$('#dd').append(`<div class="col-md-6 card" style="max-width: 49%; margin-right: 1%; padding: 0px;" data-chatid1="${id}">
+
+				        	if ( cout == 0 ||  cout != 1 && cout % 2 == 0) {
+				        		$('#dd').append(`<div class="col-md-12 card" id="ad" style="height: 50%; max-width: 99%; margin-right: 1%; padding: 0px;" data-chatid1="${id1}">
 									<div class="card-header alpha-success text-success-800 header-elements-inline">
-										<h6 class="card-title">${id} - Кабинет</h6>
+										<h6 class="card-title">${id1} - Кабинет</h6>
 									</div>
 									<div class="table-responsive card-body" style="padding: 0px;">
 										<table class="table table-hover">
@@ -138,25 +193,60 @@ $header = "Рабочий стол";
 								</div>`);
 
 								we = "";
+
+								cout += 1;
+
+								$("#dd").attr("data-cout" , cout);
+
+
+				        	}else{
+
+				        		$('#ad').css("max-width", "49%");
+
+				        		$('#ad').attr("id", "");
+
+					        	$('#dd').append(`<div class="col-md-6 card" style="height: 50%; max-width: 49%; margin-right: 1%; padding: 0px;" data-chatid1="${id1}">
+										<div class="card-header alpha-success text-success-800 header-elements-inline">
+											<h6 class="card-title">${id1} - Кабинет</h6>
+										</div>
+										<div class="table-responsive card-body" style="padding: 0px;">
+											<table class="table table-hover">
+								                <thead>
+								                    <tr class="bg-blue">
+									                    <th> Номер </th>
+														<th> Пациент </th>
+								                    </tr>
+								                </thead>
+								                <tbody>
+
+								               		${we}
+
+								                </tbody>
+								            </table>
+								        </div>
+
+									</div>`);
+
+
+								cout += 1;
+
+								$("#dd").attr("data-cout" , cout);
+
+								we = "";
+				        	}
+
 				        }
 
-				    });
-
-				    	// we = 'fsa';
-
-	        			
-		        		
+				    });     		
 	        	});
 
 	        	$(document).on('click', '.dele', function () {
 
-	        		id = $(this).attr('data-chatid');
+	        		id1 = $(this).attr('data-chatid');
 
 	        		$(this).attr('class', "chew");
 
-	        		alert(id);
-
-	        		$(`div[data-chatid1=${id}]`).remove()
+	        		$(`div[data-chatid1=${id1}]`).remove()
 
 	        	})
 
@@ -190,7 +280,7 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="row" id="dd">
+				<div class="row" id="dd" style="height: 80%" data-cout="0">
 
 				</div>
 				 

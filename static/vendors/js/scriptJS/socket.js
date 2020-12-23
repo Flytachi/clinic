@@ -23,8 +23,11 @@ conn.onopen = function(e) {
 };
 
 conn.onmessage = function(e) {
+
+
 	let d = JSON.parse(e.data)
 
+  console.log(d);
 	let time = new Date();
 
 	let hour = addZero(time.getHours());
@@ -143,9 +146,17 @@ conn.onmessage = function(e) {
             type: 'info',
             html: d.message
         });
+    
     }
-  }
+  }else if (d.type == "patient" ) {
+      if(d.id == id){
 
+        $(`tr[data-userid=${ d.user_id }]`).css("background-color" , "green");
+        // alert($(`tr[data-userid=${ d.user_id }]`).text());
+
+        // alert("d");
+      }
+  }
 };
 
 function sendMessage(body) {
@@ -189,3 +200,12 @@ function deletNotice(body) {
 		console.log('error')
 	}
 }
+
+function sendPatient(body) {
+  parentid = body.dataset.parentid;
+  userid = body.dataset.userid;
+  let obj = JSON.stringify({ type : 'patient', id : "1983", user_id : userid, parent_id : parentid});
+  conn.send(obj);
+  // alert(obj);
+}
+

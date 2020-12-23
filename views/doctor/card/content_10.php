@@ -196,9 +196,6 @@ $header = "Пациент";
 			</div>
 		</div>
 	</div>
-	<script src="<?= stack('global_assets/js/plugins/datetimepicker-master/build/jquery.datetimepicker.full.js') ?>"></script>
-
-
 	<script>
 
 
