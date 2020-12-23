@@ -429,6 +429,42 @@ class VisitModel extends Model
         <?php
     }
 
+    public function form_oper($pk = null)
+    {
+        global $db, $patient;
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-4">
+                    <label>Дата:</label>
+                    <input type="date" class="form-control" name="oper_date">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Время:</label>
+                    <input type="time" class="form-control" name="time">
+                </div>
+
+                <div class="col-md-4">
+                    <div class="text-right mt-4">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Назначить операцию</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function save()
     {
         global $db;
@@ -467,6 +503,10 @@ class VisitModel extends Model
             if ($stat) {
                 $this->post['laboratory'] = True;
             }
+        }
+        if ($this->post['oper_date']) {
+            $this->post['oper_date'] .= " ".$this->post['time'];
+            unset($this->post['time']);
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
@@ -831,7 +871,46 @@ class VisitInspectionModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status_anest" value="1">
+            <input type="hidden" name="status" value="1">
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function form_oper($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status" value="2">
 
             <div class="modal-body">
 
@@ -2131,6 +2210,73 @@ class PatientStatsModel extends Model
         <?php
     }
 
+    public function form_oper($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status" value="2">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+
+                    <div class="col-md-6">
+                        <label>Время:</label>
+                        <input type="time" class="form-control" name="time">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Давление:</label>
+                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление">
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-4">
+                        <label>Пульс:</label>
+                        <input type="number" class="form-control" name="pulse" min="40" step="1" max="150" value="85" placeholder="Введите пульс" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Температура:</label>
+                        <input type="number" class="form-control" name="temperature" min="35" step="0.1" max="42" value="36.6" placeholder="Введите температура" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Сатурация:</label>
+                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['status'] and $this->post['time']) {
+            $this->post['add_date'] = date('Y-m-d ') . $this->post['time'];
+            unset($this->post['time']);
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -2347,6 +2493,70 @@ class StoragePreparatModel extends Model
             $object = Mixin\delete('storage_orders', $order_pk);
         }
         $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
+
+class VisitMemberModel extends Model
+{
+    public $table = 'visit_member';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>Член персонала:</label>
+                    <select placeholder="Введите состояние" name="member_id" class="form-control form-control-select2">
+                        <?php foreach ($db->query("SELECT us.id, IFNULL(vm.id, NULL) 'vm_id' FROM users us LEFT JOIN visit_member vm ON(vm.member_id=us.id AND vm.status IS NULL AND vm.visit_id=$patient->visit_id) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($row['vm_id']) ? "disabled" : "" ?>><?= get_full_name($row['id']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()

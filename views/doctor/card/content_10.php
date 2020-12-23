@@ -16,7 +16,7 @@ $header = "Пациент";
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
-	<?php 
+	<?php
 
 		$id = $_SESSION['session_id'];
 
@@ -41,7 +41,7 @@ $header = "Пациент";
 
 		id : <?= $key['id']?>
 	},
-		
+
 
 	<?php
 		}
@@ -50,7 +50,7 @@ $header = "Пациент";
 
 
 	]
-	
+
 
 
 	setInterval(function () {
@@ -115,13 +115,7 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-						<?php
-						include "content_tabs.php";
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
 							<div class="card-header header-elements-inline">
@@ -156,7 +150,7 @@ $header = "Пациент";
 
 									   		<div class="time" data-id="<?= $row['id']?>"><?= $row['time_text']; ?></div>
 
-									   			
+
 								   		</td>
 									   	<td class="pass_e" data-id="<?= $row['id']?>"><?= $row['description']; ?></td>
 									   	<td>
@@ -202,7 +196,7 @@ $header = "Пациент";
 		$(document).on('click', '.pass_e', function function_name() {
 			word = $(this).text();
 
-			
+
 
 			id = $(this).attr('data-id');
 			$(this).text('');
@@ -213,7 +207,7 @@ $header = "Пациент";
 
 		$(document).on('click', 'button', function() {
 			id = $(this).attr('data-id');
-		
+
 			$.ajax({
 		        type: "POST",
 
@@ -300,7 +294,7 @@ $header = "Пациент";
 
 				$(`.activ_d[data-id="${id}"]`).attr('class', 'pass_d');
 			}
-				
+
 		});
 
 		$(document).on('keypress', '.time1', function(e) {
@@ -340,7 +334,7 @@ $header = "Пациент";
 
 				$(`.activ_d[data-id="${id}"]`).attr('class', 'pass_d');
 			}
-				
+
 		});
 	</script>
 

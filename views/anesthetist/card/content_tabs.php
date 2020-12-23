@@ -65,3 +65,10 @@
     }
     ?>
 </ul>
+
+<?php
+if($_SESSION['message']){
+    echo $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>

@@ -5,7 +5,7 @@ $sql = "SELECT
             us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
-            wd.floor, wd.ward, bd.bed
+            vs.oper_date, wd.floor, wd.ward, bd.bed
         FROM users us
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
