@@ -16,6 +16,71 @@ $header = "Пациент";
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+	<?php 
+
+		$id = $_SESSION['session_id'];
+
+		$sql = "SELECT * FROM notes WHERE parent_id = $id AND status = 0";
+
+		$res = $db->query($sql)->fetchAll();
+
+	?>
+<script>
+
+
+	let mas = [
+	<?php
+
+		foreach ($res as $key) {
+	?>
+
+	{
+		date : new Date('<?= $key['date_text']?> <?= $key['time_text']?>').getTime(),
+
+		text : "<?= $key['description']?>",
+
+		id : <?= $key['id']?>
+	},
+		
+
+	<?php
+		}
+
+	?>
+
+
+	]
+	
+
+
+	setInterval(function () {
+		// alert(mas.length);
+		if(mas.length != 0){
+			for(let i = 0; i < mas.length; i++){
+				if((Math.trunc(Date.now() / 100000) - Math.trunc(mas[i].date / 100000)) >= 0 ){
+
+					new Noty({
+			            text: mas[i].text,
+			            type: 'info'
+			        }).show();
+
+
+					$.ajax({
+				        type: "POST",
+
+				        url: "ajax/upadateNotes1.php",
+
+				        data: { id: mas[i].id, status : 1 }
+
+				    });
+					delete mas[i];
+				}
+			}
+		}
+	}, 1000);
+
+
+</script>
 
 <!-- <script src="../../../../global_assets/js/demo_pages/picker_date.js"></script> -->
 
@@ -74,17 +139,16 @@ $header = "Пациент";
 							<table id="data_table" class="table table-striped">
 								<thead>
 									<tr>
-										<th>Id</th>
-										<th>Date</th>
-										<th>Description</th>
+										<th>Дата</th>
+										<th>Описания</th>
+										<th>Удалить</th>
 									</tr>
 								</thead>
 								<tbody>
 								<?php
 								foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
 								?>
-									<tr>
-								   		<td><?php echo $row['id']; ?></td>
+									<tr data-id="<?= $row['id']?>">
 									   	<td class="pass_d" data-id="<?= $row['id']?>">
 
 									   		<div class="date" data-id="<?= $row['id']?>"><?= $row['date_text']; ?></div>
@@ -95,6 +159,9 @@ $header = "Пациент";
 									   			
 								   		</td>
 									   	<td class="pass_e" data-id="<?= $row['id']?>"><?= $row['description']; ?></td>
+									   	<td>
+									   		<button data-id="<?= $row['id']?>" type="button" class="btn btn-danger legitRipple active">Удалить</button>
+									   	</td>
 								   	</tr>
 								<?php
 								}
@@ -145,6 +212,21 @@ $header = "Пациент";
 			$(this).attr('class', 'activ_e');
 			$(this).append(`<input class="form-control inpt" type="text" value="${word}" data-id="${id}">`);
 
+		});
+
+		$(document).on('click', 'button', function() {
+			id = $(this).attr('data-id');
+		
+			$.ajax({
+		        type: "POST",
+
+		        url: "ajax/deletNotes.php",
+
+		        data: { id: id}
+
+		    });
+
+		    $(`tr[data-id="${id}"]`).remove();
 		});
 
 		$(document).on('keypress', '.inpt', function(e) {
@@ -201,6 +283,15 @@ $header = "Пациент";
 
 			    });
 
+			    $.ajax({
+			        type: "POST",
+
+			        url: "ajax/upadateNotes1.php",
+
+			        data: { id: id, status : 0 }
+
+			    });
+
 				$(`.date1[data-id="${id}"]`).remove();
 
 				$(`.time1[data-id="${id}"]`).remove();
@@ -230,6 +321,15 @@ $header = "Пациент";
 			        url: "ajax/upadateNotes.php",
 
 			        data: { id: id, date_text : date, time_text : time }
+
+			    });
+
+			    $.ajax({
+			        type: "POST",
+
+			        url: "ajax/upadateNotes1.php",
+
+			        data: { id: id, status : 0 }
 
 			    });
 

@@ -20,6 +20,7 @@ $PERSONAL = array(
     8 => "Главный врач",
     9 => "Повар",
     10 => "Диагностика",
+    11 => "Анестезиолог"
 );
 
 $FLOOR = array(
@@ -182,6 +183,21 @@ function division_name($id = null) {
     $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
     try{
         $stmt = $db->query("SELECT name from division where id = $id")->fetchColumn();
+    }
+    catch (PDOException $ex) {
+        $stmt = null;
+    }
+	return $stmt;
+}
+
+function division_title($id = null) {
+    global $db, $PERSONAL;
+    if(empty($id)){
+        $id = $_SESSION['session_id'];
+    }
+    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    try{
+        $stmt = $db->query("SELECT title from division where id = $id")->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;

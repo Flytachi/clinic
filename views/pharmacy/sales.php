@@ -147,6 +147,7 @@ is_auth(4);
 				            <table class="table table-hover">
 				                <thead>
 				                    <tr class="bg-blue">
+										<th> Дата: </th>
 				                        <th> Наименование: </th>
 										<th> Производитель:</th>
 										<th> Серия:</th>
@@ -164,7 +165,7 @@ is_auth(4);
 				                	<?php
 									$id=$_GET['invoice'];
 
-									$result = $db->prepare("SELECT * FROM sales_order");
+									$result = $db->prepare("SELECT * FROM sales_order ORDER BY add_date DESC");
 
 									$result->bindParam(':userid', $id);
 									$result->execute();
@@ -172,6 +173,9 @@ is_auth(4);
 								?>
 								<tr>
 									<td hidden><?= $row['product']; ?></td>
+									<td>
+										<?= date('d.m.Y H:i', strtotime($row['add_date']))?>
+									</td>
 									<td><?= $row['product_code']; ?></td>
 									<td><?= $row['gen_name']; ?></td>
 									<td><?= $row['name']; ?></td>
@@ -195,7 +199,7 @@ is_auth(4);
 								?>
 
 								<tr>
-									<th colspan="5"></th>
+									<th colspan="6"></th>
 									<td>Общая цена: </td>
 									<td>Общая прибыль: </td>
 
@@ -204,7 +208,7 @@ is_auth(4);
 								</tr>
 
 								<tr>
-									<td colspan="4"></td>
+									<td colspan="5"></td>
 									<td><strong style="font-size: 12px; color: #222222;">Всего:</strong></td>
 									<td colspan="1"><strong style="font-size: 12px; color: #222222;">
 									<?php

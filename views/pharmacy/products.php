@@ -31,6 +31,15 @@ is_auth(4);
 <script src="<?= stack("assets/js/app.js")?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_select2.js")?>"></script>
 
+<script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js")?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/switchery.min.js")?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/switch.min.js")?>"></script>
+
+
+</head>
+
 <body>
 
 	<!-- Main navbar -->
@@ -292,19 +301,30 @@ is_auth(4);
 															</div>
 														</div>
 
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Категория</label>
-																	<select name="catg" class="form-control select select2-hidden-accessible"  data-fouc="" tabindex="-1" aria-hidden="true">
-																		<option></option>
-																		<?php foreach ($db->query("SELECT * FROM pharmacy_category") as $row): ?>
-																			<option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-											                            <?php endforeach; ?>
-																	</select>
-																</div>
-															</div>
-														</div>
+
+																<div class="form-group pt-2">
+									<label>Категория</label>
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input-styled" name="catg" value="2" checked data-fouc>
+											Препарат
+										</label>
+									</div>
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input-styled" name="catg" value="3" data-fouc>
+											Расходный материал
+										</label>
+									</div>
+
+									<div class="form-check">
+										<label class="form-check-label">
+											<input type="radio" class="form-check-input-styled" name="catg" value="4" data-fouc>
+											Анестезия
+										</label>
+									</div>
+
+								</div>
 
 														<div class="form-group">
 															<div class="row">

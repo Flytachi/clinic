@@ -161,51 +161,17 @@
                         case 4:
                             ?>
                             <li class="nav-item">
-                                <a href="sales.php?id=cash&invoice" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Продажа</span>
+                                <a href="orders.php" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Заказы</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="products.php" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Препараты (товары)</span>
+                                <a href="application.php" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Пациенты</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="customer.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Клиенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="supplier.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Поставщики</span>
-                                </a>
-                            </li>
-                            <!-- <li class="nav-item">
-                                <a href="#" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Отчет продаж</span>
-                                </a>
-                            </li> -->
-                            <li class="nav-item">
-                                <a href="sales_inventory.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Инвентаризация продаж</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="all_prep.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Все наименования</span>
-                                </a>
-                            </li>
-                            <?php
-                            break;
-                        case 4:
-                            ?>
                             <li class="nav-item">
                                 <a href="sales.php?id=cash&invoice" class="nav-link legitRipple">
                                     <i class="icon-users"></i>
@@ -382,6 +348,24 @@
                                     ?>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('nurce/list_task') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Задания</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Склад</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('journal/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 8:
@@ -513,6 +497,36 @@
                                 </a>
                             </li>
                             <?php
+                        case 11:
+                            ?>
+                            <li class="nav-item">
+                                <a href="" class="nav-link legitRipple">
+                                    <i class="icon-users2 "></i>
+                                    <span>Амбулаторные пациенты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('anesthetist/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Стационарные пациенты</span>
+                                    <?php
+                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                    if ($con_tree) {
+                                        ?>
+                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
+                                        <?php
+                                    }
+                                    ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('anesthetist/storage') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Склад</span>
+                                </a>
+                            </li>
+                            <?php
+                            break;
                     endswitch;
                     ?>
 

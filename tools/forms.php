@@ -437,7 +437,7 @@ class VisitRoute extends Model
                     <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 5 AND id != ".division()) as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -454,7 +454,7 @@ class VisitRoute extends Model
                     <label>Выберите специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
                         <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                        foreach($db->query("SELECT * from users WHERE user_level = 5 AND id != {$_SESSION['session_id']}") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                             <?php
@@ -862,6 +862,30 @@ class VisitRoute extends Model
         return True;
     }
 
+    public function save()
+    {
+        global $db;
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (intval($object)){
+                $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
+                $post['visit_id'] = $object;
+                $post['item_type'] = 1;
+                $post['item_id'] = $this->post['service_id'];
+                $post['item_cost'] = $service['price'];
+                $post['item_name'] = $service['name'];
+                $object = Mixin\insert('visit_price', $post);
+                if (intval($object)){
+                    $this->success();
+                }else{
+                    $this->error($object);
+                }
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -1038,7 +1062,8 @@ class BypassDateModel extends Model
     {
         global $db, $methods, $grant;
         $this_date = new \DateTime();
-        $add_date = date('Y-m-d', strtotime($db->query("SELECT add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch()['add_date']));
+        $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
+        $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
         $span = count($col);
@@ -1104,9 +1129,9 @@ class BypassDateModel extends Model
                                             <?php else: ?>
                                                 <?php if ($grant): ?>
                                                     <?php if ($post['status']): ?>
-                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
                                                     <?php else: ?>
-                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate()" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
                                                     <?php endif; ?>
                                                 <?php else: ?>
                                                     <?php if ($post['status']): ?>
@@ -1157,34 +1182,44 @@ class BypassDateModel extends Model
                 }
             }
 
-            function SwetDate() {
+            function SwetDate(swet_input) {
                 var form = $('#<?= __CLASS__ ?>_form');
-                if (event.target.dataset.id) {
+                var products = [], i = 0;
+                document.querySelectorAll('.products').forEach(function(events) {
+                    products[i] = $(events).val();
+                    i++;
+                });
+
+                if (swet_input.dataset.id) {
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
-                        id: event.target.dataset.id,
-                        bypass_time_id: event.target.dataset.time,
-                        date: event.target.dataset.date,
-                        status: event.target.dataset.val
+                        id: swet_input.dataset.id,
+                        user_id: "<?= $bypass['user_id'] ?>",
+                        bypass_time_id: swet_input.dataset.time,
+                        date: swet_input.dataset.date,
+                        status: swet_input.dataset.val,
+                        products: products
                     };
                 }else {
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
-                        bypass_time_id: event.target.dataset.time,
-                        date: event.target.dataset.date,
-                        status: event.target.dataset.val
+                        user_id: "<?= $bypass['user_id'] ?>",
+                        bypass_time_id: swet_input.dataset.time,
+                        date: swet_input.dataset.date,
+                        status: swet_input.dataset.val,
+                        products: products
                     };
                 }
-                if (event.target.dataset.val == 1) {
-                    $(event.target).removeClass('icon-circle');
-                    $(event.target).addClass('icon-checkmark-circle');
-                    event.target.dataset.val = "";
-                }else if(event.target.dataset.val == ""){
-                    $(event.target).removeClass('icon-checkmark-circle');
-                    $(event.target).addClass('icon-circle');
-                    event.target.dataset.val = 1;
+                if (swet_input.dataset.val == 1) {
+                    $(swet_input).removeClass('icon-circle');
+                    $(swet_input).addClass('icon-checkmark-circle');
+                    swet_input.dataset.val = "";
+                }else if(swet_input.dataset.val == ""){
+                    $(swet_input).removeClass('icon-checkmark-circle');
+                    $(swet_input).addClass('icon-circle');
+                    swet_input.dataset.val = 1;
                 }
 
                 $.ajax({
@@ -1192,219 +1227,14 @@ class BypassDateModel extends Model
                     url: form.attr("action"),
                     data: data,
                     success: function (result) {
-                        if (!Number(result)) {
+                        if (!Number(result) && result != "success") {
                             $('#error_div').html(result);
+                        }else if(Number(result)){
+                            swet_input.dataset.id = result;
                         }
                     },
                 });
             }
-            /* ------------------------------------------------------------------------------
-             *
-             *  # Tooltips and popovers
-             *
-             *  Demo JS code for components_popups.html page
-             *
-             * ---------------------------------------------------------------------------- */
-
-
-            // Setup module
-            // ------------------------------
-
-            var Popups = function () {
-
-
-                //
-                // Setup module components
-                //
-
-                // Custom tooltip color
-                var _componentTooltipCustomColor = function() {
-            		$('[data-popup=tooltip-custom]').tooltip({
-            			template: '<div class="tooltip"><div class="arrow border-teal"></div><div class="tooltip-inner bg-teal"></div></div>'
-            		});
-                };
-
-                // Tooltip events
-                var _componentTooltipEvents = function() {
-
-            		// onShow event
-            		$('#tooltip-show').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('show.bs.tooltip', function() {
-            			alert('Show event fired.');
-            		});
-
-            		// onShown event
-            		$('#tooltip-shown').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('shown.bs.tooltip', function() {
-            			alert('Shown event fired.');
-            		});
-
-            		// onHide event
-            		$('#tooltip-hide').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('hide.bs.tooltip', function() {
-            			alert('Hide event fired.');
-            		});
-
-            		// onHidden event
-            		$('#tooltip-hidden').tooltip({
-            			title: 'I am a tooltip',
-            			trigger: 'click'
-            		}).on('hidden.bs.tooltip', function() {
-            			alert('Hidden event fired.');
-            		});
-                };
-
-                // Tooltip methods
-                var _componentTooltipMethods = function() {
-
-            		// Show method
-            		$('#show-tooltip-method').on('click', function() {
-            			$('#show-tooltip-method-target').tooltip('show');
-            		});
-
-            		// Hide method
-            		$('#hide-tooltip-method-target').on('mouseenter', function() {
-            			$(this).tooltip('show')
-            		});
-            		$('#hide-tooltip-method').on('click', function() {
-            			$('#hide-tooltip-method-target').tooltip('hide');
-            		});
-
-            		// Toggle method
-            		$('#toggle-tooltip-method').on('click', function() {
-            			$('#toggle-tooltip-method-target').tooltip('toggle');
-            		})
-
-            		// Dispose method
-            		$('#dispose-tooltip-method').on('click', function() {
-            			$('#dispose-tooltip-method-target').tooltip('dispose');
-            		});
-
-            		// Toggle enable method
-            		$('#toggle-enabled-tooltip-method').on('click', function() {
-            			$('#toggle-enabled-tooltip-method-target').tooltip('toggleEnabled');
-            		});
-                };
-
-
-                // Custom popover color
-                var _componentPopoverCustomHeaderColor = function() {
-            		$('[data-popup=popover-custom]').popover({
-            			template: '<div class="popover border-teal"><div class="arrow"></div><h3 class="popover-header bg-teal"></h3><div class="popover-body"></div></div>'
-            		});
-                };
-
-                // Custom popover background color
-                var _componentPopoverCustomBackgroundColor = function() {
-            		$('[data-popup=popover-solid]').popover({
-            			template: '<div class="popover bg-primary border-primary"><div class="arrow"></div><h3 class="popover-header"></h3><div class="popover-body text-white"></div></div>'
-            		});
-                };
-
-                // Popover events
-                var _componentPopoverEvents = function() {
-
-            		// onShow event
-            		$('#popover-show').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			trigger: 'click'
-            		}).on('show.bs.popover', function() {
-            			alert('Show event fired.');
-            		});
-
-            		// onShown event
-            		$('#popover-shown').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			trigger: 'click'
-            		}).on('shown.bs.popover', function() {
-            			alert('Shown event fired.');
-            		});
-
-            		// onHide event
-            		$('#popover-hide').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			placement: 'top',
-            			trigger: 'click'
-            		}).on('hide.bs.popover', function() {
-            			alert('Hide event fired.');
-            		});
-
-            		// onHidden event
-            		$('#popover-hidden').popover({
-            			title: 'Popover title',
-            			content: 'And here\'s some amazing content. It\'s very engaging. Right?',
-            			trigger: 'click'
-            		}).on('hidden.bs.popover', function() {
-            			alert('Hidden event fired.');
-            		});
-                };
-
-                // Popover methods
-                var _componentPopoverMethods = function() {
-
-            		// Show method
-            		$('#show-popover-method').on('click', function() {
-            			$('#show-popover-method-target').popover('show');
-            		})
-
-            		// Hide method
-            		$('#hide-popover-method-target').on('mouseenter', function() {
-            			$(this).popover('show')
-            		});
-            		$('#hide-popover-method').on('click', function() {
-            			$('#hide-popover-method-target').popover('hide');
-            		});
-
-            		// Toggle method
-            		$('#toggle-popover-method').on('click', function() {
-            			$('#toggle-popover-method-target').popover('toggle');
-            		})
-
-            		// Dispose method
-            		$('#dispose-popover-method').on('click', function() {
-            			$('#dispose-popover-method-target').popover('dispose');
-            		});
-
-            		// Toggle enable method
-            		$('#toggle-enabled-popover-method').on('click', function() {
-            			$('#toggle-enabled-popover-method-target').popover('toggleEnabled');
-            		});
-                };
-
-
-                //
-                // Return objects assigned to module
-                //
-
-                return {
-                    init: function() {
-                        _componentTooltipCustomColor();
-                        _componentTooltipEvents();
-                        _componentTooltipMethods();
-                        _componentPopoverCustomHeaderColor();
-                        _componentPopoverCustomBackgroundColor();
-                        _componentPopoverEvents();
-                        _componentPopoverMethods();
-                    }
-                }
-            }();
-
-
-            // Initialize module
-            // ------------------------------
-
-            document.addEventListener('DOMContentLoaded', function() {
-                Popups.init();
-            });
         </script>
         <?php
     }
@@ -1413,7 +1243,7 @@ class BypassDateModel extends Model
     {
         global $db, $methods;
         $this_date = new \DateTime();
-        $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
+        $bypass = $db->query("SELECT user_id, visit_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
         $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
@@ -1526,6 +1356,7 @@ class BypassDateModel extends Model
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
+                        visit_id: "<?= $bypass['visit_id'] ?>",
                         id: event.target.dataset.id,
                         completed: event.target.dataset.value,
                         user_id: "<?= $bypass['user_id'] ?>",
@@ -1537,6 +1368,7 @@ class BypassDateModel extends Model
                     var data = {
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
+                        visit_id: "<?= $bypass['visit_id'] ?>",
                         id: event.target.dataset.id,
                         completed: event.target.dataset.value,
                         user_id: "<?= $bypass['user_id'] ?>",
@@ -1550,8 +1382,11 @@ class BypassDateModel extends Model
                     url: form.attr("action"),
                     data: data,
                     success: function (result) {
+                        console.log(result);
                         if (!Number(result)) {
-                            $('#error_div').html(result);
+                            if (result != "success") {
+                                $('#error_div').html(result);
+                            }
                         }
                     },
                 });
@@ -1563,37 +1398,108 @@ class BypassDateModel extends Model
 
     public function clean()
     {
-        global $db;
+        global $db, $patient;
         if ($this->post['products']) {
             $user_pk = $this->post['user_id'];
             if ($this->post['completed']) {
-
+                // Медсестра
                 foreach ($this->post['products'] as $value){
-                    $post = $db->query("SELECT $user_pk 'user_id', product_id 'product', qty, 0 'amount', 0 'profit', product_code, gen_name, product_name 'name', price FROM products WHERE product_id = $value")->fetch();
-                    $object = Mixin\update('products', array('qty' => $post['qty']-1), array('product_id' => $value));
+                    $post = $db->query("SELECT id, preparat_id 'item_id', price 'item_cost', preparat_code 'item_name', qty FROM storage_preparat WHERE preparat_id = $value")->fetch();
+                    if(!$post){
+                        $this->error("Не осталось препарата ".$value);
+                        $this->stop();
+                    }
+                    $post['visit_id'] = $this->post['visit_id'];
+                    $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$post['item_id']}")->fetch()['catg'];
+                    if ($post['qty'] <= 1) {
+                        $object = Mixin\delete('storage_preparat', $post['id']);
+                    }else {
+                        $object = Mixin\update('storage_preparat', array('qty' => $post['qty']-1), array('preparat_id' => $value));
+                    }
                     if (intval($object)) {
-                        $post['qty'] = 1;
-                        $object1 = Mixin\insert('sales_order', $post);
+                        unset($post['qty']);
+                        unset($post['id']);
+                        $object1 = Mixin\insert('visit_price', $post);
                         if (!intval($object1)) {
-                            $this->error('sales_order'.$object1);
+                            $this->error('visit_price'.$object1);
                         }
                     }else {
-                        $this->error('products'.$object);
+                        $this->error('storage_preparat'.$object);
                     }
                 }
+            }else {
+                // ДОктор
+                if ($this->post['status']) {
 
+                    foreach ($this->post['products'] as $value){
+                        $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
+                        if ($post) {
+                            $post_pk = $post['id'];
+                            unset($post['id']);
+                            $post['qty'] ++;
+                            $post['date'] = $this->post['date'];
+                            $object = Mixin\update('storage_orders', $post, $post_pk);
+                        }else {
+                            $post = array(
+                                'user_id' => $this->post['user_id'],
+                                'parent_id' => $_SESSION['session_id'],
+                                'preparat_id' => $value,
+                                'qty' => 1,
+                                'date' => $this->post['date']
+                            );
+                            $object = Mixin\insert('storage_orders', $post);
+                        }
+                        if (!intval($object)) {
+                            $this->error('storage_orders: '.$object);
+                        }
+                    }
+
+                } else {
+
+                    foreach ($this->post['products'] as $value){
+                        $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
+                        if ($post['qty'] > 1) {
+                            $post_pk = $post['id'];
+                            unset($post['id']);
+                            $post['qty'] --;
+                            $object = Mixin\update('storage_orders', $post, $post_pk);
+                        }else {
+                            $object = Mixin\delete('storage_orders', $post['id']);
+                        }
+                    }
+
+                }
             }
             unset($this->post['user_id']);
             unset($this->post['products']);
+            if ($this->post['visit_id']) {
+                unset($this->post['visit_id']);
+            }
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
     }
 
-    public function success()
+    public function save()
     {
-        echo 1;
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (intval($object)){
+                $this->success($object);
+            }else{
+                $this->error($object);
+            }
+        }
+    }
+
+    public function success($message=null)
+    {
+        if ($message) {
+            echo $message;
+        }else {
+            echo "success";
+        }
     }
 
     public function error($message)
@@ -1679,9 +1585,9 @@ class NotesModel extends Model
      }
  }
 
-class SalesOrderAdd extends Model
+class StoragePreparatForm extends Model
 {
-    public $table = 'sales_order';
+    public $table = 'storage_preparat';
 
     public function form($pk = null)
     {
@@ -1691,21 +1597,27 @@ class SalesOrderAdd extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="modal-body">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
 
                 <div class="form-group row">
-                    <label>Расходные материалы:</label>
-                    <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 1") as $row): ?>
-                            <option value="<?= $row['product_id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['product_code'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
 
-                <div class="form-group row">
-                    <label>Количество:</label>
-                    <input type="number" name="qtys" value="1" class="form-control">
+                    <div class="col-md-8">
+                        <label>Расходные материалы:</label>
+                        <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT st.id, st.preparat_code, st.qty FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 7") as $row): ?>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['preparat_code'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label>Количество:</label>
+                            <input type="number" name="qty" value="1" class="form-control">
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -1718,33 +1630,211 @@ class SalesOrderAdd extends Model
         <?php
     }
 
-    public function save()
+    public function clean()
     {
         global $db;
-        $object = $db->query("SELECT product_code, gen_name, product_name, price, qty FROM products WHERE product_id = {$this->post['product']}")->fetch();
-        $this->post['product_code'] = $object['product_code'];
-        $this->post['gen_name'] = $object['gen_name'];
-        $this->post['name'] = $object['product_name'];
-        $this->post['price'] = $object['price'];
+        $order = $db->query("SELECT * FROM $this->table WHERE id={$this->post['product']}")->fetch();
+        $post['visit_id'] = $this->post['visit_id'];
+        $post['item_id'] = $order['preparat_id'];
+        $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$order['preparat_id']}")->fetch()['catg'];
+        $post['item_cost'] = $order['price'];
+        $post['item_name'] = $order['preparat_code'];
+        for ($i=0; $i < $this->post['qty']; $i++) {
+            $object = Mixin\insert('visit_price', $post);
+        }
+        if (!intval($object)) {
+            $this->error('visit_price: '.$object);
+        }
+        if ($order['qty'] > $this->post['qty']) {
+            $object = Mixin\update('storage_preparat', array('qty' => $order['qty']-$this->post['qty']), $this->post['product']);
+        } else {
+            $object = Mixin\delete('storage_preparat', $this->post['product']);
+        }
+        if (!intval($object)) {
+            $this->error('storage_preparat: '.$object);
+        }
+        $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}
+
+class StoragePreparatAnestForm extends Model
+{
+    public $table = 'storage_preparat';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+
+                <div class="form-group row">
+
+                    <div class="col-md-8">
+                        <label>Расходные материалы:</label>
+                        <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT st.id, st.preparat_code, st.qty FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 11") as $row): ?>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['preparat_code'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group row">
+                            <label>Количество:</label>
+                            <input type="number" name="qty" value="1" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        global $db;
+        $order = $db->query("SELECT * FROM $this->table WHERE id={$this->post['product']}")->fetch();
+        $post['visit_id'] = $this->post['visit_id'];
+        $post['item_id'] = $order['preparat_id'];
+        $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$order['preparat_id']}")->fetch()['catg'];
+        $post['item_cost'] = $order['price'];
+        $post['item_name'] = $order['preparat_code'];
+        for ($i=0; $i < $this->post['qty']; $i++) {
+            $object = Mixin\insert('visit_price', $post);
+        }
+        if (!intval($object)) {
+            $this->error('visit_price: '.$object);
+        }
+        if ($order['qty'] > $this->post['qty']) {
+            $object = Mixin\update('storage_preparat', array('qty' => $order['qty']-$this->post['qty']), $this->post['product']);
+        } else {
+            $object = Mixin\delete('storage_preparat', $this->post['product']);
+        }
+        if (!intval($object)) {
+            $this->error('storage_preparat: '.$object);
+        }
+        $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}
+
+class StorageOrdersModel extends Model
+{
+    public $table = 'storage_orders';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="modal-body">
+                <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+                <div class="form-group row">
+
+                    <div class="col-md-8">
+                        <label>Расходные материалы:</label>
+                        <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products") as $row): ?>
+                                <option value="<?= $row['product_id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['product_code'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Количество:</label>
+                        <input type="number" name="qty" value="1" class="form-control">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        global $db;
+        $this->post['date'] = date('Y-m-d');
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        $this->post['amount'] = 0;
-        $this->post['profit'] = 0;
-        $qt = $this->post['qtys'];
-        unset($this->post['qtys']);
-        $object2 = Mixin\update('products', array('qty' => $object['qty']-$qt), array('product_id' => $this->post['product']));
-        if (intval($object2)){
-            $this->post['qty'] = 1;
-            for ($i=0; $i < $qt; $i++) {
-                $object = Mixin\insert($this->table, $this->post);
-                if (!intval($object)){
-                    $this->error($object);
-                }
+        if (!$this->post['id']) {
+            $inf = $db->query("SELECT id, qty FROM storage_orders WHERE preparat_id = {$this->post['preparat_id']} AND parent_id = {$this->post['parent_id']}")->fetch();
+            if ($inf) {
+                $this->post['id'] = $inf['id'];
+                $this->post['qty'] = $inf['qty'] + $this->post['qty'];
+                $this->update();
             }
-            $this->success();
-        }else {
-            $this->error($object2);
+            return True;
         }
+        return true;
+
     }
 
     public function success()

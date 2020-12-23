@@ -18,12 +18,17 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
+                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1")->fetchAll();
                 $sql = "SELECT
+                            vs.id,
                             SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
+                            ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) 'bed_days',
+                            bdt.name 'bed_type',
+                            bdt.price 'bed_price',
                             ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
-                            (SELECT SUM(sc.price) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL) 'cost_service',
-                            (SELECT SUM(price) FROM sales_order WHERE user_id = us.id AND amount = 0 AND profit = 0) 'cost_preparat'
-                            -- bdt.price 'bed_price',
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 1) 'cost_service',
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) 'cost_item_2',
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                             -- vs.add_date
                         FROM users us
                             LEFT JOIN investment iv ON(iv.user_id = us.id)
@@ -32,10 +37,15 @@ if ($_GET['pk']) {
                             LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
                         WHERE us.id = $pk";
                 $price = $db->query($sql)->fetch();
-
+                foreach ($serv_id as $value) {
+                    $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+                    foreach ($item_service as $pri_ze) {
+                        $price['cost_service'] += $pri_ze['price'];
+                    }
+                }
                 // prit($price);
 
-                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_preparat'];
+                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'] + $price['cost_item_3'];
                 ?>
                 <table class="table table-hover">
                     <tbody>

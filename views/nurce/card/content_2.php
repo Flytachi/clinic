@@ -6,6 +6,11 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+
+<script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
+<script src="<?= stack('global_assets/js/demo_pages/form_checkboxes_radios.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -35,57 +40,63 @@ $header = "Пациент";
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
-				    <div class="card-body">
-				        <?php include "content_tabs.php"; ?>
+					<div class="card-body">
 
-						<div class="card">
+					   <?php
+					   include "content_tabs.php";
+					   if($_SESSION['message']){
+						   echo $_SESSION['message'];
+						   unset($_SESSION['message']);
+					   }
+					   ?>
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">История Осмотров</h5>
-							</div>
+					   <div class="card">
 
-							<div class="table-responsive">
-								<table class="table table-hover table-sm">
-									<thead>
-				                        <tr class="bg-info">
-				                            <th>№</th>
-				                            <th>Специалист</th>
-				                            <th>Тип визита</th>
-											<th>Дата визита</th>
-											<th>Дата завершения</th>
-				                            <th>Мед услуга</th>
-				                            <th class="text-center">Действия</th>
-				                        </tr>
-				                    </thead>
-				                    <tbody>
-										<?php
-										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.completed IS NOT NULL AND vs.laboratory IS NULL ORDER BY id DESC") as $row) {
-										?>
-											<tr>
-												<td><?= $i++ ?></td>
-												<td>
-													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
-													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
-												</td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
-												<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
-												<td><?= $row['name'] ?></td>
-												<td class="text-center">
-													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-												</td>
-											</tr>
-										<?php
-										}
-									 	?>
-				                    </tbody>
-								</table>
-							</div>
+						   <div class="card-header header-elements-inline">
+							   <h6 class="card-title">Лист назначений</h6>
+						   </div>
 
-						</div>
+						   <div class="table-responsive">
+							   <table class="table table-hover table-sm table-bordered">
+ 								  <thead>
+ 									  <tr class="bg-info">
+ 										  <th style="width: 40px !important;">№</th>
+ 										  <th style="width: 400px;">Препарат</th>
+ 										  <th>Описание</th>
+ 										  <th class="text-center" style="width: 150px;">Метод введения </th>
+ 										  <th class="text-right" style="width: 150px;">Действия</th>
+ 									  </tr>
+ 								  </thead>
+ 								  <tbody>
+ 									  <?php
+ 									  $i=1;
+ 									  foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
+ 										  ?>
+ 										  <tr>
+ 											  <td><?= $i++ ?></td>
+ 											  <td>
+												  <?php
+												  foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
+													  echo $serv['product_code']."<br>";
+												  }
+												  ?>
+ 											  </td>
+ 											  <td><?= $row['description'] ?></td>
+ 											  <td><?= $methods[$row['method']] ?></td>
+ 											  <td>
+ 												  <button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
+ 											  </td>
+ 										  </tr>
+ 										  <?php
+ 									  }
+ 									  ?>
+ 								  </tbody>
+ 							  </table>
+ 						  </div>
 
-				    </div>
+					   </div>
+
+				   </div>
 
 				    <!-- /content wrapper -->
 				</div>
@@ -98,9 +109,9 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg" id="modal_class_show">
-			<div class="modal-content border-3 border-info" id="report_show">
+	<div id="modal_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="div_show">
 
 			</div>
 		</div>
@@ -112,13 +123,12 @@ $header = "Пациент";
 				type: "GET",
 				url: events,
 				success: function (data) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
+					$('#modal_show').modal('show');
+					$('#div_show').html(data);
 				},
 			});
 		};
 	</script>
-
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>
     <!-- /footer -->
