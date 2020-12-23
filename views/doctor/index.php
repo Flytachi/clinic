@@ -29,7 +29,6 @@ $header = "Приём пациетов";
 			<!-- Content area -->
 			<div class="content">
 
-
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
@@ -106,6 +105,7 @@ $header = "Приём пациетов";
 					</div>
 
 				</div>
+
 			</td>
 
 			</div>
