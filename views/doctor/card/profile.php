@@ -267,7 +267,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $button_inner = "Завершить";
                     }
                     ?>
-                    <button <?= ($patient->grant_id == $_SESSION['session_id']) ? "disabled" : "" ?> data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                    <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
                         <i class="icon-paste2"></i> <?= $button_inner ?>
                     </button>
                 </div>

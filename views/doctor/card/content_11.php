@@ -292,6 +292,7 @@ $header = "Пациент";
 								</div>
 							<?php endif; ?>
 
+
 						</div>
 
 				    </div>

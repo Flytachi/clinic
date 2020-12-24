@@ -45,7 +45,7 @@ $header = "Рабочий стол";
                         <div class="card border-1 border-info">
 
 							<div class="card-header bg-white header-elements-sm-inline">
-								<h5 class="card-title">Стационар</h5>
+								<h5 class="card-title">Долники</h5>
 								<div class="header-elements">
 									<div class="form-group-feedback form-group-feedback-right">
 										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">

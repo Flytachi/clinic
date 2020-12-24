@@ -42,17 +42,19 @@ $header = "Рабочий стол";
 				    <div class="col-md-5">
 				        <div class="card border-1 border-info">
 
+							<div class="card-header bg-white header-elements-sm-inline">
+								<h5 class="card-title">Приём платежей</h5>
+								<div class="header-elements">
+									<div class="form-group-feedback form-group-feedback-right">
+										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
+										<div class="form-control-feedback text-success">
+											<i class="icon-search4 font-size-base text-muted"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+
 				            <div class="card-body">
-				                <div class="form-group form-group-float">
-				                    <label class="form-group-float-label text-success font-weight-semibold animate">ID или имя пациента</label>
-				                    <div class="form-group-feedback form-group-feedback-right">
-				                        <input type="text" class="form-control border-success" id="search_input" placeholder="Введите ID или имя">
-				                        <div class="form-control-feedback text-success">
-				                            <i class="icon-search4"></i>
-				                        </div>
-				                    </div>
-				                    <span class="form-text text-success">Выбор пациента</span>
-				                </div>
 
 				                <div class="table-responsive">
 				                    <table class="table table-hover">

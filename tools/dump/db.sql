@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Дек 23 2020 г., 20:57
+-- Время создания: Дек 24 2020 г., 15:31
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.13
 
@@ -895,7 +895,8 @@ INSERT INTO `user_stats` (`id`, `parent_id`, `visit_id`, `stat`, `pressure`, `pu
 (7, 5, 1, NULL, '90/40', 50, 35.5, 50, NULL, NULL, NULL, 2, '2020-12-23 12:53:00'),
 (8, 5, 1, NULL, '120/80', 85, 36.6, 75, NULL, NULL, NULL, 2, '2020-12-23 13:50:00'),
 (9, 5, 1, NULL, '30/5', 40, 35, 25, NULL, NULL, NULL, 2, '2020-12-23 15:00:00'),
-(10, 5, 1, NULL, '140/60', 85, 36.7, 90, NULL, NULL, NULL, 2, '2020-12-24 16:00:00');
+(10, 5, 1, NULL, '140/60', 85, 36.7, 90, NULL, NULL, NULL, 2, '2020-12-24 16:00:00'),
+(11, 5, 1, NULL, '220/140', 150, 42, 99, NULL, NULL, NULL, 2, '2020-12-24 17:00:00');
 
 -- --------------------------------------------------------
 
@@ -949,7 +950,7 @@ INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `assi
 (25, 16, 5, 6, 11, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, '2020-12-13 16:26:46', '2020-12-23 16:10:04', '2020-12-21 15:53:19', NULL, NULL, '2020-12-23 16:10:35'),
 (26, 16, 5, 18, 11, 7, 2, 2, NULL, NULL, 0, 1, NULL, NULL, '12', 'eqw', '1212', '3', '2020-12-13 16:26:51', '2020-12-21 22:00:06', '2020-12-21 15:53:19', NULL, NULL, '2020-12-23 16:23:09'),
 (29, 15, NULL, 5, 5, NULL, 10, 34, NULL, 1, 2, NULL, NULL, NULL, 'Раны грудной клетки', 'e qwew qwe q qwe qqwe qwqwe qwqw', 'ewqe wq  qwew', 'e qweqw qeq', '2020-12-21 20:50:52', '2020-12-21 20:50:52', NULL, NULL, NULL, NULL),
-(30, 15, 5, 11, 5, NULL, 14, 43, NULL, 1, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-21 21:33:11', '2020-12-24 01:48:04', NULL, NULL, NULL, NULL),
+(30, 15, 5, 11, 5, NULL, 14, 43, NULL, 1, NULL, NULL, NULL, NULL, 'Первичная консультация невропатолога', 'weqweqw', 'eqweqw', 'eqweqw', '2020-12-21 21:33:11', '2020-12-24 01:48:04', NULL, NULL, NULL, '2020-12-24 20:29:13'),
 (31, 15, 5, 18, 5, 7, 2, 3, NULL, 1, 0, 1, NULL, NULL, '12131232132', '213 12eqw', 'qweqw q', 'qweqw qwe qweqwe', '2020-12-21 21:59:15', '2020-12-21 22:00:05', NULL, NULL, NULL, '2020-12-21 22:01:04'),
 (35, 15, 5, 6, 5, NULL, 8, 26, NULL, 1, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, '2020-12-22 17:03:52', '2020-12-23 16:10:03', NULL, NULL, NULL, '2020-12-23 16:10:17'),
 (36, 22, 5, 5, 2, NULL, 10, 1, 2, 1, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-23 14:37:37', '2020-12-23 14:37:50', NULL, NULL, NULL, NULL),
@@ -991,7 +992,8 @@ INSERT INTO `visit_inspection` (`id`, `visit_id`, `parent_id`, `description`, `d
 (7, 1, 5, 'pick', 'pick', 'pick', NULL, '2020-12-22 21:54:19'),
 (8, 36, 5, 'рррр', 'ывыввы', 'принимать витамины', NULL, '2020-12-23 17:39:51'),
 (10, 1, 5, 'eee12', '3213123123', '123', NULL, '2020-12-23 21:08:43'),
-(11, 1, 5, 'T11', 'T11', 'T11', 2, '2020-12-23 21:10:10');
+(11, 1, 5, 'T11', 'T11', 'T11', 2, '2020-12-23 21:10:10'),
+(12, 1, 5, 'Дибилизм', 'Далбаеб', 'Лечится', 2, '2020-12-24 18:52:16');
 
 -- --------------------------------------------------------
 
@@ -1484,7 +1486,7 @@ ALTER TABLE `user_card`
 -- AUTO_INCREMENT для таблицы `user_stats`
 --
 ALTER TABLE `user_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT для таблицы `visit`
@@ -1496,7 +1498,7 @@ ALTER TABLE `visit`
 -- AUTO_INCREMENT для таблицы `visit_inspection`
 --
 ALTER TABLE `visit_inspection`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_member`
