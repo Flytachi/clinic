@@ -15,7 +15,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
         <div class="row">
 
             <div class="col-6">
-                <img src="icon/company.jpg" width="480" height="105">
+                <img src="<?= img('prints/icon/company.jpg') ?>" width="480" height="105">
             </div>
 
             <div class="col-6 text-right h3">
