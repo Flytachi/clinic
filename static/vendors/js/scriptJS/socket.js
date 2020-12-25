@@ -151,10 +151,22 @@ conn.onmessage = function(e) {
   }else if (d.type == "patient" ) {
       if(d.id == id){
 
-        $(`tr[data-userid=${ d.user_id }]`).css("background-color" , "green");
-        // alert($(`tr[data-userid=${ d.user_id }]`).text());
+        $(`tr[data-userid=${ d.user_id }][data-parentid=${ d.parent_id }]`).remove();
 
-        // alert("d");
+        $.ajax({
+          type: "POST",
+
+          url: "visitpd.php",
+
+          data: { id_user: d.user_id, id_patient: d.parent_id },
+
+          success: function (data) {
+
+            let d = JSON.parse(data);
+
+            $(`#${ d.user[0].parent_id }`).prepend(`<tr style=" background-color: #97E32F;"><td>${ d.user[0].first_name }</td><td>${ d.user[0].last_name }</td></tr>`)
+          },
+      });
       }
   }
 };
@@ -206,6 +218,5 @@ function sendPatient(body) {
   userid = body.dataset.userid;
   let obj = JSON.stringify({ type : 'patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
-  // alert(obj);
 }
 

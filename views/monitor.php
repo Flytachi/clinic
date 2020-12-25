@@ -182,7 +182,7 @@ $header = "Рабочий стол";
 													<th> Пациент </th>
 							                    </tr>
 							                </thead>
-							                <tbody>
+							                <tbody id="${id1}">
 
 							               		${we}
 
@@ -217,7 +217,7 @@ $header = "Рабочий стол";
 														<th> Пациент </th>
 								                    </tr>
 								                </thead>
-								                <tbody>
+								                <tbody id="${id1}">
 
 								               		${we}
 
