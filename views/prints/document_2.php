@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 is_auth();
 
-$docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.report_title, vs.report_description, vs.report_conclusion, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+$docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,9 +47,9 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
                     <thead>
                         <tr>
                             <th style="width:3%">№</th>
-                            <th style="width:20%">Анализ</th>
-                            <th style="width:20%">Результат</th>
-                            <th style="width:20%">Норматив</th>
+                            <th class="text-left">Анализ</th>
+                            <th class="text-right" style="width:15%">Результат</th>
+                            <th class="text-right" style="width:15%">Норма</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,9 +59,9 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
                             ?>
                             <tr>
                                 <td><?= $i++ ?></td>
-                                <td><?= $row['name'] ?></td>
-                                <td><?= $row['result'] ?></td>
-                                <td><?= $row['standart'] ?></td>
+                                <td class="text-left"><?= $row['name'] ?></td>
+                                <td class="text-right"><?= $row['result'] ?></td>
+                                <td class="text-right"><?= $row['standart'] ?></td>
                             </tr>
                             <?php
                         }

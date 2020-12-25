@@ -377,6 +377,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="<?= viv('maindoctor/list_operation') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Операционные пациенты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('maindoctor/list_all') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Все пациенты</span>
@@ -501,17 +507,11 @@
                         case 11:
                             ?>
                             <li class="nav-item">
-                                <a href="" class="nav-link legitRipple">
-                                    <i class="icon-users2 "></i>
-                                    <span>Амбулаторные пациенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('anesthetist/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
-                                    <span>Стационарные пациенты</span>
+                                    <span>Пациенты</span>
                                     <?php
-                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.oper_date IS NOT NULL ORDER BY us.id ASC")->rowCount();
                                     if ($con_tree) {
                                         ?>
                                         <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
