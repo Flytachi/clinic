@@ -1,3 +1,10 @@
+function Print(events) {
+    var WinPrint = window.open(`${events}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+    WinPrint.focus();
+    WinPrint.onload();
+    WinPrint.close();
+};
+
 function addZero(number){
 
     let strNumber = String(number);
@@ -146,7 +153,7 @@ conn.onmessage = function(e) {
             type: 'info',
             html: d.message
         });
-    
+
     }
   }else if (d.type == "patient" ) {
       if(d.id == id){
@@ -219,4 +226,3 @@ function sendPatient(body) {
   let obj = JSON.stringify({ type : 'patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
 }
-

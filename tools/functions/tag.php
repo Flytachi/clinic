@@ -27,6 +27,10 @@ function viv($url){
     return DIR."/views/$url.php";
 }
 
+function img($url){
+    return DIR."/views/$url";
+}
+
 function stack($url){
     return DIR."/static/$url";
 }

@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth([5,8]);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -291,6 +291,7 @@ $header = "Пациент";
 							        </div>
 								</div>
 							<?php endif; ?>
+
 
 						</div>
 
