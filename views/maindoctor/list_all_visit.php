@@ -163,8 +163,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
 											</td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
+											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $row['name'] ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>

@@ -1663,7 +1663,7 @@ select[size] {
   background-color: #f5f5f5; }
 
 .nav-pills-bordered .nav-link.active {
-  border-color: #26A69A; }
+  border-color: blue; }
 
 .nav-pills-bordered .nav-link.disabled, .nav-pills-bordered .nav-link.disabled:hover, .nav-pills-bordered .nav-link.disabled:focus {
   background-color: #fafafa; }

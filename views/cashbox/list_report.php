@@ -130,20 +130,21 @@ $header = "Отчёт";
                                     FROM visit_price vsp
                                         LEFT JOIN visit vs ON(vs.id=vsp.visit_id)
                                     WHERE
+										vsp.item_type = 1 AND
                                         (DATE_FORMAT(vsp.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
                                         vsp.pricer_id IN (".implode($_POST['priser_id']).")
                                     ";
 
-							$sql2 = "SELECT
-                                        iv.pricer_id,
-                                        iv.user_id,
-                                        iv.balance,
-                                        iv.add_date
-                                    FROM investment iv
-                                    WHERE
-                                        (DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-                                        iv.pricer_id IN (".implode($_POST['priser_id']).")
-                                    ";
+							// $sql2 = "SELECT
+                            //             iv.pricer_id,
+                            //             iv.user_id,
+                            //             iv.balance,
+                            //             iv.add_date
+                            //         FROM investment iv
+                            //         WHERE
+							// 			(DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+                            //             iv.pricer_id IN (".implode($_POST['priser_id']).")
+                            //         ";
 							// prit($db->query($sql2)->fetchAll());
                             ?>
 
@@ -177,7 +178,7 @@ $header = "Отчёт";
 												<th><?= $row['refund'] ?></th>
                                             </tr>
                                         <?php endforeach; ?>
-										<?php foreach ($db->query($sql2) as $row): ?>
+										<!-- <?php foreach ($db->query($sql2) as $row): ?>
                                             <tr>
                                                 <th><?= $i++ ?></th>
                                                 <th><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></th>
@@ -190,7 +191,7 @@ $header = "Отчёт";
 												<th><?= ($row['balance'] > 0) ? $row['balance'] : 0 ?></th>
 												<th><?= ($row['balance'] < 0) ? $row['balance'] : 0 ?></th>
                                             </tr>
-                                        <?php endforeach; ?>
+                                        <?php endforeach; ?> -->
                                     </tbody>
                                 </table>
 

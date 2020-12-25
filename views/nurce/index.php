@@ -29,7 +29,7 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+				<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
 					<li class="nav-item"><a href="#basic-justified-tab1" class="nav-link legitRipple active show" data-toggle="tab">1 Этаж</a></li>
 					<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">2 Этаж</a></li>
 					<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">3 Этаж</a></li>

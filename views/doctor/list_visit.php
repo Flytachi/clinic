@@ -163,8 +163,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['completed'])) ?></td>
+											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td class="text-center">
 												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>

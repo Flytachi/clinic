@@ -58,7 +58,7 @@ $header = "Приём пациетов";
                                 <tbody>
                                     <?php
 									// prit($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->fetchAll());
-                                    foreach($db->query("SELECT DISTINCT vs.id, us.id, vs.user_id, vs.parent_id, 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $row) {
+                                    foreach($db->query("SELECT DISTINCT vs.id 'visit_id', us.id, vs.user_id, vs.parent_id, us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $row) {
                                         ?>
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['id']) ?></td>
@@ -92,7 +92,7 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-												<a type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
+												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>

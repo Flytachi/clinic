@@ -517,9 +517,13 @@ class VisitModel extends Model
     {
         global $db;
         // Нахождение id визита
-        $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+        $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
         $object = Mixin\delete($this->table, $pk);
-        if ($object) {
+        // $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
+        // if (!intval($object)) {
+        //     $this->error($object, 1);
+        // }
+        if (intval($object)) {
             $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
                 Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
@@ -697,7 +701,7 @@ class VisitPriceModel extends Model
         global $db;
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk")->fetch();
+        $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
         $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
@@ -713,8 +717,9 @@ class VisitPriceModel extends Model
     public function price()
     {
         global $db;
-        // parad("Услуги", $db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
-        foreach ($db->query("SELECT vs.id, sc.price, sc.name FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price") as $row) {
+        // parad("Услуги", $db->query("SELECT vs.id, sc.price, sc.name FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
+        // parad("Услуги 2 модель", $db->query("SELECT vp.id, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost")->fetchAll());
+        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
             $post = array(
                 'pricer_id' => $this->post['pricer_id'],
                 'sale' => $this->post['sale'],
@@ -722,13 +727,13 @@ class VisitPriceModel extends Model
 
             if ($this->post['price_cash'])
             {
-                if ($this->post['price_cash'] >= $row['price']) {
-                    $this->post['price_cash'] -= $row['price'];
-                    $post['price_cash'] = $row['price'];
+                if ($this->post['price_cash'] >= $row['item_cost']) {
+                    $this->post['price_cash'] -= $row['item_cost'];
+                    $post['price_cash'] = $row['item_cost'];
                 }else {
                     $post['price_cash'] = $this->post['price_cash'];
                     $this->post['price_cash'] = 0;
-                    $temp = $row['price'] - $post['price_cash'];
+                    $temp = $row['item_cost'] - $post['price_cash'];
                     if ($this->post['price_card'] >= $temp) {
                         $this->post['price_card'] -= $temp;
                         $post['price_card'] = $temp;
@@ -747,13 +752,13 @@ class VisitPriceModel extends Model
             }
             elseif ($this->post['price_card'])
             {
-                if ($this->post['price_card'] >= $row['price']) {
-                    $this->post['price_card'] -= $row['price'];
-                    $post['price_card'] = $row['price'];
+                if ($this->post['price_card'] >= $row['item_cost']) {
+                    $this->post['price_card'] -= $row['item_cost'];
+                    $post['price_card'] = $row['item_cost'];
                 }else {
                     $post['price_card'] = $this->post['price_card'];
                     $this->post['price_card'] = 0;
-                    $temp = $row['price'] - $post['price_card'];
+                    $temp = $row['item_cost'] - $post['price_card'];
                     if ($this->post['price_transfer'] >= $temp) {
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
@@ -764,23 +769,19 @@ class VisitPriceModel extends Model
             }
             else
             {
-                if ($this->post['price_transfer'] >= $row['price']) {
-                    $this->post['price_transfer'] -= $row['price'];
-                    $post['price_transfer'] = $row['price'];
+                if ($this->post['price_transfer'] >= $row['item_cost']) {
+                    $this->post['price_transfer'] -= $row['item_cost'];
+                    $post['price_transfer'] = $row['item_cost'];
                 }else {
                     $this->error("Ошибка в price transfer");
                 }
             }
-            $post['item_id'] = $row['id'];
-            $post['item_type'] = 1;
-            $post['item_cost'] = $row['price'];
-            $post['item_name'] = $row['name'];
-            $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
+
+            $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
             if(intval($object)){
-                $post['visit_id'] = $row['id'];
-                $object1 = Mixin\insert($this->table, $post);
-                if (!intval($object1)){
-                    $this->error($object1);
+                $object = Mixin\update($this->table, $post, $row['id']);
+                if (!intval($object)){
+                    $this->error($object);
                 }
             }else {
                 $this->error($object);
