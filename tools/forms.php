@@ -252,30 +252,27 @@ class VisitReport extends Model
             <div class="modal-body">
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="id" id="rep_id" value="<?= $pk ?>">
-                <?php if (division_assist() == 2): ?>
-                    <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-                <?php endif; ?>
+                <input type="hidden" name="id" id="repfun_id" value="<?= $pk ?>">
 
                 <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        <label class="col-form-label">Наименования отчета:</label>
-                        <input type="text" name="report_title" id="report_title" value="<?= $post['report_title'] ?>" class="form-control" placeholder="Названия отчета">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Клинический диагноз:</label>
+                        <textarea rows="3" cols="3" name="report_diagnostic" class="form-control" placeholder="Клинический диагноз"><?= $post['report_diagnostic'] ?></textarea>
                     </div>
 
                     <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Описание:</label>
-                        <textarea rows="5" cols="3" name="report_description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                        <label class="col-form-label">Сопутствующее заболевание:</label>
+                        <textarea rows="3" cols="3" name="report_title" class="form-control" placeholder="Сопутствующее заболевание"><?= $post['report_title'] ?></textarea>
                     </div>
 
                     <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Диагноз:</label>
-                        <textarea rows="3" cols="3" name="report_diagnostic" class="form-control" placeholder="Заключения"><?= $post['report_diagnostic'] ?></textarea>
+                        <label class="col-form-label">Жалоба:</label>
+                        <textarea rows="5" cols="3" name="report_description" class="form-control" placeholder="Жалоба"><?= $post['report_description'] ?></textarea>
                     </div>
 
                     <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Рекомендации:</label>
-                        <textarea rows="3" cols="3" name="report_recommendation" class="form-control" placeholder="Заключения"><?= $post['report_recommendation'] ?></textarea>
+                        <label class="col-form-label">Анамнез Морби:</label>
+                        <textarea rows="3" cols="3" name="report_recommendation" class="form-control" placeholder="Анамнез Морби"><?= $post['report_recommendation'] ?></textarea>
                     </div>
 
                 </div>
@@ -312,7 +309,11 @@ class VisitReport extends Model
         }else {
             if($object){
                 $this->set_post($object);
-                return $this->form($object['id']);
+                if ($object['service_id'] == 1) {
+                    return $this->form_finish($object['id']);
+                }else {
+                    return $this->form($object['id']);
+                }
             }else{
                 Mixin\error('404');
             }
@@ -979,9 +980,6 @@ class VisitFinish extends Model
     public function get_or_404($pk)
     {
         global $db;
-
-        $this->mod('test');
-
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){

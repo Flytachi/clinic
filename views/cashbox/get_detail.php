@@ -3,21 +3,22 @@ require_once '../../tools/warframe.php';
 is_auth(3);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
+    $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1")->fetch();
     $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1")->fetchAll();
     $sql = "SELECT
                 vs.id,
                 SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
-                ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) 'bed_days',
+                ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) 'bed_days',
                 bdt.name 'bed_type',
                 bdt.price 'bed_price',
-                ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
+                ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 1) 'cost_service',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) 'cost_item_2',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                 -- vs.add_date
             FROM users us
                 LEFT JOIN investment iv ON(iv.user_id = us.id)
-                LEFT JOIN beds bd ON(bd.user_id = us.id)
+                LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
             WHERE us.id = $pk";

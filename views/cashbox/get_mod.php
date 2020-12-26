@@ -18,21 +18,22 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
+                $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1")->fetch();
                 $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1")->fetchAll();
                 $sql = "SELECT
                             vs.id,
                             SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
-                            ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) 'bed_days',
+                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) 'bed_days',
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
-                            ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
+                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 1) 'cost_service',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) 'cost_item_2',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                             -- vs.add_date
                         FROM users us
                             LEFT JOIN investment iv ON(iv.user_id = us.id)
-                            LEFT JOIN beds bd ON(bd.user_id = us.id)
+                            LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
                             LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                             LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
                         WHERE us.id = $pk";
@@ -73,6 +74,7 @@ if ($_GET['pk']) {
                 <div class="text-right mt-3">
                     <button onclick="Invest(1)" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
                     <button onclick="Invest(0)" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
+                    <button onclick="alert('Расщёт')" class="btn btn-outline-warning btn-sm">Расщёт</button>
                     <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
                 </div>
 

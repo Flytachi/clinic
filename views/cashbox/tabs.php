@@ -5,7 +5,4 @@
     <li class="nav-item">
         <a href="<?= viv('cashbox/stationary') ?>" class="nav-link <?= (viv('cashbox/stationary')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Стационар</a>
     </li>
-    <li class="nav-item">
-        <a href="<?= viv('cashbox/debtor') ?>" class="nav-link <?= (viv('cashbox/debtor')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple">Должники</a>
-    </li>
 </ul>

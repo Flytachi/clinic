@@ -87,8 +87,12 @@ $header = "Пациент";
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
 													<?php if ($row['report_description']): ?>
-														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-														<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php if ($row['service_id'] == 1): ?>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php else: ?>
+															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php endif; ?>
 													<?php else: ?>
 														<?php if ($row['service_id'] == 1): ?>
 															<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
@@ -145,7 +149,7 @@ $header = "Пациент";
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info" id="form_card_finish">
 
-				<?php VisitReport::form(); ?>
+				<?php VisitReport::form_finish(); ?>
 
 			</div>
 		</div>
@@ -194,7 +198,7 @@ $header = "Пациент";
 
 		function CleanFormFinish(id, name) {
 			$('#report_editor').html('');
-			$('#rep_id').val(id);
+			$('#repfun_id').val(id);
 			$('#modal_report_finish').modal('show');
 			if (name) {
 				$('#report_title').val(name);
@@ -221,13 +225,24 @@ $header = "Пациент";
 			});
 		};
 
-		function Update(events, name) {
+		function Update(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
 					$('#modal_report_add').modal('show');
 					$('#form_card').html(result);
+				},
+			});
+		};
+
+		function UpdateFinish(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_report_finish').modal('show');
+					$('#form_card_finish').html(result);
 				},
 			});
 		};
