@@ -480,6 +480,17 @@ class VisitModel extends Model
             }
             $this->post['grant_id'] = $this->post['parent_id'];
             $object = Mixin\insert($this->table, $this->post);
+
+            $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
+            $post['visit_id'] = $object;
+            $post['item_type'] = 1;
+            $post['item_id'] = $this->post['service_id'];
+            $post['item_cost'] = $service['price'];
+            $post['item_name'] = $service['name'];
+            $object = Mixin\insert('visit_price', $post);
+            if (!intval($object)){
+                $this->error($object);
+            }
             if (intval($object)){
                 // Обновление статуса у пациента
                 $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
@@ -519,10 +530,10 @@ class VisitModel extends Model
         // Нахождение id визита
         $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
         $object = Mixin\delete($this->table, $pk);
-        // $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
-        // if (!intval($object)) {
-        //     $this->error($object, 1);
-        // }
+        $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
+        if (!intval($object)) {
+            $this->error($object, 1);
+        }
         if (intval($object)) {
             $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
@@ -1605,7 +1616,6 @@ class ServiceModel extends Model
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
-                    prit($this->post);
                     $object = Mixin\insert($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);

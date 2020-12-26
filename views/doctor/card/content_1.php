@@ -42,7 +42,7 @@ $header = "Пациент";
 						if ($patient->direction) {
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.service_id != 1 AND accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "table-info";
 						} else {
 							$title = "Осмотр";
@@ -83,14 +83,18 @@ $header = "Пациент";
 									</thead>
 									<tbody>
 										<?php foreach ($db->query($table_sql) as $row): ?>
-											<tr class="<?= $table_tr ?>">
+											<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
 													<?php if ($row['report_description']): ?>
 														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 														<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 													<?php else: ?>
-														<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+														<?php if ($row['service_id'] == 1): ?>
+															<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
+														<?php else: ?>
+															<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+														<?php endif; ?>
 													<?php endif; ?>
 												</td>
 											</tr>
@@ -130,6 +134,16 @@ $header = "Пациент";
 	<div id="modal_report_add" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info" id="form_card">
+
+				<?php VisitReport::form(); ?>
+
+			</div>
+		</div>
+	</div>
+
+	<div id="modal_report_finish" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="form_card_finish">
 
 				<?php VisitReport::form(); ?>
 
@@ -177,6 +191,15 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
+
+		function CleanFormFinish(id, name) {
+			$('#report_editor').html('');
+			$('#rep_id').val(id);
+			$('#modal_report_finish').modal('show');
+			if (name) {
+				$('#report_title').val(name);
+			}
+		}
 
 		function CleanForm(id, name) {
 			$('#report_editor').html('');
