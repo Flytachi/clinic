@@ -67,6 +67,14 @@ $header = "Рабочий стол";
 <!-- /theme JS files -->
 
 <body>
+
+	<?php
+
+		// $ew = read_excel('templates/qwe.xlsx');
+
+		// prit($ew);
+
+	?>
 	<!-- Main navbar -->
 	<div class="navbar navbar-expand-md navbar-dark bg-info navbar-static" >
 	    <div class="navbar-brand">
