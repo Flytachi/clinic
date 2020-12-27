@@ -68,6 +68,25 @@ is_auth(4);
 
 					<div class="card-body">
 
+						<div class="card-header header-elements-inline">
+			              	<h5 class="card-title">Шаблон</h5>
+			              	<div class="header-elements">
+		                  		<div class="list-icons">
+									<a href="../templates/product.xlsx" class="btn" download>Шаблон</a>
+			                      	<a class="list-icons-item" data-action="collapse"></a>
+			                  	</div>
+			              	</div>
+			          	</div>
+					
+						<?php ProductsModel::form_template(); ?>
+					</div>
+
+				</div>
+
+				<div class="card">
+
+					<div class="card-body">
+
 						<?php
 							$rowcount = $db->query("SELECT * FROM products ORDER BY qty_sold DESC")->rowcount();
 
@@ -449,8 +468,8 @@ is_auth(4);
 										<td><?= $row['ediz']; ?></td>
 
 										<td>
-											<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#a<?= $row['product_id'] ?>"><i class="icon-pencil3"></i></button>
-										<a href="deletproducts.php?id=<?= $row['product_id']; ?>" id="" class="delbutton" title="Удалить"><button class="btn btn-danger"><i class="icon-trash"></i></button></a></td>
+											<i class="icon-pencil7" data-toggle="modal" data-target="#a<?= $row['product_id'] ?>"></i>
+										<a href="deletproducts.php?id=<?= $row['product_id']; ?>" id="" class="delbutton" title="Удалить"><i class="icon-trash"></i></a></td>
 									</tr>
 									<?php
 											}

@@ -59,6 +59,25 @@ is_auth(4);
 			<div class="content">
 
 				<div class="card">
+
+					<div class="card-body">
+
+						<div class="card-header header-elements-inline">
+			              	<h5 class="card-title">Шаблон</h5>
+			              	<div class="header-elements">
+		                  		<div class="list-icons">
+									<a href="../templates/goods.xlsx" class="btn" download>Шаблон</a>
+			                      	<a class="list-icons-item" data-action="collapse"></a>
+			                  	</div>
+			              	</div>
+			          	</div>
+					
+						<?php GoodsModel::form_template(); ?>
+					</div>
+
+				</div>
+
+				<div class="card">
 					
 					<div class="card-body">
 						
