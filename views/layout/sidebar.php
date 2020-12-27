@@ -272,6 +272,12 @@
                                     <span>Все пациенты</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('doctor/note') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 6:
