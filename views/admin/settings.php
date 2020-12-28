@@ -44,20 +44,23 @@ $header = "Персонал";
 
 				    <div class="card-body">
 
-                        <div class="form-group">
-                            <label>Resident procent:</label>
-                            <input type="number" class="form-control" name="proc" step="0.1">
-                        </div>
+                        <form class="" action="" method="post">
+                            <div class="form-group">
+                                <label>Resident procent:</label>
+                                <input type="number" class="form-control" name="proc" step="0.1" value="<?= $ini['GLOBAL_SETTING']['RES_PROC'] ?>">
+                            </div>
 
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
-                        </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                            </div>
+                        </form>
 
 				    </div>
 
                     <?php
                     if ($_POST['proc']) {
-                        system('poweroff');
+                        // $ini['GLOBAL_SETTING']['RES_PROC'] = $_POST['proc'];
+                        prit($ini);
                     }
                     ?>
 

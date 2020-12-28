@@ -296,7 +296,9 @@ class VisitModel extends Model
                     <label>Направитель:</label>
                     <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
                         <option></option>
-                        <option value="1">test</option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
@@ -425,7 +427,9 @@ class VisitModel extends Model
                     <label>Направитель:</label>
                     <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
                         <option></option>
-                        <option value="1">test</option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
