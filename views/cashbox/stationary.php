@@ -132,6 +132,21 @@ $header = "Рабочий стол";
 
 	<script type="text/javascript">
 
+		function Proter() {
+			if ($('#prot_item').val() != 0) {
+				event.preventDefault();
+				if ($('#prot_item').val() < 0) {
+					var text = "Нехватка средств!";
+				}else {
+					var text = "Верните пациенту деньги!";
+				}
+				new Noty({
+					text: text,
+					type: 'error'
+				}).show();
+			}
+		}
+
 		function Detail(events) {
 			if (event.target.dataset.show == 1) {
 				$(event.target).addClass('btn-primary');

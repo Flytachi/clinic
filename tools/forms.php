@@ -127,12 +127,13 @@ class PatientForm extends Model
                         <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
                     </div>
 
-                    <!-- <div class="form-group row">
-                        <div class="col-md-6">
-                            <label>Аллергия:</label>
-                            <textarea rows="4" cols="4" name="allergy" class="form-control" placeholder="Введите аллергия ..."><?= $post['allergy']?></textarea>
+                    <div class="form-group">
+                        <label class="d-block font-weight-semibold">Статус</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
+                            <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
                         </div>
-                    </div> -->
+                    </div>
 
                 </div>
             </div>

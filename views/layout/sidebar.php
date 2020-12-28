@@ -112,6 +112,12 @@
                                     <span>Склад</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Врачи оператор</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 2:

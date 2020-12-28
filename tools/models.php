@@ -291,6 +291,16 @@ class VisitModel extends Model
 
             </div>
 
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label>Направитель:</label>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                        <option></option>
+                        <option value="1">test</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -408,6 +418,16 @@ class VisitModel extends Model
                     </select>
                 </div>
 
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label>Направитель:</label>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                        <option></option>
+                        <option value="1">test</option>
+                    </select>
+                </div>
             </div>
 
             <div class="text-right">
@@ -670,7 +690,7 @@ class VisitPriceModel extends Model
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
                 <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
-                <!-- <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
+                <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button>
     		</div>
 
         </form>
@@ -707,13 +727,36 @@ class VisitPriceModel extends Model
         <?php
     }
 
+    public function form_button($pk = null)
+    {
+        global $pk, $price, $price_cost;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="user_id" value="<?= $pk ?>">
+            <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
+            <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
+            <button onclick="Proter()" class="btn btn-outline-warning btn-sm">Расщёт</button>
+            <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
+        </form>
+        <?php
+    }
+
     public function clean()
     {
         global $db;
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
-        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
+        if ($this->post['bed_cost']) {
+            $this->bed_cost = $this->post['bed_cost'];
+            unset($this->post['bed_cost']);
+            return True;
+        } else {
+            $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
+            $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
+        }
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
         }elseif ($result > 0) {
@@ -787,7 +830,7 @@ class VisitPriceModel extends Model
                     $this->error("Ошибка в price transfer");
                 }
             }
-
+            // prit($post);
             $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
             if(intval($object)){
                 $object = Mixin\update($this->table, $post, $row['id']);
@@ -799,13 +842,23 @@ class VisitPriceModel extends Model
             }
 
         }
+        // $this->mod('test');
+    }
+
+    public function stationar_price()
+    {
+        $this->error("Стационарная оплата в разработке!");
     }
 
     public function save()
     {
         global $db;
         if($this->clean()){
-            $this->price();
+            if ($this->bed_cost) {
+                $this->stationar_price();
+            }else {
+                $this->price();
+            }
             $this->success();
         }
     }

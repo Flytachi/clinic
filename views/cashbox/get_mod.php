@@ -68,14 +68,13 @@ if ($_GET['pk']) {
                                 <td class="text-right text-dark"><?= number_format($price['balance'] + $price_cost) ?></td>
                             <?php endif; ?>
                         </tr>
+                        <input type="hidden" id="prot_item" value="<?= $price['balance'] + $price_cost ?>">
                     </tbody>
                 </table>
 
                 <div class="text-right mt-3">
-                    <button onclick="Invest(1)" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
-                    <button onclick="Invest(0)" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
-                    <button onclick="alert('Расщёт')" class="btn btn-outline-warning btn-sm">Расщёт</button>
-                    <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
+
+                    <?php VisitPriceModel::form_button() ?>
                 </div>
 
                 <div id="detail_div"></div>

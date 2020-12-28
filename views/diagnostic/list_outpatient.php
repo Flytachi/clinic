@@ -7,6 +7,9 @@ $header = "Амбулаторные пациенты";
 <html lang="en">
 <?php include '../layout/head.php' ?>
 
+<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/content_cards_header.js") ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>
@@ -35,9 +38,18 @@ $header = "Амбулаторные пациенты";
 					<div class="card-header text-dark header-elements-inline alpha-info">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
+							<form action="#">
+								<div class="wmin-sm-200">
+									<select class="form-control form-control-multiselect" multiple="multiple" data-fouc>
+										<option value="cheese">Cheese</option>
+										<option value="tomatoes">Tomatoes</option>
+										<option value="mozarella">Mozzarella</option>
+										<option value="mushrooms">Mushrooms</option>
+										<option value="pepperoni">Pepperoni</option>
+										<option value="onions">Onions</option>
+									</select>
+								</div>
+							</form>
 						</div>
 					</div>
 
@@ -99,7 +111,7 @@ $header = "Амбулаторные пациенты";
 											</td>
                                             <td class="text-center">
 												<?php if ($tr != "table-danger"): ?>
-													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $serv['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
 												<?php endif; ?>
                                             </td>
                                         </tr>
@@ -138,13 +150,14 @@ $header = "Амбулаторные пациенты";
 
 	<script type="text/javascript">
 
-		function ResultShow(events) {
+		function ResultShow(events, title) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
 					$('#modal_result_show').modal('show');
 					$('#modal_result_show_content').html(result);
+					$('#report_title').val(title);
 				},
 			});
 		};
