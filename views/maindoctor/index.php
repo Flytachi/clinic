@@ -52,6 +52,5 @@ $header = "Рабочий стол";
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
 </body>
 </html>

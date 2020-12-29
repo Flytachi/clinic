@@ -296,7 +296,9 @@ class VisitModel extends Model
                     <label>Направитель:</label>
                     <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
                         <option></option>
-                        <option value="1">test</option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
@@ -425,7 +427,9 @@ class VisitModel extends Model
                     <label>Направитель:</label>
                     <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
                         <option></option>
-                        <option value="1">test</option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
@@ -1680,6 +1684,130 @@ class ServiceModel extends Model
             }
         }
         $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render();
+    }
+}
+
+class MemberModel extends Model
+{
+    public $table = 'members';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
+            <div class="form-group">
+                <label>ФИО:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Сумма:</label>
+                <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $post['price']?>">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render();
+    }
+}
+
+class GuideModel extends Model
+{
+    public $table = 'guides';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
+            <div class="form-group">
+                <label>ФИО:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Сумма:</label>
+                <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $post['price']?>">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
     }
 
     public function success()

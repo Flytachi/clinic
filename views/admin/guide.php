@@ -51,7 +51,7 @@ $header = "Услуги";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php MemberModel::form(); ?>
+		    			<?php GuideModel::form(); ?>
 		          	</div>
 
 	        	</div>
@@ -81,7 +81,7 @@ $header = "Услуги";
 	                          	<tbody>
 	                              	<?php
                                     $i=1;
-	                              	foreach($db->query("SELECT * from members") as $row) {
+	                              	foreach($db->query("SELECT * from guides") as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $i++ ?></td>
@@ -89,8 +89,8 @@ $header = "Услуги";
 	                                      	<td><?= number_format($row['price']) ?></td>
 	                                      	<td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'MemberModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'MemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить врача оператора?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row['id'], 'GuideModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'GuideModel') ?>" onclick="return confirm('Вы уверены что хотите удалить врача оператора?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
                               			</tr>
