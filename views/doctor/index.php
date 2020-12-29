@@ -92,8 +92,8 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-												<!-- <a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a> -->
-												<a type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
+												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
+												<!-- <a type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a> -->
                                                 <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
