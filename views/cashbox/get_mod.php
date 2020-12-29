@@ -18,11 +18,11 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1")->fetch();
-                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1")->fetchAll();
+                $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
+                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
                 $sql = "SELECT
                             vs.id,
-                            SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'balance',
+                            IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) 'balance',
                             ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) 'bed_days',
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
@@ -35,7 +35,7 @@ if ($_GET['pk']) {
                             LEFT JOIN investment iv ON(iv.user_id = us.id)
                             LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
                             LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                            LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                            LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
                         WHERE us.id = $pk";
                 $price = $db->query($sql)->fetch();
                 foreach ($serv_id as $value) {

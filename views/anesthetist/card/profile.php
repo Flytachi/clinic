@@ -128,7 +128,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         }
                     }
                     $sql = "SELECT
-                                SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) -
+                                IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
                                     IFNULL($pl, 0) +
@@ -140,7 +140,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 LEFT JOIN investment iv ON(iv.user_id = us.id)
                                 LEFT JOIN beds bd ON(bd.user_id = us.id)
                                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
                             WHERE us.id = $patient->id";
                     $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     // prit($price);

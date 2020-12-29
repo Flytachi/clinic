@@ -743,7 +743,8 @@ class VisitPriceModel extends Model
             <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
-            <button onclick="Proter()" class="btn btn-outline-warning btn-sm">Расщёт</button>
+            <button onclick="Proter('<?= $pk ?>')" type="button" class="btn btn-outline-warning btn-sm">Расщёт</button>
+            <button type="submit" id="proter_button" style="display:none;"></button>
             <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
         </form>
         <?php
@@ -754,7 +755,7 @@ class VisitPriceModel extends Model
         global $db;
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        if ($this->post['bed_cost']) {
+        if (isset($this->post['bed_cost'])) {
             $this->bed_cost = $this->post['bed_cost'];
             unset($this->post['bed_cost']);
             return True;
@@ -850,7 +851,6 @@ class VisitPriceModel extends Model
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
             $this->price($row);
         }
-        // $this->mod('test');
     }
 
     public function stationar_price()
@@ -858,10 +858,11 @@ class VisitPriceModel extends Model
         global $db;
         // parad("Баланс", $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch());
         // parad("Услуги", $db->query("SELECT vp.id, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost")->fetchAll());
+        /*
         $this->add_bed();
         $balance = $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch();
         if ($balance['balance_cash'] < 0 or $balance['balance_card'] < 0 or $balance['balance_transfer'] < 0) {
-            $this->error("Стационарная оплата в разработке!");
+            $this->error("Критическая ошибка!");
         }
         $this->post['sale'] = null;
         if ($balance['balance_cash'] != 0) {
@@ -873,10 +874,10 @@ class VisitPriceModel extends Model
         if ($balance['balance_transfer'] != 0) {
             $this->post['price_transfer'] = $balance['balance_transfer'];
         }
-        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
+        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
             $this->price($row);
         }
-        // $this->mod('test');
+        $this->del_invest();*/
     }
 
     public function add_bed()
@@ -889,15 +890,25 @@ class VisitPriceModel extends Model
         $post['item_id'] = $ti['bed_id'];
         $post['item_name'] = $ti['bed_id'];
         $post['item_cost'] = $this->bed_cost;
-        // $post['price_date'] = date("Y-m-d H:i");
         $object = Mixin\insert($this->table, $post);
+    }
+
+    public function del_invest()
+    {
+        global $db;
+        foreach ($db->query("SELECT * FROM $this->table2 WHERE user_id = $this->user_pk") as $row) {
+            $object = Mixin\delete($this->table2, $row['id']);
+            if(!intval($object)){
+                $this->error("{$this->table2}: ".$object);
+            }
+        }
     }
 
     public function save()
     {
         global $db;
         if($this->clean()){
-            if ($this->bed_cost) {
+            if (isset($this->bed_cost)) {
                 $this->stationar_price();
             }else {
                 $this->ambulator_price();
