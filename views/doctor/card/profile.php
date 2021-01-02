@@ -50,7 +50,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     							<?= date('d.m.Y', strtotime($patient->dateBith)) ?>
     						</div>
 
-                            <label class="col-md-4"><b>Адрес проживание:</b></label>
+                            <label class="col-md-4"><b>Адрес проживания:</b></label>
     						<div class="col-md-8 text-right">
     							г. <?= $patient->region ?> <?= $patient->residenceAddress ?>
     						</div>
@@ -171,7 +171,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                     <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
                                 </div>
 
-                                <label class="col-md-4"><b>Дата размещёния:</b></label>
+                                <label class="col-md-4"><b>Дата размещения:</b></label>
                                 <div class="col-md-8 text-right">
                                     <?= date('d.m.Y  H:i', strtotime($patient->add_date)) ?>
                                 </div>

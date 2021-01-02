@@ -18,7 +18,9 @@ if ($_GET['pk']) {
             <div class="card-body">
 
                 <?php
-                $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
+                $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
+                $pk_visit = $ps['id'];
+                $completed = $ps['completed'];
                 $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
                 $sql = "SELECT
                             vs.id,

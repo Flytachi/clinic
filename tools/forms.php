@@ -262,8 +262,8 @@ class VisitReport extends Model
                     </div>
 
                     <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Сопутствующее заболевание:</label>
-                        <textarea rows="3" cols="3" name="report_title" class="form-control" placeholder="Сопутствующее заболевание"><?= $post['report_title'] ?></textarea>
+                        <label class="col-form-label">Сопутствующие заболевания:</label>
+                        <textarea rows="3" cols="3" name="report_title" class="form-control" placeholder="Сопутствующие заболевания"><?= $post['report_title'] ?></textarea>
                     </div>
 
                     <div class="col-md-10 offset-md-1">

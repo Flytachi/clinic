@@ -31,7 +31,7 @@
         <a href="<?= viv('doctor/card/content_2') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_2')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Другие визиты</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_3')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Назначеные визиты</a>
+        <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_3')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Назначенные визиты</a>
     </li>
     <li class="nav-item">
         <a href="<?= viv('doctor/card/content_4') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_4')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Визиты</a>
@@ -52,7 +52,7 @@
             <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_8')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Лист назначений</a>
         </li>
         <li class="nav-item">
-            <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_9')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Состаяние</a>
+            <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_9')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Состояние</a>
         </li>
         <?php
     }
