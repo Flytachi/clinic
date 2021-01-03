@@ -5,25 +5,25 @@ $header = "Стационарные пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -58,11 +58,11 @@ $header = "Стационарные пациенты";
                                 <tbody>
                                     <?php
 									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}elseif (division_assist() == 1) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}
                                     foreach($db->query($sql) as $row) {
 										if (division_assist() == 2) {
@@ -142,7 +142,7 @@ $header = "Стационарные пациенты";
 	</div>
 
 	<!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 
 	<script type="text/javascript">

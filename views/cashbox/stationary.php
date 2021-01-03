@@ -5,7 +5,7 @@ $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
@@ -14,14 +14,14 @@ $header = "Рабочий стол";
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
@@ -29,7 +29,7 @@ $header = "Рабочий стол";
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -43,18 +43,20 @@ $header = "Рабочий стол";
                     <div class="col-md-5">
 
                         <div class="card border-1 border-info">
-                            <div class="card-body">
 
-                                <div class="form-group form-group-float">
-                                    <label class="form-group-float-label text-success font-weight-semibold animate">ID или имя пациента</label>
-                                    <div class="form-group-feedback form-group-feedback-right">
-                                        <input type="text" class="form-control border-success" id="search_input" placeholder="Введите ID или имя">
-                                        <div class="form-control-feedback text-success">
-                                            <i class="icon-search4"></i>
-                                        </div>
-                                    </div>
-                                    <span class="form-text text-success">Выбор пациента</span>
-                                </div>
+							<div class="card-header bg-white header-elements-sm-inline">
+								<h5 class="card-title">Стационар</h5>
+								<div class="header-elements">
+									<div class="form-group-feedback form-group-feedback-right">
+										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
+										<div class="form-control-feedback text-success">
+											<i class="icon-search4 font-size-base text-muted"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+
+                            <div class="card-body">
 
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -66,7 +68,7 @@ $header = "Рабочий стол";
                                         </thead>
                                         <tbody id="search_display">
                                             <?php
-                                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NOT NULL AND priced_date IS NULL AND status IS NOT NULL") as $row) {
+                                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NOT NULL AND priced_date IS NULL AND service_id = 1") as $row) {
                                                 ?>
                                                     <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
                                                         <td><?= addZero($row['id']) ?></td>
@@ -84,7 +86,8 @@ $header = "Рабочий стол";
                                 </div>
 
                             </div>
-                        </div>
+
+						</div>
 
                     </div>
 
@@ -124,10 +127,32 @@ $header = "Рабочий стол";
 	</div>
 
 	<!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		function Proter(pk) {
+			event.preventDefault();
+			if ($('#prot_item').val() != 0) {
+				if ($('#prot_item').val() < 0) {
+					var text = "Нехватка средств!";
+				}else {
+					var text = "Верните пациенту деньги!";
+				}
+				new Noty({
+					text: text,
+					type: 'error'
+				}).show();
+			}else {
+				var url = "<?= viv('prints/document_3') ?>?id="+pk;
+				var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+			    WinPrint.focus();
+				$("#proter_button").trigger('click');
+			    WinPrint.onload();
+			    WinPrint.close();
+			}
+		}
 
 		function Detail(events) {
 			if (event.target.dataset.show == 1) {

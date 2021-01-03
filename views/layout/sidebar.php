@@ -23,25 +23,12 @@
 							<span>My profile</span>
 						</a>
 					</li>
-					<!-- <li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-coins"></i>
-							<span>My balance</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-comment-discussion"></i>
-							<span>Messages</span>
-							<span class="badge bg-teal-400 badge-pill align-self-center ml-auto">58</span>
-						</a>
-					</li>
-					<li class="nav-item">
-						<a href="#" class="nav-link">
-							<i class="icon-cog5"></i>
-							<span>Account settings</span>
-						</a>
-					</li> -->
+                    <li class="nav-item">
+                        <a href="<?= viv('admin/settings') ?>" class="nav-link legitRipple">
+                            <i class="icon-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
 					<li class="nav-item">
 						<a href="<?= logout() ?>" class="nav-link">
 							<i class="icon-switch2"></i>
@@ -110,6 +97,18 @@
                                 <a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
                                     <span>Склад</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Врачи оператор</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/guide') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Направители</span>
                                 </a>
                             </li>
                             <?php
@@ -261,21 +260,21 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('doctor/list_operating') ?>" class="nav-link legitRipple">
-                                    <i class="icon-collaboration"></i>
-                                    <span>Операционные пациенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('doctor/list_completed') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Завершёные пациенты</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('maindoctor/list_all') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Все пациенты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('doctor/note') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
                                 </a>
                             </li>
                             <?php
@@ -377,7 +376,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('maindoctor/list_all') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('maindoctor/list_operation') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Операционные пациенты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Все пациенты</span>
                                 </a>
@@ -497,20 +502,15 @@
                                 </a>
                             </li>
                             <?php
+                            break;
                         case 11:
                             ?>
                             <li class="nav-item">
-                                <a href="" class="nav-link legitRipple">
-                                    <i class="icon-users2 "></i>
-                                    <span>Амбулаторные пациенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('anesthetist/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
-                                    <span>Стационарные пациенты</span>
+                                    <span>Пациенты</span>
                                     <?php
-                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.oper_date IS NOT NULL ORDER BY us.id ASC")->rowCount();
                                     if ($con_tree) {
                                         ?>
                                         <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>

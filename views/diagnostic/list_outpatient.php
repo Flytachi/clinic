@@ -5,25 +5,28 @@ $header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
+
+<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/content_cards_header.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -35,9 +38,18 @@ $header = "Амбулаторные пациенты";
 					<div class="card-header text-dark header-elements-inline alpha-info">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
+							<form action="#">
+								<div class="wmin-sm-200">
+									<select class="form-control form-control-multiselect" multiple="multiple" data-fouc>
+										<option value="cheese">Cheese</option>
+										<option value="tomatoes">Tomatoes</option>
+										<option value="mozarella">Mozzarella</option>
+										<option value="mushrooms">Mushrooms</option>
+										<option value="pepperoni">Pepperoni</option>
+										<option value="onions">Onions</option>
+									</select>
+								</div>
+							</form>
 						</div>
 					</div>
 
@@ -58,11 +70,11 @@ $header = "Амбулаторные пациенты";
                                 <tbody>
                                     <?php
 									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}elseif (division_assist() == 1) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}
                                     foreach($db->query($sql) as $row) {
 										if (division_assist() == 2) {
@@ -99,7 +111,7 @@ $header = "Амбулаторные пациенты";
 											</td>
                                             <td class="text-center">
 												<?php if ($tr != "table-danger"): ?>
-													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $serv['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
 												<?php endif; ?>
                                             </td>
                                         </tr>
@@ -133,18 +145,19 @@ $header = "Амбулаторные пациенты";
 	</div>
 
 	<!-- Footer -->
-	<?php include '../layout/footer.php' ?>
+	<?php include layout('footer') ?>
 	<!-- /footer -->
 
 	<script type="text/javascript">
 
-		function ResultShow(events) {
+		function ResultShow(events, title) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
 					$('#modal_result_show').modal('show');
 					$('#modal_result_show_content').html(result);
+					$('#report_title').val(title);
 				},
 			});
 		};

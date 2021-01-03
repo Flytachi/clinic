@@ -5,7 +5,7 @@ $header = "Отчёт";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
@@ -32,14 +32,14 @@ $header = "Отчёт";
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
@@ -47,7 +47,7 @@ $header = "Отчёт";
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -130,20 +130,21 @@ $header = "Отчёт";
                                     FROM visit_price vsp
                                         LEFT JOIN visit vs ON(vs.id=vsp.visit_id)
                                     WHERE
+										vsp.item_type = 1 AND
                                         (DATE_FORMAT(vsp.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
                                         vsp.pricer_id IN (".implode($_POST['priser_id']).")
                                     ";
 
-							$sql2 = "SELECT
-                                        iv.pricer_id,
-                                        iv.user_id,
-                                        iv.balance,
-                                        iv.add_date
-                                    FROM investment iv
-                                    WHERE
-                                        (DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-                                        iv.pricer_id IN (".implode($_POST['priser_id']).")
-                                    ";
+							// $sql2 = "SELECT
+                            //             iv.pricer_id,
+                            //             iv.user_id,
+                            //             iv.balance,
+                            //             iv.add_date
+                            //         FROM investment iv
+                            //         WHERE
+							// 			(DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+                            //             iv.pricer_id IN (".implode($_POST['priser_id']).")
+                            //         ";
 							// prit($db->query($sql2)->fetchAll());
                             ?>
 
@@ -177,7 +178,7 @@ $header = "Отчёт";
 												<th><?= $row['refund'] ?></th>
                                             </tr>
                                         <?php endforeach; ?>
-										<?php foreach ($db->query($sql2) as $row): ?>
+										<!-- <?php foreach ($db->query($sql2) as $row): ?>
                                             <tr>
                                                 <th><?= $i++ ?></th>
                                                 <th><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></th>
@@ -190,7 +191,7 @@ $header = "Отчёт";
 												<th><?= ($row['balance'] > 0) ? $row['balance'] : 0 ?></th>
 												<th><?= ($row['balance'] < 0) ? $row['balance'] : 0 ?></th>
                                             </tr>
-                                        <?php endforeach; ?>
+                                        <?php endforeach; ?> -->
                                     </tbody>
                                 </table>
 
@@ -210,7 +211,7 @@ $header = "Отчёт";
 	<!-- /page content -->
 
 	<!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>

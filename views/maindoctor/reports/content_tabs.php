@@ -1,4 +1,4 @@
-<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
     <li class="nav-item">
         <a href="<?= viv('maindoctor/reports/content_1') ?>" class="nav-link <?= (viv('maindoctor/reports/content_1')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Услуги</a>
     </li>

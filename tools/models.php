@@ -291,6 +291,18 @@ class VisitModel extends Model
 
             </div>
 
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label>Направитель:</label>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -410,6 +422,18 @@ class VisitModel extends Model
 
             </div>
 
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <label>Направитель:</label>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -429,6 +453,42 @@ class VisitModel extends Model
         <?php
     }
 
+    public function form_oper($pk = null)
+    {
+        global $db, $patient;
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-4">
+                    <label>Дата:</label>
+                    <input type="date" class="form-control" name="oper_date">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Время:</label>
+                    <input type="time" class="form-control" name="time">
+                </div>
+
+                <div class="col-md-4">
+                    <div class="text-right mt-4">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Назначить операцию</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function save()
     {
         global $db;
@@ -444,16 +504,27 @@ class VisitModel extends Model
             }
             $this->post['grant_id'] = $this->post['parent_id'];
             $object = Mixin\insert($this->table, $this->post);
-            if (intval($object)){
-                // Обновление статуса у пациента
-                $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
-                if (intval($object1)){
-                    $this->success();
-                }else {
-                    $this->error($object1);
-                }
-            }else{
+            if (!intval($object)){
                 $this->error($object);
+            }
+            if (!$this->post['direction'] or (level() != 2 and $this->post['direction'])) {
+                $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
+                $post['visit_id'] = $object;
+                $post['item_type'] = 1;
+                $post['item_id'] = $this->post['service_id'];
+                $post['item_cost'] = $service['price'];
+                $post['item_name'] = $service['name'];
+                $object = Mixin\insert('visit_price', $post);
+                if (!intval($object)){
+                    $this->error($object);
+                }
+            }
+            // Обновление статуса у пациента
+            $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
+            if (intval($object1)){
+                $this->success();
+            }else {
+                $this->error($object1);
             }
 
         }
@@ -468,6 +539,10 @@ class VisitModel extends Model
                 $this->post['laboratory'] = True;
             }
         }
+        if ($this->post['oper_date']) {
+            $this->post['oper_date'] .= " ".$this->post['time'];
+            unset($this->post['time']);
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -477,9 +552,13 @@ class VisitModel extends Model
     {
         global $db;
         // Нахождение id визита
-        $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+        $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
         $object = Mixin\delete($this->table, $pk);
-        if ($object) {
+        $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
+        if (!intval($object)) {
+            $this->error($object, 1);
+        }
+        if (intval($object)) {
             $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
                 Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
@@ -538,6 +617,7 @@ class VisitPriceModel extends Model
 {
     public $table = 'visit_price';
     public $table1 = 'visit';
+    public $table2 = 'investment';
 
     public function form($pk = null)
     {
@@ -615,7 +695,7 @@ class VisitPriceModel extends Model
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
                 <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
-                <!-- <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button> -->
+                <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button>
     		</div>
 
         </form>
@@ -652,13 +732,37 @@ class VisitPriceModel extends Model
         <?php
     }
 
+    public function form_button($pk = null)
+    {
+        global $pk, $pk_visit, $completed, $price, $price_cost;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="user_id" value="<?= $pk ?>">
+            <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
+            <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
+            <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
+            <button type="submit" id="proter_button" style="display:none;"></button>
+            <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
+        </form>
+        <?php
+    }
+
     public function clean()
     {
         global $db;
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
-        $tot = $db->query("SELECT SUM(sc.price) 'total_price' FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk")->fetch();
-        $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
+        if (isset($this->post['bed_cost'])) {
+            $this->bed_cost = $this->post['bed_cost'];
+            unset($this->post['bed_cost']);
+            return True;
+        } else {
+            $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
+            $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
+        }
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
         }elseif ($result > 0) {
@@ -670,50 +774,30 @@ class VisitPriceModel extends Model
         }
     }
 
-    public function price()
+    public function price($row)
     {
         global $db;
-        // parad("Услуги", $db->query("SELECT vs.id, sc.price FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE priced_date IS NULL AND user_id = $this->user_pk ORDER BY sc.price")->fetchAll());
-        foreach ($db->query("SELECT vs.id, sc.price, sc.name FROM $this->table1 vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY sc.price") as $row) {
-            $post = array(
-                'pricer_id' => $this->post['pricer_id'],
-                'sale' => $this->post['sale'],
-            );
-
-            if ($this->post['price_cash'])
-            {
-                if ($this->post['price_cash'] >= $row['price']) {
-                    $this->post['price_cash'] -= $row['price'];
-                    $post['price_cash'] = $row['price'];
-                }else {
-                    $post['price_cash'] = $this->post['price_cash'];
-                    $this->post['price_cash'] = 0;
-                    $temp = $row['price'] - $post['price_cash'];
-                    if ($this->post['price_card'] >= $temp) {
-                        $this->post['price_card'] -= $temp;
-                        $post['price_card'] = $temp;
-                    }else {
-                        $post['price_card'] = $this->post['price_card'];
-                        $this->post['price_card'] = 0;
-                        $temp = $temp - $post['price_card'];
-                        if ($this->post['price_transfer'] >= $temp) {
-                            $this->post['price_transfer'] -= $temp;
-                            $post['price_transfer'] = $temp;
-                        }else {
-                            $this->error("Ошибка в price transfer");
-                        }
-                    }
-                }
-            }
-            elseif ($this->post['price_card'])
-            {
-                if ($this->post['price_card'] >= $row['price']) {
-                    $this->post['price_card'] -= $row['price'];
-                    $post['price_card'] = $row['price'];
+        $post = array(
+            'pricer_id' => $this->post['pricer_id'],
+            'sale' => $this->post['sale'],
+            'price_date' => date("Y-m-d H:i"),
+        );
+        if ($this->post['price_cash'])
+        {
+            if ($this->post['price_cash'] >= $row['item_cost']) {
+                $this->post['price_cash'] -= $row['item_cost'];
+                $post['price_cash'] = $row['item_cost'];
+            }else {
+                $post['price_cash'] = $this->post['price_cash'];
+                $this->post['price_cash'] = 0;
+                $temp = $row['item_cost'] - $post['price_cash'];
+                if ($this->post['price_card'] >= $temp) {
+                    $this->post['price_card'] -= $temp;
+                    $post['price_card'] = $temp;
                 }else {
                     $post['price_card'] = $this->post['price_card'];
                     $this->post['price_card'] = 0;
-                    $temp = $row['price'] - $post['price_card'];
+                    $temp = $temp - $post['price_card'];
                     if ($this->post['price_transfer'] >= $temp) {
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
@@ -722,30 +806,101 @@ class VisitPriceModel extends Model
                     }
                 }
             }
-            else
-            {
-                if ($this->post['price_transfer'] >= $row['price']) {
-                    $this->post['price_transfer'] -= $row['price'];
-                    $post['price_transfer'] = $row['price'];
+        }
+        elseif ($this->post['price_card'])
+        {
+            if ($this->post['price_card'] >= $row['item_cost']) {
+                $this->post['price_card'] -= $row['item_cost'];
+                $post['price_card'] = $row['item_cost'];
+            }else {
+                $post['price_card'] = $this->post['price_card'];
+                $this->post['price_card'] = 0;
+                $temp = $row['item_cost'] - $post['price_card'];
+                if ($this->post['price_transfer'] >= $temp) {
+                    $this->post['price_transfer'] -= $temp;
+                    $post['price_transfer'] = $temp;
                 }else {
                     $this->error("Ошибка в price transfer");
                 }
             }
-            $post['item_id'] = $row['id'];
-            $post['item_type'] = 1;
-            $post['item_cost'] = $row['price'];
-            $post['item_name'] = $row['name'];
-            $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['id']);
-            if(intval($object)){
-                $post['visit_id'] = $row['id'];
-                $object1 = Mixin\insert($this->table, $post);
-                if (!intval($object1)){
-                    $this->error($object1);
-                }
+        }
+        else
+        {
+            if ($this->post['price_transfer'] >= $row['item_cost']) {
+                $this->post['price_transfer'] -= $row['item_cost'];
+                $post['price_transfer'] = $row['item_cost'];
             }else {
+                $this->error("Ошибка в price transfer");
+            }
+        }
+
+        $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+        if(intval($object)){
+            $object = Mixin\update($this->table, $post, $row['id']);
+            if (!intval($object)){
                 $this->error($object);
             }
+        }else {
+            $this->error($object);
+        }
+    }
 
+    public function ambulator_price()
+    {
+        global $db;
+        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
+            $this->price($row);
+        }
+    }
+
+    public function stationar_price()
+    {
+        global $db;
+        // parad("Баланс", $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch());
+        // parad("Услуги", $db->query("SELECT vp.id, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost")->fetchAll());
+        $balance = $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch();
+        if ($balance['balance_cash'] < 0 or $balance['balance_card'] < 0 or $balance['balance_transfer'] < 0) {
+            $this->error("Критическая ошибка!");
+        }
+        $this->add_bed();
+        $this->post['sale'] = null;
+        if ($balance['balance_cash'] != 0) {
+            $this->post['price_cash'] = $balance['balance_cash'];
+        }
+        if ($balance['balance_card'] != 0) {
+            $this->post['price_card'] = $balance['balance_card'];
+        }
+        if ($balance['balance_transfer'] != 0) {
+            $this->post['price_transfer'] = $balance['balance_transfer'];
+        }
+        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
+            $this->price($row);
+        }
+        $this->del_invest();
+    }
+
+    public function add_bed()
+    {
+        global $db;
+        $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1")->fetch();
+        $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN ward wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
+        $post['visit_id'] = $ti['id'];
+        $post['pricer_id'] = $this->post['pricer_id'];
+        $post['item_type'] = 101;
+        $post['item_id'] = $ti['bed_id'];
+        $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
+        $post['item_cost'] = $this->bed_cost;
+        $object = Mixin\insert($this->table, $post);
+    }
+
+    public function del_invest()
+    {
+        global $db;
+        foreach ($db->query("SELECT * FROM $this->table2 WHERE user_id = $this->user_pk") as $row) {
+            $object = Mixin\delete($this->table2, $row['id']);
+            if(!intval($object)){
+                $this->error("{$this->table2}: ".$object);
+            }
         }
     }
 
@@ -753,7 +908,11 @@ class VisitPriceModel extends Model
     {
         global $db;
         if($this->clean()){
-            $this->price();
+            if (isset($this->bed_cost)) {
+                $this->stationar_price();
+            }else {
+                $this->ambulator_price();
+            }
             $this->success();
         }
     }
@@ -831,7 +990,46 @@ class VisitInspectionModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status_anest" value="1">
+            <input type="hidden" name="status" value="1">
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function form_oper($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status" value="2">
 
             <div class="modal-body">
 
@@ -1525,7 +1723,6 @@ class ServiceModel extends Model
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
-                    prit($this->post);
                     $object = Mixin\insert($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);
@@ -1537,6 +1734,130 @@ class ServiceModel extends Model
             }
         }
         $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render();
+    }
+}
+
+class MemberModel extends Model
+{
+    public $table = 'members';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
+            <div class="form-group">
+                <label>ФИО:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Сумма:</label>
+                <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $post['price']?>">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+			<span class="font-weight-semibold"> '.$message.'</span>
+	    </div>
+        ';
+        render();
+    }
+}
+
+class GuideModel extends Model
+{
+    public $table = 'guides';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+
+            <div class="form-group">
+                <label>ФИО:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Сумма:</label>
+                <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $post['price']?>">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
     }
 
     public function success()
@@ -2131,6 +2452,73 @@ class PatientStatsModel extends Model
         <?php
     }
 
+    public function form_oper($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status" value="2">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+
+                    <div class="col-md-6">
+                        <label>Время:</label>
+                        <input type="time" class="form-control" name="time">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Давление:</label>
+                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление">
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-4">
+                        <label>Пульс:</label>
+                        <input type="number" class="form-control" name="pulse" min="40" step="1" max="150" value="85" placeholder="Введите пульс" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Температура:</label>
+                        <input type="number" class="form-control" name="temperature" min="35" step="0.1" max="42" value="36.6" placeholder="Введите температура" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Сатурация:</label>
+                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['status'] and $this->post['time']) {
+            $this->post['add_date'] = date('Y-m-d ') . $this->post['time'];
+            unset($this->post['time']);
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -2347,6 +2735,70 @@ class StoragePreparatModel extends Model
             $object = Mixin\delete('storage_orders', $order_pk);
         }
         $this->success();
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
+
+class VisitMemberModel extends Model
+{
+    public $table = 'visit_member';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label>Член персонала:</label>
+                    <select placeholder="Введите состояние" name="member_id" class="form-control form-control-select2">
+                        <?php foreach ($db->query("SELECT us.id, IFNULL(vm.id, NULL) 'vm_id' FROM users us LEFT JOIN visit_member vm ON(vm.member_id=us.id AND vm.status IS NULL AND vm.visit_id=$patient->visit_id) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($row['vm_id']) ? "disabled" : "" ?>><?= get_full_name($row['id']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()

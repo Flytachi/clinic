@@ -56,6 +56,25 @@ is_auth(4);
 			<div class="content">
 
 				<div class="card">
+
+					<div class="card-body">
+
+						<div class="card-header header-elements-inline">
+			              	<h5 class="card-title">Шаблон</h5>
+			              	<div class="header-elements">
+		                  		<div class="list-icons">
+									<a href="../templates/supliers.xlsx" class="btn" download>Шаблон</a>
+			                      	<a class="list-icons-item" data-action="collapse"></a>
+			                  	</div>
+			              	</div>
+			          	</div>
+						
+						<?php SupliersModel::form_template(); ?>
+					</div>
+
+				</div>
+
+				<div class="card">
 					
 					<div class="card-body">
 						
@@ -134,8 +153,8 @@ is_auth(4);
 										<td><?= $row['note']; ?></td>
 
 										<td>
-											<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#a<?= $row['suplier_id'] ?>"><i class="icon-pencil3"></i></button>
-											<a href="deletesupplier.php?id=<?= $row['suplier_id'] ?>" class="delbutton" title="Удалить"><button class="btn btn-danger"><i class="icon-trash"></i></button></a>
+											<i class="icon-pencil7" data-toggle="modal" data-target="#a<?= $row['suplier_id'] ?>"></i>
+											<a href="deletesupplier.php?id=<?= $row['suplier_id'] ?>" class="delbutton" title="Удалить"><i class="icon-trash"></i></a>
 										</td>
 									</tr>
 									<?php

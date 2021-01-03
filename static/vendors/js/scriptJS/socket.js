@@ -1,3 +1,10 @@
+function Print(events) {
+    var WinPrint = window.open(`${events}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+    WinPrint.focus();
+    WinPrint.onload();
+    WinPrint.close();
+};
+
 function addZero(number){
 
     let strNumber = String(number);
@@ -23,8 +30,11 @@ conn.onopen = function(e) {
 };
 
 conn.onmessage = function(e) {
+
+
 	let d = JSON.parse(e.data)
 
+  console.log(d);
 	let time = new Date();
 
 	let hour = addZero(time.getHours());
@@ -143,9 +153,29 @@ conn.onmessage = function(e) {
             type: 'info',
             html: d.message
         });
-    }
-  }
 
+    }
+  }else if (d.type == "patient" ) {
+      if(d.id == id){
+
+        $(`tr[data-userid=${ d.user_id }][data-parentid=${ d.parent_id }]`).remove();
+
+        $.ajax({
+          type: "POST",
+
+          url: "visitpd.php",
+
+          data: { id_user: d.user_id, id_patient: d.parent_id },
+
+          success: function (data) {
+
+            let d = JSON.parse(data);
+
+            $(`#${ d.user[0].parent_id }`).prepend(`<tr style=" background-color: #97E32F;"><td>${ d.user[0].first_name }</td><td>${ d.user[0].last_name }</td></tr>`)
+          },
+      });
+      }
+  }
 };
 
 function sendMessage(body) {
@@ -188,4 +218,11 @@ function deletNotice(body) {
 	}catch{
 		console.log('error')
 	}
+}
+
+function sendPatient(body) {
+  parentid = body.dataset.parentid;
+  userid = body.dataset.userid;
+  let obj = JSON.stringify({ type : 'patient', id : "1983", user_id : userid, parent_id : parentid});
+  conn.send(obj);
 }

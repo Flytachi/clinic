@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth([5,8]);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -36,13 +36,7 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-						<?php
-						include "content_tabs.php";
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+						<?php include "content_tabs.php"; ?>
 
 						<div class="card">
 
@@ -84,8 +78,8 @@ $header = "Пациент";
 													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
 													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
 												</td>
-												<td><?= ($row['accept_date']) ? date('d.m.Y  H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Не принят</span>'?></td>
-												<td><?= ($row['completed']) ? date('d.m.Y  H:i', strtotime($row['completed'])) : '<span class="text-muted">Не завершён</span>'?></td>
+												<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row['name'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td>

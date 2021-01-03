@@ -1053,7 +1053,7 @@ body {
     border-left-width: 1px; }
 
 .sidebar-user-material .sidebar-user-material-body {
-  background: url(../../vendors/image/back2.jpg) center center no-repeat;
+  background: url(../../vendors/image/user_bg.jpg) center center no-repeat;
   background-size: cover; }
 
 .sidebar-dark .sidebar-user-material .collapse {

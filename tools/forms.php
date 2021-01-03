@@ -127,12 +127,13 @@ class PatientForm extends Model
                         <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
                     </div>
 
-                    <!-- <div class="form-group row">
-                        <div class="col-md-6">
-                            <label>Аллергия:</label>
-                            <textarea rows="4" cols="4" name="allergy" class="form-control" placeholder="Введите аллергия ..."><?= $post['allergy']?></textarea>
+                    <div class="form-group">
+                        <label class="d-block font-weight-semibold">Статус</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
+                            <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
                         </div>
-                    </div> -->
+                    </div>
 
                 </div>
             </div>
@@ -233,6 +234,64 @@ class VisitReport extends Model
         <?php
     }
 
+    public function form_finish($pk = null)
+    {
+        global $db, $patient;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        ?>
+        <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
+
+            <div class="modal-header bg-info">
+                <h5 class="modal-title">Заключение</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="id" id="repfun_id" value="<?= $pk ?>">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Клинический диагноз:</label>
+                        <textarea rows="3" cols="3" name="report_diagnostic" class="form-control" placeholder="Клинический диагноз"><?= $post['report_diagnostic'] ?></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Сопутствующие заболевания:</label>
+                        <textarea rows="3" cols="3" name="report_title" class="form-control" placeholder="Сопутствующие заболевания"><?= $post['report_title'] ?></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Жалоба:</label>
+                        <textarea rows="5" cols="3" name="report_description" class="form-control" placeholder="Жалоба"><?= $post['report_description'] ?></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Анамнез Морби:</label>
+                        <textarea rows="3" cols="3" name="report_recommendation" class="form-control" placeholder="Анамнез Морби"><?= $post['report_recommendation'] ?></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <?php if (level() == 10): ?>
+                    <!-- <a href="<?= up_url($_GET['user_id'], 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента!')" class="btn btn-outline-danger">Завершить</a> -->
+                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
+                <?php endif; ?>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function get_or_404($pk)
     {
         global $db;
@@ -251,7 +310,11 @@ class VisitReport extends Model
         }else {
             if($object){
                 $this->set_post($object);
-                return $this->form($object['id']);
+                if ($object['service_id'] == 1) {
+                    return $this->form_finish($object['id']);
+                }else {
+                    return $this->form($object['id']);
+                }
             }else{
                 Mixin\error('404');
             }

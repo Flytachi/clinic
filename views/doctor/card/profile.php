@@ -5,7 +5,7 @@ $sql = "SELECT
             us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
-            wd.floor, wd.ward, bd.bed
+            vs.oper_date, wd.floor, wd.ward, bd.bed
         FROM users us
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
@@ -50,7 +50,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     							<?= date('d.m.Y', strtotime($patient->dateBith)) ?>
     						</div>
 
-                            <label class="col-md-4"><b>Адрес проживание:</b></label>
+                            <label class="col-md-4"><b>Адрес проживания:</b></label>
     						<div class="col-md-8 text-right">
     							г. <?= $patient->region ?> <?= $patient->residenceAddress ?>
     						</div>
@@ -128,7 +128,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         }
                     }
                     $sql = "SELECT
-                                SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) -
+                                IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
                                     IFNULL($pl, 0) +
@@ -140,7 +140,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 LEFT JOIN investment iv ON(iv.user_id = us.id)
                                 LEFT JOIN beds bd ON(bd.user_id = us.id)
                                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id)
+                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
                             WHERE us.id = $patient->id";
                     $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     // prit($price);
@@ -171,7 +171,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                     <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
                                 </div>
 
-                                <label class="col-md-4"><b>Дата размещёния:</b></label>
+                                <label class="col-md-4"><b>Дата размещения:</b></label>
                                 <div class="col-md-8 text-right">
                                     <?= date('d.m.Y  H:i', strtotime($patient->add_date)) ?>
                                 </div>
@@ -267,7 +267,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $button_inner = "Завершить";
                     }
                     ?>
-                    <button <?= ($patient->grant_id == $_SESSION['session_id']) ? "disabled" : "" ?> data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                    <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
                         <i class="icon-paste2"></i> <?= $button_inner ?>
                     </button>
                 </div>

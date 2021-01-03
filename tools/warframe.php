@@ -53,6 +53,9 @@ function get_full_name($id = null) {
     if($id){
         $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }else{
+        if ($_SESSION['session_id'] == "master") {
+            return "Master";
+        }
         $id = $_SESSION['session_id'];
         $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }
@@ -64,6 +67,9 @@ function get_name($id = null) {
     if($id){
         $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }else{
+        if ($_SESSION['session_id'] == "master") {
+            return "Master";
+        }
         $id = $_SESSION['session_id'];
         $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }
@@ -75,6 +81,9 @@ function level() {
     level()
     */
 	global $db;
+    if ($_SESSION['session_id'] == "master") {
+        return "master";
+    }
     $id = $_SESSION['session_id'];
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
 	return intval($stmt);
@@ -86,6 +95,9 @@ function level_name($id = null) {
     */
     global $db, $PERSONAL;
     if(empty($id)){
+        if ($_SESSION['session_id'] == "master") {
+            return "";
+        }
         $id = $_SESSION['session_id'];
     }
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
@@ -162,6 +174,9 @@ function addZero($number){
 function division($id = null) {
     global $db, $PERSONAL;
     if(empty($id)){
+        if ($_SESSION['session_id'] == "master") {
+            return "";
+        }
         $id = $_SESSION['session_id'];
     }
     $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
@@ -178,6 +193,9 @@ function division($id = null) {
 function division_name($id = null) {
     global $db, $PERSONAL;
     if(empty($id)){
+        if ($_SESSION['session_id'] == "master") {
+            return "";
+        }
         $id = $_SESSION['session_id'];
     }
     $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
@@ -193,6 +211,9 @@ function division_name($id = null) {
 function division_title($id = null) {
     global $db, $PERSONAL;
     if(empty($id)){
+        if ($_SESSION['session_id'] == "master") {
+            return "";
+        }
         $id = $_SESSION['session_id'];
     }
     $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();

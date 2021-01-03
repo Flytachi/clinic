@@ -7,7 +7,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
 <!DOCTYPE html>
 <html lang="en">
 
-    <?php include '../layout/head.php' ?>
+    <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
     <body onload="window.print();">
@@ -15,7 +15,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
         <div class="row">
 
             <div class="col-6">
-                <img src="icon/company.jpg" width="480" height="105">
+                <img src="<?= img('prints/icon/company.jpg') ?>" width="480" height="105">
             </div>
 
             <div class="col-6 text-right h3">
@@ -58,6 +58,6 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
 
         </div>
 
-
     </body>
+
 </html>

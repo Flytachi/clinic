@@ -67,8 +67,8 @@ $header = "Пациент";
                                                 ?>
                                             </td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['accept_date'])) ?></td>
-											<td><?= date('d.m.Y  H:i', strtotime($row['completed'])) ?></td>
+											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td class="text-center">
 												<button type="button" class="btn btn-outline-primary btn-lg legitRipple dropdown-toggle" data-toggle="dropdown"><i class="icon-eye mr-2"></i> Просмотр</button>
 												<div class="dropdown-menu dropdown-menu-right">

@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth([5,8]);
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -39,15 +39,10 @@ $header = "Пациент";
 
 						<?php
 						include "content_tabs.php";
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-
 						if ($patient->direction) {
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.service_id != 1 AND accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "table-info";
 						} else {
 							$title = "Осмотр";
@@ -88,21 +83,29 @@ $header = "Пациент";
 									</thead>
 									<tbody>
 										<?php foreach ($db->query($table_sql) as $row): ?>
-											<tr class="<?= $table_tr ?>">
+											<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
 													<?php if ($row['report_description']): ?>
-														<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
-														<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php if ($row['service_id'] == 1): ?>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php else: ?>
+															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php endif; ?>
 													<?php else: ?>
-														<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+														<?php if ($row['service_id'] == 1): ?>
+															<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
+														<?php else: ?>
+															<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+														<?php endif; ?>
 													<?php endif; ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
 
 										<?php if ($patient->direction): ?>
-											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status_anest IS NULL ORDER BY add_date DESC") as $row): ?>
+											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status IS NULL ORDER BY add_date DESC") as $row): ?>
 												<tr>
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 													<td><?= get_full_name($row['parent_id']) ?></td>
@@ -137,6 +140,16 @@ $header = "Пациент";
 			<div class="modal-content border-3 border-info" id="form_card">
 
 				<?php VisitReport::form(); ?>
+
+			</div>
+		</div>
+	</div>
+
+	<div id="modal_report_finish" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="form_card_finish">
+
+				<?php VisitReport::form_finish(); ?>
 
 			</div>
 		</div>
@@ -183,6 +196,15 @@ $header = "Пациент";
 
 	<script type="text/javascript">
 
+		function CleanFormFinish(id, name) {
+			$('#report_editor').html('');
+			$('#repfun_id').val(id);
+			$('#modal_report_finish').modal('show');
+			if (name) {
+				$('#report_title').val(name);
+			}
+		}
+
 		function CleanForm(id, name) {
 			$('#report_editor').html('');
 			$('#rep_id').val(id);
@@ -203,13 +225,24 @@ $header = "Пациент";
 			});
 		};
 
-		function Update(events, name) {
+		function Update(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
 					$('#modal_report_add').modal('show');
 					$('#form_card').html(result);
+				},
+			});
+		};
+
+		function UpdateFinish(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_report_finish').modal('show');
+					$('#form_card_finish').html(result);
 				},
 			});
 		};

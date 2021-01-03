@@ -5,15 +5,17 @@ function is_auth($arr = null){
     if (!$_SESSION['session_id']) {
         header("location:".DIR."/auth/login.php");
     }
-    if ($arr){
-        $perk =level();
-        if (is_array($arr)){
-            if(!in_array($perk, $arr)){
-                Mixin\error('423');
-            }
-        }else{
-            if(intval($arr) != $perk){
-                Mixin\error('423');
+    if (!$_SESSION['session_id'] == "master") {
+        if ($arr){
+            $perk =level();
+            if (is_array($arr)){
+                if(!in_array($perk, $arr)){
+                    Mixin\error('423');
+                }
+            }else{
+                if(intval($arr) != $perk){
+                    Mixin\error('423');
+                }
             }
         }
     }

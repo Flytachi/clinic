@@ -5,24 +5,24 @@ $header = "Отчёт по визитам";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
-		<?php include '../../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -43,97 +43,139 @@ $header = "Отчёт по визитам";
 
                     <div class="card-body">
 
-						<div class="form-group row">
+						<form action="" method="post">
+							<div class="form-group row">
 
-							<div class="col-md-3">
-			                    <label>Пациент:</label>
-								<select class="form-control form-control-select2" data-fouc required>
-			                        <option>Выберите пациента</option>
-									<?php
-									foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
-										?>
-										<option value="<?= $row['id'] ?>"><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+								<div class="col-md-3">
+				                    <label>Пациент:</label>
+									<select class="form-control form-control-select2" name="user_id" data-fouc>
+				                        <option value="">Выберите пациента</option>
 										<?php
-									}
-									?>
-			                    </select>
-			                </div>
+										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
+											?>
+											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+											<?php
+										}
+										?>
+				                    </select>
+				                </div>
 
-							<div class="col-md-3">
-								<label>Дата приёма:</label>
-								<div class="input-group">
-									<input type="text" class="form-control daterange-locale">
-									<span class="input-group-append">
-										<span class="input-group-text"><i class="icon-calendar22"></i></span>
-									</span>
+								<div class="col-md-3">
+									<label>Дата приёма:</label>
+									<div class="input-group">
+										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<span class="input-group-append">
+											<span class="input-group-text"><i class="icon-calendar22"></i></span>
+										</span>
+									</div>
 								</div>
+
+								<div class="col-md-3">
+				                    <label>Тип визита:</label>
+				                    <select class="form-control form-control-select2" name="direction" data-fouc>
+				                        <option value="">Выберите тип визита</option>
+										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
+										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
+				                    </select>
+				                </div>
+
+								<div class="col-md-3">
+									<label class="d-block font-weight-semibold">Статус</label>
+									<div class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="compl_true" <?= (!$_POST or $_POST['compl_true']) ? "checked" : "" ?>>
+										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
+									</div>
+
+									<div class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="compl_false" <?= (!$_POST or $_POST['compl_false']) ? "checked" : "" ?>>
+										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
+									</div>
+								</div>
+
 							</div>
 
-							<div class="col-md-3">
-			                    <label>Тип визита:</label>
-			                    <select data-placeholder="Выберите тип визита" class="form-control form-control-select2" data-fouc required>
-			                        <option>Выберите тип визита</option>
-									<option value="0">Амбулаторный</option>
-									<option value="1">Стационарный</option>
-			                    </select>
-			                </div>
-
-							<div class="col-md-3">
-								<label class="d-block font-weight-semibold">Статус</label>
-								<div class="custom-control custom-checkbox">
-									<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" checked>
-									<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
-								</div>
-
-								<div class="custom-control custom-checkbox">
-									<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" checked>
-									<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
-								</div>
+							<div class="text-right">
+								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
-
-						</div>
-
-						<div class="text-right">
-							<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
-						</div>
+						</form>
 
                     </div>
 
                 </div>
 
-				<div class="card border-1 border-info">
+				<?php if ($_POST): ?>
+					<?php
+					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
+					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
+					$sql = "SELECT
+								vs.user_id, vs.accept_date,
+								vs.completed, vp.item_name,
+								vp.item_cost, vs.priced_date
+							FROM visit vs
+								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
+							WHERE
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+					// Обработка
+					if ($_POST['user_id']) {
+						$sql .= " AND vs.user_id = {$_POST['user_id']}";
+					}
+					if ($_POST['date_start'] and $_POST['date_end']) {
+						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+					}
+					if ($_POST['direction']) {
+						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
+					}
+					if (!$_POST['compl_true'] or !$_POST['compl_false']) {
+						if ($_POST['compl_true']) {
+							$sql .= " AND vs.completed IS NOT NULL";
+						}
+						if ($_POST['compl_false']) {
+							$sql .= " AND vs.completed IS NULL";
+						}
+					}
+					?>
+					<div class="card border-1 border-info">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Визиты</h6>
-						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
+						<div class="card-header text-dark header-elements-inline alpha-info">
+							<h6 class="card-title">Визиты</h6>
+							<div class="header-elements">
+								<div class="list-icons">
+									<a class="list-icons-item" data-action="collapse"></a>
+								</div>
 							</div>
 						</div>
+
+						<div class="card-body">
+
+							<div class="table-responsive">
+	                            <table class="table table-hover table-sm table-bordered">
+	                                <thead>
+	                                    <tr class="bg-info">
+	                                        <th>Пациент</th>
+				                            <th style="width: 12%">Дата приёма</th>
+											<th style="width: 12%">Дата завершения</th>
+				                            <th>Услуга</th>
+											<th class="text-right">Сумма</th>
+										</tr>
+	                                </thead>
+	                                <tbody>
+										<?php foreach ($db->query($sql) as $row): ?>
+											<tr>
+												<td><?= get_full_name($row['user_id']) ?></td>
+												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= $row['item_name'] ?></td>
+												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>"><?= number_format($row['item_cost']) ?></td>
+											</tr>
+										<?php endforeach; ?>
+	                                </tbody>
+	                            </table>
+	                        </div>
+
+						</div>
+
 					</div>
-
-					<div class="card-body">
-
-						<div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
-                                <thead>
-                                    <tr class="bg-info">
-                                        <th>Пациент</th>
-			                            <th>Дата приёма</th>
-										<th>Дата завершения</th>
-			                            <th>Услуга</th>
-										<th>Сумма</th>
-									</tr>
-                                </thead>
-                                <tbody>
-                                    
-                                </tbody>
-                            </table>
-                        </div>
-
-					</div>
-
-				</div>
+				<?php endif; ?>
 
 			</div>
             <!-- /content area -->
@@ -144,7 +186,7 @@ $header = "Отчёт по визитам";
 	<!-- /page content -->
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>
