@@ -858,11 +858,11 @@ class VisitPriceModel extends Model
         global $db;
         // parad("Баланс", $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch());
         // parad("Услуги", $db->query("SELECT vp.id, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost")->fetchAll());
-        $this->add_bed();
         $balance = $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch();
         if ($balance['balance_cash'] < 0 or $balance['balance_card'] < 0 or $balance['balance_transfer'] < 0) {
             $this->error("Критическая ошибка!");
         }
+        $this->add_bed();
         $this->post['sale'] = null;
         if ($balance['balance_cash'] != 0) {
             $this->post['price_cash'] = $balance['balance_cash'];
