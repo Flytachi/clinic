@@ -883,11 +883,12 @@ class VisitPriceModel extends Model
     {
         global $db;
         $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1")->fetch();
+        $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN ward wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
         $post['visit_id'] = $ti['id'];
         $post['pricer_id'] = $this->post['pricer_id'];
         $post['item_type'] = 101;
         $post['item_id'] = $ti['bed_id'];
-        $post['item_name'] = $ti['bed_id'];
+        $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
         $post['item_cost'] = $this->bed_cost;
         $object = Mixin\insert($this->table, $post);
     }

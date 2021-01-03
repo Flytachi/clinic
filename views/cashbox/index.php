@@ -5,7 +5,7 @@ $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
@@ -21,7 +21,7 @@ $header = "Рабочий стол";
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
@@ -29,7 +29,7 @@ $header = "Рабочий стол";
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -131,7 +131,7 @@ $header = "Рабочий стол";
 
 
 	<!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 
 	<script type="text/javascript">

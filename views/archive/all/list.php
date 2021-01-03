@@ -1,29 +1,29 @@
 <?php
-require_once '../../tools/warframe.php';
-is_auth([5,8]);
+require_once '../../../tools/warframe.php';
+is_auth();
 $header = "Все пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -75,7 +75,7 @@ $header = "Все пациенты";
                                             <td><?= $row['numberPhone'] ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('maindoctor/list_all_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -115,7 +115,7 @@ $header = "Все пациенты";
 	</script>
 
     <!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>

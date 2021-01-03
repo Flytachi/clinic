@@ -8,7 +8,7 @@ if ($grant_id == $_SESSION['session_id']) {
     $grant = true;
 }
 ?>
-<?php include '../../layout/head.php' ?>
+<?php include layout('head') ?>
 <script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <div class="modal-header bg-info">

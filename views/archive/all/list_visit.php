@@ -1,17 +1,17 @@
 <?php
-require_once '../../tools/warframe.php';
-is_auth([2,5,8]);
+require_once '../../../tools/warframe.php';
+is_auth();
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <body>
 
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 
@@ -19,14 +19,14 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -142,20 +142,36 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <thead>
                                     <tr class="bg-info">
                                         <th>№</th>
-										<th>Специолист</th>
-										<th>Дата визита</th>
-										<th>Дата завершения</th>
+										<th style="width: 16%">Специолист</th>
+										<th style="width: 11%">Дата визита</th>
+										<th style="width: 11%">Дата завершения</th>
 			                            <th>Мед услуга</th>
-										<th>Напрвитель</th>
+										<th style="width: 16%">Напрвитель</th>
 										<th>Тип визита</th>
 										<th>Статус</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+                                        <th class="text-right" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.parent_id, vs.grant_id, vs.direction, vs.accept_date, vs.status, vs.completed, sc.name, vs.laboratory FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} ORDER BY vs.add_date DESC") as $row) {
+									$sql = "SELECT
+												vs.id, vs.route_id,
+												vs.parent_id, vs.grant_id,
+												vs.direction, vs.accept_date,
+												vs.status, vs.completed,
+												sc.name, vs.laboratory,
+												vs.service_id
+											FROM visit vs
+												LEFT JOIN service sc ON(vs.service_id=sc.id)
+											WHERE
+												user_id = {$_GET['id']} AND
+												(
+													vs.direction IS NULL OR
+													(vs.direction IS NOT NULL AND vs.service_id = 1)
+												)
+											ORDER BY vs.add_date DESC";
+                                    foreach($db->query($sql) as $row) {
 										?>
                                         <tr>
                                             <td><?= $i++ ?></td>
@@ -198,15 +214,20 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												}
 												?>
 											</td>
-                                            <td class="text-center">
-												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                            <td class="text-right">
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<?php if ($row['laboratory']): ?>
-														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye mr-2"></i> Просмотр</a>
+														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
 														<a onclick="Print('<?= viv('prints/document_2') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													<?php else: ?>
-														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye mr-2"></i> Просмотр</a>
-														<a onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
+															<a href="<?= viv('archive/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
+															<a onclick="Print('<?= viv('prints/document_3') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
+														<?php else: ?>
+															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
+															<a onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<?php endif; ?>
 													<?php endif; ?>
                                                 </div>
 											</td>
@@ -254,7 +275,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	</script>
 
 	<!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+	<?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>

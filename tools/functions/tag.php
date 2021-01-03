@@ -23,6 +23,10 @@ function render($url=null){
     exit;
 }
 
+function layout($url){
+    return $_SERVER['DOCUMENT_ROOT'].DIR."/views/layout/$url.php";
+}
+
 function viv($url){
     return DIR."/views/$url.php";
 }

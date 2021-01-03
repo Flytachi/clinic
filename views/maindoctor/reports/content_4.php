@@ -5,24 +5,24 @@ $header = "Отчёт по отделам";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../../layout/head.php' ?>
+<?php include layout('head') ?>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
-		<?php include '../../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -76,7 +76,7 @@ $header = "Отчёт по отделам";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+
                                 </tbody>
                             </table>
                         </div>
@@ -94,7 +94,7 @@ $header = "Отчёт по отделам";
 	<!-- /page content -->
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>

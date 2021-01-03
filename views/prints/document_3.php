@@ -22,7 +22,7 @@ $docs->completed = date('Y-m-d H:i');
 <!DOCTYPE html>
 <html lang="en">
 
-    <?php include '../layout/head.php' ?>
+    <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
     <body onload="window.print();">

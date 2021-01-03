@@ -7,7 +7,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
 <!DOCTYPE html>
 <html lang="en">
 
-    <?php include '../layout/head.php' ?>
+    <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
     <body onload="window.print();">

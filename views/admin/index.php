@@ -5,7 +5,7 @@ $header = "Персонал";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../layout/head.php' ?>
+<?php include layout('head') ?>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
@@ -17,14 +17,14 @@ $header = "Персонал";
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
+	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
@@ -33,7 +33,7 @@ $header = "Персонал";
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -130,7 +130,7 @@ $header = "Персонал";
 	<!-- /page content -->
 
     <!-- Footer -->
-    <?php include '../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 
 	<script type="text/javascript">
