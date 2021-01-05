@@ -712,9 +712,8 @@ class VisitPriceModel extends Model
                 }
             }
             function submitFunck(check) {
-                // PrintCheck(check);
-                console.log(check);
-                // $('#btn_submit').triger('click');
+                PrintCheck(check);
+                $('#btn_submit').triger('click');
             }
             function submitAlert() {
                 var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
