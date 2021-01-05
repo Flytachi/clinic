@@ -4,6 +4,23 @@ function Print(events) {
     WinPrint.onload();
     WinPrint.close();
 };
+function PrintCheck(events) {
+    var WinPrint = window.open(``,'','left=50,top=50,width=300,height=400,toolbar=0,scrollbars=1,status=0');
+    WinPrint.focus();
+    WinPrint.onload();
+    WinPrint.close();
+    // $.ajax({
+    //     type: "GET",
+    //     url: events,
+    //     success: function (data) {
+    //         WinPrint.document.write(data);
+    //         WinPrint.document.close();
+    //         WinPrint.focus();
+    //         WinPrint.print();
+    //         WinPrint.close();
+    //     },
+    // });
+};
 
 function addZero(number){
 

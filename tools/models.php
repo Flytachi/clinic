@@ -694,22 +694,12 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
-                <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button>
+                <button type="button" onclick="submitFunck('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info btn-sm">Печать</button>
+                <button style="display:none;" type="submit" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
     		</div>
 
         </form>
         <script type="text/javascript">
-            function checkBody(urls) {
-                window.location = urls;
-                // $.ajax({
-                // 	type: "GET",
-                // 	url: urls,
-                // 	success: function (result) {
-                //         checkPrint(result);
-                // 	},
-                // });
-            }
 
             function Checkert(event) {
                 var input = $('#input_'+event.id);
@@ -720,6 +710,11 @@ class VisitPriceModel extends Model
                     input.removeAttr("disabled");
                     Upsum(input);
                 }
+            }
+            function submitFunck(check) {
+                // PrintCheck(check);
+                console.log(check);
+                // $('#btn_submit').triger('click');
             }
             function submitAlert() {
                 var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));

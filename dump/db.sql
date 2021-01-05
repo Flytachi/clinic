@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Дек 28 2020 г., 14:04
+-- Время создания: Янв 05 2021 г., 16:39
 -- Версия сервера: 10.5.8-MariaDB
 -- Версия PHP: 7.4.13
 
@@ -111,10 +111,7 @@ CREATE TABLE `bypass` (
 --
 
 INSERT INTO `bypass` (`id`, `user_id`, `visit_id`, `parent_id`, `method`, `description`, `update_date`, `add_date`) VALUES
-(1, 15, 1, 5, 1, '3 раза', NULL, '2020-12-19 17:06:22'),
-(3, 15, 1, 5, 1, '3343344 34423  5254 2 22', NULL, '2020-12-21 15:37:39'),
-(4, 15, 1, 5, 1, 'weweqeqw qweq', NULL, '2020-12-21 16:28:55'),
-(5, 22, 36, 5, 1, 'wwe', NULL, '2020-12-23 14:55:30');
+(6, 15, 61, 5, 1, 'dd', NULL, '2020-12-29 21:10:01');
 
 -- --------------------------------------------------------
 
@@ -135,6 +132,14 @@ CREATE TABLE `bypass_date` (
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Дамп данных таблицы `bypass_date`
+--
+
+INSERT INTO `bypass_date` (`id`, `bypass_id`, `bypass_time_id`, `parent_id`, `custom_time`, `date`, `comment`, `status`, `completed`, `add_date`) VALUES
+(88, 6, 14, 14, NULL, '2020-12-29', 'weee', 1, 1, '2020-12-29 16:10:07'),
+(89, 6, 15, 14, NULL, '2020-12-29', 'ha ha ha', 1, 1, '2020-12-29 16:10:07');
+
 -- --------------------------------------------------------
 
 --
@@ -153,12 +158,7 @@ CREATE TABLE `bypass_preparat` (
 --
 
 INSERT INTO `bypass_preparat` (`id`, `bypass_id`, `preparat_id`, `add_date`) VALUES
-(1, 1, 161, '2020-12-19 12:06:22'),
-(2, 2, 162, '2020-12-19 12:29:47'),
-(3, 3, 162, '2020-12-21 10:37:39'),
-(4, 3, 163, '2020-12-21 10:37:39'),
-(5, 4, 163, '2020-12-21 11:28:55'),
-(6, 5, 163, '2020-12-23 09:55:30');
+(7, 6, 163, '2020-12-29 16:10:01');
 
 -- --------------------------------------------------------
 
@@ -178,16 +178,8 @@ CREATE TABLE `bypass_time` (
 --
 
 INSERT INTO `bypass_time` (`id`, `bypass_id`, `time`, `add_date`) VALUES
-(1, 1, '18:00:00', '2020-12-19 12:06:22'),
-(2, 1, '21:00:00', '2020-12-19 12:06:22'),
-(6, 3, '16:00:00', '2020-12-21 10:37:39'),
-(7, 3, '17:00:00', '2020-12-21 10:37:39'),
-(8, 3, '20:30:00', '2020-12-21 10:37:39'),
-(9, 3, '21:10:00', '2020-12-21 10:37:39'),
-(10, 4, '17:00:00', '2020-12-21 11:28:55'),
-(11, 4, '20:00:00', '2020-12-21 11:28:55'),
-(12, 5, '16:00:00', '2020-12-23 09:55:30'),
-(13, 5, '20:15:00', '2020-12-23 09:55:30');
+(14, 6, '22:00:00', '2020-12-29 16:10:01'),
+(15, 6, '23:00:00', '2020-12-29 16:10:01');
 
 -- --------------------------------------------------------
 
@@ -363,6 +355,13 @@ CREATE TABLE `guides` (
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Дамп данных таблицы `guides`
+--
+
+INSERT INTO `guides` (`id`, `name`, `price`, `add_date`) VALUES
+(1, 'Обл Болинца', '25000.0', '2020-12-28 14:20:28');
+
 -- --------------------------------------------------------
 
 --
@@ -378,18 +377,6 @@ CREATE TABLE `investment` (
   `balance_transfer` decimal(65,1) NOT NULL DEFAULT 0.0,
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `investment`
---
-
-INSERT INTO `investment` (`id`, `pricer_id`, `user_id`, `balance_cash`, `balance_card`, `balance_transfer`, `add_date`) VALUES
-(1, 3, 15, '100000.0', '50000.0', '0.0', '2020-12-14 23:11:13'),
-(7, 3, 15, '2900000.0', '0.0', '0.0', '2020-12-26 21:04:19'),
-(8, 3, 15, '4000.0', '0.0', '0.0', '2020-12-28 15:44:04'),
-(9, 3, 15, '-5000.0', '0.0', '0.0', '2020-12-28 15:44:24'),
-(10, 3, 15, '2000.0', '0.0', '0.0', '2020-12-28 15:49:32'),
-(11, 3, 15, '-1000.0', '0.0', '0.0', '2020-12-28 15:49:44');
 
 -- --------------------------------------------------------
 
@@ -407,6 +394,20 @@ CREATE TABLE `laboratory_analyze` (
   `deviation` tinyint(1) DEFAULT NULL,
   `description` varchar(300) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `laboratory_analyze`
+--
+
+INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `service_id`, `analyze_id`, `result`, `deviation`, `description`) VALUES
+(8, 15, 62, 28, 6, '10', 1, '777'),
+(9, 15, 62, 28, 7, '12', NULL, '1'),
+(10, 15, 74, 26, 4, '15', NULL, 'a'),
+(11, 15, 74, 26, 5, '10', NULL, 'sa'),
+(12, 15, 76, 26, 4, '15', NULL, 's'),
+(13, 15, 76, 26, 5, '12', NULL, 's'),
+(14, 15, 77, 28, 6, '1231', NULL, ''),
+(15, 15, 77, 28, 7, '123', NULL, '');
 
 -- --------------------------------------------------------
 
@@ -432,7 +433,9 @@ INSERT INTO `laboratory_analyze_type` (`id`, `service_id`, `name`, `code`, `stan
 (2, 45, 'АСТ', 'lab-08', '15-35', 1),
 (3, 45, 'Общий белок', 'lab-09', '55-80', 1),
 (4, 26, 'ss1', 'RGM', '15', 1),
-(5, 26, 'eeee', '234325', '12', 1);
+(5, 26, 'eeee', '234325', '12', 1),
+(6, 28, 'ss2', 'RGM', '15', 1),
+(7, 28, 'rrr', '234325', '12', 1);
 
 -- --------------------------------------------------------
 
@@ -446,6 +449,13 @@ CREATE TABLE `members` (
   `price` decimal(65,1) NOT NULL DEFAULT 0.0,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `members`
+--
+
+INSERT INTO `members` (`id`, `name`, `price`, `add_date`) VALUES
+(1, 'Вадим Китаец', '50000.0', '2020-12-28 14:15:04');
 
 -- --------------------------------------------------------
 
@@ -516,12 +526,12 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `product_code`, `gen_name`, `product_name`, `cost`, `o_price`, `price`, `profit`, `supplier`, `catg`, `onhand_qty`, `qty`, `qty_sold`, `sdate`, `ediz`, `expiry_date`, `date_arrival`, `fakturanumber`, `qtyu`, `shcod`) VALUES
-(158, 'Шприц 2 мг 1 шт', 'wqeqwe', '1231232', NULL, '1000', '1030', '30', 'STeam', '3', NULL, 40, NULL, '1231-03-13', 'УП', '2020-12-10', '2020-12-10', '213213', '20', '132132131231231232'),
+(158, 'Шприц 2 мг 1 шт', 'wqeqwe', '1231232', NULL, '1000', '1030', '30', 'STeam', '3', NULL, 39, NULL, '1231-03-13', 'УП', '2020-12-10', '2020-12-10', '213213', '20', '132132131231231232'),
 (159, 'Волшебные таблетки', 'Жасур', '213213', NULL, '5000', '5500', '500', 'STeam', '3', NULL, 40, NULL, '2020-12-04', 'ШТ', '2020-12-18', '2020-12-10', '12312', '2', 'йцуйцуйцу'),
 (161, 'Бисопролол 2,5 мг\r\n', '112', '2232', NULL, '4000', '4600', '600', 'STeam', '2', NULL, 45, NULL, '2020-12-02', 'ШТ', '2020-12-10', '2020-12-11', 'wwww', '10', 'qwerqwerwere'),
 (162, 'Глимепирид таблетки 1 мг\r\n', 'wwww', 'wwww', NULL, '25000', '28750', '3750', 'STeam', '2', NULL, 73, NULL, '2020-12-10', 'ШТ', '2021-06-18', '2020-12-11', '222', '20', 'wwwww'),
-(163, 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', NULL, '6000', '6900', '900', 'STeam', '2', NULL, 85, NULL, '2020-12-02', 'ШТ', '2020-12-03', '2020-12-10', '3223', '20', 'wewqeqweqw'),
-(164, 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2333', 'ww', NULL, '10000', '11500', '1500', 'STeam', '4', NULL, 20, NULL, '2020-12-02', 'ШТ', '2020-12-24', '2020-12-10', 'weewq', '5', 'wwwwwww');
+(163, 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', NULL, '6000', '6900', '900', 'STeam', '2', NULL, 83, NULL, '2020-12-02', 'ШТ', '2020-12-03', '2020-12-10', '3223', '20', 'wewqeqweqw'),
+(164, 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2333', 'ww', NULL, '10000', '11500', '1500', 'STeam', '4', NULL, 15, NULL, '2020-12-02', 'ШТ', '2020-12-24', '2020-12-10', 'weewq', '5', 'wwwwwww');
 
 -- --------------------------------------------------------
 
@@ -590,6 +600,15 @@ CREATE TABLE `sales_order` (
   `discount` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `sales_order`
+--
+
+INSERT INTO `sales_order` (`transaction_id`, `user_id`, `product`, `qty`, `amount`, `profit`, `product_code`, `gen_name`, `name`, `price`, `discount`, `add_date`) VALUES
+(47, 21, '164', '5', '57500', '7500', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2333', 'ww', '11500', NULL, '2020-12-29 21:08:00'),
+(48, 14, '163', '2', '13800', '1800', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '', 'eee', '6900', NULL, '2020-12-29 21:10:22'),
+(49, 14, '158', '1', '1030', '30', 'Шприц 2 мг 1 шт', 'wqeqwe', '1231232', '1030', NULL, '2020-12-29 21:12:07');
 
 -- --------------------------------------------------------
 
@@ -691,6 +710,13 @@ CREATE TABLE `storage_preparat` (
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Дамп данных таблицы `storage_preparat`
+--
+
+INSERT INTO `storage_preparat` (`id`, `division_id`, `parent_id`, `preparat_id`, `preparat_code`, `first_qty`, `qty`, `price`, `amount`, `add_date`) VALUES
+(33, NULL, 21, 164, 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', 5, 3, '11500.0', '57500.0', '2020-12-29 21:08:00');
+
 -- --------------------------------------------------------
 
 --
@@ -773,23 +799,23 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `division_id`, `status`, `share`, `resident`, `token_telegramm`, `add_date`) VALUES
 (1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 99.1, NULL, NULL, '2020-10-31 22:48:15.000000'),
-(2, NULL, 'reg', 'e06b95860a6082ae37ef08874f8eb5fade2549da', 'Регистратура', 'Регистратура', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, '2020-11-08 19:03:49.000000'),
+(2, NULL, 'reg', 'e06b95860a6082ae37ef08874f8eb5fade2549da', 'Регистратура', 'Регистратура', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 0, NULL, NULL, '2020-11-08 19:03:49.000000'),
 (3, NULL, 'kassa', '913c8fd5abbf64f58c66b63dd31f6c310c757702', 'kassa', 'kassa', 'kassa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 10, NULL, NULL, '2020-11-18 20:55:30.000000'),
-(4, NULL, 'main', 'b28b7af69320201d1cf206ebf28373980add1451', 'врач', 'главный', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, NULL, NULL, NULL, '2020-12-04 17:36:43.000000'),
-(5, NULL, 'doc_xirurg', '6f0d864cd22ec68deaa7b2c6e84420f7f8515825', 'Шариф', 'Ахмедов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 10, 1, NULL, NULL, NULL, '2020-12-05 05:00:29.000000'),
-(6, NULL, 'laboratory', '80240dcecd105d50195cce7a318413dc013733e3', 'Дилноза', 'Шарипова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 8, 1, NULL, NULL, NULL, '2020-12-05 05:01:19.000000'),
-(7, NULL, 'mrt', 'f2b83e490eacf0abfbda89413282a3744dc9a2b8', 'Давид', 'Нагараев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 2, 1, NULL, NULL, NULL, '2020-12-05 05:01:55.000000'),
-(8, NULL, 'rentgen', '9928bac9a395fc4d8b99d4cdf9577d2d6e19bdaf', 'Жамшид', 'Рахмонов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 3, 1, NULL, NULL, NULL, '2020-12-05 05:02:33.000000'),
-(9, NULL, 'uzi', 'f2b545bd0099b1c89c3ef7acd0e4e1e50874bf74', 'Шухрат', 'Аллаёров', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 6, 1, NULL, NULL, NULL, '2020-12-05 05:03:21.000000'),
-(10, NULL, 'kt', '3553b226127e0cccd2bec8c74a70f7d1603f41f9', 'Самандар', 'Файзиев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 4, 1, NULL, NULL, NULL, '2020-12-05 05:04:40.000000'),
-(11, NULL, 'doc_nevrolog', '9e509e93c9b6f6624b4a1cfb30b636974a4ab57d', 'Сухроб', 'Гулямов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 14, 1, NULL, NULL, NULL, '2020-12-05 06:11:56.000000'),
-(12, NULL, 'doc_ginekolog', '32e27b059f80416a798458f2e67b898f078172a0', 'Нафиса', 'Шарипова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 13, 1, NULL, NULL, NULL, '2020-12-05 06:12:43.000000'),
-(14, NULL, 'nurce', '98b8f939651a9c9f10a7a0c83815083e96ae52c9', 'Шамсия', 'Турсунова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, NULL, NULL, NULL, '2020-12-05 06:14:36.000000'),
+(4, NULL, 'main', 'b28b7af69320201d1cf206ebf28373980add1451', 'врач', 'главный', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, 0, NULL, NULL, '2020-12-04 17:36:43.000000'),
+(5, NULL, 'doc_xirurg', '6f0d864cd22ec68deaa7b2c6e84420f7f8515825', 'Шариф', 'Ахмедов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 10, 1, 15, NULL, NULL, '2020-12-05 05:00:29.000000'),
+(6, NULL, 'laboratory', '80240dcecd105d50195cce7a318413dc013733e3', 'Дилноза', 'Шарипова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 8, 1, 0, NULL, NULL, '2020-12-05 05:01:19.000000'),
+(7, NULL, 'mrt', 'f2b83e490eacf0abfbda89413282a3744dc9a2b8', 'Давид', 'Нагараев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 2, 1, 0, NULL, NULL, '2020-12-05 05:01:55.000000'),
+(8, NULL, 'rentgen', '9928bac9a395fc4d8b99d4cdf9577d2d6e19bdaf', 'Жамшид', 'Рахмонов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 3, 1, 0, NULL, NULL, '2020-12-05 05:02:33.000000'),
+(9, NULL, 'uzi', 'f2b545bd0099b1c89c3ef7acd0e4e1e50874bf74', 'Шухрат', 'Аллаёров', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 6, 1, 0, NULL, NULL, '2020-12-05 05:03:21.000000'),
+(10, NULL, 'kt', '3553b226127e0cccd2bec8c74a70f7d1603f41f9', 'Самандар', 'Файзиев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 4, 1, 0, NULL, NULL, '2020-12-05 05:04:40.000000'),
+(11, NULL, 'doc_nevrolog', '9e509e93c9b6f6624b4a1cfb30b636974a4ab57d', 'Сухроб', 'Гулямов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 14, 1, 12, NULL, NULL, '2020-12-05 06:11:56.000000'),
+(12, NULL, 'doc_ginekolog', '32e27b059f80416a798458f2e67b898f078172a0', 'Нафиса', 'Шарипова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 13, 1, 5, NULL, NULL, '2020-12-05 06:12:43.000000'),
+(14, NULL, 'nurce', '98b8f939651a9c9f10a7a0c83815083e96ae52c9', 'Шамсия', 'Турсунова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 0, NULL, NULL, '2020-12-05 06:14:36.000000'),
 (15, 2, NULL, NULL, 'Бемор 1', 'Бемор 1', 'ххх', '2001-12-04', 'Ромитан', 'АА12345678', 'Химчан', 'ИТ', '998912474353', 'Кучабог 8', 'Рухшобод', NULL, 15, NULL, NULL, 0, NULL, NULL, '2020-12-05 06:59:59.000000'),
-(16, 2, NULL, NULL, 'Бемор-2', 'Бемор-2', 'ххх', '2001-10-03', 'Олмазор', 'АА1234567', 'ААА', 'ААА', '998912474353', 'ААА', 'ААА', 1, 15, NULL, NULL, 0, NULL, NULL, '2020-12-05 07:53:03.000000'),
+(16, 2, NULL, NULL, 'Бемор-2', 'Бемор-2', 'ххх', '2001-10-03', 'Олмазор', 'АА1234567', 'ААА', 'ААА', '998912474353', 'ААА', 'ААА', 1, 15, NULL, 1, 0, NULL, NULL, '2020-12-05 07:53:03.000000'),
 (17, NULL, 'farm', '36a3bbe0659d5cf5e918a70a1da0c90ff6a33ba9', 'farm', 'farm', 'farm', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, NULL, NULL, '2020-12-06 21:30:42.000000'),
-(18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, NULL, NULL, NULL, '2020-12-07 17:56:02.000000'),
-(19, 2, NULL, NULL, 'qweqwe', 'eqweqw', 'eqweqw', '2020-12-02', 'Ромитан', '21321321312', 'eqweqw', 'eqweqw', '231312321313123', 'eqweqw', 'eqweqw', 1, 15, NULL, NULL, 0, NULL, NULL, '2020-12-10 21:01:05.000000'),
+(18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, 0, NULL, NULL, '2020-12-07 17:56:02.000000'),
+(19, 2, NULL, NULL, 'qweqwe', 'eqweqw', 'eqweqw', '2020-12-02', 'Ромитан', '21321321312', 'eqweqw', 'eqweqw', '231312321313123', 'eqweqw', 'eqweqw', 1, 15, NULL, 1, 0, NULL, NULL, '2020-12-10 21:01:05.000000'),
 (20, 2, NULL, NULL, 'Test', 'Test', 'Test', '2000-12-12', 'Ромитан', 'АА454545', 'аап', 'апапап', '998912474353', 'г .Бухара', 'Кучабох 8', 1, 15, NULL, 1, 0, NULL, NULL, '2020-12-13 15:59:40.000000'),
 (21, NULL, 'any', 'c5fe0200d1c7a5139bd18fd22268c4ca8bf45e90', 'any', 'any', 'any', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, NULL, NULL, 11, NULL, NULL, '2020-12-22 17:46:42.000000'),
 (22, 2, NULL, NULL, 'Tester', 'tester', 'Tester', '2020-12-17', 'Миробод', '001', 'qweqweqw', 'asdasddqwdqwe', '123232131312', 'Tester', 'Tester', 1, 15, NULL, 1, 0, NULL, NULL, '2020-12-23 14:36:57.000000');
@@ -898,14 +924,21 @@ CREATE TABLE `visit` (
 --
 
 INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `assist_id`, `division_id`, `service_id`, `bed_id`, `direction`, `status`, `diagnostic`, `laboratory`, `guide_id`, `failure`, `report_title`, `report_description`, `report_diagnostic`, `report_recommendation`, `add_date`, `accept_date`, `priced_date`, `discharge_date`, `oper_date`, `completed`) VALUES
-(1, 15, 5, 5, 2, NULL, 10, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, 'wererer eqwe  qq w', 'w qw qw qe qwqwe  q', '1111111', 'q qw qw qwe qw e', '2020-12-07 22:20:00', '2020-12-07 22:20:12', NULL, '2020-12-19', '2020-12-25 17:35:00', '2020-12-26 20:31:00'),
-(44, 19, 5, 5, 2, NULL, 10, 32, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Консультация хирурга, первичная', 'Консультация пластического хирурга пройдет более плодотворно, если Вы возьмите на неё свою фотографию, на которой хорошо видны места предполагаемой операции. Например, ринопластика, блефаропластика, отопластика предполагают наличие фотографии портретного типа. А вот увеличении груди, липосакция, абдоминопластика, наоборот — в полный рост! Для ринопластики будет не лишне взять с собой даже две фотографии — в профиль и анфас. Заранее обдумайте, какие фотографии будут уместны для объяснения Ваших пожеланий и возьмите их с собой.', 'Причем, имея на руках фотографии, уже первая консультация пластического хирурга позволит Вам увидеть свой будущий образ, который будет смонтирован при помощи компьютерной программы. Такое моделирование позволит точно сформировать предполагаемые конечные результаты.', 'Благодаря чему перед хирургическим вмешательством Ваши представления будут совпадать с виденьем врача. Это позволит получить максимально желаемый результат!', '2020-12-25 20:45:51', '2020-12-25 21:17:05', '2020-12-25 20:46:38', NULL, NULL, '2020-12-25 22:40:00'),
-(48, 19, 5, 18, 5, 7, 2, 2, NULL, NULL, 0, 1, NULL, NULL, NULL, 'МРТ Головного мозга', 'МРТ головного мозга — это неинвазивное исследование, которое подразумевает использование мощных магнитных полей, высокочастотных импульсов, компьютерной системы и программного обеспечения, позволяющих получить детальное изображение мозга. Рентгеновское излучение при МРТ не используется. Именно поэтому на сегодняшний день МРТ — одно из наиболее безопасных и притом очень точных исследований. Качество визуализации при МРТ намного лучше, чем при рентгенологическом или ультразвуковом исследовании, компьютерной томографии. Магнитно-резонансная томография дает возможность обнаружить опухоли, аневризму и другие патологии сосудов, а также некоторые проблемы нервной системы. Словом, возможности метода очень широки. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Несмотря на то, что для разных методов диагностики (рентгеновской, радионуклидной, магнитно-резонансной, ультразвуковой) используются различные физические принципы и источники излучения, их объединяет применение правил математического моделирования при создании изображений. Поэтому данные методы относят к методам лучевой диагностики, и обследование проводится в специальном отделении с аналогичным названием. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Контрастные препараты других классов (например, на основе оксида железа) в России на данный момент не зарегистрированы Оригинал статьи.', '2020-12-25 22:13:31', '2020-12-25 22:37:17', '2020-12-25 22:36:03', NULL, NULL, '2020-12-25 22:38:42'),
-(49, 15, 5, 18, 5, 7, 2, 3, NULL, 1, 0, 1, NULL, NULL, NULL, 'Шейный отдел позвоночника', 'Шейный отдел позвоночника — это неинвазивное исследование, которое подразумевает использование мощных магнитных полей, высокочастотных импульсов, компьютерной системы и программного обеспечения, позволяющих получить детальное изображение мозга. Рентгеновское излучение при МРТ не используется. Именно поэтому на сегодняшний день МРТ — одно из наиболее безопасных и притом очень точных исследований. Качество визуализации при МРТ намного лучше, чем при рентгенологическом или ультразвуковом исследовании, компьютерной томографии. Магнитно-резонансная томография дает возможность обнаружить опухоли, аневризму и другие патологии сосудов, а также некоторые проблемы нервной системы. Словом, возможности метода очень широки. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Решение о проведении МРТ с контрастом выносится в тех случаях, когда проведение обследования без контраста будет недостаточным для постановки диагноза. Так, абсолютным показанием к внутривенному контрастированию является подозрение или уже подтвержденное онкологическое заболевание. В большинстве случаев применяются препараты макроциклических хелатов гадолиния в низких дозах, достаточных для проведения обследования. Такое обследование проводят с осторожностью, поскольку контрастирующее вещество может вызывать аллергические реакции. Оригинал статьи: https://www.kp.ru/guide/mrt-golovnogo-mozga.html', 'Решение о проведении МРТ с контрастом выносится в тех случаях, когда проведение обследования без контраста будет недостаточным для постановки диагноза. Так, абсолютным показанием к внутривенному контрастированию является подозрение или уже подтвержденное онкологическое заболевание. В большинстве', '2020-12-25 22:41:17', '2020-12-25 22:41:50', NULL, NULL, NULL, '2020-12-25 22:43:20'),
-(52, 20, 5, 5, 2, NULL, 10, 32, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-28 15:03:35', NULL, NULL, NULL, NULL, NULL),
-(53, 22, 9, 9, 2, NULL, 6, 20, NULL, NULL, 0, NULL, NULL, 1, NULL, 'Транскраниальная Допплерография', 'Транскраниальная ДопплерографияТ ранскраниальная Допплерография', '9999', 'Транскраниальная Допплерография wq\r\nqqweqw\r\neqwe\r\nqw\r\neqwe\r\nqwe\r\nqw', '2020-12-28 17:01:18', '2020-12-28 17:03:55', '2020-12-28 17:03:20', NULL, NULL, '2020-12-28 17:11:31'),
-(55, 19, 7, 18, 2, 7, 2, 2, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'МРТ Головного мозга', 'qweqwewqeq qe qweqw eqw', 'qwsadd qw', '777', '2020-12-28 17:44:04', '2020-12-28 17:46:44', '2020-12-28 17:44:45', NULL, NULL, '2020-12-28 18:07:38'),
-(56, 22, 10, 10, 2, 10, 4, 17, NULL, NULL, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-12-28 17:45:16', '2020-12-28 17:46:47', '2020-12-28 17:45:27', NULL, NULL, NULL);
+(71, 15, 9, 9, 2, NULL, 6, 20, NULL, NULL, 0, NULL, NULL, 1, NULL, 'Транскраниальная Допплерография', 'Транскраниальная Допплерография\r\nТранскраниальная Допплерография\r\nТранскраниальная Допплерография\r\nТранскраниальная Допплерография\r\nТранскраниальная Допплерография', 'Транскраниальная Допплерография\r\nТранскраниальная Допплерография\r\nТранскраниальная ДопплерографияТранскраниальная Допплерография', 'Транскраниальная Допплерография\r\nТранскраниальная Допплерография\r\nТранскраниальная ДопплерографияТранскраниальная Допплерография', '2021-01-02 19:19:38', '2021-01-02 19:20:13', '2021-01-02 19:19:53', NULL, NULL, '2021-01-02 19:20:29'),
+(72, 15, 5, 5, 2, NULL, 10, 1, 1, 1, 1, NULL, NULL, 1, NULL, 'Аутизм', 'Боль во всех частях тела', 'Артрит', 'что это?', '2020-12-31 19:21:26', '2021-01-02 20:35:42', '2021-01-02 23:16:40', '2021-01-02', NULL, '2021-01-02 22:37:16'),
+(73, 15, 5, 11, 5, NULL, 14, 44, NULL, 1, 1, NULL, NULL, NULL, NULL, 'Вторичная консультация детс.невропатолога', 'Mike Shinoda, 2Pac &amp; Eminem - Hvitserk (Remix 2020)\r\nAnother banger song of Vikings by Mike Shinoda, Tupac Shakur &amp; Eminem. If you like my work become a Patreon, you can get all my remixes and more exclusive content, please support this Mike Shinoda, 2Pac &amp; Eminem - Hvitserk (Remix 2020)\r\nAnother banger song of Vikings by Mike Shinoda, Tupac Shakur &amp; Eminem. If you like my work become a Patreon, you can get all my remixes and more exclusive content, please support this Mike Shinoda, 2Pac &amp; Eminem - Hvitserk (Remix 2020)\r\nAnother banger song of Vikings by Mike Shinoda, Tupac Shakur &amp; Eminem. If you like my work become a Patreon, you can get all my remixes and more exclusive content, please support this', 'Mike Shinoda, 2Pac &amp; Eminem - Hvitserk (Remix 2020)\r\nAnother banger song of Vikings by Mike Shinoda, Tupac Shakur &amp; Eminem. If you like my work become a Patreon, you can get all my remixes and more exclusive content, please support this', 'Mike Shinoda, 2Pac &amp; Eminem - Hvitserk (Remix 2020)\r\nAnother banger song of Vikings by Mike Shinoda, Tupac Shakur &amp; Eminem. If you like my work become a Patreon, you can get all my remixes and more exclusive content, please support this', '2021-01-02 20:38:29', '2021-01-02 20:38:47', '2021-01-02 23:16:40', NULL, NULL, '2021-01-02 20:39:53'),
+(74, 15, 5, 6, 5, NULL, 8, 26, NULL, 1, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-02 21:01:40', '2021-01-02 21:01:54', '2021-01-02 23:16:40', NULL, NULL, '2021-01-02 21:02:14'),
+(75, 15, 5, 12, 5, NULL, 13, 42, NULL, 1, 1, NULL, NULL, NULL, NULL, 'Кольпоскопия', 'Кольпоскопия', 'КольпоскопияКольпоскопия', 'Кольпоскопия ehf efhefhefedpwjdqojdfq', '2021-01-02 21:13:23', '2021-01-02 21:13:46', '2021-01-02 23:16:40', NULL, NULL, '2021-01-02 21:14:04'),
+(76, 15, 5, 6, 5, NULL, 8, 26, NULL, 1, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-02 21:38:40', '2021-01-02 21:38:48', '2021-01-02 23:16:40', NULL, NULL, '2021-01-02 21:39:07'),
+(77, 15, 5, 6, 5, NULL, 8, 28, NULL, 1, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-02 21:39:20', '2021-01-02 21:39:27', '2021-01-02 23:16:40', NULL, NULL, '2021-01-02 21:40:03'),
+(78, 15, 5, 18, 5, 7, 2, 2, NULL, 1, 1, 1, NULL, NULL, NULL, 'МРТ Головного мозга', 'weqeqweqeqweqeqeq', 'МРТ Головного мозга', 'МРТ Головного мозга GG', '2021-01-02 21:44:35', '2021-01-02 21:44:48', '2021-01-02 23:16:40', NULL, NULL, '2021-01-02 21:45:14'),
+(79, 19, 6, 6, 2, NULL, 8, 26, NULL, NULL, 1, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, '2021-01-05 14:47:17', NULL, '2021-01-05 14:47:43', NULL, NULL, NULL),
+(80, 22, 5, 5, 2, NULL, 10, 34, NULL, NULL, 2, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, '2021-01-05 14:48:21', '2021-01-05 14:53:06', '2021-01-05 14:52:53', NULL, NULL, NULL),
+(81, 22, 5, 12, 5, NULL, 13, 40, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-05 14:53:28', NULL, '2021-01-05 15:19:54', NULL, NULL, NULL),
+(82, 22, 5, 9, 5, NULL, 6, 20, NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-05 14:53:54', NULL, '2021-01-05 15:19:54', NULL, NULL, NULL),
+(83, 22, 5, 6, 5, NULL, 8, 26, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-05 14:54:01', NULL, '2021-01-05 15:19:54', NULL, NULL, NULL),
+(84, 16, 9, 9, 2, NULL, 6, 21, NULL, NULL, 1, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, '2021-01-05 15:21:06', NULL, '2021-01-05 15:26:53', NULL, NULL, NULL),
+(85, 20, 12, 12, 2, NULL, 13, 40, NULL, NULL, 0, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, '2021-01-05 15:33:16', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -929,16 +962,13 @@ CREATE TABLE `visit_inspection` (
 --
 
 INSERT INTO `visit_inspection` (`id`, `visit_id`, `parent_id`, `description`, `diagnostic`, `recommendation`, `status`, `add_date`) VALUES
-(1, 1, 5, 'qwwqwq', NULL, 'qw123 323 12 313 1', NULL, '2020-12-12 21:52:45'),
-(2, 1, 5, 'test1', NULL, 'test', NULL, '2020-12-12 22:09:28'),
-(3, 1, 5, 'hdihqidhid', NULL, 'dhwihqidhqwid', NULL, '2020-12-12 22:14:34'),
-(4, 1, 5, 'dfdbdfbdf', NULL, 'dfbdfbdfb', NULL, '2020-12-13 16:11:27'),
-(5, 1, 5, 'wew qeqwe', 'qw eqweq weqwe', 'weqwe qweqweq weqw', NULL, '2020-12-17 20:51:57'),
-(6, 1, 21, 'wqewqe', 'qwewqewq', 'qwewq', 1, '2020-12-22 21:50:40'),
-(7, 1, 5, 'pick', 'pick', 'pick', NULL, '2020-12-22 21:54:19'),
-(10, 1, 5, 'eee12', '3213123123', '123', NULL, '2020-12-23 21:08:43'),
-(11, 1, 5, 'T11', 'T11', 'T11', 2, '2020-12-23 21:10:10'),
-(12, 1, 5, 'Дибилизм', 'Далбаеб', 'Лечится', 2, '2020-12-24 18:52:16');
+(13, 61, 5, 'qeqwewq', 'qweqw', 'eqweqwew', NULL, '2020-12-29 21:04:53'),
+(14, 61, 5, 'qweqweq', 'qweqweqweqw', 'weqwe', NULL, '2020-12-29 21:04:59'),
+(15, 61, 5, 'eqwe', 'wqeqweqw', 'eqweqweqw', 2, '2020-12-29 21:05:30'),
+(16, 61, 21, '32e 32e', '4324 234', '4 23423 4f234 2432 ewrewrwr', 1, '2020-12-29 21:06:59'),
+(17, 72, 5, 'У пациента боль в животе  и т.д', 'ййцуйцуй', 'йц йуйцйуййуцй', NULL, '2021-01-02 21:49:20'),
+(18, 72, 5, 'уйцуйц', 'уйцуйцуйц', 'уцйуйцуйцуйц', NULL, '2021-01-02 21:49:31'),
+(19, 72, 5, 'dwqwqcqwd', 'qwdqwdqwqdw', 'Повесится', NULL, '2021-01-02 22:02:12');
 
 -- --------------------------------------------------------
 
@@ -958,7 +988,9 @@ CREATE TABLE `visit_member` (
 --
 
 INSERT INTO `visit_member` (`id`, `visit_id`, `member_id`, `status`) VALUES
-(3, 1, 11, NULL);
+(3, 1, 11, NULL),
+(4, 61, 11, NULL),
+(5, 61, 12, NULL);
 
 -- --------------------------------------------------------
 
@@ -973,12 +1005,13 @@ CREATE TABLE `visit_price` (
   `price_cash` decimal(65,1) NOT NULL DEFAULT 0.0,
   `price_card` decimal(65,1) NOT NULL DEFAULT 0.0,
   `price_transfer` decimal(65,1) NOT NULL DEFAULT 0.0,
-  `sale` tinyint(4) DEFAULT NULL,
+  `sale` tinyint(4) DEFAULT 0,
   `refund` decimal(65,1) NOT NULL DEFAULT 0.0,
   `item_type` tinyint(4) NOT NULL,
   `item_id` int(11) NOT NULL,
   `item_cost` decimal(65,1) NOT NULL,
   `item_name` varchar(500) NOT NULL,
+  `price_date` datetime DEFAULT NULL,
   `add_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -986,14 +1019,33 @@ CREATE TABLE `visit_price` (
 -- Дамп данных таблицы `visit_price`
 --
 
-INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `refund`, `item_type`, `item_id`, `item_cost`, `item_name`, `add_date`) VALUES
-(81, 44, 3, '20000.0', '30000.0', '0.0', NULL, '0.0', 1, 44, '50000.0', 'Консультация хирурга, первичная', '2020-12-25 20:46:38'),
-(85, 48, 3, '35000.0', '65000.0', '0.0', NULL, '0.0', 1, 2, '100000.0', 'МРТ Головного мозга', '2020-12-25 22:13:31'),
-(86, 49, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 3, '200000.0', 'Шейный отдел позвоночника', '2020-12-25 22:41:17'),
-(88, 52, NULL, '0.0', '0.0', '0.0', NULL, '0.0', 1, 32, '50000.0', 'Консультация хирурга, первичная', '2020-12-28 15:03:35'),
-(89, 53, 3, '80000.0', '0.0', '0.0', NULL, '0.0', 1, 20, '80000.0', 'Транскраниальная Допплерография', '2020-12-28 17:01:18'),
-(91, 55, 3, '100000.0', '0.0', '0.0', NULL, '0.0', 1, 2, '100000.0', 'МРТ Головного мозга', '2020-12-28 17:44:04'),
-(92, 56, 3, '0.0', '150000.0', '0.0', NULL, '0.0', 1, 17, '150000.0', 'КТ Правая плечевая кость', '2020-12-28 17:45:16');
+INSERT INTO `visit_price` (`id`, `visit_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `refund`, `item_type`, `item_id`, `item_cost`, `item_name`, `price_date`, `add_date`) VALUES
+(104, 62, 3, '60000.0', '0.0', '0.0', NULL, '0.0', 1, 28, '60000.0', 'Общий анализ крови', '2020-12-29 21:14:00', '2020-12-29 20:58:11'),
+(105, 63, 3, '100000.0', '0.0', '0.0', NULL, '0.0', 1, 2, '100000.0', 'МРТ Головного мозга', '2020-12-29 21:14:00', '2020-12-29 20:58:31'),
+(106, 64, 3, '60000.0', '0.0', '0.0', NULL, '0.0', 1, 34, '60000.0', 'Раны грудной клетки', '2020-12-29 21:14:00', '2020-12-29 21:04:32'),
+(107, 61, 3, '11500.0', '0.0', '0.0', NULL, '0.0', 4, 164, '11500.0', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2020-12-29 21:14:00', '2020-12-29 21:08:16'),
+(108, 61, 3, '11500.0', '0.0', '0.0', NULL, '0.0', 4, 164, '11500.0', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', '2020-12-29 21:14:00', '2020-12-29 21:08:27'),
+(109, 61, 3, '6900.0', '0.0', '0.0', NULL, '0.0', 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '2020-12-29 21:14:00', '2020-12-29 21:11:16'),
+(110, 61, 3, '6900.0', '0.0', '0.0', NULL, '0.0', 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', '2020-12-29 21:14:00', '2020-12-29 21:11:25'),
+(111, 61, 3, '1030.0', '0.0', '0.0', NULL, '0.0', 3, 158, '1030.0', 'Шприц 2 мг 1 шт', '2020-12-29 21:14:00', '2020-12-29 21:12:19'),
+(112, 61, 3, '200000.0', '400000.0', '0.0', NULL, '0.0', 101, 1, '600000.0', '1', '2020-12-29 21:14:00', '2020-12-29 21:14:49'),
+(113, 66, 3, '0.0', '0.0', '150000.0', NULL, '0.0', 1, 23, '150000.0', 'Молочная железа-Щитовидная железа', '2020-12-29 21:19:00', '2020-12-29 21:19:45'),
+(115, 70, NULL, '0.0', '0.0', '0.0', 0, '0.0', 1, 34, '60000.0', 'Раны грудной клетки', NULL, '2020-12-29 22:04:10'),
+(116, 71, 3, '80000.0', '0.0', '0.0', NULL, '0.0', 1, 20, '80000.0', 'Транскраниальная Допплерография', '2021-01-02 19:19:00', '2021-01-02 19:19:38'),
+(117, 73, 3, '50000.0', '0.0', '0.0', NULL, '0.0', 1, 44, '50000.0', 'Вторичная консультация детс.невропатолога', '2021-01-02 23:16:00', '2021-01-02 20:38:29'),
+(118, 74, 3, '30000.0', '0.0', '0.0', NULL, '0.0', 1, 26, '30000.0', 'Общий белок', '2021-01-02 23:16:00', '2021-01-02 21:01:40'),
+(119, 75, 3, '80000.0', '0.0', '0.0', NULL, '0.0', 1, 42, '80000.0', 'Кольпоскопия', '2021-01-02 23:16:00', '2021-01-02 21:13:23'),
+(120, 76, 3, '30000.0', '0.0', '0.0', NULL, '0.0', 1, 26, '30000.0', 'Общий белок', '2021-01-02 23:16:00', '2021-01-02 21:38:40'),
+(121, 77, 3, '60000.0', '0.0', '0.0', NULL, '0.0', 1, 28, '60000.0', 'Общий анализ крови', '2021-01-02 23:16:00', '2021-01-02 21:39:20'),
+(122, 78, 3, '100000.0', '0.0', '0.0', NULL, '0.0', 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-02 23:16:00', '2021-01-02 21:44:35'),
+(123, 72, 3, '100000.0', '200000.0', '0.0', NULL, '0.0', 101, 1, '300000.0', '1', '2021-01-02 23:16:00', '2021-01-02 23:16:40'),
+(124, 79, 3, '30000.0', '0.0', '0.0', NULL, '0.0', 1, 26, '30000.0', 'Общий белок', '2021-01-05 14:47:00', '2021-01-05 14:47:17'),
+(125, 80, 3, '60000.0', '0.0', '0.0', NULL, '0.0', 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-05 14:52:00', '2021-01-05 14:48:21'),
+(126, 81, 3, '40000.0', '20000.0', '0.0', NULL, '0.0', 1, 40, '60000.0', 'Первичная консультация гинеколога', '2021-01-05 15:19:00', '2021-01-05 14:53:28'),
+(127, 82, 3, '0.0', '80000.0', '0.0', NULL, '0.0', 1, 20, '80000.0', 'Транскраниальная Допплерография', '2021-01-05 15:19:00', '2021-01-05 14:53:54'),
+(128, 83, 3, '30000.0', '0.0', '0.0', NULL, '0.0', 1, 26, '30000.0', 'Общий белок', '2021-01-05 15:19:00', '2021-01-05 14:54:01'),
+(129, 84, 3, '90000.0', '0.0', '0.0', NULL, '0.0', 1, 21, '90000.0', 'Щитовидная железа', '2021-01-05 15:26:00', '2021-01-05 15:21:06'),
+(130, 85, NULL, '0.0', '0.0', '0.0', 0, '0.0', 1, 40, '60000.0', 'Первичная консультация гинеколога', NULL, '2021-01-05 15:33:16');
 
 -- --------------------------------------------------------
 
@@ -1257,25 +1309,25 @@ ALTER TABLE `bed_type`
 -- AUTO_INCREMENT для таблицы `bypass`
 --
 ALTER TABLE `bypass`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `bypass_date`
 --
 ALTER TABLE `bypass_date`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT для таблицы `bypass_preparat`
 --
 ALTER TABLE `bypass_preparat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `bypass_time`
 --
 ALTER TABLE `bypass_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT для таблицы `collection`
@@ -1299,31 +1351,31 @@ ALTER TABLE `goods`
 -- AUTO_INCREMENT для таблицы `guides`
 --
 ALTER TABLE `guides`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `investment`
 --
 ALTER TABLE `investment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
 --
 ALTER TABLE `laboratory_analyze_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `notes`
@@ -1365,7 +1417,7 @@ ALTER TABLE `sales`
 -- AUTO_INCREMENT для таблицы `sales_order`
 --
 ALTER TABLE `sales_order`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT для таблицы `service`
@@ -1377,13 +1429,13 @@ ALTER TABLE `service`
 -- AUTO_INCREMENT для таблицы `storage_orders`
 --
 ALTER TABLE `storage_orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_preparat`
 --
 ALTER TABLE `storage_preparat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_type`
@@ -1413,25 +1465,25 @@ ALTER TABLE `user_stats`
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_inspection`
 --
 ALTER TABLE `visit_inspection`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_member`
 --
 ALTER TABLE `visit_member`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
 
 --
 -- AUTO_INCREMENT для таблицы `wards`
