@@ -1,25 +1,38 @@
 function Print(events) {
-    var WinPrint = window.open(`${events}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-    WinPrint.focus();
-    WinPrint.onload();
-    WinPrint.close();
+    var WinPrint = window.open(``,'ABC','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+    $.ajax({
+        type: "GET",
+        url: events,
+        success: function (data) {
+            WinPrint.document.write(data);
+            WinPrint.document.close();
+            WinPrint.focus();
+            window.stop();
+            $(WinPrint).on('load', function () {
+                WinPrint.print();
+                WinPrint.close();
+            });
+        },
+    });
 };
+
 function PrintCheck(events) {
     var WinPrint = window.open(``,'','left=50,top=50,width=300,height=400,toolbar=0,scrollbars=1,status=0');
-    WinPrint.focus();
-    WinPrint.onload();
-    WinPrint.close();
-    // $.ajax({
-    //     type: "GET",
-    //     url: events,
-    //     success: function (data) {
-    //         WinPrint.document.write(data);
-    //         WinPrint.document.close();
-    //         WinPrint.focus();
-    //         WinPrint.print();
-    //         WinPrint.close();
-    //     },
-    // });
+    $.ajax({
+        type: "GET",
+        url: events,
+        success: function (data) {
+            WinPrint.document.write(data);
+            WinPrint.document.close();
+            WinPrint.focus();
+            window.stop();
+            $(WinPrint).on('load', function () {
+                WinPrint.print();
+                WinPrint.close();
+                $('#btn_submit').click();
+            });
+        },
+    });
 };
 
 function addZero(number){

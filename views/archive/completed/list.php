@@ -1,5 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
+require_once '../../../tools/warframe.php';
 is_auth(5);
 $header = "Завершёный пациенты";
 ?>
@@ -67,7 +67,7 @@ $header = "Завершёный пациенты";
                                             <td><?= $row['numberPhone'] ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('doctor/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('archive/completed/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php

@@ -6,84 +6,8 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include '../../layout/head.php' ?>
-<link href="<?= stack("global_assets/js/plugins/datetimepicker-master/jquery.datetimepicker.css") ?>" rel="stylesheet" type="text/css">
-<script src="<?= stack('global_assets/js/plugins/ui/moment/moment.min.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js"') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
-<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
-	<?php
-
-		$id = $_SESSION['session_id'];
-
-		$sql = "SELECT * FROM notes WHERE parent_id = $id AND status = 0";
-
-		$res = $db->query($sql)->fetchAll();
-
-	?>
-<script>
-
-
-	let mas = [
-	<?php
-
-		foreach ($res as $key) {
-	?>
-
-	{
-		date : new Date('<?= $key['date_text']?> <?= $key['time_text']?>').getTime(),
-
-		text : "<?= $key['description']?>",
-
-		id : <?= $key['id']?>
-	},
-
-
-	<?php
-		}
-
-	?>
-
-
-	]
-
-
-
-	setInterval(function () {
-		// alert(mas.length);
-		if(mas.length != 0){
-			for(let i = 0; i < mas.length; i++){
-				if((Math.trunc(Date.now() / 100000) - Math.trunc(mas[i].date / 100000)) >= 0 ){
-
-					new Noty({
-			            text: mas[i].text,
-			            type: 'info'
-			        }).show();
-
-
-					$.ajax({
-				        type: "POST",
-
-				        url: "ajax/upadateNotes1.php",
-
-				        data: { id: mas[i].id, status : 1 }
-
-				    });
-					delete mas[i];
-				}
-			}
-		}
-	}, 1000);
-
-
-</script>
-
-<!-- <script src="../../../../global_assets/js/demo_pages/picker_date.js"></script> -->
-
+<script src="<?= stack("global_assets/js/plugins/visualization/echarts/echarts.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/charts/echarts/lines.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -114,54 +38,261 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
+				        <?php include "content_tabs.php"; ?>
 
-						<?php include "content_tabs.php"; ?>
+						<div class="row">
 
-						<div class="card">
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Заметки</h5>
-								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-											<i class="icon-plus22"></i>Добавить
-										</a>
+							<?php if ($patient->oper_date): ?>
+								<div class="col-md-7">
+
+									<div class="card border-1 border-success">
+										<div class="card-header header-elements-inline alpha-success">
+											<h5 class="card-title">Динамика показателей</h5>
+											<div class="header-elements">
+												<div class="list-icons">
+													<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+														<a class="list-icons-item text-success mr-2" data-toggle="modal" data-target="#modal_add">
+															<i class="icon-plus22"></i>Добавить
+														</a>
+													<?php endif; ?>
+													<a class="list-icons-item" data-action="collapse"></a>
+												</div>
+											</div>
+										</div>
+
+										<div class="card-body">
+											<div class="chart-container">
+												<div class="chart has-fixed-height" id="line_stat"></div>
+
+												<div style="display:none;">
+													<?php foreach ($db->query("SELECT pressure, pulse, temperature, saturation, add_date FROM user_stats WHERE visit_id=$patient->visit_id AND status = 2 ORDER BY add_date DESC") as $row): ?>
+														<span class="chart_date"><?= date('H:i', strtotime($row['add_date'])) ?></span>
+														<span class="chart_pressure"><?= $row['pressure'] ?></span>
+														<span class="chart_pulse"><?= $row['pulse'] ?></span>
+														<span class="chart_temperature"><?= $row['temperature'] ?></span>
+														<span class="chart_saturation"><?= $row['saturation'] ?></span>
+													<?php endforeach; ?>
+												</div>
+
+											</div>
+										</div>
 									</div>
+
+									<div class="card">
+
+										<div class="card-header header-elements-inline">
+											<h5 class="card-title">Препараты Анестезиолога</h5>
+										</div>
+
+										<div class="table-responsive">
+											<table class="table table-hover table-sm">
+											   <thead>
+												   <tr class="bg-info">
+													   <th style="width: 40px !important;">№</th>
+													   <th>Препарат</th>
+													   <th style="width: 200px;">Цена ед.</th>
+													   <th style="width: 200px;">Сумма</th>
+													   <th style="width: 100px;">Сегоня</th>
+													   <th style="width: 100px;">Всего</th>
+												   </tr>
+											   </thead>
+											   <tbody>
+												   <?php
+												   $sql = "SELECT DISTINCT vp.item_id,
+															 vp.item_name,
+															 vp.item_cost,
+															 vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 4 AND item_id = vp.item_id) 'price',
+															 (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 4 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
+															 (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 4 AND item_id = vp.item_id) 'total_count_all'
+														 FROM visit_price vp
+														 WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 4";
+												   $total_total_price = $total_count_every = $total_count_all = 0;
+												   ?>
+												   <?php $i=1; foreach ($db->query($sql) as $row): ?>
+													   <tr>
+														   <td><?= $i++ ?></td>
+														   <td><?= $row['item_name'] ?></td>
+														   <td><?= $row['item_cost'] ?></td>
+														   <td>
+															 <?php
+																 $total_total_price += $row['price'];
+																 echo number_format($row['price']);
+															 ?>
+														   </td>
+														   <td>
+															 <?php
+																 $total_count_every += $row['count_every'];
+																 echo number_format($row['count_every']);
+															 ?>
+														   </td>
+														   <td>
+															   <?php
+																 $total_count_all += $row['total_count_all'];
+																 echo number_format($row['total_count_all']);
+																 ?>
+														   </td>
+													   </tr>
+												   <?php endforeach; ?>
+
+												   <tr class="table-primary">
+													   <td colspan="3">Итог:</td>
+													   <td><?= number_format($total_total_price) ?></td>
+													   <td><?= $total_count_every ?></td>
+													   <td><?= $total_count_all ?></td>
+												   </tr>
+											   </tbody>
+										   </table>
+									   </div>
+
+									</div>
+
 								</div>
-							</div>
 
-							<?php //prit($patient); ?>
-							<table id="data_table" class="table table-striped">
-								<thead>
-									<tr>
-										<th>Дата</th>
-										<th>Описания</th>
-										<th>Удалить</th>
-									</tr>
-								</thead>
-								<tbody>
-								<?php
-								foreach ($db->query("SELECT * FROM notes WHERE visit_id = $patient->visit_id AND parent_id = {$_SESSION['session_id']}") as $row) {
-								?>
-									<tr data-id="<?= $row['id']?>">
-									   	<td class="pass_d" data-id="<?= $row['id']?>">
+								<div class="col-md-5">
 
-									   		<div class="date" data-id="<?= $row['id']?>"><?= $row['date_text']; ?></div>
+									<div class="card">
+
+										<div class="card-header header-elements-inline">
+											<h5 class="card-title">Операционный осмотр</h5>
+											<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+												<div class="header-elements">
+													<div class="list-icons">
+														<a class="list-icons-item text-info mr-1" data-toggle="modal" data-target="#modal_add_inspection">
+															<i class="icon-plus22"></i>Осмотр
+														</a>
+													</div>
+												</div>
+											<?php endif; ?>
+										</div>
+
+										<div class="table-responsive">
+											<table class="table table-hover table-sm">
+												<thead>
+													<tr class="bg-info">
+														<th>Дата и время осмотра</th>
+														<th class="text-right">Действия</th>
+													</tr>
+												</thead>
+												<tbody>
+													<?php if ($patient->direction): ?>
+														<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status = 2 ORDER BY add_date DESC") as $row): ?>
+															<tr>
+																<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+																<td class="text-right">
+																	<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+																</td>
+															</tr>
+														<?php endforeach; ?>
+													<?php endif; ?>
+												</tbody>
+											</table>
+										</div>
+
+									</div>
+
+									<div class="card">
+
+										<div class="card-header header-elements-inline">
+											<h5 class="card-title">Осмотр Анестезиолога</h5>
+										</div>
+
+										<div class="table-responsive">
+											<table class="table table-hover table-sm">
+												<thead>
+													<tr class="bg-info">
+														<th>Дата и время осмотра</th>
+														<th>Врач</th>
+														<th class="text-right">Действия</th>
+													</tr>
+												</thead>
+												<tbody>
+													<?php if ($patient->direction): ?>
+														<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status = 1 ORDER BY add_date DESC") as $row): ?>
+															<tr>
+																<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+																<td><?= get_full_name($row['parent_id']) ?></td>
+																<td class="text-right">
+																	<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+																</td>
+															</tr>
+														<?php endforeach; ?>
+													<?php endif; ?>
+												</tbody>
+											</table>
+										</div>
+
+									</div>
+
+									<div class="card">
+
+										<div class="card-header header-elements-inline">
+											<h5 class="card-title">Персонал</h5>
+											<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+												<div class="header-elements">
+													<div class="list-icons">
+														<a class="list-icons-item text-info mr-1" data-toggle="modal" data-target="#modal_add_member">
+															<i class="icon-plus22"></i>Добавить
+														</a>
+													</div>
+												</div>
+											<?php endif; ?>
+										</div>
+
+										<div class="table-responsive">
+											<table class="table table-hover table-sm">
+												<thead>
+													<tr class="bg-info">
+														<th>ФИО</th>
+														<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+															<th class="text-right">Действия</th>
+														<?php endif; ?>
+													</tr>
+												</thead>
+												<tbody>
+													<?php if ($patient->direction): ?>
+														<?php foreach ($db->query("SELECT * FROM visit_member WHERE visit_id = $patient->visit_id") as $row): ?>
+															<tr>
+																<td><?= get_full_name($row['member_id']) ?></td>
+																<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+																	<td class="text-right">
+																		<a href="<?= del_url($row['id'], 'VisitMemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить члена персонала?')" class="btn btn-outline-danger btn-sm legitRipple"><i class="icon-trash"></i></a>
+																	</td>
+																<?php endif; ?>
+															</tr>
+														<?php endforeach; ?>
+													<?php endif; ?>
+												</tbody>
+											</table>
+										</div>
+
+									</div>
+
+								</div>
+							<?php elseif($patient->grant_id == $_SESSION['session_id']): ?>
+								<div class="col-md-12">
+
+									<div class="card">
+
+										<div class="card-header header-elements-inline bg-info">
+											<h5 class="card-title">Операционный блок</h5>
+										</div>
+
+										<div class="card-body">
+											<?= VisitModel::form_oper() ?>
+										<div>
+
+									</div>
+
+								</div>
+							<?php else: ?>
+								<div class="col-md-12">
+									<div class="alert alert-warning" role="alert">
+							            Операция не назначена
+							        </div>
+								</div>
+							<?php endif; ?>
 
 
-									   		<div class="time" data-id="<?= $row['id']?>"><?= $row['time_text']; ?></div>
-
-
-								   		</td>
-									   	<td class="pass_e" data-id="<?= $row['id']?>"><?= $row['description']; ?></td>
-									   	<td>
-									   		<button data-id="<?= $row['id']?>" type="button" class="btn btn-danger legitRipple active">Удалить</button>
-									   	</td>
-								   	</tr>
-								<?php
-								}
-								?>
-								</tbody>
-							</table>
 						</div>
 
 				    </div>
@@ -177,165 +308,67 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_add" class="modal fade" tabindex="-1">
+	<div id="modal_add_inspection" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header bg-info">
-					<h6 class="modal-title">Добавить Заметку</h6>
+					<h6 class="modal-title">Осмотр</h6>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php NotesModel::form() ?>
+				<?php VisitInspectionModel::form_oper() ?>
 
 			</div>
 		</div>
 	</div>
-	<script>
 
+	<div id="modal_add" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Добавить примечание</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
 
-		$(document).on('click', '.pass_e', function function_name() {
-			word = $(this).text();
+				<?= PatientStatsModel::form_oper() ?>
 
+			</div>
+		</div>
+	</div>
 
+	<div id="modal_add_member" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Добавить примечание</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
 
-			id = $(this).attr('data-id');
-			$(this).text('');
-			$(this).attr('class', 'activ_e');
-			$(this).append(`<input class="form-control inpt" type="text" value="${word}" data-id="${id}">`);
+				<?= VisitMemberModel::form() ?>
 
-		});
+			</div>
+		</div>
+	</div>
 
-		$(document).on('click', 'button', function() {
-			id = $(this).attr('data-id');
+	<div id="modal_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="div_show">
 
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function Check(events) {
 			$.ajax({
-		        type: "POST",
-
-		        url: "ajax/deletNotes.php",
-
-		        data: { id: id}
-
-		    });
-
-		    $(`tr[data-id="${id}"]`).remove();
-		});
-
-		$(document).on('keypress', '.inpt', function(e) {
-			id = $(this).attr('data-id');
-			if(e.keyCode == 13){
-
-				$.ajax({
-			        type: "POST",
-
-			        url: "ajax/upadateNotes.php",
-
-			        data: { id: id, description : $(this).val()}
-
-			    });
-
-				$(`.activ_e[data-id="${id}"]`).text(`${$(this).val()}`)
-				$(`.activ_e[data-id="${id}"]`).attr('class', 'pass_e');
-			}
-		});
-
-		$(document).on('click', '.pass_d', function function_name() {
-
-			id = $(this).attr('data-id');
-
-			date = $(`.date[data-id="${id}"]`).text();
-
-			time = $(`.time[data-id="${id}"]`).text();
-
-			$(this).text('');
-
-			$(this).attr('class', 'activ_d');
-
-			$(this).append(`<input type="date" class="form-control date1" value="${date}" data-id="${id}">`);
-
-			$(this).append(`<input type="time" class="form-control time1" value="${time}"" data-id="${id}">`);
-
-		});
-
-		$(document).on('keypress', '.date1', function(e) {
-			id = $(this).attr('data-id');
-
-			if (e.keyCode == 13) {
-
-				date = $(`.date1[data-id="${id}"]`).val();
-
-				time = $(`.time1[data-id="${id}"]`).val();
-
-				$.ajax({
-			        type: "POST",
-
-			        url: "ajax/upadateNotes.php",
-
-			        data: { id: id, date_text : date, time_text : time }
-
-			    });
-
-			    $.ajax({
-			        type: "POST",
-
-			        url: "ajax/upadateNotes1.php",
-
-			        data: { id: id, status : 0 }
-
-			    });
-
-				$(`.date1[data-id="${id}"]`).remove();
-
-				$(`.time1[data-id="${id}"]`).remove();
-
-				$(`.activ_d[data-id="${id}"]`).append(`<div class="date" data-id="${id}">${date}</div>`);
-
-				$(`.activ_d[data-id="${id}"]`).append(`<div class="time" data-id="${id}">${time}</div>`);
-
-
-				$(`.activ_d[data-id="${id}"]`).attr('class', 'pass_d');
-			}
-
-		});
-
-		$(document).on('keypress', '.time1', function(e) {
-			id = $(this).attr('data-id');
-
-			if (e.keyCode == 13) {
-
-				date = $(`.date1[data-id="${id}"]`).val();
-
-				time = $(`.time1[data-id="${id}"]`).val();
-
-				$.ajax({
-			        type: "POST",
-
-			        url: "ajax/upadateNotes.php",
-
-			        data: { id: id, date_text : date, time_text : time }
-
-			    });
-
-			    $.ajax({
-			        type: "POST",
-
-			        url: "ajax/upadateNotes1.php",
-
-			        data: { id: id, status : 0 }
-
-			    });
-
-				$(`.date1[data-id="${id}"]`).remove();
-
-				$(`.time1[data-id="${id}"]`).remove();
-
-				$(`.activ_d[data-id="${id}"]`).append(`<div class="date" data-id="${id}">${date}</div>`);
-
-				$(`.activ_d[data-id="${id}"]`).append(`<div class="time" data-id="${id}">${time}</div>`);
-
-				$(`.activ_d[data-id="${id}"]`).attr('class', 'pass_d');
-			}
-
-		});
+				type: "GET",
+				url: events,
+				success: function (data) {
+					$('#modal_show').modal('show');
+					$('#div_show').html(data);
+				},
+			});
+		};
 	</script>
 
     <!-- Footer -->

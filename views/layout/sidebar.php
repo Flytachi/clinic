@@ -260,7 +260,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('doctor/list_completed') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('archive/completed/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Завершёные пациенты</span>
                                 </a>
@@ -324,7 +324,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('laboratory/list_completed') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('archive/completed/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Завершёные пациенты</span>
                                 </a>
@@ -496,7 +496,7 @@
                                 </li>
                             <?php endif; ?>
                             <li class="nav-item">
-                                <a href="<?= viv('diagnostic/list_completed') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('archive/completed/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Завершёные пациенты</span>
                                 </a>

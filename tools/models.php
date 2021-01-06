@@ -623,7 +623,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" >
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -694,12 +694,16 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="button" onclick="submitFunck('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info btn-sm">Печать</button>
-                <button style="display:none;" type="submit" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
+                <button type="button" id="btn_check" onclick="submitFunck('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info btn-sm">Печать</button>
+                <button style="display:none;" type="submit" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Оплата</button>
     		</div>
 
         </form>
         <script type="text/javascript">
+
+            function submitFunck(check) {
+                PrintCheck(check);
+            }
 
             function Checkert(event) {
                 var input = $('#input_'+event.id);
@@ -711,10 +715,7 @@ class VisitPriceModel extends Model
                     Upsum(input);
                 }
             }
-            function submitFunck(check) {
-                PrintCheck(check);
-                $('#btn_submit').triger('click');
-            }
+
             function submitAlert() {
                 var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
                 parent_id.forEach(function(events) {

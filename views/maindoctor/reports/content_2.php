@@ -48,7 +48,7 @@ $header = "Отчёт по врачам";
 							<div class="form-group row">
 
 								<div class="col-md-3">
-									<label>Дата визита:</label>
+									<label>Дата завершения:</label>
 									<div class="input-group">
 										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
 										<span class="input-group-append">

@@ -983,7 +983,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND completed IS NULL AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){
             if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {

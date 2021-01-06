@@ -126,12 +126,13 @@ $header = "Отчёт";
                                         vsp.price_card,
                                         vsp.price_transfer,
 										vsp.refund,
-                                        vsp.add_date
+                                        vsp.price_date
                                     FROM visit_price vsp
                                         LEFT JOIN visit vs ON(vs.id=vsp.visit_id)
                                     WHERE
 										vsp.item_type = 1 AND
-                                        (DATE_FORMAT(vsp.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+										vsp.price_date IS NOT NULL AND
+                                        (DATE_FORMAT(vsp.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
                                         vsp.pricer_id IN (".implode($_POST['priser_id']).")
                                     ";
 
@@ -167,7 +168,7 @@ $header = "Отчёт";
                                         <?php $i=1; foreach ($db->query($sql) as $row): ?>
                                             <tr>
                                                 <th><?= $i++ ?></th>
-                                                <th><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></th>
+                                                <th><?= date("d.m.Y H:i", strtotime($row['price_date'])) ?></th>
                                                 <th><?= get_full_name($row['pricer_id']) ?></th>
                                                 <th><?= get_full_name($row['user_id'])  ?></th>
                                                 <th><?= $row['price'] ?></th>

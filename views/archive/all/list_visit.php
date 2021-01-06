@@ -215,7 +215,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												?>
 											</td>
                                             <td class="text-right">
-												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false" <?= ($row['completed']) ? "" : "disabled" ?>>Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<?php if ($row['laboratory']): ?>
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
