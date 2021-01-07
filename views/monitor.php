@@ -205,7 +205,7 @@ $header = "Рабочий стол";
 											<div class="chew" data-chatid="<?= $key['id'] ?>" data-nameLast="Кабинет - 1<?= $key['room'] ?>">
 												<input type="checkbox" class="form-input-styled"   data-fouc>
 											</div>
-											<?= $key['last_name'] ?> - <?= $key['first_name'] ?>
+											<?= get_full_name($key['id']) ?>
 										</label>
 									</div>
 
@@ -291,15 +291,18 @@ $header = "Рабочий стол";
 
 				        	if(reception.length != 0){
 				        		console.log(reception);
-					        	we += `<tr data-status="accept_patient" style=" background-color: #97E32F;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }"><td>${ reception[0].first_name }</td><td>${ reception[0].last_name }</td></tr>`;
+					        	we += `<tr data-status="accept_patient" style=" background-color: #97E32F;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }">
+								        	<td>${ reception[0].user_id }</td>
+								        	<td>${ reception[0].last_name } - ${ reception[0].first_name }</td>
+								        </tr>`;
 
 				        	}
 
 				        	if( queue.length != 0 ){
 				        		for (let i = 0; i < queue.length; i++) {
 					        		we += `<tr data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
-					        				<td>${ queue[i].user_id } ${ queue[i].id }</td>
-					        				<td>${ queue[i].last_name } - ${ queue[i].first_name }</td>
+					        				<td><h2> ${ queue[i].user_id } </h2> </td>
+					        				<td> <h2> ${ queue[i].last_name } - ${ queue[i].first_name } </h2> </td>
 					        				</tr>`
 					        	}
 					        }
@@ -309,84 +312,43 @@ $header = "Рабочий стол";
 				        	}
 
 
-				        	if ( cout % 5 != 0) {
+			        		col = 12 / cout;
 
-				        		col = 12 / cout;
- 
-				        		$('#dd').append(`
-					        		<div class="col" id="ad" data-chatid1="${id1}">
-					        			<div class="card" style="height:400px">
-											<div class="card-header alpha-success text-success-800 header-elements-inline">
-												<h6 class="card-title">${name}</h6>
-											</div>
-											<div class="table-responsive card-body" style="padding: 0px;">
-												<table class="table table-hover">
-									                <thead>
-									                    <tr class="bg-blue">
-										                    <th> Номер </th>
-															<th> Пациент </th>
-									                    </tr>
-									                </thead>
-									                <tbody id="${id1}">
-
-									               		${we}
-
-									                </tbody>
-									            </table>
-									        </div>
+			        		$('#dd').append(`
+				        		<div class="col" id="ad" data-chatid1="${id1}">
+				        			<div class="card" style="height:400px">
+										<div class="card-header alpha-success text-success-800 header-elements-inline">
+											<h6 class="card-title"> <h2> ${name} </h2></h6>
 										</div>
+										<div class="table-responsive card-body" style="padding: 0px;">
+											<table class="table table-hover">
+								                <thead>
+								                    <tr class="bg-blue">
+									                    <th> Номер </th>
+														<th> Пациент </th>
+								                    </tr>
+								                </thead>
+								                <tbody id="${id1}">
+
+								               		${we}
+
+								                </tbody>
+								            </table>
+								        </div>
 									</div>
-								`);
+								</div>
+							`);
 
-								// $(`div.col-md-${12 / (cout-1)}`).each(function () {
-								// 	$(this).attr("class",`col-md-${12 / cout}`);
-								// });
+							// $(`div.col-md-${12 / (cout-1)}`).each(function () {
+							// 	$(this).attr("class",`col-md-${12 / cout}`);
+							// });
 
-								we = "";
+							we = "";
 
-								cout += 1;
+							cout += 1;
 
-								$("#dd").attr("data-cout" , cout);
+							$("#dd").attr("data-cout" , cout);
 
-
-				        	}else{
-
-				        		// $('#ad').css("max-width", "49%");
-
-				        		// $('#ad').attr("id", "");
-
-					        	$('#dd').append(`
-					        		<div class="col" data-chatid1="${id1}" >
-					        			<div class="card" style="height:400px">
-											<div class="card-header alpha-success text-success-800 header-elements-inline">
-												<h6 class="card-title">${name}</h6>
-											</div>
-											<div class="table-responsive card-body" style="padding: 0px;">
-												<table class="table table-hover">
-									                <thead>
-									                    <tr class="bg-blue">
-										                    <th> Номер </th>
-															<th> Пациент </th>
-									                    </tr>
-									                </thead>
-									                <tbody id="${id1}">
-
-									               		${we}
-
-									                </tbody>
-									            </table>
-									        </div>
-										</div>
-				        			</div>
-									`);
-
-
-								cout += 1;
-
-								$("#dd").attr("data-cout" , cout);
-
-								we = "";
-				        	}
 
 				        }
 
