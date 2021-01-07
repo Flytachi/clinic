@@ -93,10 +93,10 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-                                            	<?php if (division_assist() == 2): ?>
+                                            	<?php if (!division_assist()): ?>
                                             		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
                                             	<?php else: ?>
-                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</button>	
+                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</button>
                                             		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</a>
                                             	<?php endif; ?>
                                             </td>
