@@ -695,7 +695,7 @@ class VisitPriceModel extends Model
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
                 <button type="button" id="btn_check" onclick="submitFunck('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info btn-sm">Печать</button>
-                <button style="display:none;" type="button" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Оплата</button>
+                <button style="display:none;" type="submit" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Оплата</button>
     		</div>
 
         </form>

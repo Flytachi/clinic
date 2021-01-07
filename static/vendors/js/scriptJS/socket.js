@@ -180,7 +180,6 @@ conn.onmessage = function(e) {
       // События для монитора, принятие к доктору
       if(d.id == id){
 
-        $(`tr[data-userid=${ d.user_id }][data-parentid=${ d.parent_id }]`).remove();
 
         $.ajax({
           type: "POST",
@@ -197,7 +196,13 @@ conn.onmessage = function(e) {
             $('#audio').trigger('play');
 
             // Удаляется и добавляется заново подсвеченным зеленым
-            $(`#${ d.user[0].parent_id }`).prepend(`<tr style=" background-color: #97E32F;"><td>${ d.user[0].first_name }</td><td>${ d.user[0].last_name }</td></tr>`)
+            $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
+            $(`tr[data-parentid=${ d.user[0].parent_id }][data-status=accept_patient]`).remove();
+            $(`#${ d.user[0].parent_id }`).prepend(`
+              <tr data-userid="${ d.user[0].user_id }" data-parentid="${ d.user[0].parent_id }" data-status="accept_patient" style=" background-color: #97E32F;">
+                <td>000</td>
+                <td>${ d.user[0].first_name } - ${ d.user[0].last_name }</td>
+              </tr>`)
             },
         });
       }
@@ -282,6 +287,6 @@ function deletNotice(body) {
 function sendPatient(body) {
   parentid = body.dataset.parentid;
   userid = body.dataset.userid;
-  let obj = JSON.stringify({ type : 'patient', id : "1983", user_id : userid, parent_id : parentid});
+  let obj = JSON.stringify({ type : 'accept_patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
 }

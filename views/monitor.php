@@ -202,7 +202,7 @@ $header = "Рабочий стол";
 
 									<div class="dropdown-item form-check">
 										<label class="form-check-label">
-											<div class="chew" data-chatid="<?= $key['id'] ?>">
+											<div class="chew" data-chatid="<?= $key['id'] ?>" data-nameLast="Кабинет - 1<?= $key['room'] ?>">
 												<input type="checkbox" class="form-input-styled"   data-fouc>
 											</div>
 											<?= $key['last_name'] ?> - <?= $key['first_name'] ?>
@@ -260,6 +260,8 @@ $header = "Рабочий стол";
 
 	        		id1 = $(this).attr('data-chatid');
 
+	        		name = $(this).attr('data-nameLast');
+
 	        		// $('#audio').trigger('play');
 	        		// alert($(''))
 
@@ -285,13 +287,15 @@ $header = "Рабочий стол";
 
 				        	let reception = d.reception;
 
-				        	console.log(reception);
+				        	console.log(queue.length);
 
 				        	if(reception.length != 0){
-					        	we += `<tr style=" background-color: #97E32F;"><td>${ reception[0].first_name }</td><td>${ reception[0].last_name }</td></tr>`;
+				        		console.log(reception);
+					        	we += `<tr data-status="accept_patient" style=" background-color: #97E32F;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }"><td>${ reception[0].first_name }</td><td>${ reception[0].last_name }</td></tr>`;
 
-				        	}else if( queue.length != 0 ){
+				        	}
 
+				        	if( queue.length != 0 ){
 				        		for (let i = 0; i < queue.length; i++) {
 					        		we += `<tr data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
 					        				<td>${ queue[i].user_id } ${ queue[i].id }</td>
@@ -304,7 +308,6 @@ $header = "Рабочий стол";
 				        		$('#dd').append(`<div class="w-100"></div>`)
 				        	}
 
-				        	
 
 				        	if ( cout % 5 != 0) {
 
@@ -314,7 +317,7 @@ $header = "Рабочий стол";
 					        		<div class="col" id="ad" data-chatid1="${id1}">
 					        			<div class="card" style="height:400px">
 											<div class="card-header alpha-success text-success-800 header-elements-inline">
-												<h6 class="card-title">${id1} - Кабинет</h6>
+												<h6 class="card-title">${name}</h6>
 											</div>
 											<div class="table-responsive card-body" style="padding: 0px;">
 												<table class="table table-hover">
@@ -356,7 +359,7 @@ $header = "Рабочий стол";
 					        		<div class="col" data-chatid1="${id1}" >
 					        			<div class="card" style="height:400px">
 											<div class="card-header alpha-success text-success-800 header-elements-inline">
-												<h6 class="card-title">${id1} - Кабинет</h6>
+												<h6 class="card-title">${name}</h6>
 											</div>
 											<div class="table-responsive card-body" style="padding: 0px;">
 												<table class="table table-hover">
