@@ -135,18 +135,6 @@ $header = "Отчёт";
                                         (DATE_FORMAT(vsp.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
                                         vsp.pricer_id IN (".implode($_POST['priser_id']).")
                                     ";
-
-							// $sql2 = "SELECT
-                            //             iv.pricer_id,
-                            //             iv.user_id,
-                            //             iv.balance,
-                            //             iv.add_date
-                            //         FROM investment iv
-                            //         WHERE
-							// 			(DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-                            //             iv.pricer_id IN (".implode($_POST['priser_id']).")
-                            //         ";
-							// prit($db->query($sql2)->fetchAll());
                             ?>
 
                             <table class="table table-hover datatable-basic table-sm">
@@ -160,8 +148,7 @@ $header = "Отчёт";
                                             <th>Наличные</th>
                                             <th>Терминал</th>
                                             <th>Перечисление</th>
-											<th>Предоплата</th>
-                                            <th>Возврат</th>
+											<th>Баланс</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -175,24 +162,9 @@ $header = "Отчёт";
                                                 <th><?= $row['price_cash'] ?></th>
                                                 <th><?= $row['price_card'] ?></th>
                                                 <th><?= $row['price_transfer'] ?></th>
-												<th>0</th>
 												<th><?= $row['refund'] ?></th>
                                             </tr>
                                         <?php endforeach; ?>
-										<!-- <?php foreach ($db->query($sql2) as $row): ?>
-                                            <tr>
-                                                <th><?= $i++ ?></th>
-                                                <th><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></th>
-                                                <th><?= get_full_name($row['pricer_id']) ?></th>
-                                                <th><?= get_full_name($row['user_id'])  ?></th>
-												<th>0</th>
-                                                <th>0</th>
-                                                <th>0</th>
-                                                <th>0</th>
-												<th><?= ($row['balance'] > 0) ? $row['balance'] : 0 ?></th>
-												<th><?= ($row['balance'] < 0) ? $row['balance'] : 0 ?></th>
-                                            </tr>
-                                        <?php endforeach; ?> -->
                                     </tbody>
                                 </table>
 

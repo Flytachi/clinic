@@ -133,6 +133,8 @@ $header = "Отчёт по визитам";
 							$sql .= " AND vs.completed IS NULL";
 						}
 					}
+					$total_price=0;
+					$i=1;
 					?>
 					<div class="card border-1 border-info">
 
@@ -151,9 +153,10 @@ $header = "Отчёт по визитам";
 	                            <table class="table table-hover table-sm table-bordered">
 	                                <thead>
 	                                    <tr class="bg-info">
+											<th style="width: 50px">№</th>
 	                                        <th>Пациент</th>
-				                            <th style="width: 12%">Дата приёма</th>
-											<th style="width: 12%">Дата завершения</th>
+				                            <th style="width: 11%">Дата приёма</th>
+											<th style="width: 11%">Дата завершения</th>
 				                            <th>Услуга</th>
 											<th class="text-right">Сумма</th>
 										</tr>
@@ -161,13 +164,26 @@ $header = "Отчёт по визитам";
 	                                <tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
+												<td><?= $i++ ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
 												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row['item_name'] ?></td>
-												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>"><?= number_format($row['item_cost']) ?></td>
+												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>">
+													<?php
+													if ($row['priced_date']) {
+														$total_price += $row['item_cost'];
+													}
+													echo number_format($row['item_cost']);
+													?>
+												</td>
 											</tr>
 										<?php endforeach; ?>
+										<tr class="table-secondary">
+											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
+											<th colspan="3" class="text-right">Итого:</th>
+											<td class="text-right text-success"><?= number_format($total_price) ?></td>
+										</tr>
 	                                </tbody>
 	                            </table>
 	                        </div>
