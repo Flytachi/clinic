@@ -318,7 +318,7 @@ $header = "Рабочий стол";
 				        		<div class="col" id="ad" data-chatid1="${id1}">
 				        			<div class="card" style="height:400px">
 										<div class="card-header alpha-success text-success-800 header-elements-inline">
-											<h6 class="card-title"> <h2> ${name} </h2></h6>
+											<h2 class="card-title"> ${name} </h2>
 										</div>
 										<div class="table-responsive card-body" style="padding: 0px;">
 											<table class="table table-hover">
