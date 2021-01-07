@@ -175,17 +175,9 @@ conn.onmessage = function(e) {
             html: d.message
         });
     }
-  }else if (d.type == "alert_pharmacy_call"){
-    if(d.id == id){
-        swal({
-            position: 'top',
-            title: 'Вас вызывют в аптеку!',
-            type: 'info',
-            html: d.message
-        });
+  }else if (d.type == "accept_patient" ) {
 
-    }
-  }else if (d.type == "patient" ) {
+      // События для монитора, принятие к доктору
       if(d.id == id){
 
         $(`tr[data-userid=${ d.user_id }][data-parentid=${ d.parent_id }]`).remove();
@@ -201,9 +193,46 @@ conn.onmessage = function(e) {
 
             let d = JSON.parse(data);
 
+            // Проигрывается аудио уведомления  
+            $('#audio').trigger('play');
+
+            // Удаляется и добавляется заново подсвеченным зеленым
             $(`#${ d.user[0].parent_id }`).prepend(`<tr style=" background-color: #97E32F;"><td>${ d.user[0].first_name }</td><td>${ d.user[0].last_name }</td></tr>`)
-          },
-      });
+            },
+        });
+      }
+  }else if (d.type == "new_patient" ) {
+
+      // События для монитора, добавление нового пациента
+      if(d.id == id){
+        // Проигрывается аудио уведомления  
+        $('#audio').trigger('play');
+        console.log('ew');
+
+        $.ajax({
+          type: "POST",
+
+          url: "get_user.php",
+
+          data: { id_user: d.user_id, id_patient: d.parent_id },
+
+          success: function (data) {
+
+            let d = JSON.parse(data);
+
+            console.log('ew')
+
+            // Проигрывается аудио уведомления  
+            $('#audio').trigger('play');
+
+            // Удаляется и добавляется заново подсвеченным зеленым
+            $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" data-parentid="${ d.queue[0].parent_id }">
+                          <td>${ d.queue[0].user_id } ${ d.queue[0].id }</td>
+                          <td>${ d.queue[0].last_name } - ${ d.queue[0].first_name }</td>
+                          </tr>`);
+            },
+        });
+
       }
   }
 };

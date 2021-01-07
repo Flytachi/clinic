@@ -695,13 +695,20 @@ class VisitPriceModel extends Model
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
                 <button type="button" id="btn_check" onclick="submitFunck('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info btn-sm">Печать</button>
-                <button style="display:none;" type="submit" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Оплата</button>
+                <button style="display:none;" type="button" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Оплата</button>
     		</div>
 
         </form>
         <script type="text/javascript">
 
             function submitFunck(check) {
+                var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                parent_id.forEach(function(events) {
+                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                    let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
+                    conn.send(obj);
+                    conn.send(obj1);
+                });
                 PrintCheck(check);
             }
 
@@ -717,11 +724,14 @@ class VisitPriceModel extends Model
             }
 
             function submitAlert() {
-                var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
-                parent_id.forEach(function(events) {
-                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-                    conn.send(obj);
-                });
+                // var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                // parent_id.forEach(function(events) {
+                //     let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                //     // let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
+                //     conn.send(obj);
+                //     // conn.send(obj1);
+                //     console.log(obj);
+                // });
             }
         </script>
         <?php

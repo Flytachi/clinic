@@ -60,163 +60,101 @@ $header = "Рабочий стол";
 	<!-- /theme JS files -->
 
 	<style>
-		
-		.title {
-		  position: absolute;
-		  top: 0;
-		  font: 36px Arial;
-		  letter-spacing: 0.1em;
-		  width: 80vw;
-		  margin: 6vh 10vw;
-		  color: rgba(256, 256, 256, 0.5);
+		@font-face {
+		    font-family: 'BebasNeueRegular';
+		    src: url('fonts/BebasNeue-webfont.eot');
+		    src: url('fonts/BebasNeue-webfont.eot?#iefix') format('embedded-opentype'),
+		         url('fonts/BebasNeue-webfont.woff') format('woff'),
+		         url('fonts/BebasNeue-webfont.ttf') format('truetype'),
+		         url('fonts/BebasNeue-webfont.svg#BebasNeueRegular') format('svg');
+		    font-weight: normal;
+		    font-style: normal;
+		 
 		}
-		@media only screen and (min-width: 768px) {
-		  .title {
-		    font: 48px Arial;
-		  }
+		 
+		.container {
+		    width: 960px; 
+		    margin: 0 auto; 
+		    overflow: hidden;
 		}
-
+		 
 		.clock {
-		  width: 200px;
-		  height: 200px;
-		  border: solid 10px #333;
-		  border-radius: 50%;
-		  margin: calc(50vh - 100px) calc(50% - 100px);
-		  position: relative;
-		  background: rgba(256, 256, 256, 0.25);
-		  cursor: pointer;
+		    width:377px; 
+		    margin:0 auto; 
+		    padding:5px; 
+		    color:#fff; 
 		}
-		@media only screen and (min-width: 768px) and (min-height: 540px) {
-		  .clock {
-		    width: 300px;
-		    height: 300px;
-		    border: solid 15px #333;
-		    margin: calc(50vh - 150px) calc(50% - 150px);
-		  }
+		 
+		#Date { 
+		    font-family:'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+		    font-size:17px; 
+		    text-align:center; 
+		    text-shadow:0 0 5px #000; 
 		}
+		 
+		ul { 
+		    width:156px; 
+		    margin:0 auto; 
+		    padding:0px; 
+		    list-style:none; 
+		    text-align:center; 
+		}
+		 
+		ul li { 
+		    display:inline; 
+		    font-size:2em; 
+		    text-align:center; 
+		    font-family:'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+		    text-shadow:0 0 5px #000;
+		    color: #b2e8e3;
+		}
+		 
+		#point { 
+		    position:relative; 
+		    /*-moz-animation:mymove 1s ease infinite; */
+		    /*-webkit-animation:mymove 1s ease infinite; */
+		    /*text-shadow:0 0 5px #000;*/
+		    padding-left:10px; 
+		    padding-right:10px; 
+		    color: #b2e8e3;
 
-		.dot {
-		  background: red;
-		  width: 10px;
-		  height: 10px;
-		  position: absolute;
-		  top: calc(50% - 5px);
-		  left: calc(50% - 5px);
-		  display: none;
 		}
-
-		.spire {
-		  position: absolute;
+		 
+		@-webkit-keyframes mymove 
+		{
+		    0% {
+		        opacity:1.0; 
+		        text-shadow:0 0 20px #00c6ff;
+		    }
+		 
+		    50% {
+		        opacity:0; 
+		        text-shadow:none; 
+		    }
+		 
+		    100% {
+		        opacity:1.0; 
+		        text-shadow:0 0 20px #00c6ff; 
+		    }	
 		}
-
-		.hour {
-		  top: calc(50% - 37.5px);
-		  left: calc(50% - 2.5px);
-		  width: 5px;
-		  height: 40px;
-		  border-radius: 0 0 5px 5px;
-		  background: #333;
-		  z-index: 4;
-		  transform-origin: 2.5px 37.5px;
-		  transition: transform 2s ease;
-		}
-		@media only screen and (min-width: 768px) and (min-height: 540px) {
-		  .hour {
-		    top: calc(50% - 57.5px);
-		    left: calc(50% - 2.5px);
-		    width: 5px;
-		    height: 60px;
-		    transform-origin: 2.5px 57.5px;
-		  }
-		}
-
-		.min {
-		  top: calc(50% - 67.5px);
-		  left: calc(50% - 2.5px);
-		  width: 5px;
-		  height: 70px;
-		  border-radius: 0 0 5px 5px;
-		  background: rgba(167, 139, 131, 1);
-		  z-index: 3;
-		  transform-origin: 2.5px 67.5px;
-		  transition: transform 1s ease;
-		}
-		@media only screen and (min-width: 768px) and (min-height: 540px) {
-		  .min {
-		    top: calc(50% - 102.5px);
-		    left: calc(50% - 2.5px);
-		    width: 5px;
-		    height: 105px;
-		    transform-origin: 2.5px 102.5px;
-		  }
-		}
-
-		.sec {
-		  top: calc(50% - 78.75px);
-		  left: calc(50% - 1.25px);
-		  width: 2.5px;
-		  height: 80px;
-		  border-radius: 0 0 2.5px 2.5px;
-		  background: rgba(231, 76, 60, 1);
-		  z-index: 2;
-		  transform-origin: 1.25px 78.75px;
-		  transition: transform .5s ease;
-		}
-		@media only screen and (min-width: 768px) and (min-height: 540px) {
-		  .sec {
-		    top: calc(50% - 118.75px);
-		    left: calc(50% - 1.25px);
-		    width: 2.5px;
-		    height: 120px;
-		    transform-origin: 1.25px 118.75px;
-		  }
-		}
-
-		.digit {
-		  position: absolute;
-		  top: calc(50% - 100px);
-		  left: calc(50% - 100px);
-		  width: 200px;
-		  font: 42px/200px Arial;
-		  color: rgba(32, 32, 32, 0.6);
-		  display: none;
-		  z-index: -10;
-		}
-		@media only screen and (min-width: 768px) and (min-height: 540px) {
-		  .digit {
-		    top: calc(50% - 150px);
-		    left: calc(50% - 150px);
-		    width: 300px;
-		    font: 58px/300px Arial;
-		  }
-		}
-		.clock:hover + .digit {
-		  display: block;
-		}
-
-		footer {
-		  position: absolute;
-		  bottom: 3vh;
-		  font: 16px Arial;
-		  color: rgba(256, 256, 256, 0.5);
-		  width: 100vw;
-		}
-		footer a {
-		  color: rgba(51, 51, 51, 0.75);
-		  text-decoration: none;
-		}
-		footer a:hover {
-		  color: rgba(256, 256, 256, 0.5);
-		}
-
-		.background {
-		  background: #9b59b6;
-		  background: linear-gradient(to top left, #9b59b6, #f39c12);
-		  position: fixed;
-		  top: 0;
-		  height: 100vh;
-		  width: 100%;
-		  z-index: -100;
+		 
+		 
+		@-moz-keyframes mymove 
+		{
+		    0% {
+		        opacity:1.0; 
+		        text-shadow:0 0 20px #00c6ff;
+		    }
+		 
+		    50% {
+		        opacity:0; 
+		        text-shadow:none; 
+		    }
+		 
+		    100% {
+		        opacity:1.0; 
+		        text-shadow:0 0 20px #00c6ff; 
+		    }	
 		}
 
 	</style>
@@ -294,16 +232,38 @@ $header = "Рабочий стол";
 
 	    <div class="collapse navbar-collapse" id="navbar-mobile">
 
-	        <span class="ml-md-3 siya-long" id="timedisplay"></span>
+							    <!-- <div id="Date"></div> -->
+	        <span class="ml-md-3 siya-long" id="Date"></span>
+
+	        <div class="col-md-5">
+				<div class="clock">
+				    <ul>
+				        <li id="hours"> </li>
+				        <li id="point">:</li>
+				        <li id="min"> </li>
+				        <li id="point">:</li>
+				        <li id="sec"> </li>
+				    </ul>
+				</div>
+			</div>
 
 	        <script>
 
+//                let er = new Audio('ee.mp3');
+//
+//                er.play();
+        
 	        	let we = "";
 
+
 	        	$(document).on('click', '.chew', function () {
+
 	        		id1 = $(this).attr('data-chatid');
 
+	        		// $('#audio').trigger('play');
 	        		// alert($(''))
+
+	        		// $('#audio').trigger('play');
 
 	        		$(this).attr('class', "dele");
 
@@ -330,58 +290,54 @@ $header = "Рабочий стол";
 				        	if(reception.length != 0){
 					        	we += `<tr style=" background-color: #97E32F;"><td>${ reception[0].first_name }</td><td>${ reception[0].last_name }</td></tr>`;
 
-				        	}else{
-				        		// for (let i = 0; i < 4; i++) {
-					        	// 	we += `<tr data-userid="" data-parentid="">
-					        	// 			<td></td>
-					        	// 			<td></td>
-					        	// 			</tr>`
-					        	// }
-				        	}
-
-				        	if( queue.length != 0 ){
+				        	}else if( queue.length != 0 ){
 
 				        		for (let i = 0; i < queue.length; i++) {
 					        		we += `<tr data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
-					        				<td>${ queue[i].user_id }</td>
+					        				<td>${ queue[i].user_id } ${ queue[i].id }</td>
 					        				<td>${ queue[i].last_name } - ${ queue[i].first_name }</td>
 					        				</tr>`
 					        	}
 					        }
 
-				        	// }else{
-				        	// 	for (let i = 0; i < 4; i++) {
-					        // 		we += `<tr data-userid="" data-parentid="">
-					        // 				<td></td>
-					        // 				<td></td>
-					        // 				</tr>`
-					        // 	}
-				        	// }
+				        	if (cout % 4 == 0 ) {
+				        		$('#dd').append(`<div class="w-100"></div>`)
+				        	}
 
 				        	
 
-				        	if ( cout == 0 ||  cout != 1 && cout % 2 == 0) {
-				        		$('#dd').append(`<div class="col-md-12 card" id="ad" style="max-width: 99%; margin-right: 1%; padding: 0px;" data-chatid1="${id1}">
-									<div class="card-header alpha-success text-success-800 header-elements-inline">
-										<h6 class="card-title">${id1} - Кабинет</h6>
+				        	if ( cout % 5 != 0) {
+
+				        		col = 12 / cout;
+ 
+				        		$('#dd').append(`
+					        		<div class="col" id="ad" data-chatid1="${id1}">
+					        			<div class="card" style="height:400px">
+											<div class="card-header alpha-success text-success-800 header-elements-inline">
+												<h6 class="card-title">${id1} - Кабинет</h6>
+											</div>
+											<div class="table-responsive card-body" style="padding: 0px;">
+												<table class="table table-hover">
+									                <thead>
+									                    <tr class="bg-blue">
+										                    <th> Номер </th>
+															<th> Пациент </th>
+									                    </tr>
+									                </thead>
+									                <tbody id="${id1}">
+
+									               		${we}
+
+									                </tbody>
+									            </table>
+									        </div>
+										</div>
 									</div>
-									<div class="table-responsive card-body" style="padding: 0px;">
-										<table class="table table-hover">
-							                <thead>
-							                    <tr class="bg-blue">
-								                    <th> Номер </th>
-													<th> Пациент </th>
-							                    </tr>
-							                </thead>
-							                <tbody id="${id1}">
+								`);
 
-							               		${we}
-
-							                </tbody>
-							            </table>
-							        </div>
-
-								</div>`);
+								// $(`div.col-md-${12 / (cout-1)}`).each(function () {
+								// 	$(this).attr("class",`col-md-${12 / cout}`);
+								// });
 
 								we = "";
 
@@ -392,31 +348,34 @@ $header = "Рабочий стол";
 
 				        	}else{
 
-				        		$('#ad').css("max-width", "49%");
+				        		// $('#ad').css("max-width", "49%");
 
-				        		$('#ad').attr("id", "");
+				        		// $('#ad').attr("id", "");
 
-					        	$('#dd').append(`<div class="col-md-6 card" style="height: 50%; max-width: 49%; margin-right: 1%; padding: 0px;" data-chatid1="${id1}">
-										<div class="card-header alpha-success text-success-800 header-elements-inline">
-											<h6 class="card-title">${id1} - Кабинет</h6>
+					        	$('#dd').append(`
+					        		<div class="col" data-chatid1="${id1}" >
+					        			<div class="card" style="height:400px">
+											<div class="card-header alpha-success text-success-800 header-elements-inline">
+												<h6 class="card-title">${id1} - Кабинет</h6>
+											</div>
+											<div class="table-responsive card-body" style="padding: 0px;">
+												<table class="table table-hover">
+									                <thead>
+									                    <tr class="bg-blue">
+										                    <th> Номер </th>
+															<th> Пациент </th>
+									                    </tr>
+									                </thead>
+									                <tbody id="${id1}">
+
+									               		${we}
+
+									                </tbody>
+									            </table>
+									        </div>
 										</div>
-										<div class="table-responsive card-body" style="padding: 0px;">
-											<table class="table table-hover">
-								                <thead>
-								                    <tr class="bg-blue">
-									                    <th> Номер </th>
-														<th> Пациент </th>
-								                    </tr>
-								                </thead>
-								                <tbody id="${id1}">
-
-								               		${we}
-
-								                </tbody>
-								            </table>
-								        </div>
-
-									</div>`);
+				        			</div>
+									`);
 
 
 								cout += 1;
@@ -439,29 +398,13 @@ $header = "Рабочий стол";
 
 	        		$(`div[data-chatid1=${id1}]`).remove()
 
+		        	cout = Number($("#dd").attr("data-cout"));
+
+		        	cout -= 1;
+
+		        	$("#dd").attr("data-cout", cout);
+
 	        	})
-
-				// var msg = new SpeechSynthesisUtterance('Welcom to home');
-				// window.speechSynthesis.speak(msg);
-
-				 // speechSynthesis.speak(
-				 //    new SpeechSynthesisUtterance('Саня')
-				 //  );
-
-				 // let re = new webkitSpeechRecognition();
-
-				 // let voice = speechSynthesis.getVoices();
-
-				 // let ee = new SpeechSynthesisUtterance();
-
-				 // ee.voice = voice[0];
-
-				//  ee.lang = "ru-Ru";
-
-				//  ee.text = "Пациент";
-
-				// window.speechSynthesis.speak(ee);
-
 	        </script>
 
 	    </div>
@@ -492,35 +435,29 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="row">
+				<!-- <div class="row">
 
-					<div class="row col-md-4">
-						<div class="col-md-12">
-							<div class="card-img-actions m-1">
-								<div class="card-img embed-responsive embed-responsive-16by9">
-									<video autoplay>
-										<source src="../meadi/video/Рекламный_ролик_клиники _Гранд Медика_.mp4">
-									</video>
-								</div>
+                    
+					
+					<div class="col-md-7">
+						<div class="card-img-actions m-1">
+							<div class="card-img embed-responsive embed-responsive-16by9">
+								<video autoplay width="5000" height="1000">
+									<source src="../meadi/video/Рекламный_ролик_клиники _Гранд Медика_.mp4">
+								</video>
 							</div>
 						</div>
-						<div class="col-md-4">
-							
-							<section class="clock" style="margin: 13%;">
-							  <div class="dot"></div>
-							  <div class="spire hour"></div>
-							  <div class="spire min"></div>
-							  <div class="spire sec"></div>
-							</section>
-
-						</div>
 					</div>
+				</div> -->
 
-					<div class="row col-md-8" id="dd" style="height: 50%" data-cout="0">
+				<div class="row" id="dd" style="height: 50%;" data-cout="0"></div>
 
+
+                    <audio id="audio" style="display:none;">
+                        <source src="../media/audio/music" type="audio/mpeg">
+                      </audio>
 
 					</div>
-				</div>
 				
 
 				<!-- <div class="row" style="height: 50%" >
@@ -530,7 +467,9 @@ $header = "Рабочий стол";
 				</div> -->
 
 				<script>
-	
+
+	        		// $('#audio').trigger('play');
+
 
 					$(document).ready(function() {
 
@@ -538,79 +477,43 @@ $header = "Рабочий стол";
 
 					}); 
 
-					setInterval(function () {
-						$("video")[0].play();
-					}, 13200)
+					// setInterval(function () {
+					// 	$("video")[0].play();
+					// }, 13200)
 
-
-					var date = new Date();
-					var hour = date.getHours();
-					var min = date.getMinutes();
-					var sec = date.getSeconds();
-					var hourElt = document.getElementsByClassName("hour")[0];
-					var minElt = document.getElementsByClassName("min")[0];
-					var secElt = document.getElementsByClassName("sec")[0];
-					var digit = document.getElementsByClassName("digit")[0];
-
-					moveTime();
-
-					function moveTime() {
-					  moveSec();
-					  moveMin();
-					  moveHour();  
-					}
-
-					function moveSec() {
-					  var turnSec = sec*6;
-					  secElt.style.transform = "rotate(" + turnSec + "deg)";
-					  secElt.style.webkitTransform = "rotate(" + turnSec + "deg)";
-					  // for each sec after first
-					  var eachSec = setInterval(function () {
-					    turnSec += 6;
-					    secElt.style.transform = "rotate(" + turnSec + "deg)";
-					    secElt.style.webkitTransform = "rotate(" + turnSec + "deg)";
-					  }, 1000);
-					}
-
-					function moveMin() {
-					  var turnMin = min*6;
-					  minElt.style.transform = "rotate(" + turnMin + "deg)";
-					  minElt.style.webkitTransform = "rotate(" + turnMin + "deg)";
-					  digit.innerHTML = date.getHours() + ":" + date.getMinutes();
-					  // after first min leftovers
-					  setTimeout(function () {
-					    turnMin += 6;
-					    minElt.style.transform = "rotate(" + turnMin + "deg)";
-					    minElt.style.webkitTransform = "rotate(" + turnMin + "deg)";
-					    digit.innerHTML = new Date().getHours() + ":" + new Date().getMinutes();
-					    // for each min after first
-					    var eachMin = setInterval(function () {
-					      turnMin += 6;
-					      minElt.style.transform = "rotate(" + turnMin + "deg)";
-					      minElt.style.webkitTransform = "rotate(" + turnMin + "deg)";
-					      digit.innerHTML = new Date().getHours() + ":" + new Date().getMinutes();
-					    }, 60000);
-					  }, (60 - sec) * 1000);
-					}
-
-					function moveHour() {
-					  if(hour > 11) {hour -= 12;}
-					  var turnHour = hour*30;
-					  hourElt.style.transform = "rotate(" + turnHour + "deg)";
-					  hourElt.style.webkitTransform = "rotate(" + turnHour + "deg)";
-					  // after first hour leftovers
-					  setTimeout(function () {
-					    turnHour += 30;
-					    hourElt.style.transform = "rotate(" + turnHour + "deg)";
-					    hourElt.style.webkitTransform = "rotate(" + turnHour + "deg)";
-					    // for each hour after first
-					    var eachHour = setInterval(function () {
-					      turnHour += 30;
-					      hourElt.style.transform = "rotate(" + turnHour + "deg)";
-					      hourElt.style.webkitTransform = "rotate(" + turnHour + "deg)";
-					    }, 3600000);
-					  }, (60 - min) * 60000);
-					}
+					$(document).ready(function() {
+				        // Создаем две переменные с названиями месяцев и названиями дней.
+				        var monthNames = [ "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь" ]; 
+				        var dayNames= ["Воскресенье","Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"]
+				 
+				        // Создаем объект newDate()
+				        var newDate = new Date();
+				        // "Достаем" текущую дату из объекта Date
+				        newDate.setDate(newDate.getDate());
+				        // Получаем день недели, день, месяц и год
+				        $('#Date').html(dayNames[newDate.getDay()] + " " + newDate.getDate() + ' ' + monthNames[newDate.getMonth()] + ' ' + newDate.getFullYear());
+				 
+				        setInterval( function() {
+				            // Создаем объект newDate() и показывает секунды
+				            var seconds = new Date().getSeconds();
+				            // Добавляем ноль в начало цифры, которые до 10
+				            $("#sec").html(( seconds < 10 ? "0" : "" ) + seconds);
+				        },1000);
+				 
+				        setInterval( function() {
+				            // Создаем объект newDate() и показывает минуты
+				            var minutes = new Date().getMinutes();
+				            // Добавляем ноль в начало цифры, которые до 10
+				            $("#min").html(( minutes < 10 ? "0" : "" ) + minutes);
+				        },1000);
+				 
+				        setInterval( function() {
+				            // Создаем объект newDate() и показывает часы
+				            var hours = new Date().getHours();
+				            // Добавляем ноль в начало цифры, которые до 10
+				            $("#hours").html(( hours < 10 ? "0" : "" ) + hours);
+				        }, 1000);				
+				    });
 
 				</script>
 				 
