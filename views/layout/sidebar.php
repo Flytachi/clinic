@@ -102,7 +102,7 @@
                             <li class="nav-item">
                                 <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
-                                    <span>Врачи оператор</span>
+                                    <span>УчтепаВрачи оператор</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -272,7 +272,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('doctor/note') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
                                 </a>
@@ -329,6 +329,12 @@
                                     <span>Завершёные пациенты</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 7:
@@ -354,15 +360,21 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
-                                    <span>Склад</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('journal/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Журнал</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Склад</span>
                                 </a>
                             </li>
                             <?php
@@ -393,6 +405,12 @@
                                     <span>Отчёт</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 9:
@@ -401,6 +419,12 @@
                                 <a href="<?= viv('coock/index') ?>" class="nav-link">
                                     <i class="icon-display"></i>
                                     <span>Рабочий стол</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
                                 </a>
                             </li>
                             <?php
@@ -420,6 +444,12 @@
                                             <?php
                                         }
                                         ?>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('archive/assist/list') ?>" class="nav-link legitRipple">
+                                        <i class="icon-collaboration"></i>
+                                        <span>Завершёные пациенты</span>
                                     </a>
                                 </li>
                             <?php elseif (division_assist() == 2): ?>
@@ -449,6 +479,12 @@
                                             <?php
                                         }
                                         ?>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('archive/completed/list') ?>" class="nav-link legitRipple">
+                                        <i class="icon-collaboration"></i>
+                                        <span>Завершёные пациенты</span>
                                     </a>
                                 </li>
                             <?php else: ?>
@@ -494,11 +530,17 @@
                                         ?>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= viv('archive/completed/list') ?>" class="nav-link legitRipple">
+                                        <i class="icon-collaboration"></i>
+                                        <span>Завершёные пациенты</span>
+                                    </a>
+                                </li>
                             <?php endif; ?>
                             <li class="nav-item">
-                                <a href="<?= viv('archive/completed/list') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
-                                    <span>Завершёные пациенты</span>
+                                    <span>Заметки</span>
                                 </a>
                             </li>
                             <?php
@@ -517,6 +559,12 @@
                                         <?php
                                     }
                                     ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
                                 </a>
                             </li>
                             <li class="nav-item">

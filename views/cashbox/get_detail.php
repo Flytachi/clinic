@@ -17,7 +17,7 @@ if ($_GET['pk']) {
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                 -- vs.add_date
             FROM users us
-                LEFT JOIN investment iv ON(iv.user_id = us.id)
+                LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
                 LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)

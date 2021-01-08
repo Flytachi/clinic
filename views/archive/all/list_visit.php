@@ -35,7 +35,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                 <div class="card border-1 border-info">
 
                     <div class="card-header text-dark header-elements-inline alpha-info">
-                        <h6 class="card-title" ><b>Информация о пациенте</b></h6>
+                        <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
@@ -69,12 +69,12 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 				                            <label class="col-md-4"><b>Адрес проживание:</b></label>
 				    						<div class="col-md-8 text-right">
-				    							г. <?= $patient->region ?> <?= $patient->residenceAddress ?>
+				    							<?= $patient->region ?> <?= $patient->residenceAddress ?>
 				    						</div>
 
 				                            <label class="col-md-4"><b>Адрес прописки:</b></label>
 				    						<div class="col-md-8 text-right">
-				    							г. <?= $patient->region ?> <?= $patient->registrationAddress ?>
+				    							<?= $patient->region ?> <?= $patient->registrationAddress ?>
 				    						</div>
 
 				                            <label class="col-md-4"><b>Дата визита:</b></label>

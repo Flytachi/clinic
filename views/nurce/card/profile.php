@@ -17,7 +17,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 <div class="card border-1 border-info">
 
     <div class="card-header text-dark header-elements-inline alpha-info">
-        <h6 class="card-title" ><?= get_full_name($patient->id) ?></h6>
+        <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>
@@ -51,12 +51,12 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
                             <label class="col-md-4"><b>Адрес проживание:</b></label>
     						<div class="col-md-8 text-right">
-    							г. <?= $patient->region ?> <?= $patient->residenceAddress ?>
+    							<?= $patient->region ?> <?= $patient->residenceAddress ?>
     						</div>
 
                             <label class="col-md-4"><b>Адрес прописки:</b></label>
     						<div class="col-md-8 text-right">
-    							г. <?= $patient->region ?> <?= $patient->registrationAddress ?>
+    							<?= $patient->region ?> <?= $patient->registrationAddress ?>
     						</div>
 
                             <label class="col-md-4"><b>Дата визита:</b></label>
@@ -92,11 +92,6 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     							<?= ($patient->gender) ? "Мужской": "Женский" ?>
     						</div>
 
-                            <!-- <label class="col-md-3"><b>Аллергия:</b></label>
-                            <div class="col-md-9 text-right">
-                                <?= $patient->allergy ?>
-                            </div> -->
-
     					</div>
 
                     </div>
@@ -125,13 +120,12 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 )
                                  'balance'
                             FROM users us
-                                LEFT JOIN investment iv ON(iv.user_id = us.id)
+                                LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
                                 LEFT JOIN beds bd ON(bd.user_id = us.id)
                                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
                             WHERE us.id = $patient->id";
                     $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-                    // prit($price);
 
                     if ($price->balance >= 0) {
                         $class_card_balance = "text-success";

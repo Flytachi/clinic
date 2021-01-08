@@ -310,6 +310,13 @@ class VisitModel extends Model
                 </div>
             </div>
 
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -438,6 +445,13 @@ class VisitModel extends Model
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
                 </div>
             </div>
 
@@ -892,7 +906,7 @@ class VisitPriceModel extends Model
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
             $this->price($row);
         }
-        $this->del_invest();
+        $this->up_invest();
     }
 
     public function add_bed()
@@ -906,16 +920,17 @@ class VisitPriceModel extends Model
         $post['item_id'] = $ti['bed_id'];
         $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
         $post['item_cost'] = $this->bed_cost;
+        $post['price_date'] = date('Y-m-d H:i:s');
         $object = Mixin\insert($this->table, $post);
     }
 
-    public function del_invest()
+    public function up_invest()
     {
         global $db;
         foreach ($db->query("SELECT * FROM $this->table2 WHERE user_id = $this->user_pk") as $row) {
-            $object = Mixin\delete($this->table2, $row['id']);
-            if(!intval($object)){
-                $this->error("{$this->table2}: ".$object);
+            $object = Mixin\update($this->table2, array('status' => null), $row['id']);
+            if (!intval($object)){
+                $this->error($object);
             }
         }
     }

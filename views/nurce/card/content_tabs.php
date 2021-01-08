@@ -23,13 +23,10 @@
         <a href="<?= viv('nurce/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Состаение</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('nurce/card/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Заметки</a>
+        <a href="<?= viv('nurce/card/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Расходные материалы</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('nurce/card/content_8') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_8')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Расходные материалы</a>
-    </li>
-    <li class="nav-item">
-        <a href="<?= viv('nurce/card/content_9') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_9')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Операционный блок</a>
+        <a href="<?= viv('nurce/card/content_8') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('nurce/card/content_8')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Операционный блок</a>
     </li>
 </ul>
 

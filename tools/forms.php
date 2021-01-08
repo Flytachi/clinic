@@ -57,17 +57,14 @@ class PatientForm extends Model
                             <div class="form-group">
                                 <label>Выбирите регион:</label>
                                 <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" required>
-                                    <option><?= $post['region']?></option>
-                                    <optgroup label="Бухоро вилояти">
-                                        <option value="Ромитан">Ромитан</option>
-                                    </optgroup>
-                                    <optgroup label="Тошкент вилояти">
-                                        <option value="Чилонзор">Чилонзор</option>
-                                        <option value="Миробод">Миробод</option>
-                                        <option value="Олмазор">Олмазор</option>
-                                        <option value="Юнусобод">Юнусобод</option>
-                                    </optgroup>
-
+                                    <option></option>
+                                    <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
+                                        <optgroup label="<?= $province['name'] ?>">
+                                            <?php foreach ($db->query("SELECT * FROM region WHERE province_id = {$province['id']}") as $region): ?>
+                                                <option value="<?= $region['name'] ?>"><?= $region['name'] ?></option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
