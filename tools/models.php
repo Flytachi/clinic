@@ -623,7 +623,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         ?>
-        <form method="post" action="<?= add_url() ?>" >
+        <form method="post" action="<?= add_url() ?>" onsubmit="Submit_alert()">
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -694,22 +694,37 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="button" id="btn_check" onclick="submitFunck('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info btn-sm">Печать</button>
-                <button style="display:none;" type="submit" id="btn_submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Оплата</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
     		</div>
 
         </form>
+
         <script type="text/javascript">
 
-            function submitFunck(check) {
-                var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
-                parent_id.forEach(function(events) {
-                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-                    let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
-                    conn.send(obj);
-                    conn.send(obj1);
+            function Submit_alert() {
+                event.preventDefault();
+                $.ajax({
+                    type: $(event.target).attr("method"),
+                    url: $(event.target).attr("action"),
+                    data: $(event.target).serializeArray(),
+                    success: function (result) {
+                        var status = JSON.parse(result).status;
+                        var val = JSON.parse(result).val;
+                        if (status == "success") {
+                            var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                            parent_id.forEach(function(events) {
+                                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                                let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
+                                conn.send(obj);
+                                conn.send(obj1);
+                            });
+                            location = val;
+                        } else {
+                            sessionStorage['message'] = val;
+                            location.reload();
+                        }
+                    },
                 });
-                PrintCheck(check);
             }
 
             function Checkert(event) {
@@ -721,17 +736,6 @@ class VisitPriceModel extends Model
                     input.removeAttr("disabled");
                     Upsum(input);
                 }
-            }
-
-            function submitAlert() {
-                // var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
-                // parent_id.forEach(function(events) {
-                //     let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-                //     // let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
-                //     conn.send(obj);
-                //     // conn.send(obj1);
-                //     console.log(obj);
-                // });
             }
         </script>
         <?php
@@ -924,25 +928,46 @@ class VisitPriceModel extends Model
 
     public function success()
     {
-        $_SESSION['message'] = '
-        <div class="alert alert-info" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
+        if (isset($this->bed_cost)) {
+            $_SESSION['message'] = '
+            <div class="alert alert-info" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                Успешно
+            </div>
+            ';
+            render();
+        }else {
+            echo json_encode(array(
+                'status' => "success" ,
+                'val' => viv('prints/check')."?id=".$this->user_pk
+            ));
+        }
     }
 
     public function error($message)
     {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
+        if (isset($this->bed_cost)) {
+            $_SESSION['message'] = '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold"> '.$message.'</span>
+            </div>
+            ';
+            render();
+        }else {
+            $value = '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold">'.$message.'</span>
+            </div>
+            ';
+            echo json_encode(array(
+                'status' => "error" ,
+                'val' => $value
+            ));
+        }
     }
+
 }
 
 class VisitInspectionModel extends Model

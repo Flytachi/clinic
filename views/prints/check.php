@@ -83,7 +83,7 @@ is_auth();
 
 </style>
 
-<body>
+<body onload="window.print();">
 
     <div id="invoice-POS" >
 
@@ -98,7 +98,7 @@ is_auth();
 
             <div class="info">
                 <!-- <h2><?= addZero($_GET['id']) ?></h2> -->
-                <p>
+                <p class="h4">
                     <b>№</b>: <?= addZero($_GET['id']) ?></br>
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
@@ -149,13 +149,13 @@ is_auth();
     			</table>
     		</div>
 
-            <div id="legalcopy">
+            <!-- <div id="legalcopy">
     			<p class="legal">
                     <strong>Thank you for your business!</strong>
                     Payment is expected within 31 days; please process this invoice within that time.
                     There will be a 5% interest charge per month on late invoices.
     			</p>
-    		</div>
+    		</div> -->
 
         </div>
 
