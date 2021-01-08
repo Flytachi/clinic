@@ -3,7 +3,7 @@
 function is_auth($arr = null){
     session_start();
     if (!$_SESSION['session_id']) {
-        header("location:".DIR."/auth/login.php");
+        header("location:".DIR."/auth/login".EXT);
     }
     if (!$_SESSION['session_id'] == "master") {
         if ($arr){
@@ -22,7 +22,7 @@ function is_auth($arr = null){
 }
 
 function logout(){
-    return (DIR."/auth/logout.php");
+    return (DIR."/auth/logout".EXT);
 }
 
 ?>

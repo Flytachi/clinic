@@ -1,5 +1,39 @@
 <?php
 session_start();
+require_once 'functions/connection.php';
+
+// Settings debugger
+
+if ($ini['GLOBAL_SETTING']['DEBUG']) {
+
+    define('ROOT_DIR', "/".basename(dirname(__DIR__)));
+
+    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR or $_SERVER['HTTP_HOST'] == $ini['SOCKET']['HOST']) {
+        define('DIR', "");
+    }else {
+        define('DIR', ROOT_DIR);
+    }
+
+}else {
+    define('DIR', "");
+}
+
+// END Settings debugger
+
+// File extension
+
+if ($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) {
+
+    define('EXT', "");
+
+}else {
+
+    define('EXT', ".php");
+
+}
+
+// END File extension
+
 
 $PERSONAL = array(
     1 => "Администратор",
@@ -33,28 +67,12 @@ $methods = array(
     9 => "Поверхностное натирание",
 );
 
-require_once 'functions/connection.php';
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'models.php';
 require_once 'forms.php';
 require_once 'forms_2.php';
 
-// Settings debugger
-if ($ini['GLOBAL_SETTING']['DEBUG']) {
-
-    define('ROOT_DIR', "/".basename(dirname(__DIR__)));
-
-    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR or $_SERVER['HTTP_HOST'] == $ini['SOCKET']['HOST']) {
-        define('DIR', "");
-    }else {
-        define('DIR', ROOT_DIR);
-    }
-
-}else {
-    define('DIR', "");
-}
-// END Settings debugger
 
 function get_full_name($id = null) {
     global $db;
