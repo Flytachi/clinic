@@ -77,6 +77,7 @@ $header = "Персонал";
 				                        <th>Логин</th>
 				                        <th>ФИО</th>
 				                        <th>Роль</th>
+										<th>Кабинет</th>
 				                        <th style="width: 100px">Действия</th>
 				                    </tr>
 				                </thead>
@@ -96,6 +97,7 @@ $header = "Персонал";
 				                                }
 				                                ?>
 				                            </td>
+											<td><?= $row['room'] ?></td>
 				                            <td>
 				                                <div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
