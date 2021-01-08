@@ -199,8 +199,8 @@ conn.onmessage = function(e) {
             $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
             $(`tr[data-parentid=${ d.user[0].parent_id }][data-status=accept_patient]`).remove();
             $(`#${ d.user[0].parent_id }`).prepend(`
-              <tr data-userid="${ d.user[0].user_id }" data-parentid="${ d.user[0].parent_id }" data-status="accept_patient" style=" background-color: #97E32F;">
-                <td>000</td>
+              <tr data-userid="${ d.user[0].user_id }" data-parentid="${ d.user[0].parent_id }" data-status="accept_patient" style="font-weight: 900; font-size: 140%; background-color: #97E32F;">
+                <td>${ d.user[0].user_id }</td>
                 <td>${ d.user[0].first_name } - ${ d.user[0].last_name }</td>
               </tr>`)
             },
@@ -210,10 +210,6 @@ conn.onmessage = function(e) {
 
       // События для монитора, добавление нового пациента
       if(d.id == id){
-        // Проигрывается аудио уведомления  
-        $('#audio').trigger('play');
-        console.log('ew');
-
         $.ajax({
           type: "POST",
 
@@ -231,8 +227,8 @@ conn.onmessage = function(e) {
             $('#audio').trigger('play');
 
             // Удаляется и добавляется заново подсвеченным зеленым
-            $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" data-parentid="${ d.queue[0].parent_id }">
-                          <td>${ d.queue[0].user_id } ${ d.queue[0].id }</td>
+            $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" style="font-weight: 900; font-size: 140%;" data-parentid="${ d.queue[0].parent_id }">
+                          <td>${ d.queue[0].user_id }</td>
                           <td>${ d.queue[0].last_name } - ${ d.queue[0].first_name }</td>
                           </tr>`);
             },

@@ -202,7 +202,7 @@ $header = "Рабочий стол";
 
 									<div class="dropdown-item form-check">
 										<label class="form-check-label">
-											<div class="chew" data-chatid="<?= $key['id'] ?>" data-nameLast="<?= $key['room'] ?> Кабинет">
+											<div class="chew" data-chatid="<?= $key['id'] ?>" data-nameLast="<?= $key['room'] ?> - Кабинет">
 												<input type="checkbox" class="form-input-styled" data-fouc>
 											</div>
 											<?= $key['room'] ?> Кабинет
@@ -291,7 +291,7 @@ $header = "Рабочий стол";
 
 				        	if(reception.length != 0){
 				        		console.log(reception);
-					        	we += `<tr data-status="accept_patient" style=" background-color: #97E32F;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }">
+					        	we += `<tr data-status="accept_patient" style=" background-color: #97E32F; font-weight: 900; font-size: 140%;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }">
 								        	<td>${ reception[0].user_id }</td>
 								        	<td>${ reception[0].last_name } - ${ reception[0].first_name }</td>
 								        </tr>`;
@@ -300,9 +300,9 @@ $header = "Рабочий стол";
 
 				        	if( queue.length != 0 ){
 				        		for (let i = 0; i < queue.length; i++) {
-					        		we += `<tr data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
-					        				<td><h2> ${ queue[i].user_id } </h2> </td>
-					        				<td> <h2> ${ queue[i].last_name } - ${ queue[i].first_name } </h2> </td>
+					        		we += `<tr style="font-weight: 900; font-size: 140%;" data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
+					        				<td> ${ queue[i].user_id }  </td>
+					        				<td> ${ queue[i].last_name } - ${ queue[i].first_name } </td>
 					        				</tr>`
 					        	}
 					        }
@@ -318,7 +318,7 @@ $header = "Рабочий стол";
 				        		<div class="col" id="ad" data-chatid1="${id1}">
 				        			<div class="card" style="height:400px">
 										<div class="card-header alpha-success text-success-800 header-elements-inline">
-											<h2 class="card-title"> ${name} </h2>
+											<h2 class="card-title" style="font-weight: 900;"> ${name} </h2>
 										</div>
 										<div class="table-responsive card-body" style="padding: 0px;">
 											<table class="table table-hover">
@@ -490,6 +490,29 @@ $header = "Рабочий стол";
 
 	</div>
 	<!-- /page content -->
+	<!-- Footer -->
+    <div class="navbar navbar-expand-lg navbar-light">
+	    <div class="text-center d-lg-none w-100">
+	        <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse" data-target="#navbar-footer">
+	            <i class="icon-unfold mr-2"></i>
+	            Footer
+	        </button>
+	    </div>
+
+	    <div class="navbar-collapse collapse" id="navbar-footer">
+	        <span class="navbar-text">
+	            &copy; 2020 - 2021. <span class="text-primary">Автор проекта Я.Фарход. +998 91 247 43 53</span>
+	        </span>
+
+	        <ul class="navbar-nav ml-lg-auto">
+	            <li class="nav-item">
+	                <a href="http://medpomosh.uz/" target="_blank" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400">Medpomosh.uz</span></a>
+	            </li>
+	        </ul>
+	    </div>
+	</div>
+
+    <!-- /footer -->
 
 
 </body>
