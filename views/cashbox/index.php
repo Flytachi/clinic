@@ -136,27 +136,10 @@ $header = "Рабочий стол";
 
 	<script type="text/javascript">
 
-		if (sessionStorage['message_amb']) {
-			$('#message_ses').html(sessionStorage['message_amb']);
-			sessionStorage['message_amb'] = '';
+		if (sessionStorage['message']) {
+			$('#message_ses').html(sessionStorage['message']);
+			sessionStorage['message'] = '';
 		}
-
-		$('#sweet_visit_finish').on('click', function(event) {
-            event.preventDefault();
-            var url = this.dataset.href;
-            swal({
-                position: 'top',
-                title: 'Вы уверены?',
-                text: this.dataset.question,
-                type: 'info',
-                showCancelButton: true,
-                confirmButtonText: this.dataset.btn
-            }).then(function(ivi) {
-                if (ivi.value) {
-                    window.location = url;
-                }
-            });
-        });
 
 		function Delete(events, tr) {
 			swal({
@@ -179,7 +162,7 @@ $header = "Рабочий стол";
 									sumTo($('.total_cost'));
 								});
 							}else{
-								sessionStorage['message_amb'] = data;
+								sessionStorage['message'] = data;
 								location.reload();
 							}
 						},

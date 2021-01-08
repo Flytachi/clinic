@@ -16,25 +16,6 @@ function Print(events) {
     });
 };
 
-function PrintCheck(events) {
-    var WinPrint = window.open(``,'','left=50,top=50,width=300,height=400,toolbar=0,scrollbars=1,status=0');
-    $.ajax({
-        type: "GET",
-        url: events,
-        success: function (data) {
-            WinPrint.document.write(data);
-            WinPrint.document.close();
-            WinPrint.focus();
-            window.stop();
-            $(WinPrint).on('load', function () {
-                WinPrint.print();
-                WinPrint.close();
-                $('#btn_submit').click();
-            });
-        },
-    });
-};
-
 function addZero(number){
 
     let strNumber = String(number);
@@ -192,7 +173,7 @@ conn.onmessage = function(e) {
 
             let d = JSON.parse(data);
 
-            // Проигрывается аудио уведомления  
+            // Проигрывается аудио уведомления
             $('#audio').trigger('play');
 
             // Удаляется и добавляется заново подсвеченным зеленым
@@ -210,7 +191,7 @@ conn.onmessage = function(e) {
 
       // События для монитора, добавление нового пациента
       if(d.id == id){
-        // Проигрывается аудио уведомления  
+        // Проигрывается аудио уведомления
         $('#audio').trigger('play');
         console.log('ew');
 
@@ -227,7 +208,7 @@ conn.onmessage = function(e) {
 
             console.log('ew')
 
-            // Проигрывается аудио уведомления  
+            // Проигрывается аудио уведомления
             $('#audio').trigger('play');
 
             // Удаляется и добавляется заново подсвеченным зеленым

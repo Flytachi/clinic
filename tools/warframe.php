@@ -6,7 +6,8 @@ define('ROOT_DIR', "/".basename(dirname(__DIR__)));
 if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
     define('DIR', "");
 }else {
-    define('DIR', ROOT_DIR);
+    // define('DIR', ROOT_DIR);
+    define('DIR', "");
 }
 
 $PERSONAL = array(
