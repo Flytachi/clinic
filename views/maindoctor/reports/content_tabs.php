@@ -9,7 +9,7 @@
         <a href="<?= viv('maindoctor/reports/content_3') ?>" class="nav-link <?= (viv('maindoctor/reports/content_3')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Визиты</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('maindoctor/reports/content_4') ?>" class="nav-link <?= (viv('maindoctor/reports/content_4')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Отделы</a>
+        <a href="<?= viv('maindoctor/reports/content_4') ?>" class="nav-link <?= (viv('maindoctor/reports/content_4')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Направители</a>
     </li>
 </ul>
 

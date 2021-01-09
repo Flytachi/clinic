@@ -83,69 +83,82 @@ is_auth();
 
 </style>
 
-<div id="invoice-POS">
+<body onload="window.print();">
 
-    <center id="top">
-        <div class="logo"></div>
-        <div class="info">
-            <h2>SBISTechs Inc</h2>
+    <div id="invoice-POS" >
+
+        <center id="top">
+            <div class="logo"></div>
+            <div class="info">
+                <h2>SBISTechs Inc</h2>
+            </div>
+        </center>
+
+        <div id="mid">
+
+            <div class="info">
+                <!-- <h2><?= addZero($_GET['id']) ?></h2> -->
+                <p class="h4">
+                    <b>№</b>: <?= addZero($_GET['id']) ?></br>
+                    <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
+                    <b>Дата</b>: <?= date('d.m.Y H:i') ?>
+                </p>
+            </div>
+
         </div>
-    </center>
 
-    <div id="mid">
+        <div id="bot">
 
-        <div class="info">
-            <h2>Contact Info</h2>
-            <p>
-                Address : street city, state 0000</br>
-                Email   : JohnDoe@gmail.com</br>
-                Phone   : 555-555-5555</br>
-            </p>
-        </div>
+            <div id="table">
+                <table>
+                    <tr class="tabletitle">
+                        <td class="item"><h2>Item</h2></td>
+                        <td class="Hours"><h2>Qty</h2></td>
+                        <td class="Rate"><h2>Sub Total</h2></td>
+                    </tr>
 
-    </div>
+                    <?php $total_price = 0; ?>
 
-    <div id="bot">
+                    <?php foreach ($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$_GET['id']} AND vs.priced_date IS NULL") as $row): ?>
+                        <tr class="service">
+        					<td class="tableitem"><p class="itemtext"><?= $row['name'] ?></p></td>
+        					<td class="tableitem"><p class="itemtext">1</p></td>
+        					<td class="tableitem">
+                                <p class="itemtext">
+                                    <?php
+                                    echo number_format($row['price']);
+                                    $total_price += $row['price'];
+                                    ?>
+                                </p>
+                            </td>
+        				</tr>
+                    <?php endforeach; ?>
 
-        <div id="table">
-            <table>
-                <tr class="tabletitle">
-                    <td class="item"><h2>Item</h2></td>
-                    <td class="Hours"><h2>Qty</h2></td>
-                    <td class="Rate"><h2>Sub Total</h2></td>
-                </tr>
+    				<!-- <tr class="tabletitle">
+    					<td></td>
+    					<td class="Rate"><h2>tax</h2></td>
+    					<td class="payment"><h2>$419.25</h2></td>
+    				</tr> -->
 
-                <?php foreach ($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$_GET['id']} AND vs.priced_date IS NULL") as $row): ?>
-                    <tr class="service">
-    					<td class="tableitem"><p class="itemtext"><?= $row['name'] ?></p></td>
-    					<td class="tableitem"><p class="itemtext">1</p></td>
-    					<td class="tableitem"><p class="itemtext"><?= $row['price'] ?></p></td>
+    				<tr class="tabletitle">
+    					<td></td>
+    					<td class="Rate"><h2>Total</h2></td>
+    					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
     				</tr>
-                <?php endforeach; ?>
 
-				<tr class="tabletitle">
-					<td></td>
-					<td class="Rate"><h2>tax</h2></td>
-					<td class="payment"><h2>$419.25</h2></td>
-				</tr>
+    			</table>
+    		</div>
 
-				<tr class="tabletitle">
-					<td></td>
-					<td class="Rate"><h2>Total</h2></td>
-					<td class="payment"><h2>$3,644.25</h2></td>
-				</tr>
+            <!-- <div id="legalcopy">
+    			<p class="legal">
+                    <strong>Thank you for your business!</strong>
+                    Payment is expected within 31 days; please process this invoice within that time.
+                    There will be a 5% interest charge per month on late invoices.
+    			</p>
+    		</div> -->
 
-			</table>
-		</div>
-
-        <div id="legalcopy">
-			<p class="legal">
-                <strong>Thank you for your business!</strong>
-                Payment is expected within 31 days; please process this invoice within that time.
-                There will be a 5% interest charge per month on late invoices.
-			</p>
-		</div>
+        </div>
 
     </div>
 
-</div>
+</body>

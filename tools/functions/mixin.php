@@ -108,6 +108,6 @@ function delete($tb, $pk){
 }
 
 function error($url){
-    header("location:".DIR."/error/$url.php");
+    header("location:".DIR."/error/$url".EXT);
     exit;
 }

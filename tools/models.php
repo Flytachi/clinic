@@ -89,6 +89,13 @@ class UserModel extends Model
 
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label>Кабинет:</label>
+                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $post['room'] ?>">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
                                     <label>Доля:</label>
                                     <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $post['share'] ?>">
                                 </div>
@@ -303,6 +310,13 @@ class VisitModel extends Model
                 </div>
             </div>
 
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
+                </div>
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -431,6 +445,13 @@ class VisitModel extends Model
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <label>Жалоба:</label>
+                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
                 </div>
             </div>
 
@@ -623,7 +644,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="Submit_alert()">
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -694,21 +715,37 @@ class VisitPriceModel extends Model
 
     		<div class="modal-footer">
     			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Печать</button>
-                <button type="button" onclick="checkBody('<?= viv('prints/check') ?>?id='+$('#user_amb_id').val())" class="btn btn-outline-info"><i class="icon-printer2"></i> Печать</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
     		</div>
 
         </form>
+
         <script type="text/javascript">
-            function checkBody(urls) {
-                window.location = urls;
-                // $.ajax({
-                // 	type: "GET",
-                // 	url: urls,
-                // 	success: function (result) {
-                //         checkPrint(result);
-                // 	},
-                // });
+
+            function Submit_alert() {
+                event.preventDefault();
+                $.ajax({
+                    type: $(event.target).attr("method"),
+                    url: $(event.target).attr("action"),
+                    data: $(event.target).serializeArray(),
+                    success: function (result) {
+                        var status = JSON.parse(result).status;
+                        var val = JSON.parse(result).val;
+                        if (status == "success") {
+                            var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                            parent_id.forEach(function(events) {
+                                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                                let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
+                                conn.send(obj);
+                                conn.send(obj1);
+                            });
+                            location = val;
+                        } else {
+                            sessionStorage['message'] = val;
+                            location.reload();
+                        }
+                    },
+                });
             }
 
             function Checkert(event) {
@@ -720,13 +757,6 @@ class VisitPriceModel extends Model
                     input.removeAttr("disabled");
                     Upsum(input);
                 }
-            }
-            function submitAlert() {
-                var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
-                parent_id.forEach(function(events) {
-                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-                    conn.send(obj);
-                });
             }
         </script>
         <?php
@@ -876,7 +906,7 @@ class VisitPriceModel extends Model
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
             $this->price($row);
         }
-        $this->del_invest();
+        $this->up_invest();
     }
 
     public function add_bed()
@@ -890,16 +920,17 @@ class VisitPriceModel extends Model
         $post['item_id'] = $ti['bed_id'];
         $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
         $post['item_cost'] = $this->bed_cost;
+        $post['price_date'] = date('Y-m-d H:i:s');
         $object = Mixin\insert($this->table, $post);
     }
 
-    public function del_invest()
+    public function up_invest()
     {
         global $db;
         foreach ($db->query("SELECT * FROM $this->table2 WHERE user_id = $this->user_pk") as $row) {
-            $object = Mixin\delete($this->table2, $row['id']);
-            if(!intval($object)){
-                $this->error("{$this->table2}: ".$object);
+            $object = Mixin\update($this->table2, array('status' => null), $row['id']);
+            if (!intval($object)){
+                $this->error($object);
             }
         }
     }
@@ -919,25 +950,46 @@ class VisitPriceModel extends Model
 
     public function success()
     {
-        $_SESSION['message'] = '
-        <div class="alert alert-info" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
+        if (isset($this->bed_cost)) {
+            $_SESSION['message'] = '
+            <div class="alert alert-info" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+                Успешно
+            </div>
+            ';
+            render();
+        }else {
+            echo json_encode(array(
+                'status' => "success" ,
+                'val' => viv('prints/check')."?id=".$this->user_pk
+            ));
+        }
     }
 
     public function error($message)
     {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
+        if (isset($this->bed_cost)) {
+            $_SESSION['message'] = '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold"> '.$message.'</span>
+            </div>
+            ';
+            render();
+        }else {
+            $value = '
+            <div class="alert bg-danger alert-styled-left alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+                <span class="font-weight-semibold">'.$message.'</span>
+            </div>
+            ';
+            echo json_encode(array(
+                'status' => "error" ,
+                'val' => $value
+            ));
+        }
     }
+
 }
 
 class VisitInspectionModel extends Model

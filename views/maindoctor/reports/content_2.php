@@ -48,7 +48,7 @@ $header = "Отчёт по врачам";
 							<div class="form-group row">
 
 								<div class="col-md-3">
-									<label>Дата визита:</label>
+									<label>Дата завершения:</label>
 									<div class="input-group">
 										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
 										<span class="input-group-append">
@@ -160,6 +160,8 @@ $header = "Отчёт по врачам";
 					if ($_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
 					}
+					$total_price=0;
+					$i=1;
 					?>
 					<div class="card border-1 border-info">
 
@@ -178,7 +180,8 @@ $header = "Отчёт по врачам";
 								<table class="table table-hover table-sm table-bordered">
 									<thead>
 										<tr class="bg-info">
-											<th style="width: 12%">Дата завершения</th>
+											<th style="width: 50px">№</th>
+											<th style="width: 11%">Дата завершения</th>
 	                                        <th>Специалист</th>
 				                            <th>Услуга</th>
 				                            <th>Пациент</th>
@@ -190,15 +193,26 @@ $header = "Отчёт по врачам";
 									<tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
+												<td><?= $i++ ?></td>
 												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= $row['item_name'] ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
 												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>"><?= number_format($row['item_cost']) ?></td>
 												<td class="text-center"><?= $row['share'] ?> %</td>
-												<td class="text-right text-success"><?= number_format($row['share_price']) ?></td>
+												<td class="text-right text-success">
+													<?php
+													$total_price += $row['share_price'];
+													echo number_format($row['share_price']);
+													?>
+												</td>
 											</tr>
 										<?php endforeach; ?>
+										<tr class="table-secondary">
+											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
+											<th colspan="5" class="text-right">Итого:</th>
+											<td class="text-right text-success"><?= number_format($total_price) ?></td>
+										</tr>
 									</tbody>
 								</table>
 							</div>

@@ -1,9 +1,7 @@
-header<?php
+<?php
 require_once '../../tools/warframe.php';
 is_auth();
 ?>
-<?php include layout('head') ?>
-
 <div class="modal-header bg-info">
     <h5 class="modal-title">Анализы: </h5>
     <button type="button" class="close" data-dismiss="modal">&times;</button>

@@ -10,7 +10,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
     <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
-    <body onload="window.print();">
+    <body>
 
         <div class="row">
 

@@ -1,6 +1,6 @@
 <?php
-require_once '../../tools/warframe.php';
-is_auth(6);
+require_once '../../../tools/warframe.php';
+is_auth(5);
 $header = "Завершёный пациенты";
 ?>
 <!DOCTYPE html>
@@ -43,7 +43,7 @@ $header = "Завершёный пациенты";
 
 					<div class="card-body">
 
-						<div class="table-responsive">
+						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
@@ -67,7 +67,7 @@ $header = "Завершёный пациенты";
                                             <td><?= $row['numberPhone'] ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('laboratory/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('archive/completed/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
                                         <?php

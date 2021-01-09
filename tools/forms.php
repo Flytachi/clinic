@@ -57,17 +57,14 @@ class PatientForm extends Model
                             <div class="form-group">
                                 <label>Выбирите регион:</label>
                                 <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" required>
-                                    <option><?= $post['region']?></option>
-                                    <optgroup label="Бухоро вилояти">
-                                        <option value="Ромитан">Ромитан</option>
-                                    </optgroup>
-                                    <optgroup label="Тошкент вилояти">
-                                        <option value="Чилонзор">Чилонзор</option>
-                                        <option value="Миробод">Миробод</option>
-                                        <option value="Олмазор">Олмазор</option>
-                                        <option value="Юнусобод">Юнусобод</option>
-                                    </optgroup>
-
+                                    <option></option>
+                                    <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
+                                        <optgroup label="<?= $province['name'] ?>">
+                                            <?php foreach ($db->query("SELECT * FROM region WHERE province_id = {$province['id']}") as $region): ?>
+                                                <option value="<?= $region['name'] ?>"><?= $region['name'] ?></option>
+                                            <?php endforeach; ?>
+                                        </optgroup>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -983,7 +980,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND completed IS NULL AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){
             if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {

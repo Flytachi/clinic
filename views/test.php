@@ -38,5 +38,12 @@ require_once '../tools/warframe.php';
 
 	</form>
 
+
+	<script>
+		
+		alert('ll');
+
+	</script>
+
 </body>
 </html>

@@ -26,7 +26,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = 2 AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
+                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = 2 AND vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
                         ?>
                         <tr>
                             <td><?= addZero($row['user_id']) ?></td>

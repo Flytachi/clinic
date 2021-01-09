@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Ошибка соединения</title>
+    <title>Ошибка - 505</title>
     <!-- Global stylesheets -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
     <link href="/static/global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
@@ -30,8 +30,8 @@
 
                     <!-- Error title -->
                     <div class="text-center mb-3">
-                        <h3 class="error-title text-danger">Ошибка</h3>
-                        <h3><?= $e->getMessage(); ?></h5>
+                        <h1 class="error-title">505</h1>
+                        <h3>Ошибка на сервере</h5>
                     </div>
                     <!-- /error title -->
 

@@ -16,7 +16,7 @@ function prit($value) {
 
 function render($url=null){
     if ($url) {
-        header("location:".DIR."/views/$url.php");
+        header("location:".DIR."/views/$url".EXT);
     }else {
         header("location:".$_SERVER['HTTP_REFERER']);
     }
@@ -28,7 +28,7 @@ function layout($url){
 }
 
 function viv($url){
-    return DIR."/views/$url.php";
+    return DIR."/views/$url".EXT;
 }
 
 function img($url){
@@ -41,18 +41,18 @@ function stack($url){
 
 
 function add_url(){
-    return DIR."/model/create_to_update.php?";
+    return DIR."/model/create_to_update".EXT."?";
 }
 
 function del_url($id, $model){
-    return DIR."/model/delete.php?id=$id&model=$model";
+    return DIR."/model/delete".EXT."?id=$id&model=$model";
 }
 
 function up_url($id, $model, $form=null){
     if ($form) {
-        $result = DIR."/model/get.php?id=$id&model=$model&form=$form";
+        $result = DIR."/model/get".EXT."?id=$id&model=$model&form=$form";
     }else {
-        $result = DIR."/model/get.php?id=$id&model=$model";
+        $result = DIR."/model/get".EXT."?id=$id&model=$model";
     }
     return $result;
 }

@@ -1,8 +1,19 @@
 function Print(events) {
-    var WinPrint = window.open(`${events}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-    WinPrint.focus();
-    WinPrint.onload();
-    WinPrint.close();
+    var WinPrint = window.open(``,'ABC','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+    $.ajax({
+        type: "GET",
+        url: events,
+        success: function (data) {
+            WinPrint.document.write(data);
+            WinPrint.document.close();
+            WinPrint.focus();
+            window.stop();
+            $(WinPrint).on('load', function () {
+                WinPrint.print();
+                WinPrint.close();
+            });
+        },
+    });
 };
 
 function addZero(number){
@@ -145,20 +156,11 @@ conn.onmessage = function(e) {
             html: d.message
         });
     }
-  }else if (d.type == "alert_pharmacy_call"){
-    if(d.id == id){
-        swal({
-            position: 'top',
-            title: 'Вас вызывют в аптеку!',
-            type: 'info',
-            html: d.message
-        });
+  }else if (d.type == "accept_patient" ) {
 
-    }
-  }else if (d.type == "patient" ) {
+      // События для монитора, принятие к доктору
       if(d.id == id){
 
-        $(`tr[data-userid=${ d.user_id }][data-parentid=${ d.parent_id }]`).remove();
 
         $.ajax({
           type: "POST",
@@ -171,9 +173,48 @@ conn.onmessage = function(e) {
 
             let d = JSON.parse(data);
 
-            $(`#${ d.user[0].parent_id }`).prepend(`<tr style=" background-color: #97E32F;"><td>${ d.user[0].first_name }</td><td>${ d.user[0].last_name }</td></tr>`)
-          },
-      });
+            // Проигрывается аудио уведомления
+            $('#audio').trigger('play');
+
+            // Удаляется и добавляется заново подсвеченным зеленым
+            $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
+            $(`tr[data-parentid=${ d.user[0].parent_id }][data-status=accept_patient]`).remove();
+            $(`#${ d.user[0].parent_id }`).prepend(`
+              <tr data-userid="${ d.user[0].user_id }" data-parentid="${ d.user[0].parent_id }" data-status="accept_patient" style="font-weight: 900; font-size: 140%; background-color: #97E32F;">
+                <td>${ d.user[0].user_id }</td>
+                <td>${ d.user[0].first_name } - ${ d.user[0].last_name }</td>
+              </tr>`)
+            },
+        });
+      }
+  }else if (d.type == "new_patient" ) {
+
+      // События для монитора, добавление нового пациента
+      if(d.id == id){
+        $.ajax({
+          type: "POST",
+
+          url: "get_user.php",
+
+          data: { id_user: d.user_id, id_patient: d.parent_id },
+
+          success: function (data) {
+
+            let d = JSON.parse(data);
+
+            console.log('ew')
+
+            // Проигрывается аудио уведомления
+            $('#audio').trigger('play');
+
+            // Удаляется и добавляется заново подсвеченным зеленым
+            $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" style="font-weight: 900; font-size: 140%;" data-parentid="${ d.queue[0].parent_id }">
+                          <td>${ d.queue[0].user_id }</td>
+                          <td>${ d.queue[0].last_name } - ${ d.queue[0].first_name }</td>
+                          </tr>`);
+            },
+        });
+
       }
   }
 };
@@ -223,6 +264,6 @@ function deletNotice(body) {
 function sendPatient(body) {
   parentid = body.dataset.parentid;
   userid = body.dataset.userid;
-  let obj = JSON.stringify({ type : 'patient', id : "1983", user_id : userid, parent_id : parentid});
+  let obj = JSON.stringify({ type : 'accept_patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
 }
