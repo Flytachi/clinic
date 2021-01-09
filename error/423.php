@@ -22,12 +22,7 @@ is_auth();
 </head>
 
 <body>
-
-	<!-- Main navbar -->
-
-	<!-- /main navbar -->
-
-
+	
 	<!-- Page content -->
 	<div class="page-content">
 
