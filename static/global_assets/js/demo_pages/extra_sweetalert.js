@@ -40,8 +40,35 @@ var SweetAlert = function () {
         //
 
         $('#sweet_visit_finish').on('click', function(event) {
+
             event.preventDefault();
             var url = this.dataset.href;
+
+            // Verification
+
+            if (this.dataset.btn == "Выписать") {
+                console.log("fe");
+            } else {
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id
+                    },
+                    success: function (data) {
+                        alert(data);
+                    },
+                });
+                // swal({
+                //     position: 'top',
+                //     title: 'Oops...'+data,
+                //     text: 'Невозможно завершить визиты!',
+                //     type: 'error',
+                //     padding: 30
+                // });
+                return 0;
+            }
+
             swal({
                 position: 'top',
                 title: 'Вы уверены?',
@@ -54,6 +81,7 @@ var SweetAlert = function () {
                     window.location = url;
                 }
             });
+
         });
 
         $('#sweet_call_nurce').on('click', function(event) {
