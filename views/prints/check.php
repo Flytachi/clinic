@@ -5,7 +5,7 @@ is_auth();
 <style>
     #invoice-POS{
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
-        padding:2mm;
+        /*padding:2mm;*/
         margin: 0 auto;
         width: 44mm;
         background: #FFF;
@@ -24,7 +24,6 @@ is_auth();
     }
     p{
       font-size: .7em;
-      color: #666;
       line-height: 1.2em;
     }
 
@@ -69,9 +68,7 @@ is_auth();
       //border: 1px solid #EEE
     }
     .tabletitle{
-      //padding: 5px;
-      font-size: .5em;
-      background: #EEE;
+      background: #9e9e9e;
     }
     .service{border-bottom: 1px solid #EEE;}
     .item{width: 24mm;}
@@ -83,14 +80,14 @@ is_auth();
 
 </style>
 
-<body onload="window.print();">
+<body onload="window.print();" style="color: black; font-size: 140%;">
 
     <div id="invoice-POS" >
 
         <center id="top">
             <div class="logo"></div>
             <div class="info">
-                <h2>SBISTechs Inc</h2>
+                <h2>CARMEN PLYUS</h2>
             </div>
         </center>
 
@@ -112,9 +109,9 @@ is_auth();
             <div id="table">
                 <table>
                     <tr class="tabletitle">
-                        <td class="item"><h2>Item</h2></td>
-                        <td class="Hours"><h2>Qty</h2></td>
-                        <td class="Rate"><h2>Sub Total</h2></td>
+                        <td class="item"><h2>Услуга</h2></td>
+                        <td class="Hours"><h2>шт</h2></td>
+                        <td class="Rate"><h2>сумма</h2></td>
                     </tr>
 
                     <?php $total_price = 0; ?>
@@ -142,7 +139,7 @@ is_auth();
 
     				<tr class="tabletitle">
     					<td></td>
-    					<td class="Rate"><h2>Total</h2></td>
+    					<td class="Rate"><h2>Итого</h2></td>
     					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
     				</tr>
 
