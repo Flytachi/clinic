@@ -491,10 +491,10 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 	<!-- Footer -->
-    <div id="qwee" class="navbar navbar-expand-lg navbar-light">
+    <div id="qwee" class="navbar navbar-expand-lg navbar-light" style="width: 101%; padding: 0%;">
 	    <div class="navbar-collapse collapse" id="navbar-footer">
 	        <h1 id="wew" class="navbar-text" style=" font-weight: 900; font-size: 250%;">
-	            &copy; 2020 - 2021. <span class="text-primary">Пациент 50 5</span>
+	            &copy; 2020 - 2021. <span class="text-primary">Экстренный пациент, пропустить без очереди</span>
 	        </h1>
 	    </div>
 	</div>
@@ -503,10 +503,10 @@ $header = "Рабочий стол";
 
         footer = $('#qwee').marquee({duration: 15000,direction: 'left'});
 
-        footer.bind('finished', function () {
-            // alert('fin');
-            footer.marquee('pause');
-        });
+        // footer.bind('finished', function () {
+        //     // alert('fin');
+        //     footer.marquee('pause');
+        // });
 	</script>
 
     <!-- /footer -->
