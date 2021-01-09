@@ -260,12 +260,13 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $button_inner = "Завершить";
                     }
                     ?>
-                    <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
                     <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
                         <i class="icon-paste2"></i> <?= $button_inner ?>
                     </button>
                 </div>
             </div>
+
+            <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
 
         </div>
 

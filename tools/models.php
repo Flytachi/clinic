@@ -942,7 +942,7 @@ class VisitPriceModel extends Model
             if (isset($this->bed_cost)) {
                 $this->stationar_price();
             }else {
-                $this->ambulator_price();
+                // $this->ambulator_price();
             }
             $this->success();
         }
