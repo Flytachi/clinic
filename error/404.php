@@ -8,7 +8,7 @@ is_auth();
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Ошибка</title>
+	<title>Ошибка - 404</title>
 
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -42,8 +42,8 @@ is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title text-danger">404</h1>
-						<h4>Page not found!</h4>
+						<h1 class="error-title">404</h1>
+						<h4>Страница не найдена!</h4>
 					</div>
 					<!-- /error title -->
 
