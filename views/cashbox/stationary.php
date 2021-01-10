@@ -132,6 +132,11 @@ $header = "Рабочий стол";
 
 	<script type="text/javascript">
 
+		if (sessionStorage['message']) {
+			$('#check_div').html(sessionStorage['message']);
+			sessionStorage['message'] = '';
+		}
+
 		function Detail(events) {
 			if (event.target.dataset.show == 1) {
 				$(event.target).addClass('btn-primary');

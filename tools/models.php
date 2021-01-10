@@ -729,21 +729,25 @@ class VisitPriceModel extends Model
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
-                        var status = JSON.parse(result).status;
-                        var val = JSON.parse(result).val;
-                        if (status == "success") {
-                            var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                        var result = JSON.parse(result);
+                        if (result.status == "success") {
+
+                            var parent_id = document.querySelectorAll('.parent_class');
                             parent_id.forEach(function(events) {
                                 let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
                                 let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
                                 conn.send(obj);
                                 conn.send(obj1);
                             });
-                            location = val;
-                        } else {
-                            sessionStorage['message'] = val;
-                            location.reload();
+
+                            // Печать :
+                            // var WinPrint = window.open(`${result.val}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                            // WinPrint.focus();
+                            // WinPrint.onload();
+                            // WinPrint.close();
                         }
+                        sessionStorage['message'] = result.message;
+                        location.reload();
                     },
                 });
             }
@@ -804,7 +808,16 @@ class VisitPriceModel extends Model
 
                             if (result.status == "success") {
 
-                                console.log(result);
+                                // Выдача выписки
+                                // var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                                // var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                                // WinPrint.focus();
+                                // WinPrint.onload();
+                                // WinPrint.close();
+
+                                // Перезагрузка
+                                sessionStorage['message'] = result.message;
+                                location.reload();
 
                             }else {
                                 $('#check_div').html(result.val);
@@ -812,13 +825,6 @@ class VisitPriceModel extends Model
 
                         },
                     });
-
-                    // var url = "<?= viv('prints/document_3') ?>?id="+pk;
-                    // var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-                    // WinPrint.focus();
-                    // // $("#proter_button").trigger('click');
-                    // WinPrint.onload();
-                    // WinPrint.close();
 
                 }
             }
@@ -925,8 +931,11 @@ class VisitPriceModel extends Model
     public function ambulator_price()
     {
         global $db;
+        $i = 0;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
-            $this->price($row);
+            $this->items[] = $row['visit_id'];
+            $this->items[] = $row['visit_id'];
+            // $this->price($row);
         }
     }
 
@@ -997,14 +1006,22 @@ class VisitPriceModel extends Model
 
     public function success()
     {
+        $value = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
         if (isset($this->bed_cost)) {
             echo json_encode(array(
-                'status' => "success"
+                'status' => "success",
+                'message' => $value
             ));
         }else {
             echo json_encode(array(
                 'status' => "success" ,
-                'val' => viv('prints/check')."?id=".$this->user_pk
+                'message' => $value,
+                'val' => viv('prints/check')."?id=".$this->user_pk."&items=".json_encode($this->items)
             ));
         }
     }
@@ -1019,7 +1036,7 @@ class VisitPriceModel extends Model
         ';
         echo json_encode(array(
             'status' => "error" ,
-            'val' => $value
+            'message' => $value
         ));
     }
 

@@ -94,9 +94,10 @@ is_auth();
         <div id="mid">
 
             <div class="info">
-                <!-- <h2><?= addZero($_GET['id']) ?></h2> -->
+                <span style="text-align: center;">
+                    <h2><?= $_GET['id'] ?></h2>
+                </span>
                 <p class="h4">
-                    <b>№</b>: <?= addZero($_GET['id']) ?></br>
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
                 </p>
@@ -116,7 +117,8 @@ is_auth();
 
                     <?php $total_price = 0; ?>
 
-                    <?php foreach ($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$_GET['id']} AND vs.priced_date IS NULL") as $row): ?>
+                    <?php foreach (json_decode($_GET['items']) as $item): ?>
+                        <?php $row = $db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.id = $item AND vs.priced_date IS NULL")->fetch() ?>
                         <tr class="service">
         					<td class="tableitem"><p class="itemtext"><?= $row['name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>
