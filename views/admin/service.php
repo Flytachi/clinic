@@ -41,36 +41,45 @@ $header = "Услуги";
 				<div class="card">
 
           			<div class="card-header header-elements-inline">
-		              	<h5 class="card-title">Шаблон</h5>
-		              	<div class="header-elements">
-	                  		<div class="list-icons">
-								<a href="../templates/service.xlsx" class="btn" download>Шаблон</a>
-		                      	<a class="list-icons-item" data-action="collapse"></a>
-		                  	</div>
-		              	</div>
-		          	</div>
-
-		          	<div class="card-body">
-						<?php ServiceModel::form_template(); ?>
-		          	</div>
-
-	        	</div>
-
-
-
-				<div class="card">
-
-          			<div class="card-header header-elements-inline">
 		              	<h5 class="card-title">Добавить Услугу</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
-		                      	<a class="list-icons-item" data-action="collapse"></a>
+								<a href="../templates/service.xlsx" class="btn" download>Шаблон</a>
 		                  	</div>
 		              	</div>
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php ServiceModel::form(); ?>
+
+						<?php if ($_POST['flush']): ?>
+
+							<?php
+							Mixin\T_flush('service');
+							$task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
+							?>
+
+							<?php if (intval($task) == 1): ?>
+								<div class="alert alert-primary" role="alert">
+						            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+						            Услуги успешно очищены!
+						        </div>
+							<?php else: ?>
+								<div class="alert bg-danger alert-styled-left alert-dismissible">
+									<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+									<span class="font-weight-semibold"><?= $task ?></span>
+							    </div>
+							<?php endif; ?>
+
+						<?php endif; ?>
+
+						<div class="row">
+
+							<div class="col-md-9"><?php ServiceModel::form(); ?></div>
+
+							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
+
+						</div>
+
 		          	</div>
 
 	        	</div>
@@ -82,7 +91,10 @@ $header = "Услуги";
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
 								<a href="../templates/service.xlsx" class="btn" download>EXEL</a>
-	                          	<a class="list-icons-item" data-action="collapse"></a>
+								<form action="" method="post">
+									<input style="display:none;" id="btn_flush" type="submit" value="FLUSH" name="flush"></input>
+								</form>
+								<a class="btn text-danger" onclick="Conf()">FLUSH</a>
 	                      	</div>
 	                  	</div>
 	              	</div>
@@ -141,6 +153,32 @@ $header = "Услуги";
     <!-- /footer -->
 
 	<script type="text/javascript">
+		function Conf() {
+			swal({
+                position: 'top',
+                title: 'Вы уверены что хотите очистить список услуг?',
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: "Уверен"
+            }).then(function(ivi) {
+				if (ivi.value) {
+					swal({
+		                position: 'top',
+		                title: 'Внимание!',
+		                text: 'Вернуть данные назад будет невозможно!',
+		                type: 'warning',
+		                showCancelButton: true,
+		                confirmButtonText: "Да"
+		            }).then(function(ivi) {
+						if (ivi.value) {
+							$('#btn_flush').click();
+						}
+		            });
+				}
+
+            });
+		}
+
 		function Update(events) {
 			events
 			$.ajax({

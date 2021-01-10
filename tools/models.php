@@ -1716,61 +1716,69 @@ class ServiceModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
 
-            <div class="form-group">
-                <label>Выбирите Роль:</label>
-                <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="form-control form-control-select2" required>
-                    <option></option>
-                    <?php
-                    foreach ($PERSONAL as $key => $value) {
-                        ?>
-                        <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+            <div class="form-group row">
+
+                <div class="col-md-5">
+                    <label>Выбирите Роль:</label>
+                    <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="form-control form-control-select2" required>
+                        <option></option>
                         <?php
-                    }
-                    ?>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Отдел:</label>
-                <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="form-control form-control-select2" required >
-                    <option></option>
-                    <?php
-                    foreach($db->query('SELECT * from division') as $row) {
+                        foreach ($PERSONAL as $key => $value) {
+                            ?>
+                            <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <?php
+                        }
                         ?>
-                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                    </select>
+                </div>
 
+                <div class="col-md-4">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="form-control form-control-select2" required >
+                        <option></option>
                         <?php
-                    }
-                    ?>
-                </select>
+                        foreach($db->query('SELECT * from division') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-3">
+                    <label>Тип:</label>
+                    <select name="type" class="form-control form-control-select2" required >
+                        <option value="1" <?= ($post['type']==1) ? 'selected': '' ?>>Обычная</option>
+                        <option value="2" <?= ($post['type']==2) ? 'selected': '' ?>>Консультация</option>
+                        <option value="3" <?= ($post['type']==3) ? 'selected': '' ?>>Операционная</option>
+                    </select>
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label>Код:</label>
-                <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
-            </div>
+            <div class="form-group row">
 
-            <div class="form-group">
-                <label>Название:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
-            </div>
+                <div class="col-md-6">
+                    <label>Название:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                </div>
 
-            <div class="form-group">
-                <label>Цена:</label>
-                <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
-            </div>
+                <div class="col-md-3">
+                    <label>Код:</label>
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
+                </div>
 
-            <div class="form-group">
-                <label>Тип:</label>
-                <select name="type" class="form-control form-control-select2" required >
-                    <option value="1" <?= ($post['type']==1) ? 'selected': '' ?>>Обычная</option>
-                    <option value="2" <?= ($post['type']==2) ? 'selected': '' ?>>Консультация</option>
-                    <option value="3" <?= ($post['type']==3) ? 'selected': '' ?>>Операционная</option>
-                </select>
+                <div class="col-md-3">
+                    <label>Цена:</label>
+                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
+                </div>
+
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
             </div>
 
         </form>
