@@ -132,28 +132,6 @@ $header = "Рабочий стол";
 
 	<script type="text/javascript">
 
-		function Proter(pk) {
-			event.preventDefault();
-			if ($('#prot_item').val() != 0) {
-				if ($('#prot_item').val() < 0) {
-					var text = "Нехватка средств!";
-				}else {
-					var text = "Верните пациенту деньги!";
-				}
-				new Noty({
-					text: text,
-					type: 'error'
-				}).show();
-			}else {
-				var url = "<?= viv('prints/document_3') ?>?id="+pk;
-				var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-			    WinPrint.focus();
-				$("#proter_button").trigger('click');
-			    WinPrint.onload();
-			    WinPrint.close();
-			}
-		}
-
 		function Detail(events) {
 			if (event.target.dataset.show == 1) {
 				$(event.target).addClass('btn-primary');

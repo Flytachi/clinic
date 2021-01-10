@@ -82,8 +82,8 @@ $header = "Стационарные пациенты";
 													<a href="<?= viv('anesthetist/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
 													<a href="<?= viv('anesthetist/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 													<a href="<?= viv('anesthetist/card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
-                                                    <a href="<?= viv('anesthetist/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
-                                                    <a href="<?= viv('anesthetist/card/content_9') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
+                                                    <a href="<?= viv('anesthetist/card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
+                                                    <a href="<?= viv('anesthetist/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>
                                               </td>
                                         </tr>

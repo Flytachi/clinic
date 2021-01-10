@@ -53,13 +53,13 @@ $header = "Приём пациетов";
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th>Тип визита</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+                                        <th class="text-center">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
 									// prit($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->fetchAll());
-                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', vs.user_id, vs.parent_id, us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $row) {
+                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', vs.user_id, vs.parent_id, us.dateBith, vs.route_id, vs.service_id, vs.direction, vs.complaint FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $row) {
                                         ?>
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['id']) ?></td>
@@ -96,20 +96,16 @@ $header = "Приём пациетов";
                                             	<?php if (!division_assist()): ?>
                                             		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
                                             	<?php else: ?>
-                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" 
-
-                                            			<?php 
-
-														 	if(!$row['direction']){
-
-														 ?>
-															 onclick="sendPatient(this)"
-														 <?php
-														 	}
-
-														 ?>>Принять</button>
+                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"
+														<?php if (!$row['direction']): ?>
+															onclick="sendPatient(this)"
+														<?php endif; ?>
+                                            			>Принять</button>
                                             		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</a>
                                             	<?php endif; ?>
+												<?php if ($row['complaint']): ?>
+													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
+												<?php endif; ?>
 												<button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>

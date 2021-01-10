@@ -448,12 +448,12 @@ class VisitModel extends Model
                 </div>
             </div>
 
-            <div class="form-group row">
+            <!-- <div class="form-group row">
                 <div class="col-md-12">
                     <label>Жалоба:</label>
                     <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
                 </div>
-            </div>
+            </div> -->
 
             <div class="text-right">
                 <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
@@ -766,7 +766,7 @@ class VisitPriceModel extends Model
     {
         global $pk, $pk_visit, $completed, $price, $price_cost;
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
@@ -774,9 +774,56 @@ class VisitPriceModel extends Model
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
-            <button type="submit" id="proter_button" style="display:none;"></button>
             <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
         </form>
+        <script type="text/javascript">
+
+            function Proter(pk) {
+                event.preventDefault();
+
+                if ($('#prot_item').val() != 0) {
+
+                    if ($('#prot_item').val() < 0) {
+                        var text = "Нехватка средств!";
+                    }else {
+                        var text = "Верните пациенту деньги!";
+                    }
+                    new Noty({
+                        text: text,
+                        type: 'error'
+                    }).show();
+
+                }else {
+
+                    $.ajax({
+                        type: $('#<?= __CLASS__ ?>_form').attr("method"),
+                        url: $('#<?= __CLASS__ ?>_form').attr("action"),
+                        data: $('#<?= __CLASS__ ?>_form').serializeArray(),
+                        success: function (result) {
+                            var result = JSON.parse(result);
+
+                            if (result.status == "success") {
+
+                                console.log(result);
+
+                            }else {
+                                $('#check_div').html(result.val);
+                            }
+
+                        },
+                    });
+
+                    // var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                    // var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                    // WinPrint.focus();
+                    // // $("#proter_button").trigger('click');
+                    // WinPrint.onload();
+                    // WinPrint.close();
+
+                }
+            }
+
+        </script>
         <?php
     }
 
@@ -940,9 +987,9 @@ class VisitPriceModel extends Model
         global $db;
         if($this->clean()){
             if (isset($this->bed_cost)) {
-                $this->stationar_price();
+                // $this->stationar_price();
             }else {
-                // $this->ambulator_price();
+                $this->ambulator_price();
             }
             $this->success();
         }
@@ -951,13 +998,9 @@ class VisitPriceModel extends Model
     public function success()
     {
         if (isset($this->bed_cost)) {
-            $_SESSION['message'] = '
-            <div class="alert alert-info" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                Успешно
-            </div>
-            ';
-            render();
+            echo json_encode(array(
+                'status' => "success"
+            ));
         }else {
             echo json_encode(array(
                 'status' => "success" ,
@@ -968,26 +1011,16 @@ class VisitPriceModel extends Model
 
     public function error($message)
     {
-        if (isset($this->bed_cost)) {
-            $_SESSION['message'] = '
-            <div class="alert bg-danger alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold"> '.$message.'</span>
-            </div>
-            ';
-            render();
-        }else {
-            $value = '
-            <div class="alert bg-danger alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold">'.$message.'</span>
-            </div>
-            ';
-            echo json_encode(array(
-                'status' => "error" ,
-                'val' => $value
-            ));
-        }
+        $value = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold">'.$message.'</span>
+        </div>
+        ';
+        echo json_encode(array(
+            'status' => "error" ,
+            'val' => $value
+        ));
     }
 
 }
