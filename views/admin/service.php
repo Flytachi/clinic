@@ -81,6 +81,7 @@ $header = "Услуги";
 	                  	<h5 class="card-title">Список Услуг</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
+								<a href="../templates/service.xlsx" class="btn" download>EXEL</a>
 	                          	<a class="list-icons-item" data-action="collapse"></a>
 	                      	</div>
 	                  	</div>
@@ -101,7 +102,7 @@ $header = "Услуги";
 	                          	</thead>
 	                          	<tbody>
 	                              	<?php
-	                              	foreach($db->query('SELECT * from service') as $row) {
+	                              	foreach($db->query('SELECT * from service WHERE id != 1') as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $row['code'] ?></td>

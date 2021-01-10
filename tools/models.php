@@ -820,7 +820,7 @@ class VisitPriceModel extends Model
                                 location.reload();
 
                             }else {
-                                $('#check_div').html(result.val);
+                                $('#check_div').html(result.message);
                             }
 
                         },
@@ -931,11 +931,9 @@ class VisitPriceModel extends Model
     public function ambulator_price()
     {
         global $db;
-        $i = 0;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
             $this->items[] = $row['visit_id'];
-            $this->items[] = $row['visit_id'];
-            // $this->price($row);
+            $this->price($row);
         }
     }
 
@@ -997,6 +995,8 @@ class VisitPriceModel extends Model
         if($this->clean()){
             if (isset($this->bed_cost)) {
                 // $this->stationar_price();
+                $this->error("Временно заблокированно!");
+                exit;
             }else {
                 $this->ambulator_price();
             }
@@ -1747,7 +1747,7 @@ class ServiceModel extends Model
 
             <div class="form-group">
                 <label>Код:</label>
-                <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
+                <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
             </div>
 
             <div class="form-group">
@@ -1758,6 +1758,15 @@ class ServiceModel extends Model
             <div class="form-group">
                 <label>Цена:</label>
                 <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
+            </div>
+
+            <div class="form-group">
+                <label>Тип:</label>
+                <select name="type" class="form-control form-control-select2" required >
+                    <option value="1" <?= ($post['type']==1) ? 'selected': '' ?>>Обычная</option>
+                    <option value="2" <?= ($post['type']==2) ? 'selected': '' ?>>Консультация</option>
+                    <option value="3" <?= ($post['type']==3) ? 'selected': '' ?>>Операционная</option>
+                </select>
             </div>
 
             <div class="text-right">
