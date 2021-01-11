@@ -270,7 +270,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" class="form-control select" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" class="form-control select" onchange="table_change()" data-fouc>
                     <optgroup label="Врачи">
                         <?php
                         foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
@@ -368,10 +368,9 @@ class VisitModel extends Model
 
         </form>
         <script type="text/javascript">
-            $(function(){
-                $("#parent_id").chained("#division_id");
-                $("#service_id").chained("#division_id");
-            });
+
+
+
         </script>
         <?php
     }
@@ -1147,10 +1146,12 @@ class VisitPriceModel extends Model
     {
         global $db;
         if($this->clean()){
-            $this->error("Временно заблокированно!");
+            $this->success();
             exit;
             if (isset($this->bed_cost)) {
                 // $this->stationar_price();
+                $this->error("Временно заблокированно!");
+                exit;
             }else {
                 $this->ambulator_price();
             }
