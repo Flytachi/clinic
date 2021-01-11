@@ -757,7 +757,6 @@ class VisitModel extends Model
     {
         global $db;
         if (is_array($this->post['service'])) {
-            $this->mod('test');
             $this->save_rows();
         }
         if ($this->post['division_id']) {
@@ -943,13 +942,22 @@ class VisitPriceModel extends Model
                             });
 
                             // Печать :
-                            // var WinPrint = window.open(`${result.val}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-                            // WinPrint.focus();
-                            // WinPrint.onload();
-                            // WinPrint.close();
+                            $.ajax({
+                                type: "GET",
+                                url: result.val,
+                                success: function (data) {
+                                    let ww = window.open();
+                                    ww.document.write(data);
+                                    ww.focus();
+                                    ww.print();
+                                    ww.close();
+                                },
+                            });
                         }
                         sessionStorage['message'] = result.message;
-                        location.reload();
+                        setTimeout( function() {
+                                location.reload();
+                            }, 1000)
                     },
                 });
             }
