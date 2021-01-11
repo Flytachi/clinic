@@ -16,6 +16,8 @@ $header = "Пациент";
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/notifications/jgrowl.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/notifications/pnotify.min.js')?>"></script>
+
 	<?php
 
 		$id = $_SESSION['session_id'];
@@ -57,18 +59,34 @@ $header = "Пациент";
 		// alert(mas.length);
 		if(mas.length != 0){
 			for(let i = 0; i < mas.length; i++){
-				if((Math.trunc(Date.now() / 100000) - Math.trunc(mas[i].date / 100000)) >= 0 ){
+				if((Math.trunc(Date.now() / 10000) - Math.trunc(mas[i].date / 10000)) >= 0 ){
 
-					new Noty({
-			            text: mas[i].text,
-			            type: 'info'
-			        }).show();
+					console.log(Date.now());
 
+					console.log(mas[i].date);
+
+					console.log(Math.trunc(Date.now() / 100000) - Math.trunc(mas[i].date / 100000));
+
+			        let notice = new PNotify({
+		                text: mas[i].text,
+		                addclass: 'bg-primary border-primary',
+		                hide: false,
+		                buttons: {
+		                    closer: false,
+		                    sticker: false
+		                }
+		            });
+
+		            notice.get().click(function() {
+		                notice.remove();
+		            });  
+
+		            $('#audio').trigger('play');
 
 					$.ajax({
 				        type: "POST",
 
-				        url: "card/ajax/upadateNotes1.php",
+				        url: "ajax/upadateNotes1.php",
 
 				        data: { id: mas[i].id, status : 1 }
 
@@ -206,7 +224,7 @@ $header = "Пациент";
 			$.ajax({
 		        type: "POST",
 
-		        url: "card/ajax/deletNotes.php",
+		        url: "ajax/deletNotes.php",
 
 		        data: { id: id}
 
@@ -222,7 +240,7 @@ $header = "Пациент";
 				$.ajax({
 			        type: "POST",
 
-			        url: "card/ajax/upadateNotes.php",
+			        url: "ajax/upadateNotes.php",
 
 			        data: { id: id, description : $(this).val()}
 
@@ -263,7 +281,7 @@ $header = "Пациент";
 				$.ajax({
 			        type: "POST",
 
-			        url: "card/ajax/upadateNotes.php",
+			        url: "ajax/upadateNotes.php",
 
 			        data: { id: id, date_text : date, time_text : time }
 
@@ -272,7 +290,7 @@ $header = "Пациент";
 			    $.ajax({
 			        type: "POST",
 
-			        url: "card/ajax/upadateNotes1.php",
+			        url: "ajax/upadateNotes1.php",
 
 			        data: { id: id, status : 0 }
 
@@ -304,7 +322,7 @@ $header = "Пациент";
 				$.ajax({
 			        type: "POST",
 
-			        url: "card/ajax/upadateNotes.php",
+			        url: "ajax/upadateNotes.php",
 
 			        data: { id: id, date_text : date, time_text : time }
 
@@ -313,7 +331,7 @@ $header = "Пациент";
 			    $.ajax({
 			        type: "POST",
 
-			        url: "card/ajax/upadateNotes1.php",
+			        url: "ajax/upadateNotes1.php",
 
 			        data: { id: id, status : 0 }
 

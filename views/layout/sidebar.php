@@ -127,6 +127,13 @@
                                     <span>Список пациентов</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 3:
@@ -153,6 +160,13 @@
                                 <a href="<?= viv('cashbox/list_report') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Отчёт</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php
@@ -211,6 +225,13 @@
                                 <a href="all_prep.php" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
                                     <span>Все наименования</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php
@@ -277,6 +298,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 6:
@@ -335,6 +363,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 7:
@@ -377,6 +412,13 @@
                                     <span>Склад</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 8:
@@ -411,6 +453,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 9:
@@ -425,6 +474,13 @@
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php
@@ -543,6 +599,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 11:
@@ -571,6 +634,12 @@
                                 <a href="<?= viv('anesthetist/storage') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Склад</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php

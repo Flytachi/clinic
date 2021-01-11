@@ -6,24 +6,24 @@ $header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../../layout/head.php' ?>
+<?php include '../layout/head.php' ?>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../../layout/navbar.php' ?>
+	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
-		<?php include '../../layout/sidebar.php' ?>
+		<?php include '../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../../layout/header.php' ?>
+			<?php include '../layout/header.php' ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -52,7 +52,7 @@ $header = "Пациент";
 
 									$id = $_SESSION['session_id'];
 
-									foreach ($db->query("SELECT * FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
+									foreach ($db->query("SELECT * FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
 
 										$id_user = $value['id'];
 
@@ -63,12 +63,12 @@ $header = "Пациент";
 										$count = $count == 0 ? "" : $count;
 									?>
 
-										<li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
+										<!-- <li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
 											<a href="#<?=$value['id']?>" class="nav-link legitRipple" data-idChat="<?=$value['id']?>" data-toggle="tab">
 												<img src="../../../../clinic/static/global_assets/images/placeholders/placeholder.jpg" alt="" class="rounded-circle mr-2" width="20" height="20" />
 												<?=$value['first_name']?> <span class="badge bg-danger badge-pill ml-auto" data-idChat="<?=$value['id']?>"><?= $count?></span>
 											</a>
-										</li>
+										</li> -->
 
 									<?php
 										}
@@ -81,7 +81,7 @@ $header = "Пациент";
 
 												<?php
 
-													foreach ($db->query("SELECT * FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
+													foreach ($db->query("SELECT * FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
 												?>
 													<a href="#<?=$value['id']?>" class="dropdown-item" data-toggle="tab"><?=$value['first_name']?></a>
 												<?php
@@ -97,12 +97,20 @@ $header = "Пациент";
 
 									<?php
 
-									foreach ($db->query("SELECT id FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
+									$i = 0;
+
+									foreach ($db->query("SELECT id , first_name , last_name FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
+
+										$status = $i == 0 ? "active show" : "";
+
+										$i = 1;
 
 									?>
 
-										<div class="tab-pane fade" id="<?= $value['id'] ?>" >
+										<div class="tab-pane fade <?= $status ?>" id="<?= $value['id'] ?>" >
+											<h1 style=" margin-left: auto;    margin-right: auto; width: 30%;" ><?= $value['first_name'] ?> <?= $value['last_name'] ?></h1>
 											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>" data-offset="100" style="height: 600px; overflow: scroll;">
+
 
 												<?php
 
@@ -192,10 +200,11 @@ $header = "Пациент";
 		</div>
 		<!-- /main content -->
 	</div>
+
 	<!-- /page content -->
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include '../layout/footer.php' ?>
 
     <script>
 

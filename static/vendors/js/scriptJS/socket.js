@@ -74,6 +74,8 @@ conn.onmessage = function(e) {
   		     $(`ul[data-chatid=${d.id_cli}]`).scrollTop($(`ul[data-chatid=${d.id_cli}]`).prop('scrollHeight'));
   		}else{
 
+        $('#audio').trigger('play');
+
   			let active = $('a.show').attr('data-idChat');
 
   			if(active == d.id){
@@ -127,15 +129,12 @@ conn.onmessage = function(e) {
 
   				let b = Number($(`b#noticeus`).text()) + 1;
 
-  				console.log(`vvvvvvvvvvvvvvvvvvvv ${ $(`b#noticeus`).html() }`)
-
   				$(`b#noticeus`).html('');
 
   				$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${b}</span>`);
 
   				$(`span[data-idChat=${d.id}]`).text(p)
 
-  				console.log(p);
   			}
   		}
   	}

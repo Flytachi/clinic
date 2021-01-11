@@ -48,3 +48,6 @@
 	</script>
 	<script src="<?= stack("vendors/js/scriptJS/socket.js") ?>"></script>
 </head>
+<audio id="audio">
+    <source src="../../media/audio/music" type="audio/mpeg">
+</audio>
