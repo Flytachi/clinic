@@ -222,7 +222,25 @@ class VisitReport extends Model
             <div class="modal-footer">
                 <?php if (level() == 10): ?>
                     <!-- <a href="<?= up_url($_GET['user_id'], 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента!')" class="btn btn-outline-danger">Завершить</a> -->
-                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
+                    <input style="display:none;" id="btn_end_submit" type="submit" value="Завершить" name="end"></input>
+                    <button class="btn btn-outline-danger btn-sm" type="button" onclick="Verification()">Завершить</button>
+                    <script type="text/javascript">
+                        function Verification() {
+                            event.preventDefault();
+                            swal({
+                                position: 'top',
+                                title: 'Внимание!',
+                                text: 'Вы точно хотите завершить визит пациента?',
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Да'
+                            }).then(function(ivi) {
+                                if (ivi.value) {
+                                    $('#btn_end_submit').click();
+                                }
+                            });
+                        }
+                    </script>
                 <?php endif; ?>
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
@@ -980,7 +998,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND completed IS NULL AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
             if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id']) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {

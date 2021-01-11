@@ -5,7 +5,7 @@ $sql = "SELECT
             us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
-            vs.oper_date, wd.floor, wd.ward, bd.bed
+            vs.oper_date, wd.floor, wd.ward, bd.bed, vs.complaint
         FROM users us
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
@@ -98,14 +98,6 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
                     </div>
 
-                    <!-- <div class="col-md-12">
-                        <div class="form-group row">
-                            <label class="col-form-label col-md-2"><b>Жалоба:</b></label>
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" value="<?= $patient->complaint ?>" disabled>
-                            </div>
-                        </div>
-                    </div> -->
                 </fieldset>
 
                 <?php
@@ -214,6 +206,12 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     <?php
                 }
                 ?>
+
+                <?php if (!$patient->direction): ?>
+                    <div class="col-md-12">
+                        <b>Жалоба: </b><?= $patient->complaint ?>
+                    </div>
+                <?php endif; ?>
 
             </div>
 

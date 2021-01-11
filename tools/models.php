@@ -448,12 +448,12 @@ class VisitModel extends Model
                 </div>
             </div>
 
-            <div class="form-group row">
+            <!-- <div class="form-group row">
                 <div class="col-md-12">
                     <label>Жалоба:</label>
                     <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
                 </div>
-            </div>
+            </div> -->
 
             <div class="text-right">
                 <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
@@ -729,21 +729,25 @@ class VisitPriceModel extends Model
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
-                        var status = JSON.parse(result).status;
-                        var val = JSON.parse(result).val;
-                        if (status == "success") {
-                            var parent_id =  Array.prototype.slice.call(document.querySelectorAll('.parent_class'));
+                        var result = JSON.parse(result);
+                        if (result.status == "success") {
+
+                            var parent_id = document.querySelectorAll('.parent_class');
                             parent_id.forEach(function(events) {
                                 let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
                                 let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
                                 conn.send(obj);
                                 conn.send(obj1);
                             });
-                            location = val;
-                        } else {
-                            sessionStorage['message'] = val;
-                            location.reload();
+
+                            // Печать :
+                            // var WinPrint = window.open(`${result.val}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                            // WinPrint.focus();
+                            // WinPrint.onload();
+                            // WinPrint.close();
                         }
+                        sessionStorage['message'] = result.message;
+                        location.reload();
                     },
                 });
             }
@@ -766,7 +770,7 @@ class VisitPriceModel extends Model
     {
         global $pk, $pk_visit, $completed, $price, $price_cost;
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
@@ -774,9 +778,58 @@ class VisitPriceModel extends Model
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
-            <button type="submit" id="proter_button" style="display:none;"></button>
             <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
         </form>
+        <script type="text/javascript">
+
+            function Proter(pk) {
+                event.preventDefault();
+
+                if ($('#prot_item').val() != 0) {
+
+                    if ($('#prot_item').val() < 0) {
+                        var text = "Нехватка средств!";
+                    }else {
+                        var text = "Верните пациенту деньги!";
+                    }
+                    new Noty({
+                        text: text,
+                        type: 'error'
+                    }).show();
+
+                }else {
+
+                    $.ajax({
+                        type: $('#<?= __CLASS__ ?>_form').attr("method"),
+                        url: $('#<?= __CLASS__ ?>_form').attr("action"),
+                        data: $('#<?= __CLASS__ ?>_form').serializeArray(),
+                        success: function (result) {
+                            var result = JSON.parse(result);
+
+                            if (result.status == "success") {
+
+                                // Выдача выписки
+                                // var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                                // var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                                // WinPrint.focus();
+                                // WinPrint.onload();
+                                // WinPrint.close();
+
+                                // Перезагрузка
+                                sessionStorage['message'] = result.message;
+                                location.reload();
+
+                            }else {
+                                $('#check_div').html(result.message);
+                            }
+
+                        },
+                    });
+
+                }
+            }
+
+        </script>
         <?php
     }
 
@@ -879,6 +932,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
+            $this->items[] = $row['visit_id'];
             $this->price($row);
         }
     }
@@ -940,9 +994,11 @@ class VisitPriceModel extends Model
         global $db;
         if($this->clean()){
             if (isset($this->bed_cost)) {
-                $this->stationar_price();
+                // $this->stationar_price();
+                $this->error("Временно заблокированно!");
+                exit;
             }else {
-                // $this->ambulator_price();
+                $this->ambulator_price();
             }
             $this->success();
         }
@@ -950,44 +1006,38 @@ class VisitPriceModel extends Model
 
     public function success()
     {
+        $value = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
         if (isset($this->bed_cost)) {
-            $_SESSION['message'] = '
-            <div class="alert alert-info" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                Успешно
-            </div>
-            ';
-            render();
+            echo json_encode(array(
+                'status' => "success",
+                'message' => $value
+            ));
         }else {
             echo json_encode(array(
                 'status' => "success" ,
-                'val' => viv('prints/check')."?id=".$this->user_pk
+                'message' => $value,
+                'val' => viv('prints/check')."?id=".$this->user_pk."&items=".json_encode($this->items)
             ));
         }
     }
 
     public function error($message)
     {
-        if (isset($this->bed_cost)) {
-            $_SESSION['message'] = '
-            <div class="alert bg-danger alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold"> '.$message.'</span>
-            </div>
-            ';
-            render();
-        }else {
-            $value = '
-            <div class="alert bg-danger alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold">'.$message.'</span>
-            </div>
-            ';
-            echo json_encode(array(
-                'status' => "error" ,
-                'val' => $value
-            ));
-        }
+        $value = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold">'.$message.'</span>
+        </div>
+        ';
+        echo json_encode(array(
+            'status' => "error" ,
+            'message' => $value
+        ));
     }
 
 }
@@ -1666,52 +1716,69 @@ class ServiceModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
 
-            <div class="form-group">
-                <label>Выбирите Роль:</label>
-                <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="form-control form-control-select2" required>
-                    <option></option>
-                    <?php
-                    foreach ($PERSONAL as $key => $value) {
-                        ?>
-                        <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+            <div class="form-group row">
+
+                <div class="col-md-5">
+                    <label>Выбирите Роль:</label>
+                    <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="form-control form-control-select2" required>
+                        <option></option>
                         <?php
-                    }
-                    ?>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Отдел:</label>
-                <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="form-control form-control-select2" required >
-                    <option></option>
-                    <?php
-                    foreach($db->query('SELECT * from division') as $row) {
+                        foreach ($PERSONAL as $key => $value) {
+                            ?>
+                            <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <?php
+                        }
                         ?>
-                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                    </select>
+                </div>
 
+                <div class="col-md-4">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="form-control form-control-select2" required >
+                        <option></option>
                         <?php
-                    }
-                    ?>
-                </select>
+                        foreach($db->query('SELECT * from division') as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-3">
+                    <label>Тип:</label>
+                    <select name="type" class="form-control form-control-select2" required >
+                        <option value="1" <?= ($post['type']==1) ? 'selected': '' ?>>Обычная</option>
+                        <option value="2" <?= ($post['type']==2) ? 'selected': '' ?>>Консультация</option>
+                        <option value="3" <?= ($post['type']==3) ? 'selected': '' ?>>Операционная</option>
+                    </select>
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label>Код:</label>
-                <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
-            </div>
+            <div class="form-group row">
 
-            <div class="form-group">
-                <label>Название:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
-            </div>
+                <div class="col-md-6">
+                    <label>Название:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                </div>
 
-            <div class="form-group">
-                <label>Цена:</label>
-                <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
+                <div class="col-md-3">
+                    <label>Код:</label>
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Цена:</label>
+                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
+                </div>
+
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
             </div>
 
         </form>

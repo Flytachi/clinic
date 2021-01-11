@@ -64,17 +64,17 @@ $header = "Амбулаторные пациенты";
                                         <th>Дата рождения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+                                        <th class="text-center" style="width:300px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
 									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id, vs.complaint FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}elseif (division_assist() == 1) {
 										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.complaint FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}
                                     foreach($db->query($sql) as $row) {
 										if (division_assist() == 2) {
@@ -110,6 +110,9 @@ $header = "Амбулаторные пациенты";
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
                                             <td class="text-center">
+												<?php if ($row['complaint']): ?>
+													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
+												<?php endif; ?>
 												<?php if ($tr != "table-danger"): ?>
 													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $serv['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
 												<?php endif; ?>

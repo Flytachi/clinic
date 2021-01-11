@@ -20,6 +20,7 @@
 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
     <li class="nav-item">
         <a href="<?= viv('doctor/card/content_1') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_1')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">
+            <i class="icon-repo-forked mr-1"></i>
             <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
                 Обход
             <?php else: ?>
@@ -31,26 +32,26 @@
         <a href="<?= viv('doctor/card/content_2') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_2')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Другие визиты</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_3')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Назначенные визиты</a>
+        <a href="<?= viv('doctor/card/content_3') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_3')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-add mr-1"></i>Назначенные визиты</a>
     </li>
     <li class="nav-item">
         <a href="<?= viv('doctor/card/content_4') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_4')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Визиты</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_5')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Анализы</a>
+        <a href="<?= viv('doctor/card/content_5') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_5')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-fire2 mr-1"></i>Анализы</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Диагностика</a>
+        <a href="<?= viv('doctor/card/content_6') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_6')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-pulse2 mr-1"></i>Диагностика</a>
     </li>
     <?php if ($patient->direction): ?>
         <li class="nav-item">
-            <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Лист назначений</a>
+            <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_7')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-magazine mr-1"></i>Лист назначений</a>
         </li>
         <li class="nav-item">
-            <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_8')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Состояние</a>
+            <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_8')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-clipboard2 mr-1"></i>Состояние</a>
         </li>
         <li class="nav-item">
-            <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_9')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;">Операционный блок</a>
+            <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $_GET['id'] ?>" class="nav-link <?= (viv('doctor/card/content_9')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-bed2 mr-1"></i>Операционный блок</a>
         </li>
     <?php endif; ?>
 </ul>

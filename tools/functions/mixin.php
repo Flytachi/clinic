@@ -1,6 +1,7 @@
 <?php
 namespace Mixin;
 
+
 function clean($value = "") {
     $value = trim($value);
     $value = stripslashes($value);
@@ -111,3 +112,15 @@ function error($url){
     header("location:".DIR."/error/$url".EXT);
     exit;
 }
+
+
+
+function T_flush($table)
+{
+    global $db;
+    $PDOStatement = $db->prepare("TRUNCATE TABLE $table;");
+    $PDOStatement->execute();
+    return True;
+}
+
+?>

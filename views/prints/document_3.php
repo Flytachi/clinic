@@ -17,7 +17,6 @@ $sql = "SELECT  us.id,
             vs.service_id = 1 AND
             vs.completed IS NOT NULL";
 $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-$docs->completed = date('Y-m-d H:i');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +47,7 @@ $docs->completed = date('Y-m-d H:i');
 
         <div class="text-left">
 
-            <h3 class="text-center h1"><b>Выписка</b></h3>
+            <h3 class="text-center h1"><b>Выписка <?= $docs->id ?> № <?= $docs->visit_id ?></b></h3>
 
             <div class="table-responsive card">
                 <table class="table table-bordered table-sm">
