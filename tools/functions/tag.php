@@ -41,7 +41,7 @@ function stack($url){
 
 function ajax($url)
 {
-    return DIR."/ajax/$url";
+    return DIR."/ajax/$url".EXT;
 }
 
 

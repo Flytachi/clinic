@@ -50,7 +50,7 @@ $header = "Рабочий стол";
 					</div>
 
 					<div class="card-body">
-						<?php VisitModel::form_out(); ?>
+						<?php VisitModel::form_out_new(); ?>
 					</div>
 
 				</div>

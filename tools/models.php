@@ -222,7 +222,7 @@ class VisitModel extends Model
     public $table1 = 'users';
     public $table2 = 'beds';
 
-    public function form_out($pk = null)
+    public function form_out_new($pk = null)
     {
         global $db;
         if($_SESSION['message']){
@@ -270,7 +270,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" class="form-control select" onchange="table_change()" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" class="form-control select" onchange="table_change(this)" data-fouc>
                     <optgroup label="Врачи">
                         <?php
                         foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
@@ -315,7 +315,7 @@ class VisitModel extends Model
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="table_form">
                             <tr>
                                 <th>
                                     <input type="checkbox" class="form-input-styled" checked data-fouc>
@@ -331,51 +331,34 @@ class VisitModel extends Model
                 </div>
 
             </div>
-            <!-- <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div> -->
 
             <div class="text-right">
                 <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
+
         </form>
+
         <script type="text/javascript">
 
+            function table_change(the) {
 
+                $.ajax({
+    				type: "GET",
+    				url: "<?= ajax('service_table') ?>",
+                    data: $(the).val(),
+    				success: function (result) {
+                        $('#table_form').html(result);
+    				},
+    			});
+
+            }
 
         </script>
         <?php
     }
 
-    public function form_out_old($pk = null)
+    public function form_out($pk = null)
     {
         global $db;
         if($_SESSION['message']){

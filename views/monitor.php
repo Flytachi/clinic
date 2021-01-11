@@ -417,7 +417,7 @@ $header = "Рабочий стол";
 
 				<div class="row" id="dd" style="height: 50%;" data-cout="0"></div>
 
-                    <audio controls id="audio">
+                    <audio id="audio">
 						<source src="../media/audio/music" type="audio/mpeg">
                     </audio>
 
