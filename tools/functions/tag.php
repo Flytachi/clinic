@@ -39,6 +39,11 @@ function stack($url){
     return DIR."/static/$url";
 }
 
+function ajax($url)
+{
+    return DIR."/ajax/$url";
+}
+
 
 function add_url(){
     return DIR."/model/create_to_update".EXT."?";
@@ -56,5 +61,4 @@ function up_url($id, $model, $form=null){
     }
     return $result;
 }
-
 ?>

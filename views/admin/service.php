@@ -108,19 +108,33 @@ $header = "Услуги";
 										<th style="width:40%">Название</th>
 										<th>Роль</th>
 										<th>Отдел</th>
+										<th>Тип</th>
 										<th>Цена</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
 	                              	<?php
-	                              	foreach($db->query('SELECT * from service WHERE id != 1') as $row) {
+	                              	foreach($db->query('SELECT * from service WHERE type != 101') as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
 	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT * FROM division WHERE id ={$row['division_id']}")->fetch()['name'] : "" ?></td>
+											<td>
+												<?php switch ($row['type']) {
+													case 1:
+														echo "Обычная";
+														break;
+													case 2:
+														echo "Консультация";
+														break;
+													case 3:
+														echo "Операционная";
+														break;
+												} ?>
+											</td>
 											<td><?= $row['price'] ?></td>
 	                                      	<td>
 												<div class="list-icons">
