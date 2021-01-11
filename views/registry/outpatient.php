@@ -50,7 +50,7 @@ $header = "Рабочий стол";
 					</div>
 
 					<div class="card-body">
-						<?php VisitModel::form_out_new(); ?>
+						<?php VisitModel::form_out(); ?>
 					</div>
 
 				</div>
@@ -64,7 +64,6 @@ $header = "Рабочий стол";
 
 	</div>
 	<!-- /page content -->
-
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

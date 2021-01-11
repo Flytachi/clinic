@@ -222,7 +222,7 @@ class VisitModel extends Model
     public $table1 = 'users';
     public $table2 = 'beds';
 
-    public function form_out_new($pk = null)
+    public function form_out($pk = null)
     {
         global $db;
         if($_SESSION['message']){
@@ -270,7 +270,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <optgroup label="Врачи">
                         <?php
                         foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
@@ -301,12 +301,20 @@ class VisitModel extends Model
                 </select>
             </div>
 
+
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
+                </div>
+            </div>
+
             <div class="form-group">
 
                 <div class="table-responsive">
                     <table class="table table-hover table-sm">
                         <thead>
-                            <tr class="table-secondary">
+                            <tr class="bg-dark">
                                 <th>#</th>
                                 <th>Отдел</th>
                                 <th>Услуга</th>
@@ -332,13 +340,32 @@ class VisitModel extends Model
 
         <script type="text/javascript">
 
+            let service = [];
+
+            $("#search_input").keyup(function() {
+    			$.ajax({
+    				type: "GET",
+    				url: "search_amb.php",
+    				data: {
+    					divisions: $("#division_selector").val(),
+    					search: $("#search_input").val(),
+                        selected: service
+    				},
+    				success: function (result) {
+                        let service = [];
+    					$('#table_form').html(result);
+    				},
+    			});
+    		});
+
             function table_change(the) {
 
                 $.ajax({
     				type: "GET",
     				url: "<?= ajax('service_table') ?>",
-                    data: { divisions: $(the).val() },
+                    data: { divisions: $(the).val(), selected: service  },
     				success: function (result) {
+                        let service = [];
                         $('#table_form').html(result);
     				},
     			});
@@ -349,7 +376,7 @@ class VisitModel extends Model
         <?php
     }
 
-    public function form_out($pk = null)
+    public function form_out_old($pk = null)
     {
         global $db;
         if($_SESSION['message']){
@@ -641,6 +668,7 @@ class VisitModel extends Model
     {
         global $db;
         if($this->clean()){
+
             if ($this->post['direction']) {
                 $object1 = Mixin\update($this->table2, array('user_id' => $this->post['user_id']), $this->post['bed']);
                 if (!intval($object1)){
@@ -678,18 +706,65 @@ class VisitModel extends Model
         }
     }
 
+    public function save_rows()
+    {
+        global $db;
+        foreach ($this->post['service'] as $key => $value) {
+
+            $post_big['direction'] = $this->post['direction'];
+            $post_big['route_id'] = $this->post['route_id'];
+            $post_big['user_id'] = $this->post['user_id'];
+            $post_big['guide_id'] = $this->post['guide_id'];
+            $post_big['complaint'] = $this->post['complaint'];
+            $post_big['service_id'] = $value;
+            $post_big['division_id'] = $this->post['division_id'][$key];
+            $post_big['parent_id'] = $this->post['parent_id'][$key];
+            $post_big['grant_id'] = $post_big['parent_id'];
+            $stat = $db->query("SELECT * FROM division WHERE id={$post_big['division_id']} AND level=6")->fetch();
+            if ($stat) {
+                $post_big['laboratory'] = True;
+            }
+
+            $post_big = Mixin\clean_form($post_big);
+            $post_big = Mixin\to_null($post_big);
+            $object = Mixin\insert($this->table, $post_big);
+            if (!intval($object)){
+                $this->error($object);
+            }
+
+            if (!$post_big['direction'] or (level() != 2 and $post_big['direction'])) {
+                $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
+                $post['visit_id'] = $object;
+                $post['item_type'] = 1;
+                $post['item_id'] = $value;
+                $post['item_cost'] = $service['price'];
+                $post['item_name'] = $service['name'];
+                $object = Mixin\insert('visit_price', $post);
+                if (!intval($object)){
+                    $this->error($object);
+                }
+            }
+        }
+        // Обновление статуса у пациента
+        $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
+        if (!intval($object1)){
+            $this->error($object1);
+        }
+        $this->success();
+    }
+
     public function clean()
     {
         global $db;
+        if (is_array($this->post['service'])) {
+            $this->mod('test');
+            $this->save_rows();
+        }
         if ($this->post['division_id']) {
             $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
             if ($stat) {
                 $this->post['laboratory'] = True;
             }
-        }
-        if ($this->post['oper_date']) {
-            $this->post['oper_date'] .= " ".$this->post['time'];
-            unset($this->post['time']);
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
@@ -1125,7 +1200,7 @@ class VisitPriceModel extends Model
                 $this->error("Временно заблокированно!");
                 exit;
             }else {
-                // $this->ambulator_price();
+                $this->ambulator_price();
             }
             $this->success();
         }
@@ -2388,30 +2463,26 @@ class LaboratoryAnalyzeModel extends Model
                 $val['service_id'] = $db->query("SELECT service_id FROM visit WHERE id = {$val['visit_id']}")->fetch()['service_id'];
                 $object = Mixin\insert('laboratory_analyze', $val);
             }
-        }
-        if (intval($object)){
-            if ($end) {
-                foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
-                    if ($row['grant_id'] == $row['parent_id']) {
-                        Mixin\update('users', array('status' => null), $user_pk);
-                    }
-                    $this->clear_post();
-                    $this->set_table('visit');
-                    $this->set_post(array(
-                        'id' => $row['id'],
-                        'status' => 0,
-                        'completed' => date('Y-m-d H:i:s')
-                    ));
-                    $this->update();
-                }
-                $this->success();
-
-            }else {
-                $this->success();
+            if (!intval($object)){
+                $this->error($object);
             }
-        }else{
-            $this->error($object);
         }
+        if ($end) {
+            foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+                if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$user_pk AND completed IS NULL AND service_id != 1")->rowCount()) {
+                    Mixin\update('users', array('status' => null), $user_pk);
+                }
+                $this->clear_post();
+                $this->set_table('visit');
+                $this->set_post(array(
+                    'id' => $row['id'],
+                    'status' => 0,
+                    'completed' => date('Y-m-d H:i:s')
+                ));
+                $this->update();
+            }
+        }
+        $this->success();
     }
 
     public function update()

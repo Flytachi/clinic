@@ -352,7 +352,7 @@ class VisitReport extends Model
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
-                    if ($row['grant_id'] == $row['parent_id']) {
+                    if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id={$row['user_id']} AND completed IS NULL AND service_id != 1")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }
@@ -362,19 +362,16 @@ class VisitReport extends Model
                     'completed' => date('Y-m-d H:i:s')
                 ));
                 $object = Mixin\update($this->table, $this->post, $pk);
-                if (intval($object)){
-                    $this->success();
-                }else{
+                if (!intval($object)){
                     $this->error($object);
                 }
             }else {
-                if (intval($object)){
-                    $this->success();
-                }else{
+                if (!intval($object)){
                     $this->error($object);
                 }
             }
         }
+        $this->success();
     }
 
     public function success()
@@ -999,7 +996,7 @@ class VisitFinish extends Model
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id']) {
+            if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND completed IS NULL AND service_id != 1")->rowCount()) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $inf['user_id']);

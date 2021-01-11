@@ -1,12 +1,19 @@
 <?php
-require_once '../tools/warframe.php';
+require_once '../../tools/warframe.php';
 is_auth();
 
-$i; $cost = 0;
+$ser = $_GET['search']; $i; $cost = 0;
 ?>
+
 <?php foreach ($_GET['divisions'] as $divis_pk): ?>
 
-    <?php foreach ($db->query("SELECT sc.id, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type != 101") as $row): ?>
+    <?php if ($ser): ?>
+        <?php $sql = "SELECT sc.id, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type != 101 AND (dv.title LIKE '%$ser%' OR sc.name LIKE '%$ser%' )"; ?>
+    <?php else: ?>
+        <?php $sql = "SELECT sc.id, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type != 101"; ?>
+    <?php endif; ?>
+
+    <?php foreach ($db->query($sql) as $row): ?>
         <?php $i++; ?>
         <tr>
             <td>
@@ -46,6 +53,7 @@ $i; $cost = 0;
             <td class="text-right text-success"><?= number_format($row['price']) ?></td>
         </tr>
     <?php endforeach; ?>
+
 <?php endforeach; ?>
 <tr class="table-secondary">
     <th class="text-right" colspan="5">Итого:</th>
