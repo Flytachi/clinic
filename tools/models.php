@@ -1146,14 +1146,12 @@ class VisitPriceModel extends Model
     {
         global $db;
         if($this->clean()){
-            $this->success();
-            exit;
             if (isset($this->bed_cost)) {
                 // $this->stationar_price();
                 $this->error("Временно заблокированно!");
                 exit;
             }else {
-                $this->ambulator_price();
+                // $this->ambulator_price();
             }
             $this->success();
         }
