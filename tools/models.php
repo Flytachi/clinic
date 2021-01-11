@@ -316,16 +316,7 @@ class VisitModel extends Model
                             </tr>
                         </thead>
                         <tbody id="table_form">
-                            <tr>
-                                <th>
-                                    <input type="checkbox" class="form-input-styled" checked data-fouc>
-                                </th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <th>Тип</th>
-                                <th>Доктор</th>
-                                <th>Цена</th>
-                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -346,7 +337,7 @@ class VisitModel extends Model
                 $.ajax({
     				type: "GET",
     				url: "<?= ajax('service_table') ?>",
-                    data: $(the).val(),
+                    data: { divisions: $(the).val() },
     				success: function (result) {
                         $('#table_form').html(result);
     				},
