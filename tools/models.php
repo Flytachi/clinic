@@ -252,6 +252,160 @@ class VisitModel extends Model
                 </div>
 
                 <div class="col-md-6">
+                    <label>Направитель:</label>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label>Жалоба:</label>
+                <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" class="form-control select" data-fouc>
+                    <optgroup label="Врачи">
+                        <?php
+                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </optgroup>
+                    <optgroup label="Диогностика">
+                        <?php
+                        foreach($db->query("SELECT * from division WHERE level = 10") as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </optgroup>
+                    <optgroup label="Лабаратория">
+                        <?php
+                        foreach($db->query("SELECT * from division WHERE level = 6 AND (assist IS NULL OR assist = 1)") as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="table-secondary">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <th>Тип</th>
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="form-input-styled" checked data-fouc>
+                                </th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <th>Тип</th>
+                                <th>Доктор</th>
+                                <th>Цена</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <!-- <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
+                            ?>
+                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
+                            ?>
+                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div> -->
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id").chained("#division_id");
+                $("#service_id").chained("#division_id");
+            });
+        </script>
+        <?php
+    }
+
+    public function form_out_old($pk = null)
+    {
+        global $db;
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="0">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Пациент:</label>
+                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
+                                ?>
+                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                <?php
+                            }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
                     <label>Отдел:</label>
                     <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
@@ -993,10 +1147,10 @@ class VisitPriceModel extends Model
     {
         global $db;
         if($this->clean()){
+            $this->error("Временно заблокированно!");
+            exit;
             if (isset($this->bed_cost)) {
                 // $this->stationar_price();
-                $this->error("Временно заблокированно!");
-                exit;
             }else {
                 $this->ambulator_price();
             }
