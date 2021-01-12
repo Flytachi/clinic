@@ -2416,7 +2416,7 @@ class LaboratoryAnalyzeModel extends Model
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[analyze_id]" value="<?= $row['analyze_id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[visit_id]" value="<?= $row_parent['id'] ?>">
-                                            <input type="number" step="0.00001" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                            <input type="number" step="0.00001" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
                                             <div class="form-check">
@@ -2441,12 +2441,48 @@ class LaboratoryAnalyzeModel extends Model
             </div>
 
             <div class="modal-footer">
-                <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <input type="hidden" id="input_end" name="end"></input>
+                <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить</button>
+                <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
         <script type="text/javascript">
+
+            function Proter_lab() {
+                var imba = 0;
+
+                document.querySelectorAll('.result_check').forEach(function(events) {
+                    if (!events.value) {
+                        imba = imba + 1;
+                    }
+                });
+
+                if (imba > 0) {
+                    swal({
+                        position: 'top',
+                        title: 'Невозможно завершить!',
+                        text: 'Введите все результаты.',
+                        type: 'error',
+                        padding: 30
+                    });
+                    return 0;
+                }
+
+                swal({
+                    position: 'top',
+                    title: 'Внимание!',
+                    text: 'Вы точно хотите завершить визит пациента?',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Да'
+                }).then(function(ivi) {
+                    if (ivi.value) {
+                        $('#input_end').val('Завершить');
+                        $('#btn_submit').click();
+                    }
+                });
+            }
 
             $('.cek_a').on('click', function(event) {
                 if ($(this).is(':checked')) {
@@ -2455,6 +2491,7 @@ class LaboratoryAnalyzeModel extends Model
                     $('#'+this.dataset.id).removeClass("table-danger");
                 }
             });
+
         </script>
         <?php
     }
@@ -2492,7 +2529,7 @@ class LaboratoryAnalyzeModel extends Model
             }
         }
         if ($end) {
-            foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+            foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
                 if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$user_pk AND completed IS NULL AND service_id != 1")->rowCount()) {
                     Mixin\update('users', array('status' => null), $user_pk);
                 }

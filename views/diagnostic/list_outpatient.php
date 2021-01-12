@@ -61,7 +61,8 @@ $header = "Амбулаторные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
+										<th>Возраст</th>
+                                        <th>Дата приёма</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:300px">Действия</th>
@@ -70,11 +71,19 @@ $header = "Амбулаторные пациенты";
                                 <tbody>
                                     <?php
 									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id, vs.complaint FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
-									}elseif (division_assist() == 1) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
-									}else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.complaint FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, vs.service_id, vs.parent_id, vs.assist_id, vs.complaint, vs.accept_date,
+												(
+													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+												) 'age'
+												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
+									} else {
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, vs.complaint , vs.accept_date,
+												(
+													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+												) 'age'
+												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}
                                     foreach($db->query($sql) as $row) {
 										if (division_assist() == 2) {
@@ -92,7 +101,8 @@ $header = "Амбулаторные пациенты";
                                         <tr class="<?= $tr ?>">
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= $row['age'] ?></td>
+											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
 												<?php
 												if (division_assist() == 2) {

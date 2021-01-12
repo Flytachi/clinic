@@ -48,7 +48,8 @@ $header = "Приём пациетов";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
+										<th>Возраст</th>
+                                        <th>Дата назначения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th>Тип визита</th>
@@ -57,7 +58,17 @@ $header = "Приём пациетов";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $row) {
+									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id',
+												vs.route_id, vs.service_id, vs.direction, vs.add_date,
+												(
+													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+												) 'age'
+											FROM users us
+												LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']}
+											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
+                                    foreach($db->query($sql) as $row) {
                                         ?>
                                         <tr id="PatientFailure_tr_<?= $row['id'] ?>">
                                             <td><?= addZero($row['id']) ?></td>
@@ -71,7 +82,8 @@ $header = "Приём пациетов";
 													?>
 												</div>
 											</td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= $row['age'] ?></td>
+											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
