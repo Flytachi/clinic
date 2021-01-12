@@ -514,7 +514,7 @@
                                         <i class="icon-users2 "></i>
                                         <span>Амбулаторные пациенты</span>
                                         <?php
-                                        $con_two = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_two = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_two) {
                                             ?>
                                             <span class="badge bg-blue badge-pill ml-auto"><?=$con_two?></span>
@@ -528,7 +528,7 @@
                                         <i class="icon-users2"></i>
                                         <span>Стационарные пациенты</span>
                                         <?php
-                                        $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_tree = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_tree) {
                                             ?>
                                             <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
@@ -563,7 +563,7 @@
                                         <i class="icon-users2 "></i>
                                         <span>Амбулаторные пациенты</span>
                                         <?php
-                                        $con_two = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_two = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_two) {
                                             ?>
                                             <span class="badge bg-blue badge-pill ml-auto"><?=$con_two?></span>
@@ -577,7 +577,7 @@
                                         <i class="icon-users2"></i>
                                         <span>Стационарные пациенты</span>
                                         <?php
-                                        $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_tree = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_tree) {
                                             ?>
                                             <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>

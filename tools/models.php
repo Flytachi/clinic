@@ -2304,19 +2304,35 @@ class LaboratoryAnalyzeTypeModel extends Model
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Название:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Название:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                </div>
+                <div class="col-md-3">
+                    <label>Код:</label>
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
+                </div>
+                <div class="col-md-3">
+                    <label>Ед:</label>
+                    <input type="text" class="form-control" name="unit" placeholder="Введите шт" required value="<?= $post['unit']?>">
+                </div>
+
             </div>
 
-            <div class="form-group">
-                <label>Код:</label>
-                <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
-            </div>
+            <div class="form-group row">
 
-            <div class="form-group">
-                <label>Норматив:</label>
-                <textarea rows="4" cols="4" name="standart" class="form-control" placeholder="Введите норматив ..."><?= $post['standart']?></textarea>
+                <div class="col-md-6">
+                    <label>Норма минимум:</label>
+                    <input type="number" class="form-control" step="0.00001" name="standart_min" placeholder="Введите норматив ..." required value="<?= $post['standart_min'] ?>">
+                </div>
+                <div class="col-md-6">
+                    <label>Норма максимум:</label>
+                    <input type="number" class="form-control" step="0.00001" name="standart_max" placeholder="Введите норматив ..." required value="<?= $post['standart_max'] ?>">
+                </div>
+
             </div>
 
             <div class="text-right">
@@ -2378,7 +2394,7 @@ class LaboratoryAnalyzeModel extends Model
                                 <th style="width:3%">№</th>
                                 <th>Название услуги</th>
                                 <th>Анализ</th>
-                                <th style="width:10%">Норматив</th>
+                                <th style="width:10%">Норма</th>
                                 <th style="width:10%">Результат</th>
                                 <th class="text-center" style="width:10%">Отклонение</th>
                                 <th class="text-center" style="width:25%">Примечание</th>
@@ -2389,18 +2405,18 @@ class LaboratoryAnalyzeModel extends Model
                             $i = 0;
                             $s = 1;
                             foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row_parent) {
-                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', lat.name, lat.standart, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
+                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', lat.name, lat.standart_min, lat.standart_max, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
                                     ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                                         <td><?= $s++ ?></td>
                                         <td><?= $row['ser_name'] ?></td>
                                         <td><?= $row['name'] ?></td>
-                                        <td><?= $row['standart'] ?></td>
+                                        <td><?= $row['standart_min']."-".$row['standart_max'] ?></td>
                                         <td>
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[analyze_id]" value="<?= $row['analyze_id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[visit_id]" value="<?= $row_parent['id'] ?>">
-                                            <input type="text" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                            <input type="number" step="0.00001" class="form-control" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
                                             <div class="form-check">

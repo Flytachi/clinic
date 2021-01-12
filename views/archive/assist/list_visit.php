@@ -154,7 +154,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.laboratory, vs.accept_date, vs.completed, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} AND assist_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
+                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.laboratory, vs.add_date, vs.completed, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE user_id = {$_GET['id']} AND assist_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
 										?>
                                         <tr>
                                             <td><?= $i++ ?></td>
@@ -163,7 +163,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td class="text-center">

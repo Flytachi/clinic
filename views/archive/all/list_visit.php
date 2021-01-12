@@ -158,7 +158,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 									$sql = "SELECT
 												vs.id, vs.route_id,
 												vs.parent_id, vs.grant_id,
-												vs.direction, vs.accept_date,
+												vs.direction, vs.add_date,
 												vs.status, vs.completed,
 												sc.name, vs.laboratory,
 												vs.service_id
@@ -179,7 +179,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
 											</td>
-											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $row['name'] ?></td>
 											<td>
@@ -215,11 +215,11 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												?>
 											</td>
                                             <td class="text-right">
-												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false" <?= ($row['completed']) ? "" : "disabled" ?>>Просмотр</button>
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<?php if ($row['laboratory']): ?>
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
-														<a onclick="Print('<?= viv('prints/document_2') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<a <?= ($row['completed']) ? 'onclick="Print(\'<?= viv(\'prints/document_2\') ?>?id=<?= $row[\'id\'] ?>\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													<?php else: ?>
 														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
 															<a href="<?= viv('archive/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>

@@ -117,6 +117,8 @@ is_auth();
 
                     <?php $total_price = 0; ?>
 
+
+
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
                         <?php $row = $db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.id = $item AND vs.priced_date IS NULL")->fetch() ?>
                         <tr class="service">
