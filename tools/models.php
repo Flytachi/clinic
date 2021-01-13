@@ -349,7 +349,9 @@ class VisitModel extends Model
     				data: {
     					divisions: $("#division_selector").val(),
     					search: $("#search_input").val(),
-                        selected: service
+                        selected: service,
+                        types: "1,2",
+                        cols: 0
     				},
     				success: function (result) {
                         let service = [];
@@ -363,7 +365,12 @@ class VisitModel extends Model
                 $.ajax({
     				type: "GET",
     				url: "<?= ajax('service_table') ?>",
-                    data: { divisions: $(the).val(), selected: service  },
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1,2",
+                        cols: 0
+                    },
     				success: function (result) {
                         let service = [];
                         $('#table_form').html(result);

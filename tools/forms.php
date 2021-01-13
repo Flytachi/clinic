@@ -481,7 +481,6 @@ class VisitRoute extends Model
                                 <th>#</th>
                                 <th>Отдел</th>
                                 <th>Услуга</th>
-                                <th>Тип</th>
                                 <th>Доктор</th>
                                 <th class="text-right">Цена</th>
                             </tr>
@@ -510,7 +509,9 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
-                        selected: service
+                        selected: service,
+                        types: "1,2",
+                        cols: 1
                     },
                     success: function (result) {
                         let service = [];
@@ -524,7 +525,12 @@ class VisitRoute extends Model
                 $.ajax({
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
-                    data: { divisions: $(the).val(), selected: service  },
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1,2",
+                        cols: 1
+                    },
                     success: function (result) {
                         let service = [];
                         $('#table_form').html(result);
@@ -547,58 +553,45 @@ class VisitRoute extends Model
             <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->id ?>">
-                    <input type="text" class="form-control" value="<?= get_full_name($patient->id) ?>" disabled>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5 AND id != ".division()) as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                    <?php
+                    foreach($db->query("SELECT * from division WHERE level = 5 AND id !=". division()) as $row) {
                         ?>
-                    </select>
-                </div>
-
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
             </div>
 
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query("SELECT * from users WHERE user_level = 5 AND id != {$_SESSION['session_id']}") as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -609,10 +602,44 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1,2",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
             });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1,2",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
         </script>
         <?php
     }
@@ -642,9 +669,9 @@ class VisitRoute extends Model
                         <thead>
                             <tr class="bg-dark">
                                 <th>#</th>
-                                <th>Отдел</th>
+                                <!-- <th>Отдел</th> -->
                                 <th>Услуга</th>
-                                <th>Тип</th>
+                                <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
                                 <th class="text-right">Цена</th>
                             </tr>
@@ -674,14 +701,16 @@ class VisitRoute extends Model
                     url: "/views/registry/search_amb.php",
                     data: {
                         divisions: [
-                            "<?php
-                            foreach($db->query("SELECT * from division WHERE level = 6 ") as $row) {
-                                echo $row['id'];
-                            }
-                            ?>"
-                        ],
+                                "<?php
+                                foreach($db->query("SELECT * from division WHERE level = 6 ") as $row) {
+                                    echo $row['id'];
+                                }
+                                ?>"
+                            ],
                         search: $("#search_input").val(),
-                        selected: service
+                        selected: service,
+                        types: "1",
+                        cols: 2
                     },
                     success: function (result) {
                         let service = [];
@@ -695,13 +724,18 @@ class VisitRoute extends Model
                 $.ajax({
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
-                    data: { divisions: [
-                        "<?php
-                        foreach($db->query("SELECT * from division WHERE level = 6 ") as $row) {
-                            echo $row['id'];
-                        }
-                        ?>"
-                    ], selected: service  },
+                    data: {
+                        divisions: [
+                                "<?php
+                                foreach($db->query("SELECT * from division WHERE level = 6 ") as $row) {
+                                    echo $row['id'];
+                                }
+                                ?>"
+                            ],
+                        selected: service,
+                        types: "1",
+                        cols: 2
+                    },
                     success: function (result) {
                         let service = [];
                         $('#table_form').html(result);
@@ -724,58 +758,36 @@ class VisitRoute extends Model
             <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
             <input type="hidden" name="laboratory" value="1">
 
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->id ?>">
-                    <input type="text" class="form-control" value="<?= get_full_name($patient->id) ?>" disabled>
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
                 </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 6") as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
             </div>
 
-            <div class="form-group row">
+            <div class="form-group">
 
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 6') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 6') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <!-- <th>Отдел</th> -->
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+                            <tr>
+                                <td colspan="6" class="text-center" onclick="table_change()">услуги</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -786,10 +798,56 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: [
+                            "<?php
+                            foreach($db->query("SELECT * from division WHERE level = 6 ") as $row) {
+                                echo $row['id'];
+                            }
+                            ?>"
+                        ],
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 2
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
             });
+
+            function table_change() {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: [
+                                "<?php
+                                foreach($db->query("SELECT * from division WHERE level = 6 ") as $row) {
+                                    echo $row['id'];
+                                }
+                                ?>"
+                            ],
+                        selected: service,
+                        types: "1",
+                        cols: 2
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
         </script>
         <?php
     }
@@ -834,7 +892,7 @@ class VisitRoute extends Model
                                 <th>#</th>
                                 <th>Отдел</th>
                                 <th>Услуга</th>
-                                <th>Тип</th>
+                                <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
                                 <th class="text-right">Цена</th>
                             </tr>
@@ -863,7 +921,9 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
-                        selected: service
+                        selected: service,
+                        types: "1",
+                        cols: 1
                     },
                     success: function (result) {
                         let service = [];
@@ -877,7 +937,12 @@ class VisitRoute extends Model
                 $.ajax({
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
-                    data: { divisions: $(the).val(), selected: service  },
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
                     success: function (result) {
                         let service = [];
                         $('#table_form').html(result);
@@ -901,58 +966,46 @@ class VisitRoute extends Model
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
             <input type="hidden" name="diagnostic" value="1">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <input type="hidden" class="form-control" name="user_id" value="<?= $patient->id ?>">
-                    <input type="text" class="form-control" value="<?= get_full_name($patient->id) ?>" disabled>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division2" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                    <?php
+                    foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
                         ?>
-                    </select>
-                </div>
-
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
             </div>
 
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id2" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 10') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 10') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -963,10 +1016,44 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            $(function(){
-                $("#parent_id2").chained("#division2");
-                $("#service").chained("#division2");
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
             });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
         </script>
         <?php
     }
@@ -983,23 +1070,32 @@ class VisitRoute extends Model
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-            <input type="hidden" name="division_id" value="<?= division() ?>">
-            <input type="hidden" name="division_id" value="<?= division() ?>">
+            <input type="hidden" name="division_grant" value="<?= division() ?>">
 
-            <div class="form-group row">
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
+                </div>
+            </div>
 
-                <div class="col-md-12">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from service WHERE user_level = ".level()." AND division_id =".division()) as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Услуга</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+                            <tr>
+                                <td colspan="4" class="text-center" onclick="table_change()">услуги</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -1009,6 +1105,48 @@ class VisitRoute extends Model
             </div>
 
         </form>
+        <script type="text/javascript">
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: ["<?= division() ?>"],
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 3,
+                        head: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function table_change() {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: ["<?= division() ?>"],
+                        selected: service,
+                        types: "1",
+                        cols: 3,
+                        head: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+        </script>
         <?php
     }
 
@@ -1050,15 +1188,23 @@ class VisitRoute extends Model
     public function save_rows()
     {
         global $db;
+        if ($this->post['accept_date'] and $this->post['division_grant']) {
+            $post_big['accept_date'] = date('Y-m-d H:i:s');
+            $post_big['division_id'] = $this->post['division_grant'];
+            $post_big['parent_id'] = $this->post['parent_id'];
+        }
         foreach ($this->post['service'] as $key => $value) {
 
             $post_big['direction'] = $this->post['direction'];
-            $post_big['grant_id'] = $post_big['grant_id'];
+            $post_big['status'] = $this->post['status'];
+            $post_big['grant_id'] = $this->post['grant_id'];
             $post_big['route_id'] = $this->post['route_id'];
             $post_big['user_id'] = $this->post['user_id'];
             $post_big['service_id'] = $value;
-            $post_big['division_id'] = $this->post['division_id'][$key];
-            $post_big['parent_id'] = $this->post['parent_id'][$key];
+            if (!$this->post['division_grant']) {
+                $post_big['parent_id'] = $this->post['parent_id'][$key];
+                $post_big['division_id'] = $this->post['division_id'][$key];
+            }
             if ($this->post['diagnostic']) {
                 $post_big['diagnostic'] = $this->post['diagnostic'];
             }
@@ -1122,7 +1268,7 @@ class VisitFinish extends Model
         $this->post['status'] = 0;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id'] and $inf['parent_id'] != $inf['route_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND completed IS NULL AND service_id != 1")->rowCount()) {
+            if ($inf['grant_id'] == $inf['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND completed IS NULL AND service_id != 1")->rowCount()) {
                 Mixin\update($this->table1, array('status' => null), $inf['user_id']);
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $inf['user_id']);

@@ -81,6 +81,29 @@ var SweetAlert = function () {
                         stage: 2,
                     },
                     success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно выписать!',
+                                text: 'Форма заключения не запонена.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 1,
+                        stage: 3,
+                    },
+                    success: function (data) {
                         if (data) {
                             if (!(data == 0)) {
                                 swal({
@@ -112,7 +135,7 @@ var SweetAlert = function () {
                     data: {
                         id: this.dataset.user_id,
                         main: 1,
-                        stage: 3,
+                        stage: 4,
                     },
                     success: function (data) {
                         if (data >= 1) {
