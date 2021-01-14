@@ -56,6 +56,16 @@ $header = "Услуги";
 							<?php
 							Mixin\T_flush('service');
 							$task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
+							// Mixin\T_flush('visit');
+							// Mixin\T_flush('visit_price');
+							// Mixin\T_flush('visit_member');
+							// Mixin\T_flush('visit_inspection');
+							// Mixin\T_flush('bypass');
+							// Mixin\T_flush('bypass_date');
+							// Mixin\T_flush('bypass_time');
+							// Mixin\T_flush('bypass_preparat');
+							// Mixin\T_flush('investment');
+							// Mixin\T_flush('laboratory_analyze');
 							?>
 
 							<?php if (intval($task) == 1): ?>

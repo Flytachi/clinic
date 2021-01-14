@@ -59,7 +59,7 @@ $header = "Стационарные пациенты";
                                 <tbody>
                                     <?php
 									if (division_assist() == 2) {
-										$sql = "SELECT us.id, vs.id 'visit_id', vs.route_id, vs.service_id, vs.parent_id, vs.assist_id, vs.accept_date,
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, vs.parent_id, vs.assist_id,
 												(
 													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
 													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
@@ -67,7 +67,7 @@ $header = "Стационарные пациенты";
 												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
 												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}else {
-										$sql = "SELECT us.id, vs.id 'visit_id', vs.route_id, vs.service_id, vs.accept_date,
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint,
 												(
 													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
 													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
@@ -101,7 +101,7 @@ $header = "Стационарные пациенты";
 												</div>
 											</td>
 											<td><?= $row['age'] ?></td>
-											<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= $row['name']; ?></td>
                                             <td>
 												<?php
 												$sql_ser = "SELECT * FROM service WHERE id = {$row['service_id']}";
@@ -116,7 +116,7 @@ $header = "Стационарные пациенты";
 											</td>
                                             <td class="text-center">
 												<?php if ($tr != "table-danger"): ?>
-													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $serv['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $row['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
 												<?php endif; ?>
                                           	</td>
                                         </tr>
