@@ -864,11 +864,12 @@ class VisitPriceModel extends Model
                     <div class="col-md-9">
                         <label class="col-form-label">Сумма к оплате:</label>
                         <input type="text" class="form-control" id="total_price" disabled>
+                        <input type="hidden" id="total_price_original">
                     </div>
                     <div class="col-md-3">
                         <label class="col-form-label">Скидка:</label>
                         <div class="form-group-feedback form-group-feedback-right">
-                            <input type="text" class="form-control" name="sale" placeholder="">
+                            <input type="number" class="form-control" step="0.1" name="sale" id="sale_input" placeholder="">
                             <div class="form-control-feedback text-success">
                                 <span style="font-size: 20px;">%</span>
                             </div>
@@ -979,6 +980,13 @@ class VisitPriceModel extends Model
                     Upsum(input);
                 }
             }
+
+            $("#sale_input").keyup(function() {
+                var sum = $("#total_price_original").val();
+                var proc = $("#sale_input").val() / 100;
+                $("#total_price").val(sum - (sum * proc));
+    		});
+
         </script>
         <?php
     }
@@ -1061,17 +1069,19 @@ class VisitPriceModel extends Model
             return True;
         } else {
             $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
-            $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
+            if ($this->post['sale'] > 0) {
+                $tot['total_price'] = $tot['total_price'] - ($tot['total_price'] * ($this->post['sale'] / 100));
+            }
+            $result = $tot['total_price'] - $this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer'];
         }
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
         }elseif ($result > 0) {
             $this->error("Недостаточно средств! ". $result);
-        }else {
-            $this->post = Mixin\clean_form($this->post);
-            $this->post = Mixin\to_null($this->post);
-            return True;
         }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function price($row)
@@ -1135,12 +1145,11 @@ class VisitPriceModel extends Model
         }
 
         $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
-        if(intval($object)){
-            $object = Mixin\update($this->table, $post, $row['id']);
-            if (!intval($object)){
-                $this->error($object);
-            }
-        }else {
+        if (!intval($object)){
+            $this->error($object);
+        }
+        $object = Mixin\update($this->table, $post, $row['id']);
+        if (!intval($object)){
             $this->error($object);
         }
     }
@@ -1150,6 +1159,9 @@ class VisitPriceModel extends Model
         global $db;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
             $this->items[] = $row['visit_id'];
+            if ($this->post['sale'] > 0) {
+                $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->post['sale'] / 100));
+            }
             $this->price($row);
         }
     }
