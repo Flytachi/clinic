@@ -43,14 +43,6 @@ $header = "Рабочий стол";
 
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Возврат</h5>
-								<div class="header-elements">
-									<div class="form-group-feedback form-group-feedback-right">
-										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
-										<div class="form-control-feedback text-success">
-											<i class="icon-search4 font-size-base text-muted"></i>
-										</div>
-									</div>
-								</div>
 							</div>
 
 				            <div class="card-body">
@@ -153,21 +145,7 @@ $header = "Рабочий стол";
 				},
 			});
 		};
-
-		$("#search_input").keyup(function() {
-			$.ajax({
-				type: "GET",
-				url: "search.php",
-				data: {
-					tab: 1,
-                    search: $("#search_input").val(),
-                },
-				success: function (result) {
-					$('#search_display').html(result);
-				},
-			});
-		});
-
+		
 		function Downsum(input) {
 			input.attr("class", 'form-control');
 			input.val("");
