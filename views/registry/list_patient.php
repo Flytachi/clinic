@@ -91,7 +91,7 @@ $header = "Список пациентов";
 											<td><?= $row['region'] ?></td>
 											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 											<?php
-											if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} ORDER BY add_date ASC")->fetch()){
+											if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()){
 												if($stm_dr['direction']){
 													?>
 													<td>

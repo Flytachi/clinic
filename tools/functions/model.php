@@ -86,11 +86,10 @@ class Model
     {
         if($this->clean()){
             $object = Mixin\insert($this->table, $this->post);
-            if (intval($object)){
-                $this->success();
-            }else{
+            if (!intval($object)){
                 $this->error($object);
             }
+            $this->success();
         }
     }
 
@@ -101,10 +100,9 @@ class Model
             unset($this->post['id']);
             $object = Mixin\update($this->table, $this->post, $pk);
             if ($object == 1){
-                $this->success();
-            }else{
                 $this->error($object);
             }
+            $this->success();
         }
     }
 

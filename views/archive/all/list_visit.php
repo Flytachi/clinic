@@ -165,7 +165,8 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											FROM visit vs
 												LEFT JOIN service sc ON(vs.service_id=sc.id)
 											WHERE
-												user_id = {$_GET['id']} AND
+												vs.user_id = {$_GET['id']} AND
+												(vs.status NOT IN (5,6) OR vs.status IS NULL) AND
 												(
 													vs.direction IS NULL OR
 													(vs.direction IS NOT NULL AND vs.service_id = 1)
