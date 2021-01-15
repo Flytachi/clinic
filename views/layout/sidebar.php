@@ -102,7 +102,7 @@
                             <li class="nav-item">
                                 <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
-                                    <span>УчтепаВрачи оператор</span>
+                                    <span>Врачи операторы</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -142,6 +142,12 @@
                                 <a href="<?= viv('cashbox/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Приём платежей</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/refund') ?>" class="nav-link legitRipple">
+                                    <i class="icon-display"></i>
+                                    <span>Возврат</span>
                                 </a>
                             </li>
                             <li class="nav-item">

@@ -3,7 +3,8 @@ require_once '../../tools/warframe.php';
 is_auth(3);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
-    if($_GET['mod']){
+
+    if($_GET['mod'] == "st"){
         ?>
         <div class="card">
             <div class="card-header header-elements-inline">
@@ -84,6 +85,55 @@ if ($_GET['pk']) {
             </div>
         </div>
         <?php
+    }elseif ($_GET['mod'] == "rf"){
+        ?>
+        <div class="card">
+
+            <div class="card-header header-elements-inline">
+                <h5 class="card-title"><em><?= get_full_name($pk); ?></em></h5>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr class="bg-blue">
+                                <th class="text-left">Дата и время</th>
+                                <th>Мед услуги</th>
+                                <th class="text-right">Сумма</th>
+                                <th class="text-center" style="width: 150px">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            foreach($db->query("SELECT vs.id, vs.add_date, vp.item_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.user_id = $pk AND vs.status = 5") as $row) {
+                                ?>
+                                    <tr id="tr_VisitModel_<?= $row['id'] ?>">
+                                        <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                                        <td><?= $row['item_name'] ?></td>
+                                        <td class="text-right total_cost"><?= $row['price'] ?></td>
+                                        <td>
+                                            <button onclick="Get_Mod(<?= $pk ?>, <?= $row['id'] ?>, <?= $row['price'] ?>)" type="button" class="btn btn-outline-primary btn-sm legitRipple" data-toggle="modal" data-target="#modal_default">Вернуть</button>
+                                        </td>
+                                    </tr>
+                                <?php
+                            }
+                            ?>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <script type="text/javascript">
+            function Get_Mod(pk, vs, price) {
+                $('#total_price').val(price);
+                $('#user_id').val(pk);
+                $('#visit_id').val(vs);
+            }
+        </script>
+        <?php
     }else {
         ?>
         <div class="card">
@@ -143,6 +193,7 @@ if ($_GET['pk']) {
         </script>
         <?php
     }
+
 }else {
     ?>
     <div class="alert bg-danger alert-styled-left alert-dismissible">

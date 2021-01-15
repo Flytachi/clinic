@@ -384,13 +384,13 @@ class VisitReport extends Model
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
-                    if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id={$row['user_id']} AND completed IS NULL AND service_id != 1")->rowCount()) {
+                    if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id={$row['user_id']} AND status NOT IN (5,6) AND completed IS NULL AND service_id != 1")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }
                 $this->clear_post();
                 $this->set_post(array(
-                    'status' => 0,
+                    'status' => null,
                     'completed' => date('Y-m-d H:i:s')
                 ));
                 $object = Mixin\update($this->table, $this->post, $pk);
@@ -1265,20 +1265,20 @@ class VisitFinish extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $this->post['status'] = 0;
+        $this->post['status'] = null;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND completed IS NULL AND service_id != 1")->rowCount()) {
-                Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+            if ($inf['grant_id'] == $inf['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status NOT IN (5,6) AND completed IS NULL AND service_id != 1")->rowCount()) {
+                Mixin\update($this->table1, array('status' => null), $pk);
                 if ($inf['direction']) {
-                    $pk_arr = array('user_id' => $inf['user_id']);
+                    $pk_arr = array('user_id' => $pk);
                     $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
                 }
             }
             if ($inf['assist_id']) {
                 if (!$inf['direction']) {
                     $this->post['grant_id'] = $_SESSION['session_id'];
-                    Mixin\update($this->table1, array('status' => null), $inf['user_id']);
+                    Mixin\update($this->table1, array('status' => null), $pk);
                 }
             }
             $this->post['id'] = $inf['id'];
@@ -1327,7 +1327,7 @@ class LaboratoryUpStatus extends Model
 
 }
 
-class PatientFailure extends Model
+class VisitFailure extends Model
 {
     public $table = 'visit';
 
@@ -1341,7 +1341,7 @@ class PatientFailure extends Model
                 <div class="form-group row">
 
                     <input type="hidden" id="vis_id" name="id" value="">
-                    <input type="hidden" name="parent_id" value="">
+                    <input type="hidden" name="status" value="5">
 
                     <div class="col-md-12">
                         <label>Причина:</label>
@@ -1381,17 +1381,15 @@ class PatientFailure extends Model
 
     public function update()
     {
-        // if($this->clean()){
-        //     $pk = $this->post['id'];
-        //     unset($this->post['id']);
-        //     $object = Mixin\update($this->table, $this->post, $pk);
-        //     if (intval($object)){
-        //         $this->success($pk);
-        //     }else{
-        //         $this->error($object);
-        //     }
-        // }
-        $this->success($this->post['id']);
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
+            $this->success($pk);
+        }
     }
 
     public function success($pk)
@@ -2182,6 +2180,166 @@ class StorageOrdersModel extends Model
         }
         return true;
 
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}
+
+class VisitRefundModel extends Model
+{
+    public $table = 'visit_price';
+
+    public function form($pk = null)
+    {
+        global $db;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+
+            <div class="modal-body">
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
+                <input type="hidden" name="user_id" id="user_id">
+                <input type="hidden" name="visit_id" id="visit_id">
+
+                <div class="form-group row">
+
+                    <div class="col-md-12">
+                        <label class="col-form-label">Сумма к оплате:</label>
+                        <input type="text" class="form-control" id="total_price" disabled>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Наличный</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+								<span class="input-group-text">
+									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_1" onchange="Checkert(this)">
+								</span>
+							</span>
+						</div>
+					</div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Пластиковый</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+								<span class="input-group-text">
+									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_2" onchange="Checkert(this)">
+								</span>
+							</span>
+						</div>
+					</div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Перечисление</label>
+					<div class="col-md-9">
+						<div class="input-group">
+							<input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <span class="input-group-prepend ml-5">
+								<span class="input-group-text">
+									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_3" onchange="Checkert(this)">
+								</span>
+							</span>
+						</div>
+					</div>
+                </div>
+
+            </div>
+
+    		<div class="modal-footer">
+    			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
+    		</div>
+
+        </form>
+
+        <script type="text/javascript">
+
+            function Checkert(event) {
+                var input = $('#input_'+event.id);
+                if(!input.prop('disabled')){
+                    input.attr("disabled", "disabled");
+                    Downsum(input);
+                }else {
+                    input.removeAttr("disabled");
+                    Upsum(input);
+                }
+            }
+
+        </script>
+        <?php
+    }
+
+    public function clean()
+    {
+        global $db;
+        $this->visit_pk = $this->post['visit_id'];
+        $this->pricer_id = $this->post['pricer_id'];
+        $this->user_id = $this->post['user_id'];
+
+        $this->price_cash = $this->post['price_cash'];
+        $this->price_card = $this->post['price_card'];
+        $this->price_transfer = $this->post['price_transfer'];
+
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+
+        if (0 == $db->query("SELECT * FROM visit WHERE user_id=$this->user_id AND status NOT IN (5,6) AND completed IS NULL AND service_id != 1")->rowCount()) {
+            Mixin\update('users', array('status' => null), $this->user_id);
+        }
+        $object = Mixin\update('visit', array('status' => 6), $this->visit_pk);
+        if (!intval($object)) {
+            $this->error($object);
+        }
+        $object = $db->query("SELECT * FROM visit_price WHERE visit_id = $this->visit_pk")->fetch();
+        $this->post = $object;
+
+        unset($this->post['id']);
+        $this->post['pricer_id'] = $this->pricer_id;
+        $this->post['price_cash'] = -$this->price_cash;
+        $this->post['price_card'] = -$this->price_card;
+        $this->post['price_transfer'] = -$this->price_transfer;
+        return True;
+    }
+
+    public function save()
+    {
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (!intval($object)){
+                $this->error($object);
+            }
+            $this->success();
+        }
     }
 
     public function success()

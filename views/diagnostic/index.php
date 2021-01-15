@@ -74,7 +74,7 @@ $header = "Приём пациетов";
 											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
                                     foreach($db->query($sql) as $row) {
                                         ?>
-                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
+                                        <tr id="PatientFailure_tr_<?= $row['visit_id'] ?>">
                                             <td><?= addZero($row['id']) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
@@ -120,7 +120,8 @@ $header = "Приём пациетов";
 												<?php if ($row['complaint']): ?>
 													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
 												<?php endif; ?>
-												<button data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>'); deletPatient(this); " data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+
+												<button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>'); deletPatient(this);" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -154,7 +155,7 @@ $header = "Приём пациетов";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?= PatientFailure::form(); ?>
+				<?= VisitFailure::form(); ?>
 			</div>
 		</div>
 	</div>
