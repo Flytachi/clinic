@@ -128,12 +128,19 @@ if ($_GET['pk']) {
                         <strong>Итого: </strong><strong id="total_title"></strong>
                     </div>
                     <div class="text-right">
-                        <button onclick="$('#total_price').val($('#total_title').text());$('#user_amb_id').val('<?= $pk ?>');" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                        <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
                     </div>
                 </div>
             </div>
 
         </div>
+        <script type="text/javascript">
+            function Get_Mod(pk) {
+                $('#total_price').val($('#total_title').text());
+                $('#total_price_original').val($('#total_title').text());
+                $('#user_amb_id').val(pk);
+            }
+        </script>
         <?php
     }
 }else {

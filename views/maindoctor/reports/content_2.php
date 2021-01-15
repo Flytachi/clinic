@@ -199,7 +199,7 @@ $header = "Отчёт по врачам";
 												<td><?= $row['item_name'] ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
 												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>"><?= number_format($row['item_cost']) ?></td>
-												<td class="text-center"><?= $row['share'] ?> %</td>
+												<td class="text-center"><?= ($row['share']) ? $row['share']."%" : '<span class="text-muted">Нет</span>'?></td>
 												<td class="text-right text-success">
 													<?php
 													$total_price += $row['share_price'];

@@ -110,7 +110,8 @@ $header = "Отчёт по визитам";
 					$sql = "SELECT
 								vs.user_id, vs.accept_date,
 								vs.completed, vp.item_name,
-								vp.item_cost, vs.priced_date
+								vp.item_cost, vs.priced_date,
+								vp.sale, (vp.price_cash + vp.price_card + vp.price_transfer) 'price'
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
@@ -158,6 +159,8 @@ $header = "Отчёт по визитам";
 				                            <th style="width: 11%">Дата приёма</th>
 											<th style="width: 11%">Дата завершения</th>
 				                            <th>Услуга</th>
+											<th class="text-right">Цена</th>
+											<th class="text-center">Доля</th>
 											<th class="text-right">Сумма</th>
 										</tr>
 	                                </thead>
@@ -169,19 +172,21 @@ $header = "Отчёт по визитам";
 												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row['item_name'] ?></td>
+												<td class="text-right text-success"> <?= number_format($row['item_cost']); ?> </td>
+												<td class="text-center"><?= ($row['sale']) ? $row['sale']."%" : '<span class="text-muted">Нет</span>'?></td>
 												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>">
 													<?php
 													if ($row['priced_date']) {
-														$total_price += $row['item_cost'];
+														$total_price += $row['price'];
 													}
-													echo number_format($row['item_cost']);
+													echo number_format($row['price']);
 													?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
 											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
-											<th colspan="3" class="text-right">Итого:</th>
+											<th colspan="5" class="text-right">Итого:</th>
 											<td class="text-right text-success"><?= number_format($total_price) ?></td>
 										</tr>
 	                                </tbody>
