@@ -940,14 +940,19 @@ class VisitPriceModel extends Model
                         var result = JSON.parse(result);
                         if (result.status == "success") {
 
-                            var parent_id = document.querySelectorAll('.parent_class');
+                            let parent_id = document.querySelectorAll('.parent_class');
+
+                            let par_id;
+
                             parent_id.forEach(function(events) {
                                 let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-                                let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : $(events).val()});
                                 conn.send(obj);
-                                conn.send(obj1);
-                            });
 
+                                par_id = $(events).val() 
+                            });
+                            let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
+
+                            conn.send(obj1);
                             // Печать :
                             $.ajax({
                                 type: "GET",
