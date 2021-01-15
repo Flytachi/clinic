@@ -196,7 +196,7 @@ $header = "Рабочий стол";
 
 								<?php
 
-									$sql = "SELECT us.* FROM users us LEFT JOIN division dv ON (dv.id = us.division_id) WHERE us.user_level = 5 OR ((dv.assist != 2 OR dv.assist IS NULL) AND us.user_level = 10)";
+									$sql = "SELECT us.* FROM users us LEFT JOIN division dv ON (dv.id = us.division_id) WHERE us.user_level = 5 OR ((dv.assist != 2 OR dv.assist IS NULL) AND us.user_level IN(10,6))";
 
 									$allUser = $db->query($sql)->fetchAll();
 

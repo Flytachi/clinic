@@ -120,7 +120,7 @@ $header = "Приём пациетов";
 												<?php if ($row['complaint']): ?>
 													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
 												<?php endif; ?>
-												<button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+												<button data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>'); deletPatient(this); " data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
                                         <?php

@@ -58,7 +58,7 @@ $header = "Приём пациетов";
                                 </thead>
                                 <tbody>
                                     <?php
-									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id',
+									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.user_id, vs.parent_id,
 												vs.route_id, vs.service_id, vs.direction, vs.add_date,
 												(
 													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
@@ -103,7 +103,7 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-												<a href="<?= up_url($row['visit_id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
+												<a href="<?= up_url($row['visit_id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
                                             </td>
                                         </tr>
                                         <?php

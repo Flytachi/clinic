@@ -208,9 +208,9 @@ class UserModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -343,39 +343,39 @@ class VisitModel extends Model
             let service = [];
 
             $("#search_input").keyup(function() {
-    			$.ajax({
-    				type: "GET",
-    				url: "search_amb.php",
-    				data: {
-    					divisions: $("#division_selector").val(),
-    					search: $("#search_input").val(),
+                $.ajax({
+                    type: "GET",
+                    url: "search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
                         selected: service,
                         types: "1,2",
                         cols: 0
-    				},
-    				success: function (result) {
+                    },
+                    success: function (result) {
                         let service = [];
-    					$('#table_form').html(result);
-    				},
-    			});
-    		});
+                        $('#table_form').html(result);
+                    },
+                });
+            });
 
             function table_change(the) {
 
                 $.ajax({
-    				type: "GET",
-    				url: "<?= ajax('service_table') ?>",
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
                     data: {
                         divisions: $(the).val(),
                         selected: service,
                         types: "1,2",
                         cols: 0
                     },
-    				success: function (result) {
+                    success: function (result) {
                         let service = [];
                         $('#table_form').html(result);
-    				},
-    			});
+                    },
+                });
 
             }
 
@@ -880,52 +880,52 @@ class VisitPriceModel extends Model
 
                 <div class="form-group row">
                     <label class="col-form-label col-md-3">Наличный</label>
-					<div class="col-md-9">
-						<div class="input-group">
-							<input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
-								<span class="input-group-text">
-									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_1" onchange="Checkert(this)">
-								</span>
-							</span>
-						</div>
-					</div>
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery" data-fouc id="chek_1" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-md-3">Пластиковый</label>
-					<div class="col-md-9">
-						<div class="input-group">
-							<input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
-								<span class="input-group-text">
-									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_2" onchange="Checkert(this)">
-								</span>
-							</span>
-						</div>
-					</div>
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery" data-fouc id="chek_2" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-md-3">Перечисление</label>
-					<div class="col-md-9">
-						<div class="input-group">
-							<input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
+                    <div class="col-md-9">
+                        <div class="input-group">
+                            <input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
-								<span class="input-group-text">
-									<input type="checkbox" class="form-control-switchery" data-fouc id="chek_3" onchange="Checkert(this)">
-								</span>
-							</span>
-						</div>
-					</div>
+                                <span class="input-group-text">
+                                    <input type="checkbox" class="form-control-switchery" data-fouc id="chek_3" onchange="Checkert(this)">
+                                </span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
-    		<div class="modal-footer">
-    			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
                 <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
-    		</div>
+            </div>
 
         </form>
 
@@ -941,19 +941,20 @@ class VisitPriceModel extends Model
                         var result = JSON.parse(result);
                         if (result.status == "success") {
 
-                            let parent_id = document.querySelectorAll('.parent_class');
+                            var parent_id = document.querySelectorAll('.parent_class');
 
                             let par_id;
 
                             parent_id.forEach(function(events) {
                                 let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-                                conn.send(obj);
 
                                 par_id = $(events).val() 
+                                
+                                conn.send(obj);
                             });
-                            let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
+                                let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
 
-                            conn.send(obj1);
+                                conn.send(obj1);
                             // Печать :
                             $.ajax({
                                 type: "GET",
@@ -990,7 +991,7 @@ class VisitPriceModel extends Model
                 var sum = $("#total_price_original").val();
                 var proc = $("#sale_input").val() / 100;
                 $("#total_price").val(sum - (sum * proc));
-    		});
+            });
 
         </script>
         <?php
@@ -1487,9 +1488,9 @@ class InvestmentModel extends Model
             </div>
 
             <div class="modal-footer">
-    			<button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
                 <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
-    		</div>
+            </div>
 
         </form>
         <script type="text/javascript">
@@ -1735,9 +1736,9 @@ class WardModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -1839,9 +1840,9 @@ class BedModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -1901,9 +1902,9 @@ class BedTypeModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -2104,9 +2105,9 @@ class ServiceModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -2166,9 +2167,9 @@ class MemberModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -2228,9 +2229,9 @@ class GuideModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -2285,9 +2286,9 @@ class StorageTypeModel extends Model
     {
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
         ';
         render();
     }
@@ -2444,10 +2445,10 @@ class LaboratoryAnalyzeModel extends Model
                                         </td>
                                         <td>
                                             <div class="form-check">
-        										<label class="form-check-label">
-        											<input data-id="TR_<?= $i ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
-        										</label>
-        									</div>
+                                                <label class="form-check-label">
+                                                    <input data-id="TR_<?= $i ?>" type="checkbox" name="<?= $i ?>[deviation]" class="form-check-input cek_a" <?= ($row['deviation']) ? "checked" : "" ?>>
+                                                </label>
+                                            </div>
                                         </td>
                                         <th class="text-center" style="width:25%">
                                             <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
@@ -2635,7 +2636,7 @@ class BypassModel extends Model
                             <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 2") as $row2): ?>
                                 <option value="<?= $row2['product_id'] ?>"><?= $row2['product_code'] ?> (<?= $row2['qty'] ?>)</option>
                             <?php endforeach; ?>
-						</select>
+                        </select>
                     </div>
 
                 </div>
@@ -2677,7 +2678,7 @@ class BypassModel extends Model
 
             </div>
 
-    		<div class="modal-footer">
+            <div class="modal-footer">
                 <button class="btn btn-outline-info btn-sm legitRipple" type="submit">Сохранить</button>
             </div>
 

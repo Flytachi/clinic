@@ -211,12 +211,40 @@ conn.onmessage = function(e) {
             console.log('---------------------------------------------------------------')
 
             // Удаляется и добавляется заново подсвеченным зеленым
+
+            console.log(d);
+
             $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" style="text-transform: uppercase; font-weight: 900; font-size: 250%;" data-parentid="${ d.queue[0].parent_id }">
                           <td style="text-align: center;">${ d.queue[0].user_id }</td>
                           </tr>`);
             },
         });
 
+      }
+  }else if (d.type == "delet_patient" ) {
+
+      // События для монитора, принятие к доктору
+      if(d.id == id){
+
+
+        $.ajax({
+          type: "POST",
+
+          url: "visitpd.php",
+
+          data: { id_user: d.user_id, id_patient: d.parent_id },
+
+          success: function (data) {
+
+            let d = JSON.parse(data);
+
+            // Проигрывается аудио уведомления
+            $('#audio').trigger('play');
+
+            // Удаляется и добавляется заново подсвеченным зеленым
+            $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
+            },
+        });
       }
   }
 };
@@ -267,5 +295,12 @@ function sendPatient(body) {
   parentid = body.dataset.parentid;
   userid = body.dataset.userid;
   let obj = JSON.stringify({ type : 'accept_patient', id : "1983", user_id : userid, parent_id : parentid});
+  conn.send(obj);
+}
+
+function deletPatient(body) {
+  parentid = body.dataset.parentid;
+  userid = body.dataset.userid;
+  let obj = JSON.stringify({ type : 'delet_patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
 }
