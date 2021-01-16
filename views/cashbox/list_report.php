@@ -100,6 +100,29 @@ $header = "Отчёт";
                     </div>
 
                 </div>
+				<?php
+				$sqld = "SELECT
+								pricer_id,
+								user_id,
+								(price_cash + price_card + price_transfer) 'price',
+								price_cash,
+								price_card,
+								price_transfer,
+								price_date
+							FROM visit_price
+							UNION ALL
+							SELECT
+								pricer_id,
+								user_id,
+								(balance_cash + balance_card + balance_transfer) 'price',
+								balance_cash,
+								balance_card,
+								balance_transfer,
+								add_date
+							FROM investment
+							";
+				// prit($db->query($sqld)->fetchAll());
+				?>
 
                 <?php if ($_POST): ?>
                     <div class="card border-1 border-info">
@@ -119,20 +142,33 @@ $header = "Отчёт";
                             $_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
                             $_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
                             $sql = "SELECT
-                                        vsp.pricer_id,
+                                        vs.pricer_id,
                                         vs.user_id,
-                                        (vsp.price_cash + vsp.price_card + vsp.price_transfer) 'price',
-                                        vsp.price_cash,
-                                        vsp.price_card,
-                                        vsp.price_transfer,
-                                        vsp.price_date
-                                    FROM visit_price vsp
-                                        LEFT JOIN visit vs ON(vs.id=vsp.visit_id)
-                                    WHERE
-										vsp.item_type = 1 AND
-										vsp.price_date IS NOT NULL AND
-                                        (DATE_FORMAT(vsp.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-                                        vsp.pricer_id IN (".implode($_POST['priser_id']).")
+                                        (vs.price_cash + vs.price_card + vs.price_transfer) 'price',
+                                        vs.price_cash,
+                                        vs.price_card,
+                                        vs.price_transfer,
+                                        vs.price_date
+                                    FROM visit_price vs
+									WHERE
+										vs.item_type = 1 AND
+										vs.price_date IS NOT NULL AND
+										(DATE_FORMAT(vs.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+										vs.pricer_id IN (".implode($_POST['priser_id']).")
+									UNION ALL
+									SELECT
+										iv.pricer_id,
+										iv.user_id,
+										(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'price',
+										iv.balance_cash,
+										iv.balance_card,
+										iv.balance_transfer,
+										iv.add_date
+									FROM investment iv
+									WHERE
+										iv.add_date IS NOT NULL AND
+										(DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
+										iv.pricer_id IN (".implode($_POST['priser_id']).")
                                     ";
 							$total_price=$total_price_cash=$total_price_card=$total_price_transfer=0;
                             ?>

@@ -384,7 +384,7 @@ class VisitReport extends Model
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
-                    if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id={$row['user_id']} AND status NOT IN (5,6) AND completed IS NULL AND service_id != 1")->rowCount()) {
+                    if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id={$row['user_id']} AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }
@@ -1173,6 +1173,7 @@ class VisitRoute extends Model
             }
             $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
             $post['visit_id'] = $object;
+            $post['user_id'] = $this->post['user_id'];
             $post['item_type'] = 1;
             $post['item_id'] = $this->post['service_id'];
             $post['item_cost'] = $service['price'];
@@ -1221,6 +1222,7 @@ class VisitRoute extends Model
 
             $service = $db->query("SELECT price, name FROM service WHERE id = {$post_big['service_id']}")->fetch();
             $post['visit_id'] = $object;
+            $post['user_id'] = $this->post['user_id'];
             $post['item_type'] = 1;
             $post['item_id'] = $post_big['service_id'];
             $post['item_cost'] = $service['price'];
@@ -1268,7 +1270,7 @@ class VisitFinish extends Model
         $this->post['status'] = null;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status NOT IN (5,6) AND completed IS NULL AND service_id != 1")->rowCount()) {
+            if ($inf['grant_id'] == $inf['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
                 Mixin\update($this->table1, array('status' => null), $pk);
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $pk);
@@ -2302,44 +2304,23 @@ class VisitRefundModel extends Model
     public function clean()
     {
         global $db;
-        $this->visit_pk = $this->post['visit_id'];
-        $this->pricer_id = $this->post['pricer_id'];
-        $this->user_id = $this->post['user_id'];
-
-        $this->price_cash = $this->post['price_cash'];
-        $this->price_card = $this->post['price_card'];
-        $this->price_transfer = $this->post['price_transfer'];
-
+        $object = $db->query("SELECT * FROM visit_price WHERE visit_id ={$this->post['visit_id']}")->fetch();
+        $this->post['sale'] = $object['sale'];
+        $this->post['item_type'] = $object['item_type'];
+        $this->post['item_id'] = $object['item_id'];
+        $this->post['item_cost'] = $object['item_cost'];
+        $this->post['item_name'] = $object['item_name'];
+        $this->post['price_date'] = date('Y-m-d H:i:s');
+        if (0 == $db->query("SELECT * FROM visit WHERE user_id={$this->post['user_id']} AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
+            Mixin\update('users', array('status' => null), $this->post['user_id']);
+        }
+        Mixin\delete('visit', $this->post['visit_id']);
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-
-        if (0 == $db->query("SELECT * FROM visit WHERE user_id=$this->user_id AND status NOT IN (5,6) AND completed IS NULL AND service_id != 1")->rowCount()) {
-            Mixin\update('users', array('status' => null), $this->user_id);
-        }
-        $object = Mixin\update('visit', array('status' => 6), $this->visit_pk);
-        if (!intval($object)) {
-            $this->error($object);
-        }
-        $object = $db->query("SELECT * FROM visit_price WHERE visit_id = $this->visit_pk")->fetch();
-        $this->post = $object;
-
-        unset($this->post['id']);
-        $this->post['pricer_id'] = $this->pricer_id;
-        $this->post['price_cash'] = -$this->price_cash;
-        $this->post['price_card'] = -$this->price_card;
-        $this->post['price_transfer'] = -$this->price_transfer;
+        $this->post['price_cash'] = -$this->post['price_cash'];
+        $this->post['price_card'] = -$this->post['price_card'];
+        $this->post['price_transfer'] = -$this->post['price_transfer'];
         return True;
-    }
-
-    public function save()
-    {
-        if($this->clean()){
-            $object = Mixin\insert($this->table, $this->post);
-            if (!intval($object)){
-                $this->error($object);
-            }
-            $this->success();
-        }
     }
 
     public function success()

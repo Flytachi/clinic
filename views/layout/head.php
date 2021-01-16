@@ -43,8 +43,8 @@
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 
 	<script>
-			let id = '<?= $_SESSION['session_id'] ?>';
-			let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		let id = '<?= $_SESSION['session_id'] ?>';
+		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 	</script>
 	<script src="<?= stack("vendors/js/scriptJS/socket.js") ?>"></script>
 </head>

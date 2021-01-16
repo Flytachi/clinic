@@ -656,7 +656,7 @@ class VisitModel extends Model
 
                 <div class="col-md-4">
                     <label>Время:</label>
-                    <input type="time" class="form-control" name="time">
+                    <input type="time" class="form-control" name="oper_time">
                 </div>
 
                 <div class="col-md-4">
@@ -693,6 +693,7 @@ class VisitModel extends Model
             if (!$this->post['direction'] or (level() != 2 and $this->post['direction'])) {
                 $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
                 $post['visit_id'] = $object;
+                $post['user_id'] = $this->post['user_id'];
                 $post['item_type'] = 1;
                 $post['item_id'] = $this->post['service_id'];
                 $post['item_cost'] = $service['price'];
@@ -742,6 +743,7 @@ class VisitModel extends Model
             if (!$post_big['direction'] or (level() != 2 and $post_big['direction'])) {
                 $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
                 $post['visit_id'] = $object;
+                $post['user_id'] = $this->post['user_id'];
                 $post['item_type'] = 1;
                 $post['item_id'] = $value;
                 $post['item_cost'] = $service['price'];
@@ -1072,16 +1074,17 @@ class VisitPriceModel extends Model
             if ($this->post['sale'] > 0) {
                 $tot['total_price'] = $tot['total_price'] - ($tot['total_price'] * ($this->post['sale'] / 100));
             }
-            $result = $tot['total_price'] - $this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer'];
+            $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
         }
         if ($result < 0) {
             $this->error("Есть остаток ".$result);
         }elseif ($result > 0) {
             $this->error("Недостаточно средств! ". $result);
+        }else {
+            $this->post = Mixin\clean_form($this->post);
+            $this->post = Mixin\to_null($this->post);
+            return True;
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        return True;
     }
 
     public function price($row)
@@ -2549,7 +2552,7 @@ class LaboratoryAnalyzeModel extends Model
         }
         if ($end) {
             foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
-                if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$user_pk AND completed IS NULL AND service_id != 1")->rowCount()) {
+                if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$user_pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
                     Mixin\update('users', array('status' => null), $user_pk);
                 }
                 $this->clear_post();

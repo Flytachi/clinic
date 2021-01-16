@@ -50,13 +50,16 @@ $header = "Пациент";
 							<div class="card-header header-elements-inline">
 								<h6 class="card-title">Лист назначений</h6>
 								<div class="header-elements">
-									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-										<div class="list-icons">
+									<div class="list-icons">
+										<a onclick="List('<?= viv('doctor/bypass_list') ?>?pk=<?= $patient->visit_id ?>')" class="list-icons-item text-info mr-2">
+											<i class="icon-list"></i> Лист
+										</a>
+										<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
 											<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
 												<i class="icon-plus22"></i>Добавить
 											</a>
-										</div>
-									<?php endif; ?>
+										<?php endif; ?>
+									</div>
 								</div>
 							</div>
 
@@ -135,6 +138,14 @@ $header = "Пациент";
 		</div>
 	</div>
 
+	<div id="modal_list" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="div_list">
+
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
 		function Check(events) {
 			$.ajax({
@@ -143,6 +154,17 @@ $header = "Пациент";
 				success: function (data) {
 					$('#modal_show').modal('show');
 					$('#div_show').html(data);
+				},
+			});
+		};
+
+		function List(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (data) {
+					$('#modal_list').modal('show');
+					$('#div_list').html(data);
 				},
 			});
 		};
