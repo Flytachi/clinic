@@ -145,7 +145,7 @@ $header = "Рабочий стол";
 				},
 			});
 		};
-		
+
 		function Downsum(input) {
 			input.attr("class", 'form-control');
 			input.val("");
