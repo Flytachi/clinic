@@ -16,7 +16,6 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
             <?php foreach ($db->query($sql) as $row): ?>
                 <tr>
                     <td colspan="2">
-                        ------
                         <?php foreach ($db->query("SELECT p.product_code FROM bypass_preparat bp LEFT JOIN products p ON(p.product_id=bp.preparat_id) WHERE bp.bypass_id = {$row['id']}") as $prep): ?>
                             <?= $prep['product_code'] ?><br>
                         <?php endforeach; ?>

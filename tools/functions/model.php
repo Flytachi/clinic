@@ -99,7 +99,7 @@ class Model
             $pk = $this->post['id'];
             unset($this->post['id']);
             $object = Mixin\update($this->table, $this->post, $pk);
-            if ($object == 1){
+            if (!intval($object)){
                 $this->error($object);
             }
             $this->success();
