@@ -1352,7 +1352,7 @@ class VisitFailure extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger btn-sm">Отказаться</button>
+                <button id="renouncement" onclick="deletPatient(this);" data-userid="" data-parentid="" type="submit" id="button_<?= __CLASS__ ?>" class="btn btn-outline-danger btn-sm">Отказаться</button>
             </div>
 
         </form>
@@ -1360,6 +1360,7 @@ class VisitFailure extends Model
         <script type="text/javascript">
 
             $('#<?= __CLASS__ ?>_form').submit(function (events) {
+
                 events.preventDefault();
                 $.ajax({
                     type: $(this).attr("method"),
@@ -1370,7 +1371,7 @@ class VisitFailure extends Model
                         $(result).css("background-color", "rgb(244, 67, 54)");
                         $(result).css("color", "white");
                         $(result).fadeOut(900, function() {
-                            $(this).remove();
+                            // $(this).remove();
                         });
                     },
                 });

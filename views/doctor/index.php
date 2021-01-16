@@ -110,7 +110,7 @@ $header = "Приём пациетов";
 													<?php endif; ?>
 													>Принять</a>
 
-                                                <button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>');  deletPatient(this);" data-toggle="modal" data-target="#modal_failure" type="button" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+                                                <button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>'); $('#renouncement').attr('data-userid', '<?= $row['user_id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $row['parent_id'] ?>');" data-toggle="modal" data-target="#modal_failure" type="button" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
                                         <?php

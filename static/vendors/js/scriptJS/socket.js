@@ -36,6 +36,16 @@ function addZero(number){
     return strNumber;
 }
 
+conn.onerror = function(error) {
+  alert('asd')
+  conn.close();
+};
+
+conn.onclose = function(error) {
+  alert('asd')
+  conn.close();
+};
+
 conn.onopen = function(e) {
     console.log("Connection success!");
 };
@@ -226,7 +236,6 @@ conn.onmessage = function(e) {
       // События для монитора, принятие к доктору
       if(d.id == id){
 
-
         $.ajax({
           type: "POST",
 
@@ -238,10 +247,7 @@ conn.onmessage = function(e) {
 
             let d = JSON.parse(data);
 
-            // Проигрывается аудио уведомления
-            $('#audio').trigger('play');
-
-            // Удаляется и добавляется заново подсвеченным зеленым
+            // Удаляется пациент
             $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
             },
         });
@@ -303,4 +309,5 @@ function deletPatient(body) {
   userid = body.dataset.userid;
   let obj = JSON.stringify({ type : 'delet_patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
+  console.log( obj);
 }

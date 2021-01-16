@@ -26,7 +26,6 @@ $header = "Рабочий стол";
 	<script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
-	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 	<!-- /core JS files -->
 
 	<script src="<?= stack("global_assets/js/plugins/notifications/jgrowl.min.js") ?>"></script>
@@ -41,9 +40,6 @@ $header = "Рабочий стол";
 	<!-- /theme JS files -->
 
 	<script src="<?= stack("assets/js/app.js") ?>"></script>
-
-	<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
 
 	<!-- JS chained -->
 
