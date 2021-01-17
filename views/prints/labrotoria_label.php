@@ -7,7 +7,7 @@ is_auth();
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
         /*padding:2mm;*/
         margin: 0 auto;
-        width: 44mm;
+        width: 56mm;
         background: #FFF;
     }
     ::selection {background: #f31544; color: #FFF;}
@@ -84,10 +84,6 @@ is_auth();
 
     <div id="invoice-POS" >
 
-        <center id="top">
-            <div class="logo"></div>
-        </center>
-
         <div id="mid">
 
             <div class="info">
@@ -96,64 +92,14 @@ is_auth();
                 </span>
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
+
+                    <b>ID</b>: 182</br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
                 </p>
             </div>
 
         </div>
 
-        <div id="bot">
-
-            <div id="table">
-                <table>
-                    <tr class="tabletitle">
-                        <td class="item"><h2>Услуга</h2></td>
-                        <td class="Hours"><h2>шт</h2></td>
-                        <td class="Rate"><h2>сумма</h2></td>
-                    </tr>
-
-                    <?php $total_price = 0; ?>
-
-                    <?php foreach (json_decode($_GET['items']) as $item): ?>
-                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
-                        <tr class="service">
-        					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
-        					<td class="tableitem"><p class="itemtext">1</p></td>
-        					<td class="tableitem">
-                                <p class="itemtext">
-                                    <?php
-                                    echo number_format($row['price']);
-                                    $total_price += $row['price'];
-                                    ?>
-                                </p>
-                            </td>
-        				</tr>
-                    <?php endforeach; ?>
-
-    				<!-- <tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>tax</h2></td>
-    					<td class="payment"><h2>$419.25</h2></td>
-    				</tr> -->
-
-    				<tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>Итого</h2></td>
-    					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
-    				</tr>
-
-    			</table>
-    		</div>
-
-            <!-- <div id="legalcopy">
-    			<p class="legal">
-                    <strong>Thank you for your business!</strong>
-                    Payment is expected within 31 days; please process this invoice within that time.
-                    There will be a 5% interest charge per month on late invoices.
-    			</p>
-    		</div> -->
-
-        </div>
 
     </div>
 

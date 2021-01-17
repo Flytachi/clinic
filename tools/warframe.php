@@ -7,14 +7,18 @@ require_once 'functions/connection.php';
 if ($ini['GLOBAL_SETTING']['DEBUG']) {
 
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
+    define('DIR', ROOT_DIR);
 
-    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR or $_SERVER['HTTP_HOST'] == $ini['SOCKET']['HOST']) {
-        define('DIR', "");
-    }else {
-        define('DIR', ROOT_DIR);
-    }
+    // if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR or $_SERVER['HTTP_HOST'] == $ini['SOCKET']['HOST']) {
+        // define('DIR', "");
+    // }else {
+        // define('DIR', ROOT_DIR);
+    // }s
 
 }else {
+    if (condition) {
+        # code...
+    }
     define('DIR', "");
 }
 
