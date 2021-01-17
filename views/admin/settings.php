@@ -62,6 +62,7 @@ $header = "Персонал";
                         // $ini['GLOBAL_SETTING']['RES_PROC'] = $_POST['proc'];
                         prit($ini);
                     }
+					write_exel();
                     ?>
 
 				</div>

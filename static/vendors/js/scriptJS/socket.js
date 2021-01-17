@@ -37,13 +37,19 @@ function addZero(number){
 }
 
 conn.onerror = function(error) {
-  alert('asd')
-  conn.close();
+    new Noty({
+        text: 'Сокет сервер не включён!',
+        type: 'error'
+    }).show();
+    conn.close();
 };
 
 conn.onclose = function(error) {
-  alert('asd')
-  conn.close();
+    new Noty({
+        text: 'Сокет сервер был  выключен!',
+        type: 'error'
+    }).show();
+    conn.close();
 };
 
 conn.onopen = function(e) {

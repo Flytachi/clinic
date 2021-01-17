@@ -281,4 +281,32 @@ function read_excel($filepath){
     $ar = $objPHPExcel->getActiveSheet()->toArray(); // выгружаем данные из объекта в массив
     return $ar; //возвращаем массив
 }
+
+function write_exel($value='')
+{
+    // Redirect output to a client’s web browser (Excel5)
+    header("Content-type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=demo.xls");
+    header('Cache-Control: max-age=0');
+
+    // PHPExcel
+    require_once 'PHPExcel/Classes/PHPExcel.php';
+    require_once 'PHPExcel/Classes/PHPExcel/IOFactory.php';
+
+    // Create new PHPExcel object
+    $objPHPExcel = new PHPExcel();
+
+    // Set Orientation, size and scaling
+    $objPHPExcel->setActiveSheetIndex(0);
+    $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+    $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
+    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
+    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+
+    // Generate spreadsheet
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+    $objWriter->save('php://output');
+    exit;
+}
 ?>
