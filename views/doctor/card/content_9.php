@@ -42,6 +42,47 @@ $header = "Пациент";
 
 						<div class="row">
 
+							<div class="col-md-12">
+
+								<div class="card">
+
+									<div class="card-header header-elements-inline">
+										<h5 class="card-title">Операционный блок</h5>
+										<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+											<div class="header-elements">
+												<div class="list-icons">
+													<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add_operation">
+														<i class="icon-plus22"></i>Добавить
+													</a>
+												</div>
+											</div>
+										<?php endif; ?>
+									</div>
+
+									<div class="table-responsive">
+										<table class="table table-hover table-sm">
+											<thead>
+												<tr class="bg-info">
+													<th>№</th>
+						                            <th>Специалист</th>
+													<th>Дата визита</th>
+													<th>Дата завершения</th>
+						                            <th>Мед услуга</th>
+													<th>Тип визита</th>
+													<th>Статус</th>
+													<th class="text-center">Действия</th>
+												</tr>
+											</thead>
+											<tbody>
+
+											</tbody>
+										</table>
+									</div>
+
+								</div>
+
+							</div>
+
 							<?php if ($patient->oper_date): ?>
 								<div class="col-md-7">
 
@@ -268,28 +309,6 @@ $header = "Пациент";
 									</div>
 
 								</div>
-							<?php elseif($patient->grant_id == $_SESSION['session_id']): ?>
-								<div class="col-md-12">
-
-									<div class="card">
-
-										<div class="card-header header-elements-inline bg-info">
-											<h5 class="card-title">Операционный блок</h5>
-										</div>
-
-										<div class="card-body">
-											<?= VisitModel::form_oper() ?>
-										<div>
-
-									</div>
-
-								</div>
-							<?php else: ?>
-								<div class="col-md-12">
-									<div class="alert alert-warning" role="alert">
-							            Операция не назначена
-							        </div>
-								</div>
 							<?php endif; ?>
 
 
@@ -307,6 +326,22 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_add_operation" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Назначить операцию</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+
+				<div class="modal-body">
+					<?= VisitModel::form_oper() ?>
+				</div>
+
+			</div>
+		</div>
+	</div>
 
 	<div id="modal_add_inspection" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">

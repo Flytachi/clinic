@@ -1758,6 +1758,7 @@ class BypassDateModel extends Model
                         $this->stop();
                     }
                     $post['visit_id'] = $this->post['visit_id'];
+                    $post['user_id'] = $user_pk;
                     $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$post['item_id']}")->fetch()['catg'];
                     if ($post['qty'] <= 1) {
                         $object = Mixin\delete('storage_preparat', $post['id']);
@@ -1946,6 +1947,7 @@ class StoragePreparatForm extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group row">
 
@@ -1983,6 +1985,7 @@ class StoragePreparatForm extends Model
         global $db;
         $order = $db->query("SELECT * FROM $this->table WHERE id={$this->post['product']}")->fetch();
         $post['visit_id'] = $this->post['visit_id'];
+        $post['user_id'] = $this->post['user_id'];
         $post['item_id'] = $order['preparat_id'];
         $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$order['preparat_id']}")->fetch()['catg'];
         $post['item_cost'] = $order['price'];
@@ -2041,6 +2044,7 @@ class StoragePreparatAnestForm extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group row">
 
@@ -2078,6 +2082,7 @@ class StoragePreparatAnestForm extends Model
         global $db;
         $order = $db->query("SELECT * FROM $this->table WHERE id={$this->post['product']}")->fetch();
         $post['visit_id'] = $this->post['visit_id'];
+        $post['user_id'] = $this->post['user_id'];
         $post['item_id'] = $order['preparat_id'];
         $post['item_type'] = $db->query("SELECT catg FROM products WHERE product_id = {$order['preparat_id']}")->fetch()['catg'];
         $post['item_cost'] = $order['price'];

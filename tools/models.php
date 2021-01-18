@@ -638,36 +638,82 @@ class VisitModel extends Model
     public function form_oper($pk = null)
     {
         global $db, $patient;
-        if($_SESSION['message']){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
 
                 <div class="col-md-4">
                     <label>Дата:</label>
                     <input type="date" class="form-control" name="oper_date">
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
                     <label>Время:</label>
                     <input type="time" class="form-control" name="oper_time">
                 </div>
 
-                <div class="col-md-4">
-                    <div class="text-right mt-4">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Назначить операцию</button>
-                    </div>
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
+                            ?>
+                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
+                            ?>
+                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
 
             </div>
 
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
         </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id").chained("#division_id");
+                $("#service_id").chained("#division_id");
+            });
+        </script>
         <?php
     }
 
@@ -950,8 +996,8 @@ class VisitPriceModel extends Model
                             parent_id.forEach(function(events) {
                                 let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
 
-                                par_id = $(events).val() 
-                                
+                                par_id = $(events).val()
+
                                 conn.send(obj);
                             });
                                 let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
@@ -1207,6 +1253,7 @@ class VisitPriceModel extends Model
         $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1")->fetch();
         $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN ward wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
         $post['visit_id'] = $ti['id'];
+        $post['user_id'] = $this->user_pk;
         $post['pricer_id'] = $this->post['pricer_id'];
         $post['item_type'] = 101;
         $post['item_id'] = $ti['bed_id'];

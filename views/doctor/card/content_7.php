@@ -92,7 +92,7 @@ $header = "Пациент";
 												<td><?= $row['description'] ?></td>
 												<td><?= $methods[$row['method']] ?></td>
 												<td class="text-center">
-													<?php foreach ($db->query("SELECT bd.status, bd.completed, bt.time FROM bypass_date bd LEFT JOIN bypass_time bt ON(bt.id=bd.bypass_time_id) WHERE bd.bypass_id = {$row['id']}") as $time): ?>
+													<?php foreach ($db->query("SELECT bd.status, bd.completed, bt.time FROM bypass_date bd LEFT JOIN bypass_time bt ON(bt.id=bd.bypass_time_id) WHERE bd.bypass_id = {$row['id']} AND bd.date = CURRENT_DATE()") as $time): ?>
 														<?php if ($time['status']): ?>
 															<?php if ($time['completed']): ?>
 																<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
