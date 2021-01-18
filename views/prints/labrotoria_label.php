@@ -53,7 +53,7 @@ is_auth();
     .info{
       display: block;
       //float:left;
-      margin-left: 0;
+      margin-left: 3px;
     }
     .title{
       float: right;
