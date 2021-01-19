@@ -1,13 +1,11 @@
 <?php
 
-	$filePath  = $_FILES['filedata']['tmp_name'];
-	$name = md5_file($filePath);
-    $pathPicture = '/files/' . $name . ".txt";
+	$uploaddir = 'files/';
+	$uploadfile = $uploaddir . basename($_FILES['filedata']['name']);
 
-    echo $pathPicture;
+	if (move_uploaded_file($_FILES['filedata']['tmp_name'], $uploadfile)) {
+	    echo "Файл корректен и был успешно загружен.\n";
+	} else {
+	    echo "Возможная атака с помощью файловой загрузки!\n";
+	}
 
-	$r = move_uploaded_file($filePath,$pathPicture);
-
-	echo strval($r);
-
-	// var_dump($_FILES);

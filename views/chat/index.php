@@ -170,7 +170,7 @@ $header = "Пациент";
 
 											<div class="d-flex align-items-center">
 												<div class="list-icons list-icons-extended">
-													<form id="lo" method="POST" action="saveFile.php" enctype="multipart/form-data">
+													<form id="lo" method="POST" enctype="multipart/form-data">
 
 														<!-- <input type="file" name="filedata">
 
@@ -241,7 +241,7 @@ $header = "Пациент";
 		  $(`#filedata`).remove();
 		  $.ajax({
 		      type : "POST",
-		      url : "../../test.php/modules/lox?id=8&pol=9",
+		      url : "../../route.php/modules/lox",
 		      data : formData,
 		      processData: false,
 		      contentType: false,
