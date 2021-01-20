@@ -621,7 +621,7 @@
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
                                     <?php
-                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.oper_date IS NOT NULL ORDER BY us.id ASC")->rowCount();
+                                    $con_tree = $db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL")->rowCount();
                                     if ($con_tree) {
                                         ?>
                                         <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>

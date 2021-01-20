@@ -1,4 +1,7 @@
 <?php
+
+	require_once 'tools/warframe.php';
+
 	class Apps {
 		function rout_test (){
 			print 'test1';
@@ -29,33 +32,35 @@
 		var $main_action = 'index'; // Функция, вызываемая по стандарту
 		var $funcs_prefix = 'rout_'; // Префикс к функциям
 		var $modules = 'modules'; // Название роута для объекта, в нашем случае модули
-			 
-		function __construct (){
+
+		function __construct (){http://clinic.loc/views/doctor/card/content_9.php?id=15
 
 			$_SERVER['REQUEST_URI'] = strtok($_SERVER['REQUEST_URI'], "?");
 
 			$this->routs = explode('/', $_SERVER['REQUEST_URI']); // Разделяем наш запрос
 
-			if ($this->routs[3] == $this->modules OR !count($this->routs[3])) { // Если передаётся нужный нам объект либо вообще ничего
+			var_dump($this->routs);
 
-				$this->action = $this->routs[4];
+			if ($this->routs[1] == $this->modules OR !count($this->routs[1])) { // Если передаётся нужный нам объект либо вообще ничего
+
+				$this->action = $this->routs[2];
 
 				$this->action = ($this->action == NULL OR !count($this->action)) ? $this->main_action : $this->action;
 
-				$this->get_routs(); 
+				$this->get_routs();
 
 			}
 
 		}
-					 
+
 		function get_routs(){
 
-			$action = $this->funcs_prefix . $this->action;	// Получаем название функции  
+			$action = $this->funcs_prefix . $this->action;	// Получаем название функции
 			if(method_exists($this, $action)) $this->$action(); // Если функция присутствует, то выполняем
-			else die('Возникла ошибка, ваш запрос не верен!'); 
-					     
+			else die('Возникла ошибка, ваш запрос не верен!');
+
 		}
-		 
+
 	}
 
     $routing = new Routing;

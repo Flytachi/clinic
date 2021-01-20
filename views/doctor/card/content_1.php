@@ -105,7 +105,7 @@ $header = "Пациент";
 										<?php endforeach; ?>
 
 										<?php if ($patient->direction): ?>
-											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id AND status IS NULL ORDER BY add_date DESC") as $row): ?>
+											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
 												<tr>
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 													<td><?= get_full_name($row['parent_id']) ?></td>

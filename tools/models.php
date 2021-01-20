@@ -635,88 +635,6 @@ class VisitModel extends Model
         <?php
     }
 
-    public function form_oper($pk = null)
-    {
-        global $db, $patient;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="1">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-4">
-                    <label>Дата:</label>
-                    <input type="date" class="form-control" name="oper_date">
-                </div>
-
-                <div class="col-md-2">
-                    <label>Время:</label>
-                    <input type="time" class="form-control" name="oper_time">
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
-        </form>
-        <script type="text/javascript">
-            $(function(){
-                $("#parent_id").chained("#division_id");
-                $("#service_id").chained("#division_id");
-            });
-        </script>
-        <?php
-    }
-
     public function save()
     {
         global $db;
@@ -1339,84 +1257,6 @@ class VisitInspectionModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-
-            <div class="modal-body">
-
-                <div class="row">
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Описание:</label>
-                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
-                    </div>
-
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Диагноз:</label>
-                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
-                    </div>
-
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Рекомендации:</label>
-                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
-        </form>
-        <?php
-    }
-
-    public function form_anest($pk = null)
-    {
-        global $db, $patient;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="1">
-
-            <div class="modal-body">
-
-                <div class="row">
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Описание:</label>
-                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
-                    </div>
-
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Диагноз:</label>
-                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
-                    </div>
-
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Рекомендации:</label>
-                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
-        </form>
-        <?php
-    }
-
-    public function form_oper($pk = null)
-    {
-        global $db, $patient;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="2">
 
             <div class="modal-body">
 
@@ -2905,73 +2745,6 @@ class PatientStatsModel extends Model
         <?php
     }
 
-    public function form_oper($pk = null)
-    {
-        global $db, $patient;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="status" value="2">
-
-            <div class="modal-body">
-
-                <div class="form-group row">
-
-                    <div class="col-md-6">
-                        <label>Время:</label>
-                        <input type="time" class="form-control" name="time">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label>Давление:</label>
-                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление">
-                    </div>
-
-                </div>
-
-                <div class="form-group row">
-
-                    <div class="col-md-4">
-                        <label>Пульс:</label>
-                        <input type="number" class="form-control" name="pulse" min="40" step="1" max="150" value="85" placeholder="Введите пульс" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Температура:</label>
-                        <input type="number" class="form-control" name="temperature" min="35" step="0.1" max="42" value="36.6" placeholder="Введите температура" required>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Сатурация:</label>
-                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
-            </div>
-
-        </form>
-        <?php
-    }
-
-    public function clean()
-    {
-        if ($this->post['status'] and $this->post['time']) {
-            $this->post['add_date'] = date('Y-m-d ') . $this->post['time'];
-            unset($this->post['time']);
-        }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        return True;
-    }
-
     public function success()
     {
         $_SESSION['message'] = '
@@ -3213,9 +2986,9 @@ class StoragePreparatModel extends Model
     }
 }
 
-class VisitMemberModel extends Model
+class OperationMemberModel extends Model
 {
-    public $table = 'visit_member';
+    public $table = 'operation_member';
 
     public function form($pk = null)
     {
@@ -3223,15 +2996,15 @@ class VisitMemberModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="operation_id" value="<?= $patient->pk ?>">
 
             <div class="modal-body">
 
                 <div class="form-group">
                     <label>Член персонала:</label>
                     <select placeholder="Введите состояние" name="member_id" class="form-control form-control-select2">
-                        <?php foreach ($db->query("SELECT us.id, IFNULL(vm.id, NULL) 'vm_id' FROM users us LEFT JOIN visit_member vm ON(vm.member_id=us.id AND vm.status IS NULL AND vm.visit_id=$patient->visit_id) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($row['vm_id']) ? "disabled" : "" ?>><?= get_full_name($row['id']) ?></option>
+                        <?php foreach ($db->query("SELECT us.id, IFNULL(opm.id, NULL) 'opm_id' FROM users us LEFT JOIN operation_member opm ON(opm.member_id=us.id AND opm.status IS NULL AND opm.operation_id=$patient->pk) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($row['opm_id']) ? "disabled" : "" ?>><?= get_full_name($row['id']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -3277,4 +3050,353 @@ class VisitMemberModel extends Model
     }
 }
 
+class OperationModel extends Model
+{
+    public $table = 'operation';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
+                            ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label>Дата:</label>
+                    <input type="date" class="form-control" name="oper_date">
+                </div>
+
+                <div class="col-md-2">
+                    <label>Время:</label>
+                    <input type="time" class="form-control" name="oper_time">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Выберите специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
+                        <?php
+                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
+                            ?>
+                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Услуга:</label>
+                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
+                        <option></option>
+                        <?php
+                        foreach($db->query('SELECT * from service WHERE user_level = 5 AND type = 3') as $row) {
+                            ?>
+                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#parent_id").chained("#division_id");
+                $("#service_id").chained("#division_id");
+            });
+        </script>
+        <?php
+    }
+
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        if ($_GET['finish']) {
+            $this->finish($pk);
+        }
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+            $this->set_post($object);
+            return $this->form($object['id']);
+        }else{
+            Mixin\error('404');
+        }
+
+    }
+
+    public function finish()
+    {
+        Mixin\error('404');
+    }
+
+    public function clean()
+    {
+        $this->post['oper_date'] .= " ".$this->post['oper_time'];
+        unset($this->post['oper_time']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
+    public function save()
+    {
+        global $db;
+        if($this->clean()){
+            $object = Mixin\insert($this->table, $this->post);
+            if (!intval($object)){
+                $this->error($object);
+            }
+            $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
+            $post['visit_id'] = $this->post['visit_id'];
+            $post['user_id'] = $this->post['user_id'];
+            $post['item_type'] = 5;
+            $post['item_id'] = $this->post['service_id'];
+            $post['item_cost'] = $service['price'];
+            $post['item_name'] = $service['name'];
+            $object = Mixin\insert('visit_price', $post);
+            if (!intval($object)){
+                $this->error($object);
+            }
+
+            $this->success();
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
+
+class OperationInspectionModel extends Model
+{
+    public $table = 'operation_inspection';
+
+    public function form_anest($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="operation_id" value="<?= $patient->pk ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="operation_id" value="<?= $patient->pk ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="status" value="1">
+
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Описание:</label>
+                        <textarea rows="8" cols="3" name="description" class="form-control" placeholder="Описание"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Диагноз:</label>
+                        <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Диагноз"></textarea>
+                    </div>
+
+                    <div class="col-md-10 offset-md-1">
+                        <label class="col-form-label">Рекомендации:</label>
+                        <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Рекомендации"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-info" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+}
+
+class OperationStatsModel extends Model
+{
+    public $table = 'operation_stats';
+
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="operation_id" value="<?= $patient->pk ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+
+                    <div class="col-md-6">
+                        <label>Время:</label>
+                        <input type="time" class="form-control" name="time">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Давление:</label>
+                        <input type="text" class="form-control" name="pressure" placeholder="Введите давление">
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+
+                    <div class="col-md-4">
+                        <label>Пульс:</label>
+                        <input type="number" class="form-control" name="pulse" min="40" step="1" max="150" value="85" placeholder="Введите пульс" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Температура:</label>
+                        <input type="number" class="form-control" name="temperature" min="35" step="0.1" max="42" value="36.6" placeholder="Введите температура" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Сатурация:</label>
+                        <input type="number" class="form-control" name="saturation" min="25" max="100" placeholder="Введите cатурация" required>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
 ?>

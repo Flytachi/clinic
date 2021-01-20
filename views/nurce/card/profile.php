@@ -5,7 +5,7 @@ $sql = "SELECT
             us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
-            vs.oper_date, wd.floor, wd.ward, bd.bed
+            wd.floor, wd.ward, bd.bed
         FROM users us
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
@@ -115,6 +115,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
                                     IFNULL($pl, 0) +
+                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) +
                                     (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) +
                                     (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
                                 )

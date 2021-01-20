@@ -12,7 +12,7 @@ if ($_GET['pk']) {
                 bdt.name 'bed_type',
                 bdt.price 'bed_price',
                 ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
-                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 1) 'cost_service',
+                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) 'cost_item_2',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
                 -- vs.add_date
@@ -34,7 +34,7 @@ if ($_GET['pk']) {
     <div class="table-responsive mt-3">
         <table class="table table-hover">
             <thead>
-                <tr class="bg-blue">
+                <tr class="bg-dark">
                     <th class="text-left" colspan="2">Наименование</th>
                     <th>Дата и время</th>
                     <th class="text-right">Сумма</th>
@@ -48,12 +48,12 @@ if ($_GET['pk']) {
                     <td class="text-right"><?= number_format($price['cost_bed']) ?></td>
                 </tr>
 
-                <tr class="text-center table-primary">
-                    <td colspan="3" class="text-left">Мед услуги</td>
+                <tr class="text-center table-secondary">
+                    <td colspan="3" class="text-left">Мед услуги / Операции</td>
                     <td class="text-right"><?= number_format($price['cost_service']) ?></td>
                 </tr>
                 <?php foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND priced_date IS NULL") as $val): ?>
-                    <?php foreach ($db->query("SELECT * FROM visit_price WHERE visit_id = {$val['id']} AND item_type = 1") as $row): ?>
+                    <?php foreach ($db->query("SELECT * FROM visit_price WHERE visit_id = {$val['id']} AND item_type IN (1,5)") as $row): ?>
                         <tr>
                             <!-- <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>"> -->
                             <td colspan="2"><?= $row['item_name'] ?></td>
@@ -66,7 +66,7 @@ if ($_GET['pk']) {
                     <?php endforeach; ?>
                 <?php endforeach; ?>
 
-                <tr class="table-primary">
+                <tr class="table-secondary">
                     <td>Препараты</td>
                     <td>Количество</td>
                     <td>Цена ед.</td>
@@ -81,7 +81,7 @@ if ($_GET['pk']) {
                     </tr>
                 <?php endforeach; ?>
 
-                <tr class="table-primary">
+                <tr class="table-secondary">
                     <td>Расходные материалы</td>
                     <td>Количество</td>
                     <td>Цена ед.</td>

@@ -55,12 +55,10 @@ $header = "Операционные пациенты";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.grant_id IS NOT NULL AND vs.service_id = 1 AND vs.oper_date IS NOT NULL ORDER BY vs.oper_date DESC") as $row) {
-                                        ?>
-                                        <tr>
-                                            <td><?= addZero($row['id']) ?></td>
-                                            <td>
+									<?php foreach ($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL") as $row): ?>
+										<tr>
+											<td><?= addZero($row['id']) ?></td>
+											<td>
 												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
 												<div class="text-muted">
 													<?php
@@ -70,14 +68,14 @@ $header = "Операционные пациенты";
 													?>
 												</div>
 											</td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-                                            <td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
-                                                <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
+											<td class="text-center">
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+												<div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
 													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Осмотр Врача</a>
 													<a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
 													<a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
@@ -85,11 +83,9 @@ $header = "Операционные пациенты";
                                                     <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
                                                     <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>
-                                              </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    ?>
+											</td>
+										</tr>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
