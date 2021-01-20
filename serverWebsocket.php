@@ -37,12 +37,13 @@ class Chat implements MessageComponentInterface {
             $type = $mas->{'type'};
 
             if($type == "messages"){
-              $id_push = $mas->{"id"};
-              $id_pull = $mas->{"id_cli"};
-              $message = $mas->{"message"};
-              $type = $mas->{'type'};
+				$id_push = $mas->{"id"};
+				$id_pull = $mas->{"id_cli"};
+				$message = $mas->{"message"};
+				$type = $mas->{'type'};
+				$type_message = $mas->{'type_message'};
             }else{
-                $type = $mas->{'type'};
+				$type = $mas->{'type'};
             }
         }
 
@@ -63,8 +64,22 @@ class Chat implements MessageComponentInterface {
 
           $time = $hour .":". $minute;
 
+          switch ($type_message) {
+          	case 'text':
+				$sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
 
-          $sql = "INSERT INTO `chat` (`id`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$id_push', '$id_pull', '$message', '$date', '$time')";
+          		break;
+          	case 'file':
+				$sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
+          		break;
+          	case 'image':
+				$sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
+          		break;
+          	default:
+          		# code...
+          		break;
+          }
+
 
           echo $sql;
 

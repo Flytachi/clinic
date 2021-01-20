@@ -122,11 +122,42 @@ $header = "Пациент";
 
 														if($val['id_push'] == $id){
 
+															switch ($val['type_message']) {
+																case 'text':
+																
 												?>
 															<li class="media media-chat-item-reverse">
 																<div class="media-body">
 																	<div class="media-chat-item"><?=$val['message']?></div>
-														<div class="font-size-sm text-muted mt-2">													<?=$val['time']?><a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																	<div class="font-size-sm text-muted mt-2"><?=$val['time']?>
+																		<a href="#">
+																			<i class="icon-pin-alt ml-2 text-muted"></i>
+																		</a>
+																	</div>
+																</div>
+
+																<div class="ml-3">
+																	<a href="#">
+																		<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+																	</a>
+																</div>
+															</li>
+
+												<?php
+
+																break;
+																case 'file':
+																
+												?>
+															<li class="media media-chat-item-reverse">
+																<div class="media-body">
+																	<div class="media-chat-item"> 
+																		<a style="color: white;" href="<?=$val['message']?>" download>Скачать файл</a> 
+																	</div>
+																	<div class="font-size-sm text-muted mt-2"><?=$val['time']?>
+																		<a href="#">
+																			<i class="icon-pin-alt ml-2 text-muted"></i>
+																		</a>
 																	</div>
 																</div>
 
@@ -139,25 +170,110 @@ $header = "Пациент";
 
 													<?php
 
-														}else{
-													?>
-
-															<li class="media">
-																<div class="mr-3">
-																	<a href="#">
-																		<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-																	</a>
+																	break;
+																	case 'image':
+																
+												?>
+															<li class="media media-chat-item-reverse">
+																<div class="media-body">
+																	<div class="media-chat-item"> 
+																		<img src="<?=$val['message']?>" width="200">
+																	</div>
+																	<div class="font-size-sm text-muted mt-2"><?=$val['time']?>
+																		<a href="#">
+																			<i class="icon-pin-alt ml-2 text-muted"></i>
+																		</a>
+																	</div>
 																</div>
 
-																<div class="media-body">
-																	<div class="media-chat-item"><?=$val['message']?></div>
-																	<div class="font-size-sm text-muted mt-2">
-																		<?=$val['time']?><a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-																	</div>
+																<div class="ml-3">
+																	<a href="#">
+																		<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+																	</a>
 																</div>
 															</li>
 
-												<?php
+													<?php
+
+																	break;
+																default:
+																	echo $val['message'];
+
+																break;
+															}
+
+														}else{
+													
+															switch ($val['type_message']) {
+																case 'text':
+															?>
+																<li class="media">
+																	<div class="mr-3">
+																		<a href="#">
+																			<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+																		</a>
+																	</div>
+
+																	<div class="media-body">
+																		<div class="media-chat-item"><?=$val['message']?></div>
+																		<div class="font-size-sm text-muted mt-2">
+																			<?=$val['time']?><a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																		</div>
+																	</div>
+																</li>
+
+															<?php
+																break;
+
+																case 'file':	
+															?>
+																<li class="media">
+																	<div class="mr-3">
+																		<a href="#">
+																			<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+																		</a>
+																	</div>
+
+																	<div class="media-body">
+																		<div class="media-chat-item">
+																			<a style="color: #333333;" href="<?=$val['message']?>" download>Скачать файл</a>
+																		</div>
+																		<div class="font-size-sm text-muted mt-2">
+																			<?=$val['time']?><a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																		</div>
+																	</div>
+																</li>
+															<?php
+																break;
+
+																case 'image':
+															?>
+
+																<li class="media">
+																	<div class="mr-3">
+																		<a href="#">
+																			<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+																		</a>
+																	</div>
+
+																	<div class="media-body">
+																		<div class="media-chat-item">
+																			<img src="<?=$val['message']?>" width="200">
+																		</div>
+																		<div class="font-size-sm text-muted mt-2">
+																			<?=$val['time']?><a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
+																		</div>
+																	</div>
+																</li>
+
+															<?php
+																break;
+
+																default:
+																	echo $val['message'];
+																break;
+															}
+
 														}
 
 													}
@@ -170,15 +286,10 @@ $header = "Пациент";
 
 											<div class="d-flex align-items-center">
 												<div class="list-icons list-icons-extended">
-													<form id="lo" method="POST" enctype="multipart/form-data">
+													<form id="lo" method="POST" enctype="multipart/form-data" data-inputid="<?= $value['id'] ?>">
 
-														<!-- <input type="file" name="filedata">
-
-														<button type="submit">ee</button> -->
-
-														<a onclick="sendToFile(this)" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send photo"><i class="icon-file-picture"></i></a>
-														<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send video"><i class="icon-file-video"></i></a>
-														<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send file"><i class="icon-file-plus"></i></a>
+														<a onclick="sendToImage(this)" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send photo"><i class="icon-file-picture"></i></a>
+														<a onclick="sendToFile(this)" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send file"><i class="icon-file-plus"></i></a>
 													</form>
 												</div>
 
@@ -220,7 +331,7 @@ $header = "Пациент";
 				let id_cli = $(this).attr('data-inputid');
 				let word = $(this).val();
 				$(this).val('');
-				let obj = JSON.stringify({ type : 'messages',  id : id, id_cli : id_cli, message : word });
+				let obj = JSON.stringify({ type : 'messages',  type_message : 'text', id : id, id_cli : id_cli, message : word });
 				conn.send(obj);
 			}
 		});
@@ -234,6 +345,15 @@ $header = "Пациент";
 		  file.click();
 		}
 
+		function sendToImage(body) {
+		  file = document.createElement('input');
+		  file.setAttribute('type', `file`);
+		  file.setAttribute('onchange', `sendToI(this)`);
+		  file.setAttribute('name', `filedata`);
+		  file.setAttribute('id', `filedata`);
+		  file.click();
+		}
+
 		function sendTo(body) {
 		  let form = $(`#lo`) ;
 		  $(`#lo`).prepend(body);
@@ -241,7 +361,7 @@ $header = "Пациент";
 		  $(`#filedata`).remove();
 		  $.ajax({
 		      type : "POST",
-		      url : "../../route.php/modules/lox",
+		      url : "saveFile.php",
 		      data : formData,
 		      processData: false,
 		      contentType: false,
@@ -254,7 +374,37 @@ $header = "Пациент";
 		                 //   alert("Загрузка не выполнена");
 		                 // }
 
-		                 console.log(data);
+	                    let obj = JSON.stringify({ type : 'messages',  type_message : 'file', id : id, id_cli : $("#lo").attr('data-inputid'), message : data.file_url });
+						conn.send(obj);
+						console.log(obj);
+
+		               }
+		    })
+		}
+
+		function sendToI(body) {
+		  let form = $(`#lo`) ;
+		  $(`#lo`).prepend(body);
+		  let formData = new FormData(form[0]);
+		  $(`#filedata`).remove();
+		  $.ajax({
+		      type : "POST",
+		      url : "saveImage.php",
+		      data : formData,
+		      processData: false,
+		      contentType: false,
+		      success: function(data){
+		                 // if(data.msg == 'ok'){
+		                 //   alert("Загрузка выполнена успешно");
+		                 //   console.log(data)
+		                 //   socket.emit('fileSend', {data});
+		                 // }else{
+		                 //   alert("Загрузка не выполнена");
+		                 // }
+
+	                    let obj = JSON.stringify({ type : 'messages',  type_message : 'image', id : id, id_cli : $("#lo").attr('data-inputid'), message : data.file_url });
+						conn.send(obj);
+						console.log(obj);
 
 		               }
 		    })
