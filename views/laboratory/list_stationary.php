@@ -56,7 +56,7 @@ $header = "Стационарные пациенты";
 									<tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
+										<th>Возраст</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:210px">Действия</th>
@@ -64,7 +64,14 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date DESC") as $row) {
+									$sql = "SELECT DISTINCT us.id, vs.route_id,
+											(
+												(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+												(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+											) 'age'
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date DESC";
+                                    foreach($db->query($sql) as $row) {
                                         ?>
 										<tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -78,7 +85,7 @@ $header = "Стационарные пациенты";
 													?>
 												</div>
 											</td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= $row['age'] ?></td>
                                             <td>
 												<?php
                                                 foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL") as $serv) {

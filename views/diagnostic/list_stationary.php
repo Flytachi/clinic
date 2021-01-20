@@ -49,7 +49,8 @@ $header = "Стационарные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
+										<th>Возраст</th>
+                                        <th>Дата приёма</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:210px">Действия</th>
@@ -58,11 +59,21 @@ $header = "Стационарные пациенты";
                                 <tbody>
                                     <?php
 									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.parent_id, vs.assist_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
-									}elseif (division_assist() == 1) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, vs.parent_id, vs.assist_id,
+												(
+													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+												) 'age'
+												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									}else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
+										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint,
+												(
+													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+												) 'age'
+												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}
                                     foreach($db->query($sql) as $row) {
 										if (division_assist() == 2) {
@@ -89,14 +100,11 @@ $header = "Стационарные пациенты";
 													?>
 												</div>
 											</td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= $row['age'] ?></td>
+											<td><?= $row['name']; ?></td>
                                             <td>
 												<?php
-												if (division_assist() == 2) {
-													$sql_ser = "SELECT * FROM service WHERE id = {$row['service_id']}";
-												}else {
-													$sql_ser = "SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL";
-												}
+												$sql_ser = "SELECT * FROM service WHERE id = {$row['service_id']}";
                                                 foreach ($db->query($sql_ser) as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
@@ -108,7 +116,7 @@ $header = "Стационарные пациенты";
 											</td>
                                             <td class="text-center">
 												<?php if ($tr != "table-danger"): ?>
-													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $row['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
 												<?php endif; ?>
                                           	</td>
                                         </tr>
@@ -147,13 +155,14 @@ $header = "Стационарные пациенты";
 
 	<script type="text/javascript">
 
-		function ResultShow(events) {
+		function ResultShow(events, title) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
 					$('#modal_result_show').modal('show');
 					$('#modal_result_show_content').html(result);
+					$('#report_title').val(title);
 				},
 			});
 		};

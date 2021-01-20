@@ -102,7 +102,7 @@
                             <li class="nav-item">
                                 <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
-                                    <span>УчтепаВрачи оператор</span>
+                                    <span>Врачи операторы</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -127,6 +127,13 @@
                                     <span>Список пациентов</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 3:
@@ -135,6 +142,12 @@
                                 <a href="<?= viv('cashbox/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Приём платежей</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/refund') ?>" class="nav-link legitRipple">
+                                    <i class="icon-display"></i>
+                                    <span>Возврат</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -153,6 +166,13 @@
                                 <a href="<?= viv('cashbox/list_report') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Отчёт</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php
@@ -213,6 +233,13 @@
                                     <span>Все наименования</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 5:
@@ -222,7 +249,7 @@
                                     <i class="icon-user-plus"></i>
                                     <span>Принять пациентов</span>
                                     <?php
-                                    $con_one = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_one = $db->query("SELECT DISTINCT vs.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                     if ($con_one) {
                                         ?>
                                         <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
@@ -275,6 +302,13 @@
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php
@@ -335,6 +369,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 7:
@@ -377,6 +418,13 @@
                                     <span>Склад</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 8:
@@ -411,6 +459,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 9:
@@ -425,6 +480,13 @@
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php
@@ -458,7 +520,7 @@
                                         <i class="icon-users2 "></i>
                                         <span>Амбулаторные пациенты</span>
                                         <?php
-                                        $con_two = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_two = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_two) {
                                             ?>
                                             <span class="badge bg-blue badge-pill ml-auto"><?=$con_two?></span>
@@ -472,7 +534,7 @@
                                         <i class="icon-users2"></i>
                                         <span>Стационарные пациенты</span>
                                         <?php
-                                        $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_tree = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.assist_id IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_tree) {
                                             ?>
                                             <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
@@ -507,7 +569,7 @@
                                         <i class="icon-users2 "></i>
                                         <span>Амбулаторные пациенты</span>
                                         <?php
-                                        $con_two = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_two = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_two) {
                                             ?>
                                             <span class="badge bg-blue badge-pill ml-auto"><?=$con_two?></span>
@@ -521,7 +583,7 @@
                                         <i class="icon-users2"></i>
                                         <span>Стационарные пациенты</span>
                                         <?php
-                                        $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                        $con_tree = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                         if ($con_tree) {
                                             ?>
                                             <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
@@ -543,6 +605,13 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 11:
@@ -552,7 +621,7 @@
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
                                     <?php
-                                    $con_tree = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.oper_date IS NOT NULL ORDER BY us.id ASC")->rowCount();
+                                    $con_tree = $db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL")->rowCount();
                                     if ($con_tree) {
                                         ?>
                                         <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
@@ -571,6 +640,12 @@
                                 <a href="<?= viv('anesthetist/storage') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Склад</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Чат</span>
                                 </a>
                             </li>
                             <?php

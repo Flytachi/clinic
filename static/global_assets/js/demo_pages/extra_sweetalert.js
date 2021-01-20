@@ -40,8 +40,190 @@ var SweetAlert = function () {
         //
 
         $('#sweet_visit_finish').on('click', function(event) {
+
             event.preventDefault();
             var url = this.dataset.href;
+
+            // Verification
+
+            if (this.dataset.btn == "Выписать") {
+
+                // Стационар
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 1,
+                        stage: 1,
+                    },
+                    success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно выписать!',
+                                text: 'У пациента есть не завершёные визиты.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 1,
+                        stage: 2,
+                    },
+                    success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно выписать!',
+                                text: 'Форма заключения не запонена.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 1,
+                        stage: 3,
+                    },
+                    success: function (data) {
+                        if (data) {
+                            if (!(data == 0)) {
+                                swal({
+                                    position: 'top',
+                                    title: 'Невозможно выписать!',
+                                    text: 'Дата выписки не совпадает с сегоднешней.',
+                                    type: 'error',
+                                    padding: 30
+                                });
+                                return 0;
+                            }
+                        }else {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно выписать!',
+                                text: 'Не назначена дата выписки.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+
+                    },
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 1,
+                        stage: 4,
+                    },
+                    success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно выписать!',
+                                text: 'В листе назначений есть не завершённые процедуры.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+
+                });
+
+                // $.ajax({
+                //     type: "GET",
+                //     url: $('#verification_url').val(),
+                //     data: {
+                //         id: this.dataset.user_id,
+                //         main: 1,
+                //         stage: 4,
+                //     },
+                //     success: function (data) {
+                //         if (data >= 1) {
+                //             swal({
+                //                 position: 'top',
+                //                 title: 'Невозможно выписать!',
+                //                 text: 'У пациента есть не завершёные визиты.',
+                //                 type: 'error',
+                //                 padding: 30
+                //             });
+                //             return 0;
+                //         }
+                //     },
+                //
+                // });
+                // --
+
+            } else {
+                // Амбулаторные
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 0,
+                        stage: 1,
+                    },
+                    success: function (data) {
+                        if (data == 0) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно завершить!',
+                                text: 'У вас нет ни одного завершающего отчёта.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 0,
+                        stage: 2,
+                    },
+                    success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно завершить!',
+                                text: 'У пациента есть не завершёные визиты.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+                });
+                // --
+            }
+
             swal({
                 position: 'top',
                 title: 'Вы уверены?',
@@ -54,6 +236,7 @@ var SweetAlert = function () {
                     window.location = url;
                 }
             });
+
         });
 
         $('#sweet_call_nurce').on('click', function(event) {

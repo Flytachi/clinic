@@ -36,6 +36,22 @@ function addZero(number){
     return strNumber;
 }
 
+conn.onerror = function(error) {
+    new Noty({
+        text: 'Сокет сервер не включён!',
+        type: 'error'
+    }).show();
+    conn.close();
+};
+
+conn.onclose = function(error) {
+    new Noty({
+        text: 'Сокет сервер был  выключен!',
+        type: 'error'
+    }).show();
+    conn.close();
+};
+
 conn.onopen = function(e) {
     console.log("Connection success!");
 };
@@ -73,6 +89,8 @@ conn.onmessage = function(e) {
   										</li>`)
   		     $(`ul[data-chatid=${d.id_cli}]`).scrollTop($(`ul[data-chatid=${d.id_cli}]`).prop('scrollHeight'));
   		}else{
+
+        $('#audio').trigger('play');
 
   			let active = $('a.show').attr('data-idChat');
 
@@ -127,15 +145,12 @@ conn.onmessage = function(e) {
 
   				let b = Number($(`b#noticeus`).text()) + 1;
 
-  				console.log(`vvvvvvvvvvvvvvvvvvvv ${ $(`b#noticeus`).html() }`)
-
   				$(`b#noticeus`).html('');
 
   				$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${b}</span>`);
 
   				$(`span[data-idChat=${d.id}]`).text(p)
 
-  				console.log(p);
   			}
   		}
   	}
@@ -180,9 +195,8 @@ conn.onmessage = function(e) {
             $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
             $(`tr[data-parentid=${ d.user[0].parent_id }][data-status=accept_patient]`).remove();
             $(`#${ d.user[0].parent_id }`).prepend(`
-              <tr data-userid="${ d.user[0].user_id }" data-parentid="${ d.user[0].parent_id }" data-status="accept_patient" style="font-weight: 900; font-size: 140%; background-color: #97E32F;">
-                <td>${ d.user[0].user_id }</td>
-                <td>${ d.user[0].first_name } - ${ d.user[0].last_name }</td>
+              <tr data-userid="${ d.user[0].user_id }" data-parentid="${ d.user[0].parent_id }" data-status="accept_patient" style="text-transform: uppercase; font-weight: 900; font-weight: 900; font-size: 250%; background-color: #97E32F;">
+                <td style="text-align: center;">${ d.user[0].user_id }</td>
               </tr>`)
             },
         });
@@ -191,6 +205,7 @@ conn.onmessage = function(e) {
 
       // События для монитора, добавление нового пациента
       if(d.id == id){
+
         $.ajax({
           type: "POST",
 
@@ -202,19 +217,46 @@ conn.onmessage = function(e) {
 
             let d = JSON.parse(data);
 
-            console.log('ew')
+            $('#wew').html(`Новый пациент ${d.queue[0].last_name} - ${d.queue[0].first_name}`)
+
+            footer.marquee('resume');
 
             // Проигрывается аудио уведомления
             $('#audio').trigger('play');
 
+            console.log('---------------------------------------------------------------')
+
             // Удаляется и добавляется заново подсвеченным зеленым
-            $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" style="font-weight: 900; font-size: 140%;" data-parentid="${ d.queue[0].parent_id }">
-                          <td>${ d.queue[0].user_id }</td>
-                          <td>${ d.queue[0].last_name } - ${ d.queue[0].first_name }</td>
+
+            console.log(d);
+
+            $(`#${ d.queue[0].parent_id }`).append(`<tr data-userid="${ d.queue[0].user_id }" style="text-transform: uppercase; font-weight: 900; font-size: 250%;" data-parentid="${ d.queue[0].parent_id }">
+                          <td style="text-align: center;">${ d.queue[0].user_id }</td>
                           </tr>`);
             },
         });
 
+      }
+  }else if (d.type == "delet_patient" ) {
+
+      // События для монитора, принятие к доктору
+      if(d.id == id){
+
+        $.ajax({
+          type: "POST",
+
+          url: "visitpd.php",
+
+          data: { id_user: d.user_id, id_patient: d.parent_id },
+
+          success: function (data) {
+
+            let d = JSON.parse(data);
+
+            // Удаляется пациент
+            $(`tr[data-userid=${ d.user[0].user_id }][data-parentid=${ d.user[0].parent_id }]`).remove();
+            },
+        });
       }
   }
 };
@@ -266,4 +308,12 @@ function sendPatient(body) {
   userid = body.dataset.userid;
   let obj = JSON.stringify({ type : 'accept_patient', id : "1983", user_id : userid, parent_id : parentid});
   conn.send(obj);
+}
+
+function deletPatient(body) {
+  parentid = body.dataset.parentid;
+  userid = body.dataset.userid;
+  let obj = JSON.stringify({ type : 'delet_patient', id : "1983", user_id : userid, parent_id : parentid});
+  conn.send(obj);
+  console.log( obj);
 }

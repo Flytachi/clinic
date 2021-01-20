@@ -74,7 +74,8 @@ $header = "Анализы";
                                         <th>Код</th>
                                         <th>Название</th>
                                         <th>Услуга</th>
-                                        <th>Норматив</th>
+                                        <th>Норма</th>
+										<th>Ед</th>
                                         <th>Статус</th>
                                         <th style="width: 100px">Действия</th>
                                     </tr>
@@ -94,7 +95,8 @@ $header = "Анализы";
                                                 echo $stmt->name;
                                                 ?>
                                             </td>
-                                            <td><?= $row['standart'] ?></td>
+                                            <td><?= $row['standart_min']."-".$row['standart_max'] ?></td>
+											<td><?= $row['unit'] ?></td>
                                             <td><?= ($row['status']) ? "Активный" : "Не активный" ?></td>
                                             <td>
 												<div class="list-icons">

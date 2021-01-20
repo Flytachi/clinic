@@ -5,7 +5,7 @@ $sql = "SELECT
             us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
-            vs.oper_date, wd.floor, wd.ward, bd.bed
+            wd.floor, wd.ward, bd.bed, vs.complaint
         FROM users us
             LEFT JOIN visit vs ON (vs.user_id = us.id)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
@@ -98,14 +98,6 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
                     </div>
 
-                    <!-- <div class="col-md-12">
-                        <div class="form-group row">
-                            <label class="col-form-label col-md-2"><b>Жалоба:</b></label>
-                            <div class="col-md-10">
-                                <input type="text" class="form-control" value="<?= $patient->complaint ?>" disabled>
-                            </div>
-                        </div>
-                    </div> -->
                 </fieldset>
 
                 <?php
@@ -126,6 +118,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
                                     IFNULL($pl, 0) +
+                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) +
                                     (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) +
                                     (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
                                 )
@@ -215,6 +208,12 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 }
                 ?>
 
+                <?php if (!$patient->direction): ?>
+                    <div class="col-md-12">
+                        <b>Жалоба: </b><?= $patient->complaint ?>
+                    </div>
+                <?php endif; ?>
+
             </div>
 
             <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
@@ -253,10 +252,10 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 <div class="text-right">
                     <?php
                     if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
-                        $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!"';
+                        $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-user_id="'.$patient->id.'"';
                         $button_inner = "Выписать";
                     }else {
-                        $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!"';
+                        $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-user_id="'.$patient->id.'"';
                         $button_inner = "Завершить";
                     }
                     ?>
@@ -265,6 +264,8 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     </button>
                 </div>
             </div>
+
+            <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
 
         </div>
 

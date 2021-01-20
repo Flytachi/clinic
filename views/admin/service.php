@@ -41,36 +41,55 @@ $header = "Услуги";
 				<div class="card">
 
           			<div class="card-header header-elements-inline">
-		              	<h5 class="card-title">Шаблон</h5>
-		              	<div class="header-elements">
-	                  		<div class="list-icons">
-								<a href="../templates/service.xlsx" class="btn" download>Шаблон</a>
-		                      	<a class="list-icons-item" data-action="collapse"></a>
-		                  	</div>
-		              	</div>
-		          	</div>
-
-		          	<div class="card-body">
-						<?php ServiceModel::form_template(); ?>
-		          	</div>
-
-	        	</div>
-
-
-
-				<div class="card">
-
-          			<div class="card-header header-elements-inline">
 		              	<h5 class="card-title">Добавить Услугу</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
-		                      	<a class="list-icons-item" data-action="collapse"></a>
+								<a href="../templates/service.xlsx" class="btn" download>Шаблон</a>
 		                  	</div>
 		              	</div>
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php ServiceModel::form(); ?>
+
+						<?php if ($_POST['flush']): ?>
+
+							<?php
+							Mixin\T_flush('service');
+							$task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
+							// Mixin\T_flush('visit');
+							// Mixin\T_flush('visit_price');
+							// Mixin\T_flush('visit_member');
+							// Mixin\T_flush('visit_inspection');
+							// Mixin\T_flush('bypass');
+							// Mixin\T_flush('bypass_date');
+							// Mixin\T_flush('bypass_time');
+							// Mixin\T_flush('bypass_preparat');
+							// Mixin\T_flush('investment');
+							// Mixin\T_flush('laboratory_analyze');
+							?>
+
+							<?php if (intval($task) == 1): ?>
+								<div class="alert alert-primary" role="alert">
+						            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+						            Услуги успешно очищены!
+						        </div>
+							<?php else: ?>
+								<div class="alert bg-danger alert-styled-left alert-dismissible">
+									<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+									<span class="font-weight-semibold"><?= $task ?></span>
+							    </div>
+							<?php endif; ?>
+
+						<?php endif; ?>
+
+						<div class="row">
+
+							<div class="col-md-9"><?php ServiceModel::form(); ?></div>
+
+							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
+
+						</div>
+
 		          	</div>
 
 	        	</div>
@@ -81,7 +100,11 @@ $header = "Услуги";
 	                  	<h5 class="card-title">Список Услуг</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
-	                          	<a class="list-icons-item" data-action="collapse"></a>
+								<a href="../templates/service.xlsx" class="btn" download>EXEL</a>
+								<form action="" method="post">
+									<input style="display:none;" id="btn_flush" type="submit" value="FLUSH" name="flush"></input>
+								</form>
+								<a class="btn text-danger" onclick="Conf()">FLUSH</a>
 	                      	</div>
 	                  	</div>
 	              	</div>
@@ -95,19 +118,33 @@ $header = "Услуги";
 										<th style="width:40%">Название</th>
 										<th>Роль</th>
 										<th>Отдел</th>
+										<th>Тип</th>
 										<th>Цена</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
 	                              	<?php
-	                              	foreach($db->query('SELECT * from service') as $row) {
+	                              	foreach($db->query('SELECT * from service WHERE type != 101') as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
 	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT * FROM division WHERE id ={$row['division_id']}")->fetch()['name'] : "" ?></td>
+											<td>
+												<?php switch ($row['type']) {
+													case 1:
+														echo "Обычная";
+														break;
+													case 2:
+														echo "Консультация";
+														break;
+													case 3:
+														echo "Операционная";
+														break;
+												} ?>
+											</td>
 											<td><?= $row['price'] ?></td>
 	                                      	<td>
 												<div class="list-icons">
@@ -140,6 +177,32 @@ $header = "Услуги";
     <!-- /footer -->
 
 	<script type="text/javascript">
+		function Conf() {
+			swal({
+                position: 'top',
+                title: 'Вы уверены что хотите очистить список услуг?',
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: "Уверен"
+            }).then(function(ivi) {
+				if (ivi.value) {
+					swal({
+		                position: 'top',
+		                title: 'Внимание!',
+		                text: 'Вернуть данные назад будет невозможно!',
+		                type: 'warning',
+		                showCancelButton: true,
+		                confirmButtonText: "Да"
+		            }).then(function(ivi) {
+						if (ivi.value) {
+							$('#btn_flush').click();
+						}
+		            });
+				}
+
+            });
+		}
+
 		function Update(events) {
 			events
 			$.ajax({

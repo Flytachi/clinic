@@ -49,7 +49,7 @@ $header = "Стационарные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
+										<th>Возраст</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:210px">Действия</th>
@@ -57,7 +57,14 @@ $header = "Стационарные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} AND vs.grant_id IS NOT NULL ORDER BY vs.accept_date DESC") as $row) {
+									$sql = "SELECT DISTINCT us.id, vs.route_id,
+											(
+												(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+												(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+											) 'age'
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} AND vs.grant_id IS NOT NULL ORDER BY vs.accept_date DESC";
+                                    foreach($db->query($sql) as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -71,7 +78,7 @@ $header = "Стационарные пациенты";
 													?>
 												</div>
 											</td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= $row['age'] ?></td>
                                             <td>
 												<?php
                                                 foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL") as $serv) {
@@ -86,12 +93,12 @@ $header = "Стационарные пациенты";
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
-													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Осмотр Врача</a>
+													<a href="<?= viv('doctor/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Обход / Осмотр</a>
 													<a href="<?= viv('doctor/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
 													<a href="<?= viv('doctor/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 													<a href="<?= viv('doctor/card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
-                                                    <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
-                                                    <a href="<?= viv('doctor/card/content_9') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
+                                                    <a href="<?= viv('doctor/card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначения</a>
+                                                    <a href="<?= viv('doctor/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>
                                               </td>
                                         </tr>

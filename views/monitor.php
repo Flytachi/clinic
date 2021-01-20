@@ -3,7 +3,7 @@ require_once '../tools/warframe.php';
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style=" text-transform: uppercase;">
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,7 +26,6 @@ $header = "Рабочий стол";
 	<script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
-	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 	<!-- /core JS files -->
 
 	<script src="<?= stack("global_assets/js/plugins/notifications/jgrowl.min.js") ?>"></script>
@@ -42,11 +41,9 @@ $header = "Рабочий стол";
 
 	<script src="<?= stack("assets/js/app.js") ?>"></script>
 
-	<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
-
 	<!-- JS chained -->
-	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
+
+	<script type='text/javascript' src='<?= stack("vendors/js/aamirafridi-jQuery.Marquee-2425821/jquery.marquee.min.js") ?>'></script>
 
 	<script>
 			let id = '1983';
@@ -71,6 +68,8 @@ $header = "Рабочий стол";
 		    font-style: normal;
 
 		}
+
+		html { overflow-x:  hidden; }
 
 		.container {
 		    width: 960px;
@@ -193,7 +192,7 @@ $header = "Рабочий стол";
 
 								<?php
 
-									$sql = "SELECT us.* FROM users us LEFT JOIN division dv ON (dv.id = us.division_id) WHERE us.user_level = 5 OR ((dv.assist != 2 OR dv.assist IS NULL) AND us.user_level = 10)";
+									$sql = "SELECT us.* FROM users us LEFT JOIN division dv ON (dv.id = us.division_id) WHERE us.user_level = 5 OR ((dv.assist != 2 OR dv.assist IS NULL) AND us.user_level IN(10,6))";
 
 									$allUser = $db->query($sql)->fetchAll();
 
@@ -291,23 +290,21 @@ $header = "Рабочий стол";
 
 				        	if(reception.length != 0){
 				        		console.log(reception);
-					        	we += `<tr data-status="accept_patient" style=" background-color: #97E32F; font-weight: 900; font-size: 140%;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }">
-								        	<td>${ reception[0].user_id }</td>
-								        	<td>${ reception[0].last_name } - ${ reception[0].first_name }</td>
+					        	we += `<tr data-status="accept_patient" style=" text-transform: uppercase; background-color: #97E32F; font-weight: 900; font-size: 250%;" data-userid="${ reception[0].user_id }" data-parentid="${ reception[0].parent_id }">
+								        	<td style="text-align: center;">${ reception[0].user_id }</td>
 								        </tr>`;
 
 				        	}
 
 				        	if( queue.length != 0 ){
 				        		for (let i = 0; i < queue.length; i++) {
-					        		we += `<tr style="font-weight: 900; font-size: 140%;" data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
-					        				<td> ${ queue[i].user_id }  </td>
-					        				<td> ${ queue[i].last_name } - ${ queue[i].first_name } </td>
+					        		we += `<tr style="text-transform: uppercase; font-weight: 900; font-size: 250%;" data-userid="${ queue[i].user_id }" data-parentid="${ queue[i].parent_id }">
+					        				<td style="text-align: center;"> ${ queue[i].user_id }  </td>
 					        				</tr>`
 					        	}
 					        }
 
-				        	if (cout % 4 == 0 ) {
+				        	if (cout % 8 == 0 ) {
 				        		$('#dd').append(`<div class="w-100"></div>`)
 				        	}
 
@@ -318,14 +315,13 @@ $header = "Рабочий стол";
 				        		<div class="col" id="ad" data-chatid1="${id1}">
 				        			<div class="card" style="height:400px">
 										<div class="card-header alpha-success text-success-800 header-elements-inline">
-											<h2 class="card-title" style="font-weight: 900;"> ${name} </h2>
+											<h2 class="card-title" style="font-weight: 900; color: #1A1A1A;"> ${name} </h2>
 										</div>
 										<div class="table-responsive card-body" style="padding: 0px;">
 											<table class="table table-hover">
 								                <thead>
-								                    <tr class="bg-blue">
-									                    <th> Номер </th>
-														<th> Пациент </th>
+								                    <tr class="bg-blue" style="font-size: 200%; text-transform: none;">
+									                    <th style="text-align: center;"> Номер - чека </th>
 								                    </tr>
 								                </thead>
 								                <tbody id="${id1}">
@@ -417,10 +413,13 @@ $header = "Рабочий стол";
 
 				<div class="row" id="dd" style="height: 50%;" data-cout="0"></div>
 
+                    <audio id="audio">
+						<source src="../media/audio/music" type="audio/mpeg">
+                    </audio>
 
-                    <audio id="audio" style="display:none;">
-                        <source src="../media/audio/music" type="audio/mpeg">
-                      </audio>
+                    <!--   <audio  controls id="audio" style="">
+                        <source src="../media/audio/patien1" type="audio/mpeg">
+                      </audio> -->
 
 					</div>
 
@@ -491,26 +490,23 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 	<!-- Footer -->
-    <div class="navbar navbar-expand-lg navbar-light">
-	    <div class="text-center d-lg-none w-100">
-	        <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse" data-target="#navbar-footer">
-	            <i class="icon-unfold mr-2"></i>
-	            Footer
-	        </button>
-	    </div>
-
+    <div id="qwee" class="navbar navbar-expand-lg navbar-light" style="width: 101%; padding: 0%;">
 	    <div class="navbar-collapse collapse" id="navbar-footer">
-	        <span class="navbar-text">
-	            &copy; 2020 - 2021. <span class="text-primary">Автор проекта Я.Фарход. +998 91 247 43 53</span>
-	        </span>
-
-	        <ul class="navbar-nav ml-lg-auto">
-	            <li class="nav-item">
-	                <a href="http://medpomosh.uz/" target="_blank" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400">Medpomosh.uz</span></a>
-	            </li>
-	        </ul>
+	        <h1 id="wew" class="navbar-text" style=" font-weight: 900; font-size: 250%;">
+	            &copy; 2020 - 2021. <span class="text-primary">Экстренный пациент, пропустить без очереди</span>
+	        </h1>
 	    </div>
 	</div>
+
+	<script>
+
+        footer = $('#qwee').marquee({duration: 15000,direction: 'left'});
+
+        // footer.bind('finished', function () {
+        //     // alert('fin');
+        //     footer.marquee('pause');
+        // });
+	</script>
 
     <!-- /footer -->
 

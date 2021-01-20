@@ -63,8 +63,21 @@ $header = "История платежей ". addZero($_GET['pk']);
                                     // prit($db->query("SELECT vsp.* FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id) WHERE vs.user_id = {$_GET['pk']} AND vsp.price_date IS NOT NULL ORDER BY price_date DESC")->fetchAll());
                                     $i = 1;
 									foreach($db->query("SELECT vsp.* FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id) WHERE vs.user_id = {$_GET['pk']} AND vsp.price_date IS NOT NULL ORDER BY price_date DESC") as $row) {
-                                        ?>
-                                        <tr>
+										if (empty($temp_old)) {
+											$temp_old = $row['price_date'];
+											$color = "";
+										}else {
+											if ($temp_old != $row['price_date']) {
+												if ($color) {
+													$color = "";
+												}else {
+													$color = "table-secondary";
+												}
+											}
+											$temp_old = $row['price_date'];
+										}
+										?>
+                                        <tr class="<?= $color ?>">
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['price_date'])) ?></td>
                                             <td><?= $row['item_name'] ?></td>

@@ -5,7 +5,7 @@ is_auth();
 <style>
     #invoice-POS{
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
-        padding:2mm;
+        /*padding:2mm;*/
         margin: 0 auto;
         width: 44mm;
         background: #FFF;
@@ -24,7 +24,6 @@ is_auth();
     }
     p{
       font-size: .7em;
-      color: #666;
       line-height: 1.2em;
     }
 
@@ -38,10 +37,10 @@ is_auth();
 
     #top .logo{
         //float: left;
-    	height: 60px;
-    	width: 60px;
-    	background: url(http://michaeltruong.ca/images/logo1.png) no-repeat;
-    	background-size: 60px 60px;
+        height: 90px;
+        width: 110px;
+        background: url(../../static/assets/images/logo) no-repeat;
+        background-size: 110px 90px;
     }
     .clientlogo{
         float: left;
@@ -69,9 +68,7 @@ is_auth();
       //border: 1px solid #EEE
     }
     .tabletitle{
-      //padding: 5px;
-      font-size: .5em;
-      background: #EEE;
+      background: #9e9e9e;
     }
     .service{border-bottom: 1px solid #EEE;}
     .item{width: 24mm;}
@@ -83,23 +80,21 @@ is_auth();
 
 </style>
 
-<body onload="window.print();">
+<body onload="window.print();" style="color: black; font-size: 140%;">
 
     <div id="invoice-POS" >
 
         <center id="top">
             <div class="logo"></div>
-            <div class="info">
-                <h2>SBISTechs Inc</h2>
-            </div>
         </center>
 
         <div id="mid">
 
             <div class="info">
-                <!-- <h2><?= addZero($_GET['id']) ?></h2> -->
+                <span style="text-align: center;">
+                    <h2><?= $_GET['id'] ?></h2>
+                </span>
                 <p class="h4">
-                    <b>№</b>: <?= addZero($_GET['id']) ?></br>
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
                 </p>
@@ -112,16 +107,17 @@ is_auth();
             <div id="table">
                 <table>
                     <tr class="tabletitle">
-                        <td class="item"><h2>Item</h2></td>
-                        <td class="Hours"><h2>Qty</h2></td>
-                        <td class="Rate"><h2>Sub Total</h2></td>
+                        <td class="item"><h2>Услуга</h2></td>
+                        <td class="Hours"><h2>шт</h2></td>
+                        <td class="Rate"><h2>сумма</h2></td>
                     </tr>
 
                     <?php $total_price = 0; ?>
 
-                    <?php foreach ($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$_GET['id']} AND vs.priced_date IS NULL") as $row): ?>
+                    <?php foreach (json_decode($_GET['items']) as $item): ?>
+                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
                         <tr class="service">
-        					<td class="tableitem"><p class="itemtext"><?= $row['name'] ?></p></td>
+        					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>
         					<td class="tableitem">
                                 <p class="itemtext">
@@ -142,7 +138,7 @@ is_auth();
 
     				<tr class="tabletitle">
     					<td></td>
-    					<td class="Rate"><h2>Total</h2></td>
+    					<td class="Rate"><h2>Итого</h2></td>
     					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
     				</tr>
 

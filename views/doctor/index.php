@@ -48,7 +48,8 @@ $header = "Приём пациетов";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
+										<th>Возраст</th>
+                                        <th>Дата назначения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th>Тип визита</th>
@@ -57,10 +58,20 @@ $header = "Приём пациетов";
                                 </thead>
                                 <tbody>
                                     <?php
-									// prit($db->query("SELECT DISTINCT us.id, vs.id 'visit_id', us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->fetchAll());
-                                    foreach($db->query("SELECT DISTINCT vs.id 'visit_id', us.id, vs.user_id, vs.parent_id, us.dateBith, vs.route_id, vs.service_id, vs.direction FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $row) {
+									$sql = "SELECT DISTINCT vs.id 'visit_id', us.id,
+												vs.user_id, vs.parent_id, vs.add_date,
+												vs.route_id, vs.service_id, vs.direction,
+												(
+													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
+													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
+												) 'age'
+											FROM users us
+												LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']}
+											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
+                                    foreach($db->query($sql) as $row) {
                                         ?>
-                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
+                                        <tr id="PatientFailure_tr_<?= $row['visit_id'] ?>">
                                             <td><?= addZero($row['id']) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
@@ -72,7 +83,8 @@ $header = "Приём пациетов";
 													?>
 												</div>
 											</td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= $row['age'] ?></td>
+											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
@@ -92,9 +104,13 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
-												<!-- <a type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a> -->
-                                                <button onclick="$('#vis_id').val(<?= $row['id'] ?>); $('#vis_title').text('<?= get_full_name($row['user_id']) ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"
+													<?php if (!$row['direction']): ?>
+														onclick="sendPatient(this)"
+													<?php endif; ?>
+													>Принять</a>
+
+                                                <button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>'); $('#renouncement').attr('data-userid', '<?= $row['user_id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $row['parent_id'] ?>');" data-toggle="modal" data-target="#modal_failure" type="button" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -129,7 +145,7 @@ $header = "Приём пациетов";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?= PatientFailure::form(); ?>
+				<?= VisitFailure::form(); ?>
 			</div>
 		</div>
 	</div>

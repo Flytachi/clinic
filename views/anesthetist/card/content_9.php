@@ -38,84 +38,68 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-
 				        <?php include "content_tabs.php"; ?>
 
-						<!-- Zoom option -->
-						<div class="card border-1 border-warning">
-							<div class="card-header header-elements-inline alpha-warning">
-								<h5 class="card-title">Динамика показателей</h5>
-								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item" data-action="collapse"></a>
+						<div class="row">
+
+							<div class="col-md-12">
+
+								<div class="card">
+
+									<div class="card-header header-elements-inline">
+										<h5 class="card-title">Операционный блок</h5>
 									</div>
+
+									<div class="table-responsive">
+										<table class="table table-hover table-sm">
+											<thead>
+												<tr class="bg-info">
+													<th>Операция</th>
+													<th>Оператор</th>
+													<th style="width: 12%;">Дата назначения</th>
+													<th style="width: 12%;">Дата операции</th>
+													<th style="width: 12%;">Дата завершения</th>
+													<th class="text-right">Действия</th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php foreach ($db->query("SELECT op.id, sc.name, op.parent_id, op.add_date, op.oper_date, op.completed FROM operation op LEFT JOIN service sc ON(sc.id=op.service_id) WHERE op.visit_id = $patient->visit_id AND op.user_id = $patient->id") as $row): ?>
+													<tr>
+														<td><?= $row['name'] ?></td>
+														<td><?= get_full_name($row['parent_id']) ?></td>
+														<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+														<?php if (!$row['completed'] and $patient->grant_id == $_SESSION['session_id']): ?>
+															<td class="text-primary" onclick="Oper_date('<?= $row['id'] ?>', '<?= date('Y-m-d', strtotime($row['oper_date'])) ?>', '<?= date('H:i', strtotime($row['oper_date'])) ?>')">
+																<?= ($row['oper_date']) ? date('d.m.Y H:i', strtotime($row['oper_date'])) : '<span class="text-muted">Нет данных</span>' ?>
+															</td>
+														<?php else: ?>
+															<td><?= ($row['oper_date']) ? date('d.m.Y H:i', strtotime($row['oper_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+														<?php endif; ?>
+														<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+														<td class="text-right">
+															<?php if ($row['completed']): ?>
+																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm">До</button>
+																<button type="button" class="btn btn-outline-primary btn-sm">После</button>
+															<?php else: ?>
+																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
+																<?php if ($patient->grant_id == $_SESSION['session_id'] and strtotime($row['oper_date']) <= strtotime(date('Y-m-d H:i'))): ?>
+																	<a href="<?= up_url($row['id'], 'OperationModel') ?>&finish=1" class="btn btn-outline-success btn-sm">Завершить</a>
+																<?php endif; ?>
+															<?php endif; ?>
+														</td>
+													</tr>
+												<?php endforeach; ?>
+											</tbody>
+										</table>
+									</div>
+
 								</div>
+
 							</div>
 
-							<div class="card-body">
-								<div class="chart-container">
-									<div class="chart has-fixed-height" id="line_stat"></div>
-								</div>
-							</div>
 						</div>
-						<!-- /zoom option -->
 
-						<div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Состояние пациента</h5>
-							</div>
-
-							<div class="table-responsive">
-								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
-											<th>Дата и время</th>
-											<th>Состояние пациента</th>
-											<th>Медсестра ФИО</th>
-											<th>Давление</th>
-											<th>Пульс</th>
-											<th>Температура</th>
-											<th>Сатурация</th>
-											<th>Дыхание</th>
-											<th>Моча</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id ORDER BY add_date DESC") as $row) {
-											switch ($row['stat']):
-												case 1:
-													$stat = "Актив";
-													$class_tr = "table-success";
-													break;
-												case 2:
-													$stat = "Пассив";
-													$class_tr = "table-danger";
-													break;
-												default:
-													$stat = "Норма";
-													$class_tr = "";
-													break;
-											endswitch;
-											?>
-											<tr class="<?= $class_tr ?> tolltip" data-popup="tooltip" title="<?= $row['description'] ?>">
-												<td class="chart_date"><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-												<td><?= $stat ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td class="chart_pressure"><?= $row['pressure'] ?></td>
-												<td class="chart_pulse"><?= $row['pulse'] ?></td>
-												<td class="chart_temperature"><?= $row['temperature'] ?></td>
-												<td class="chart_saturation"><?= $row['saturation'] ?></td>
-												<td><?= $row['breath'] ?></td>
-												<td><?= $row['urine'] ?></td>
-											</tr>
-											<?php
-										}
-										?>
-									</tbody>
-								</table>
-							</div>
+						<div class="row" id="content_data">
 
 						</div>
 
@@ -131,6 +115,19 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+		function Show_info(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#content_data').html(result);
+					EchartsLines.init();
+				},
+			});
+		};
+	</script>
 
     <!-- Footer -->
     <?php include '../../layout/footer.php' ?>

@@ -15,7 +15,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= img('prints/icon/company.jpg') ?>" width="480" height="105">
+                <img src="<?= stack('/assets/images/logo') ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h3">
@@ -48,6 +48,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
                         <tr>
                             <th style="width:3%">№</th>
                             <th class="text-left">Анализ</th>
+                            <th class="text-right" style="width:10%">Ед</th>
                             <th class="text-right" style="width:15%">Результат</th>
                             <th class="text-right" style="width:15%">Норма</th>
                         </tr>
@@ -55,13 +56,14 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith,
                     <tbody>
                         <?php
                         $i = 1;
-                        foreach ($db->query("SELECT la.id, la.result, la.deviation, lat.name, lat.standart FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}") as $row) {
+                        foreach ($db->query("SELECT la.id, la.result, la.deviation, lat.name, lat.standart_min, lat.standart_max, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}") as $row) {
                             ?>
                             <tr>
                                 <td><?= $i++ ?></td>
                                 <td class="text-left"><?= $row['name'] ?></td>
+                                <td class="text-right"><?= $row['unit'] ?></td>
                                 <td class="text-right"><?= $row['result'] ?></td>
-                                <td class="text-right"><?= $row['standart'] ?></td>
+                                <td class="text-right"><?= $row['standart_min']."-".$row['standart_max'] ?></td>
                             </tr>
                             <?php
                         }

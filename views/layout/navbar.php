@@ -1,9 +1,11 @@
 <div class="navbar navbar-expand-md navbar-dark bg-info navbar-static"> <!-- fixed-top -->
-    <div class="navbar-brand">
+        
         <a href="index.php" class="d-inline-block">
-            <img src="<?= stack("global_assets/images/logo_light.png") ?>" alt="">
+            <img width="200" height="50" src="<?= stack("assets/images/logo") ?>" alt="">
         </a>
-    </div>
+    <!-- <div class="navbar-brand">
+        
+    </div> -->
 
     <div class="d-md-none">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-mobile">

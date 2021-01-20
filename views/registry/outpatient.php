@@ -65,7 +65,6 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
-
 	<!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->

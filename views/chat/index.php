@@ -6,24 +6,24 @@ $header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include '../../layout/head.php' ?>
+<?php include '../layout/head.php' ?>
 
 <body>
 	<!-- Main navbar -->
-	<?php include '../../layout/navbar.php' ?>
+	<?php include '../layout/navbar.php' ?>
 	<!-- /main navbar -->
 
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
-		<?php include '../../layout/sidebar.php' ?>
+		<?php include '../layout/sidebar.php' ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../../layout/header.php' ?>
+			<?php include '../layout/header.php' ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -52,7 +52,7 @@ $header = "Пациент";
 
 									$id = $_SESSION['session_id'];
 
-									foreach ($db->query("SELECT * FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
+									foreach ($db->query("SELECT * FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
 
 										$id_user = $value['id'];
 
@@ -63,12 +63,12 @@ $header = "Пациент";
 										$count = $count == 0 ? "" : $count;
 									?>
 
-										<li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
+										<!-- <li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
 											<a href="#<?=$value['id']?>" class="nav-link legitRipple" data-idChat="<?=$value['id']?>" data-toggle="tab">
 												<img src="../../../../clinic/static/global_assets/images/placeholders/placeholder.jpg" alt="" class="rounded-circle mr-2" width="20" height="20" />
 												<?=$value['first_name']?> <span class="badge bg-danger badge-pill ml-auto" data-idChat="<?=$value['id']?>"><?= $count?></span>
 											</a>
-										</li>
+										</li> -->
 
 									<?php
 										}
@@ -81,7 +81,7 @@ $header = "Пациент";
 
 												<?php
 
-													foreach ($db->query("SELECT * FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
+													foreach ($db->query("SELECT * FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
 												?>
 													<a href="#<?=$value['id']?>" class="dropdown-item" data-toggle="tab"><?=$value['first_name']?></a>
 												<?php
@@ -97,12 +97,20 @@ $header = "Пациент";
 
 									<?php
 
-									foreach ($db->query("SELECT id FROM users WHERE user_level = 5 AND id != $id") as $key => $value) {
+									$i = 0;
+
+									foreach ($db->query("SELECT id , first_name , last_name FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
+
+										$status = $i == 0 ? "active show" : "";
+
+										$i = 1;
 
 									?>
 
-										<div class="tab-pane fade" id="<?= $value['id'] ?>" >
+										<div class="tab-pane fade <?= $status ?>" id="<?= $value['id'] ?>" >
+											<h1 style=" margin-left: auto;    margin-right: auto; width: 30%;" ><?= $value['first_name'] ?> <?= $value['last_name'] ?></h1>
 											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>" data-offset="100" style="height: 600px; overflow: scroll;">
+
 
 												<?php
 
@@ -162,9 +170,16 @@ $header = "Пациент";
 
 											<div class="d-flex align-items-center">
 												<div class="list-icons list-icons-extended">
-													<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send photo"><i class="icon-file-picture"></i></a>
-													<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send video"><i class="icon-file-video"></i></a>
-													<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send file"><i class="icon-file-plus"></i></a>
+													<form id="lo" method="POST" enctype="multipart/form-data">
+
+														<!-- <input type="file" name="filedata">
+
+														<button type="submit">ee</button> -->
+
+														<a onclick="sendToFile(this)" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send photo"><i class="icon-file-picture"></i></a>
+														<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send video"><i class="icon-file-video"></i></a>
+														<a href="#" class="list-icons-item" data-popup="tooltip" data-container="body" title="" data-original-title="Send file"><i class="icon-file-plus"></i></a>
+													</form>
 												</div>
 
 												<button type="button" onclick="sendMessage(this)" class="btn bg-teal-400 btn-labeled btn-labeled-right ml-auto legitRipple" data-buttonid="<?= $value['id'] ?>">
@@ -192,10 +207,11 @@ $header = "Пациент";
 		</div>
 		<!-- /main content -->
 	</div>
+
 	<!-- /page content -->
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include '../layout/footer.php' ?>
 
     <script>
 
@@ -209,56 +225,40 @@ $header = "Пациент";
 			}
 		});
 
-		$(`ul.media-chat`).scroll(function () {
-			if( $(this).scrollTop() <= 0 ) {
-				console.log('начало блока');
-	           $(this).scrollTop(10);
+		function sendToFile(body) {
+		  file = document.createElement('input');
+		  file.setAttribute('type', `file`);
+		  file.setAttribute('onchange', `sendTo(this)`);
+		  file.setAttribute('name', `filedata`);
+		  file.setAttribute('id', `filedata`);
+		  file.click();
+		}
 
-	           let id1 = $(this).attr('data-chatid');
-	           let offset = Number($(this).attr('data-offset'));
+		function sendTo(body) {
+		  let form = $(`#lo`) ;
+		  $(`#lo`).prepend(body);
+		  let formData = new FormData(form[0]);
+		  $(`#filedata`).remove();
+		  $.ajax({
+		      type : "POST",
+		      url : "../../route.php/modules/lox",
+		      data : formData,
+		      processData: false,
+		      contentType: false,
+		      success: function(data){
+		                 // if(data.msg == 'ok'){
+		                 //   alert("Загрузка выполнена успешно");
+		                 //   console.log(data)
+		                 //   socket.emit('fileSend', {data});
+		                 // }else{
+		                 //   alert("Загрузка не выполнена");
+		                 // }
 
-				$(this).attr('data-offset', (offset+100));
+		                 console.log(data);
 
-				$.ajax({
-			        type: "POST",
-
-			        url: "scriptJS/ajax2.php",
-
-			        data: { id: id, id1: id1, offset : offset},
-
-			        success: function (www) {
-			        	let obj = JSON.parse(www);
-
-			        	let messages = JSON.parse(obj.messages);
-
-
-			        	for (var i = 0; i <= messages.length; i++) {
-				        	let message = messages[i]['message'];
-
-				        	let time = messages[i]['time'];
-
-				        	console.log(message);
-
-				        	$(`ul[data-chatid=${id1}]`).prepend(`<li class="media media-chat-item-reverse">
-																<div class="media-body">
-																	<div class="media-chat-item">${ message }</div>
-														<div class="font-size-sm text-muted mt-2">													${ time }<a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-																	</div>
-																</div>
-
-																<div class="ml-3">
-																	<a href="#">
-																		<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
-																	</a>
-																</div>
-															</li>`);
-			        	}
-			        },
-			    });
-			}
-		})
-
-
+		               }
+		    })
+		}
 
     </script>
 

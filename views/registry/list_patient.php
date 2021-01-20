@@ -63,7 +63,7 @@ $header = "Список пациентов";
 										<th>Дата рождение</th>
 										<th>Телефон</th>
 										<th>Регион</th>
-										<th>Дата визита</th>
+										<th>Дата регистрации</th>
 										<th>Тип визита</th>
 										<th>Статус</th>
 										<th class="text-center">Действия</th>
@@ -86,12 +86,12 @@ $header = "Список пациентов";
 													?>
 												</div>
 											</td>
-											<td><?= $row['dateBith'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
 											<td><?= $row['numberPhone'] ?></td>
 											<td><?= $row['region'] ?></td>
-											<td><?= $row['add_date'] ?></td>
+											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 											<?php
-											if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} ORDER BY add_date ASC")->fetch()){
+											if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()){
 												if($stm_dr['direction']){
 													?>
 													<td>

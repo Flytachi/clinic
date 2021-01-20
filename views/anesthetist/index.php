@@ -55,11 +55,10 @@ $header = "Стационарные пациенты";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    foreach($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.grant_id IS NOT NULL AND vs.service_id = 1 AND vs.oper_date IS NOT NULL ORDER BY vs.oper_date DESC") as $row) {
-                                        ?>
-                                        <tr>
-                                            <td><?= addZero($row['id']) ?></td>
+
+									<?php foreach ($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL") as $row): ?>
+										<tr>
+											<td><?= addZero($row['id']) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
 												<div class="text-muted">
@@ -82,14 +81,13 @@ $header = "Стационарные пациенты";
 													<a href="<?= viv('anesthetist/card/content_3') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
 													<a href="<?= viv('anesthetist/card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 													<a href="<?= viv('anesthetist/card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
-                                                    <a href="<?= viv('anesthetist/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
-                                                    <a href="<?= viv('anesthetist/card/content_9') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
+                                                    <a href="<?= viv('anesthetist/card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i> Обход</a>
+                                                    <a href="<?= viv('anesthetist/card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>
-                                              </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    ?>
+                                          	</td>
+										</tr>
+									<?php endforeach; ?>
+
                                 </tbody>
                             </table>
                         </div>
