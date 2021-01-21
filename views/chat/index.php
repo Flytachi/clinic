@@ -33,26 +33,22 @@ $header = "Пациент";
 
 				<div class="card border-1 border-info">
 				    <div class="card-header text-dark header-elements-inline alpha-info">
-				        <h6 class="card-title">Просмотр визита</h6>
+				        <h6 class="card-title">Переписка</h6>
 				    </div>
 
-				    <div class="card-body">
+				    <div>
 
 						<?php include "content_tabs.php"; ?>
 
-						<div class="card">
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Переписка</h5>
-							</div>
-
-							<div class="card">
+						<div>
+							<div>
 								<div class="nav-tabs-responsive">
 									<ul class="nav nav-tabs nav-tabs-bottom flex-nowrap mb-0">
 									<?php
 
 									$id = $_SESSION['session_id'];
 
-									foreach ($db->query("SELECT * FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
+									foreach ($db->query("SELECT * FROM users WHERE user_level NOT IN(1,15) AND id != $id") as $key => $value) {
 
 										$id_user = $value['id'];
 
@@ -63,12 +59,12 @@ $header = "Пациент";
 										$count = $count == 0 ? "" : $count;
 									?>
 
-										<!-- <li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
+										<li class="nav-item" onclick="deletNotice(this)" data-idChat="<?=$value['id']?>">
 											<a href="#<?=$value['id']?>" class="nav-link legitRipple" data-idChat="<?=$value['id']?>" data-toggle="tab">
 												<img src="../../../../clinic/static/global_assets/images/placeholders/placeholder.jpg" alt="" class="rounded-circle mr-2" width="20" height="20" />
-												<?=$value['first_name']?> <span class="badge bg-danger badge-pill ml-auto" data-idChat="<?=$value['id']?>"><?= $count?></span>
+												<?= get_full_name($value['id'])?> <span class="badge bg-danger badge-pill ml-auto" data-idChat="<?=$value['id']?>"><?= $count?></span>
 											</a>
-										</li> -->
+										</li>
 
 									<?php
 										}
@@ -81,9 +77,11 @@ $header = "Пациент";
 
 												<?php
 
-													foreach ($db->query("SELECT * FROM users WHERE user_level != 1 AND id != $id") as $key => $value) {
+													foreach ($db->query("SELECT * FROM users WHERE user_level NOT IN(1,15) AND id != $id") as $key => $value) {
 												?>
-													<a href="#<?=$value['id']?>" class="dropdown-item" data-toggle="tab"><?=$value['first_name']?></a>
+													<a href="#<?=$value['id']?>" class="dropdown-item" data-toggle="tab">
+														<?= get_full_name($value['id'])?> 
+													</a>
 												<?php
 													}
 												?>
@@ -376,7 +374,7 @@ $header = "Пациент";
 
 	                    let obj = JSON.stringify({ type : 'messages',  type_message : 'file', id : id, id_cli : $("#lo").attr('data-inputid'), message : data.file_url });
 						conn.send(obj);
-						console.log(obj);
+						console.log(data);
 
 		               }
 		    })

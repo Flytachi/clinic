@@ -64,22 +64,7 @@ class Chat implements MessageComponentInterface {
 
           $time = $hour .":". $minute;
 
-          switch ($type_message) {
-          	case 'text':
-				$sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
-
-          		break;
-          	case 'file':
-				$sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
-          		break;
-          	case 'image':
-				$sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
-          		break;
-          	default:
-          		# code...
-          		break;
-          }
-
+		  $sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
 
           echo $sql;
 
