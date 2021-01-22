@@ -159,7 +159,7 @@ conn.onmessage = function(e) {
   				$.ajax({
   			        type: "POST",
 
-  			        url: "scriptJS/ajax.php",
+  			        url: "http://localhost/clinic/static/vendors/js/scriptJS/ajax.php",
 
   			        data: { id: id, id1: d.id },
 
@@ -173,30 +173,15 @@ conn.onmessage = function(e) {
 
           $('#audio').trigger('play');
 
-  				// $(`ul[data-chatid=${d.id}]`).append(`<li class="media">
-  				// 									<div class="mr-3">
-  				// 										<a href="#">
-  				// 											<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
-  				// 										</a>
-  				// 									</div>
+  				let p = Number($(`span[data-idchat=${d.id}]`).text()) + 1;
 
-  				// 									<div class="media-body">
-  				// 										<div class="media-chat-item"> ${d.message} </div>
-  				// 										<div class="font-size-sm text-muted mt-2">
-  				// 											${ hour } : ${ mitune } <a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
-  				// 										</div>
-  				// 									</div>
-  				// 								</li>`);
+  				let b = Number($(`span#noticeus`).text()) + 1;
 
-  				// let p = Number($(`span[data-idChat=${d.id}]`).text()) + 1;
+  				$(`span#noticeus`).html('');
 
-  				// let b = Number($(`b#noticeus`).text()) + 1;
+  				$(`span#noticeus`).html(b);
 
-  				// $(`b#noticeus`).html('');
-
-  				// $(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${b}</span>`);
-
-  				// $(`span[data-idChat=${d.id}]`).text(p)
+  				$(`span[data-idChat=${d.id}]`).text(p)
 
   			}
 
@@ -397,7 +382,7 @@ function deletNotice(body) {
 	 $.ajax({
         type: "POST",
 
-        url: "scriptJS/ajax.php",
+        url: "http://localhost/clinic/static/vendors/js/scriptJS/ajax.php",
 
         data: { id: id, id1: id1 },
 
@@ -411,13 +396,13 @@ function deletNotice(body) {
 		console.log($(`span[data-idChat=${id1}]`).text());
 		console.log($(`b#noticeus`).text());
 
-		count = Number($(`b#noticeus`).text()) - Number($(`span[data-idChat=${id1}]`).text());
+		count = Number($(`span#noticeus`).text()) - Number($(`span[data-idchat=${id1}]`).text());
 		if (count != 0) {
-			$(`b#noticeus`).html(`<span class="badge bg-danger badge-pill ml-auto">${count}</span>`);
+			$(`span#noticeus`).html(count);
 		}else{
-			$(`b#noticeus`).html(``);
+			$(`span#noticeus`).html(``);
 		}
-		$(`span[data-idChat=${id1}]`).html('');
+		$(`span[data-idchat=${id1}]`).html('');
 	}catch{
 		console.log('error')
 	}
