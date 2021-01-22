@@ -16,7 +16,7 @@
 
         <ul class="navbar-nav ml-lg-auto">
             <li class="nav-item">
-                <a href="http://medpomosh.uz/" target="_blank" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400">Medpomosh.uz</span></a>
+                <a href="http://medpomosh.uz/" target="_blank" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400">Medpomosh.uz.dasd</span></a>
             </li>
         </ul>
     </div>
