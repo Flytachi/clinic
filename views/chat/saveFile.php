@@ -1,6 +1,6 @@
 <?php
 
-	$uploaddir = '../../media/';
+	$uploaddir = '../../storage/';
 
 	$we = explode(".",$_FILES['filedata']['name']);
 
