@@ -20,6 +20,7 @@ if ($ini['GLOBAL_SETTING']['DEBUG']) {
 
 // END Settings debugger
 
+
 // File extension
 
 if ($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) {
