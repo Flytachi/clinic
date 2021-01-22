@@ -6,6 +6,8 @@ $header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<link rel="stylesheet" href="<?= stack("vendors/js/lightzoom/style.css") ?>" type="text/css">
 <?php include '../layout/head.php' ?>
 
 <body>
@@ -175,7 +177,9 @@ $header = "Пациент";
 															<li class="media media-chat-item-reverse">
 																<div class="media-body">
 																	<div class="media-chat-item"> 
-																		<img src="<?=$val['message']?>" width="200">
+																		<a href="<?=$val['message']?>" class="lightzoom">
+																			<img src="<?=$val['message']?>" width="200">
+																		</a>
 																	</div>
 																	<div class="font-size-sm text-muted mt-2"><?=$val['time']?>
 																		<a href="#">
@@ -321,8 +325,30 @@ $header = "Пациент";
 
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
+<script src="<?= stack("vendors/js/lightzoom/lightzoom.js") ?>"></script>
 
     <script>
+
+    	// $('.lightzoom').lightzoom({speed: 400, viewTitle: true});
+
+    	// $('.lightzoom').lightzoom();
+
+    	(function() {
+
+		 $( '.lightzoom' ).lightzoom( {
+		   speed:                 400,   // скорость появления
+		   imgPadding:            10,    // значение отступа у изображения
+		   overlayOpacity:        '0.5', // прозрачность фона (от 0 до 1)
+		   viewTitle:             true, // true, если надо показывать подпись к изобажению
+		   isOverlayClickClosing: false, // true, если надо закрывать окно при клике по затемненной области
+		   isWindowClickClosing:  true, // true, если надо закрывать окно при клике по любой области
+		   isEscClosing:          false, // true, если надо закрывать окно при нажатии на кнопку Esc
+		   boxClass:              '',    // позволяет задавать класс окну обертке (с версии 1.1.0)
+		   overlayColor:          '',    // позволяет задавать цвет фону (с версии 1.1.0)
+		   titleColor:            '',    // позволяет задавать цвет подписи (с версии 1.1.0)
+		 } );
+
+		} )();
 
     	$('textarea').keypress(function(e){
 			if(e.keyCode == 13){
