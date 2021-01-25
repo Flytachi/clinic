@@ -51,9 +51,6 @@ $header = "Пациент";
 								<h6 class="card-title">Лист назначений</h6>
 								<div class="header-elements">
 									<div class="list-icons">
-										<a onclick="List('<?= viv('doctor/bypass_list') ?>?pk=<?= $patient->visit_id ?>')" class="list-icons-item text-info mr-2">
-											<i class="icon-list"></i> Лист
-										</a>
 										<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
 											<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
 												<i class="icon-plus22"></i>Добавить

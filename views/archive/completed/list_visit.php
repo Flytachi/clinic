@@ -56,31 +56,80 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 							<div class="col-md-9" style="font-size: 0.9rem">
 
-				                <fieldset class="mb-3 row">
+								<fieldset class="mb-3 row">
+
+									<div class="col-md-6">
+
+									   <div class="form-group row">
+
+										   <label class="col-md-4"><b>Статус:</b></label>
+										   <div class="col-md-8 text-right">
+											   <?php if ($patient->status): ?>
+
+											   <?php else: ?>
+												   <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+											   <?php endif; ?>
+										   </div>
+
+										   <label class="col-md-4"><b>Адрес проживание:</b></label>
+										   <div class="col-md-8 text-right">
+											   <?= $patient->region ?> <?= $patient->residenceAddress ?>
+										   </div>
+
+										   <label class="col-md-4"><b>Адрес прописки:</b></label>
+										   <div class="col-md-8 text-right">
+											   <?= $patient->region ?> <?= $patient->registrationAddress ?>
+										   </div>
+
+									   </div>
+
+								   	</div>
+
+							   		<div class="col-md-6">
+
+									   <div class="form-group row">
+
+										   <label class="col-md-3"><b>ID:</b></label>
+										   <div class="col-md-9 text-right">
+											   <?= addZero($patient->id) ?>
+										   </div>
+
+										   <label class="col-md-3"><b>Телефон:</b></label>
+										   <div class="col-md-9 text-right">
+											   <?= $patient->numberPhone ?>
+										   </div>
+
+										   <label class="col-md-4"><b>Дата рождение:</b></label>
+										   <div class="col-md-8 text-right">
+											   <?= date('d.m.Y', strtotime($patient->dateBith)) ?>
+										   </div>
+
+										   <label class="col-md-3"><b>Пол:</b></label>
+										   <div class="col-md-9 text-right">
+											   <?= ($patient->gender) ? "Мужской": "Женский" ?>
+										   </div>
+
+								   		</div>
+
+							   		</div>
 
 				                    <div class="col-md-6">
 
 				                        <div class="form-group row">
 
-
-				                            <label class="col-md-4"><b>Дата рождение:</b></label>
-				    						<div class="col-md-8 text-right">
-				    							<?= date('d.m.Y', strtotime($patient->dateBith)) ?>
+											<label class="col-md-8"><b>Количество курсов лечения:</b></label>
+				    						<div class="col-md-4 text-right">
+				    							100
 				    						</div>
 
-				                            <label class="col-md-4"><b>Адрес проживание:</b></label>
-				    						<div class="col-md-8 text-right">
-				    							<?= $patient->region ?> <?= $patient->residenceAddress ?>
+											<label class="col-md-8"><b>Количество стационарных курсов лечения:</b></label>
+				    						<div class="col-md-4 text-right">
+				    							100
 				    						</div>
 
-				                            <label class="col-md-4"><b>Адрес прописки:</b></label>
-				    						<div class="col-md-8 text-right">
-				    							<?= $patient->region ?> <?= $patient->registrationAddress ?>
-				    						</div>
-
-				                            <label class="col-md-4"><b>Дата визита:</b></label>
-				    						<div class="col-md-8 text-right">
-				    							<?= date('d.m.Y  H:i', strtotime($patient->accept_date)) ?>
+											<label class="col-md-8"><b>Количество амбулаторных курсов лечения:</b></label>
+				    						<div class="col-md-4 text-right">
+				    							100
 				    						</div>
 
 				                        </div>
@@ -89,31 +138,26 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 				                    <div class="col-md-6">
 
-				                        <div class="form-group row">
+										<div class="form-group row">
 
-				    						<label class="col-md-3"><b>ID:</b></label>
-				    						<div class="col-md-9 text-right">
-				    							<?= addZero($patient->id) ?>
-				    						</div>
+ 										   <label class="col-md-8"><b>Количество визитов:</b></label>
+ 										   <div class="col-md-4 text-right">
+ 											   100
+ 										   </div>
 
-				                            <label class="col-md-3"><b>Телефон:</b></label>
-				    						<div class="col-md-9 text-right">
-				    							<?= $patient->numberPhone ?>
-				    						</div>
+ 										   <label class="col-md-8"><b>Количество стационарных визитов:</b></label>
+ 										   <div class="col-md-4 text-right">
+ 											   100
+ 										   </div>
 
-				                            <label class="col-md-3"><b>Пол:</b></label>
-				    						<div class="col-md-9 text-right">
-				    							<?= ($patient->gender) ? "Мужской": "Женский" ?>
-				    						</div>
+ 										   <label class="col-md-8"><b>Количество амбулаторных визитов:</b></label>
+ 										   <div class="col-md-4 text-right">
+ 											   100
+ 										   </div>
 
-				                            <!-- <label class="col-md-3"><b>Аллергия:</b></label>
-				                            <div class="col-md-9 text-right">
-				                                <?= $patient->allergy ?>
-				                            </div> -->
+								   		</div>
 
-				    					</div>
-
-				                    </div>
+									</div>
 
 				                </fieldset>
 
@@ -176,10 +220,10 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 													<?php else: ?>
 														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
 															<a href="<?= viv('archive/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
-															<a onclick="Print('<?= viv('prints/document_3') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
+															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
 														<?php else: ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
-															<a onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													<?php endif; ?>
                                                 </div>

@@ -31,13 +31,12 @@ class PatientForm extends Model
                     <fieldset>
 
                         <div class="form-group">
-                            <label>Имя пациента:</label>
-                            <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
-                        </div>
-
-                        <div class="form-group">
                             <label>Фамилия пациента:</label>
                             <input type="text" name="last_name" class="form-control" placeholder="Введите Фамилия" value="<?= $post['last_name']?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Имя пациента:</label>
+                            <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
                         </div>
                         <div class="form-group">
                             <label>Отчество пациента:</label>
@@ -110,7 +109,7 @@ class PatientForm extends Model
                         </div>
                         <div class="col-md-6">
                             <label>Телефон номер:</label>
-                            <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $post['numberPhone']?>" required>
+                            <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
                         </div>
                     </div>
 
