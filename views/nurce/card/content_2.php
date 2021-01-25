@@ -54,36 +54,50 @@ $header = "Пациент";
 							   <table class="table table-hover table-sm table-bordered">
  								  <thead>
  									  <tr class="bg-info">
- 										  <th style="width: 40px !important;">№</th>
- 										  <th style="width: 400px;">Препарат</th>
- 										  <th>Описание</th>
- 										  <th class="text-center" style="width: 150px;">Метод введения </th>
- 										  <th class="text-right" style="width: 150px;">Действия</th>
+										 <th style="width: 40px !important;">№</th>
+ 										 <th style="width: 400px;">Препарат</th>
+ 										 <th>Описание</th>
+ 										 <th class="text-center" style="width: 150px;">Метод введения</th>
+ 										 <th class="text-center" style="width: 100px;">Время</th>
+ 										 <th class="text-right" style="width: 150px;">Действия</th>
  									  </tr>
  								  </thead>
  								  <tbody>
- 									  <?php
- 									  $i=1;
- 									  foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id") as $row) {
- 										  ?>
- 										  <tr>
- 											  <td><?= $i++ ?></td>
- 											  <td>
+									  <?php
+									  $i=1;
+									  foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id") as $row) {
+										  ?>
+										  <tr>
+											  <td><?= $i++ ?></td>
+											  <td>
 												  <?php
 												  foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
 													  echo $serv['product_code']."<br>";
 												  }
 												  ?>
- 											  </td>
- 											  <td><?= $row['description'] ?></td>
- 											  <td><?= $methods[$row['method']] ?></td>
- 											  <td>
- 												  <button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
- 											  </td>
- 										  </tr>
- 										  <?php
- 									  }
- 									  ?>
+											  </td>
+											  <td><?= $row['description'] ?></td>
+											  <td><?= $methods[$row['method']] ?></td>
+											  <td class="text-center">
+												  <?php foreach ($db->query("SELECT bd.status, bd.completed, bt.time FROM bypass_date bd LEFT JOIN bypass_time bt ON(bt.id=bd.bypass_time_id) WHERE bd.bypass_id = {$row['id']} AND bd.date = CURRENT_DATE()") as $time): ?>
+													  <?php if ($time['status']): ?>
+														  <?php if ($time['completed']): ?>
+															  <span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+														  <?php else: ?>
+															  <span class="text-danger"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+														  <?php endif; ?>
+													  <?php else: ?>
+														  <span class="text-muted"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+													  <?php endif; ?>
+												  <?php endforeach; ?>
+											  </td>
+											  <td>
+												  <button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
+											  </td>
+										  </tr>
+										  <?php
+									  }
+									  ?>
  								  </tbody>
  							  </table>
  						  </div>

@@ -54,7 +54,6 @@ $header = "Инвестиции ". addZero($_GET['pk']);
                                         <th>Пластик</th>
                                         <th>Перечисление</th>
 										<th>Кассир</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -70,9 +69,6 @@ $header = "Инвестиции ". addZero($_GET['pk']);
 											<td><?= $row['balance_card'] ?></td>
 											<td><?= $row['balance_transfer'] ?></td>
 											<td><?= get_full_name($row['pricer_id']) ?></td>
-                                            <td class="text-center">
-												<a href="#" type="button" class="btn btn-outline-info btn-sm legitRipple">PDF</button>
-                                            </td>
                                         </tr>
                                         <?php
                                     }

@@ -36,14 +36,15 @@ class UserModel extends Model
                         <legend class="font-weight-semibold"><i class="icon-user mr-2"></i> Персональные данные</legend>
 
                         <div class="form-group">
+                            <label>Фамилия пользователя:</label>
+                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $post['last_name'] ?>">
+                        </div>
+
+                        <div class="form-group">
                             <label>Имя пользователя:</label>
                             <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $post['first_name'] ?>">
                         </div>
 
-                        <div class="form-group">
-                            <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $post['last_name'] ?>">
-                        </div>
                         <div class="form-group">
                             <label>Отчество пользователя:</label>
                             <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?=  $post['father_name'] ?>">
@@ -242,7 +243,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
+                            foreach ($db->query("SELECT * FROM users WHERE user_level = 15 AND status IS NULL ORDER BY id DESC") as $row) {
                                 ?>
                                 <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
                                 <?php
@@ -509,11 +510,11 @@ class VisitModel extends Model
             <div class="form-group row">
 
                 <div class="col-md-3">
-                    <label>Пациет:</label>
-                    <select data-placeholder="Выбрать пациета" name="user_id" class="form-control form-control-select2" required data-fouc>
+                    <label>Пациент:</label>
+                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
+                            foreach ($db->query("SELECT * FROM users WHERE user_level = 15 AND status IS NULL ORDER BY id DESC") as $row) {
                                 ?>
                                 <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
                                 <?php
@@ -3137,31 +3138,89 @@ class OperationModel extends Model
         <?php
     }
 
-    public function get_or_404(int $pk)
+    public function form_oper_update($pk = null)
     {
-        global $db;
-        if ($_GET['finish']) {
-            $this->finish($pk);
-        }
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
-        if($object){
-            $this->set_post($object);
-            return $this->form($object['id']);
-        }else{
-            Mixin\error('404');
-        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" id="oper_id">
 
+            <div class="modal-body">
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Дата:</label>
+                        <input type="date" class="form-control" name="oper_date" id="oper_date">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Время:</label>
+                        <input type="time" class="form-control" name="oper_time" id="oper_time">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
     }
 
-    public function finish()
+    public function form_finish($pk = null)
     {
-        Mixin\error('404');
+        ?>
+        <form method="post" action="<?= add_url() ?>" onsubmit="Chek_fin_date()" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" id="finish_id">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Дата:</label>
+                        <input type="date" class="form-control" name="finish_date" value="<?= date('Y-m-d') ?>">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Время:</label>
+                        <input type="time" class="form-control" name="finish_time">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            function Chek_fin_date() {
+                if (event.target.dataset.c_date > event.target.finish_date.value +" "+ event.target.finish_time.value) {
+                    event.preventDefault();
+                    new Noty({
+                        text: 'Дата завершения не может быть меньше даты операции!',
+                        type: 'error'
+                    }).show();
+                }
+            }
+        </script>
+        <?php
     }
 
     public function clean()
     {
-        $this->post['oper_date'] .= " ".$this->post['oper_time'];
-        unset($this->post['oper_time']);
+        if ($this->post['finish_date']) {
+            $this->post['completed'] = $this->post['finish_date']." ".$this->post['finish_time'];
+            unset($this->post['finish_date']);
+            unset($this->post['finish_time']);
+        }else {
+            $this->post['oper_date'] .= " ".$this->post['oper_time'];
+            unset($this->post['oper_time']);
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

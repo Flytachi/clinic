@@ -31,13 +31,12 @@ class PatientForm extends Model
                     <fieldset>
 
                         <div class="form-group">
-                            <label>Имя пациента:</label>
-                            <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
-                        </div>
-
-                        <div class="form-group">
                             <label>Фамилия пациента:</label>
                             <input type="text" name="last_name" class="form-control" placeholder="Введите Фамилия" value="<?= $post['last_name']?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Имя пациента:</label>
+                            <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
                         </div>
                         <div class="form-group">
                             <label>Отчество пациента:</label>
@@ -110,7 +109,7 @@ class PatientForm extends Model
                         </div>
                         <div class="col-md-6">
                             <label>Телефон номер:</label>
-                            <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= $post['numberPhone']?>" required>
+                            <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
                         </div>
                     </div>
 
@@ -1270,7 +1269,7 @@ class VisitFinish extends Model
         $this->post['status'] = null;
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
+            if ($inf['grant_id'] == $inf['parent_id'] and ($inf['direction'] or 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount())) {
                 Mixin\update($this->table1, array('status' => null), $pk);
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $pk);

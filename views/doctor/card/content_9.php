@@ -87,12 +87,12 @@ $header = "Пациент";
 														<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 														<td class="text-right">
 															<?php if ($row['completed']): ?>
-																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm">До</button>
-																<button type="button" class="btn btn-outline-primary btn-sm">После</button>
+																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>&type=0')" class="btn btn-outline-warning btn-sm">До</button>
+																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>&type=1')" class="btn btn-outline-success btn-sm">После</button>
 															<?php else: ?>
 																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
 																<?php if ($patient->grant_id == $_SESSION['session_id'] and strtotime($row['oper_date']) <= strtotime(date('Y-m-d H:i'))): ?>
-																	<a href="<?= up_url($row['id'], 'OperationModel') ?>&finish=1" class="btn btn-outline-success btn-sm">Завершить</a>
+																	<button onclick="Finish_date('<?= $row['id'] ?>', '<?= $row['oper_date'] ?>')" class="btn btn-outline-success btn-sm">Завершить</a>
 																<?php endif; ?>
 															<?php endif; ?>
 														</td>
@@ -149,31 +149,21 @@ $header = "Пациент";
 					<button type="button" class="close" data-dismiss="modal">×</button>
 				</div>
 
-				<form method="post" action="<?= add_url() ?>">
-					<input type="hidden" name="model" value="OperationModel">
-					<input type="hidden" name="id" id="oper_id">
+				<?php OperationModel::form_oper_update() ?>
 
-					<div class="modal-body">
+			</div>
+		</div>
+	</div>
 
-						<div class="form-group row">
-							<div class="col-md-6">
-								<label>Дата:</label>
-								<input type="date" class="form-control" name="oper_date" id="oper_date">
-							</div>
+	<div id="modal_finish_date" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Дата завершения операции</h5>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
 
-							<div class="col-md-6">
-								<label>Время:</label>
-								<input type="time" class="form-control" name="oper_time" id="oper_time">
-							</div>
-						</div>
-
-					</div>
-
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-					</div>
-
-				</form>
+				<?php OperationModel::form_finish() ?>
 
 			</div>
 		</div>
@@ -196,6 +186,12 @@ $header = "Пациент";
 			$('#oper_id').val(pk);
 			$('#oper_date').val(date);
 			$('#oper_time').val(time);
+		};
+
+		function Finish_date(pk, date) {
+			$('#modal_finish_date').modal('show');
+			$('#finish_id').val(pk);
+			document.getElementById('OperationModel_form').dataset.c_date = date;
 		};
 	</script>
 
