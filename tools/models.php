@@ -1007,11 +1007,11 @@ class VisitPriceModel extends Model
                             if (result.status == "success") {
 
                                 // Выдача выписки
-                                // var url = "<?= viv('prints/document_3') ?>?id="+pk;
-                                // var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-                                // WinPrint.focus();
-                                // WinPrint.onload();
-                                // WinPrint.close();
+                                var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                                var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                                WinPrint.focus();
+                                WinPrint.onload();
+                                WinPrint.close();
 
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;
@@ -1170,7 +1170,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1")->fetch();
-        $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN ward wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
+        $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
         $post['visit_id'] = $ti['id'];
         $post['user_id'] = $this->user_pk;
         $post['pricer_id'] = $this->post['pricer_id'];
@@ -1180,6 +1180,9 @@ class VisitPriceModel extends Model
         $post['item_cost'] = $this->bed_cost;
         $post['price_date'] = date('Y-m-d H:i:s');
         $object = Mixin\insert($this->table, $post);
+        if (!intval($object)) {
+            $this->error($object);
+        }
     }
 
     public function up_invest()
@@ -1198,9 +1201,9 @@ class VisitPriceModel extends Model
         global $db;
         if($this->clean()){
             if (isset($this->bed_cost)) {
-                // $this->stationar_price();
-                $this->error("Временно заблокированно!");
-                exit;
+                $this->stationar_price();
+                // $this->error("Временно заблокированно!");
+                // exit;
             }else {
                 $this->ambulator_price();
             }

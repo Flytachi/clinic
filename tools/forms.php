@@ -1270,7 +1270,9 @@ class VisitFinish extends Model
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
             if ($inf['grant_id'] == $inf['parent_id'] and ($inf['direction'] or 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount())) {
-                Mixin\update($this->table1, array('status' => null), $pk);
+                if (!$inf['direction']) {
+                    Mixin\update($this->table1, array('status' => null), $pk);
+                }
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $pk);
                     $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
