@@ -1008,15 +1008,13 @@ class VisitPriceModel extends Model
 
                                 // Выдача выписки
                                 var url = "<?= viv('prints/document_3') ?>?id="+pk;
-                                var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-                                WinPrint.focus();
-                                WinPrint.onload();
-                                WinPrint.close();
+                                Print(url);
 
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;
-                                location.reload();
-
+                                setTimeout( function() {
+                                        location.reload();
+                                    }, 1000)
                             }else {
                                 $('#check_div').html(result.message);
                             }
@@ -1058,13 +1056,14 @@ class VisitPriceModel extends Model
         }
     }
 
-    public function price($row)
+    public function price($row, $status)
     {
         global $db;
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
             'sale' => $this->post['sale'],
             'price_date' => date("Y-m-d H:i"),
+            'status' => $status
         );
         if ($this->post['price_cash'])
         {
@@ -1136,7 +1135,7 @@ class VisitPriceModel extends Model
             if ($this->post['sale'] > 0) {
                 $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->post['sale'] / 100));
             }
-            $this->price($row);
+            $this->price($row, 1);
         }
     }
 
@@ -1148,6 +1147,7 @@ class VisitPriceModel extends Model
         $balance = $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch();
         if ($balance['balance_cash'] < 0 or $balance['balance_card'] < 0 or $balance['balance_transfer'] < 0) {
             $this->error("Критическая ошибка!");
+            exit;
         }
         $this->add_bed();
         $this->post['sale'] = null;
@@ -1161,7 +1161,7 @@ class VisitPriceModel extends Model
             $this->post['price_transfer'] = $balance['balance_transfer'];
         }
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
-            $this->price($row);
+            $this->price($row, 0);
         }
         $this->up_invest();
     }
@@ -1202,8 +1202,6 @@ class VisitPriceModel extends Model
         if($this->clean()){
             if (isset($this->bed_cost)) {
                 $this->stationar_price();
-                // $this->error("Временно заблокированно!");
-                // exit;
             }else {
                 $this->ambulator_price();
             }

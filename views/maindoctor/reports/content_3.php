@@ -116,6 +116,7 @@ $header = "Отчёт по визитам";
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
 								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+
 					// Обработка
 					if ($_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";

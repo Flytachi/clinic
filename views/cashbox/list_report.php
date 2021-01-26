@@ -151,6 +151,7 @@ $header = "Отчёт";
                                         vs.price_date
                                     FROM visit_price vs
 									WHERE
+										vs.status = 1 AND
 										vs.item_type = 1 AND
 										vs.price_date IS NOT NULL AND
 										(DATE_FORMAT(vs.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
