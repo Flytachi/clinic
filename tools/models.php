@@ -290,9 +290,9 @@ class VisitModel extends Model
                         }
                         ?>
                     </optgroup>
-                    <optgroup label="Лабаратория">
+                    <optgroup label="Остальные">
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level = 6 AND (assist IS NULL OR assist = 1)") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level IN (6, 12) AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -1007,16 +1007,14 @@ class VisitPriceModel extends Model
                             if (result.status == "success") {
 
                                 // Выдача выписки
-                                // var url = "<?= viv('prints/document_3') ?>?id="+pk;
-                                // var WinPrint = window.open(`${url}`,'','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-                                // WinPrint.focus();
-                                // WinPrint.onload();
-                                // WinPrint.close();
+                                var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                                Print(url);
 
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;
-                                location.reload();
-
+                                setTimeout( function() {
+                                        location.reload();
+                                    }, 1000)
                             }else {
                                 $('#check_div').html(result.message);
                             }
@@ -1058,13 +1056,14 @@ class VisitPriceModel extends Model
         }
     }
 
-    public function price($row)
+    public function price($row, $status)
     {
         global $db;
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
             'sale' => $this->post['sale'],
             'price_date' => date("Y-m-d H:i"),
+            'status' => $status
         );
         if ($this->post['price_cash'])
         {
@@ -1136,7 +1135,7 @@ class VisitPriceModel extends Model
             if ($this->post['sale'] > 0) {
                 $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->post['sale'] / 100));
             }
-            $this->price($row);
+            $this->price($row, 1);
         }
     }
 
@@ -1148,6 +1147,7 @@ class VisitPriceModel extends Model
         $balance = $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch();
         if ($balance['balance_cash'] < 0 or $balance['balance_card'] < 0 or $balance['balance_transfer'] < 0) {
             $this->error("Критическая ошибка!");
+            exit;
         }
         $this->add_bed();
         $this->post['sale'] = null;
@@ -1161,7 +1161,7 @@ class VisitPriceModel extends Model
             $this->post['price_transfer'] = $balance['balance_transfer'];
         }
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
-            $this->price($row);
+            $this->price($row, 0);
         }
         $this->up_invest();
     }
@@ -1170,7 +1170,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1")->fetch();
-        $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN ward wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
+        $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
         $post['visit_id'] = $ti['id'];
         $post['user_id'] = $this->user_pk;
         $post['pricer_id'] = $this->post['pricer_id'];
@@ -1180,6 +1180,9 @@ class VisitPriceModel extends Model
         $post['item_cost'] = $this->bed_cost;
         $post['price_date'] = date('Y-m-d H:i:s');
         $object = Mixin\insert($this->table, $post);
+        if (!intval($object)) {
+            $this->error($object);
+        }
     }
 
     public function up_invest()
@@ -1191,6 +1194,7 @@ class VisitPriceModel extends Model
                 $this->error($object);
             }
         }
+        Mixin\update('users', array('status' => null), $this->user_pk);
     }
 
     public function save()
@@ -1198,9 +1202,7 @@ class VisitPriceModel extends Model
         global $db;
         if($this->clean()){
             if (isset($this->bed_cost)) {
-                // $this->stationar_price();
-                $this->error("Временно заблокированно!");
-                exit;
+                $this->stationar_price();
             }else {
                 $this->ambulator_price();
             }
@@ -2259,6 +2261,17 @@ class LaboratoryAnalyzeTypeModel extends Model
         <?php
     }
 
+    public function clean()
+    {
+        $min = $this->post['standart_min'];
+        $max = $this->post['standart_max'];
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        $this->post['standart_min'] = $min;
+        $this->post['standart_max'] = $max;
+        return True;
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -3236,6 +3249,7 @@ class OperationModel extends Model
             }
             $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
             $post['visit_id'] = $this->post['visit_id'];
+            $post['operation_id'] = $object;
             $post['user_id'] = $this->post['user_id'];
             $post['item_type'] = 5;
             $post['item_id'] = $this->post['service_id'];

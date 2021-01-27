@@ -152,28 +152,28 @@ var SweetAlert = function () {
 
                 });
 
-                // $.ajax({
-                //     type: "GET",
-                //     url: $('#verification_url').val(),
-                //     data: {
-                //         id: this.dataset.user_id,
-                //         main: 1,
-                //         stage: 4,
-                //     },
-                //     success: function (data) {
-                //         if (data >= 1) {
-                //             swal({
-                //                 position: 'top',
-                //                 title: 'Невозможно выписать!',
-                //                 text: 'У пациента есть не завершёные визиты.',
-                //                 type: 'error',
-                //                 padding: 30
-                //             });
-                //             return 0;
-                //         }
-                //     },
-                //
-                // });
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 1,
+                        stage: 5,
+                    },
+                    success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Невозможно выписать!',
+                                text: 'У пациента есть не завершёные операции.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    },
+
+                });
                 // --
 
             } else {

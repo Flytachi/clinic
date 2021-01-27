@@ -11,6 +11,9 @@
     <li class="nav-item">
         <a href="<?= viv('maindoctor/reports/content_4') ?>" class="nav-link <?= (viv('maindoctor/reports/content_4')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Направители</a>
     </li>
+    <li class="nav-item">
+        <a href="<?= viv('maindoctor/reports/content_5') ?>" class="nav-link <?= (viv('maindoctor/reports/content_5')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Операционные услуги</a>
+    </li>
 </ul>
 
 

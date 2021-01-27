@@ -193,28 +193,40 @@ class VisitReport extends Model
                     <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
                 <?php endif; ?>
 
-                <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        <label class="col-form-label">Наименования отчета:</label>
-                        <input type="text" name="report_title" id="report_title" value="<?= $post['report_title'] ?>" class="form-control" placeholder="Названия отчета">
-                    </div>
+                <?php if (level() == 12): ?>
+                    <div class="row">
+                        <input type="hidden" name="report_title" id="report_title" class="form-control">
 
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Описание:</label>
-                        <textarea rows="5" cols="3" name="report_description" id="report_description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
-                    </div>
+                        <div class="col-md-10 offset-md-1">
+                            <label class="col-form-label">Примечание:</label>
+                            <textarea rows="5" cols="3" name="report_description" id="report_description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                        </div>
 
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Диагноз:</label>
-                        <textarea rows="3" cols="3" name="report_diagnostic" id="report_diagnostic" class="form-control" placeholder="Заключения"><?= $post['report_diagnostic'] ?></textarea>
                     </div>
+                <?php else: ?>
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3">
+                            <label class="col-form-label">Наименования отчета:</label>
+                            <input type="text" name="report_title" id="report_title" value="<?= $post['report_title'] ?>" class="form-control" placeholder="Названия отчета">
+                        </div>
 
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Рекомендации:</label>
-                        <textarea rows="3" cols="3" name="report_recommendation" id="report_recommendation" class="form-control" placeholder="Заключения"><?= $post['report_recommendation'] ?></textarea>
+                        <div class="col-md-10 offset-md-1">
+                            <label class="col-form-label">Описание:</label>
+                            <textarea rows="5" cols="3" name="report_description" id="report_description" class="form-control" placeholder="Описание"><?= $post['report_description'] ?></textarea>
+                        </div>
+
+                        <div class="col-md-10 offset-md-1">
+                            <label class="col-form-label">Диагноз:</label>
+                            <textarea rows="3" cols="3" name="report_diagnostic" id="report_diagnostic" class="form-control" placeholder="Заключения"><?= $post['report_diagnostic'] ?></textarea>
+                        </div>
+
+                        <div class="col-md-10 offset-md-1">
+                            <label class="col-form-label">Рекомендации:</label>
+                            <textarea rows="3" cols="3" name="report_recommendation" id="report_recommendation" class="form-control" placeholder="Заключения"><?= $post['report_recommendation'] ?></textarea>
+                        </div>
+
                     </div>
-
-                </div>
+                <?php endif; ?>
 
             </div>
 
@@ -273,7 +285,11 @@ class VisitReport extends Model
                         }
                     </script>
                 <?php endif; ?>
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <?php if (level() == 12): ?>
+                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
+                <?php else: ?>
+                    <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <?php endif; ?>
             </div>
 
         </form>
@@ -377,7 +393,7 @@ class VisitReport extends Model
             unset($this->post['id']);
             $object = Mixin\update($this->table, $this->post, $pk);
             if ($end) {
-                $row = $db->query("SELECT * FROM visit WHERE id = {$pk} AND (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL)")->fetch();
+                $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
                 if ($row['assist_id']) {
                     if ($row['grant_id'] != $row['route_id']) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
@@ -1270,7 +1286,9 @@ class VisitFinish extends Model
         $this->post['completed'] = date('Y-m-d H:i:s');
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
             if ($inf['grant_id'] == $inf['parent_id'] and ($inf['direction'] or 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount())) {
-                Mixin\update($this->table1, array('status' => null), $pk);
+                if (!$inf['direction']) {
+                    Mixin\update($this->table1, array('status' => null), $pk);
+                }
                 if ($inf['direction']) {
                     $pk_arr = array('user_id' => $pk);
                     $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);

@@ -87,7 +87,7 @@ $header = "Класификация персонала";
                                             <td><?= $row['id'] ?></td>
                                             <td><?= $PERSONAL[$row['level']] ?></td>
                                             <td><?= $row['title'] ?></td>
-                                            <td><?= $row['name'] ?> <?= ($row['assist']) ? "\"Ассистент\"" : "" ?></td>
+                                            <td><?= $row['name'] ?> <?= ($row['assist'] == 1) ? "\"Ассистент\"" : "" ?></td>
                                             <td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'DivisionModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>

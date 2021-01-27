@@ -100,29 +100,6 @@ $header = "Отчёт";
                     </div>
 
                 </div>
-				<?php
-				$sqld = "SELECT
-								pricer_id,
-								user_id,
-								(price_cash + price_card + price_transfer) 'price',
-								price_cash,
-								price_card,
-								price_transfer,
-								price_date
-							FROM visit_price
-							UNION ALL
-							SELECT
-								pricer_id,
-								user_id,
-								(balance_cash + balance_card + balance_transfer) 'price',
-								balance_cash,
-								balance_card,
-								balance_transfer,
-								add_date
-							FROM investment
-							";
-				// prit($db->query($sqld)->fetchAll());
-				?>
 
                 <?php if ($_POST): ?>
                     <div class="card border-1 border-info">
@@ -131,7 +108,7 @@ $header = "Отчёт";
                             <h6 class="card-title">Отчёт</h6>
                             <div class="header-elements">
                                 <div class="list-icons">
-                                    <a class="list-icons-item" data-action="collapse"></a>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
                                 </div>
                             </div>
                         </div>
@@ -151,6 +128,7 @@ $header = "Отчёт";
                                         vs.price_date
                                     FROM visit_price vs
 									WHERE
+										vs.status = 1 AND
 										vs.item_type = 1 AND
 										vs.price_date IS NOT NULL AND
 										(DATE_FORMAT(vs.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
@@ -173,62 +151,62 @@ $header = "Отчёт";
 							$total_price=$total_price_cash=$total_price_card=$total_price_transfer=0;
                             ?>
 
-                            <table class="table table-hover datatable-basic table-sm">
-                                    <thead>
-                                        <tr class="bg-info">
-                                            <th style="width: 100px">№</th>
-                                            <th style="width: 11%">Дата</th>
-                                            <th>Кассир</th>
-                                            <th>Пациент</th>
-                                            <th class="text-right">Сумма оплаты</th>
-                                            <th class="text-right">Наличные</th>
-                                            <th class="text-right">Терминал</th>
-                                            <th class="text-right">Перечисление</th>
+                            <table class="table table-hover datatable-basic table-sm" id="table">
+                                <thead>
+                                    <tr class="bg-info">
+                                        <th style="width: 100px">№</th>
+                                        <th style="width: 11%">Дата</th>
+                                        <th>Кассир</th>
+                                        <th>Пациент</th>
+                                        <th class="text-right">Сумма оплаты</th>
+                                        <th class="text-right">Наличные</th>
+                                        <th class="text-right">Терминал</th>
+                                        <th class="text-right">Перечисление</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php $i=1; foreach ($db->query($sql) as $row): ?>
+                                        <tr>
+                                            <th><?= $i++ ?></th>
+                                            <th><?= date("d.m.Y H:i", strtotime($row['price_date'])) ?></th>
+                                            <th><?= get_full_name($row['pricer_id']) ?></th>
+                                            <th><?= get_full_name($row['user_id'])  ?></th>
+                                            <th class="text-right <?= ($row['price']!=0) ? ($row['price']>0) ? 'text-success' : 'text-danger' : '' ?>">
+												<?php
+												$total_price += $row['price'];
+												echo number_format($row['price']);
+												?>
+											</th>
+                                            <th class="text-right <?= ($row['price_cash']!=0) ? ($row['price_cash']>0) ? 'text-success' : 'text-danger' : '' ?>">
+												<?php
+												$total_price_cash += $row['price_cash'];
+												echo number_format($row['price_cash']);
+												?>
+											</th>
+                                            <th class="text-right <?= ($row['price_card']!=0) ? ($row['price_card']>0) ? 'text-success' : 'text-danger' : '' ?>">
+												<?php
+												$total_price_card += $row['price_card'];
+												echo number_format($row['price_card']);
+												?>
+											</th>
+                                            <th class="text-right <?= ($row['price_transfer']!=0) ? ($row['price_transfer']>0) ? 'text-success' : 'text-danger' : '' ?>">
+												<?php
+												$total_price_transfer += $row['price_transfer'];
+												echo number_format($row['price_transfer']);
+												?>
+											</th>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $i=1; foreach ($db->query($sql) as $row): ?>
-                                            <tr>
-                                                <th><?= $i++ ?></th>
-                                                <th><?= date("d.m.Y H:i", strtotime($row['price_date'])) ?></th>
-                                                <th><?= get_full_name($row['pricer_id']) ?></th>
-                                                <th><?= get_full_name($row['user_id'])  ?></th>
-                                                <th class="text-right <?= ($row['price']!=0) ? ($row['price']>0) ? 'text-success' : 'text-danger' : '' ?>">
-													<?php
-													$total_price += $row['price'];
-													echo number_format($row['price']);
-													?>
-												</th>
-                                                <th class="text-right <?= ($row['price_cash']!=0) ? ($row['price_cash']>0) ? 'text-success' : 'text-danger' : '' ?>">
-													<?php
-													$total_price_cash += $row['price_cash'];
-													echo number_format($row['price_cash']);
-													?>
-												</th>
-                                                <th class="text-right <?= ($row['price_card']!=0) ? ($row['price_card']>0) ? 'text-success' : 'text-danger' : '' ?>">
-													<?php
-													$total_price_card += $row['price_card'];
-													echo number_format($row['price_card']);
-													?>
-												</th>
-                                                <th class="text-right <?= ($row['price_transfer']!=0) ? ($row['price_transfer']>0) ? 'text-success' : 'text-danger' : '' ?>">
-													<?php
-													$total_price_transfer += $row['price_transfer'];
-													echo number_format($row['price_transfer']);
-													?>
-												</th>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-									<tr class="table-secondary strong">
-										<th colspan="2">Общее колличество: <?= $i-1 ?></th>
-										<td colspan="2" class="text-right"><b>Итого :</b></td>
-										<td class="text-right <?= ($total_price!=0) ? ($total_price>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price) ?></td>
-										<td class="text-right <?= ($total_price_cash!=0) ? ($total_price_cash>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_cash) ?></td>
-										<td class="text-right <?= ($total_price_card!=0) ? ($total_price_card>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_card) ?></td>
-										<td class="text-right <?= ($total_price_transfer!=0) ? ($total_price_transfer>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_transfer) ?></td>
-									</tr>
-                                </table>
+                                    <?php endforeach; ?>
+                                </tbody>
+								<tr class="table-secondary strong">
+									<th colspan="2">Общее колличество: <?= $i-1 ?></th>
+									<td colspan="2" class="text-right"><b>Итого :</b></td>
+									<td class="text-right <?= ($total_price!=0) ? ($total_price>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price) ?></td>
+									<td class="text-right <?= ($total_price_cash!=0) ? ($total_price_cash>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_cash) ?></td>
+									<td class="text-right <?= ($total_price_card!=0) ? ($total_price_card>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_card) ?></td>
+									<td class="text-right <?= ($total_price_transfer!=0) ? ($total_price_transfer>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_transfer) ?></td>
+								</tr>
+                            </table>
 
                         </div>
 

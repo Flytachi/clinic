@@ -171,7 +171,7 @@ $header = "Отчёт по отделам";
 							<h6 class="card-title">Направители</h6>
 							<div class="header-elements">
 								<div class="list-icons">
-									<a class="list-icons-item" data-action="collapse"></a>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
 								</div>
 							</div>
 						</div>
@@ -179,7 +179,7 @@ $header = "Отчёт по отделам";
 						<div class="card-body">
 
 							<div class="table-responsive">
-	                            <table class="table table-hover table-sm table-bordered">
+	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
 	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>

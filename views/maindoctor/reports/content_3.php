@@ -116,6 +116,7 @@ $header = "Отчёт по визитам";
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
 								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+
 					// Обработка
 					if ($_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
@@ -143,7 +144,7 @@ $header = "Отчёт по визитам";
 							<h6 class="card-title">Визиты</h6>
 							<div class="header-elements">
 								<div class="list-icons">
-									<a class="list-icons-item" data-action="collapse"></a>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
 								</div>
 							</div>
 						</div>
@@ -151,7 +152,7 @@ $header = "Отчёт по визитам";
 						<div class="card-body">
 
 							<div class="table-responsive">
-	                            <table class="table table-hover table-sm table-bordered">
+	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
 	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>
