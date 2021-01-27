@@ -290,9 +290,9 @@ class VisitModel extends Model
                         }
                         ?>
                     </optgroup>
-                    <optgroup label="Лабаратория">
+                    <optgroup label="Остальные">
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level = 6 AND (assist IS NULL OR assist = 1)") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level IN (6, 12) AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -1194,6 +1194,7 @@ class VisitPriceModel extends Model
                 $this->error($object);
             }
         }
+        Mixin\update('users', array('status' => null), $this->user_pk);
     }
 
     public function save()
@@ -2260,6 +2261,17 @@ class LaboratoryAnalyzeTypeModel extends Model
         <?php
     }
 
+    public function clean()
+    {
+        $min = $this->post['standart_min'];
+        $max = $this->post['standart_max'];
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        $this->post['standart_min'] = $min;
+        $this->post['standart_max'] = $max;
+        return True;
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -3237,6 +3249,7 @@ class OperationModel extends Model
             }
             $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
             $post['visit_id'] = $this->post['visit_id'];
+            $post['operation_id'] = $object;
             $post['user_id'] = $this->post['user_id'];
             $post['item_type'] = 5;
             $post['item_id'] = $this->post['service_id'];
