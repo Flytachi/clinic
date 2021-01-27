@@ -36,8 +36,7 @@ $header = "История платежей ". addZero($_GET['pk']);
 						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-								<!-- <a href="#" type="button" class="btn btn-outline-info btn-sm legitRipple">PDF</button> -->
+								<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
 							</div>
 						</div>
 					</div>
@@ -45,7 +44,7 @@ $header = "История платежей ". addZero($_GET['pk']);
 					<div class="card-body">
 
 						<div class="table-responsive card">
-                            <table class="table table-hover table-sm">
+                            <table class="table table-hover table-sm" id="table">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>№</th>
