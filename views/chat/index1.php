@@ -82,7 +82,7 @@ $header = "Пациент";
 													foreach ($db->query("SELECT * FROM users WHERE user_level NOT IN(1,15) AND id != $id") as $key => $value) {
 												?>
 													<a href="#<?=$value['id']?>" class="dropdown-item" data-toggle="tab">
-														<?= get_full_name($value['id'])?> 
+														<?= get_full_name($value['id'])?>
 													</a>
 												<?php
 													}
@@ -109,7 +109,7 @@ $header = "Пациент";
 
 										<div class="tab-pane fade <?= $status ?>" id="<?= $value['id'] ?>" >
 											<h1 style=" margin-left: auto;    margin-right: auto; width: 30%;" ><?= $value['first_name'] ?> <?= $value['last_name'] ?></h1>
-											<ul class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>" data-offset="100" style="height: 600px; overflow: scroll;">
+											<ul id="we<?= $value['id'] ?>" class="media-list media-chat mb-3" data-chatid="<?= $value['id'] ?>" data-offset="100" style="height: 600px; overflow: scroll;">
 
 
 												<?php
@@ -124,7 +124,7 @@ $header = "Пациент";
 
 															switch ($val['type_message']) {
 																case 'text':
-																
+
 												?>
 															<li class="media media-chat-item-reverse">
 																<div class="media-body">
@@ -147,12 +147,12 @@ $header = "Пациент";
 
 																break;
 																case 'file':
-																
+
 												?>
 															<li class="media media-chat-item-reverse">
 																<div class="media-body">
-																	<div class="media-chat-item"> 
-																		<a style="color: white;" href="<?=$val['message']?>" download>Скачать файл</a> 
+																	<div class="media-chat-item">
+																		<a style="color: white;" href="<?=$val['message']?>" download>Скачать файл</a>
 																	</div>
 																	<div class="font-size-sm text-muted mt-2"><?=$val['time']?>
 																		<a href="#">
@@ -172,11 +172,11 @@ $header = "Пациент";
 
 																	break;
 																	case 'image':
-																
+
 												?>
 															<li class="media media-chat-item-reverse">
 																<div class="media-body">
-																	<div class="media-chat-item"> 
+																	<div class="media-chat-item">
 																		<a href="<?=$val['message']?>" class="lightzoom">
 																			<img src="<?=$val['message']?>" width="200">
 																		</a>
@@ -205,7 +205,7 @@ $header = "Пациент";
 															}
 
 														}else{
-													
+
 															switch ($val['type_message']) {
 																case 'text':
 															?>
@@ -227,7 +227,7 @@ $header = "Пациент";
 															<?php
 																break;
 
-																case 'file':	
+																case 'file':
 															?>
 																<li class="media">
 																	<div class="mr-3">
@@ -260,7 +260,9 @@ $header = "Пациент";
 
 																	<div class="media-body">
 																		<div class="media-chat-item">
-																			<img src="<?=$val['message']?>" width="200">
+																			<a href="<?=$val['message']?>" class="lightzoom">
+																				<img src="<?=$val['message']?>" width="200">
+																			</a>
 																		</div>
 																		<div class="font-size-sm text-muted mt-2">
 																			<?=$val['time']?><a href="#"><i class="icon-pin-alt ml-2 text-muted"></i></a>
@@ -283,8 +285,10 @@ $header = "Пациент";
 												?>
 											</ul>
 
+											<div class="ww">
 
-											<textarea name="enter-message" class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..." data-inputid="<?= $value['id'] ?>"></textarea>
+											</div>
+
 
 											<div class="d-flex align-items-center">
 												<div class="list-icons list-icons-extended">
@@ -333,22 +337,22 @@ $header = "Пациент";
 
     	// $('.lightzoom').lightzoom();
 
-    	(function() {
+    	function lightZoom(argument) {
+    		$( '.lightzoom' ).lightzoom( {
+			   speed:                 400,   // скорость появления
+			   imgPadding:            10,    // значение отступа у изображения
+			   overlayOpacity:        '0.5', // прозрачность фона (от 0 до 1)
+			   viewTitle:             true, // true, если надо показывать подпись к изобажению
+			   isOverlayClickClosing: false, // true, если надо закрывать окно при клике по затемненной области
+			   isWindowClickClosing:  true, // true, если надо закрывать окно при клике по любой области
+			   isEscClosing:          false, // true, если надо закрывать окно при нажатии на кнопку Esc
+			   boxClass:              '',    // позволяет задавать класс окну обертке (с версии 1.1.0)
+			   overlayColor:          '',    // позволяет задавать цвет фону (с версии 1.1.0)
+			   titleColor:            '',    // позволяет задавать цвет подписи (с версии 1.1.0)
+			 } );
+    	}
 
-		 $( '.lightzoom' ).lightzoom( {
-		   speed:                 400,   // скорость появления
-		   imgPadding:            10,    // значение отступа у изображения
-		   overlayOpacity:        '0.5', // прозрачность фона (от 0 до 1)
-		   viewTitle:             true, // true, если надо показывать подпись к изобажению
-		   isOverlayClickClosing: false, // true, если надо закрывать окно при клике по затемненной области
-		   isWindowClickClosing:  true, // true, если надо закрывать окно при клике по любой области
-		   isEscClosing:          false, // true, если надо закрывать окно при нажатии на кнопку Esc
-		   boxClass:              '',    // позволяет задавать класс окну обертке (с версии 1.1.0)
-		   overlayColor:          '',    // позволяет задавать цвет фону (с версии 1.1.0)
-		   titleColor:            '',    // позволяет задавать цвет подписи (с версии 1.1.0)
-		 } );
-
-		} )();
+    	lightZoom();
 
     	$('textarea').keypress(function(e){
 			if(e.keyCode == 13){
@@ -390,16 +394,8 @@ $header = "Пациент";
 		      processData: false,
 		      contentType: false,
 		      success: function(data){
-		                 // if(data.msg == 'ok'){
-		                 //   alert("Загрузка выполнена успешно");
-		                 //   console.log(data)
-		                 //   socket.emit('fileSend', {data});
-		                 // }else{
-		                 //   alert("Загрузка не выполнена");
-		                 // }
 
-	                    let obj = JSON.stringify({ type : 'messages',  type_message : 'file', id : id, id_cli : $("#lo").attr('data-inputid'), message : data.file_url });
-						conn.send(obj);
+						chat.emit('message', {'mes' : data.file_url, 'id_pull' : Number($("#lo").attr('data-inputid')), 'id_push' : id, 'type_message' : 'file'})
 						console.log(data);
 
 		               }
@@ -418,18 +414,8 @@ $header = "Пациент";
 		      processData: false,
 		      contentType: false,
 		      success: function(data){
-		                 // if(data.msg == 'ok'){
-		                 //   alert("Загрузка выполнена успешно");
-		                 //   console.log(data)
-		                 //   socket.emit('fileSend', {data});
-		                 // }else{
-		                 //   alert("Загрузка не выполнена");
-		                 // }
 
-	                    let obj = JSON.stringify({ type : 'messages',  type_message : 'image', id : id, id_cli : $("#lo").attr('data-inputid'), message : data.file_url });
-						conn.send(obj);
-						console.log(obj);
-
+						chat.emit('message', {'mes' : data.file_url, 'id_pull' : Number($("#lo").attr('data-inputid')), 'id_push' : id, 'type_message' : 'image'});
 		               }
 		    })
 		}
@@ -442,13 +428,305 @@ $header = "Пациент";
 	<script src="../../node_modules/socket.io/client-dist/socket.io.min.js" crossorigin="anonymous"></script>
 
     <script type="text/babel">
-    	
-		let ioe = io.connect('localhost:4000/chat');
 
-    	ioe.on('we', function (data) {
+    	let element= <textarea name="enter-message" class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
 
-			console.log(data)
+		let chat = io.connect('<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>/chat');
+
+		chat.emit('joinRoom', {'id' : id});
+
+		chat.on('joinRoom',(data) =>{
+
+			console.log('join room ' + data.id);
+
+		});
+
+
+    	class Textarea extends React.Component {
+		  constructor(props) {
+		    super(props);
+		    this.state = {isToggleOn: true};
+
+		    this.state.value = "";
+
+		    this.state.id = this.props.id;
+
+		    // Эта привязка обязательна для работы `this` в колбэке.
+		    this.sendMessage = this.sendMessage.bind(this);
+		}
+
+
+			sendMessage(e) {
+				if(e.key === "Enter"){
+					chat.emit('message', {'mes' : e.target.value, 'id_pull' : this.state.id, 'id_push' : id, 'type_message' : 'text'})
+				}else{
+
+					this.setState({value: e.target.value});
+				}
+			}
+		  render() {
+		    return (
+		      <textarea id={this.state.id} name="enter-message" onKeyPress={this.sendMessage} class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
+		    );
+		  }
+		}
+
+		let mas = [
+
+			<?php
+
+				foreach ($db->query("SELECT id FROM users WHERE user_level NOT IN(1,15) AND id != $id") as $key => $value) {
+					echo $value['id']. ",";
+				}
+			?>
+		]
+
+		for(let x = 0 ; x < document.getElementsByClassName('ww').length; x++){
+
+			ReactDOM.render(
+				<Textarea id={mas[x]} />,
+				document.getElementsByClassName('ww')[x]
+			);
+        }
+
+
+    	chat.on('we', function (d) {
+
+    		console.log(d);
+
+			let time = new Date();
+
+			let hour = addZero(time.getHours());
+
+			let mitune = addZero(time.getMinutes());
+
+			$(`ul#we3`).append(`
+              <li class="media media-chat-item-reverse">
+                <div class="media-body">
+                  <div class="media-chat-item">${d.mes}</div>
+                  <div class="font-size-sm text-muted mt-2">
+                    ${ hour } : ${ mitune }
+                    <a href="#">
+                      <i class="icon-pin-alt ml-2 text-muted"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="ml-3">
+                  <a href="#">
+                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+                  </a>
+                </div>
+              </li>
+              `)
 		})
+
+		chat.on('text',(d) =>{
+
+			let time = new Date();
+
+			let hour = addZero(time.getHours());
+
+			let mitune = addZero(time.getMinutes());
+
+			if(d.id_push == id){
+			    $(`ul#we${d.id_pull}`).append(`
+	              <li class="media media-chat-item-reverse">
+	                <div class="media-body">
+	                  <div class="media-chat-item">${d.mes}</div>
+	                  <div class="font-size-sm text-muted mt-2">
+	                    ${ hour } : ${ mitune }
+	                    <a href="#">
+	                      <i class="icon-pin-alt ml-2 text-muted"></i>
+	                    </a>
+	                  </div>
+	                </div>
+
+	                <div class="ml-3">
+	                  <a href="#">
+	                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+	                  </a>
+	                </div>
+	              </li>
+	              `)
+					$(`ul#we${d.id_pull}`).scrollTop($(`ul#we${d.id_pull}`).prop('scrollHeight'));
+			}else{
+
+	  			let active = Number($('a.show').attr('data-idChat')) == NaN ? 0 : Number($('a.show').attr('data-idChat'));
+
+	  			console.log(active);
+
+	  			if(active == d.id_push){
+
+	  				$.ajax({
+	  			        type: "POST",
+
+	  			        url: "http://"+config.SOCKET.HOST+"/clinic/static/vendors/js/scriptJS/ajax.php",
+
+	  			        data: { id: id, id1: d.id_push },
+
+	  			        success: function (www) {
+	  			        	console.log(www);
+	  			        },
+	  			    });
+
+
+	  			}else{
+
+					$('#audio').trigger('play');
+
+					let p = Number($(`span[data-idchat=${d.id_push}]`).text()) + 1;
+
+					let b = Number($(`span#noticeus`).text()) + 1;
+
+					$(`span#noticeus`).html('');
+
+					$(`span#noticeus`).html(b);
+
+					$(`span[data-idChat=${d.id_push}]`).text(p)
+
+	  			}
+
+				$(`ul#we${d.id_push}`).append(`
+	              <li class="media">
+	                <div class="mr-3">
+	                  <a href="#">
+	                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+	                  </a>
+	                </div>
+	                <div class="media-body">
+	                  <div class="media-chat-item">${d.mes}</div>
+	                  <div class="font-size-sm text-muted mt-2">
+	                    ${ hour } : ${ mitune }
+	                    <a href="#">
+	                      <i class="icon-pin-alt ml-2 text-muted"></i>
+	                    </a>
+	                  </div>
+	                </div>
+	              </li>
+	              `)
+				$(`ul#we${d.id_push}`).scrollTop($(`ul#we${d.id_push}`).prop('scrollHeight'));
+			}
+
+
+		  });
+
+		  chat.on('file',(d) =>{
+
+			let time = new Date();
+
+			let hour = addZero(time.getHours());
+
+			let mitune = addZero(time.getMinutes());
+
+			if(d.id_push == id){
+			    $(`ul#we${d.id_pull}`).append(`
+	              <li class="media media-chat-item-reverse">
+	                <div class="media-body">
+	                  <div class="media-chat-item">
+	                    <a style="color: white;" href="${d.mes}" download>Скачать файл</a>
+	                  </div>
+	                  <div class="font-size-sm text-muted mt-2">
+	                    ${ hour } : ${ mitune }
+	                    <a href="#">
+	                      <i class="icon-pin-alt ml-2 text-muted"></i>
+	                    </a>
+	                  </div>
+	                </div>
+
+	                <div class="ml-3">
+	                  <a href="#">
+	                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+	                  </a>
+	                </div>
+	              </li>
+	              `)
+			}else{
+				$(`ul#we${d.id_push}`).append(`
+	              <li class="media">
+	                <div class="mr-3">
+	                  <a href="#">
+	                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+	                  </a>
+	                </div>
+
+	                <div class="media-body">
+	                  <div class="media-chat-item">
+	                    <a style="color: #333333;" href="${d.mes}" download>Скачать файл</a>
+	                  </div>
+	                  <div class="font-size-sm text-muted mt-2">
+	                    ${ hour } : ${ mitune }
+	                      <a href="#">
+	                        <i class="icon-pin-alt ml-2 text-muted"></i>
+	                      </a>
+	                  </div>
+	                </div>
+	              </li>
+	              `)
+			}
+
+		  });
+
+		  chat.on('image',(d) =>{
+
+			let time = new Date();
+
+			let hour = addZero(time.getHours());
+
+			let mitune = addZero(time.getMinutes());
+
+			if(d.id_push == id){
+			    $(`ul#we${d.id_pull}`).append(`
+	              <li class="media media-chat-item-reverse">
+	                <div class="media-body">
+	                  <div class="media-chat-item">
+							<a href="${d.mes}" class="lightzoom">
+			                    <img src="${d.mes}" width="200">
+			                </a>
+	                  </div>
+	                  <div class="font-size-sm text-muted mt-2">
+	                    ${ hour } : ${ mitune }
+	                    <a href="#">
+	                      <i class="icon-pin-alt ml-2 text-muted"></i>
+	                    </a>
+	                  </div>
+	                </div>
+
+	                <div class="ml-3">
+	                  <a href="#">
+	                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40">
+	                  </a>
+	                </div>
+	              </li>
+	              `)
+			}else{
+				$(`ul#we${d.id_push}`).append(`
+	              <li class="media">
+	                <div class="mr-3">
+	                  <a href="#">
+	                    <img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle" alt="" width="40" height="40" />
+	                  </a>
+	                </div>
+	                <div class="media-body">
+	                  <div class="media-chat-item">
+	                  	<a href="${d.mes}" class="lightzoom">
+		                    <img src="${d.mes}" width="200">
+		                </a>
+	                  </div>
+	                  <div class="font-size-sm text-muted mt-2">
+	                    ${ hour } : ${ mitune }
+	                    <a href="#">
+	                      <i class="icon-pin-alt ml-2 text-muted"></i>
+	                    </a>
+	                  </div>
+	                </div>
+	              </li>
+	              `)
+			}
+
+	    	lightZoom();
+
+		  });
     </script>
 
 </body>

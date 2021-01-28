@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Янв 20 2021 г., 09:01
+-- Время создания: Янв 28 2021 г., 17:55
 -- Версия сервера: 10.5.8-MariaDB
--- Версия PHP: 7.4.13
+-- Версия PHP: 7.4.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -56,20 +56,6 @@ CREATE TABLE `beds` (
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `beds`
---
-
-INSERT INTO `beds` (`id`, `ward_id`, `bed`, `types`, `user_id`, `add_date`) VALUES
-(1, 1, 1, 1, 15, '2020-11-28 02:25:43'),
-(2, 1, 2, 1, NULL, '2020-11-28 02:27:22'),
-(3, 1, 3, 1, NULL, '2020-11-28 02:27:30'),
-(4, 1, 4, 1, NULL, '2020-11-28 02:27:43'),
-(5, 4, 1, 2, NULL, '2020-11-28 02:29:20'),
-(6, 4, 2, 2, NULL, '2020-11-28 02:29:30'),
-(7, 5, 1, 2, NULL, '2020-11-28 02:29:39'),
-(8, 2, 1, 1, NULL, '2021-01-09 02:12:09');
-
 -- --------------------------------------------------------
 
 --
@@ -107,14 +93,6 @@ CREATE TABLE `bypass` (
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `bypass`
---
-
-INSERT INTO `bypass` (`id`, `user_id`, `visit_id`, `parent_id`, `method`, `description`, `update_date`, `add_date`) VALUES
-(1, 15, 43, 5, 1, '2 раза в день 1/2 таб', NULL, '2021-01-16 15:22:36'),
-(2, 15, 43, 5, 2, 'www', NULL, '2021-01-16 21:50:27');
-
 -- --------------------------------------------------------
 
 --
@@ -134,17 +112,6 @@ CREATE TABLE `bypass_date` (
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `bypass_date`
---
-
-INSERT INTO `bypass_date` (`id`, `bypass_id`, `bypass_time_id`, `parent_id`, `custom_time`, `date`, `comment`, `status`, `completed`, `add_date`) VALUES
-(1, 1, 1, 14, NULL, '2021-01-16', 'sss', 1, 1, '2021-01-16 10:22:58'),
-(2, 1, 2, 14, NULL, '2021-01-16', 'fds', 1, 1, '2021-01-16 10:22:59'),
-(3, 2, 4, NULL, NULL, '2021-01-16', NULL, NULL, NULL, '2021-01-16 16:51:38'),
-(4, 1, 1, 14, NULL, '2021-01-18', 's', 1, 1, '2021-01-18 12:37:00'),
-(5, 1, 2, NULL, NULL, '2021-01-18', NULL, NULL, NULL, '2021-01-18 12:37:11');
-
 -- --------------------------------------------------------
 
 --
@@ -157,15 +124,6 @@ CREATE TABLE `bypass_preparat` (
   `preparat_id` int(11) DEFAULT NULL,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `bypass_preparat`
---
-
-INSERT INTO `bypass_preparat` (`id`, `bypass_id`, `preparat_id`, `add_date`) VALUES
-(1, 1, 162, '2021-01-16 10:22:36'),
-(2, 1, 163, '2021-01-16 10:22:36'),
-(3, 2, 161, '2021-01-16 16:50:27');
 
 -- --------------------------------------------------------
 
@@ -180,16 +138,6 @@ CREATE TABLE `bypass_time` (
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `bypass_time`
---
-
-INSERT INTO `bypass_time` (`id`, `bypass_id`, `time`, `add_date`) VALUES
-(1, 1, '19:30:00', '2021-01-16 10:22:36'),
-(2, 1, '20:30:00', '2021-01-16 10:22:36'),
-(3, 2, '12:00:00', '2021-01-16 16:50:27'),
-(4, 2, '23:40:00', '2021-01-16 16:50:27');
-
 -- --------------------------------------------------------
 
 --
@@ -203,18 +151,9 @@ CREATE TABLE `chat` (
   `message` text CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `date` varchar(255) DEFAULT NULL,
   `time` varchar(255) DEFAULT NULL,
-  `activity` int(11) DEFAULT 0
+  `activity` int(11) DEFAULT 0,
+  `type_message` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Дамп данных таблицы `chat`
---
-
-INSERT INTO `chat` (`id`, `id_push`, `id_pull`, `message`, `date`, `time`, `activity`) VALUES
-(1, '4', '20', '5', '2021.01.12', '17:23', 0),
-(2, '4', '20', '\n', '2021.01.12', '17:23', 0),
-(3, '4', '2', 'hi', '2021.01.14', '19:23', 0),
-(4, '7', '2', 'hello chmooooooo', '2021.01.18', '19:16', 0);
 
 -- --------------------------------------------------------
 
@@ -290,7 +229,8 @@ INSERT INTO `division` (`id`, `level`, `title`, `name`, `assist`) VALUES
 (12, 5, 'Инфекционный', 'Инфекционист', NULL),
 (13, 5, 'Гинекология', 'Гинеколог', NULL),
 (14, 5, 'Неврология', 'Невролог', NULL),
-(144, 5, 'Урололгия', 'Уролог', NULL);
+(144, 5, 'Урололгия', 'Уролог', NULL),
+(145, 12, 'Физиотерапия', 'Фмзитеропевт', NULL);
 
 -- --------------------------------------------------------
 
@@ -375,14 +315,6 @@ CREATE TABLE `guides` (
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `guides`
---
-
-INSERT INTO `guides` (`id`, `name`, `price`, `add_date`) VALUES
-(1, 'Обл Болинца', '25000.0', '2020-12-28 14:20:28'),
-(2, 'Врач Ахмедов Алишер', '20000.0', '2021-01-14 14:12:17');
-
 -- --------------------------------------------------------
 
 --
@@ -396,17 +328,9 @@ CREATE TABLE `investment` (
   `balance_cash` decimal(65,1) NOT NULL DEFAULT 0.0,
   `balance_card` decimal(65,1) NOT NULL DEFAULT 0.0,
   `balance_transfer` decimal(65,1) NOT NULL DEFAULT 0.0,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `status` tinyint(1) DEFAULT 1,
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `investment`
---
-
-INSERT INTO `investment` (`id`, `pricer_id`, `user_id`, `balance_cash`, `balance_card`, `balance_transfer`, `status`, `add_date`) VALUES
-(1, 3, 15, '100000.0', '0.0', '0.0', 1, '2021-01-16 15:20:37'),
-(2, 3, 15, '500000.0', '0.0', '0.0', 1, '2021-01-18 17:20:02');
 
 -- --------------------------------------------------------
 
@@ -425,40 +349,6 @@ CREATE TABLE `laboratory_analyze` (
   `description` varchar(300) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `laboratory_analyze`
---
-
-INSERT INTO `laboratory_analyze` (`id`, `user_id`, `visit_id`, `service_id`, `analyze_id`, `result`, `deviation`, `description`) VALUES
-(1, 28, 15, 26, 4, '4', NULL, ''),
-(2, 28, 15, 26, 5, '32', NULL, ''),
-(3, 28, 16, 45, 1, '23', NULL, ''),
-(4, 28, 16, 45, 2, '23', NULL, ''),
-(5, 28, 16, 45, 3, '23', NULL, ''),
-(6, 28, 17, 56, 9, '23', NULL, ''),
-(7, 28, 17, 56, 10, '23', NULL, ''),
-(8, 16, 11, 26, 4, '3', NULL, ''),
-(9, 16, 11, 26, 5, '123', NULL, ''),
-(10, 16, 14, 56, 9, '123', NULL, ''),
-(11, 16, 14, 56, 10, '123', NULL, ''),
-(12, 35, 30, 26, 4, '12', NULL, ''),
-(13, 35, 30, 26, 5, '3', NULL, ''),
-(14, 35, 36, 25, 8, '22', NULL, ''),
-(15, 35, 37, 26, 4, '22', NULL, ''),
-(16, 35, 37, 26, 5, '2', NULL, ''),
-(17, 28, 51, 26, 4, '12', NULL, ''),
-(18, 28, 51, 26, 5, '2', NULL, ''),
-(19, 20, 54, 26, 4, '5', NULL, ''),
-(20, 20, 54, 26, 5, '5', NULL, ''),
-(21, 36, 62, 25, 8, '', NULL, ''),
-(22, 36, 63, 26, 4, '', NULL, ''),
-(23, 36, 63, 26, 5, '', NULL, ''),
-(24, 36, 66, 45, 1, '', NULL, ''),
-(25, 36, 66, 45, 2, '', NULL, ''),
-(26, 36, 66, 45, 3, '', NULL, ''),
-(27, 36, 67, 56, 9, '', NULL, ''),
-(28, 36, 67, 56, 10, '', NULL, '');
-
 -- --------------------------------------------------------
 
 --
@@ -469,9 +359,9 @@ CREATE TABLE `laboratory_analyze_type` (
   `id` int(11) NOT NULL,
   `service_id` int(11) DEFAULT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `code` varchar(20) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `standart_min` float NOT NULL DEFAULT 0,
-  `standart_max` float NOT NULL DEFAULT 1,
+  `code` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `standart_min` float NOT NULL,
+  `standart_max` float NOT NULL,
   `unit` varchar(50) DEFAULT NULL,
   `status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -481,14 +371,154 @@ CREATE TABLE `laboratory_analyze_type` (
 --
 
 INSERT INTO `laboratory_analyze_type` (`id`, `service_id`, `name`, `code`, `standart_min`, `standart_max`, `unit`, `status`) VALUES
-(1, 45, 'АЛТ', 'lab-07', 20, 40, NULL, 1),
-(2, 45, 'АСТ', 'lab-08', 0, 1, NULL, 1),
-(3, 45, 'Общий белок', 'lab-09', 0, 1, NULL, 1),
-(4, 26, 'ss1', 'RGM', 3.15, 13.5, '%', 1),
-(5, 26, 'eeee', '234325', 1.1, 5.1, 'GG', 1),
-(8, 25, 'dv', 'vd', 0, 1, NULL, 1),
-(9, 56, 'WBC (Лейкоциты)', '1234', 4.2, 10, NULL, 1),
-(10, 56, 'RBC (Эритроциты)', '1234', 3.8, 5.2, NULL, 1);
+(2, 3, 'АЛаТ', 'ALT', 0, 42, 'U/L', 1),
+(3, 3, 'АСаТ', 'AST', 0, 37, 'U/L', 1),
+(4, 3, 'Билирубин (общий)', 'TBIL', 0, 21, 'µmol/L', 1),
+(6, 3, 'Билирубин (прямой)', 'DBIL', 0, 5.42, 'µmol/L', 1),
+(7, 3, 'Билирубин (непрямой)', 'DBIL', 0, 14.4, 'µmol/L', 1),
+(8, 3, 'Глюкоза', 'GLU', 4.2, 6.4, 'µmol/L', 1),
+(9, 3, 'Холестерин  (общий)', 'CHOL', 0, 5.7, 'µmol/L', 1),
+(10, 3, 'Холестерин  ЛПВП', 'HDL', 0.9, 1.42, 'µmol/L', 1),
+(11, 3, 'Холестерин  ЛПНП', 'LDL', 2.25, 4.82, 'µmol/L', 1),
+(12, 3, 'Триглицериды', 'Trig', 0, 1.71, 'µmol/L', 1),
+(13, 3, 'Общ белок', 'TP', 66, 87, 'g/l', 1),
+(14, 3, 'Альбумин', 'ALB', 38, 51, 'g/l', 1),
+(15, 3, 'Альфа амилаза', 'AMYL', 0, 220, 'U/L', 1),
+(16, 3, 'Гликизированный гемоглобин', 'HbA1c', 0, 5.7, '%', 1),
+(17, 3, 'Лактатдегидрогеназа', 'LDH', 225, 450, 'U/L', 1),
+(18, 3, 'Мочевина', 'UREA UV', 1.7, 8.3, 'µmol/L', 1),
+(19, 3, 'Креатинин (муж)', 'CREA', 53, 97, 'µmol/L', 1),
+(20, 3, 'Креатинин (жен)', 'CREA', 44, 80, 'µmol/L', 1),
+(21, 3, 'Мочевая кислота (муж)', 'URIC', 200, 420, 'µmol/L', 1),
+(22, 3, 'Мочевая кислота (жен)', 'URIC', 140, 340, 'µmol/L', 1),
+(23, 3, 'Гамма-глутамилтрансфераза (муж)', 'GGT', 11, 61, 'U/L', 1),
+(24, 3, 'Гамма-глутамилтрансфераза (жен)', 'GGT', 9, 39, 'µmol/L', 1),
+(25, 3, 'Креатининкиназа (муж)', 'CK NAC', 27, 190, 'U/L', 1),
+(26, 3, 'Креатининкиназа (жен)', 'CK NAC', 24, 190, 'U/L', 1),
+(27, 3, 'Щелочная фосфатаза (муж)', 'ALP', 80, 306, 'U/L', 1),
+(28, 3, 'Щелочная фосфатаза (жен)', 'ALP', 64, 306, 'U/L', 1),
+(29, 3, 'Щелочная фосфатаза (дети до 15)', 'ALP', 0, 644, 'U/L', 1),
+(30, 3, 'Щелочная фосфатаза (Подростки 15-17)', 'ALP', 0, 483, 'U/L', 1),
+(31, 3, 'Калий', 'Potassium', 3.6, 5.5, 'µmol/L', 1),
+(32, 3, 'Калций', 'CA', 2.02, 2.6, 'µmol/L', 1),
+(33, 3, 'Натрий', 'Sodium', 135, 155, 'µmol/L', 1),
+(34, 3, 'Магний', 'MG', 1.9, 2.5, 'mg/dl', 1),
+(35, 3, 'Фосфор	(дети)', 'Р', 2.5, 5, 'mg/dl', 1),
+(36, 3, 'Фосфор	(Взрослые)', 'P', 4, 7, 'mg/dl', 1),
+(37, 3, 'Железо (муж)', 'IRON', 10.6, 28.3, 'µmol/L', 1),
+(38, 3, 'Железо	(жен)', 'IRON', 6.6, 26, 'µmol/L', 1),
+(39, 4, 'Мужчины  20-39 лет', 'TESTO', 9, 38, 'ng/ml', 1),
+(40, 4, '40-55 лет', 'TESTO', 6.9, 21, 'ng/ml', 1),
+(41, 4, 'старше 55 лет', 'TESTO', 5.9, 18.1, 'ng/ml', 1),
+(42, 4, 'Женщины :', 'TESTO', 0, 4.6, 'ng/ml', 1),
+(43, 5, 'Мужчины :', 'fTESTO', 4.5, 42, 'pg/ml', 1),
+(44, 5, 'Женщины :', 'fTESTO', 0, 4.1, 'pg/ml', 1),
+(45, 5, 'Постменопауза :', 'fTESTO', 0.1, 4.7, 'pg/ml', 1),
+(46, 6, 'Фолликулярная фаза :', 'LH', 2, 9.5, 'U/L', 1),
+(47, 6, 'Овуляции :', 'LH', 10, 45, 'U/L', 1),
+(48, 6, 'Лютеинизирующая :', 'LH', 0.5, 17, 'U/L', 1),
+(49, 6, 'Мужчины :', 'LH', 1.5, 9, 'U/L', 1),
+(50, 7, 'Фолликулярная фаза :', 'FSH', 3, 12, 'U/L', 1),
+(51, 7, 'Лютеинизирующая фаза :', 'FSH', 2, 12, 'U/L', 1),
+(52, 7, 'Овуляции :', 'FSH', 6, 25, 'U/L', 1),
+(53, 7, 'Менопауза :', 'FSH', 10, 150, 'U/L', 1),
+(54, 7, 'Мужчин :', 'FSH', 0.8, 25, 'U/L', 1),
+(55, 8, 'Мужчины :10-20 лет', 'AMH', 1.3, 140, 'ng/ml', 1),
+(56, 8, 'муж &gt;20 лет', 'AMH', 0.8, 14.8, 'ng/ml', 1),
+(57, 8, 'Женщины : 18-30 лет', 'AMH', 0.2, 12.6, 'ng/ml', 1),
+(58, 8, '31-50 лет', 'AMH', 0.025, 5.1, 'ng/ml', 1),
+(59, 8, 'менопауза', 'AMH', 0, 0.4, 'ng/ml', 1),
+(60, 9, 'Беременные : 1-й триместр :', 'PRL', 0, 2000, 'UI/L', 1),
+(61, 9, 'Беременные : 2-й триместр :', 'PRL', 0, 6000, 'UI/L', 1),
+(62, 9, 'Беременные : 3-й триместр :', 'PRL', 0, 10000, 'UI/L', 1),
+(63, 9, 'Фазы цикла : Фолликулярная фаза :', 'PRL', 60, 600, 'UI/L', 1),
+(64, 9, 'Фазы цикла : Лютеинизирующая фаза :', 'PRL', 120, 900, 'UI/L', 1),
+(65, 9, 'Фазы цикла : Менопауза :', 'PRL', 40, 550, 'UI/L', 1),
+(66, 9, 'Мужчины :', 'PRL', 60, 560, 'UI/L', 1),
+(67, 10, 'Мужчин :', 'PROG', 0.1, 1.37, 'ng/ml', 1),
+(68, 10, 'Фолликулярная фаза :', 'PROG', 0.19, 1.46, 'ng/ml', 1),
+(69, 10, 'Лютеинизирующая фаза :', 'PROG', 2.39, 25.4, 'ng/ml', 1),
+(70, 10, 'менопауза', 'PROG', 0.1, 0.73, 'ng/ml', 1),
+(71, 11, 'Мужчин :', 'E2', 0.029, 0.3, 'nmol/l', 1),
+(72, 11, 'Фолликулярная фаза :', 'E2', 0.05, 0.7, 'nmol/l', 1),
+(73, 11, 'Лютеинизирующая фаза :', 'E2', 0.1, 1.1, 'nmol/l', 1),
+(74, 11, 'Овуляция :', 'E2', 0.34, 1.8, 'nmol/l', 1),
+(75, 11, 'Менопауза :', 'E2', 0, 0.23, 'nmol/l', 1),
+(76, 12, 'Кортизол', 'CORT', 140, 600, 'nmol/l', 1),
+(77, 13, 'Жен', 'T4', 60, 160, 'nmol/l', 1),
+(78, 13, 'Муж', 'T4', 60, 135, 'nmol/l', 1),
+(79, 15, 'Трийодтиронин', 'T3', 1.2, 3.2, 'nmol/l', 1),
+(80, 16, 'Свободный Трийодтиронин', 'fT3', 2.5, 5.8, 'pgmol/l', 1),
+(81, 17, 'До 60 лет :', 'fT4', 10, 25, 'pmol/l', 1),
+(82, 17, 'Старше 60 лет', 'fT4', 10, 21, 'pmol/l', 1),
+(83, 18, 'Тиреотропный гормон', 'THS', 0.3, 4, 'mlU/l', 1),
+(84, 19, 'Мужчины :', 'DHEA-S', 1, 4.2, 'μg/ml', 1),
+(85, 19, 'Дети : 1-5 лет :', 'DHEA-S', 0, 0.3, 'μg/ml', 1),
+(86, 19, 'Дети : 6-11 лет :', 'DHEA-S', 0.1, 1.5, 'μg/ml', 1),
+(87, 19, 'Дети : 12-17 лет :', 'DHEA-S', 0.3, 5.5, 'μg/ml', 1),
+(88, 19, 'Постменопауза :', 'DHEA-S', 0.1, 0.6, 'μg/ml', 1),
+(89, 19, 'Период беремен :', 'DHEA-S', 0.2, 1.2, 'μg/ml', 1),
+(90, 19, 'Предменопауза :', 'DHEA-S', 0.8, 3.9, 'μg/ml', 1),
+(91, 20, 'Женщины :', 'АТ-ТПО', 0, 30, 'UI/L', 1),
+(92, 20, 'Женщины &gt;50 лет :', 'АТ-ТПО', 0, 50, 'UI/L', 1),
+(93, 20, 'Мужчины :', 'АТ-ТПО', 0, 30, 'UI/L', 1),
+(94, 21, 'Мужчины', 'АТ-TГ', 0, 100, 'UI/L', 1),
+(95, 21, 'Женщины', 'АТ-TГ', 0, 100, 'UI/L', 1),
+(96, 21, 'Старше 50 лет :', 'АТ-TГ', 0, 150, 'UI/L', 1),
+(97, 22, 'Новорожденные', 'GH EIA', 20, 80, 'mlU/l', 1),
+(98, 22, 'Дети', 'GH EIA', 2, 20, 'mlU/l', 1),
+(99, 22, 'Взрослые', 'GH EIA', 0, 20, 'mlU/l', 1),
+(100, 23, 'возраст 3-8 лет:', 'IGF-1', 20, 250, 'ng/ml', 1),
+(101, 23, 'возраст 11-16 лет:', 'IGF-1', 130, 600, 'ng/ml', 1),
+(102, 23, 'взрослые после пол.созревания:', 'IGF-1', 150, 350, 'ng/ml', 1),
+(103, 24, 'АКТГ', 'ACTH', 7, 63, 'пг/мл', 1),
+(104, 25, 'Парат гормон', 'PTH', 18.5, 88, 'пг/мл', 1),
+(105, 26, 'Дети', '17-OH-PROG', 0.1, 2.7, 'nmol/l', 1),
+(106, 26, 'Мужчины', '17-OH-PROG', 0.2, 6, 'nmol/l', 1),
+(107, 26, 'Женщины', '17-OH-PROG', 0.1, 8.7, 'nmol/l', 1),
+(108, 26, 'Фоликулярная фаза', '17-OH-PROG', 0.2, 2.4, 'nmol/l', 1),
+(109, 26, 'Лютеиновая фаза', '17-OH-PROG', 0.9, 8.7, 'nmol/l', 1),
+(110, 26, 'Менопауза', '17-OH-PROG', 0.12, 7, 'nmol/l', 1),
+(111, 27, 'ҳомиладор бўлмаган аёлларда :', 'hCG', 0, 5, 'UI/L', 1),
+(112, 27, 'эркакларда :', 'hCG', 0, 5, 'UI/L', 1),
+(113, 27, 'Беременные : 1- неделя', 'hCG', 10, 30, 'UI/L', 1),
+(114, 27, 'Беременные : 2- неделя', 'hCG', 30, 100, 'UI/L', 1),
+(115, 27, 'Беременные: 3- неделя', 'hCG', 100, 1000, 'UI/L', 1),
+(116, 27, 'Беременные: 4- неделя', 'hCG', 1000, 10000, 'UI/L', 1),
+(117, 27, 'Беременные : 2-3 месяц', 'hCG', 30000, 100000, 'UI/L', 1),
+(118, 27, 'Беременные: 2-триместр', 'hCG', 10000, 30000, 'UI/L', 1),
+(119, 27, 'Беременные: 3-триместр', 'hCG', 5000, 15000, 'UI/L', 1),
+(120, 28, 'Аутоимун антитело IgG', 'ds ДНК', 0, 25, 'МЕ/мл', 1),
+(121, 29, 'Витамин D', 'Vit D', 20, 50, 'ng/ml', 1),
+(122, 30, 'Лямблия', 'Giardia.I', 0, 0.926, 'IgG', 1),
+(123, 31, 'Эхинокок', 'Echinococcus', 0, 0.311, 'IgG', 1),
+(124, 32, 'Трихинелла', 'Trichinella sp', 0, 0.322, 'IgG', 1),
+(125, 33, 'Аскарида', 'Ascaris.L', 0, 0.451, 'IgG', 1),
+(126, 34, 'Токсокар', 'Toxocariasis', 0, 0.296, 'IgG', 1),
+(127, 35, 'Описторхис', 'Opistorchis fel', 0, 0.243, 'IgG', 1),
+(128, 36, 'Глюкоза в крови (экспр)', 'GLU', 3.3, 5.5, 'mmol/L', 1),
+(129, 37, 'D-Димер', 'D-dimer', 0, 500, 'нг/мл', 1),
+(130, 38, 'Гепатит А', 'HAV IgM', 0, 0.236, 'IgM', 1),
+(131, 39, 'Вирус гепатита &quot;В&quot;', 'HbsAg', 0, 0.489, 'IgG', 1),
+(132, 40, 'Вирус гепатита &quot;С&quot;', 'HCVAg', 0, 0.248, 'IgG', 1),
+(133, 41, 'Вирус гепатита &quot;D&quot;', 'HDVAg', 1601, 0, 'IgG', 1),
+(134, 42, 'Cytomegalovirus	lgG', 'CMV', 0, 0.289, 'IgG', 1),
+(135, 43, 'Herpes simplex virus –I,II', 'HSV', 0, 0.317, 'IgG', 1),
+(136, 44, 'Toxoplasma gondii', 'TOXO', 0, 0.329, 'IgG', 1),
+(137, 45, 'Rubella', 'RUB', 15.1, 75.3, 'U/ml', 1),
+(138, 46, 'Chlamydia  trachomatis', 'CHLAM', 0, 0.294, 'IgG', 1),
+(139, 47, 'Ureaplasma urealyticum', 'UREA', 0, 0.315, 'IgG', 1),
+(140, 48, 'Mycoplasma hominis', 'MYCO', 0, 0.301, 'IgG', 1),
+(141, 49, 'Helicobacter Pylori', 'H.pylori', 0, 0.343, 'IgG', 1),
+(142, 50, 'Туберкулёзный-АГ', 'AT-Tub', 0, 0.171, 'IgG', 1),
+(143, 51, 'Cytomegalovirus  Ig M', 'CMV Ig M', 0, 0.312, 'IgM', 1),
+(144, 52, 'Herpes simplex virus –I,II  Ig M', 'HSV Ig M', 0, 0.278, 'IgM', 1),
+(145, 53, 'Toxoplasma gondii  Ig M', 'TOXO Ig M', 0, 0.215, 'IgM', 1),
+(146, 54, 'Rubella Ig M', 'RUB Ig M', 0, 0.267, 'IgM', 1),
+(147, 55, 'Micoplasma hominis  Ig M', 'MYCO Ig M', 0, 0.343, 'IgM', 1),
+(148, 56, 'Ureaplasma urealyticum  Ig M', 'UREA Ig M', 0, 0.236, 'IgM', 1),
+(149, 57, 'Chlamydia  trachomatis Ig M', 'CHLAM Ig M', 0, 0.226, 'IgM', 1),
+(150, 58, 'Протромбиновое время', 'PT', 8, 15, 'секунд', 1);
 
 -- --------------------------------------------------------
 
@@ -502,13 +532,6 @@ CREATE TABLE `members` (
   `price` decimal(65,1) NOT NULL DEFAULT 0.0,
   `add_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `members`
---
-
-INSERT INTO `members` (`id`, `name`, `price`, `add_date`) VALUES
-(1, 'Вадим Китаец', '50000.0', '2020-12-28 14:15:04');
 
 -- --------------------------------------------------------
 
@@ -551,8 +574,7 @@ CREATE TABLE `operation` (
 --
 
 INSERT INTO `operation` (`id`, `visit_id`, `user_id`, `grant_id`, `parent_id`, `division_id`, `service_id`, `oper_date`, `add_date`, `priced_date`, `completed`) VALUES
-(3, 43, 15, 5, 5, 10, 34, '2021-01-20 10:29:00', '2021-01-19 19:51:06', NULL, NULL),
-(4, 43, 15, 5, 5, 10, 34, '2021-01-21 10:10:00', '2021-01-20 10:30:41', NULL, NULL);
+(1, 1, 33, 5, 5, 10, 34, '2021-01-27 15:35:00', '2021-01-27 15:29:16', NULL, '2021-01-27 15:59:00');
 
 -- --------------------------------------------------------
 
@@ -571,16 +593,6 @@ CREATE TABLE `operation_inspection` (
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `operation_inspection`
---
-
-INSERT INTO `operation_inspection` (`id`, `operation_id`, `parent_id`, `description`, `diagnostic`, `recommendation`, `status`, `add_date`) VALUES
-(1, 3, 5, 'eqweqw', 'eqeq eqw', 'eqweqw', 1, '2021-01-19 23:22:38'),
-(2, 3, 5, 'lol', 'lod', 'lod', 1, '2021-01-19 23:41:03'),
-(3, 3, 5, 'wqeqwe', 'eqweqweqwe', 'qeqweqw', 1, '2021-01-20 09:41:57'),
-(4, 3, 21, 'any', 'any', 'any', NULL, '2021-01-20 09:45:17');
-
 -- --------------------------------------------------------
 
 --
@@ -593,13 +605,6 @@ CREATE TABLE `operation_member` (
   `member_id` int(11) NOT NULL,
   `status` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `operation_member`
---
-
-INSERT INTO `operation_member` (`id`, `operation_id`, `member_id`, `status`) VALUES
-(1, 3, 11, NULL);
 
 -- --------------------------------------------------------
 
@@ -618,34 +623,6 @@ CREATE TABLE `operation_stats` (
   `saturation` tinyint(4) DEFAULT NULL,
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `operation_stats`
---
-
-INSERT INTO `operation_stats` (`id`, `parent_id`, `operation_id`, `time`, `pressure`, `pulse`, `temperature`, `saturation`, `add_date`) VALUES
-(1, 5, 3, '10:00:00', '160/80', 85, 36.6, 75, '2021-01-19 23:31:41'),
-(2, 5, 3, '12:00:00', '170/90', 87, 38.3, 40, '2021-01-19 23:32:48'),
-(3, 5, 3, '13:00:00', '90/30', 63, 35.7, 25, '2021-01-19 23:51:12');
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `pharmacy_category`
---
-
-CREATE TABLE `pharmacy_category` (
-  `id` int(11) NOT NULL,
-  `name` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `pharmacy_category`
---
-
-INSERT INTO `pharmacy_category` (`id`, `name`) VALUES
-(1, 'Расходный материал'),
-(2, 'Таблетки');
 
 -- --------------------------------------------------------
 
@@ -988,7 +965,7 @@ CREATE TABLE `service` (
   `id` int(11) NOT NULL,
   `user_level` tinyint(4) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
-  `code` varchar(10) DEFAULT NULL,
+  `code` varchar(30) DEFAULT NULL,
   `name` varchar(500) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `price` decimal(65,1) DEFAULT NULL,
   `type` smallint(1) NOT NULL DEFAULT 1
@@ -1000,54 +977,62 @@ CREATE TABLE `service` (
 
 INSERT INTO `service` (`id`, `user_level`, `division_id`, `code`, `name`, `price`, `type`) VALUES
 (1, 1, NULL, NULL, 'Стационарный Осмотр', NULL, 101),
-(2, 10, 2, '4R15', 'МРТ Головного мозга', '100000.0', 1),
-(3, 10, 2, NULL, 'Шейный отдел позвоночника', '200000.0', 1),
-(4, 10, 2, NULL, 'Грудной отдел позвоночника', '150000.0', 1),
-(5, 10, 2, NULL, 'Позвоночный столб', '120000.0', 1),
-(6, 10, 2, NULL, 'Правая ключица RT', '130000.0', 1),
-(7, 10, 2, NULL, 'Правое предплечье', '150000.0', 1),
-(8, 10, 2, NULL, 'Левый коленный сустав LT', '160000.0', 1),
-(9, 10, 2, NULL, 'Фораминалный Обзор (Полный)', '180000.0', 1),
-(10, 10, 3, NULL, 'Задне-передняя проекция', '60000.0', 1),
-(11, 10, 3, NULL, 'Передне-задняя проекция', '60000.0', 1),
-(12, 10, 3, NULL, 'Передне-задняя проекция/Боковая', '80000.0', 1),
-(13, 10, 3, NULL, 'Оба Ключицы Передне-задняя', '80000.0', 1),
-(14, 10, 3, NULL, 'Грудной отдел позвоночника Передне-задняя/Боковая', '100000.0', 1),
-(15, 10, 3, NULL, 'Оба Пальцев Передне-задняя/Боковая', '120000.0', 1),
-(16, 10, 4, NULL, 'КТ Позвоночный столб 3D', '80000.0', 1),
-(17, 10, 4, NULL, 'КТ Правая плечевая кость', '150000.0', 1),
-(18, 10, 4, NULL, 'КТ Кости таза', '160000.0', 1),
-(19, 10, 4, NULL, 'КТ Левая стопа', '200000.0', 1),
-(20, 10, 6, NULL, 'Транскраниальная Допплерография', '80000.0', 1),
-(21, 10, 6, NULL, 'Щитовидная железа', '90000.0', 1),
-(22, 10, 6, NULL, 'Тромбоз Допплерография (Обе)', '140000.0', 1),
-(23, 10, 6, NULL, 'Молочная железа-Щитовидная железа', '150000.0', 1),
-(24, 10, 7, NULL, 'ЭКГ', '100000.0', 1),
-(25, 6, 8, NULL, 'Электролиты крови', '50000.0', 1),
-(26, 6, 8, NULL, 'Общий белок', '30000.0', 1),
-(27, 6, 8, NULL, 'Альбумин', '20000.0', 1),
-(29, 6, 8, NULL, 'Ревматоидный фактор', '70000.0', 1),
-(30, 5, 9, NULL, 'Первичная консультация терапевта', '50000.0', 1),
-(31, 5, 9, NULL, 'Вторичная консультация терапевта', '30000.0', 1),
-(32, 5, 10, 'e312312', 'Консультация хирурга, первичная', '50000.0', 2),
-(33, 5, 10, NULL, 'Консультация хирурга, повторная', '30000.0', 1),
-(34, 5, 10, NULL, 'Раны грудной клетки', '60000.0', 3),
-(35, 5, 10, NULL, 'Раны промежности (без повреждения кишки)', '15000.0', 1),
-(36, 5, 11, NULL, 'Первичная консультация кардиолога', '50000.0', 1),
-(37, 5, 11, NULL, 'Вторичная консультация кардиолога', '30000.0', 1),
-(38, 5, 12, NULL, 'Прием (осмотр, консультация) врача-инфекциониста', '60000.0', 1),
-(39, 5, 12, NULL, 'Исследование уровня  тимоловой пробы в крови', '60000.0', 1),
-(40, 5, 13, NULL, 'Первичная консультация гинеколога', '60000.0', 1),
-(41, 5, 13, NULL, 'Вторичная консультация гинеколога', '50000.0', 1),
-(42, 5, 13, NULL, 'Кольпоскопия', '80000.0', 1),
-(43, 5, 14, NULL, 'Первичная консультация невропатолога', '60000.0', 1),
-(44, 5, 14, NULL, 'Вторичная консультация детс.невропатолога', '50000.0', 1),
-(45, 6, 8, NULL, 'Биохимия', '14000.0', 1),
-(52, 5, 11, '4545', 'Первичная консультация кардиолога', '60000.0', 1),
-(53, 5, 11, '4546', 'повторный осмотр', '30000.0', 1),
-(54, 5, 9, 'DS43', 'Первичная консультация', '100000.0', 1),
-(55, 5, 142, 'FG554', 'Первичная консультация', '34000.0', 1),
-(56, 6, 8, '1234', 'Общий анализ крови', '100000.0', 1);
+(2, 12, 145, NULL, 'Массаж спины', '50000.0', 1),
+(3, 6, 8, NULL, 'Биохимический анализ крови', '45000.0', 1),
+(4, 6, 8, NULL, 'Тестостерон', '38000.0', 1),
+(5, 6, 8, NULL, 'Своб. Тестостерон', '37000.0', 1),
+(6, 6, 8, NULL, 'Лютеинизирующий гормон (ЛГ)', '37000.0', 1),
+(7, 6, 8, NULL, 'Фолликулостимулирующий (ФСГ)', '37000.0', 1),
+(8, 6, 8, NULL, 'Антимюллер гормон', '270000.0', 1),
+(9, 6, 8, NULL, 'Пролактин', '38000.0', 1),
+(10, 6, 8, 'PROG', 'Прогестерон', '42000.0', 1),
+(11, 6, 8, NULL, 'Эстрадиол', '37000.0', 1),
+(12, 6, 8, NULL, 'Кортизол', '37000.0', 1),
+(13, 6, 8, NULL, 'Тироксин (T4)', '38000.0', 1),
+(15, 6, 8, NULL, 'Трийодтиронин ( T3)', '38000.0', 1),
+(16, 6, 8, NULL, 'Свободный Трийодтиронин  (fT3)', '39000.0', 1),
+(17, 6, 8, NULL, 'Свободный Тироксин  (fT4)', '37000.0', 1),
+(18, 6, 8, NULL, 'Тиреотропный гормон  (ТТГ)', '38000.0', 1),
+(19, 6, 8, NULL, 'Дегидроэпиандростерон -Сульфата (ДГАЭС)', '43000.0', 1),
+(20, 6, 8, NULL, 'Аутоантител к тиреопероксидазе (ТПО)', '40000.0', 1),
+(21, 6, 8, NULL, 'Антитело к треоглобулину (Анти-ТГ)', '40000.0', 1),
+(22, 6, 8, NULL, 'Гормон Роста', '52000.0', 1),
+(23, 6, 8, NULL, 'Инсулиноподобный фактор (ИФР-1)', '145000.0', 1),
+(24, 6, 8, NULL, 'АКТГ', '145000.0', 1),
+(25, 6, 8, NULL, 'Парат гормон', '150000.0', 1),
+(26, 6, 8, NULL, '17-ОН-Прогестерон', '42000.0', 1),
+(27, 6, 8, NULL, 'Хорионический Гонадотропин Человека', '35000.0', 1),
+(28, 6, 8, NULL, 'Аутоимун антитело IgG', '45000.0', 1),
+(29, 6, 8, NULL, 'Витамин D', '120000.0', 1),
+(30, 6, 8, NULL, 'Лямблия', '28000.0', 1),
+(31, 6, 8, NULL, 'Эхинокок', '25000.0', 1),
+(32, 6, 8, NULL, 'Трихинелла', '20000.0', 1),
+(33, 6, 8, NULL, 'Аскарида', '28000.0', 1),
+(34, 6, 8, NULL, 'Токсокар', '20000.0', 1),
+(35, 6, 8, NULL, 'Описторхис', '28000.0', 1),
+(36, 6, 8, NULL, 'Глюкоза в крови (экспр)', '7000.0', 1),
+(37, 6, 8, NULL, 'D-Димер', '90000.0', 1),
+(38, 6, 8, NULL, 'Гепатит А', '30000.0', 1),
+(39, 6, 8, NULL, 'Вирус гепатита &quot;В&quot;', '20000.0', 1),
+(40, 6, 8, NULL, 'Вирус гепатита &quot;С&quot;', '20000.0', 1),
+(41, 6, 8, NULL, 'Вирус гепатита &quot;D&quot;', '30000.0', 1),
+(42, 6, 8, NULL, 'Cytomegalovirus', '27000.0', 1),
+(43, 6, 8, NULL, 'Herpes simplex virus –I,II		lgG', '27000.0', 1),
+(44, 6, 8, NULL, 'Toxoplasma gondii		lgG', '27000.0', 1),
+(45, 6, 8, NULL, 'Rubella		lgG', '27000.0', 1),
+(46, 6, 8, NULL, 'Chlamydia  trachomatis lgG', '27000.0', 1),
+(47, 6, 8, NULL, 'Ureaplasma urealyticum		lgG', '30000.0', 1),
+(48, 6, 8, NULL, 'Mycoplasma hominis  lgG', '30000.0', 1),
+(49, 6, 8, NULL, 'Helicobacter Pylori', '48000.0', 1),
+(50, 6, 8, NULL, 'Туберкулёзный-АГ', '40000.0', 1),
+(51, 6, 8, NULL, 'Cytomegalovirus  Ig M', '30000.0', 1),
+(52, 6, 8, NULL, 'Herpes simplex virus –I,II  Ig M', '30000.0', 1),
+(53, 6, 8, NULL, 'Toxoplasma gondii  Ig M', '30000.0', 1),
+(54, 6, 8, NULL, 'Rubella Ig M', '30000.0', 1),
+(55, 6, 8, NULL, 'Micoplasma hominis  Ig M', '33000.0', 1),
+(56, 6, 8, NULL, 'Ureaplasma urealyticum  Ig M', '33000.0', 1),
+(57, 6, 8, NULL, 'Chlamydia  trachomatis Ig M', '30000.0', 1),
+(58, 6, 8, NULL, 'Протромбиновое время', '8000.0', 1);
 
 -- --------------------------------------------------------
 
@@ -1165,24 +1150,24 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `last_name`, `father_name`, `dateBith`, `region`, `passport`, `placeWork`, `position`, `numberPhone`, `residenceAddress`, `registrationAddress`, `gender`, `user_level`, `division_id`, `status`, `share`, `resident`, `room`, `token_telegramm`, `add_date`) VALUES
-(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, 1, 99.1, NULL, NULL, NULL, '2020-10-31 22:48:15.000000'),
-(2, NULL, 'reg', 'e06b95860a6082ae37ef08874f8eb5fade2549da', 'Регистратура', 'Регистратура', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, 1, 0, NULL, NULL, NULL, '2020-11-08 19:03:49.000000'),
-(3, NULL, 'kassa', '913c8fd5abbf64f58c66b63dd31f6c310c757702', 'kassa', 'kassa', 'kassa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, 1, 10, NULL, NULL, NULL, '2020-11-18 20:55:30.000000'),
-(4, NULL, 'main', 'b28b7af69320201d1cf206ebf28373980add1451', 'врач', 'главный', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, 1, 5, NULL, 1, NULL, '2020-12-04 17:36:43.000000'),
-(5, NULL, 'doc_xirurg', '6f0d864cd22ec68deaa7b2c6e84420f7f8515825', 'Шариф', 'Ахмедов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 10, 1, 15, NULL, 2, NULL, '2020-12-05 05:00:29.000000'),
-(6, NULL, 'laboratory', '80240dcecd105d50195cce7a318413dc013733e3', 'Дилноза', 'Шарипова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 8, 1, 12, NULL, 3, NULL, '2020-12-05 05:01:19.000000'),
-(7, NULL, 'mrt', 'f2b83e490eacf0abfbda89413282a3744dc9a2b8', 'Давид', 'Нагараев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 2, 1, 20, NULL, 3, NULL, '2020-12-05 05:01:55.000000'),
-(8, NULL, 'rentgen', '9928bac9a395fc4d8b99d4cdf9577d2d6e19bdaf', 'Жамшид', 'Рахмонов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 3, 1, NULL, NULL, 4, NULL, '2020-12-05 05:02:33.000000'),
-(9, NULL, 'uzi', 'f2b545bd0099b1c89c3ef7acd0e4e1e50874bf74', 'Шухрат', 'Аллаёров', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 6, 1, NULL, NULL, 5, NULL, '2020-12-05 05:03:21.000000'),
-(10, NULL, 'kt', '3553b226127e0cccd2bec8c74a70f7d1603f41f9', 'Самандар', 'Файзиев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 4, 1, NULL, NULL, 6, NULL, '2020-12-05 05:04:40.000000'),
-(11, NULL, 'doc_nevrolog', '9e509e93c9b6f6624b4a1cfb30b636974a4ab57d', 'Дилафруз', 'Ахмедова', 'Баходировна', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 14, 1, 12, NULL, 7, NULL, '2020-12-05 06:11:56.000000'),
-(12, NULL, 'doc_ginekolog', '32e27b059f80416a798458f2e67b898f078172a0', 'Гулрух', 'Ахматова', 'Рахматовна', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 13, 1, 5, NULL, 8, NULL, '2020-12-05 06:12:43.000000'),
-(14, NULL, 'nurce', '98b8f939651a9c9f10a7a0c83815083e96ae52c9', 'Шамсия', 'Турсунова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, 1, 0, NULL, NULL, NULL, '2020-12-05 06:14:36.000000'),
-(15, 2, NULL, NULL, 'Бемор 1', 'Бемор 1', 'ххх', '2001-12-04', 'Бухарский район', 'АА12345678', 'Химчан', 'ИТ', '998912474353', 'Кучабог 8', 'Рухшобод', NULL, 15, NULL, 1, 0, NULL, NULL, NULL, '2020-12-05 06:59:59.000000'),
+(1, NULL, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'Jasur', 'Rakhmatov', 'Ilhomovich', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, 99.1, NULL, NULL, NULL, '2020-10-31 22:48:15.000000'),
+(2, NULL, 'reg', 'e06b95860a6082ae37ef08874f8eb5fade2549da', 'Регистратура', 'Регистратура', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 2, NULL, NULL, 0, NULL, NULL, NULL, '2020-11-08 19:03:49.000000'),
+(3, NULL, 'kassa', '913c8fd5abbf64f58c66b63dd31f6c310c757702', 'kassa', 'kassa', 'kassa', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 3, NULL, NULL, 10, NULL, NULL, NULL, '2020-11-18 20:55:30.000000'),
+(4, NULL, 'main', 'b28b7af69320201d1cf206ebf28373980add1451', 'врач', 'главный', 'xxx', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 8, NULL, NULL, 5, NULL, 1, NULL, '2020-12-04 17:36:43.000000'),
+(5, NULL, 'doc_xirurg', '6f0d864cd22ec68deaa7b2c6e84420f7f8515825', 'Шариф', 'Ахмедов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 10, NULL, 15, NULL, 2, NULL, '2020-12-05 05:00:29.000000'),
+(6, NULL, 'laboratory', '80240dcecd105d50195cce7a318413dc013733e3', 'Дилноза', 'Шарипова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 6, 8, NULL, 12, NULL, 3, NULL, '2020-12-05 05:01:19.000000'),
+(7, NULL, 'mrt', 'f2b83e490eacf0abfbda89413282a3744dc9a2b8', 'Давид', 'Нагараев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 2, NULL, 20, NULL, 3, NULL, '2020-12-05 05:01:55.000000'),
+(8, NULL, 'rentgen', '9928bac9a395fc4d8b99d4cdf9577d2d6e19bdaf', 'Жамшид', 'Рахмонов', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 3, NULL, NULL, NULL, 4, NULL, '2020-12-05 05:02:33.000000'),
+(9, NULL, 'uzi', 'f2b545bd0099b1c89c3ef7acd0e4e1e50874bf74', 'Шухрат', 'Аллаёров', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 6, NULL, NULL, NULL, 5, NULL, '2020-12-05 05:03:21.000000'),
+(10, NULL, 'kt', '3553b226127e0cccd2bec8c74a70f7d1603f41f9', 'Самандар', 'Файзиев', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 4, NULL, NULL, NULL, 6, NULL, '2020-12-05 05:04:40.000000'),
+(11, NULL, 'doc_nevrolog', '9e509e93c9b6f6624b4a1cfb30b636974a4ab57d', 'Дилафруз', 'Ахмедова', 'Баходировна', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 14, NULL, 12, NULL, 7, NULL, '2020-12-05 06:11:56.000000'),
+(12, NULL, 'doc_ginekolog', '32e27b059f80416a798458f2e67b898f078172a0', 'Гулрух', 'Ахматова', 'Рахматовна', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 5, 13, NULL, 5, NULL, 8, NULL, '2020-12-05 06:12:43.000000'),
+(14, NULL, 'nurce', '98b8f939651a9c9f10a7a0c83815083e96ae52c9', 'Шамсия', 'Турсунова', 'ххх', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, NULL, NULL, 0, NULL, NULL, NULL, '2020-12-05 06:14:36.000000'),
+(15, 2, NULL, NULL, 'Бемор 1', 'Бемор 1', 'ххх', '2001-12-04', 'Бухарский район', 'АА12345678', 'Химчан', 'ИТ', '998912474353', 'Кучабог 8', 'Рухшобод', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2020-12-05 06:59:59.000000'),
 (16, 2, NULL, NULL, 'Бемор-2', 'Бемор-2', 'ххх', '2001-10-03', 'Олмазор', 'АА1234567', 'ААА', 'ААА', '998912474353', 'ААА', 'ААА', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2020-12-05 07:53:03.000000'),
-(17, NULL, 'farm', '36a3bbe0659d5cf5e918a70a1da0c90ff6a33ba9', 'farm', 'farm', 'farm', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, 1, 1, NULL, NULL, NULL, '2020-12-06 21:30:42.000000'),
-(18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, 1, 3, NULL, 10, NULL, '2020-12-07 17:56:02.000000'),
-(19, 2, NULL, NULL, 'qweqwe', 'eqweqw', 'eqweqw', '2020-12-02', 'Ромитан', '21321321312', 'eqweqw', 'eqweqw', '231312321313123', 'eqweqw', 'eqweqw', 1, 15, NULL, 1, 0, NULL, NULL, NULL, '2020-12-10 21:01:05.000000'),
+(17, NULL, 'farm', '36a3bbe0659d5cf5e918a70a1da0c90ff6a33ba9', 'farm', 'farm', 'farm', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, 1, NULL, NULL, NULL, '2020-12-06 21:30:42.000000'),
+(18, NULL, 'radiolog', 'd92ffb3b4c6121a260f303bee9b228ca020786ba', 'doc_rad', 'doc_rad', 'doc_rad', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10, 1, NULL, 3, NULL, 10, NULL, '2020-12-07 17:56:02.000000'),
+(19, 2, NULL, NULL, 'qweqwe', 'eqweqw', 'eqweqw', '2020-12-02', 'Ромитан', '21321321312', 'eqweqw', 'eqweqw', '231312321313123', 'eqweqw', 'eqweqw', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2020-12-10 21:01:05.000000'),
 (20, 2, NULL, NULL, 'Test', 'Test', 'Test', '2000-12-12', 'Ромитан', 'АА454545', 'аап', 'апапап', '998912474353', 'г .Бухара', 'Кучабох 8', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2020-12-13 15:59:40.000000'),
 (21, NULL, 'any', 'c5fe0200d1c7a5139bd18fd22268c4ca8bf45e90', 'any', 'any', 'any', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, NULL, NULL, 11, NULL, 11, NULL, '2020-12-22 17:46:42.000000'),
 (22, 2, NULL, NULL, 'Tester', 'tester', 'Tester', '2020-12-17', 'Миробод', '001', 'qweqweqw', 'asdasddqwdqwe', '123232131312', 'Tester', 'Tester', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2020-12-23 14:36:57.000000'),
@@ -1190,15 +1175,16 @@ INSERT INTO `users` (`id`, `parent_id`, `username`, `password`, `first_name`, `l
 (24, 2, NULL, NULL, 'Регистратура_1', 'Регистратура_1', 'xxx', '2001-12-12', 'Беруний тумани', 'kl;kl;kl', 'kl;k', 'l;kl;', '998974411547', 'l;lk;', 'kl;kl;', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-08 18:04:07.424631'),
 (25, 2, NULL, NULL, 'Нигина', 'Виязова', 'Иззатуллаевна', '2000-12-12', 'Юнусабадский район', 'АА4578213', 'ПромСтрой Банк', 'Бухгалтер', '998912456575', 'Алпомиш кучаси,13/4 дом 13 кв', 'г.Ташкент р.Яшнабадский ул.Сокин, 5-3', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 15:49:58.553400'),
 (26, 2, NULL, NULL, 'Абдурахмон', 'Абдурахмонов', 'Абдурахмонович', '1993-02-12', 'Бухарский район', 'AC 45215', 'Лукоил', 'инжинер', '998914252123', 'махачкала 4/25', 'махачкала 4/25', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 16:05:20.076527'),
-(28, 2, NULL, NULL, 'Рахимжон', 'Рахмижонов', 'Рахимжонович', '1985-02-12', 'М.Улугбекский район', 'AC 45265', 'Хокимият', 'Бухгалтер', '998914582363', 'махачкала 5 / 63', 'махачкала 5 / 63', 1, 15, NULL, 1, 0, NULL, NULL, NULL, '2021-01-09 16:08:06.897534'),
+(28, 2, NULL, NULL, 'Рахимжон', 'Рахмижонов', 'Рахимжонович', '1985-02-12', 'М.Улугбекский район', 'AC 45265', 'Хокимият', 'Бухгалтер', '998914582363', 'махачкала 5 / 63', 'махачкала 5 / 63', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 16:08:06.897534'),
 (29, 2, NULL, NULL, 'Нигора', 'Нозимова', 'Абдулаевна', '1989-06-09', 'Алтыарыкский район', 'AC 20551', '9 поликниника', 'медсестра', '998912523698', 'очилгул 5 дом', 'очилгул 5 дом', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 16:12:23.530646'),
 (32, 2, NULL, NULL, 'test20212', 'test20212', 'test20212', '2000-12-12', 'Сергелиский район', 'AA121232', 'defs', 'sefef', '9989475465465', 'dsd', 'sdvcsdv', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 16:46:57.809933'),
-(33, 2, NULL, NULL, '7777', '7777', '7777', '2000-01-12', 'Учтепинский район', 'AA45213613', '354121', '54534', '998975412161', '232', '+6+6', NULL, 15, NULL, 1, 0, NULL, NULL, NULL, '2021-01-09 20:21:25.743902'),
+(33, 2, NULL, NULL, '7777', '7777', '7777', '2000-01-12', 'Учтепинский район', 'AA45213613', '354121', '54534', '998975412161', '232', '+6+6', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 20:21:25.743902'),
 (34, 2, NULL, NULL, 'fasdf', 'fasdf', 'fasdf', '2021-01-16', 'Бектемирский район', '21', 'fasdf', 'fasdf', '2', 'fasdf', 'fasdf', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-09 20:25:08.334117'),
 (35, 2, NULL, NULL, 'Farxod', 'Yakubov', 'Abdurasulovich', '1988-04-19', 'Бухарский район', 'AA1234567', 'himchan', 'IT', '998912474353', 'Ул.Кучабог', 'Ул.Кучабог 8', 1, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-13 20:14:41.930907'),
-(36, 2, NULL, NULL, 'Бэтмен', 'Бэтмобиль', 'Бэтбункер', '1989-01-01', 'Бектемирский район', 'SD 545525', 'БЭТМЕН comporeyshen', 'СУПЕР ГЕРОЙ', '+998914520245', 'Бэтмен сити', 'Бэтмен сити', NULL, 15, NULL, 1, 0, NULL, NULL, NULL, '2021-01-18 18:16:03.300391'),
+(36, 2, NULL, NULL, 'Бэтмен', 'Бэтмобиль', 'Бэтбункер', '1989-01-01', 'Бектемирский район', 'SD 545525', 'БЭТМЕН comporeyshen', 'СУПЕР ГЕРОЙ', '+998914520245', 'Бэтмен сити', 'Бэтмен сити', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-18 18:16:03.300391'),
 (37, 2, NULL, NULL, 'плей бой', 'плей боев', 'плей боивич', '1969-02-22', 'Учтепинский район', 'РО 0211222', 'кулб', 'танцор', '+998902522855', 'губмен', 'губмен', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-18 18:18:14.392906'),
-(38, 2, NULL, NULL, 'баран', 'баранов', 'бврвнович', '2000-06-05', 'Сергелиский район', 'БА 15241', 'поле', 'травоед', '+998956253322', 'лес', 'лес', NULL, 15, NULL, 1, 0, NULL, NULL, NULL, '2021-01-18 18:54:48.360964');
+(38, 2, NULL, NULL, 'баран', 'баранов', 'бврвнович', '2000-06-05', 'Сергелиский район', 'БА 15241', 'поле', 'травоед', '+998956253322', 'лес', 'лес', NULL, 15, NULL, NULL, 0, NULL, NULL, NULL, '2021-01-18 18:54:48.360964'),
+(39, NULL, 'fiz', 'b308e7c524d90a2e314a7077beb43ab0b24d7700', 'fiz', 'fiz', 'fiz', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, 145, NULL, 13, NULL, 108, NULL, '2021-01-27 18:22:31.813671');
 
 -- --------------------------------------------------------
 
@@ -1282,69 +1268,6 @@ CREATE TABLE `visit` (
   `completed` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Дамп данных таблицы `visit`
---
-
-INSERT INTO `visit` (`id`, `user_id`, `grant_id`, `parent_id`, `route_id`, `assist_id`, `division_id`, `service_id`, `bed_id`, `direction`, `status`, `diagnostic`, `laboratory`, `guide_id`, `complaint`, `failure`, `report_title`, `report_description`, `report_diagnostic`, `report_recommendation`, `add_date`, `accept_date`, `priced_date`, `discharge_date`, `completed`) VALUES
-(1, 15, 5, 5, 2, NULL, 10, 32, NULL, NULL, NULL, NULL, NULL, 1, 'qwqqwq', NULL, 'Консультация хирурга, первичная', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:03:28', '2021-01-14 19:04:25', '2021-01-14 19:03:56', NULL, '2021-01-14 19:05:56'),
-(2, 16, 9, 9, 2, NULL, 6, 20, NULL, NULL, NULL, NULL, NULL, 1, 'weqwqe', NULL, 'Транскраниальная Допплерография', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:09:32', '2021-01-14 19:10:57', '2021-01-14 19:09:43', NULL, '2021-01-14 19:11:19'),
-(3, 16, 9, 9, 2, NULL, 6, 21, NULL, NULL, NULL, NULL, NULL, 1, 'weqwqe', NULL, 'Щитовидная железа', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:09:32', '2021-01-14 19:10:56', '2021-01-14 19:09:43', NULL, '2021-01-14 19:11:09'),
-(4, 15, 5, 5, 2, NULL, 10, 32, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Консультация хирурга, первичная', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:13:00', '2021-01-14 19:15:23', '2021-01-14 19:13:33', NULL, '2021-01-14 19:17:40'),
-(5, 15, 5, 5, 2, NULL, 10, 34, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Раны грудной клетки', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:13:00', '2021-01-14 19:15:23', '2021-01-14 19:13:33', NULL, '2021-01-14 19:18:28'),
-(6, 15, 12, 12, 2, NULL, 13, 40, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Первичная консультация гинеколога', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'eqweqwМагнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '121Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:13:00', '2021-01-14 19:19:56', '2021-01-14 19:13:33', NULL, '2021-01-14 19:30:18'),
-(7, 15, 12, 12, 2, NULL, 13, 41, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Вторичная консультация гинеколога', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 19:13:00', '2021-01-14 19:19:55', '2021-01-14 19:13:33', NULL, '2021-01-14 19:30:31'),
-(8, 35, 9, 9, 2, NULL, 6, 21, NULL, NULL, NULL, NULL, NULL, 2, 'wwww', NULL, 'Щитовидная железа', 'eqweqwe', 'eqweqw', 'eqweqweqweqweqweqwe', '2021-01-14 19:32:09', '2021-01-14 19:33:48', '2021-01-14 21:14:57', NULL, '2021-01-14 19:50:33'),
-(9, 35, 9, 9, 2, NULL, 6, 22, NULL, NULL, NULL, NULL, NULL, 2, 'wwww', NULL, 'Тромбоз Допплерография (Обе)', 'Тромбоз Допплерография (Обе)', 'Тромбоз Допплерография (Обе)', 'Тромбоз Допплерография (Обе)', '2021-01-14 19:32:09', '2021-01-14 19:33:49', '2021-01-14 21:15:03', NULL, '2021-01-14 19:50:03'),
-(10, 28, 7, 18, 2, 7, 2, 2, NULL, NULL, NULL, NULL, NULL, NULL, 'ss', NULL, 'МРТ Головного мозга', 'weqwe', 'qweqwe', 'qweqweqweqwe', '2021-01-14 19:53:25', '2021-01-14 19:54:10', '2021-01-14 21:14:42', NULL, '2021-01-14 19:56:56'),
-(11, 16, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, 2, 'www', NULL, NULL, NULL, NULL, NULL, '2021-01-14 19:58:03', '2021-01-14 20:05:39', '2021-01-14 20:05:24', NULL, '2021-01-14 20:06:08'),
-(12, 16, 6, 6, 2, NULL, 8, 29, NULL, NULL, NULL, NULL, 1, 2, 'www', NULL, NULL, NULL, NULL, NULL, '2021-01-14 19:58:03', '2021-01-14 20:05:38', '2021-01-14 20:05:24', NULL, '2021-01-14 20:06:08'),
-(14, 16, 6, 6, 2, NULL, 8, 56, NULL, NULL, NULL, NULL, 1, 2, 'www', NULL, NULL, NULL, NULL, NULL, '2021-01-14 19:58:03', '2021-01-14 20:05:40', '2021-01-14 20:05:24', NULL, '2021-01-14 20:06:08'),
-(15, 28, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, 2, 'as', NULL, NULL, NULL, NULL, NULL, '2021-01-14 19:58:18', '2021-01-14 20:01:03', '2021-01-14 19:58:33', NULL, '2021-01-14 20:04:56'),
-(16, 28, 6, 6, 2, NULL, 8, 45, NULL, NULL, NULL, NULL, 1, 2, 'as', NULL, NULL, NULL, NULL, NULL, '2021-01-14 19:58:18', '2021-01-14 20:01:11', '2021-01-14 19:58:33', NULL, '2021-01-14 20:04:56'),
-(17, 28, 6, 6, 2, NULL, 8, 56, NULL, NULL, NULL, NULL, 1, 2, 'as', NULL, NULL, NULL, NULL, NULL, '2021-01-14 19:58:18', '2021-01-14 20:01:04', '2021-01-14 19:58:33', NULL, '2021-01-14 20:04:56'),
-(18, 15, 11, 11, 2, NULL, 14, 43, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Первичная консультация невропатолога', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 20:07:50', '2021-01-14 20:08:15', '2021-01-14 20:07:59', NULL, '2021-01-14 20:08:35'),
-(19, 15, 11, 11, 2, NULL, 14, 44, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Вторичная консультация детс.невропатолога', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', 'Магнитно-резонансная томография (МРТ) – один из новейших, продвинутых и безопасных типов радиологической диагностики в современной медицине. МРТ использует сильное магнитное поле и частоты радиоволн, с помощью которых визуализируется детальный вид внутренних органов и мягких тканей. Этот метод не использует ионизирующее излучение (радиацию) и не имеет вредного воздействия на организм.', '2021-01-14 20:07:50', '2021-01-14 20:08:16', '2021-01-14 20:07:59', NULL, '2021-01-14 20:08:35'),
-(28, 35, 7, 18, 2, 7, 2, 2, NULL, NULL, 0, NULL, NULL, 1, 'ew', NULL, 'МРТ Головного мозга', 'wqeqwe', '1221', '312312321312', '2021-01-14 21:45:38', '2021-01-14 22:23:59', '2021-01-14 22:22:11', NULL, '2021-01-14 22:24:12'),
-(29, 35, 5, 5, 2, NULL, 10, 32, NULL, NULL, NULL, NULL, NULL, 1, 'www', NULL, 'Консультация хирурга, первичная', 'weqweq', 'eqweq', 'qweqweqw', '2021-01-15 16:41:28', '2021-01-15 16:42:28', '2021-01-15 16:42:04', NULL, '2021-01-15 16:42:45'),
-(30, 35, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-15 16:43:22', '2021-01-15 16:43:52', '2021-01-15 16:43:34', NULL, '2021-01-15 16:44:07'),
-(31, 35, 7, 18, 2, 7, 2, 2, NULL, NULL, 0, NULL, NULL, 1, NULL, NULL, 'МРТ Головного мозга', 'МРТ Головного мозга', 'МРТ Головного мозга', 'МРТ Головного мозга', '2021-01-15 16:44:50', '2021-01-15 16:45:07', '2021-01-15 16:44:57', NULL, '2021-01-15 16:45:23'),
-(32, 35, 11, 11, 2, NULL, 14, 43, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Первичная консультация невропатолога', 'eqwe', 'qweqw', 'bich', '2021-01-15 16:47:39', '2021-01-15 16:48:08', '2021-01-15 16:47:47', NULL, '2021-01-15 16:56:50'),
-(33, 35, 11, 11, 2, NULL, 14, 44, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Вторичная консультация детс.невропатолога', 'ee', 'ee', 'ee', '2021-01-15 16:47:39', '2021-01-15 16:48:09', '2021-01-15 16:47:47', NULL, '2021-01-15 16:56:50'),
-(34, 35, 9, 9, 2, NULL, 6, 22, NULL, NULL, NULL, NULL, NULL, NULL, 'ww', NULL, 'Тромбоз Допплерография (Обе)', 'e2121321', 'wqeqweqwe', 'eqweqweqw', '2021-01-15 17:00:09', '2021-01-15 17:03:17', '2021-01-15 17:00:37', NULL, '2021-01-15 17:04:23'),
-(35, 35, 9, 9, 2, NULL, 6, 23, NULL, NULL, NULL, NULL, NULL, NULL, 'ww', NULL, 'Молочная железа-Щитовидная железа', 'eqwe', 'qweqwe', 'qweqweqw', '2021-01-15 17:00:09', '2021-01-15 17:03:18', '2021-01-15 17:00:37', NULL, '2021-01-15 17:03:28'),
-(36, 35, 6, 6, 2, NULL, 8, 25, NULL, NULL, NULL, NULL, 1, NULL, 'ww', NULL, NULL, NULL, NULL, NULL, '2021-01-15 17:00:09', '2021-01-15 17:01:57', '2021-01-15 17:00:37', NULL, '2021-01-15 17:02:45'),
-(37, 35, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, NULL, 'ww', NULL, NULL, NULL, NULL, NULL, '2021-01-15 17:00:09', '2021-01-15 17:01:56', '2021-01-15 17:00:37', NULL, '2021-01-15 17:02:45'),
-(39, 15, 5, 5, 2, NULL, 10, 32, NULL, NULL, 6, NULL, NULL, 1, 'wererwerwer', 'eqweqweqweqw', NULL, NULL, NULL, NULL, '2021-01-15 20:11:01', NULL, '2021-01-15 20:11:28', NULL, NULL),
-(40, 15, 5, 5, 2, NULL, 10, 34, NULL, NULL, NULL, NULL, NULL, 2, 'ww', NULL, 'Раны грудной клетки', 'weqwe', 'qweqwe', 'qwewqewqe', '2021-01-15 20:53:06', '2021-01-15 20:53:19', '2021-01-15 20:53:12', NULL, '2021-01-15 20:54:27'),
-(41, 15, 7, 7, 2, NULL, 2, 2, NULL, NULL, 6, NULL, NULL, 1, 'www', 'adasds', NULL, NULL, NULL, NULL, '2021-01-15 20:58:10', NULL, '2021-01-15 20:58:22', NULL, NULL),
-(42, 15, 9, 9, 2, NULL, 6, 20, NULL, NULL, 6, NULL, NULL, 1, 'www', 'wqwqw', NULL, NULL, NULL, NULL, '2021-01-15 20:58:10', NULL, '2021-01-15 20:58:22', NULL, NULL),
-(43, 15, 5, 5, 2, NULL, 10, 1, 1, 1, 2, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-16 15:19:04', '2021-01-16 15:20:57', NULL, '2021-01-20', NULL),
-(47, 28, 5, 5, 2, NULL, 10, 33, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Консультация хирурга, повторная', 'пкпкп', 'упавпмв', 'уаувау', '2021-01-16 18:16:11', '2021-01-16 18:20:58', '2021-01-16 18:18:17', NULL, '2021-01-16 20:34:04'),
-(50, 28, 5, 11, 5, NULL, 14, 43, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Первичная консультация невропатолога', '21322', 'qwewqe', 'qweqw', '2021-01-16 19:05:27', '2021-01-16 20:32:54', '2021-01-16 19:05:44', NULL, '2021-01-16 20:33:53'),
-(51, 28, 5, 6, 5, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-16 19:07:53', '2021-01-16 20:34:41', '2021-01-16 20:01:13', NULL, '2021-01-16 20:34:51'),
-(52, 20, 9, 9, 2, NULL, 6, 20, NULL, NULL, NULL, NULL, NULL, 2, 'sss', NULL, 'Транскраниальная Допплерография', 'qqq', 'qqqq', 'qqqq', '2021-01-16 20:35:45', '2021-01-16 20:37:43', '2021-01-16 20:36:14', NULL, '2021-01-16 20:38:00'),
-(54, 20, 6, 6, 2, NULL, 8, 26, NULL, NULL, NULL, NULL, 1, 1, 'ss', NULL, NULL, NULL, NULL, NULL, '2021-01-16 20:40:37', '2021-01-16 21:00:26', '2021-01-16 20:59:14', NULL, '2021-01-16 21:00:38'),
-(55, 33, 5, 5, 2, NULL, 10, 32, NULL, NULL, 2, NULL, NULL, 1, 'dedd', NULL, NULL, NULL, NULL, NULL, '2021-01-18 16:57:46', '2021-01-18 17:09:50', '2021-01-18 17:00:51', NULL, NULL),
-(56, 15, 5, 11, 5, NULL, 14, 43, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, 'Первичная консультация невропатолога', 'qweqw', '2121', '21', '2021-01-18 17:34:32', '2021-01-18 17:34:55', NULL, NULL, '2021-01-18 17:41:06'),
-(62, 36, 6, 6, 2, NULL, 8, 25, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:27:37', '2021-01-18 18:28:17', '2021-01-18 18:27:56', NULL, NULL),
-(63, 36, 6, 6, 2, NULL, 8, 26, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:27:37', '2021-01-18 18:28:24', '2021-01-18 18:27:56', NULL, NULL),
-(64, 36, 6, 6, 2, NULL, 8, 27, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:27:37', '2021-01-18 18:28:21', '2021-01-18 18:27:56', NULL, NULL),
-(65, 36, 6, 6, 2, NULL, 8, 29, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:27:37', '2021-01-18 18:28:18', '2021-01-18 18:27:56', NULL, NULL),
-(66, 36, 6, 6, 2, NULL, 8, 45, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:27:37', '2021-01-18 18:28:13', '2021-01-18 18:27:56', NULL, NULL),
-(67, 36, 6, 6, 2, NULL, 8, 56, NULL, NULL, 2, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:27:37', '2021-01-18 18:28:20', '2021-01-18 18:27:56', NULL, NULL),
-(68, 37, 7, 18, 2, 7, 2, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'МРТ Головного мозга', 'шпшопшол', 'фкпфыпфу', 'фкпффкпвап', '2021-01-18 18:39:06', '2021-01-18 18:41:09', '2021-01-18 18:39:21', NULL, '2021-01-18 18:44:03'),
-(70, 37, 7, 18, 2, 7, 2, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Грудной отдел позвоночника', 'вапыпыва', 'пыпапы', 'вапыпаап', '2021-01-18 18:39:06', '2021-01-18 18:43:19', '2021-01-18 18:39:21', NULL, '2021-01-18 18:44:10'),
-(72, 37, 7, 18, 2, 7, 2, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Шейный отдел позвоночника', 'впвапва', 'пфвапфапфав', 'вапапавапва', '2021-01-18 18:46:09', '2021-01-18 18:47:21', '2021-01-18 18:46:19', NULL, '2021-01-18 18:47:34'),
-(74, 24, 5, 5, 2, NULL, 10, 33, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Консультация хирурга, повторная', 'зджлдщдб', 'жджжжжл', 'жжжжздлзолш', '2021-01-18 18:49:48', '2021-01-18 18:51:07', '2021-01-18 18:50:46', NULL, '2021-01-18 18:51:37'),
-(75, 38, 5, 5, 2, NULL, 10, 34, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Раны грудной клетки', 'ьллоььь', 'шпшщпщд', 'рщрщгшр', '2021-01-18 18:55:14', '2021-01-18 18:57:53', '2021-01-18 18:57:11', NULL, '2021-01-18 19:01:14'),
-(77, 38, 5, 6, 5, NULL, 8, 25, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:58:25', NULL, '2021-01-18 19:00:02', NULL, NULL),
-(78, 38, 5, 6, 5, NULL, 8, 26, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:58:25', NULL, '2021-01-18 19:00:02', NULL, NULL),
-(79, 38, 5, 6, 5, NULL, 8, 27, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:58:25', NULL, '2021-01-18 19:00:02', NULL, NULL),
-(80, 38, 5, 6, 5, NULL, 8, 29, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:58:25', NULL, '2021-01-18 19:00:02', NULL, NULL),
-(81, 38, 5, 6, 5, NULL, 8, 45, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:58:25', NULL, '2021-01-18 19:00:02', NULL, NULL),
-(82, 38, 5, 6, 5, NULL, 8, 56, NULL, NULL, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-01-18 18:58:25', NULL, '2021-01-18 19:00:02', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -1361,13 +1284,6 @@ CREATE TABLE `visit_inspection` (
   `add_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `visit_inspection`
---
-
-INSERT INTO `visit_inspection` (`id`, `visit_id`, `parent_id`, `description`, `diagnostic`, `recommendation`, `add_date`) VALUES
-(1, 43, 5, 'jihjihohuihu', 'jijoi', 'ihhuiho', '2021-01-19 18:35:57');
-
 -- --------------------------------------------------------
 
 --
@@ -1379,10 +1295,12 @@ CREATE TABLE `visit_price` (
   `visit_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `pricer_id` int(11) DEFAULT NULL,
+  `operation_id` int(11) DEFAULT NULL,
   `price_cash` decimal(65,1) NOT NULL DEFAULT 0.0,
   `price_card` decimal(65,1) NOT NULL DEFAULT 0.0,
   `price_transfer` decimal(65,1) NOT NULL DEFAULT 0.0,
   `sale` float DEFAULT 0,
+  `status` tinyint(1) NOT NULL DEFAULT 1,
   `item_type` tinyint(4) NOT NULL,
   `item_id` int(11) NOT NULL,
   `item_cost` decimal(65,1) NOT NULL,
@@ -1390,110 +1308,6 @@ CREATE TABLE `visit_price` (
   `price_date` datetime DEFAULT NULL,
   `add_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Дамп данных таблицы `visit_price`
---
-
-INSERT INTO `visit_price` (`id`, `visit_id`, `user_id`, `pricer_id`, `price_cash`, `price_card`, `price_transfer`, `sale`, `item_type`, `item_id`, `item_cost`, `item_name`, `price_date`, `add_date`) VALUES
-(1, 1, NULL, 3, '50000.0', '0.0', '0.0', NULL, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-14 19:03:00', '2021-01-14 19:03:28'),
-(2, 2, NULL, 3, '80000.0', '0.0', '0.0', NULL, 1, 20, '80000.0', 'Транскраниальная Допплерография', '2021-01-14 19:09:00', '2021-01-14 19:09:32'),
-(3, 3, NULL, 3, '90000.0', '0.0', '0.0', NULL, 1, 21, '90000.0', 'Щитовидная железа', '2021-01-14 19:09:00', '2021-01-14 19:09:32'),
-(4, 4, NULL, 3, '0.0', '50000.0', '0.0', NULL, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-14 19:13:00', '2021-01-14 19:13:00'),
-(5, 5, NULL, 3, '0.0', '60000.0', '0.0', NULL, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-14 19:13:00', '2021-01-14 19:13:00'),
-(6, 6, NULL, 3, '0.0', '60000.0', '0.0', NULL, 1, 40, '60000.0', 'Первичная консультация гинеколога', '2021-01-14 19:13:00', '2021-01-14 19:13:00'),
-(7, 7, NULL, 3, '0.0', '50000.0', '0.0', NULL, 1, 41, '50000.0', 'Вторичная консультация гинеколога', '2021-01-14 19:13:00', '2021-01-14 19:13:00'),
-(8, 8, NULL, 3, '90000.0', '0.0', '0.0', NULL, 1, 21, '90000.0', 'Щитовидная железа', '2021-01-14 19:32:00', '2021-01-14 19:32:09'),
-(9, 9, NULL, 3, '140000.0', '0.0', '0.0', NULL, 1, 22, '140000.0', 'Тромбоз Допплерография (Обе)', '2021-01-14 19:32:00', '2021-01-14 19:32:09'),
-(10, 10, NULL, 3, '0.0', '100000.0', '0.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-14 19:53:00', '2021-01-14 19:53:25'),
-(11, 11, NULL, 3, '0.0', '30000.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-14 20:05:00', '2021-01-14 19:58:03'),
-(12, 12, NULL, 3, '0.0', '70000.0', '0.0', NULL, 1, 29, '70000.0', 'Ревматоидный фактор', '2021-01-14 20:05:00', '2021-01-14 19:58:03'),
-(14, 14, NULL, 3, '0.0', '100000.0', '0.0', NULL, 1, 56, '100000.0', 'Общий анализ крови', '2021-01-14 20:05:00', '2021-01-14 19:58:03'),
-(15, 15, NULL, 3, '30000.0', '0.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-14 19:58:00', '2021-01-14 19:58:18'),
-(16, 16, NULL, 3, '14000.0', '0.0', '0.0', NULL, 1, 45, '14000.0', 'Биохимия', '2021-01-14 19:58:00', '2021-01-14 19:58:18'),
-(17, 17, NULL, 3, '100000.0', '0.0', '0.0', NULL, 1, 56, '100000.0', 'Общий анализ крови', '2021-01-14 19:58:00', '2021-01-14 19:58:18'),
-(18, 18, NULL, 3, '60000.0', '0.0', '0.0', NULL, 1, 43, '60000.0', 'Первичная консультация невропатолога', '2021-01-14 20:07:00', '2021-01-14 20:07:50'),
-(19, 19, NULL, 3, '50000.0', '0.0', '0.0', NULL, 1, 44, '50000.0', 'Вторичная консультация детс.невропатолога', '2021-01-14 20:07:00', '2021-01-14 20:07:50'),
-(28, 28, NULL, 3, '70000.0', '0.0', '0.0', 30, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-14 22:22:00', '2021-01-14 21:45:38'),
-(29, 29, NULL, 3, '45000.0', '0.0', '0.0', 10, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-15 16:42:00', '2021-01-15 16:41:28'),
-(30, 30, NULL, 3, '30000.0', '0.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-15 16:43:00', '2021-01-15 16:43:22'),
-(31, 31, NULL, 3, '100000.0', '0.0', '0.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-15 16:44:00', '2021-01-15 16:44:50'),
-(32, 32, NULL, 3, '60000.0', '0.0', '0.0', NULL, 1, 43, '60000.0', 'Первичная консультация невропатолога', '2021-01-15 16:47:00', '2021-01-15 16:47:39'),
-(33, 33, NULL, 3, '50000.0', '0.0', '0.0', NULL, 1, 44, '50000.0', 'Вторичная консультация детс.невропатолога', '2021-01-15 16:47:00', '2021-01-15 16:47:39'),
-(34, 34, NULL, 3, '140000.0', '0.0', '0.0', NULL, 1, 22, '140000.0', 'Тромбоз Допплерография (Обе)', '2021-01-15 17:00:00', '2021-01-15 17:00:09'),
-(35, 35, NULL, 3, '150000.0', '0.0', '0.0', NULL, 1, 23, '150000.0', 'Молочная железа-Щитовидная железа', '2021-01-15 17:00:00', '2021-01-15 17:00:09'),
-(36, 36, NULL, 3, '50000.0', '0.0', '0.0', NULL, 1, 25, '50000.0', 'Электролиты крови', '2021-01-15 17:00:00', '2021-01-15 17:00:09'),
-(37, 37, NULL, 3, '30000.0', '0.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-15 17:00:00', '2021-01-15 17:00:09'),
-(39, 39, NULL, 3, '40000.0', '0.0', '0.0', 20, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-15 20:11:00', '2021-01-15 20:11:01'),
-(42, 39, NULL, 3, '-40000.0', '0.0', '0.0', 20, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-15 20:11:00', '2021-01-15 20:11:01'),
-(43, 40, NULL, 3, '60000.0', '0.0', '0.0', NULL, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-15 20:53:00', '2021-01-15 20:53:06'),
-(44, 41, NULL, 3, '100000.0', '0.0', '0.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-15 20:58:00', '2021-01-15 20:58:10'),
-(45, 42, NULL, 3, '80000.0', '0.0', '0.0', NULL, 1, 20, '80000.0', 'Транскраниальная Допплерография', '2021-01-15 20:58:00', '2021-01-15 20:58:10'),
-(46, 42, NULL, 3, '0.0', '-80000.0', '0.0', NULL, 1, 20, '80000.0', 'Транскраниальная Допплерография', '2021-01-15 20:58:00', '2021-01-15 20:58:10'),
-(47, 41, NULL, 3, '0.0', '0.0', '-100000.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-15 20:58:00', '2021-01-15 20:58:10'),
-(48, 43, NULL, NULL, '0.0', '0.0', '0.0', 0, 2, 162, '28750.0', 'Глимепирид таблетки 1 мг\r\n', NULL, '2021-01-16 15:54:33'),
-(49, 43, NULL, NULL, '0.0', '0.0', '0.0', 0, 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', NULL, '2021-01-16 15:54:33'),
-(50, 44, NULL, 3, '60000.0', '0.0', '0.0', NULL, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-16 18:10:00', '2021-01-16 18:09:42'),
-(51, 45, NULL, 3, '15000.0', '0.0', '0.0', NULL, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-16 18:13:00', '2021-01-16 18:10:04'),
-(52, 46, NULL, 3, '45000.0', '0.0', '0.0', 10, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-16 18:18:00', '2021-01-16 18:16:11'),
-(53, 47, NULL, 3, '27000.0', '0.0', '0.0', 10, 1, 33, '30000.0', 'Консультация хирурга, повторная', '2021-01-16 18:18:00', '2021-01-16 18:16:11'),
-(54, 48, NULL, 3, '54000.0', '0.0', '0.0', 10, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-16 18:18:00', '2021-01-16 18:16:11'),
-(55, 49, NULL, 3, '13500.0', '0.0', '0.0', 10, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-16 18:18:00', '2021-01-16 18:16:11'),
-(56, 45, 23, 3, '-15000.0', '0.0', '0.0', NULL, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-16 18:47:21', '2021-01-16 18:47:21'),
-(59, 46, 28, 3, '0.0', '-22500.0', '-22500.0', 10, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-16 18:54:23', '2021-01-16 18:54:23'),
-(60, 49, 28, 3, '-6750.0', '0.0', '-6750.0', 10, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-16 18:54:34', '2021-01-16 18:54:34'),
-(61, 50, 28, 3, '0.0', '60000.0', '0.0', NULL, 1, 43, '60000.0', 'Первичная консультация невропатолога', '2021-01-16 19:05:00', '2021-01-16 19:05:27'),
-(62, 51, 28, 3, '30000.0', '0.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-16 20:01:00', '2021-01-16 19:07:53'),
-(63, 52, 20, 3, '80000.0', '0.0', '0.0', NULL, 1, 20, '80000.0', 'Транскраниальная Допплерография', '2021-01-16 20:36:00', '2021-01-16 20:35:45'),
-(64, 53, 20, 3, '25500.0', '0.0', '0.0', 15, 1, 33, '30000.0', 'Консультация хирурга, повторная', '2021-01-16 20:59:00', '2021-01-16 20:40:37'),
-(65, 54, 20, 3, '0.0', '25500.0', '0.0', 15, 1, 26, '30000.0', 'Общий белок', '2021-01-16 20:59:00', '2021-01-16 20:40:37'),
-(66, 53, 20, 3, '0.0', '0.0', '-25500.0', 15, 1, 33, '30000.0', 'Консультация хирурга, повторная', '2021-01-16 21:01:52', '2021-01-16 21:01:52'),
-(67, 43, NULL, NULL, '0.0', '0.0', '0.0', 0, 2, 162, '28750.0', 'Глимепирид таблетки 1 мг\r\n', NULL, '2021-01-16 21:58:53'),
-(68, 43, NULL, NULL, '0.0', '0.0', '0.0', 0, 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', NULL, '2021-01-16 21:58:53'),
-(69, 55, 33, 3, '47500.0', '0.0', '0.0', 5, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-18 17:00:00', '2021-01-18 16:57:46'),
-(70, 56, 15, NULL, '0.0', '0.0', '0.0', 0, 1, 43, '60000.0', 'Первичная консультация невропатолога', NULL, '2021-01-18 17:34:32'),
-(71, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 2, 162, '28750.0', 'Глимепирид таблетки 1 мг\r\n', NULL, '2021-01-18 17:42:27'),
-(72, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 2, 163, '6900.0', 'Кислота ацетилсалициловая таб. 500 мг №10\r\n', NULL, '2021-01-18 17:42:27'),
-(73, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 3, 158, '1030.0', 'Шприц 2 мг 1 шт', NULL, '2021-01-18 17:43:19'),
-(74, 57, 36, 3, '60000.0', '0.0', '0.0', NULL, 1, 43, '60000.0', 'Первичная консультация невропатолога', '2021-01-18 18:19:00', '2021-01-18 18:18:52'),
-(75, 58, 36, 3, '50000.0', '0.0', '0.0', NULL, 1, 44, '50000.0', 'Вторичная консультация детс.невропатолога', '2021-01-18 18:19:00', '2021-01-18 18:18:52'),
-(76, 59, 37, 3, '50000.0', '0.0', '0.0', NULL, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-18 18:19:00', '2021-01-18 18:19:10'),
-(77, 60, 37, 3, '60000.0', '0.0', '0.0', NULL, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-18 18:19:00', '2021-01-18 18:19:10'),
-(78, 61, 37, 3, '15000.0', '0.0', '0.0', NULL, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-18 18:19:00', '2021-01-18 18:19:10'),
-(79, 57, 36, 3, '-60000.0', '0.0', '0.0', NULL, 1, 43, '60000.0', 'Первичная консультация невропатолога', '2021-01-18 18:24:01', '2021-01-18 18:24:01'),
-(80, 58, 36, 3, '-50000.0', '0.0', '0.0', NULL, 1, 44, '50000.0', 'Вторичная консультация детс.невропатолога', '2021-01-18 18:24:08', '2021-01-18 18:24:08'),
-(81, 59, 37, 3, '-50000.0', '0.0', '0.0', NULL, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-18 18:24:14', '2021-01-18 18:24:14'),
-(82, 60, 37, 3, '-30000.0', '0.0', '-30000.0', NULL, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-18 18:24:24', '2021-01-18 18:24:24'),
-(83, 61, 37, 3, '0.0', '0.0', '-15000.0', NULL, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-18 18:24:32', '2021-01-18 18:24:32'),
-(84, 62, 36, 3, '50000.0', '0.0', '0.0', NULL, 1, 25, '50000.0', 'Электролиты крови', '2021-01-18 18:27:00', '2021-01-18 18:27:37'),
-(85, 63, 36, 3, '30000.0', '0.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-18 18:27:00', '2021-01-18 18:27:37'),
-(86, 64, 36, 3, '20000.0', '0.0', '0.0', NULL, 1, 27, '20000.0', 'Альбумин', '2021-01-18 18:27:00', '2021-01-18 18:27:37'),
-(87, 65, 36, 3, '70000.0', '0.0', '0.0', NULL, 1, 29, '70000.0', 'Ревматоидный фактор', '2021-01-18 18:27:00', '2021-01-18 18:27:37'),
-(88, 66, 36, 3, '14000.0', '0.0', '0.0', NULL, 1, 45, '14000.0', 'Биохимия', '2021-01-18 18:27:00', '2021-01-18 18:27:37'),
-(89, 67, 36, 3, '100000.0', '0.0', '0.0', NULL, 1, 56, '100000.0', 'Общий анализ крови', '2021-01-18 18:27:00', '2021-01-18 18:27:37'),
-(90, 68, 37, 3, '100000.0', '0.0', '0.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-18 18:39:00', '2021-01-18 18:39:06'),
-(91, 69, 37, 3, '200000.0', '0.0', '0.0', NULL, 1, 3, '200000.0', 'Шейный отдел позвоночника', '2021-01-18 18:39:00', '2021-01-18 18:39:06'),
-(92, 70, 37, 3, '150000.0', '0.0', '0.0', NULL, 1, 4, '150000.0', 'Грудной отдел позвоночника', '2021-01-18 18:39:00', '2021-01-18 18:39:06'),
-(93, 69, 37, 3, '-200000.0', '0.0', '0.0', NULL, 1, 3, '200000.0', 'Шейный отдел позвоночника', '2021-01-18 18:40:15', '2021-01-18 18:40:15'),
-(94, 71, 37, 3, '100000.0', '0.0', '0.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-18 18:46:00', '2021-01-18 18:46:09'),
-(95, 72, 37, 3, '200000.0', '0.0', '0.0', NULL, 1, 3, '200000.0', 'Шейный отдел позвоночника', '2021-01-18 18:46:00', '2021-01-18 18:46:09'),
-(96, 71, 37, 3, '-100000.0', '0.0', '0.0', NULL, 1, 2, '100000.0', 'МРТ Головного мозга', '2021-01-18 18:48:15', '2021-01-18 18:48:15'),
-(97, 73, 24, 3, '50000.0', '0.0', '0.0', NULL, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-18 18:50:00', '2021-01-18 18:49:48'),
-(98, 74, 24, 3, '30000.0', '0.0', '0.0', NULL, 1, 33, '30000.0', 'Консультация хирурга, повторная', '2021-01-18 18:50:00', '2021-01-18 18:49:48'),
-(99, 73, 24, 3, '0.0', '-50000.0', '0.0', NULL, 1, 32, '50000.0', 'Консультация хирурга, первичная', '2021-01-18 18:52:36', '2021-01-18 18:52:36'),
-(100, 75, 38, 3, '60000.0', '0.0', '0.0', NULL, 1, 34, '60000.0', 'Раны грудной клетки', '2021-01-18 18:57:00', '2021-01-18 18:55:14'),
-(101, 76, 38, 3, '15000.0', '0.0', '0.0', NULL, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-18 18:57:00', '2021-01-18 18:55:14'),
-(102, 77, 38, 3, '50000.0', '0.0', '0.0', NULL, 1, 25, '50000.0', 'Электролиты крови', '2021-01-18 19:00:00', '2021-01-18 18:58:25'),
-(103, 78, 38, 3, '30000.0', '0.0', '0.0', NULL, 1, 26, '30000.0', 'Общий белок', '2021-01-18 19:00:00', '2021-01-18 18:58:25'),
-(104, 79, 38, 3, '20000.0', '0.0', '0.0', NULL, 1, 27, '20000.0', 'Альбумин', '2021-01-18 19:00:00', '2021-01-18 18:58:25'),
-(105, 80, 38, 3, '70000.0', '0.0', '0.0', NULL, 1, 29, '70000.0', 'Ревматоидный фактор', '2021-01-18 19:00:00', '2021-01-18 18:58:25'),
-(106, 81, 38, 3, '14000.0', '0.0', '0.0', NULL, 1, 45, '14000.0', 'Биохимия', '2021-01-18 19:00:00', '2021-01-18 18:58:25'),
-(107, 82, 38, 3, '100000.0', '0.0', '0.0', NULL, 1, 56, '100000.0', 'Общий анализ крови', '2021-01-18 19:00:00', '2021-01-18 18:58:25'),
-(108, 76, 38, 3, '0.0', '0.0', '0.0', NULL, 1, 35, '15000.0', 'Раны промежности (без повреждения кишки)', '2021-01-18 19:01:58', '2021-01-18 19:01:58'),
-(109, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 5, 34, '60000.0', 'Раны грудной клетки', NULL, '2021-01-19 19:51:06'),
-(110, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 4, 164, '11500.0', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', NULL, '2021-01-20 10:01:08'),
-(111, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 4, 164, '11500.0', 'Сульфаметаксазол/триметоприм таблетки 480 мг №10\r\n', NULL, '2021-01-20 10:06:16'),
-(112, 43, 15, NULL, '0.0', '0.0', '0.0', 0, 5, 34, '60000.0', 'Раны грудной клетки', NULL, '2021-01-20 10:30:41');
 
 -- --------------------------------------------------------
 
@@ -1507,17 +1321,6 @@ CREATE TABLE `wards` (
   `ward` smallint(6) DEFAULT NULL,
   `add_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Дамп данных таблицы `wards`
---
-
-INSERT INTO `wards` (`id`, `floor`, `ward`, `add_date`) VALUES
-(1, 1, 1, '2020-11-28 02:12:45'),
-(2, 1, 2, '2020-11-28 02:13:16'),
-(3, 1, 3, '2020-11-28 02:13:21'),
-(4, 2, 1, '2020-11-28 02:13:43'),
-(5, 3, 1, '2020-11-28 02:13:49');
 
 --
 -- Индексы сохранённых таблиц
@@ -1652,12 +1455,6 @@ ALTER TABLE `operation_stats`
   ADD PRIMARY KEY (`id`);
 
 --
--- Индексы таблицы `pharmacy_category`
---
-ALTER TABLE `pharmacy_category`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Индексы таблицы `products`
 --
 ALTER TABLE `products`
@@ -1781,7 +1578,7 @@ ALTER TABLE `barcode`
 -- AUTO_INCREMENT для таблицы `beds`
 --
 ALTER TABLE `beds`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `bed_type`
@@ -1793,31 +1590,31 @@ ALTER TABLE `bed_type`
 -- AUTO_INCREMENT для таблицы `bypass`
 --
 ALTER TABLE `bypass`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `bypass_date`
 --
 ALTER TABLE `bypass_date`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `bypass_preparat`
 --
 ALTER TABLE `bypass_preparat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `bypass_time`
 --
 ALTER TABLE `bypass_time`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `collection`
@@ -1829,7 +1626,7 @@ ALTER TABLE `collection`
 -- AUTO_INCREMENT для таблицы `division`
 --
 ALTER TABLE `division`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT для таблицы `goods`
@@ -1841,67 +1638,61 @@ ALTER TABLE `goods`
 -- AUTO_INCREMENT для таблицы `guides`
 --
 ALTER TABLE `guides`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `investment`
 --
 ALTER TABLE `investment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze`
 --
 ALTER TABLE `laboratory_analyze`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `laboratory_analyze_type`
 --
 ALTER TABLE `laboratory_analyze_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT для таблицы `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `operation`
 --
 ALTER TABLE `operation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `operation_inspection`
 --
 ALTER TABLE `operation_inspection`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `operation_member`
 --
 ALTER TABLE `operation_member`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `operation_stats`
 --
 ALTER TABLE `operation_stats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT для таблицы `pharmacy_category`
---
-ALTER TABLE `pharmacy_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `products`
@@ -1949,7 +1740,7 @@ ALTER TABLE `sales_order`
 -- AUTO_INCREMENT для таблицы `service`
 --
 ALTER TABLE `service`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT для таблицы `storage_orders`
@@ -1973,7 +1764,7 @@ ALTER TABLE `storage_type`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT для таблицы `user_card`
@@ -1991,25 +1782,25 @@ ALTER TABLE `user_stats`
 -- AUTO_INCREMENT для таблицы `visit`
 --
 ALTER TABLE `visit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_inspection`
 --
 ALTER TABLE `visit_inspection`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `visit_price`
 --
 ALTER TABLE `visit_price`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `wards`
 --
 ALTER TABLE `wards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
