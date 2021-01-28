@@ -476,7 +476,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('maindoctor/reports/content_1') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Отчёт</span>
                                 </a>
