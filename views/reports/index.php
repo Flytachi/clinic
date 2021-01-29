@@ -80,7 +80,7 @@ $header = "Рабочий стол";
 
                 <article class="fade-out-siblings">
                     <button class="btn btn-outline-secondary" style="font-size:1rem;">Пусто</button>
-                    <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
+                    <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</a>
                     <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
                 </article>
 
