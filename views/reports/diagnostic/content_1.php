@@ -1,7 +1,7 @@
 <?php
 require_once '../../../tools/warframe.php';
 is_auth();
-$header = "Общий отчёт по врачам";
+$header = "Общий отчёт по услугам";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@ $header = "Общий отчёт по врачам";
 							<div class="form-group row">
 
 								<div class="col-md-3">
-									<label>Дата завершения:</label>
+									<label>Дата принятия:</label>
 									<div class="input-group">
 										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
 										<span class="input-group-append">
@@ -62,7 +62,7 @@ $header = "Общий отчёт по врачам";
 									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
 									   <option value="">Выберите отдел</option>
 										<?php
-										foreach($db->query("SELECT * FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
+										foreach($db->query('SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 											<?php
@@ -76,7 +76,7 @@ $header = "Общий отчёт по врачам";
 									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите услугу</option>
 										<?php
-										foreach($db->query("SELECT * from service WHERE user_level IN(5, 6, 10, 12)") as $row) {
+										foreach($db->query('SELECT * from service WHERE user_level = 10') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 											<?php
@@ -90,8 +90,7 @@ $header = "Общий отчёт по врачам";
 									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите специалиста</option>
 										<?php
-										$parent_sql = "SELECT * from users WHERE user_level IN(5, 6, 10, 12)";
-										foreach($db->query($parent_sql) as $row) {
+										foreach($db->query('SELECT * from users WHERE user_level = 10') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 											<?php
@@ -105,8 +104,17 @@ $header = "Общий отчёт по врачам";
 							<div class="from-group row">
 
 								<div class="col-md-3">
+									<label>Тип визита:</label>
+									<select class="form-control form-control-select2" name="direction" data-fouc>
+				                        <option value="">Выберите тип визита</option>
+										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
+										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
+				                    </select>
+								</div>
+
+								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select class="form-control form-control-select2" name="user_id" data-fouc>
+									<select name="user_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите пациента</option>
 										<?php
 										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
@@ -118,11 +126,25 @@ $header = "Общий отчёт по врачам";
 									</select>
 								</div>
 
+								<div class="col-md-3">
+									<label class="d-block font-weight-semibold">Статус</label>
+									<div class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="compl_true" <?= (!$_POST or $_POST['compl_true']) ? "checked" : "" ?>>
+										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
+									</div>
+
+									<div class="custom-control custom-checkbox">
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="compl_false" <?= (!$_POST or $_POST['compl_false']) ? "checked" : "" ?>>
+										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
+									</div>
+								</div>
+
 							</div>
 
 							<div class="text-right">
 								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
+
 
 						</form>
 
@@ -135,18 +157,21 @@ $header = "Общий отчёт по врачам";
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 					$sql = "SELECT
-								vs.completed, vs.parent_id,
-								vp.item_name, vs.user_id,
-								vp.item_cost, vs.priced_date,
-								(SELECT share FROM users WHERE id = vs.parent_id) 'share',
-								vp.item_cost * ((SELECT share FROM users WHERE id = vs.parent_id)/ 100) 'share_price'
+								vs.accept_date,
+								(SELECT title FROM division WHERE id=vs.division_id) 'division',
+								vp.item_name,
+								vs.parent_id,
+								vs.direction,
+								vs.user_id,
+								vs.status,
+								vs.completed
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
 								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
-						$sql .= " AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
 					if ($_POST['division_id']) {
 						$sql .= " AND vs.division_id = {$_POST['division_id']}";
@@ -160,13 +185,23 @@ $header = "Общий отчёт по врачам";
 					if ($_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
 					}
-					$total_price=0;
+					if ($_POST['direction']) {
+						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
+					}
+					if (!$_POST['compl_true'] or !$_POST['compl_false']) {
+						if ($_POST['compl_true']) {
+							$sql .= " AND vs.completed IS NOT NULL";
+						}
+						if ($_POST['compl_false']) {
+							$sql .= " AND vs.completed IS NULL";
+						}
+					}
 					$i=1;
 					?>
 					<div class="card border-1 border-info">
 
 						<div class="card-header text-dark header-elements-inline alpha-info">
-							<h6 class="card-title">Врачи</h6>
+							<h6 class="card-title">Услуги</h6>
 							<div class="header-elements">
 								<div class="list-icons">
 									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
@@ -177,49 +212,69 @@ $header = "Общий отчёт по врачам";
 						<div class="card-body">
 
 							<div class="table-responsive">
-								<table class="table table-hover table-sm table-bordered" id="table">
-									<thead>
-										<tr class="bg-info">
+	                            <table class="table table-hover table-sm table-bordered" id="table">
+	                                <thead>
+	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>
-											<th style="width: 11%">Дата завершения</th>
-	                                        <th>Специалист</th>
+											<th style="width: 11%">Дата проведения</th>
+				                            <th>Отдел</th>
 				                            <th>Услуга</th>
-				                            <th>Пациент</th>
-											<th class="text-right">Цена</th>
-											<th class="text-center">Доля</th>
-											<th class="text-right">Сумма</th>
-										</tr>
-									</thead>
-									<tbody>
+											<th>Специалист</th>
+				                            <th style="width: 10%">Тип визита</th>
+											<th>Пациент</th>
+											<th style="width: 10%">Статус</th>
+	                                    </tr>
+	                                </thead>
+	                                <tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
 												<td><?= $i++ ?></td>
-												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= $row['division'] ?></td>
 												<td><?= $row['item_name'] ?></td>
+												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
-												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>"><?= number_format($row['item_cost']) ?></td>
-												<td class="text-center"><?= ($row['share']) ? $row['share']."%" : '<span class="text-muted">Нет</span>'?></td>
-												<td class="text-right text-success">
+												<td>
 													<?php
-													$total_price += $row['share_price'];
-													echo number_format($row['share_price']);
+													if ($row['completed']) {
+														?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
+														<?php
+													} else {
+														switch ($row['status']):
+															case 1:
+																?>
+																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+																<?php
+																break;
+															case 2:
+																?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+																<?php
+																break;
+															default:
+																?>
+																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+																<?php
+																break;
+														endswitch;
+													}
 													?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
 											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
-											<th colspan="5" class="text-right">Итого:</th>
-											<td class="text-right text-success"><?= number_format($total_price) ?></td>
 										</tr>
-									</tbody>
-								</table>
-							</div>
+	                                </tbody>
+	                            </table>
+	                        </div>
 
 						</div>
 
 					</div>
+
 				<?php endif; ?>
 
 			</div>
@@ -232,8 +287,8 @@ $header = "Общий отчёт по врачам";
 
 	<script type="text/javascript">
 		$(function(){
-			$("#parent_id").chained("#division");
 			$("#service").chained("#division");
+			$("#parent_id").chained("#division");
 		});
 	</script>
 

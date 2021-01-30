@@ -25,4 +25,8 @@ function logout(){
     return (DIR."/auth/logout".EXT);
 }
 
+function logout_avatar(){
+    return (DIR."/auth/avatar_logout".EXT);
+}
+
 ?>
