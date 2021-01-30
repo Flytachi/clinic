@@ -10,26 +10,26 @@ console.dir(config);
 
 const mariadb = require('mariadb/callback');
 const conn  = mariadb.createConnection({
-     host: config.DATABASE.HOST, 
+     host: config.DATABASE.HOST,
      user: config.DATABASE.USER,
      password: config.DATABASE.PASS,
      database: config.DATABASE.NAME,
 });
 
-// mariadb.createConnection({ // Open a new connection                                                                                                                                           
-//     host: config.DATABASE.HOST, 
+// mariadb.createConnection({ // Open a new connection
+//     host: config.DATABASE.HOST,
 //     user: config.DATABASE.USER,
 //     password: config.DATABASE.PASS,
 //     database: config.DATABASE.NAME,
 // })
 // .then(conn => {
-//   conn.query('SELECT "Hello world!" as my_message') // Execute a query                                                                                                                                
-//       .then(result => { // Print the results                                                                                                                                            
+//   conn.query('SELECT "Hello world!" as my_message') // Execute a query
+//       .then(result => { // Print the results
 //           for (row of result) {
 //               console.log(row)
 //           }
 //       })
-//       .then(conn.destroy()) // Close the connection                                                                                                                                     
+//       .then(conn.destroy()) // Close the connection
 // })
 
 const io = require('socket.io')(httpServer, {
@@ -72,7 +72,7 @@ chat.on('connection', function(socket) {
     chat.in(data.id_pull).emit(data.type_message, data);
 
     chat.in(data.id_push).emit(data.type_message, data);
-    
+
   });
 
 });

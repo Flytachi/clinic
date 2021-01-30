@@ -1,7 +1,7 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(8);
-$header = "Отчёт по отделам";
+is_auth();
+$header = "Отчёт лаборатории по визитам";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,11 +44,24 @@ $header = "Отчёт по отделам";
                     <div class="card-body">
 
 						<form action="" method="post">
-
 							<div class="form-group row">
 
-								<div class="col-md-4">
-									<label>Дата визита:</label>
+								<div class="col-md-3">
+				                    <label>Пациент:</label>
+									<select class="form-control form-control-select2" name="user_id" data-fouc>
+				                        <option value="">Выберите пациента</option>
+										<?php
+										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
+											?>
+											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+											<?php
+										}
+										?>
+				                    </select>
+				                </div>
+
+								<div class="col-md-3">
+									<label>Дата приёма:</label>
 									<div class="input-group">
 										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
 										<span class="input-group-append">
@@ -57,46 +70,14 @@ $header = "Отчёт по отделам";
 									</div>
 								</div>
 
-								<div class="col-md-4">
-									<label>Направитель:</label>
-									<select name="guide_id" class="form-control form-control-select2" data-fouc>
-										<option value="">Выберите направителя</option>
-										<?php
-										foreach($db->query('SELECT * from guides') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['guide_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-											<?php
-										}
-										?>
-									</select>
-								</div>
-
-								<div class="col-md-4">
-									<label>Тип визита:</label>
-									<select class="form-control form-control-select2" name="direction" data-fouc>
-										<option value="">Выберите тип визита</option>
+								<div class="col-md-3">
+				                    <label>Тип визита:</label>
+				                    <select class="form-control form-control-select2" name="direction" data-fouc>
+				                        <option value="">Выберите тип визита</option>
 										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
 										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
-									</select>
-								</div>
-
-							</div>
-
-							<div class="from-group row">
-
-								<div class="col-md-3">
-									<label>Пациент:</label>
-									<select name="user_id" class="form-control form-control-select2" data-fouc>
-										<option value="">Выберите пациента</option>
-										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-											<?php
-										}
-										?>
-									</select>
-								</div>
+				                    </select>
+				                </div>
 
 								<div class="col-md-3">
 									<label class="d-block font-weight-semibold">Статус</label>
@@ -116,8 +97,6 @@ $header = "Отчёт по отделам";
 							<div class="text-right">
 								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
-
-
 						</form>
 
                     </div>
@@ -129,27 +108,22 @@ $header = "Отчёт по отделам";
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 					$sql = "SELECT
-								vs.accept_date,
-								gd.name 'guide',
-								vs.user_id,
-								vp.item_name,
-								vs.parent_id,
-								vs.direction,
-								gd.price
+								vs.user_id, vs.accept_date,
+								vs.completed, vp.item_name,
+								vp.item_cost, vs.priced_date,
+								vp.sale, (vp.price_cash + vp.price_card + vp.price_transfer) 'price'
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-								LEFT JOIN guides gd ON(gd.id=vs.guide_id)
+								LEFT JOIN division ds ON(ds.id=vs.division_id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 6";
+
 					// Обработка
-					if ($_POST['date_start'] and $_POST['date_end']) {
-						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-					}
-					if ($_POST['guide_id']) {
-						$sql .= " AND vs.guide_id = {$_POST['guide_id']}";
-					}
 					if ($_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
+					}
+					if ($_POST['date_start'] and $_POST['date_end']) {
+						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
 					if ($_POST['direction']) {
 						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
@@ -168,7 +142,7 @@ $header = "Отчёт по отделам";
 					<div class="card border-1 border-info">
 
 						<div class="card-header text-dark header-elements-inline alpha-info">
-							<h6 class="card-title">Направители</h6>
+							<h6 class="card-title">Визиты</h6>
 							<div class="header-elements">
 								<div class="list-icons">
 									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
@@ -183,28 +157,30 @@ $header = "Отчёт по отделам";
 	                                <thead>
 	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>
-											<th style="width: 11%">Дата визита</th>
-				                            <th>Напрвитель</th>
-											<th>Пациент</th>
-											<th>Мед услуга</th>
-											<th>Специалист</th>
-											<th style="width: 10%">Тип визита</th>
+	                                        <th>Пациент</th>
+				                            <th style="width: 11%">Дата приёма</th>
+											<th style="width: 11%">Дата завершения</th>
+				                            <th>Услуга</th>
+											<th class="text-right">Цена</th>
+											<th class="text-center">Доля</th>
 											<th class="text-right">Сумма</th>
-	                                    </tr>
+										</tr>
 	                                </thead>
 	                                <tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
 												<td><?= $i++ ?></td>
-												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['guide'] ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
+												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row['item_name'] ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td class="text-right text-success">
+												<td class="text-right text-success"> <?= number_format($row['item_cost']); ?> </td>
+												<td class="text-center"><?= ($row['sale']) ? $row['sale']."%" : '<span class="text-muted">Нет</span>'?></td>
+												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>">
 													<?php
-													$total_price += $row['price'];
+													if ($row['priced_date']) {
+														$total_price += $row['price'];
+													}
 													echo number_format($row['price']);
 													?>
 												</td>

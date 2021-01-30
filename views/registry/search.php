@@ -23,10 +23,10 @@ foreach($db->query($sql) as $row) {
                 ?>
             </div>
         </td>
-        <td><?= $row['dateBith'] ?></td>
+        <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
         <td><?= $row['numberPhone'] ?></td>
         <td><?= $row['region'] ?></td>
-        <td><?= $row['add_date'] ?></td>
+        <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
         <?php
         if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} ORDER BY add_date ASC")->fetch()){
             if($stm_dr['direction']){
@@ -103,7 +103,7 @@ foreach($db->query($sql) as $row) {
             <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
             <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
                 <a onclick="Update('<?= up_url($row['id'], 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
-                <a href="<?= viv('doctor/list_all_visit') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
+                <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
             </div>
         </td>
     </tr>
