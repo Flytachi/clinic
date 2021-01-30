@@ -75,7 +75,7 @@
 
 <div class="row">
 
-	<?php foreach ($db->query("SELECT id, title FROM division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1) ORDER BY level") as $row): ?>
+	<?php foreach ($db->query("SELECT id, title FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1) ORDER BY level") as $row): ?>
 		<div class="col-sm-4 col-xl-3">
 			<div class="card card-body">
 				<div class="media">
