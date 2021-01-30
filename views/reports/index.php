@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(8);
+is_auth();
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
@@ -79,10 +79,31 @@ $header = "Рабочий стол";
 			<div class="content">
 
                 <article class="fade-out-siblings">
-                    <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
-                    <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</a>
-                    <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</a>
-                    <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
+
+                    <?php if (permission(8)): ?>
+                        <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Общий отчет</button>
+                    <?php endif; ?>
+
+                    <?php if (permission([6, 8])): ?>
+                        <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Лаборатория</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
+                    <?php endif; ?>
+
+                    <?php if (permission([8, 10])): ?>
+                        <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
+                    <?php endif; ?>
+
+                    <?php if (permission([3, 8])): ?>
+                        <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Касса</button>
+                    <?php endif; ?>
+
                     <button class="btn btn-outline-secondary" style="font-size:1rem;">Пусто</button>
                 </article>
 
