@@ -29,6 +29,16 @@
                             <span>Settings</span>
                         </a>
                     </li>
+
+                    <?php if ($_SESSION['master_status']): ?>
+                        <li class="nav-item">
+                            <a href="<?= logout_avatar() ?>" class="nav-link">
+                                <i class="icon-arrow-down16"></i>
+                                <span>Logout in avatar</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
                     <li class="nav-item">
                         <a href="<?= logout() ?>" class="nav-link">
                             <i class="icon-switch2"></i>
@@ -48,7 +58,6 @@
                 <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
 
                     <?php
-
                     $id = $_SESSION['session_id'];
 
                     $sql1 = "SELECT COUNT(*) FROM `chat` WHERE `id_pull` = '$id' AND `activity` = 0";
