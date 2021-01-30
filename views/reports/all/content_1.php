@@ -62,7 +62,7 @@ $header = "Общий отчёт по услугам";
 									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
 									   <option value="">Выберите отдел</option>
 										<?php
-										foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+										foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 											<?php

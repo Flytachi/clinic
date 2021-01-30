@@ -333,6 +333,13 @@
                                     </span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Отчёт</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 6:
@@ -399,6 +406,12 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -649,6 +662,12 @@
                                     </span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Отчёт</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 11:
@@ -754,6 +773,12 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php

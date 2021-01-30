@@ -1646,6 +1646,7 @@ class BedModel extends Model
         global $db, $FLOOR;
         if($pk){
             $post = $this->post;
+            $post['floor'] = $db->query("SELECT * FROM wards WHERE id = ". $post['ward_id'])->fetch()['floor'];
         }else{
             $post = array();
         }
@@ -1665,7 +1666,7 @@ class BedModel extends Model
                     <?php
                     foreach ($FLOOR as $key => $value) {
                         ?>
-                        <option value="<?= $key ?>"<?= ($post['floor']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                        <option value="<?= $key ?>" <?= ($post['floor'] == $key) ? 'selected': '' ?>><?= $value ?></option>
                         <?php
                     }
                     ?>
@@ -1688,7 +1689,7 @@ class BedModel extends Model
 
             <div class="form-group">
                 <label>Койка:</label>
-                <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $post['num']?>">
+                <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $post['bed']?>">
             </div>
 
             <div class="form-group">
@@ -1698,7 +1699,7 @@ class BedModel extends Model
                     <?php
                     foreach($db->query('SELECT * from bed_type') as $row) {
                         ?>
-                        <option value="<?= $row['id'] ?>"<?php if($row['id'] == $post['types']){echo'selected';} ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['types']){echo'selected';} ?>><?= $row['name'] ?></option>
                         <?php
                     }
                     ?>
@@ -1947,6 +1948,9 @@ class ServiceModel extends Model
                     break;
                 case 'L':
                     $this->post['user_level'] = 6;
+                    break;
+                case 'F':
+                    $this->post['user_level'] = 12;
                     break;
             }
         }
@@ -2313,6 +2317,13 @@ class LaboratoryAnalyzeModel extends Model
             <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
 
             <div class="modal-body">
+
+                <div class="text-right">
+                    <input type="hidden" id="input_end" name="end"></input>
+                    <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить</button>
+                    <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                </div>
+
                 <div id="modal_message">
                 </div>
 
@@ -2367,12 +2378,6 @@ class LaboratoryAnalyzeModel extends Model
                     </table>
                 </div>
 
-            </div>
-
-            <div class="modal-footer">
-                <input type="hidden" id="input_end" name="end"></input>
-                <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить</button>
-                <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
