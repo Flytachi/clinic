@@ -299,7 +299,7 @@ $header = "Пациент";
 													</form>
 												</div>
 
-												<button type="button" onclick="sendMessage(this)" class="btn bg-teal-400 btn-labeled btn-labeled-right ml-auto legitRipple" data-buttonid="<?= $value['id'] ?>">
+												<button data-id="<?= $value['id'] ?>" type="button" onclick="sendMessageIo(this)" class="btn bg-teal-400 btn-labeled btn-labeled-right ml-auto legitRipple" data-buttonid="<?= $value['id'] ?>">
 													<b><i class="icon-paperplane"></i></b> Отправить
 												</button>
 											</div>
@@ -337,7 +337,7 @@ $header = "Пациент";
 
     	// $('.lightzoom').lightzoom();
 
-    	function lightZoom(argument) {
+    	function lightZoom() {
     		$( '.lightzoom' ).lightzoom( {
 			   speed:                 400,   // скорость появления
 			   imgPadding:            10,    // значение отступа у изображения
@@ -354,15 +354,12 @@ $header = "Пациент";
 
     	lightZoom();
 
-    	$('textarea').keypress(function(e){
-			if(e.keyCode == 13){
-				let id_cli = $(this).attr('data-inputid');
-				let word = $(this).val();
-				$(this).val('');
-				let obj = JSON.stringify({ type : 'messages',  type_message : 'text', id : id, id_cli : id_cli, message : word });
-				conn.send(obj);
-			}
-		});
+    	function sendMessageIo(body) {
+			chat.emit('message', {'mes' : $(`textarea#${body.dataset.id}`).val(), 'id_pull' : Number(body.dataset.id), 'id_push' : id, 'type_message' : 'text'})
+
+			console.log($(`textarea#${body.dataset.id}`).val());
+
+    	}
 
 		function sendToFile(body) {
 		  file = document.createElement('input');
@@ -422,8 +419,8 @@ $header = "Пациент";
 
     </script>
 
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 	<script src="../../node_modules/socket.io/client-dist/socket.io.min.js" crossorigin="anonymous"></script>
 
@@ -458,7 +455,9 @@ $header = "Пациент";
 
 			sendMessage(e) {
 				if(e.key === "Enter"){
-					chat.emit('message', {'mes' : e.target.value, 'id_pull' : this.state.id, 'id_push' : id, 'type_message' : 'text'})
+					chat.emit('message', {'mes' : e.target.value, 'id_pull' : this.state.id, 'id_push' : id, 'type_message' : 'text'});
+
+					e.target.value = '';
 				}else{
 
 					this.setState({value: e.target.value});
