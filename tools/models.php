@@ -1812,7 +1812,6 @@ class ServiceModel extends Model
 {
     public $table = 'service';
 
-
     public function form_template($pk = null)
     {
         ?>

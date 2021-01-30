@@ -1,19 +1,11 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
-$header = "Персонал";
+is_auth('master');
+$header = "Главная";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'head.php' ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -42,23 +34,6 @@ $header = "Персонал";
 				<div class="card">
 
 				    <div class="card-header header-elements-inline">
-				        <h5 class="card-title">Добавить Пользователя</h5>
-				        <div class="header-elements">
-				            <div class="list-icons">
-				                <a class="list-icons-item" data-action="collapse"></a>
-				            </div>
-				        </div>
-				    </div>
-
-				    <div class="card-body" id="form_card">
-				        <?php UserModel::form(); ?>
-				    </div>
-
-				</div>
-
-				<div class="card">
-
-				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Список Пользователей</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">
@@ -77,7 +52,7 @@ $header = "Персонал";
 				                        <th>Логин</th>
 				                        <th>ФИО</th>
 				                        <th>Роль</th>
-				                        <th style="width: 100px">Действия</th>
+				                        <th class="text-right" style="width: 100px">Действия</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
@@ -96,16 +71,9 @@ $header = "Персонал";
 				                                }
 				                                ?>
 				                            </td>
-				                            <td>
+				                            <td class="text-right">
 				                                <div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php
-													if ($row['user_level'] !=1) {
-														?>
-														<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-														<?php
-													}
-													?>
+													<a href="<?= viv("master/index") ?>?avatar=<?= $row['id'] ?>" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>
 				                                </div>
 				                            </td>
 				                        </tr>
@@ -132,19 +100,6 @@ $header = "Персонал";
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
     <!-- /footer -->
-
-	<script type="text/javascript">
-		function Update(events) {
-			events
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (result) {
-					$('#form_card').html(result);
-				},
-			});
-		};
-	</script>
 
 </body>
 </html>
