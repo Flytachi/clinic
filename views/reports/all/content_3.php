@@ -1,7 +1,7 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(8);
-$header = "Отчёт по визитам";
+is_auth();
+$header = "Общий отчёт по визитам";
 ?>
 <!DOCTYPE html>
 <html lang="en">

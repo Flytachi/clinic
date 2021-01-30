@@ -11,7 +11,7 @@ $header = "Список пациентов";
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
-
+ 
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->

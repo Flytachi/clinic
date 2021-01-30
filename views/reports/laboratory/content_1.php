@@ -1,7 +1,7 @@
 <?php
 require_once '../../../tools/warframe.php';
 is_auth();
-$header = "Общий отчёт по услугам";
+$header = "Отчёт лаборатории по услугам";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,27 +58,13 @@ $header = "Общий отчёт по услугам";
 								</div>
 
 								<div class="col-md-3">
-									<label>Отдел:</label>
-									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
-									   <option value="">Выберите отдел</option>
-										<?php
-										foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6 OR level = 10') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-											<?php
-										}
-										?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
 									<label>Услуга:</label>
-									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
+									<select name="service_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите услугу</option>
 										<?php
-										foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+										foreach($db->query('SELECT * from service WHERE user_level = 6') as $row) {
 											?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+											<option value="<?= $row['id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 											<?php
 										}
 										?>
@@ -87,21 +73,17 @@ $header = "Общий отчёт по услугам";
 
 								<div class="col-md-3">
 									<label>Специалист:</label>
-									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
+									<select  name="parent_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите специалиста</option>
 										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+										foreach($db->query('SELECT * from users WHERE user_level = 6') as $row) {
 											?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 											<?php
 										}
 										?>
 									</select>
 								</div>
-
-							</div>
-
-							<div class="from-group row">
 
 								<div class="col-md-3">
 									<label>Тип визита:</label>
@@ -111,6 +93,11 @@ $header = "Общий отчёт по услугам";
 										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
 				                    </select>
 								</div>
+
+							</div>
+
+							<div class="from-group row">
+
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
@@ -167,14 +154,12 @@ $header = "Общий отчёт по услугам";
 								vs.completed
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
+								LEFT JOIN division ds ON(ds.id=vs.division_id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 6";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-					}
-					if ($_POST['division_id']) {
-						$sql .= " AND vs.division_id = {$_POST['division_id']}";
 					}
 					if ($_POST['service_id']) {
 						$sql .= " AND vs.service_id = {$_POST['service_id']}";
@@ -284,13 +269,6 @@ $header = "Общий отчёт по услугам";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
-
-	<script type="text/javascript">
-		$(function(){
-			$("#service").chained("#division");
-			$("#parent_id").chained("#division");
-		});
-	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
