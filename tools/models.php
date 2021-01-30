@@ -303,11 +303,20 @@ class VisitModel extends Model
             </div>
 
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-11">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -331,11 +340,6 @@ class VisitModel extends Model
                 </div>
 
             </div>
-
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
 
         </form>
 

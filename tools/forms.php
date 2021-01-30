@@ -288,7 +288,7 @@ class VisitReport extends Model
                 <?php if (level() == 12): ?>
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php else: ?>
-                    <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    <button type="submit" class="btn btn-outline-info btn-sm">Сохранить!</button>
                 <?php endif; ?>
             </div>
 
