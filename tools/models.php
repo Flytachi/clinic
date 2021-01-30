@@ -283,7 +283,7 @@ class VisitModel extends Model
                     </optgroup>
                     <optgroup label="Диогностика">
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level = 10") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
