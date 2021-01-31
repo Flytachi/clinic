@@ -36,8 +36,14 @@
 
                 <li class="nav-item">
                     <a href="<?= viv('master/index') ?>" class="nav-link legitRipple">
-                        <i class="icon-users"></i>
+                        <i class="icon-stack2"></i>
                         <span>Главная</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= viv('master/logs') ?>" class="nav-link legitRipple">
+                        <i class="icon-price-tag3"></i>
+                        <span>Логи</span>
                     </a>
                 </li>
 

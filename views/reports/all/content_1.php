@@ -62,7 +62,7 @@ $header = "Общий отчёт по услугам";
 									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
 									   <option value="">Выберите отдел</option>
 										<?php
-										foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+										foreach($db->query('SELECT * from division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 											<?php
@@ -76,7 +76,7 @@ $header = "Общий отчёт по услугам";
 									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите услугу</option>
 										<?php
-										foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
+										foreach($db->query('SELECT * from service WHERE user_level IN(5, 6, 10, 12)') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 											<?php
@@ -90,7 +90,7 @@ $header = "Общий отчёт по услугам";
 									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите специалиста</option>
 										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+										foreach($db->query('SELECT * from users WHERE user_level IN(5, 6, 10, 12)') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 											<?php

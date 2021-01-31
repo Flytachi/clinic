@@ -43,15 +43,15 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
             <h3 class="text-center h1"><b><?= $docs->report_title ?></b></h3>
             <div class="h3 text-justify">
                 <p>
-                    <?= $docs->report_description ?>
+                    <?= preg_replace("#\r?\n#", "<br />", $docs->report_description) ?>
                 </p>
                 <p>
                     <span class="h2"><b>Диагноз:</b></span>
-                    <?= $docs->report_diagnostic ?>
+                    <?= preg_replace("#\r?\n#", "<br />", $docs->report_diagnostic) ?>
                 </p>
                 <p>
                     <span class="h2"><b>Рекомендации:</b></span>
-                    <?= $docs->report_recommendation ?>
+                    <?= preg_replace("#\r?\n#", "<br />", $docs->report_recommendation) ?>
                 </p>
             </div>
 

@@ -29,6 +29,16 @@
                             <span>Settings</span>
                         </a>
                     </li>
+
+                    <?php if ($_SESSION['master_status']): ?>
+                        <li class="nav-item">
+                            <a href="<?= logout_avatar() ?>" class="nav-link">
+                                <i class="icon-arrow-down16"></i>
+                                <span>Logout in avatar</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
                     <li class="nav-item">
                         <a href="<?= logout() ?>" class="nav-link">
                             <i class="icon-switch2"></i>
@@ -48,7 +58,6 @@
                 <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
 
                     <?php
-
                     $id = $_SESSION['session_id'];
 
                     $sql1 = "SELECT COUNT(*) FROM `chat` WHERE `id_pull` = '$id' AND `activity` = 0";
@@ -175,13 +184,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('cashbox/list_report') ?>" class="nav-link legitRipple">
-                                    <i class="icon-collaboration"></i>
-                                    <span>Отчёт</span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
                                 <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
                                     <span>
@@ -189,6 +191,12 @@
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
 
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -312,12 +320,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
-                                    <i class="icon-collaboration"></i>
-                                    <span>Все пациенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
@@ -331,6 +333,19 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Архив</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -399,6 +414,19 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Архив</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -470,24 +498,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
-                                    <i class="icon-collaboration"></i>
-                                    <span>Все пациенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-collaboration"></i>
-                                    <span>Отчёт</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
                                 </a>
                             </li>
-
                             <li class="nav-item">
                                 <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
@@ -495,6 +510,19 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Архив</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -513,7 +541,6 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
-
                             <li class="nav-item">
                                 <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
@@ -639,7 +666,6 @@
                                     <span>Заметки</span>
                                 </a>
                             </li>
-
                             <li class="nav-item">
                                 <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
@@ -647,6 +673,19 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Архив</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -686,6 +725,19 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Архив</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -754,6 +806,19 @@
                                         Чат
                                         <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
                                     </span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Архив</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php

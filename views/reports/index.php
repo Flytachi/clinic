@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(8);
+is_auth();
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
@@ -79,9 +79,64 @@ $header = "Рабочий стол";
 			<div class="content">
 
                 <article class="fade-out-siblings">
-                    <button class="btn btn-outline-secondary" style="font-size:1rem;">Пусто</button>
-                    <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</a>
-                    <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
+
+                    <!-- Общий отчет -->
+                    <?php if (permission(8)): ?>
+                        <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Общий отчет</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
+                    <!-- Касса -->
+                    <?php if (permission([3, 8])): ?>
+                        <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Касса</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
+                    <!-- Лаборатория -->
+                    <?php if (permission([6, 8])): ?>
+                        <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Лаборатория</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
+                    <!-- Диагностика -->
+                    <?php if (permission([8, 10])): ?>
+                        <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
+                    <!-- Анестезия -->
+                    <?php if (permission([8, 11])): ?>
+                        <a href="<?= viv('reports/anest/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Анестезия</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Анестезия</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
+                    <!-- Физиотерапия -->
+                    <?php if (permission([8, 12])): ?>
+                        <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Физиотерапия</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Физиотерапия</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
+                    <!-- Физиотерапия -->
+                    <?php if (permission([8, 12])): ?>
+                        <!-- <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</a> -->
+                        <button class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</button>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Процедурная</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
                 </article>
 
 			</div>
