@@ -133,9 +133,12 @@ $header = "Общий отчёт по отделам";
 								gd.name 'guide',
 								vs.user_id,
 								vp.item_name,
+								vp.item_cost,
 								vs.parent_id,
 								vs.direction,
-								gd.price
+								vs.laboratory,
+								gd.price,
+								gd.share
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 								LEFT JOIN guides gd ON(gd.id=vs.guide_id)
@@ -203,10 +206,17 @@ $header = "Общий отчёт по отделам";
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td class="text-right text-success">
-													<?php
-													$total_price += $row['price'];
-													echo number_format($row['price']);
-													?>
+													<?php if ($row['laboratory']): ?>
+														<?php
+														$total_price += $row['item_cost'] * ($row['share'] / 100);
+														echo number_format($row['item_cost'] * ($row['share'] / 100));
+														?>
+													<?php else: ?>
+														<?php
+														$total_price += $row['price'];
+														echo number_format($row['price']);
+														?>
+													<?php endif; ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
