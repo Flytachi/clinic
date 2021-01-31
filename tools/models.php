@@ -2106,6 +2106,11 @@ class GuideModel extends Model
                 <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $post['price']?>">
             </div>
 
+            <div class="form-group">
+                <label>Доля:</label>
+                <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $post['share'] ?>">
+            </div>
+
             <div class="text-right">
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
             </div>
