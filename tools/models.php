@@ -2384,8 +2384,6 @@ class LaboratoryAnalyzeTypeModel extends Model
             $sex1_min = $this->post['standart_sex1_min'];
             $sex1_max = $this->post['standart_sex1_max'];
             $sex1_sign = $this->post['standart_sex1_sign'];
-        }else {
-            $this->error("Не указаны нормативы!");
         }
 
         $this->post = Mixin\clean_form($this->post);
@@ -2528,7 +2526,7 @@ class LaboratoryAnalyzeModel extends Model
                                                     <option value="Положительный(+)" <?php if("Положительный(+)" === $row['result']){echo'selected';} ?>>Положительный(+)</option>
                                                 </select>
                                             <?php else: ?>
-                                                <input type="number" step="0.00001" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                                <input type="text" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                             <?php endif; ?>
                                         </td>
                                         <td>
