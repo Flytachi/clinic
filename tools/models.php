@@ -2222,13 +2222,12 @@ class LaboratoryAnalyzeTypeModel extends Model
                     <?php
                     foreach($db->query('SELECT * from service WHERE user_level = 6') as $row) {
                         ?>
-                        <option value="<?= $row['id'] ?>"<?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
                         <?php
                     }
                     ?>
                 </select>
             </div>
-
 
             <div class="form-group row">
 
@@ -2247,17 +2246,113 @@ class LaboratoryAnalyzeTypeModel extends Model
 
             </div>
 
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Норма минимум:</label>
-                    <input type="number" class="form-control" step="0.00001" name="standart_min" placeholder="Введите норматив ..." required value="<?= $post['standart_min'] ?>">
-                </div>
-                <div class="col-md-6">
-                    <label>Норма максимум:</label>
-                    <input type="number" class="form-control" step="0.00001" name="standart_max" placeholder="Введите норматив ..." required value="<?= $post['standart_max'] ?>">
+            <div class="card">
+                <div class="card-header header-elements-inline">
+                    <h6 class="card-title">Нормативы</h6>
                 </div>
 
+                <div class="card-body">
+                    <ul class="nav nav-tabs nav-tabs-highlight nav-justified">
+                        <li class="nav-item"><a href="#highlighted-justified-tab1" class="nav-link active" data-toggle="tab">Стандарт</a></li>
+                        <li class="nav-item"><a href="#highlighted-justified-tab2" class="nav-link" data-toggle="tab">+/-</a></li>
+                        <li class="nav-item"><a href="#highlighted-justified-tab3" class="nav-link" data-toggle="tab">Пол</a></li>
+                        <!-- <li class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Остольноре</a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="#highlighted-justified-tab3" class="dropdown-item" data-toggle="tab">Пол</a>
+                                <a href="#highlighted-justified-tab4" class="dropdown-item" data-toggle="tab">Возраст</a>
+                            </div>
+                        </li> -->
+                    </ul>
+
+                    <div class="tab-content">
+
+                        <div class="tab-pane fade show active" id="highlighted-justified-tab1">
+
+                            <div class="col-md-8 offset-md-2">
+                                <div class="form-group row">
+
+                                    <div class="col-md-5">
+                                        <label>Норма минимум:</label>
+                                        <input type="number" class="form-control" step="0.00001" name="standart_min" placeholder="Введите норматив ..." value="<?= $post['standart_min'] ?>">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Знак:</label>
+                                        <input type="text" class="form-control" name="standart_sign" placeholder="Введите знак ..." value="<?= ($post['standart_sign']) ? $post['standart_sign'] : "-" ?>">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Норма максимум:</label>
+                                        <input type="number" class="form-control" step="0.00001" name="standart_max" placeholder="Введите норматив ..." value="<?= $post['standart_max'] ?>">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade" id="highlighted-justified-tab2">
+
+                            <div class="col-md-8 offset-md-2">
+                                <div class="form-group row">
+
+                                    <div class="col-md-12">
+                                        <label>Норма :</label>
+                                        <select data-placeholder="Норма..." name="standart_fun" class="form-control form-control-select2">
+                                            <option></option>
+                                            <option value="1" <?php if(0 === $post['standart_fun']){echo'selected';} ?>>Отрицательный(-)</option>
+                                            <option value="2" <?php if(1 === $post['standart_fun']){echo'selected';} ?>>Положительный(+)</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade" id="highlighted-justified-tab3">
+
+                            <div class="col-md-8 offset-md-2">
+                                <div class="form-group row">
+
+                                    <legend>Женский</legend>
+                                    <div class="col-md-5">
+                                        <label>Норма минимум:</label>
+                                        <input type="number" class="form-control" step="0.00001" name="standart_sex0_min" placeholder="Введите норматив ..." value="<?= $post['standart_sex0_min'] ?>">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Знак:</label>
+                                        <input type="text" class="form-control" name="standart_sex0_sign" placeholder="Введите знак ..." value="<?= ($post['standart_sign']) ? $post['standart_sex0_sign'] : "-" ?>">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Норма максимум:</label>
+                                        <input type="number" class="form-control" step="0.00001" name="standart_sex0_max" placeholder="Введите норматив ..." value="<?= $post['standart_sex0_max'] ?>">
+                                    </div>
+
+                                    <legend>Мужской</legend>
+                                    <div class="col-md-5">
+                                        <label>Норма минимум:</label>
+                                        <input type="number" class="form-control" step="0.00001" name="standart_sex1_min" placeholder="Введите норматив ..." value="<?= $post['standart_sex1_min'] ?>">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Знак:</label>
+                                        <input type="text" class="form-control" name="standart_sex1_sign" placeholder="Введите знак ..." value="<?= ($post['standart_sex1_sign']) ? $post['standart_sign'] : "-" ?>">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label>Норма максимум:</label>
+                                        <input type="number" class="form-control" step="0.00001" name="standart_sex1_max" placeholder="Введите норматив ..." value="<?= $post['standart_sex1_max'] ?>">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade" id="highlighted-justified-tab4">
+                            Aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthet.
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
             <div class="text-right">
@@ -2270,12 +2365,50 @@ class LaboratoryAnalyzeTypeModel extends Model
 
     public function clean()
     {
-        $min = $this->post['standart_min'];
-        $max = $this->post['standart_max'];
+        prit($this->post);
+        if (intval($this->post['standart_max'])) {
+            // echo "Standart";
+            $min = $this->post['standart_min'];
+            $max = $this->post['standart_max'];
+            $sign = $this->post['standart_sign'];
+        }elseif (intval($this->post['standart_fun'])) {
+            // echo "Standart to fun";
+            $fun = 1;
+            $fun_val = $this->post['standart_fun'];
+        }elseif (intval($this->post['standart_sex0_max']) and intval($this->post['standart_sex0_max']) or intval($this->post['standart_sex1_max']) and intval($this->post['standart_sex1_max'])) {
+            // echo "Standart to sex";
+            $sex = 1;
+            $sex0_min = $this->post['standart_sex0_min'];
+            $sex0_max = $this->post['standart_sex0_max'];
+            $sex0_sign = $this->post['standart_sex0_sign'];
+            $sex1_min = $this->post['standart_sex1_min'];
+            $sex1_max = $this->post['standart_sex1_max'];
+            $sex1_sign = $this->post['standart_sex1_sign'];
+        }else {
+            $this->error("Не указаны нормативы!");
+        }
+
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        $this->post['standart_min'] = $min;
-        $this->post['standart_max'] = $max;
+
+        if (isset($max)) {
+            $this->post['standart_min'] = $min;
+            $this->post['standart_max'] = $max;
+            $this->post['standart_sign'] = $sign;
+            $this->post['standart_type'] = 1;
+        }elseif (isset($fun)) {
+            $this->post['standart_fun'] = $fun_val;
+            $this->post['standart_type'] = 2;
+        }elseif (isset($sex)) {
+            $this->post['standart_sex0_min'] = $sex0_min;
+            $this->post['standart_sex0_max'] = $sex0_max;
+            $this->post['standart_sex0_sign'] = $sex0_sign;
+            $this->post['standart_sex1_min'] = $sex1_min;
+            $this->post['standart_sex1_max'] = $sex1_max;
+            $this->post['standart_sex1_sign'] = $sex1_sign;
+            $this->post['standart_type'] = 3;
+        }
+        // $this->mod('test');
         return True;
     }
 
@@ -2314,6 +2447,7 @@ class LaboratoryAnalyzeModel extends Model
         }else{
             $post = array();
         }
+        $pat = $db->query("SELECT gender FROM users WHERE id = {$_GET['id']}")->fetch();
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -2336,6 +2470,7 @@ class LaboratoryAnalyzeModel extends Model
                             <tr class="bg-info">
                                 <th style="width:3%">№</th>
                                 <th>Название услуги</th>
+                                <th>Код</th>
                                 <th>Анализ</th>
                                 <th style="width:10%">Норма</th>
                                 <th style="width:10%">Результат</th>
@@ -2348,18 +2483,53 @@ class LaboratoryAnalyzeModel extends Model
                             $i = 0;
                             $s = 1;
                             foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row_parent) {
-                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', lat.name, lat.standart_min, lat.standart_max, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
+                                $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
+                                            lat.standart_min, lat.standart_sign, lat.standart_max,
+                                            lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
+                                            lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', $norm, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
                                     ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                                         <td><?= $s++ ?></td>
                                         <td><?= $row['ser_name'] ?></td>
+                                        <td><?= $row['code'] ?></td>
                                         <td><?= $row['name'] ?></td>
-                                        <td><?= $row['standart_min']."-".$row['standart_max'] ?></td>
+                                        <td>
+                                            <?php
+                                            switch ($row['standart_type']) {
+                                                case 1:
+                                                    echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
+                                                    break;
+                                                case 2:
+                                                    if ($row['standart_fun'] == 2) {
+                                                        echo "Положительный (+)";
+                                                    }else {
+                                                        echo "Отрицательный (-)";
+                                                    };
+                                                    break;
+                                                case 3:
+                                                    if ($pat['gender']) {
+                                                        echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
+                                                    }else {
+                                                        echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
+                                                    }
+                                                    break;
+                                            }
+                                            ?>
+                                        </td>
                                         <td>
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[analyze_id]" value="<?= $row['analyze_id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[visit_id]" value="<?= $row_parent['id'] ?>">
-                                            <input type="number" step="0.00001" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                            <?php if ($row['standart_type'] == 2): ?>
+                                                <select data-placeholder="Норма..." name="<?= $i ?>[result]" class="form-control form-control-select2 result_check">
+                                                    <option></option>
+                                                    <option value="Отрицательный(-)" <?php if("Отрицательный(-)" === $row['result']){echo'selected';} ?>>Отрицательный(-)</option>
+                                                    <option value="Положительный(+)" <?php if("Положительный(+)" === $row['result']){echo'selected';} ?>>Положительный(+)</option>
+                                                </select>
+                                            <?php else: ?>
+                                                <input type="number" step="0.00001" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
+                                            <?php endif; ?>
                                         </td>
                                         <td>
                                             <div class="form-check">
@@ -2369,7 +2539,7 @@ class LaboratoryAnalyzeModel extends Model
                                             </div>
                                         </td>
                                         <th class="text-center" style="width:25%">
-                                            <textarea class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" rows="1" cols="80"><?= $row['description'] ?></textarea>
+                                            <input type="text" class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" value="<?= $row['description'] ?>">
                                         </th>
                                     </tr>
                                     <?php
@@ -2390,6 +2560,7 @@ class LaboratoryAnalyzeModel extends Model
                 var imba = 0;
 
                 document.querySelectorAll('.result_check').forEach(function(events) {
+                    console.log(events);
                     if (!events.value) {
                         imba = imba + 1;
                     }
