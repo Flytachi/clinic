@@ -75,6 +75,7 @@ $header = "Услуги";
                                         <th style="width:50px">№</th>
 										<th style="width:50%">ФИО</th>
 										<th>Сумма</th>
+										<th>Доля</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
@@ -87,6 +88,7 @@ $header = "Услуги";
 											<td><?= $i++ ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= number_format($row['price']) ?></td>
+											<td><?= number_format($row['share'], 1) ?></td>
 	                                      	<td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'GuideModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
