@@ -26,14 +26,40 @@ is_auth();
             <tbody>
                 <?php
                 $i = 1;
-                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', lat.name, lat.standart_min, lat.standart_max, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
+                $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
+                            lat.standart_min, lat.standart_sign, lat.standart_max,
+                            lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
+                            lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
                     ?>
                     <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                         <td><?= $i++ ?></td>
                         <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
                         <td><?= $row['name'] ?></td>
                         <td class="text-right"><?= $row['unit'] ?></td>
-                        <td class="text-right"><?= $row['standart_min']."-".$row['standart_max'] ?></td>
+                        <td class="text-right">
+                            <?php
+                            switch ($row['standart_type']) {
+                                case 1:
+                                    echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
+                                    break;
+                                case 2:
+                                    if ($row['standart_fun'] == 2) {
+                                        echo "Положительный (+)";
+                                    }else {
+                                        echo "Отрицательный (-)";
+                                    };
+                                    break;
+                                case 3:
+                                    if ($pat['gender']) {
+                                        echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
+                                    }else {
+                                        echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
+                                    }
+                                    break;
+                            }
+                            ?>
+                        </td>
                         <td class="text-right"><?= $row['result'] ?></td>
                         <!-- <td><?= $row['description'] ?></td> -->
                     </tr>
