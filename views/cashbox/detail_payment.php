@@ -158,18 +158,22 @@ $staus = 0;
 
 		function printS(body){
 
-			$.ajax({
-		        type: "GET",
-		        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,
-		        success: function (data) {
-		        	console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`)
-		            let ww = window.open();
-		            ww.document.write(data);
-		            ww.focus();
-		            ww.print();
-		            ww.close();
-		        },
-		    });
+			let we = window.open(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,'mywindow');
+
+	        setTimeout(function() {we.close()}, 100);
+
+			// $.ajax({
+		 //        type: "GET",
+		 //        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,
+		 //        success: function (data) {
+		 //        	console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`)
+		 //            let ww = window.open();
+		 //            ww.document.write(data);
+		 //            ww.focus();
+		 //            ww.print();
+		 //            ww.close();
+		 //        },
+		 //    });
 
 		}
 

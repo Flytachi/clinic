@@ -153,6 +153,7 @@ $header = "Амбулаторные пациенты";
 	<script type="text/javascript">
 
 		function ResultShow(events, title) {
+
 			$.ajax({
 				type: "GET",
 				url: events,

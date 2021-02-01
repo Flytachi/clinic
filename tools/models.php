@@ -2636,6 +2636,8 @@ class LaboratoryAnalyzeModel extends Model
                     $val['deviation'] = null;
                 }
                 $val['service_id'] = $db->query("SELECT service_id FROM visit WHERE id = {$val['visit_id']}")->fetch()['service_id'];
+                // prit($val);
+                // $this->stop();
                 $object = Mixin\insert('laboratory_analyze', $val);
             }
             if (!intval($object)){

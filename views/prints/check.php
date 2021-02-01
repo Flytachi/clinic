@@ -82,7 +82,7 @@ is_auth();
 
 </style>
 
-<body onload="window.print();" style="color: black; font-size: 140%;">
+<body onload="window.print(); " style="color: black; font-size: 140%;">
 
     <div id="invoice-POS" >
 

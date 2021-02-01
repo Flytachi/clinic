@@ -280,31 +280,50 @@ function read_excel($filepath){
     return $ar; //возвращаем массив
 }
 
-function write_exel($value='')
-{
-    // Redirect output to a client’s web browser (Excel5)
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=demo.xls");
-    header('Cache-Control: max-age=0');
+function read_labaratory($filepath){
+    require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
 
-    // PHPExcel
-    require_once 'PHPExcel/Classes/PHPExcel.php';
-    require_once 'PHPExcel/Classes/PHPExcel/IOFactory.php';
+    $ar=array(); // инициализируем массив
+    $inputFileType = PHPExcel_IOFactory::identify($filepath); // узнаем тип файла, excel может хранить файлы в разных форматах, xls, xlsx и другие
+    $objReader = PHPExcel_IOFactory::createReader($inputFileType); // создаем объект для чтения файла
+    $objPHPExcel = $objReader->load($filepath); // загружаем данные файла в объект
 
-    // Create new PHPExcel object
-    $objPHPExcel = new PHPExcel();
+    foreach($objPHPExcel->getWorksheetIterator() as $worksheet){
+        $highestRow = $worksheet->getHighestRow();
+        $highestColumn = $worksheet->getHighestColumn();
 
-    // Set Orientation, size and scaling
-    $objPHPExcel->setActiveSheetIndex(0);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+        for($row=2; $row<=$highestRow; $row++){
+            $column1 = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
+            $column2 = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+            $column3 = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+            $column4 = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+            $column5 = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+            $column6 = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
 
-    // Generate spreadsheet
-    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-    $objWriter->save('php://output');
-    exit;
+            // $finaldata[] = array(
+            //     'code'   =>  trim($column1),
+            //     'name'   =>  trim($column2),
+            //     'result' =>  trim($column5),
+            // );
+
+            if ($column1 and $column2 and $column5) {
+                $finaldata[] = array(
+                    'type'   =>  "result",
+                    'code'   =>  trim($column1),
+                    'name'   =>  trim($column2),
+                    'result' =>  trim($column5),
+                );
+            }elseif (trim($column1) == "№ :") {
+                $finaldata[] = array(
+                    'type'      =>  "label",
+                    'label_lab' =>  trim($column2),
+                );
+            }
+        }
+    }
+
+    // $ar = $objPHPExcel->getSheet()->toArray(); // выгружаем данные из объекта в массив
+    return $finaldata; //возвращаем массив
+
 }
 ?>
