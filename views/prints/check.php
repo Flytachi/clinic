@@ -36,7 +36,7 @@ is_auth();
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
 
-/*    .logo{
+    /*.logo{
         //float: left;
         height: 90px;
         width: 110px;
@@ -120,9 +120,9 @@ is_auth();
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
                         <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
                         <tr class="service" style="font-size:150%;">
-                            <td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
-                            <td class="tableitem"><p class="itemtext">1</p></td>
-                            <td class="tableitem">
+        					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
+        					<td class="tableitem"><p class="itemtext">1</p></td>
+        					<td class="tableitem">
                                 <p class="itemtext">
                                     <?php
                                     echo number_format($row['price']);

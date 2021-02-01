@@ -51,7 +51,7 @@ $header = "Амбулаторные пациенты";
 			            ?>
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm">
+                            <table class="table table-hover table-sm datatable-basic">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>

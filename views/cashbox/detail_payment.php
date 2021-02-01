@@ -142,7 +142,6 @@ $staus = 0;
         	}else{
             	body.style.backgroundColor = '';
             	body.dataset.status = 'true';
-
             	body.className = body.dataset.color;
 
             	for(let a = 0; a < arr.length; a++){
