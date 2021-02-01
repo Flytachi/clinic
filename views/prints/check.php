@@ -35,11 +35,11 @@ is_auth();
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
 
-    #top .logo{
+    .logo{
         //float: left;
         height: 90px;
         width: 110px;
-        background: url(icon/company.png) no-repeat;
+        background: url("<?= img("prints/icon/company.png") ?>") no-repeat;
         background-size: 110px 90px;
     }
     .clientlogo{

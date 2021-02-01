@@ -14,9 +14,6 @@ $staus = 0;
 <body>
 
 	<script>
-
-    	flag = true;
-
     	arr = [];
 	</script>
 	<!-- Main navbar -->
@@ -47,6 +44,7 @@ $staus = 0;
 						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
+								<button onclick="printS(this)" type="button" class="btn btn-outline-info btn-sm legitRipple">Чек</button>
 								<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
 							</div>
 						</div>
@@ -85,6 +83,7 @@ $staus = 0;
 												}else {
 													$color = "table-secondary";
 													$staus = 1;
+
 												}
 											}
 											$temp_old = $row['price_date'];
@@ -92,19 +91,20 @@ $staus = 0;
 
 										$mas .=  $row['id_visit'] . ",";
 										?>
-                                        <tr class="<?= $color ?>" data-href="/clinic/views/prints/check.php?id=<?= $_GET['pk']?>&items=[<?= $row['id_visit'] ?>]" onclick="//printS(this)
+                                        <tr class="<?= $color ?>" onclick="
 
                                         	let id = Number(this.dataset.id);
 
                                         	if (this.dataset.status == 'true') {
-	                                        	this.style.backgroundColor = 'green';
+	                                        	this.style.backgroundColor = 'yellow';
 	                                        	this.dataset.status = 'false'
 
 	                                        	arr.push(this.dataset.id);
 
                                         	}else{
 	                                        	this.style.backgroundColor = '';
-	                                        	this.dataset.status = 'true'
+	                                        	this.dataset.status = 'true';
+
 
 	                                        	arr = arr.map(function(it, ind, arr ) {
 	                                        		if(it == id ){
@@ -112,7 +112,7 @@ $staus = 0;
 	                                        		}
 	                                        	})
                                         	}
-                                        " data-color="<?= $staus ?>" data-status="true" data-id="<?= $row['id_visit'] ?>">
+                                        " data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id_visit'] ?>" data-class="<?= $colo ?>">
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['price_date'])) ?></td>
                                             <td><?= $row['item_name'] ?></td>
@@ -127,8 +127,6 @@ $staus = 0;
                                     ?>
                                 </tbody>
                             </table>
-						<button type="button" data-href="/clinic/views/prints/check.php?id=<?= $_GET['pk']?>&items=[<?= substr( $mas, 0,-1) ?>]" onclick="printS(this)"> ww</button>
-
                         </div>
 
 					</div>
@@ -151,7 +149,7 @@ $staus = 0;
 
 			$.ajax({
 		        type: "GET",
-		        url: `/views/prints/check.php?id=<?= $_GET['pk']?>&items=[${arr}]`,
+		        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,
 		        success: function (data) {
 		            let ww = window.open();
 		            ww.document.write(data);
