@@ -67,7 +67,7 @@ $header = "Анализы";
 
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover datatable-basic">
                                 <thead>
                                     <tr class="bg-blue">
                                         <th style="width:7%">№</th>

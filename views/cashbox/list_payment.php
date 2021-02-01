@@ -44,7 +44,7 @@ $header = "История платежей";
 					<div class="card-body">
 
 						<div class="table-responsive card">
-                            <table class="table table-hover table-sm">
+                            <table class="table table-hover table-sm datatable-basic">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>

@@ -174,7 +174,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 						<h6 class="card-title">Визиты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
+								<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm btn-outline-info">Печать</button>
 							</div>
 						</div>
 					</div>
@@ -218,7 +218,11 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											ORDER BY vs.add_date DESC";
                                     foreach($db->query($sql) as $row) {
 										?>
-                                        <tr>
+										<?php if ($row['laboratory']): ?>
+											<tr onclick="Change_lab(this, <?= $row['id'] ?>)" data-stat="0">
+										<?php else: ?>
+											<tr>
+										<?php endif; ?>
                                             <td><?= $i++ ?></td>
 											<td>
 												<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
@@ -317,6 +321,33 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 				},
 			});
 		};
+
+		items = [];
+
+		function Change_lab(tbody, id) {
+			if (tbody.dataset.stat == 1) {
+				tbody.dataset.stat = "0";
+				tbody.className = "";
+
+				for(let a = 0; a < items.length; a++){
+            		if(items[a] == id ){
+            			items.splice(a, 1);
+	            	}
+            	}
+
+			}else {
+				tbody.dataset.stat = "1";
+				tbody.className = "table-warning";
+				items.push(id);
+			}
+		}
+
+		function PrePrint(url) {
+			if (items.length != 0) {
+				Print(url+`&items=[${items}]`);
+			}
+		}
+
 	</script>
 
 	<!-- Footer -->
