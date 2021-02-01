@@ -81,7 +81,9 @@ $staus = 0;
 													$color = "";
 													$staus = 0;
 												}else {
+
 													$color = "table-secondary";
+
 													$staus = 1;
 
 												}
@@ -91,28 +93,7 @@ $staus = 0;
 
 										$mas .=  $row['id_visit'] . ",";
 										?>
-                                        <tr class="<?= $color ?>" onclick="
-
-                                        	let id = Number(this.dataset.id);
-
-                                        	if (this.dataset.status == 'true') {
-	                                        	this.style.backgroundColor = 'yellow';
-	                                        	this.dataset.status = 'false'
-
-	                                        	arr.push(this.dataset.id);
-
-
-                                        	}else{
-	                                        	this.style.backgroundColor = '';
-	                                        	this.dataset.status = 'true';
-
-	                                        	arr = arr.map(function(it, ind, arr ) {
-	                                        		if(it == id ){
-	                                        			delet(arr[ind]);
-	                                        		}
-	                                        	})
-                                        	}
-                                        " data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id_visit'] ?>">
+                                        <tr class="<?= $color ?>" onclick="addArray(this)" data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id_visit'] ?>">
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['price_date'])) ?></td>
                                             <td><?= $row['item_name'] ?></td>
@@ -144,6 +125,36 @@ $staus = 0;
 
 	<script>
 
+
+		function addArray(body) {
+			let id = Number(body.dataset.id);
+
+        	if (body.dataset.status == 'true') {
+            	body.style.backgroundColor = 'yellow';
+            	body.dataset.status = 'false'
+
+            	arr.push(id);
+
+            	body.className = '';
+
+            	console.log(arr);
+        	}else{
+            	body.style.backgroundColor = '';
+            	body.dataset.status = 'true';
+
+            	body.className = "table-secondary";
+
+            	for(let a = 0; a < arr.length; a++){
+            		if(arr[a] == id ){
+            			arr.splice(a, 1);
+	            	}
+
+            	}
+
+            	console.log(arr);
+
+        	}
+		}
 
 		function printS(body){
 
