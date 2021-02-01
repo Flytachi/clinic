@@ -101,10 +101,10 @@ $staus = 0;
 
 	                                        	arr.push(this.dataset.id);
 
+
                                         	}else{
 	                                        	this.style.backgroundColor = '';
 	                                        	this.dataset.status = 'true';
-
 
 	                                        	arr = arr.map(function(it, ind, arr ) {
 	                                        		if(it == id ){
@@ -112,7 +112,7 @@ $staus = 0;
 	                                        		}
 	                                        	})
                                         	}
-                                        " data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id_visit'] ?>" data-class="<?= $colo ?>">
+                                        " data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id_visit'] ?>">
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['price_date'])) ?></td>
                                             <td><?= $row['item_name'] ?></td>
