@@ -89,7 +89,7 @@ is_auth();
             <div class="info">
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
-                    <b>ID</b>: <?= $_GET['id'] ?></br>
+                    <b>ID</b>: <?= $_GET['num'] ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
                 </p>
             </div>
