@@ -2227,36 +2227,49 @@ class LaboratoryAnalyzeTypeModel extends Model
                 <label>Услуга:</label>
                 <select data-placeholder="Выбрать услугу" name="service_id" class="form-control form-control-select2" required>
                     <option></option>
-                    <?php
-                    foreach($db->query('SELECT * from service WHERE user_level = 6') as $row) {
-                        ?>
+                    <?php foreach ($db->query('SELECT * from service WHERE user_level = 6') as $row): ?>
                         <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="form-group row">
 
                 <div class="col-md-6">
-                    <label>Название:</label>
-                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label>Норматив:</label>
+                            <textarea class="form-control" name="standart" rows="3" cols="2" placeholder="Норматив"><?= $post['standart']?></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Ед:</label>
+                            <textarea class="form-control" name="unit" rows="3" cols="2" placeholder="Единица"><?= $post['unit']?></textarea>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label>Код:</label>
-                    <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
-                </div>
-                <div class="col-md-3">
-                    <label>Ед:</label>
-                    <input type="text" class="form-control" name="unit" placeholder="Введите шт" required value="<?= $post['unit']?>">
+
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label>Название:</label>
+                            <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label>Код:</label>
+                            <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
+
             <div class="card">
                 <div class="card-header header-elements-inline">
                     <h6 class="card-title">Нормативы</h6>
+                    <span class="text-meted text-danger">Страрое не использовать</span>
                 </div>
 
                 <div class="card-body">
@@ -2264,13 +2277,6 @@ class LaboratoryAnalyzeTypeModel extends Model
                         <li class="nav-item"><a href="#highlighted-justified-tab1" class="nav-link active" data-toggle="tab">Стандарт</a></li>
                         <li class="nav-item"><a href="#highlighted-justified-tab2" class="nav-link" data-toggle="tab">+/-</a></li>
                         <li class="nav-item"><a href="#highlighted-justified-tab3" class="nav-link" data-toggle="tab">Пол</a></li>
-                        <!-- <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Остольноре</a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a href="#highlighted-justified-tab3" class="dropdown-item" data-toggle="tab">Пол</a>
-                                <a href="#highlighted-justified-tab4" class="dropdown-item" data-toggle="tab">Возраст</a>
-                            </div>
-                        </li> -->
                     </ul>
 
                     <div class="tab-content">
@@ -2489,10 +2495,11 @@ class LaboratoryAnalyzeModel extends Model
                             $i = 0;
                             $s = 1;
                             foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row_parent) {
-                                $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                                            lat.standart_min, lat.standart_sign, lat.standart_max,
-                                            lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                                            lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                                // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
+                                //             lat.standart_min, lat.standart_sign, lat.standart_max,
+                                //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
+                                //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                                $norm = "lat.name, lat.code, lat.standart";
                                 foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', $norm, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
                                     ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
@@ -2501,41 +2508,34 @@ class LaboratoryAnalyzeModel extends Model
                                         <td><?= $row['code'] ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td>
+                                            <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
                                             <?php
-                                            switch ($row['standart_type']) {
-                                                case 1:
-                                                    echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
-                                                    break;
-                                                case 2:
-                                                    if ($row['standart_fun'] == 2) {
-                                                        echo "Положительный (+)";
-                                                    }else {
-                                                        echo "Отрицательный (-)";
-                                                    };
-                                                    break;
-                                                case 3:
-                                                    if ($pat['gender']) {
-                                                        echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
-                                                    }else {
-                                                        echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
-                                                    }
-                                                    break;
-                                            }
+                                            // switch ($row['standart_type']) {
+                                            //     case 1:
+                                            //         echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
+                                            //         break;
+                                            //     case 2:
+                                            //         if ($row['standart_fun'] == 2) {
+                                            //             echo "Положительный (+)";
+                                            //         }else {
+                                            //             echo "Отрицательный (-)";
+                                            //         };
+                                            //         break;
+                                            //     case 3:
+                                            //         if ($pat['gender']) {
+                                            //             echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
+                                            //         }else {
+                                            //             echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
+                                            //         }
+                                            //         break;
+                                            // }
                                             ?>
                                         </td>
                                         <td>
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[analyze_id]" value="<?= $row['analyze_id'] ?>">
                                             <input type="hidden" name="<?= $i ?>[visit_id]" value="<?= $row_parent['id'] ?>">
-                                            <?php if ($row['standart_type'] == 2): ?>
-                                                <select data-placeholder="Норма..." name="<?= $i ?>[result]" class="form-control form-control-select2 result_check">
-                                                    <option></option>
-                                                    <option value="Отрицательный(-)" <?php if("Отрицательный(-)" === $row['result']){echo'selected';} ?>>Отрицательный(-)</option>
-                                                    <option value="Положительный(+)" <?php if("Положительный(+)" === $row['result']){echo'selected';} ?>>Положительный(+)</option>
-                                                </select>
-                                            <?php else: ?>
-                                                <input type="text" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
-                                            <?php endif; ?>
+                                            <input type="text" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                         </td>
                                         <td>
                                             <div class="form-check">
