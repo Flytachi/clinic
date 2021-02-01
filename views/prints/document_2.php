@@ -15,9 +15,9 @@ if ($_GET['items']) {
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
     <style>
-        
+
         #text-b {
-            font-size: 150%;
+            font-size: 120%;
         }
 
         #text-h {
@@ -72,49 +72,32 @@ if ($_GET['items']) {
                                 <t id="text-h">
                                     <th style="width:3%">№</th>
                                     <th class="text-left">Анализ</th>
+                                    <th class="text-right" style="width:15%">Норма</th>
                                     <th class="text-right" style="width:10%">Ед</th>
                                     <th class="text-right" style="width:15%">Результат</th>
-                                    <th class="text-right" style="width:15%">Норма</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 $i = 1;
-                                $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                                            lat.standart_min, lat.standart_sign, lat.standart_max,
-                                            lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                                            lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                                // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
+                                //             lat.standart_min, lat.standart_sign, lat.standart_max,
+                                //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
+                                //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                                $norm = "lat.name, lat.code, lat.standart";
                                 $sql = "SELECT la.id, la.result, la.deviation, $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = $item";
                                 foreach ($db->query($sql) as $row) {
                                     ?>
                                     <tr id="text-b">
                                         <td><?= $i++ ?></td>
                                         <td class="text-left"><?= $row['name'] ?></td>
-                                        <td class="text-right"><?= $row['unit'] ?></td>
-                                        <td class="text-right"><?= $row['result'] ?></td>
                                         <td class="text-right">
-                                            <?php
-                                            switch ($row['standart_type']) {
-                                                case 1:
-                                                    echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
-                                                    break;
-                                                case 2:
-                                                    if ($row['standart_fun'] == 2) {
-                                                        echo "Положительный (+)";
-                                                    }else {
-                                                        echo "Отрицательный (-)";
-                                                    };
-                                                    break;
-                                                case 3:
-                                                    if ($pat['gender']) {
-                                                        echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
-                                                    }else {
-                                                        echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
-                                                    }
-                                                    break;
-                                            }
-                                            ?>
+                                            <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
                                         </td>
+                                        <td class="text-right">
+                                            <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
+                                        </td>
+                                        <td class="text-right"><?= $row['result'] ?></td>
                                     </tr>
                                     <?php
                                 }
@@ -134,49 +117,32 @@ if ($_GET['items']) {
                             <tr id="text-h">
                                 <th style="width:3%">№</th>
                                 <th class="text-left">Анализ</th>
+                                <th class="text-right" style="width:15%">Норма</th>
                                 <th class="text-right" style="width:10%">Ед</th>
                                 <th class="text-right" style="width:15%">Результат</th>
-                                <th class="text-right" style="width:15%">Норма</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             $i = 1;
-                            $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                                        lat.standart_min, lat.standart_sign, lat.standart_max,
-                                        lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                                        lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                            // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
+                            //             lat.standart_min, lat.standart_sign, lat.standart_max,
+                            //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
+                            //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                            $norm = "lat.name, lat.code, lat.standart";
                             $sql = "SELECT la.id, la.result, la.deviation, $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}";
                             foreach ($db->query($sql) as $row) {
                                 ?>
                                 <tr id="text-b">
                                     <td><?= $i++ ?></td>
                                     <td class="text-left"><?= $row['name'] ?></td>
-                                    <td class="text-right"><?= $row['unit'] ?></td>
-                                    <td class="text-right"><?= $row['result'] ?></td>
                                     <td class="text-right">
-                                        <?php
-                                        switch ($row['standart_type']) {
-                                            case 1:
-                                                echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
-                                                break;
-                                            case 2:
-                                                if ($row['standart_fun'] == 2) {
-                                                    echo "Положительный (+)";
-                                                }else {
-                                                    echo "Отрицательный (-)";
-                                                };
-                                                break;
-                                            case 3:
-                                                if ($pat['gender']) {
-                                                    echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
-                                                }else {
-                                                    echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
-                                                }
-                                                break;
-                                        }
-                                        ?>
+                                        <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
                                     </td>
+                                    <td class="text-right">
+                                        <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
+                                    </td>
+                                    <td class="text-right"><?= $row['result'] ?></td>
                                 </tr>
                                 <?php
                             }

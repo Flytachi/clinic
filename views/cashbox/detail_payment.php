@@ -157,24 +157,23 @@ $staus = 0;
 		}
 
 		function printS(body){
-
-			let we = window.open(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,'mywindow');
-
-	        setTimeout(function() {we.close()}, 100);
-
-			// $.ajax({
-		 //        type: "GET",
-		 //        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,
-		 //        success: function (data) {
-		 //        	console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`)
-		 //            let ww = window.open();
-		 //            ww.document.write(data);
-		 //            ww.focus();
-		 //            ww.print();
-		 //            ww.close();
-		 //        },
-		 //    });
-
+			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
+				$.ajax({
+			        type: "GET",
+			        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,
+			        success: function (data) {
+			        	console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`)
+			            let ww = window.open();
+			            ww.document.write(data);
+			            ww.focus();
+			            ww.print();
+			            ww.close();
+			        },
+			    });
+			}else {
+				let we = window.open(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,'mywindow');
+		        setTimeout(function() {we.close()}, 100);
+			}
 		}
 
 	</script>
