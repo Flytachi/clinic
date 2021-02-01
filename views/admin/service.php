@@ -15,6 +15,7 @@ $header = "Услуги";
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
+
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -54,8 +55,8 @@ $header = "Услуги";
 						<?php if ($_POST['flush']): ?>
 
 							<?php
-							Mixin\T_flush('service');
-							$task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
+							// Mixin\T_flush('service');
+							// $task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
 							// Mixin\T_flush('visit');
 							// Mixin\T_flush('visit_price');
 							// Mixin\T_flush('visit_member');
@@ -111,7 +112,7 @@ $header = "Услуги";
 
               		<div class="card-body">
                   		<div class="table-responsive">
-	                      	<table class="table table-hover">
+	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
 	                              	<tr class="bg-blue">
 										<th style="width:10%">Код</th>
