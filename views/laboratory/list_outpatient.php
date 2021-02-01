@@ -114,7 +114,7 @@ $header = "Амбулаторные пациенты";
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<a href="<?= viv('prints/labrotoria_label') ?>?id=<?= $row['id'] ?>&num=<?= $item_laboratory_num ?>" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+													<a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row['id'] ?>&num=<?= $item_laboratory_num ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													<a onclick="UpNumber(<?= json_encode($item_vs) ?>, <?= $item_laboratory_num ?>)" class="dropdown-item"><strong class="mr-3"><?= ($item_laboratory_num) ? $item_laboratory_num : "-" ?></strong> Номер</a>
                                                     <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
                                                 </div>
@@ -200,6 +200,25 @@ $header = "Амбулаторные пациенты";
 			$('#number_id').val(`[${id}]`);
 			$('#number_laboratory_num').val(`${num}`);
 		};
+
+		function PrintLab(url) {
+			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
+				$.ajax({
+					type: "GET",
+					url: url,
+					success: function (data) {
+						let ww = window.open();
+						ww.document.write(data);
+						ww.focus();
+						ww.print();
+						ww.close();
+					},
+				});
+			}else {
+				let we = window.open(url,'mywindow');
+				setTimeout(function() {we.close()}, 100);
+			}
+		}
 
 	</script>
 
