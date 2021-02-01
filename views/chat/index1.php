@@ -428,7 +428,12 @@ $header = "Пациент";
 
     	let element= <textarea name="enter-message" class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
 
-		let chat = io.connect('<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>/chat');
+		let chat = io.connect('example.com/chat', {
+          withCredentials: true,
+          extraHeaders: {
+            "my-custom-header": "abcd"
+          }
+        });
 
 		chat.emit('joinRoom', {'id' : id});
 

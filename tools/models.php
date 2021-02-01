@@ -926,6 +926,8 @@ class VisitPriceModel extends Model
                                 let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
 
                                 conn.send(obj1);
+
+                                console.log(result.val);
                             // Печать :
                             $.ajax({
                                 type: "GET",
@@ -1957,6 +1959,7 @@ class ServiceModel extends Model
                     break;
             }
         }
+        $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
         return True;
     }
 

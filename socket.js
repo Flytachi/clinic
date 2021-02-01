@@ -1,4 +1,17 @@
-const httpServer = require("http").createServer();
+const express = require('express');
+const app = express();
+const server = require("http").createServer(app);
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "https://example.com",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true
+  }
+});
+
+server.listen(8080);
 
 var fs = require('fs'),
     ini = require('ini');
@@ -6,7 +19,7 @@ var fs = require('fs'),
 console.log(__dirname);
 
 var config = ini.parse(fs.readFileSync(__dirname + '/tools/functions/setting.ini', 'utf8'));
-console.dir(config);
+//console.dir(config);
 
 const mariadb = require('mariadb/callback');
 const conn  = mariadb.createConnection({
@@ -16,34 +29,11 @@ const conn  = mariadb.createConnection({
      database: config.DATABASE.NAME,
 });
 
-// mariadb.createConnection({ // Open a new connection
-//     host: config.DATABASE.HOST,
-//     user: config.DATABASE.USER,
-//     password: config.DATABASE.PASS,
-//     database: config.DATABASE.NAME,
-// })
-// .then(conn => {
-//   conn.query('SELECT "Hello world!" as my_message') // Execute a query
-//       .then(result => { // Print the results
-//           for (row of result) {
-//               console.log(row)
-//           }
-//       })
-//       .then(conn.destroy()) // Close the connection
-// })
-
-const io = require('socket.io')(httpServer, {
-  cors: {
-    origin: "http://localhost",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true
-  }
-});
-
 let chat = io.of('/chat');
 
 chat.on('connection', function(socket) {
+
+  console.log("Успешное соединение");
 
   socket.on('joinRoom',(data) =>{
 
@@ -76,5 +66,3 @@ chat.on('connection', function(socket) {
   });
 
 });
-
-httpServer.listen(config.SOCKET.PORT);

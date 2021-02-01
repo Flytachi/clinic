@@ -7,6 +7,7 @@ is_auth();
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
         /*padding:2mm;*/
         margin: 0 auto;
+        margin-left: -5px;
         width: 44mm;
         background: #FFF;
     }
@@ -35,19 +36,20 @@ is_auth();
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
 
-    #top .logo{
+    #top , #logo{
         //float: left;
         height: 90px;
         width: 110px;
-        background: url(icon/company.png) no-repeat;
+        background: url("<?= stack("vendors/image/icon/company.png") ?>") no-repeat;
+        //background-image: url("http://172.16.1.7/views/prints/icon/company.png");
         background-size: 110px 90px;
     }
     .clientlogo{
         float: left;
-    	height: 60px;
-    	width: 60px;
-    	background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
-    	background-size: 60px 60px;
+        height: 60px;
+        width: 60px;
+        background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
+        background-size: 60px 60px;
         border-radius: 50px;
     }
     .info{
@@ -84,8 +86,9 @@ is_auth();
 
     <div id="invoice-POS" >
 
-        <center id="top">
-            <div class="logo"></div>
+        <center>
+            <!-- <img src="<?= stack("vendors/image/icon/company.png") ?>" alt="альтернативный текст" height="100" width="140"> -->
+            <div id="logo"></div>
         </center>
 
         <div id="mid">
@@ -116,10 +119,10 @@ is_auth();
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
                         <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
-                        <tr class="service">
-        					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
-        					<td class="tableitem"><p class="itemtext">1</p></td>
-        					<td class="tableitem">
+                        <tr class="service" style="font-size:175%;">
+                            <td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
+                            <td class="tableitem"><p class="itemtext">1</p></td>
+                            <td class="tableitem">
                                 <p class="itemtext">
                                     <?php
                                     echo number_format($row['price']);
@@ -127,31 +130,31 @@ is_auth();
                                     ?>
                                 </p>
                             </td>
-        				</tr>
+                        </tr>
                     <?php endforeach; ?>
 
-    				<!-- <tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>tax</h2></td>
-    					<td class="payment"><h2>$419.25</h2></td>
-    				</tr> -->
+                    <!-- <tr class="tabletitle">
+                        <td></td>
+                        <td class="Rate"><h2>tax</h2></td>
+                        <td class="payment"><h2>$419.25</h2></td>
+                    </tr> -->
 
-    				<tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>Итого</h2></td>
-    					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
-    				</tr>
+                    <tr class="tabletitle">
+                        <td></td>
+                        <td class="Rate"><h2>Итого</h2></td>
+                        <td class="payment"><h2><?= number_format($total_price) ?></h2></td>
+                    </tr>
 
-    			</table>
-    		</div>
+                </table>
+            </div>
 
             <!-- <div id="legalcopy">
-    			<p class="legal">
+                <p class="legal">
                     <strong>Thank you for your business!</strong>
                     Payment is expected within 31 days; please process this invoice within that time.
                     There will be a 5% interest charge per month on late invoices.
-    			</p>
-    		</div> -->
+                </p>
+            </div> -->
 
         </div>
 
