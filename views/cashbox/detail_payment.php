@@ -162,6 +162,7 @@ $staus = 0;
 		        type: "GET",
 		        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,
 		        success: function (data) {
+		        	console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`)
 		            let ww = window.open();
 		            ww.document.write(data);
 		            ww.focus();
