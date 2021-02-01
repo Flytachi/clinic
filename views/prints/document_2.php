@@ -14,6 +14,18 @@ if ($_GET['items']) {
     <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
+    <style>
+        
+        #text-b {
+            font-size: 150%;
+        }
+
+        #text-h {
+            font-size: 120%;
+        }
+
+    </style>
+
     <body>
 
         <div class="row">
@@ -57,7 +69,7 @@ if ($_GET['items']) {
                     <div class="table-responsive card">
                         <table class="table table-bordered table-sm">
                             <thead>
-                                <tr>
+                                <t id="text-h">
                                     <th style="width:3%">№</th>
                                     <th class="text-left">Анализ</th>
                                     <th class="text-right" style="width:10%">Ед</th>
@@ -75,7 +87,7 @@ if ($_GET['items']) {
                                 $sql = "SELECT la.id, la.result, la.deviation, $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = $item";
                                 foreach ($db->query($sql) as $row) {
                                     ?>
-                                    <tr>
+                                    <tr id="text-b">
                                         <td><?= $i++ ?></td>
                                         <td class="text-left"><?= $row['name'] ?></td>
                                         <td class="text-right"><?= $row['unit'] ?></td>
@@ -119,7 +131,7 @@ if ($_GET['items']) {
                 <div class="table-responsive card">
                     <table class="table table-bordered table-sm">
                         <thead>
-                            <tr>
+                            <tr id="text-h">
                                 <th style="width:3%">№</th>
                                 <th class="text-left">Анализ</th>
                                 <th class="text-right" style="width:10%">Ед</th>
@@ -137,7 +149,7 @@ if ($_GET['items']) {
                             $sql = "SELECT la.id, la.result, la.deviation, $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}";
                             foreach ($db->query($sql) as $row) {
                                 ?>
-                                <tr>
+                                <tr id="text-b">
                                     <td><?= $i++ ?></td>
                                     <td class="text-left"><?= $row['name'] ?></td>
                                     <td class="text-right"><?= $row['unit'] ?></td>
