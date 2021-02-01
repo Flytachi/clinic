@@ -928,18 +928,22 @@ class VisitPriceModel extends Model
                                 conn.send(obj1);
 
                                 console.log(result.val);
+
+                                let we = window.open(result.val,'mywindow');
+
+                                setTimeout(function() {we.close()}, 100);
                             // Печать :
-                            $.ajax({
-                                type: "GET",
-                                url: result.val,
-                                success: function (data) {
-                                    let ww = window.open();
-                                    ww.document.write(data);
-                                    ww.focus();
-                                    ww.print();
-                                    ww.close();
-                                },
-                            });
+                            // $.ajax({
+                            //     type: "GET",
+                            //     url: result.val,
+                            //     success: function (data) {
+                            //         let ww = window.open();
+                            //         ww.document.write(data);
+                            //         ww.focus();
+                            //         ww.print();
+                            //         ww.close();
+                            //     },
+                            // });
                         }
                         sessionStorage['message'] = result.message;
                         setTimeout( function() {
