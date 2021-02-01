@@ -288,27 +288,38 @@ function read_labaratory($filepath){
     $objReader = PHPExcel_IOFactory::createReader($inputFileType); // создаем объект для чтения файла
     $objPHPExcel = $objReader->load($filepath); // загружаем данные файла в объект
 
-    foreach($objPHPExcel->getWorksheetIterator() as $worksheet)
-    {
-      $highestRow = $worksheet->getHighestRow();
-      $highestColumn = $worksheet->getHighestColumn();
-      //echo $highestRow;
-      //echo $highestColumn;
-      //die();
-      for($row=2; $row<=$highestRow; $row++)
-      {
-        $column1 = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
-        $column2 = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
-        $column3 = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
-        $column4 = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
-        $column5 = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
-        $column6 = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+    foreach($objPHPExcel->getWorksheetIterator() as $worksheet){
+        $highestRow = $worksheet->getHighestRow();
+        $highestColumn = $worksheet->getHighestColumn();
 
-        $finaldata[] = array(
-            'data1'   =>    trim($column1),
-            'data2'   =>    trim($column2),
-          );
-      }
+        for($row=2; $row<=$highestRow; $row++){
+            $column1 = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
+            $column2 = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+            $column3 = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+            $column4 = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+            $column5 = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+            $column6 = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+
+            // $finaldata[] = array(
+            //     'code'   =>  trim($column1),
+            //     'name'   =>  trim($column2),
+            //     'result' =>  trim($column5),
+            // );
+
+            if ($column1 and $column2 and $column5) {
+                $finaldata[] = array(
+                    'type'   =>  "result",
+                    'code'   =>  trim($column1),
+                    'name'   =>  trim($column2),
+                    'result' =>  trim($column5),
+                );
+            }elseif (trim($column1) == "№ :") {
+                $finaldata[] = array(
+                    'type'      =>  "label",
+                    'label_lab' =>  trim($column2),
+                );
+            }
+        }
     }
 
     // $ar = $objPHPExcel->getSheet()->toArray(); // выгружаем данные из объекта в массив
