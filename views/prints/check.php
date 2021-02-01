@@ -46,10 +46,10 @@ is_auth();
     }*/
     .clientlogo{
         float: left;
-    	height: 60px;
-    	width: 60px;
-    	background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
-    	background-size: 60px 60px;
+        height: 60px;
+        width: 60px;
+        background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
+        background-size: 60px 60px;
         border-radius: 50px;
     }
     .info{
@@ -87,7 +87,7 @@ is_auth();
     <div id="invoice-POS" >
 
         <center>
-            <img src="<?= img("prints/icon/company.png") ?>" alt="альтернативный текст" height="100" width="140">
+            <img src="<?= stack("assets/images/company.png") ?>" alt="альтернативный текст" height="100" width="140">
             <div class="logo"></div>
         </center>
 
@@ -130,31 +130,31 @@ is_auth();
                                     ?>
                                 </p>
                             </td>
-        				</tr>
+                        </tr>
                     <?php endforeach; ?>
 
-    				<!-- <tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>tax</h2></td>
-    					<td class="payment"><h2>$419.25</h2></td>
-    				</tr> -->
+                    <!-- <tr class="tabletitle">
+                        <td></td>
+                        <td class="Rate"><h2>tax</h2></td>
+                        <td class="payment"><h2>$419.25</h2></td>
+                    </tr> -->
 
-    				<tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>Итого</h2></td>
-    					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
-    				</tr>
+                    <tr class="tabletitle">
+                        <td></td>
+                        <td class="Rate"><h2>Итого</h2></td>
+                        <td class="payment"><h2><?= number_format($total_price) ?></h2></td>
+                    </tr>
 
-    			</table>
-    		</div>
+                </table>
+            </div>
 
             <!-- <div id="legalcopy">
-    			<p class="legal">
+                <p class="legal">
                     <strong>Thank you for your business!</strong>
                     Payment is expected within 31 days; please process this invoice within that time.
                     There will be a 5% interest charge per month on late invoices.
-    			</p>
-    		</div> -->
+                </p>
+            </div> -->
 
         </div>
 
