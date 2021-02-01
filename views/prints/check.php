@@ -7,7 +7,8 @@ is_auth();
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
         /*padding:2mm;*/
         margin: 0 auto;
-        width: 44mm;
+        margin-left: -5px;
+        width: 50mm;
         background: #FFF;
     }
     ::selection {background: #f31544; color: #FFF;}
@@ -16,9 +17,9 @@ is_auth();
       font-size: 1.5em;
       color: #222;
     }
-    h2{font-size: .9em;}
+    h2{font-size: .7em;}
     h3{
-      font-size: 1.2em;
+      font-size: 1.0em;
       font-weight: 300;
       line-height: 2em;
     }
@@ -35,13 +36,14 @@ is_auth();
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
 
-    .logo{
+    /*.logo{
         //float: left;
         height: 90px;
         width: 110px;
+        background: url(icon/company.png) no-repeat;
         background: url("<?= img("prints/icon/company.png") ?>") no-repeat;
         background-size: 110px 90px;
-    }
+    }*/
     .clientlogo{
         float: left;
     	height: 60px;
@@ -84,7 +86,8 @@ is_auth();
 
     <div id="invoice-POS" >
 
-        <center id="top">
+        <center>
+            <img src="<?= img("prints/icon/company.png") ?>" alt="альтернативный текст" height="100" width="140">
             <div class="logo"></div>
         </center>
 
@@ -116,7 +119,7 @@ is_auth();
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
                         <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
-                        <tr class="service">
+                        <tr class="service" style="font-size:150%;">
         					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>
         					<td class="tableitem">
