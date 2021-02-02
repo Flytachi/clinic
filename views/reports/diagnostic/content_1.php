@@ -168,7 +168,7 @@ $header = "Отчёт диагностики по услугам";
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 10";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
