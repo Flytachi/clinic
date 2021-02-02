@@ -2515,27 +2515,6 @@ class LaboratoryAnalyzeModel extends Model
                                         <td><?= $row['name'] ?></td>
                                         <td>
                                             <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
-                                            <?php
-                                            // switch ($row['standart_type']) {
-                                            //     case 1:
-                                            //         echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
-                                            //         break;
-                                            //     case 2:
-                                            //         if ($row['standart_fun'] == 2) {
-                                            //             echo "Положительный (+)";
-                                            //         }else {
-                                            //             echo "Отрицательный (-)";
-                                            //         };
-                                            //         break;
-                                            //     case 3:
-                                            //         if ($pat['gender']) {
-                                            //             echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
-                                            //         }else {
-                                            //             echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
-                                            //         }
-                                            //         break;
-                                            // }
-                                            ?>
                                         </td>
                                         <td>
                                             <input type="hidden" name="<?= $i ?>[id]" value="<?= $row['id'] ?>">
