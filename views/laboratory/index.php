@@ -66,7 +66,7 @@ $header = "Приём пациетов";
 												) 'age'
 											FROM users us
 												LEFT JOIN visit vs ON(us.id=vs.user_id)
-											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']}
+											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.laboratory IS NOT NULL
 											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
                                     foreach($db->query($sql) as $row) {
                                         ?>
