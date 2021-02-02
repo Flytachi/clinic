@@ -99,7 +99,8 @@ is_auth();
                 </span>
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
-                    <b>Дата</b>: <?= date('d.m.Y H:i') ?>
+                    <b>Дата</b>: <?= date('d.m.Y H:i') ?></br>
+                    <b>Дата рождения</b>:<?= str_replace("-", ".",$db->query("SELECT * FROM users WHERE id = ". $_GET['id'] ."")->fetchALL()[0]['dateBith'])?>
                 </p>
             </div>
 
