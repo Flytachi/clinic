@@ -19,7 +19,6 @@ $header = "Инвестиции ". addZero($_GET['pk']);
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
