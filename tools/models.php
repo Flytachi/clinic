@@ -2500,7 +2500,7 @@ class LaboratoryAnalyzeModel extends Model
                             <?php
                             $i = 0;
                             $s = 1;
-                            foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row_parent) {
+                            foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} ORDER BY add_date ASC") as $row_parent) {
                                 // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
                                 //             lat.standart_min, lat.standart_sign, lat.standart_max,
                                 //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
