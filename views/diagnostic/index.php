@@ -63,10 +63,7 @@ $header = "Приём пациетов";
 												vs.user_id, vs.parent_id, vs.route_id,
 												vs.service_id, vs.direction,
 												vs.complaint, vs.add_date,
-												(
-												    (YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
+												us.dateBith
 											FROM users us
 												LEFT JOIN visit vs ON(us.id=vs.user_id)
 											WHERE
@@ -86,7 +83,7 @@ $header = "Приём пациетов";
 													?>
 												</div>
 											</td>
-											<td><?= $row['age'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
 											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
 											<td>
