@@ -84,7 +84,9 @@ $header = "Персонал";
 				                <tbody>
 				                    <?php
 				                    $i = 1;
-				                    foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row) {
+				                    foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row)
+										prit($row);
+
 				                        ?>
 				                        <tr>
 				                            <td><?= $i++ ?></td>
