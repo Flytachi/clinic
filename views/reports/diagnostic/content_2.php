@@ -116,7 +116,7 @@ $header = "Отчёт диагностики по визитам";
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 								LEFT JOIN division ds ON(ds.id=vs.division_id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 6";
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 10";
 
 					// Обработка
 					if ($_POST['user_id']) {
