@@ -38,6 +38,13 @@ $header = "Контроль базы данных";
 
 				    <div class="card-body">
 
+                        <?php
+                        if($_SESSION['message']){
+                            echo $_SESSION['message'];
+                            unset($_SESSION['message']);
+                        }
+                        ?>
+
 				        <div class="table-responsive">
 				            <table class="table table-hover">
 				                <thead>
@@ -57,7 +64,8 @@ $header = "Контроль базы данных";
                                             <td><?= $i++ ?></td>
                                             <td><?= substr($value, 3, 10); ?></td>
                                             <td>
-                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>')" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>
+                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>
+                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 0)" class="list-icons-up text-danger"><i class="icon-arrow-down16"></i></a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -79,10 +87,15 @@ $header = "Контроль базы данных";
 	<!-- /page content -->
 
     <script type="text/javascript">
-        function Conf(url, file) {
+        function Conf(url, file, st) {
+            if (st == 1) {
+                var wha = "Вы уверены что хотите откатить базу данных?";
+            }else {
+                var wha = "Вы уверены что хотите удалить базу данных?";
+            }
             swal({
                 position: 'top',
-                title: 'Вы уверены что откатить базу данных?',
+                title: wha,
                 type: 'info',
                 showCancelButton: true,
                 confirmButtonText: "Уверен"
@@ -98,7 +111,7 @@ $header = "Контроль базы данных";
                     }).then(function(ivi) {
                         if (ivi.value) {
                             console.log(file);
-                            location = url+"?file="+file;
+                            location = url+"?file="+file+"&status="+st;
                         }
                     });
                 }
