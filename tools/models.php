@@ -2550,37 +2550,39 @@ class LaboratoryAnalyzeModel extends Model
             function Proter_lab() {
                 var imba = 0;
 
-                document.querySelectorAll('.result_check').forEach(function(events) {
-                    console.log(events);
-                    if (!events.value) {
-                        imba = imba + 1;
-                    }
-                });
+                // document.querySelectorAll('.result_check').forEach(function(events) {
+                //     console.log(events);
+                //     if (!events.value) {
+                //         imba = imba + 1;
+                //     }
+                // });
+                //
+                // if (imba > 0) {
+                //     swal({
+                //         position: 'top',
+                //         title: 'Невозможно завершить!',
+                //         text: 'Введите все результаты.',
+                //         type: 'error',
+                //         padding: 30
+                //     });
+                //     return 0;
+                // }
 
-                if (imba > 0) {
-                    swal({
-                        position: 'top',
-                        title: 'Невозможно завершить!',
-                        text: 'Введите все результаты.',
-                        type: 'error',
-                        padding: 30
-                    });
-                    return 0;
-                }
-
-                swal({
-                    position: 'top',
-                    title: 'Внимание!',
-                    text: 'Вы точно хотите завершить визит пациента?',
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Да'
-                }).then(function(ivi) {
-                    if (ivi.value) {
-                        $('#input_end').val('Завершить');
-                        $('#btn_submit').click();
-                    }
-                });
+                // swal({
+                //     position: 'top',
+                //     title: 'Внимание!',
+                //     text: 'Вы точно хотите завершить визит пациента?',
+                //     type: 'warning',
+                //     showCancelButton: true,
+                //     confirmButtonText: 'Да'
+                // }).then(function(ivi) {
+                //     if (ivi.value) {
+                //         $('#input_end').val('Завершить');
+                //         $('#btn_submit').click();
+                //     }
+                // });
+                $('#input_end').val('Завершить');
+                $('#btn_submit').click();
             }
 
             $('.cek_a').on('click', function(event) {
