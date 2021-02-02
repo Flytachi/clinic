@@ -58,8 +58,8 @@ $header = "Приём пациетов";
                                 </thead>
                                 <tbody>
                                     <?php
-									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.user_id, vs.parent_id,
-												vs.route_id, vs.service_id, vs.direction, vs.add_date,
+									$sql = "SELECT DISTINCT us.id, vs.parent_id,
+												vs.route_id, vs.direction, vs.add_date,
 												(
 													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
 													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
@@ -84,7 +84,11 @@ $header = "Приём пациетов";
 											</td>
 											<td><?= $row['age'] ?></td>
 											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-                                            <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
+                                            <td>
+												<?php foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$row['id']} AND vs.accept_date IS NULL AND vs.completed IS NULL") as $serve): ?>
+													<?= $serve['name'] ?><br>
+												<?php endforeach; ?>
+											</td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
@@ -103,7 +107,7 @@ $header = "Приём пациетов";
                                                 ?>
                                             </td>
                                             <td class="text-center">
-												<a href="<?= up_url($row['visit_id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
+												<a href="<?= up_url($row['id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
                                             </td>
                                         </tr>
                                         <?php
