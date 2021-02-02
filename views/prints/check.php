@@ -1,9 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
-
-$docs = $db->query("SELECT dateBith FROM users WHERE id={$_GET['id']}")->fetch();
-
 ?>
 <style>
     #invoice-POS{
@@ -103,7 +100,6 @@ $docs = $db->query("SELECT dateBith FROM users WHERE id={$_GET['id']}")->fetch()
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
-                    <!-- <b>Дата рождения</b>: <?= date('d.m.Y' $docs['dateBith']) ?> -->
                 </p>
             </div>
 
