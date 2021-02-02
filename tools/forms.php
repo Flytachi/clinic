@@ -1333,10 +1333,27 @@ class LaboratoryUpStatus extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $this->post['id'] = $pk;
-        $this->post['status'] = 2;
-        $this->post['accept_date'] = date('Y-m-d H:i:s');
-        $this->update();
+
+        foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND accept_date IS NULL AND completed IS NULL") as $value) {
+            $this->post['id'] = $value['id'];
+            $this->post['status'] = 2;
+            $this->post['accept_date'] = date('Y-m-d H:i:s');
+            $this->update();
+        }
+        $this->success();
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
+
+        }
     }
 
     public function success()
@@ -2438,7 +2455,7 @@ class AparatLaboratory extends Model
         // prit($data);
         foreach ($this->post['data'] as $arr) {
             // prit($arr);
-            $visits = $db->query("SELECT lat.id 'analyze_id', vs.id 'visit_id', vs.user_id 'user_id', vs.service_id 'service_id', lat.code FROM visit vs LEFT JOIN laboratory_analyze_type lat ON(lat.service_id=vs.service_id) WHERE vs.completed IS NULL AND vs.laboratory_num = {$arr['laboratory_num']}")->fetchAll();
+            $visits = $db->query("SELECT lat.id 'analyze_id', vs.id 'visit_id', vs.user_id 'user_id', vs.service_id 'service_id', lat.code FROM visit vs LEFT JOIN laboratory_analyze_type lat ON(lat.service_id=vs.service_id) WHERE vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.laboratory_num = {$arr['laboratory_num']}")->fetchAll();
             foreach ($visits as $post) {
                 if ($post['code'] == $arr['code']) {
                     $post['result'] = $arr['result'];
