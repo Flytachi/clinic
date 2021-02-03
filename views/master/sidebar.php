@@ -52,6 +52,12 @@
                         <span>Логи</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="<?= viv('master/visit_control') ?>" class="nav-link legitRipple">
+                        <i class="icon-archive"></i>
+                        <span>Контроль визитов</span>
+                    </a>
+                </li>
 
                 <!-- <li class="nav-item">
                     <a href="test.php" class="nav-link legitRipple">
