@@ -517,13 +517,9 @@ class VisitModel extends Model
                     <label>Пациент:</label>
                     <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php
-                            foreach ($db->query("SELECT * FROM users WHERE user_level = 15 AND status IS NULL ORDER BY id DESC") as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
-                        ?>
+                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 AND status IS NULL ORDER BY id DESC") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -531,13 +527,13 @@ class VisitModel extends Model
                     <label>Этаж:</label>
                     <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php
-                        foreach($FLOOR as $key => $value) {
-                            ?>
-                            <option value="<?= $key ?>"><?= $value ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php foreach ($FLOOR as $key => $value): ?>
+                            <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
+                                <option value="<?= $key ?>"><?= $value ?></option>
+                            <?php else: ?>
+                                <option value="<?= $key ?>" disabled><?= $value ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -545,13 +541,13 @@ class VisitModel extends Model
                     <label>Палата:</label>
                     <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from wards ') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
-                            <?php
-                        }
-                        ?>
+                        <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
+                            <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
+                            <?php else: ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" disabled><?= $row['ward'] ?> палата</option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -559,13 +555,13 @@ class VisitModel extends Model
                     <label>Койка:</label>
                     <select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control select-price" required data-fouc>
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" <?= ($row['user_id']) ? 'disabled' : '' ?>><?= $row['bed'] ?> койка</option>
-                            <?php
-                        }
-                        ?>
+                        <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
+                            <?php if ($row['user_id']): ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
+                            <?php else: ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>"><?= $row['bed'] ?> койка</option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
