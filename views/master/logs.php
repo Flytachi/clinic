@@ -30,6 +30,8 @@ $header = "Логи";
 			<!-- Content area -->
 			<div class="content">
 
+				<?php prit($_SESSION) ?>
+				<?php prit($_SERVER) ?>
 
 			</div>
             <!-- /content area -->
