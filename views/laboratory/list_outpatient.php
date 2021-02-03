@@ -76,7 +76,7 @@ $header = "Амбулаторные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
+										<th>Дата рождения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:210px">Действия</th>
@@ -84,11 +84,7 @@ $header = "Амбулаторные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-									$sql = "SELECT DISTINCT us.id, vs.route_id,
-											(
-												(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-												(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-											) 'age'
+									$sql = "SELECT DISTINCT us.id, vs.route_id, us.dateBith
 											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
 											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.laboratory IS NOT NULL ORDER BY vs.accept_date DESC";
                                     foreach($db->query($sql) as $row) {
@@ -96,7 +92,7 @@ $header = "Амбулаторные пациенты";
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-											<td><?= $row['age'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
 												<?php
 												$item_vs = [];

@@ -18,7 +18,6 @@ $header = "Рабочий стол";
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 

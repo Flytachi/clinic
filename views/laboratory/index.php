@@ -48,7 +48,7 @@ $header = "Приём пациетов";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
+										<th>Дата рождения</th>
                                         <th>Дата назначения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
@@ -60,10 +60,7 @@ $header = "Приём пациетов";
                                     <?php
 									$sql = "SELECT DISTINCT us.id, vs.parent_id,
 												vs.route_id, vs.direction, vs.add_date,
-												(
-													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
+												us.dateBith
 											FROM users us
 												LEFT JOIN visit vs ON(us.id=vs.user_id)
 											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.laboratory IS NOT NULL
@@ -82,7 +79,7 @@ $header = "Приём пациетов";
 													?>
 												</div>
 											</td>
-											<td><?= $row['age'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
 											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
 												<?php foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$row['id']} AND vs.accept_date IS NULL AND vs.completed IS NULL") as $serve): ?>
