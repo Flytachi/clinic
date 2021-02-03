@@ -196,7 +196,7 @@ $header = "Пациент";
 	</script>
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>

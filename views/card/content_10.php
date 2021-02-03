@@ -15,14 +15,14 @@ $header = "Пациент";
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
-		<?php include '../../layout/sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -144,7 +144,7 @@ $header = "Пациент";
     </div>
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>

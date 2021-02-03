@@ -61,7 +61,7 @@ $header = "Амбулаторные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
+										<th>Дата рождения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:300px">Действия</th>

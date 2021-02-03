@@ -28,7 +28,7 @@ $header = "Пациент";
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -182,7 +182,7 @@ $header = "Пациент";
 	</script>
 
     <!-- Footer -->
-    <?php include '../../layout/footer.php' ?>
+    <?php include layout('footer') ?>
     <!-- /footer -->
 </body>
 </html>
