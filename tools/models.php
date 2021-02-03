@@ -2499,13 +2499,14 @@ class LaboratoryAnalyzeModel extends Model
                         <tbody>
                             <?php
                             $i = 0;
-                            $s = 1;
-                            foreach ($db->query("SELECT id, service_id FROM visit WHERE completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = {$_GET['id']} ORDER BY add_date ASC") as $row_parent) {
-                                // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                                //             lat.standart_min, lat.standart_sign, lat.standart_max,
-                                //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                                //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                            foreach ($db->query("SELECT vs.id, vs.service_id, sc.name FROM visit vs LEFT JOIN service sc ON (sc.id=vs.service_id) WHERE vs.completed IS NULL AND vs.laboratory IS NOT NULL AND vs.status = 2 AND vs.user_id = {$_GET['id']} ORDER BY vs.add_date ASC") as $row_parent) {
                                 $norm = "lat.name, lat.code, lat.standart";
+                                $s = 1;
+                                ?>
+                                <tr>
+                                    <th colspan="9" class="text-center"><?= $row_parent['name'] ?></th>
+                                </tr>
+                                <?php
                                 foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', $norm, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
                                     ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">

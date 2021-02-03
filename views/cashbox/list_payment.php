@@ -46,14 +46,14 @@ $header = "История платежей";
                                     <tr class="bg-info">
                                         <th>ID</th>
 										<th class="text-center" colspan="5">ФИО</th>
-										
+
 
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-									foreach($db->query("SELECT vs.user_id FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id)") as $row) {
+									foreach($db->query("SELECT DISTINCT vs.user_id FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id)") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
