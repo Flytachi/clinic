@@ -157,6 +157,7 @@ $header = "Отчёт лаборатории по визитам";
 	                                <thead>
 	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>
+											<th style="width: 10%">Id</th>
 	                                        <th>Пациент</th>
 				                            <th style="width: 11%">Дата приёма</th>
 											<th style="width: 11%">Дата завершения</th>
@@ -170,6 +171,7 @@ $header = "Отчёт лаборатории по визитам";
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
 												<td><?= $i++ ?></td>
+												<td><?= $row['user_id'] ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
 												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
