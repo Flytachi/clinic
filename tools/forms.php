@@ -471,7 +471,7 @@ class VisitRoute extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <?php
-                    foreach($db->query("SELECT * from division WHERE level = 5 AND id !=". division()) as $row) {
+                    foreach($db->query("SELECT * from division WHERE level in (5,12) AND id !=". division()) as $row) {
                         ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php
@@ -574,7 +574,7 @@ class VisitRoute extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <?php
-                    foreach($db->query("SELECT * from division WHERE level = 5 AND id !=". division()) as $row) {
+                    foreach($db->query("SELECT * from division WHERE level in (5,12) AND id !=". division()) as $row) {
                         ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php
