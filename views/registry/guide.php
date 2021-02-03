@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
-$header = "Мульти-аккаунт";
+is_auth(2);
+$header = "Услуги";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,6 +27,7 @@ $header = "Мульти-аккаунт";
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
+
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -37,10 +38,11 @@ $header = "Мульти-аккаунт";
 			<!-- Content area -->
 			<div class="content">
 
+
 				<div class="card">
 
           			<div class="card-header header-elements-inline">
-		              	<h5 class="card-title">Добавить Палату</h5>
+		              	<h5 class="card-title">Добавить врача оператора</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
 		                      	<a class="list-icons-item" data-action="collapse"></a>
@@ -49,7 +51,7 @@ $header = "Мульти-аккаунт";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php MultiAccountsModel::form(); ?>
+		    			<?php GuideModel::form_regy(); ?>
 		          	</div>
 
 	        	</div>
@@ -57,7 +59,7 @@ $header = "Мульти-аккаунт";
         		<div class="card">
 
 	          		<div class="card-header header-elements-inline">
-	                  	<h5 class="card-title">Список Палат</h5>
+	                  	<h5 class="card-title">Список Врачей Операторов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
 	                          	<a class="list-icons-item" data-action="collapse"></a>
@@ -70,24 +72,27 @@ $header = "Мульти-аккаунт";
 	                      	<table class="table table-hover">
 	                          	<thead>
 	                              	<tr class="bg-blue">
-										<th>Label</th>
-                                        <th>id</th>
-                                        <th>Пользователь</th>
+                                        <th style="width:50px">№</th>
+										<th style="width:50%">ФИО</th>
+										<th>Сумма</th>
+										<th>Доля</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
 	                              	<?php
-	                              	foreach($db->query('SELECT * FROM multi_accounts') as $row) {
+                                    $i=1;
+	                              	foreach($db->query("SELECT * from guides") as $row) {
 	                                  	?>
                                   		<tr>
-											<td><?= $row['label'] ?></td>
-											<td><?= $row['user_id'] ?></td>
-											<td><?= get_full_name($row['user_id']) ?></td>
+											<td><?= $i++ ?></td>
+											<td><?= $row['name'] ?></td>
+	                                      	<td><?= number_format($row['price']) ?></td>
+											<td><?= number_format($row['share'], 1) ?></td>
 	                                      	<td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'MultiAccountsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'MultiAccountsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить палату?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row['id'], 'GuideModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'GuideModel') ?>" onclick="return confirm('Вы уверены что хотите удалить врача оператора?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
                               			</tr>

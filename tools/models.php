@@ -2124,6 +2124,38 @@ class GuideModel extends Model
         <?php
     }
 
+    public function form_regy($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="share" value="0">
+
+            <div class="form-group">
+                <label>ФИО:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+
     public function success()
     {
         $_SESSION['message'] = '
@@ -3667,14 +3699,14 @@ class MultiAccountsModel extends Model
 
             <div class="form-group">
                 <label>Label:</label>
-                <input type="text" class="form-control" name="label" placeholder="Enter label" required value="<?= $post['label']?>">
+                <input type="text" class="form-control" name="label" placeholder="Enter label" required value="<?= $post['label'] ?>">
             </div>
 
             <div class="form-group">
                 <label>Выбирите Роль:</label>
-                <select data-placeholder="Enter user" name="level" class="form-control form-control-select2" required>
+                <select data-placeholder="Enter user" name="user_id" class="form-control form-control-select2" required>
                     <?php foreach ($db->query("SELECT id FROM users WHERE user_level != 5") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= get_full_name($row['id']) ?></option>
+                        <option value="<?= $row['id'] ?>" <?= ($post['user_id'] == $row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>

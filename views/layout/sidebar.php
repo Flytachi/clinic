@@ -161,6 +161,12 @@
                                     </span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('registry/guide') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Направители</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 3:
