@@ -51,7 +51,7 @@ $header = "Врачи операторы";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php GuideModel::form(); ?>
+		    			<?php GuideModel::form_regy(); ?>
 		          	</div>
 
 	        	</div>
