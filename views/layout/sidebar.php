@@ -366,6 +366,12 @@
                                     ?>
                                 </a>
                             </li>
+                            <!-- <li class="nav-item">
+                                <a href="<?= viv('laboratory/task') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Текущие задачи</span>
+                                </a>
+                            </li> -->
                             <li class="nav-item">
                                 <a href="<?= viv('laboratory/list_outpatient') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2 "></i>

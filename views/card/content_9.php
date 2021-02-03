@@ -1,6 +1,6 @@
 <?php
-require_once '../../../tools/warframe.php';
-is_auth([5,8]);
+require_once '../../tools/warframe.php';
+is_auth();
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -48,14 +48,16 @@ $header = "Пациент";
 
 									<div class="card-header header-elements-inline">
 										<h5 class="card-title">Операционный блок</h5>
-										<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-											<div class="header-elements">
-												<div class="list-icons">
-													<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add_operation">
-														<i class="icon-plus22"></i>Добавить
-													</a>
+										<?php if ($activity): ?>
+											<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+												<div class="header-elements">
+													<div class="list-icons">
+														<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add_operation">
+															<i class="icon-plus22"></i>Добавить
+														</a>
+													</div>
 												</div>
-											</div>
+											<?php endif; ?>
 										<?php endif; ?>
 									</div>
 
@@ -125,49 +127,51 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_add_operation" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-header bg-info">
-					<h5 class="modal-title">Назначить операцию</h5>
-					<button type="button" class="close" data-dismiss="modal">×</button>
-				</div>
+	<?php if ($activity): ?>
+		<div id="modal_add_operation" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content border-3 border-info">
+					<div class="modal-header bg-info">
+						<h5 class="modal-title">Назначить операцию</h5>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
 
-				<div class="modal-body">
-					<?= OperationModel::form() ?>
-				</div>
+					<div class="modal-body">
+						<?= OperationModel::form() ?>
+					</div>
 
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<div id="modal_oper_date" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-md">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-header bg-info">
-					<h5 class="modal-title">Переназначить дату операций</h5>
-					<button type="button" class="close" data-dismiss="modal">×</button>
+		<div id="modal_oper_date" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content border-3 border-info">
+					<div class="modal-header bg-info">
+						<h5 class="modal-title">Переназначить дату операций</h5>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+
+					<?php OperationModel::form_oper_update() ?>
+
 				</div>
-
-				<?php OperationModel::form_oper_update() ?>
-
 			</div>
 		</div>
-	</div>
 
-	<div id="modal_finish_date" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-md">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-header bg-info">
-					<h5 class="modal-title">Дата завершения операции</h5>
-					<button type="button" class="close" data-dismiss="modal">×</button>
+		<div id="modal_finish_date" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-md">
+				<div class="modal-content border-3 border-info">
+					<div class="modal-header bg-info">
+						<h5 class="modal-title">Дата завершения операции</h5>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+
+					<?php OperationModel::form_finish() ?>
+
 				</div>
-
-				<?php OperationModel::form_finish() ?>
-
 			</div>
 		</div>
-	</div>
+	<?php endif; ?>
 
 	<script type="text/javascript">
 		function Show_info(events) {

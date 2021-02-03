@@ -1,6 +1,6 @@
 <?php
-require_once '../../../tools/warframe.php';
-is_auth([5,8]);
+require_once '../../tools/warframe.php';
+is_auth();
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -49,15 +49,18 @@ $header = "Пациент";
 
 							<div class="card-header header-elements-inline">
 								<h6 class="card-title">Лист назначений</h6>
-								<div class="header-elements">
-									<div class="list-icons">
-										<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-											<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
-												<i class="icon-plus22"></i>Добавить
-											</a>
-										<?php endif; ?>
-									</div>
-								</div>
+								<?php if ($activity): ?>
+									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+										<div class="header-elements">
+											<div class="list-icons">
+												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+													<i class="icon-plus22"></i>Добавить
+												</a>
+											</div>
+										</div>
+									<?php endif; ?>
+								<?php endif; ?>
+
 							</div>
 
 							<div class="table-responsive">
@@ -127,31 +130,25 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_add" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-header bg-info">
-					<h5 class="modal-title">Назначить препарат</h5>
-					<button type="button" class="close" data-dismiss="modal">×</button>
+	<?php if ($activity): ?>
+		<div id="modal_add" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content border-3 border-info">
+					<div class="modal-header bg-info">
+						<h5 class="modal-title">Назначить препарат</h5>
+						<button type="button" class="close" data-dismiss="modal">×</button>
+					</div>
+
+					<?= BypassModel::form() ?>
+
 				</div>
-
-				<?= BypassModel::form() ?>
-
 			</div>
 		</div>
-	</div>
+	<?php endif; ?>
 
 	<div id="modal_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info" id="div_show">
-
-			</div>
-		</div>
-	</div>
-
-	<div id="modal_list" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="div_list">
 
 			</div>
 		</div>
@@ -165,17 +162,6 @@ $header = "Пациент";
 				success: function (data) {
 					$('#modal_show').modal('show');
 					$('#div_show').html(data);
-				},
-			});
-		};
-
-		function List(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					$('#modal_list').modal('show');
-					$('#div_list').html(data);
 				},
 			});
 		};

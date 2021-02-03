@@ -1,6 +1,6 @@
 <?php
-require_once '../../../tools/warframe.php';
-is_auth([5,8]);
+require_once '../../tools/warframe.php';
+is_auth();
 $header = "Пациент";
 ?>
 <!DOCTYPE html>

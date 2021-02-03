@@ -161,6 +161,7 @@ var SweetAlert = function () {
                         stage: 5,
                     },
                     success: function (data) {
+                        console.log(data);
                         if (data >= 1) {
                             swal({
                                 position: 'top',

@@ -1,6 +1,6 @@
 <?php
-require_once '../../../tools/warframe.php';
-is_auth([5,8]);
+require_once '../../tools/warframe.php';
+is_auth();
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -43,14 +43,16 @@ $header = "Пациент";
 
                            <div class="card-header header-elements-inline">
                                <h5 class="card-title">Препараты Анестезиолога</h5>
-                               <?php if (level() == 11): ?>
-                                   <div class="header-elements">
-                                       <div class="list-icons">
-                                           <a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add_preparat">
-                                               <i class="icon-plus22"></i>Добавить
-                                           </a>
-                                       </div>
-                                   </div>
+                               <?php if ($activity): ?>
+								   <?php if (level() == 11): ?>
+									   <div class="header-elements">
+										   <div class="list-icons">
+											   <a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add_preparat">
+												   <i class="icon-plus22"></i>Добавить
+											   </a>
+										   </div>
+									   </div>
+								   <?php endif; ?>
                                <?php endif; ?>
                            </div>
 
@@ -129,19 +131,21 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-    <div id="modal_add_preparat" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content border-3 border-info">
-                <div class="modal-header bg-info">
-                    <h5 class="modal-title">Добавить расходный материал</h5>
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                </div>
+    <?php if ($activity): ?>
+		<div id="modal_add_preparat" class="modal fade" tabindex="-1">
+	        <div class="modal-dialog modal-lg">
+	            <div class="modal-content border-3 border-info">
+	                <div class="modal-header bg-info">
+	                    <h5 class="modal-title">Добавить расходный материал</h5>
+	                    <button type="button" class="close" data-dismiss="modal">×</button>
+	                </div>
 
-                <?= StoragePreparatAnestForm::form() ?>
+	                <?= StoragePreparatAnestForm::form() ?>
 
-            </div>
-        </div>
-    </div>
+	            </div>
+	        </div>
+	    </div>
+    <?php endif; ?>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
