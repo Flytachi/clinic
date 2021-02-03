@@ -11,7 +11,7 @@ $header = "Список пациентов";
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
- 
+
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
@@ -73,9 +73,9 @@ $header = "Список пациентов";
 									<?php
 									$i = 1;
 
-									$count_elem = 6;
+									$count_elem = 20;
 
-				                	$count = round(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem); 
+				                	$count = round(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem);
 
 				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 1;
 
@@ -190,11 +190,7 @@ $header = "Список пациентов";
 
 				</div>
 
-				<?php
-
-					pagination_page($count, $count_elem);
-
-				?>
+				<?php pagination_page($count, $count_elem); ?>
 
 			</div>
             <!-- /content area -->

@@ -129,6 +129,12 @@
                                     <span>Направители</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/multi_account') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Мульти-аккаунт</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 2:

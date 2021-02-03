@@ -346,7 +346,7 @@ function pagination_page($count, $elem)
         $_GET['of'] = 1;
     }
 
-    for ($i= intval($_GET['of']) - 1; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i != 0 ; $i--) { 
+    for ($i= intval($_GET['of']) - 1; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i != 0 ; $i--) {
 
         $mas[] = $i;
     }
@@ -369,7 +369,7 @@ function pagination_page($count, $elem)
 
 
 
-        for ($i= (intval($_GET['of'])+1) ; $i <= (intval($_GET['of'])+$elem) and $i <= $count; $i++) { 
+        for ($i= (intval($_GET['of'])+1) ; $i <= (intval($_GET['of'])+$elem) and $i <= $count; $i++) {
 
         $mas1[] = $i;
     }
@@ -384,7 +384,7 @@ function pagination_page($count, $elem)
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor((end($mas1)  + $count) / 2 )) ."' class='page-link' legitRipple>...</a></li>";
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count - 1)."' class='page-link' legitRipple>$count</a></li>";
     }
-        
+
         echo "</ul>";
     echo "</div>";
 }
