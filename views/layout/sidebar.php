@@ -17,18 +17,15 @@
 
             <div class="collapse" id="user-nav">
                 <ul class="nav nav-sidebar">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="icon-user-plus"></i>
-                            <span>My profile</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= viv('admin/settings') ?>" class="nav-link legitRipple">
-                            <i class="icon-gear"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
+
+                    <?php foreach ($db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"{$_SESSION['slot']}\" ") as $acc): ?>
+                        <li class="nav-item">
+                            <a href="<?= DIR."/auth/recheck".EXT ?>?slot=<?= $acc['id'] ?>" class="nav-link">
+                                <i class="icon-user"></i>
+                                <span><?= $acc['username'] ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
 
                     <?php if ($_SESSION['master_status']): ?>
                         <li class="nav-item">

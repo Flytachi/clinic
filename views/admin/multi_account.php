@@ -70,7 +70,7 @@ $header = "Мульти-аккаунт";
 	                      	<table class="table table-hover">
 	                          	<thead>
 	                              	<tr class="bg-blue">
-										<th>Label</th>
+										<th>Slot</th>
                                         <th>id</th>
                                         <th>Пользователь</th>
 										<th style="width: 100px">Действия</th>
@@ -81,7 +81,7 @@ $header = "Мульти-аккаунт";
 	                              	foreach($db->query('SELECT * FROM multi_accounts') as $row) {
 	                                  	?>
                                   		<tr>
-											<td><?= $row['label'] ?></td>
+											<td><?= $row['slot'] ?></td>
 											<td><?= $row['user_id'] ?></td>
 											<td><?= get_full_name($row['user_id']) ?></td>
 	                                      	<td>

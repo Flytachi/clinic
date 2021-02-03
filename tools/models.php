@@ -3698,8 +3698,8 @@ class MultiAccountsModel extends Model
             <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
-                <label>Label:</label>
-                <input type="text" class="form-control" name="label" placeholder="Enter label" required value="<?= $post['label'] ?>">
+                <label>Slot:</label>
+                <input type="text" class="form-control" name="slot" placeholder="Enter slot" required value="<?= $post['slot'] ?>">
             </div>
 
             <div class="form-group">
