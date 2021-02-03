@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(2);
-$header = "Услуги";
+$header = "Врачи операторы";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +51,7 @@ $header = "Услуги";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php GuideModel::form_regy(); ?>
+		    			<?php GuideModel::form(); ?>
 		          	</div>
 
 	        	</div>
