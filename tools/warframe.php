@@ -335,4 +335,58 @@ function read_labaratory($filepath){
     return $finaldata; //возвращаем массив
 
 }
+
+function pagination_page($count, $elem)
+{
+    echo "<div class=\"card card-body text-center\">";
+        echo "<ul class=\"pagination align-self-center\">";
+
+
+    if(intval($_GET['of']) == 0){
+        $_GET['of'] = 1;
+    }
+
+    for ($i= intval($_GET['of']) - 1; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i != 0 ; $i--) { 
+
+        $mas[] = $i;
+    }
+
+    $mas = array_reverse($mas);
+
+    // echo $mas[0];
+
+    if($mas[0] != 1 and isset($mas)){
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>1</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor($mas[0] / 2) ) ."' class='page-link' legitRipple>...</a></li>";
+    }
+
+
+    foreach ($mas as $key) {
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key - 1)."' class='page-link' legitRipple>$key</a></li>";
+    }
+
+    echo "<li class=\"page-item\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of'] - 1) ."\" class=\"page-link legitRipple\">". intval($_GET['of']) ."</a></li>";
+
+
+
+        for ($i= (intval($_GET['of'])+1) ; $i <= (intval($_GET['of'])+$elem) and $i <= $count; $i++) { 
+
+        $mas1[] = $i;
+    }
+
+
+    foreach ($mas1 as $key) {
+
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key - 1)."' class='page-link' legitRipple>$key</a></li>";
+    }
+
+    if( end($mas1) != $count and isset($mas1)){
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor((end($mas1)  + $count) / 2 )) ."' class='page-link' legitRipple>...</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count - 1)."' class='page-link' legitRipple>$count</a></li>";
+    }
+        
+        echo "</ul>";
+    echo "</div>";
+}
+
 ?>

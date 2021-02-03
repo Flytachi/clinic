@@ -72,7 +72,16 @@ $header = "Список пациентов";
 								<tbody id="search_display">
 									<?php
 									$i = 1;
-									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC") as $row) {
+
+									$count_elem = 6;
+
+				                	$count = round(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem); 
+
+				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 1;
+
+				                	$offset = intval($_GET['of']) * $count_elem ;
+
+									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC LIMIT $count_elem OFFSET $offset ") as $row) {
 										?>
 										<tr>
 											<td><?= addZero($row['id']) ?></td>
@@ -180,6 +189,12 @@ $header = "Список пациентов";
 					</div>
 
 				</div>
+
+				<?php
+
+					pagination_page($count, $count_elem);
+
+				?>
 
 			</div>
             <!-- /content area -->
