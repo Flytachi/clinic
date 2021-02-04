@@ -1962,6 +1962,7 @@ class ServiceModel extends Model
             }
         }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
+        $this->mod('test');
         return True;
     }
 
