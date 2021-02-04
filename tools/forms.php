@@ -193,7 +193,7 @@ class VisitReport extends Model
                     <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
                 <?php endif; ?>
 
-                <?php if (level() == 12): ?>
+                <?php if (level() == (12 or 13)): ?>
                     <div class="row">
                         <input type="hidden" name="report_title" id="report_title" class="form-control">
 
@@ -285,7 +285,7 @@ class VisitReport extends Model
                         }
                     </script>
                 <?php endif; ?>
-                <?php if (level() == 12): ?>
+                <?php if (level() == (12 or 13)): ?>
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php else: ?>
                     <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
@@ -1073,6 +1073,212 @@ class VisitRoute extends Model
         <?php
     }
 
+    public function form_out_physio_manipulation($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="physio_manipulation" value="1">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                    <?php
+                    foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row) {
+                        ?>
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+
+        </script>
+        <?php
+    }
+
+    public function form_sta_physio_manipulation($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="physio_manipulation" value="1">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                    <?php
+                    foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row) {
+                        ?>
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+        </script>
+        <?php
+    }
+
     public function form_sta_doc($pk = null)
     {
         global $db, $patient;
@@ -1226,6 +1432,14 @@ class VisitRoute extends Model
             }
             if ($this->post['laboratory']) {
                 $post_big['laboratory'] = $this->post['laboratory'];
+            }
+            if ($this->post['physio_manipulation']) {
+                $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
+                if ($level_divis == 12) {
+                    $post_big['physio'] = 1;
+                } elseif ($level_divis == 13) {
+                    $post_big['manipulation'] = 1;
+                }
             }
 
             $post_big = Mixin\clean_form($post_big);

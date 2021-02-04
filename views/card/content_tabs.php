@@ -47,6 +47,9 @@
             <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= (viv('card/content_10')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-fire mr-1"></i>Анестезия</a>
         </li>
     <?php endif; ?>
+    <li class="nav-item">
+        <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= (viv('card/content_11')== $_SERVER['PHP_SELF']) ? "active": "" ?> legitRipple" style="white-space:nowrap;"><i class="icon-pulse2 mr-1"></i>Физиотерапия/Процедурная</a>
+    </li>
 </ul>
 
 <?php

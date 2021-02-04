@@ -292,7 +292,7 @@ class VisitModel extends Model
                     </optgroup>
                     <optgroup label="Остальные">
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level IN (6, 12) AND (assist IS NULL OR assist = 1)") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level IN (6, 12, 13) AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -691,6 +691,12 @@ class VisitModel extends Model
             $post_big['complaint'] = $this->post['complaint'];
             $post_big['service_id'] = $value;
             $post_big['division_id'] = $this->post['division_id'][$key];
+            $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
+            if ($level_divis == 12) {
+                $post_big['physio'] = 1;
+            }elseif ($level_divis == 13) {
+                $post_big['manipulation'] = 1;
+            }
             $post_big['parent_id'] = $this->post['parent_id'][$key];
             $post_big['grant_id'] = $post_big['parent_id'];
             $stat = $db->query("SELECT * FROM division WHERE id={$post_big['division_id']} AND level=6")->fetch();
@@ -1928,9 +1934,9 @@ class ServiceModel extends Model
 
     public function clean()
     {
-        parad("_FILES",$_FILES['template']);
+        // parad("_FILES",$_FILES['template']);
         if($_FILES['template']){
-            prit('temlate');
+            // prit('temlate');
             $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
             $this->save_excel();
         }
@@ -1964,13 +1970,13 @@ class ServiceModel extends Model
             }
         }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
-        $this->mod('test');
+        // $this->mod('test');
         return True;
     }
 
     public function save_excel()
     {
-        prit($this->post['template']);
+        // prit($this->post['template']);
         foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
