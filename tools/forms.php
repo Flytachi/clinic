@@ -193,7 +193,7 @@ class VisitReport extends Model
                     <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
                 <?php endif; ?>
 
-                <?php if (level() == (12 or 13)): ?>
+                <?php if (level() == 12 or level() == 13): ?>
                     <div class="row">
                         <input type="hidden" name="report_title" id="report_title" class="form-control">
 
@@ -285,7 +285,7 @@ class VisitReport extends Model
                         }
                     </script>
                 <?php endif; ?>
-                <?php if (level() == (12 or 13)): ?>
+                <?php if (level() == 12 or level() == 13): ?>
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php else: ?>
                     <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
