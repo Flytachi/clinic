@@ -50,7 +50,7 @@ $header = "Услуги";
 		              	</div>
 		          	</div>
 
-		          	<div class="card-body" id="form_card">
+		          	<div class="card-body">
 
 						<?php if ($_POST['flush']): ?>
 
@@ -85,7 +85,7 @@ $header = "Услуги";
 
 						<div class="row">
 
-							<div class="col-md-9"><?php ServiceModel::form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php ServiceModel::form(); ?></div>
 
 							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
 
