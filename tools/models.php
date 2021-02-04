@@ -1928,7 +1928,9 @@ class ServiceModel extends Model
 
     public function clean()
     {
+        parad("_FILES",$_FILES['template']);
         if($_FILES['template']){
+            prit('temlate');
             $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
             $this->save_excel();
         }
@@ -1968,6 +1970,7 @@ class ServiceModel extends Model
 
     public function save_excel()
     {
+        prit($this->post['template']);
         foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
