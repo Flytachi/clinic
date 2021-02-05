@@ -60,7 +60,7 @@ class PatientForm extends Model
                                     <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
                                         <optgroup label="<?= $province['name'] ?>">
                                             <?php foreach ($db->query("SELECT * FROM region WHERE province_id = {$province['id']}") as $region): ?>
-                                                <option value="<?= $region['name'] ?>"><?= $region['name'] ?></option>
+                                                <option value="<?= $region['name'] ?>" <?= ($post['region'] == $region['name']) ? "selected" : "" ?>><?= $region['name'] ?></option>
                                             <?php endforeach; ?>
                                         </optgroup>
                                     <?php endforeach; ?>
