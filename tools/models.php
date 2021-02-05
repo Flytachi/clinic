@@ -655,7 +655,7 @@ class VisitModel extends Model
             if (!intval($object)){
                 $this->error($object);
             }
-            if (!$this->post['direction'] or (level() != 2 and $this->post['direction'])) {
+            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
                 $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
                 $post['visit_id'] = $object;
                 $post['user_id'] = $this->post['user_id'];
@@ -711,7 +711,7 @@ class VisitModel extends Model
                 $this->error($object);
             }
 
-            if (!$post_big['direction'] or (level() != 2 and $post_big['direction'])) {
+            if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
                 $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
                 $post['visit_id'] = $object;
                 $post['user_id'] = $this->post['user_id'];
