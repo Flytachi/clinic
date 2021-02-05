@@ -117,13 +117,13 @@ function level() {
     /*
     level()
     */
-	global $db;
+    global $db;
     if ($_SESSION['session_id'] == "master") {
         return "master";
     }
     $id = $_SESSION['session_id'];
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-	return intval($stmt);
+    return intval($stmt);
 }
 
 function level_name($id = null) {
@@ -138,7 +138,7 @@ function level_name($id = null) {
         $id = $_SESSION['session_id'];
     }
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-	return $PERSONAL[$stmt];
+    return $PERSONAL[$stmt];
 }
 
 function permission($arr){
@@ -163,26 +163,26 @@ function permission($arr){
 }
 
 function dateformat($var=""){
-	$var = strtotime($var) ;
-	$var = date('Y-m-d', $var);
-	return $var;
+    $var = strtotime($var) ;
+    $var = date('Y-m-d', $var);
+    return $var;
 }
 
 function nodateformat($var=""){
-	$var = strtotime($var) ;
-	$var = date('d-m-Y', $var);
-	return $var ;
+    $var = strtotime($var) ;
+    $var = date('d-m-Y', $var);
+    return $var ;
 }
 
 function showTitle() //Функция title
 {
-	$title = "Clinic";
-	return $title;
+    $title = "Clinic";
+    return $title;
 }
 
 function form($name) //Функция title
 {
-	return $name();
+    return $name();
 }
 
 /* Добавляет нули к числам, чьи значаения меньше пятизначных*/
@@ -223,7 +223,7 @@ function division($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 
@@ -242,7 +242,7 @@ function division_name($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 function division_title($id = null) {
@@ -260,7 +260,7 @@ function division_title($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 function division_assist($id = null) {
@@ -275,7 +275,7 @@ function division_assist($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 function read_excel($filepath){
@@ -336,17 +336,15 @@ function read_labaratory($filepath){
 
 }
 
-function pagination_page($count, $elem)
+function pagination_page($count, $elem, $count_button = 2)
 {
+    $count -= 1;
+
     echo "<div class=\"card card-body text-center\">";
         echo "<ul class=\"pagination align-self-center\">";
 
 
-    if(intval($_GET['of']) == 0){
-        $_GET['of'] = 1;
-    }
-
-    for ($i= intval($_GET['of']) - 1; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i != 0 ; $i--) {
+    for ($i= intval($_GET['of']) - 1, $a = 0; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i >= 0 and $a != $count_button; $i--, $a++) {
 
         $mas[] = $i;
     }
@@ -355,21 +353,21 @@ function pagination_page($count, $elem)
 
     // echo $mas[0];
 
-    if($mas[0] != 1 and isset($mas)){
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>1</a></li>";
+    if(intval($_GET['of']) >= ($count_button + 1) and isset($mas)){
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>0</a></li>";
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor($mas[0] / 2) ) ."' class='page-link' legitRipple>...</a></li>";
     }
 
 
     foreach ($mas as $key) {
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key - 1)."' class='page-link' legitRipple>$key</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
     }
 
-    echo "<li class=\"page-item\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of'] - 1) ."\" class=\"page-link legitRipple\">". intval($_GET['of']) ."</a></li>";
+    echo "<li class=\"page-item active\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of']) ."\" class=\"page-link legitRipple\">". intval($_GET['of']) ."</a></li>";
 
 
 
-        for ($i= (intval($_GET['of'])+1) ; $i <= (intval($_GET['of'])+$elem) and $i <= $count; $i++) {
+    for ($i= (intval($_GET['of'])+1) , $a = 0; $i <= (intval($_GET['of'])+$elem) and $i <= $count and $a != $count_button; $i++, $a++) {
 
         $mas1[] = $i;
     }
@@ -377,12 +375,12 @@ function pagination_page($count, $elem)
 
     foreach ($mas1 as $key) {
 
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key - 1)."' class='page-link' legitRipple>$key</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
     }
 
-    if( end($mas1) != $count and isset($mas1)){
+    if( ($count - intval($_GET['of'])) >= ($count_button + 1) and isset($mas1)){
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor((end($mas1)  + $count) / 2 )) ."' class='page-link' legitRipple>...</a></li>";
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count - 1)."' class='page-link' legitRipple>$count</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count)."' class='page-link' legitRipple>$count</a></li>";
     }
 
         echo "</ul>";

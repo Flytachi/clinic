@@ -73,11 +73,13 @@ $header = "Список пациентов";
 									<?php
 									$i = 1;
 
+									echo $db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)'];
+
 									$count_elem = 20;
 
-				                	$count = round(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem);
+				                	$count = ceil(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem);
 
-				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 1;
+				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
 
 				                	$offset = intval($_GET['of']) * $count_elem ;
 

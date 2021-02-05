@@ -133,6 +133,8 @@ is_auth(4);
 
 				                	$count = round(intval($db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)']) / $count_elem); 
 
+				                	echo $db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)'];
+
 				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 1;
 
 				                	$offset = intval($_GET['of']) * $count_elem ;
@@ -164,7 +166,7 @@ is_auth(4);
 
 				<?php
 
-					pagination_page($count, $count_elem);
+					pagination_page($count, $count_elem, 5);
 
 				?>
 
