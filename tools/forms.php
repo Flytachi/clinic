@@ -109,7 +109,7 @@ class PatientForm extends Model
                         </div>
                         <div class="col-md-6">
                             <label>Телефон номер:</label>
-                            <input type="number" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
+                            <input type="text" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
                         </div>
                     </div>
 
