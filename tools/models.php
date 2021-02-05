@@ -292,7 +292,7 @@ class VisitModel extends Model
                     </optgroup>
                     <optgroup label="Остальные">
                         <?php
-                        foreach($db->query("SELECT * from division WHERE level IN (6, 12) AND (assist IS NULL OR assist = 1)") as $row) {
+                        foreach($db->query("SELECT * from division WHERE level IN (6, 12, 13) AND (assist IS NULL OR assist = 1)") as $row) {
                             ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php
@@ -655,7 +655,7 @@ class VisitModel extends Model
             if (!intval($object)){
                 $this->error($object);
             }
-            if (!$this->post['direction'] or (level() != 2 and $this->post['direction'])) {
+            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
                 $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
                 $post['visit_id'] = $object;
                 $post['user_id'] = $this->post['user_id'];
@@ -691,6 +691,12 @@ class VisitModel extends Model
             $post_big['complaint'] = $this->post['complaint'];
             $post_big['service_id'] = $value;
             $post_big['division_id'] = $this->post['division_id'][$key];
+            $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
+            if ($level_divis == 12) {
+                $post_big['physio'] = 1;
+            }elseif ($level_divis == 13) {
+                $post_big['manipulation'] = 1;
+            }
             $post_big['parent_id'] = $this->post['parent_id'][$key];
             $post_big['grant_id'] = $post_big['parent_id'];
             $stat = $db->query("SELECT * FROM division WHERE id={$post_big['division_id']} AND level=6")->fetch();
@@ -705,7 +711,7 @@ class VisitModel extends Model
                 $this->error($object);
             }
 
-            if (!$post_big['direction'] or (level() != 2 and $post_big['direction'])) {
+            if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
                 $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
                 $post['visit_id'] = $object;
                 $post['user_id'] = $this->post['user_id'];
@@ -1928,7 +1934,9 @@ class ServiceModel extends Model
 
     public function clean()
     {
+        // parad("_FILES",$_FILES['template']);
         if($_FILES['template']){
+            // prit('temlate');
             $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
             $this->save_excel();
         }
@@ -1962,11 +1970,13 @@ class ServiceModel extends Model
             }
         }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
+        // $this->mod('test');
         return True;
     }
 
     public function save_excel()
     {
+        // prit($this->post['template']);
         foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
@@ -3698,8 +3708,8 @@ class MultiAccountsModel extends Model
             <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
-                <label>Label:</label>
-                <input type="text" class="form-control" name="label" placeholder="Enter label" required value="<?= $post['label'] ?>">
+                <label>Slot:</label>
+                <input type="text" class="form-control" name="slot" placeholder="Enter slot" required value="<?= $post['slot'] ?>">
             </div>
 
             <div class="form-group">
@@ -3713,6 +3723,82 @@ class MultiAccountsModel extends Model
 
             <div class="text-right">
                 <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
+
+class TemplateModel extends Model
+{
+    public $table = 'templates';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="autor_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <label class="col-form-label">Название шаблона:</label>
+                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $post['name'] ?>">
+                </div>
+
+                <div class="col-md-10 offset-md-1">
+                    <label class="col-form-label">Описание:</label>
+                    <textarea rows="5" cols="3" name="description" class="form-control" placeholder="Описание"><?= $post['description'] ?></textarea>
+                </div>
+
+                <div class="col-md-10 offset-md-1">
+                    <label class="col-form-label">Диагноз:</label>
+                    <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Заключения"><?= $post['diagnostic'] ?></textarea>
+                </div>
+
+                <div class="col-md-10 offset-md-1">
+                    <label class="col-form-label">Рекомендации:</label>
+                    <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Заключения"><?= $post['recommendation'] ?></textarea>
+                </div>
+            </div>
+
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>

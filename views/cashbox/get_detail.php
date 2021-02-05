@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(3);
+is_auth([3, 32]);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
     $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();

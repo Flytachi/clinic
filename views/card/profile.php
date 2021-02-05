@@ -18,7 +18,7 @@ $sql = "SELECT
             wd.floor, wd.ward, bd.bed, vs.complaint,
             vs.status
         FROM users us
-            LEFT JOIN visit vs ON (vs.user_id = us.id)
+            LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NULL)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
             LEFT JOIN wards wd ON(wd.id=bd.ward_id)
         WHERE $sql_con ORDER BY add_date ASC";

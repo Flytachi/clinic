@@ -27,8 +27,12 @@ function layout($url){
     return $_SERVER['DOCUMENT_ROOT'].DIR."/views/layout/$url.php";
 }
 
-function viv($url){
-    return DIR."/views/$url".EXT;
+function viv($url=null){
+    if ($url) {
+        return DIR."/views/$url".EXT;
+    }else {
+        return DIR."/";
+    }
 }
 
 function img($url){

@@ -50,7 +50,7 @@ $header = "Услуги";
 		              	</div>
 		          	</div>
 
-		          	<div class="card-body" id="form_card">
+		          	<div class="card-body">
 
 						<?php if ($_POST['flush']): ?>
 
@@ -85,7 +85,7 @@ $header = "Услуги";
 
 						<div class="row">
 
-							<div class="col-md-9"><?php ServiceModel::form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php ServiceModel::form(); ?></div>
 
 							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
 
@@ -132,7 +132,7 @@ $header = "Услуги";
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
-	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT * FROM division WHERE id ={$row['division_id']}")->fetch()['name'] : "" ?></td>
+	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT title FROM division WHERE id ={$row['division_id']}")->fetchColumn() : "" ?></td>
 											<td>
 												<?php switch ($row['type']) {
 													case 1:
