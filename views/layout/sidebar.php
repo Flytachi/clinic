@@ -919,6 +919,78 @@
                             </li>
                             <?php
                             break;
+                        case 32:
+                            ?>
+                            <li class="nav-item">
+                                <a href="<?= viv('registry/index') ?>" class="nav-link">
+                                    <i class="icon-display"></i>
+                                    <span>Рабочий стол</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('registry/list_patient') ?>" class="nav-link">
+                                    <i class="icon-users"></i>
+                                    <span>Список пациентов</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>
+                                        Чат
+                                        <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('registry/guide') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>Направители</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-display"></i>
+                                    <span>Приём платежей</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/refund') ?>" class="nav-link legitRipple">
+                                    <i class="icon-display"></i>
+                                    <span>Возврат</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/list_payment') ?>" class="nav-link legitRipple">
+                                    <i class="icon-display"></i>
+                                    <span>История платежей</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('cashbox/list_investment') ?>" class="nav-link legitRipple">
+                                    <i class="icon-display"></i>
+                                    <span>Инвестиции</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-width"></i>
+                                    <span>
+                                        Чат
+                                        <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
+                                    </span>
+
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
+                                </a>
+                            </li>
+                            <?php
+                            break;
                     endswitch;
                     ?>
 

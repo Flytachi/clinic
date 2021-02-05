@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(2);
+is_auth([2, 32]);
 $header = "Врачи операторы";
 ?>
 <!DOCTYPE html>
