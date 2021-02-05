@@ -329,6 +329,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users"></i>
+                                    <span>Мои шаблоны</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Заметки</span>
@@ -760,7 +766,7 @@
                         case 12:
                             ?>
                             <li class="nav-item">
-                                <a href="<?= viv('diagnostic/index') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('physio/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Рабочий стол</span>
                                     <?php
@@ -774,7 +780,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('diagnostic/list_outpatient') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('physio/list_outpatient') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2 "></i>
                                     <span>Амбулаторные пациенты</span>
                                     <?php
@@ -788,7 +794,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('diagnostic/list_stationary') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('physio/list_stationary') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Стационарные пациенты</span>
                                     <?php

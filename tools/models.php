@@ -3751,4 +3751,80 @@ class MultiAccountsModel extends Model
         render();
     }
 }
+
+class TemplateModel extends Model
+{
+    public $table = 'templates';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <label class="col-form-label">Название шаблона:</label>
+                    <input name="name" class="form-control" placeholder="Введите название"><?= $post['name'] ?></textarea>
+                </div>
+
+                <div class="col-md-10 offset-md-1">
+                    <label class="col-form-label">Описание:</label>
+                    <textarea rows="5" cols="3" name="description" class="form-control" placeholder="Описание"><?= $post['description'] ?></textarea>
+                </div>
+
+                <div class="col-md-10 offset-md-1">
+                    <label class="col-form-label">Диагноз:</label>
+                    <textarea rows="3" cols="3" name="diagnostic" class="form-control" placeholder="Заключения"><?= $post['diagnostic'] ?></textarea>
+                </div>
+
+                <div class="col-md-10 offset-md-1">
+                    <label class="col-form-label">Рекомендации:</label>
+                    <textarea rows="3" cols="3" name="recommendation" class="form-control" placeholder="Заключения"><?= $post['recommendation'] ?></textarea>
+                </div>
+            </div>
+
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
+        </div>
+        ';
+        render();
+    }
+}
 ?>
