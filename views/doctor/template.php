@@ -64,22 +64,19 @@ $header = "Шаблоны";
 	                          	<thead>
 	                              	<tr class="bg-blue">
                                         <th style="width:50px">№</th>
-										<th style="width:50%">ФИО</th>
-										<th>Сумма</th>
-										<th>Доля</th>
+										<th style="width:60%">Название</th>
+										<th style="width:20%">Дата создания</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
 	                              	<?php
-                                    $i=1;
 	                              	foreach($db->query("SELECT * from templates WHERE autor_id = {$_SESSION['session_id']}") as $row) {
 	                                  	?>
                                   		<tr>
-											<td><?= $i++ ?></td>
+											<td><?= $row['id'] ?></td>
 											<td><?= $row['name'] ?></td>
-	                                      	<td><?= number_format($row['price']) ?></td>
-											<td><?= number_format($row['share'], 1) ?></td>
+											<td><?= date('Y.m.d H:i', strtotime($row['add_date'])) ?></td>
 	                                      	<td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'TemplateModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>

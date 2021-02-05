@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth([5,8]);
+is_auth();
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -79,7 +79,7 @@ $header = "Пациент";
 
 		            notice.get().click(function() {
 		                notice.remove();
-		            });  
+		            });
 
 		            $('#audio').trigger('play');
 

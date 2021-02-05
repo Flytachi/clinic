@@ -3772,12 +3772,12 @@ class TemplateModel extends Model
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="autor_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="row">
                 <div class="col-md-8 offset-md-2">
                     <label class="col-form-label">Название шаблона:</label>
-                    <input name="name" class="form-control" placeholder="Введите название"><?= $post['name'] ?></textarea>
+                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $post['name'] ?>">
                 </div>
 
                 <div class="col-md-10 offset-md-1">
