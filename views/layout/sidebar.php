@@ -164,6 +164,12 @@
                                     <span>Направители</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 3:

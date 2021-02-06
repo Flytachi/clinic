@@ -72,7 +72,16 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) ORDER BY vs.id DESC") as $row) {
+										if ($patient->completed) {
+											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation
+															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
+															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN '$patient->add_date' AND '$patient->completed') ORDER BY vs.id DESC";
+										} else {
+											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation
+															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
+															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN '$patient->add_date' AND '$patient->curent_date') ORDER BY vs.id DESC";
+										}
+										foreach ($db->query($sql_table) as $row) {
 										?>
 											<tr>
 												<td><?= $i++ ?></td>

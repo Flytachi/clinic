@@ -119,7 +119,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         </tr>
                         <tr>
                             <td>
-                                <strong>Анамнез Морби:</strong>
+                                <strong>Anamnesis morbi:</strong>
                             </td>
                             <td>
                                 <?= ($docs->report_recommendation) ? $docs->report_recommendation : '<span class="text-muted">Нет данных</span>' ?>

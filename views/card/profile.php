@@ -24,6 +24,7 @@ $sql = "SELECT
         WHERE $sql_con ORDER BY add_date ASC";
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+$patient->curent_date = date('Y-m-d H:i');
 ?>
 <div class="card border-1 border-info">
 

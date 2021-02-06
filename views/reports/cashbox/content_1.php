@@ -80,8 +80,8 @@ $header = "Отчёт кассы";
 
 								<div class="col-md-3">
 									<label>Кассир:</label>
-									<select class="form-control multiselect-full-featured" data-placeholder="Выбрать кассира" name="priser_id[]" multiple="multiple" required data-fouc>
-										<?php foreach ($db->query("SELECT * from users WHERE user_level = 3") as $row): ?>
+									<select class="form-control multiselect-full-featured" data-placeholder="Выбрать кассира" name="priser_id[]" multiple="multiple" data-fouc>
+										<?php foreach ($db->query("SELECT * from users WHERE user_level IN (3, 32)") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $_POST['priser_id'])) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
@@ -130,7 +130,7 @@ $header = "Отчёт кассы";
 										vs.item_type = 1 AND
 										vs.price_date IS NOT NULL AND
 										(DATE_FORMAT(vs.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-										vs.pricer_id IN (".implode($_POST['priser_id']).")
+										vs.pricer_id IN (".implode(",", $_POST['priser_id']).")
 									UNION ALL
 									SELECT
 										iv.pricer_id,
@@ -144,7 +144,7 @@ $header = "Отчёт кассы";
 									WHERE
 										iv.add_date IS NOT NULL AND
 										(DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-										iv.pricer_id IN (".implode($_POST['priser_id']).")
+										iv.pricer_id IN (".implode(",", $_POST['priser_id']).")
 									";
 							$total_price=$total_price_cash=$total_price_card=$total_price_transfer=0;
 							?>
