@@ -3715,7 +3715,7 @@ class MultiAccountsModel extends Model
             <div class="form-group">
                 <label>Выбирите Роль:</label>
                 <select data-placeholder="Enter user" name="user_id" class="form-control form-control-select2" required>
-                    <?php foreach ($db->query("SELECT id FROM users WHERE user_level != 5") as $row): ?>
+                    <?php foreach ($db->query("SELECT id FROM users WHERE user_level != 15") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($post['user_id'] == $row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
                     <?php endforeach; ?>
                 </select>
