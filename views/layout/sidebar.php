@@ -150,15 +150,6 @@
                             </li>
 
                             <li class="nav-item">
-                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>
-                                        Чат
-                                        <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
-                                    </span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('registry/guide') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
                                     <span>Направители</span>
@@ -196,16 +187,6 @@
                                 <a href="<?= viv('cashbox/list_investment') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Инвестиции</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>
-                                        Чат
-                                        <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
-                                    </span>
-
                                 </a>
                             </li>
                             <li class="nav-item">
