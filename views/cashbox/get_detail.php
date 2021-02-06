@@ -31,7 +31,7 @@ if ($_GET['pk']) {
     }
     // prit($price);
     ?>
-    <div class="table-responsive mt-3">
+    <div class="table-responsive mt-3" id="check_detail">
         <table class="table table-hover">
             <thead>
                 <tr class="bg-dark">
@@ -95,6 +95,11 @@ if ($_GET['pk']) {
                         <td class="text-right"><?= number_format($row['count'] * $row['item_cost']) ?></td>
                     </tr>
                 <?php endforeach; ?>
+
+                <tr class="bg-dark">
+                    <td colspan="3" class="text-right">Итого:</td>
+                    <td><?= number_format($price['balance'] + $price_cost) ?></td>
+                </tr>
 
             </tbody>
         </table>

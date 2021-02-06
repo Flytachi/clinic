@@ -72,9 +72,6 @@ $header = "Список пациентов";
 								<tbody id="search_display">
 									<?php
 									$i = 1;
-
-									echo $db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)'];
-
 									$count_elem = 20;
 
 				                	$count = ceil(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem);
@@ -192,7 +189,7 @@ $header = "Список пациентов";
 
 				</div>
 
-				<?php pagination_page($count, $count_elem); ?>
+				<?php pagination_page($count, $count_elem, 4); ?>
 
 			</div>
             <!-- /content area -->

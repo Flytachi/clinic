@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 is_auth([2, 32]);
 
 if(empty($_GET['search'])){
-    $sql = "SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC";
+    $sql = "SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC LIMIT 20";
 }else {
     $ser = $_GET['search'];
     $sql = "SELECT * FROM users WHERE user_level = 15 AND (id LIKE '%$ser%' OR first_name LIKE '%$ser%' OR last_name LIKE '%$ser%' OR father_name LIKE '%$ser%')";

@@ -429,6 +429,8 @@ $header = "Пациент";
 	<script src="<?= stack("vendors/react/babel.min.js") ?>"></script>
 	<script src="<?= stack("vendors/react/socketIo-client.js") ?>"></script>
 
+	<script src="../../node_modules/socket.io/client-dist/socket.io.min.js"></script>
+
 
     <script type="text/babel">
 

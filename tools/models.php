@@ -990,9 +990,22 @@ class VisitPriceModel extends Model
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
+            <button onclick="Test()" type="button" class="btn btn-outline-warning btn-sm">Чек</button>
             <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
         </form>
         <script type="text/javascript">
+
+            function Test() {
+
+                var headstr = "<html><head><title>Booking Details</title></head><body>";
+                var footstr = "</body>";
+                var newstr = document.getElementById('check_detail').innerHTML;
+                var oldstr = document.body.innerHTML;
+                document.body.innerHTML = headstr+newstr+footstr;
+                window.print();
+                document.body.innerHTML = oldstr;
+                return false;
+            }
 
             function Proter(pk) {
                 event.preventDefault();

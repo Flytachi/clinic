@@ -9,7 +9,7 @@ var config = ini.parse(fs.readFileSync(__dirname + '/tools/functions/setting.ini
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: `http://localhost:${config.SOCKET.PORT}`,
+    origin: `http://localhost:4001`,
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true

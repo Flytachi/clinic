@@ -52,6 +52,10 @@ $header = "Пациент";
 											</div>
 										</div>
 									<?php endif; ?>
+								<?php else: ?>
+									<div class="header-elements">
+										<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm btn-outline-info">Печать</button>
+									</div>
 								<?php endif; ?>
 							</div>
 
@@ -74,7 +78,7 @@ $header = "Пациент";
 										$i = 1;
 										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.laboratory IS NOT NULL ORDER BY vs.id DESC") as $row) {
 										?>
-											<tr>
+											<tr onclick="Change_lab(this, <?= $row['id'] ?>)" data-stat="0">
 												<td><?= $i++ ?></td>
 												<td>
 													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
@@ -182,6 +186,32 @@ $header = "Пациент";
 				},
 			});
 		};
+
+		items = [];
+
+		function Change_lab(tbody, id) {
+			if (tbody.dataset.stat == 1) {
+				tbody.dataset.stat = "0";
+				tbody.className = "";
+
+				for(let a = 0; a < items.length; a++){
+            		if(items[a] == id ){
+            			items.splice(a, 1);
+	            	}
+            	}
+
+			}else {
+				tbody.dataset.stat = "1";
+				tbody.className = "table-warning";
+				items.push(id);
+			}
+		}
+
+		function PrePrint(url) {
+			if (items.length != 0) {
+				Print(url+`&items=[${items}]`);
+			}
+		}
 	</script>
 
     <!-- Footer -->
