@@ -15,6 +15,7 @@ $header = "Услуги";
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
+
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -49,13 +50,13 @@ $header = "Услуги";
 		              	</div>
 		          	</div>
 
-		          	<div class="card-body" id="form_card">
+		          	<div class="card-body">
 
 						<?php if ($_POST['flush']): ?>
 
 							<?php
-							Mixin\T_flush('service');
-							$task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
+							// Mixin\T_flush('service');
+							// $task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
 							// Mixin\T_flush('visit');
 							// Mixin\T_flush('visit_price');
 							// Mixin\T_flush('visit_member');
@@ -84,7 +85,7 @@ $header = "Услуги";
 
 						<div class="row">
 
-							<div class="col-md-9"><?php ServiceModel::form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php ServiceModel::form(); ?></div>
 
 							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
 
@@ -111,7 +112,7 @@ $header = "Услуги";
 
               		<div class="card-body">
                   		<div class="table-responsive">
-	                      	<table class="table table-hover">
+	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
 	                              	<tr class="bg-blue">
 										<th style="width:10%">Код</th>
@@ -131,7 +132,7 @@ $header = "Услуги";
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
-	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT * FROM division WHERE id ={$row['division_id']}")->fetch()['name'] : "" ?></td>
+	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT title FROM division WHERE id ={$row['division_id']}")->fetchColumn() : "" ?></td>
 											<td>
 												<?php switch ($row['type']) {
 													case 1:

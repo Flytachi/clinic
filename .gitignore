@@ -1,2 +1,4 @@
 /tools/functions/setting.ini
+/dump/*
 /storage/*
+/node_modules/*

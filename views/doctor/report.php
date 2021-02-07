@@ -15,15 +15,15 @@ $pack = $db->query("SELECT report_title, report_description, report_diagnostic, 
     <h3 class="text-center"><?= $pack['report_title'] ?></h3>
     <p>
         <h4 class="text-center"><b>Описание</b></h4>
-        <?= $pack['report_description'] ?>
+        <?= preg_replace("#\r?\n#", "<br />", $pack['report_description']) ?>
     </p>
     <p>
         <b style="font-size: 1.1rem">Диагноз:</b>
-        <?= $pack['report_diagnostic'] ?>
+        <?= preg_replace("#\r?\n#", "<br />", $pack['report_diagnostic']) ?>
     </p>
     <p>
         <b style="font-size: 1.1rem">Рекомендации:</b>
-        <?= $pack['report_recommendation'] ?>
+        <?= preg_replace("#\r?\n#", "<br />", $pack['report_recommendation']) ?>
     </p>
 </div>
 

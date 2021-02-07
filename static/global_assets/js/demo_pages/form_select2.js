@@ -29,11 +29,12 @@ var Select2Selects = function() {
         function priceFormat(price) {
             var originalOption = price.element;
             if (!price.id) { return price.text; }
-            if ($(price.element).data('name')) {
-                var $price = '<div class="d-flex justify-content-between"><span>'+ price.text +'</span>'+ $(price.element).data('name') +'<span>'+ $(price.element).data('price') +'</span></div>';
-            }else {
-                var $price = '<div class="d-flex justify-content-between"><span>'+ price.text +'</span><span>'+ $(price.element).data('price') +'</span></div>';
-            }
+
+            var $price = '<div class="d-flex justify-content-between"><span>'+ price.text +'</span>';
+            if ($(price.element).data('name')) { $price +='<span>'+ $(price.element).data('name') +'</span>'; }
+            if ($(price.element).data('price')) { $price +='<span>'+ $(price.element).data('price') +'</span>'; }
+            $price += '</div>';
+
             return $price;
         }
 

@@ -7,7 +7,8 @@ is_auth();
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
         /*padding:2mm;*/
         margin: 0 auto;
-        width: 44mm;
+        margin-left: -5px;
+        width: 50mm;
         background: #FFF;
     }
     ::selection {background: #f31544; color: #FFF;}
@@ -16,9 +17,9 @@ is_auth();
       font-size: 1.5em;
       color: #222;
     }
-    h2{font-size: .9em;}
+    h2{font-size: .7em;}
     h3{
-      font-size: 1.2em;
+      font-size: 1.0em;
       font-weight: 300;
       line-height: 2em;
     }
@@ -35,19 +36,20 @@ is_auth();
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
 
-    #top .logo{
+    /*.logo{
         //float: left;
         height: 90px;
         width: 110px;
-        background: url(icon/company) no-repeat;
+        background: url(icon/company.png) no-repeat;
+        background: url("<?= img("prints/icon/company.png") ?>") no-repeat;
         background-size: 110px 90px;
-    }
+    }*/
     .clientlogo{
         float: left;
-    	height: 60px;
-    	width: 60px;
-    	background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
-    	background-size: 60px 60px;
+        height: 60px;
+        width: 60px;
+        background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
+        background-size: 60px 60px;
         border-radius: 50px;
     }
     .info{
@@ -80,11 +82,12 @@ is_auth();
 
 </style>
 
-<body onload="window.print();" style="color: black; font-size: 140%;">
+<body onload="window.print(); " style="color: black; font-size: 140%;">
 
     <div id="invoice-POS" >
 
-        <center id="top">
+        <center>
+            <img src="<?= stack("assets/images/company.png") ?>" alt="альтернативный текст" height="100" width="140">
             <div class="logo"></div>
         </center>
 
@@ -96,7 +99,8 @@ is_auth();
                 </span>
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
-                    <b>Дата</b>: <?= date('d.m.Y H:i') ?>
+                    <b>Дата</b>: <?= date('d.m.Y H:i') ?></br>
+                    <b>Дата рождения</b>:<?= date('d.m.Y', strtotime($db->query("SELECT dateBith FROM users WHERE id = ". $_GET['id'] ."")->fetch()['dateBith'])) ?>
                 </p>
             </div>
 
@@ -116,7 +120,7 @@ is_auth();
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
                         <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
-                        <tr class="service">
+                        <tr class="service" style="font-size:150%;">
         					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>
         					<td class="tableitem">
@@ -127,31 +131,31 @@ is_auth();
                                     ?>
                                 </p>
                             </td>
-        				</tr>
+                        </tr>
                     <?php endforeach; ?>
 
-    				<!-- <tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>tax</h2></td>
-    					<td class="payment"><h2>$419.25</h2></td>
-    				</tr> -->
+                    <!-- <tr class="tabletitle">
+                        <td></td>
+                        <td class="Rate"><h2>tax</h2></td>
+                        <td class="payment"><h2>$419.25</h2></td>
+                    </tr> -->
 
-    				<tr class="tabletitle">
-    					<td></td>
-    					<td class="Rate"><h2>Итого</h2></td>
-    					<td class="payment"><h2><?= number_format($total_price) ?></h2></td>
-    				</tr>
+                    <tr class="tabletitle">
+                        <td></td>
+                        <td class="Rate"><h2>Итого</h2></td>
+                        <td class="payment"><h2><?= number_format($total_price) ?></h2></td>
+                    </tr>
 
-    			</table>
-    		</div>
+                </table>
+            </div>
 
             <!-- <div id="legalcopy">
-    			<p class="legal">
+                <p class="legal">
                     <strong>Thank you for your business!</strong>
                     Payment is expected within 31 days; please process this invoice within that time.
                     There will be a 5% interest charge per month on late invoices.
-    			</p>
-    		</div> -->
+                </p>
+            </div> -->
 
         </div>
 

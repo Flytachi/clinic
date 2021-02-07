@@ -21,7 +21,7 @@ if ($_GET['main']) {
         echo $db->query($sql)->fetch()['result'];
         exit;
     } else if($_GET['stage'] == 5) {
-        $sql = "SELECT op.id FROM visit vs LEFT JOIN operation op ON(op.visit_id=vs.id) WHERE vs.user_id = {$_GET['id']} AND vs.grant_id = {$_SESSION['session_id']} AND vs.completed IS NULL AND vs.service_id = 1 AND op.completed IS NULL";
+        $sql = "SELECT id FROM operation WHERE user_id = {$_GET['id']} AND grant_id = {$_SESSION['session_id']} AND completed IS NULL";
     }
 
 }else {

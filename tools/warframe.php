@@ -48,7 +48,10 @@ $PERSONAL = array(
     9 => "Повар",
     10 => "Диагностика",
     11 => "Анестезиолог",
-    12 => "Физиотерапевт"
+    12 => "Физиотерапевт",
+    13 => "Процедурная медсестра",
+    14 => "Массажист",
+    32 => "Касса-Регистратура",
 );
 
 $FLOOR = array(
@@ -68,6 +71,15 @@ $methods = array(
     8 => "Ингаляционный",
     9 => "Поверхностное натирание",
 );
+
+// Browser
+if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $_SESSION['browser'] = "Firefox";
+elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Opera") !== false) $_SESSION['browser'] = "Opera";
+elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Chrome") !== false) $_SESSION['browser'] = "Chrome";
+elseif (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false) $_SESSION['browser'] = "Internet Explorer";
+elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Safari") !== false) $_SESSION['browser'] = "Safari";
+else $_SESSION['browser'] = "Неизвестный";
+
 
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
@@ -108,13 +120,13 @@ function level() {
     /*
     level()
     */
-	global $db;
+    global $db;
     if ($_SESSION['session_id'] == "master") {
         return "master";
     }
     $id = $_SESSION['session_id'];
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-	return intval($stmt);
+    return intval($stmt);
 }
 
 function level_name($id = null) {
@@ -129,7 +141,7 @@ function level_name($id = null) {
         $id = $_SESSION['session_id'];
     }
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-	return $PERSONAL[$stmt];
+    return $PERSONAL[$stmt];
 }
 
 function permission($arr){
@@ -154,26 +166,26 @@ function permission($arr){
 }
 
 function dateformat($var=""){
-	$var = strtotime($var) ;
-	$var = date('Y-m-d', $var);
-	return $var;
+    $var = strtotime($var) ;
+    $var = date('Y-m-d', $var);
+    return $var;
 }
 
 function nodateformat($var=""){
-	$var = strtotime($var) ;
-	$var = date('d-m-Y', $var);
-	return $var ;
+    $var = strtotime($var) ;
+    $var = date('d-m-Y', $var);
+    return $var ;
 }
 
 function showTitle() //Функция title
 {
-	$title = "Clinic";
-	return $title;
+    $title = "Clinic";
+    return $title;
 }
 
 function form($name) //Функция title
 {
-	return $name();
+    return $name();
 }
 
 /* Добавляет нули к числам, чьи значаения меньше пятизначных*/
@@ -214,7 +226,7 @@ function division($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 
@@ -233,7 +245,7 @@ function division_name($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 function division_title($id = null) {
@@ -251,7 +263,7 @@ function division_title($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 function division_assist($id = null) {
@@ -266,7 +278,7 @@ function division_assist($id = null) {
     catch (PDOException $ex) {
         $stmt = null;
     }
-	return $stmt;
+    return $stmt;
 }
 
 function read_excel($filepath){
@@ -280,31 +292,102 @@ function read_excel($filepath){
     return $ar; //возвращаем массив
 }
 
-function write_exel($value='')
-{
-    // Redirect output to a client’s web browser (Excel5)
-    header("Content-type: application/vnd.ms-excel");
-    header("Content-Disposition: attachment; filename=demo.xls");
-    header('Cache-Control: max-age=0');
+function read_labaratory($filepath){
+    require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
 
-    // PHPExcel
-    require_once 'PHPExcel/Classes/PHPExcel.php';
-    require_once 'PHPExcel/Classes/PHPExcel/IOFactory.php';
+    $ar=array(); // инициализируем массив
+    $inputFileType = PHPExcel_IOFactory::identify($filepath); // узнаем тип файла, excel может хранить файлы в разных форматах, xls, xlsx и другие
+    $objReader = PHPExcel_IOFactory::createReader($inputFileType); // создаем объект для чтения файла
+    $objPHPExcel = $objReader->load($filepath); // загружаем данные файла в объект
 
-    // Create new PHPExcel object
-    $objPHPExcel = new PHPExcel();
+    foreach($objPHPExcel->getWorksheetIterator() as $worksheet){
+        $highestRow = $worksheet->getHighestRow();
+        $highestColumn = $worksheet->getHighestColumn();
 
-    // Set Orientation, size and scaling
-    $objPHPExcel->setActiveSheetIndex(0);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
-    $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+        for($row=2; $row<=$highestRow; $row++){
+            $column1 = $worksheet->getCellByColumnAndRow(0, $row)->getValue();
+            $column2 = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+            $column3 = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+            $column4 = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+            $column5 = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+            $column6 = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
 
-    // Generate spreadsheet
-    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-    $objWriter->save('php://output');
-    exit;
+            // $finaldata[] = array(
+            //     'code'   =>  trim($column1),
+            //     'name'   =>  trim($column2),
+            //     'result' =>  trim($column5),
+            // );
+
+            if ($column1 and $column2 and $column5) {
+                $finaldata[] = array(
+                    'type'   =>  "result",
+                    'code'   =>  trim($column1),
+                    'name'   =>  trim($column2),
+                    'result' =>  trim($column5),
+                );
+            }elseif (trim($column1) == "№ :") {
+                $finaldata[] = array(
+                    'type'      =>  "label",
+                    'label_lab' =>  trim($column2),
+                );
+            }
+        }
+    }
+
+    // $ar = $objPHPExcel->getSheet()->toArray(); // выгружаем данные из объекта в массив
+    return $finaldata; //возвращаем массив
+
 }
+
+function pagination_page($count, $elem, $count_button = 2)
+{
+    $count -= 1;
+
+    echo "<div class=\"card card-body text-center\">";
+        echo "<ul class=\"pagination align-self-center\">";
+
+
+    for ($i= intval($_GET['of']) - 1, $a = 0; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i >= 0 and $a != $count_button; $i--, $a++) {
+
+        $mas[] = $i;
+    }
+
+    $mas = array_reverse($mas);
+
+    // echo $mas[0];
+
+    if(intval($_GET['of']) >= ($count_button + 1) and isset($mas)){
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>0</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor($mas[0] / 2) ) ."' class='page-link' legitRipple>...</a></li>";
+    }
+
+
+    foreach ($mas as $key) {
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
+    }
+
+    echo "<li class=\"page-item active\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of']) ."\" class=\"page-link legitRipple\">". intval($_GET['of']) ."</a></li>";
+
+
+
+    for ($i= (intval($_GET['of'])+1) , $a = 0; $i <= (intval($_GET['of'])+$elem) and $i <= $count and $a != $count_button; $i++, $a++) {
+
+        $mas1[] = $i;
+    }
+
+
+    foreach ($mas1 as $key) {
+
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
+    }
+
+    if( ($count - intval($_GET['of'])) >= ($count_button + 1) and isset($mas1)){
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor((end($mas1)  + $count) / 2 )) ."' class='page-link' legitRipple>...</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count)."' class='page-link' legitRipple>$count</a></li>";
+    }
+
+        echo "</ul>";
+    echo "</div>";
+}
+
 ?>

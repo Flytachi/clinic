@@ -436,5 +436,20 @@ $header = "Пациент";
 
     </script>
 
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	<script src="../../node_modules/socket.io/client-dist/socket.io.min.js" crossorigin="anonymous"></script>
+
+    <script type="text/babel">
+    	
+		let ioe = io.connect('localhost:4000/chat');
+
+    	ioe.on('we', function (data) {
+
+			console.log(data)
+		})
+    </script>
+
 </body>
 </html>

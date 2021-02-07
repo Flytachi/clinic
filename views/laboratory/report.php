@@ -17,8 +17,8 @@ is_auth();
                     <th style="width:3%">№</th>
                     <th>Название услуги</th>
                     <th>Анализ</th>
+                    <th class="text-right" style="width:12%">Норма</th>
                     <th class="text-right" style="width:7%">Ед</th>
-                    <th class="text-right" style="width:10%">Норма</th>
                     <th class="text-right" style="width:10%">Результат</th>
                     <!-- <th class="text-center" style="width:25%">Примечание</th> -->
                 </tr>
@@ -26,14 +26,23 @@ is_auth();
             <tbody>
                 <?php
                 $i = 1;
-                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', lat.name, lat.standart_min, lat.standart_max, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
+                // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
+                //             lat.standart_min, lat.standart_sign, lat.standart_max,
+                //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
+                //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
+                $norm = "lat.name, lat.code, lat.standart";
+                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
                     ?>
                     <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                         <td><?= $i++ ?></td>
                         <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
                         <td><?= $row['name'] ?></td>
-                        <td class="text-right"><?= $row['unit'] ?></td>
-                        <td class="text-right"><?= $row['standart_min']."-".$row['standart_max'] ?></td>
+                        <td class="text-right">
+                            <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
+                        </td>
+                        <td class="text-right">
+                            <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
+                        </td>
                         <td class="text-right"><?= $row['result'] ?></td>
                         <!-- <td><?= $row['description'] ?></td> -->
                     </tr>

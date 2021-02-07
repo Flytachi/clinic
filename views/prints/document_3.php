@@ -29,14 +29,14 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= img('prints/icon/company') ?>" width="480" height="105">
+                <img src="<?= img('prints/icon/company.png') ?>" width="480" height="105">
             </div>
 
             <div class="col-6 text-right h3">
                 <b>
                     Медицинский оздоровительный комплекс<br>
                     г.Бухара, ул. М.Икбол, ( )<br>
-                    Тел: (+998945487701)<br>
+                    Тел: (+998655050104)<br>
                 </b>
             </div>
 
@@ -119,7 +119,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         </tr>
                         <tr>
                             <td>
-                                <strong>Анамнез Морби:</strong>
+                                <strong>Anamnesis morbi:</strong>
                             </td>
                             <td>
                                 <?= ($docs->report_recommendation) ? $docs->report_recommendation : '<span class="text-muted">Нет данных</span>' ?>
@@ -171,15 +171,15 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         </tr>
 
                         <!-- Результаты лечения -->
-                        <tr>
+                        <!-- <tr>
                             <td colspan="2">
-                                <strong>Лечение: </strong>
+                                <strong>Лечение: </strong><br>
                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                                 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                                 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                             </td>
-                        </tr>
+                        </tr> -->
 
                         <!-- Рекомендация -->
                         <td>

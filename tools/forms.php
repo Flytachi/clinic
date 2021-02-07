@@ -60,7 +60,7 @@ class PatientForm extends Model
                                     <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
                                         <optgroup label="<?= $province['name'] ?>">
                                             <?php foreach ($db->query("SELECT * FROM region WHERE province_id = {$province['id']}") as $region): ?>
-                                                <option value="<?= $region['name'] ?>"><?= $region['name'] ?></option>
+                                                <option value="<?= $region['name'] ?>" <?= ($post['region'] == $region['name']) ? "selected" : "" ?>><?= $region['name'] ?></option>
                                             <?php endforeach; ?>
                                         </optgroup>
                                     <?php endforeach; ?>
@@ -109,7 +109,7 @@ class PatientForm extends Model
                         </div>
                         <div class="col-md-6">
                             <label>Телефон номер:</label>
-                            <input type="number" name="numberPhone" placeholder="+9989" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
+                            <input type="text" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
                         </div>
                     </div>
 
@@ -193,7 +193,7 @@ class VisitReport extends Model
                     <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
                 <?php endif; ?>
 
-                <?php if (level() == 12): ?>
+                <?php if (level() == 12 or level() == 13): ?>
                     <div class="row">
                         <input type="hidden" name="report_title" id="report_title" class="form-control">
 
@@ -285,7 +285,7 @@ class VisitReport extends Model
                         }
                     </script>
                 <?php endif; ?>
-                <?php if (level() == 12): ?>
+                <?php if (level() == 12 or level() == 13): ?>
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php else: ?>
                     <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
@@ -471,7 +471,7 @@ class VisitRoute extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <?php
-                    foreach($db->query("SELECT * from division WHERE level = 5 AND id !=". division()) as $row) {
+                    foreach($db->query("SELECT * from division WHERE level in (5,12) AND id !=". division()) as $row) {
                         ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php
@@ -574,7 +574,7 @@ class VisitRoute extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <?php
-                    foreach($db->query("SELECT * from division WHERE level = 5 AND id !=". division()) as $row) {
+                    foreach($db->query("SELECT * from division WHERE level in (5,12) AND id !=". division()) as $row) {
                         ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php
@@ -1073,6 +1073,212 @@ class VisitRoute extends Model
         <?php
     }
 
+    public function form_out_physio_manipulation($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="physio_manipulation" value="1">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                    <?php
+                    foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row) {
+                        ?>
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+
+        </script>
+        <?php
+    }
+
+    public function form_sta_physio_manipulation($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="physio_manipulation" value="1">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                    <?php
+                    foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row) {
+                        ?>
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php
+                    }
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right">
+                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                <div class="form-control-feedback">
+                    <i class="icon-search4 font-size-base text-muted"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            let service = [];
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "/views/registry/search_amb.php",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = [];
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+        </script>
+        <?php
+    }
+
     public function form_sta_doc($pk = null)
     {
         global $db, $patient;
@@ -1227,6 +1433,14 @@ class VisitRoute extends Model
             if ($this->post['laboratory']) {
                 $post_big['laboratory'] = $this->post['laboratory'];
             }
+            if ($this->post['physio_manipulation']) {
+                $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
+                if ($level_divis == 12) {
+                    $post_big['physio'] = 1;
+                } elseif ($level_divis == 13) {
+                    $post_big['manipulation'] = 1;
+                }
+            }
 
             $post_big = Mixin\clean_form($post_big);
             $post_big = Mixin\to_null($post_big);
@@ -1333,10 +1547,27 @@ class LaboratoryUpStatus extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $this->post['id'] = $pk;
-        $this->post['status'] = 2;
-        $this->post['accept_date'] = date('Y-m-d H:i:s');
-        $this->update();
+
+        foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND accept_date IS NULL AND completed IS NULL") as $value) {
+            $this->post['id'] = $value['id'];
+            $this->post['status'] = 2;
+            $this->post['accept_date'] = date('Y-m-d H:i:s');
+            $this->update();
+        }
+        $this->success();
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
+
+        }
     }
 
     public function success()
@@ -1411,6 +1642,16 @@ class VisitFailure extends Model
             $this->success($pk);
         }
     }
+
+    public function clean()
+    {
+        global $db;
+        
+        // $this->post = Mixin\clean_form($this->post);
+        // $this->post = Mixin\to_null($this->post);
+        // return True;
+    }
+
 
     public function success($pk)
     {
@@ -2344,6 +2585,114 @@ class VisitRefundModel extends Model
         $this->post['price_card'] = -$this->post['price_card'];
         $this->post['price_transfer'] = -$this->post['price_transfer'];
         return True;
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}
+
+class VisitLaboratory extends Model
+{
+    public $table = 'visit';
+
+    public function update()
+    {
+        global $db;
+        foreach (json_decode($this->post['id']) as $id) {
+            $post['laboratory_num'] = $this->post['laboratory_num'];
+            $post = Mixin\clean_form($post);
+            $post = Mixin\to_null($post);
+
+            $pk = $id;
+            $object = Mixin\update($this->table, $post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
+        }
+        $this->success();
+
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+
+}
+
+class AparatLaboratory extends Model
+{
+    public $table = 'visit';
+
+    public function clean()
+    {
+        global $db;
+        $this->post['template'] = read_labaratory($_FILES['template']['tmp_name']);
+        foreach ($this->post['template'] as $item) {
+            if ($item['type'] == "label") {
+                $dt = [];
+                $dt['laboratory_num'] = $item['label_lab'];
+                continue;
+            }
+            $dt['code'] = $item['code'];
+            $dt['result'] = $item['result'];
+            $this->post['data'][] = $dt;
+        }
+        unset($this->post['template']);
+        // prit($data);
+        foreach ($this->post['data'] as $arr) {
+            // prit($arr);
+            $visits = $db->query("SELECT lat.id 'analyze_id', vs.id 'visit_id', vs.user_id 'user_id', vs.service_id 'service_id', lat.code FROM visit vs LEFT JOIN laboratory_analyze_type lat ON(lat.service_id=vs.service_id) WHERE vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.laboratory_num = {$arr['laboratory_num']}")->fetchAll();
+            foreach ($visits as $post) {
+                if ($post['code'] == $arr['code']) {
+                    $post['result'] = $arr['result'];
+                    unset($post['code']);
+                    $object = Mixin\insert('laboratory_analyze', $post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
+                }
+            }
+        }
+        $this->success();
+
     }
 
     public function success()

@@ -39,7 +39,7 @@ is_auth();
         //float: left;
         height: 90px;
         width: 110px;
-        background: url(icon/company) no-repeat;
+        background: url(icon/company.png) no-repeat;
         background-size: 110px 90px;
     }
     .clientlogo{
@@ -87,13 +87,9 @@ is_auth();
         <div id="mid">
 
             <div class="info">
-                <span style="text-align: center;">
-                    <h2><?= $_GET['id'] ?></h2>
-                </span>
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
-
-                    <b>ID</b>: 182</br>
+                    <b>ID</b>: <?= $_GET['num'] ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
                 </p>
             </div>

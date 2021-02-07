@@ -67,7 +67,7 @@ $header = "Анализы";
 
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover datatable-basic">
                                 <thead>
                                     <tr class="bg-blue">
                                         <th style="width:7%">№</th>
@@ -83,7 +83,7 @@ $header = "Анализы";
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query('SELECT * from laboratory_analyze_type') as $row) {
+                                    foreach($db->query('SELECT * from laboratory_analyze_type ORDER BY id DESC') as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
@@ -95,8 +95,12 @@ $header = "Анализы";
                                                 echo $stmt->name;
                                                 ?>
                                             </td>
-                                            <td><?= $row['standart_min']."-".$row['standart_max'] ?></td>
-											<td><?= $row['unit'] ?></td>
+                                            <td>
+												<?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
+											</td>
+											<td>
+												<?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
+											</td>
                                             <td><?= ($row['status']) ? "Активный" : "Не активный" ?></td>
                                             <td>
 												<div class="list-icons">

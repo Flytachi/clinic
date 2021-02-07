@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(3);
+is_auth([3, 32]);
 $header = "Инвестиции ". addZero($_GET['pk']);
 ?>
 <!DOCTYPE html>
@@ -18,7 +18,6 @@ $header = "Инвестиции ". addZero($_GET['pk']);
 		<!-- Main sidebar -->
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
-
 
 		<!-- Main content -->
 		<div class="content-wrapper">

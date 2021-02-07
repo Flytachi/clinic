@@ -2,6 +2,7 @@
 require_once '../../tools/warframe.php';
 // require_once 'in.php';
 is_auth(4);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -128,11 +129,17 @@ is_auth(4);
 
 				                	<?php
 
-				                	$count = ceil(intval($db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)']) / 5); 
+				                	$count_elem = 6;
 
-				                	$offset = intval($_GET['of']) * 5 ;
+				                	$count = round(intval($db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)']) / $count_elem); 
 
-				                	$slq = "SELECT * FROM goods ORDER BY id DESC LIMIT 5 OFFSET $offset ";
+				                	echo $db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)'];
+
+				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 1;
+
+				                	$offset = intval($_GET['of']) * $count_elem ;
+
+				                	$slq = "SELECT * FROM goods ORDER BY id DESC LIMIT $count_elem OFFSET $offset ";
 
 				                	$result = $db->query($slq);
 									while($row = $result->fetch(PDO::FETCH_ASSOC)) {
@@ -157,39 +164,19 @@ is_auth(4);
 
 				</div>
 
-				<div class="card card-body text-center">
-					<ul class="pagination align-self-center">
+				<?php
 
-						<?php 
+					pagination_page($count, $count_elem, 5);
 
-							for ($i= intval($_GET['of']) <= 5 ? (intval($_GET['of']) - (intval($_GET['of']) - 1)) : intval($_GET['of']) - 5; $i < intval($_GET['of']) and $i >= 1 ; $i++) {
-						 ?>
-							<li class="page-item"><a href="all_prep.php?of=<?= $i ?>" class="page-link legitRipple"><?= $i ?></a></li>
+				?>
 
-						<?php 
-							}
-						 ?>
-
-							<li class="page-item"><a href="all_prep.php?of=<?= $i ?>" class="page-link legitRipple"><?= intval($_GET['of']) ?></a></li>
-
-
-						 <?php 
-
-							for ($i= (intval($_GET['of'])+1) ; $i < (intval($_GET['of'])+5) and $i < $count; $i++) {
-						 ?>
-							<li class="page-item"><a href="all_prep.php?of=<?= $i ?>" class="page-link legitRipple"><?= $i ?></a></li>
-
-						<?php 
-							}
-						 ?>
-					
-					</ul>
-				</div>
+				
 
 			</div>
             <!-- /content area -->
 
 		</div>
+
 		<!-- /main content -->
 
 	</div>
@@ -259,6 +246,9 @@ is_auth(4);
 
     <!-- Footer -->
     <?php include '../layout/footer.php' ?>
+
+
     <!-- /footer -->
+
 </body>
 </html>
