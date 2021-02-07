@@ -1,6 +1,6 @@
 <?php
 // Database Constants
-$ini =  parse_ini_file("setting.ini", true);
+$ini = parse_ini_file("setting.ini", true);
 $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
 // Site Constants
 date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
