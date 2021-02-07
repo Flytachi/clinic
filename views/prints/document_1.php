@@ -22,7 +22,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
                 <b>
                     Медицинский оздоровительный комплекс<br>
                     г.Бухара, ул. М.Икбол, ( )<br>
-                    Тел: (+998945487701)<br>
+                    Тел: (+998655050104)<br>
                 </b>
             </div>
 

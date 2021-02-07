@@ -50,6 +50,10 @@ if ($_SESSION['session_id']) {
         $stmt = $db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
         if($stmt){
             $_SESSION['session_id'] = $stmt->id;
+            $slot = $db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
+            if ($slot) {
+                $_SESSION['slot'] = Mixin\clean($slot);
+            }
             header('location: ../index.php');
         }else{
             $_SESSION['message'] = 'Не верный логин или пароль';

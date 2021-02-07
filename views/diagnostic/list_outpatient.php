@@ -61,7 +61,8 @@ $header = "Амбулаторные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
+										<th>Дата рождения</th>
+										<th>Дата снятия</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:300px">Действия</th>
@@ -71,18 +72,12 @@ $header = "Амбулаторные пациенты";
                                     <?php
 									if (division_assist() == 2) {
 										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, vs.parent_id, vs.assist_id,
-												(
-													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
+												us.dateBith, vs.accept_date
 												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
 												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
 									} else {
 										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint,
-												(
-													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
+												us.dateBith, vs.accept_date
 												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
 												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
 									}
@@ -102,7 +97,8 @@ $header = "Амбулаторные пациенты";
                                         <tr class="<?= $tr ?>">
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-											<td><?= $row['age'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
                                             <td><?= $row['name']; ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>

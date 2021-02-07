@@ -48,7 +48,7 @@ $header = "Приём пациетов";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
+										<th>Дата рождения</th>
                                         <th>Дата назначения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
@@ -61,10 +61,7 @@ $header = "Приём пациетов";
 									$sql = "SELECT DISTINCT vs.id 'visit_id', us.id,
 												vs.user_id, vs.parent_id, vs.add_date,
 												vs.route_id, vs.service_id, vs.direction,
-												(
-													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
+												us.dateBith
 											FROM users us
 												LEFT JOIN visit vs ON(us.id=vs.user_id)
 											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']}
@@ -83,7 +80,7 @@ $header = "Приём пациетов";
 													?>
 												</div>
 											</td>
-											<td><?= $row['age'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
 											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
 											<td>

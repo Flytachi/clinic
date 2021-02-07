@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(2);
+is_auth([2, 32]);
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
@@ -17,7 +17,6 @@ $header = "Рабочий стол";
 		<!-- Main sidebar -->
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
-
 
 		<!-- Main content -->
 		<div class="content-wrapper">

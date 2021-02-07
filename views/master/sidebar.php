@@ -41,6 +41,18 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="<?= viv('master/database') ?>" class="nav-link legitRipple">
+                        <i class="icon-server"></i>
+                        <span>Database</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= viv('master/visit_control') ?>" class="nav-link legitRipple">
+                        <i class="icon-archive"></i>
+                        <span>Контроль визитов</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="<?= viv('master/logs') ?>" class="nav-link legitRipple">
                         <i class="icon-price-tag3"></i>
                         <span>Логи</span>

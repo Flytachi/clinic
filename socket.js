@@ -1,25 +1,20 @@
 const express = require('express');
 const app = express();
-const server = require("http").createServer(app);
+const server = require("http").Server(app);
+
+var fs = require('fs'),
+    ini = require('ini');
+
+var config = ini.parse(fs.readFileSync(__dirname + '/tools/functions/setting.ini', 'utf8'));
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: "https://example.com",
+    origin: `http://localhost:4001`,
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true
   }
 });
-
-server.listen(8080);
-
-var fs = require('fs'),
-    ini = require('ini');
-
-console.log(__dirname);
-
-var config = ini.parse(fs.readFileSync(__dirname + '/tools/functions/setting.ini', 'utf8'));
-//console.dir(config);
 
 const mariadb = require('mariadb/callback');
 const conn  = mariadb.createConnection({
@@ -65,4 +60,14 @@ chat.on('connection', function(socket) {
 
   });
 
+  socket.on('disconnect',() =>{
+
+    console.log('Соединение разорвано')
+
+  });
+
+});
+
+server.listen(config.SOCKET.PORT, function () {
+  console.log("Start server");
 });

@@ -1,18 +1,30 @@
 <?php
+if ($_GET['pk']) {
+    $sql_con = "vs.id = {$_GET['pk']}";
+    $agr = "?pk=".$_GET['pk'];
+    $activity = False;
+} else {
+    $sql_con = "us.id = {$_GET['id']}";
+    $agr = "?id=".$_GET['id'];
+    $activity = True;
+}
+
 $sql = "SELECT
             us.id, vs.id 'visit_id', vs.grant_id,
             us.dateBith, us.numberPhone, us.gender,
             us.region, us.residenceAddress,
             us.registrationAddress, vs.accept_date,
             vs.direction, vs.add_date, vs.discharge_date,
-            wd.floor, wd.ward, bd.bed, vs.complaint
+            wd.floor, wd.ward, bd.bed, vs.complaint,
+            vs.status
         FROM users us
-            LEFT JOIN visit vs ON (vs.user_id = us.id)
+            LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NULL)
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
             LEFT JOIN wards wd ON(wd.id=bd.ward_id)
-        WHERE vs.status = 2 AND us.id = {$_GET['id']} ORDER BY add_date ASC";
+        WHERE $sql_con ORDER BY add_date ASC";
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+$patient->curent_date = date('Y-m-d H:i');
 ?>
 <div class="card border-1 border-info">
 
@@ -42,6 +54,30 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     <div class="col-md-6">
 
                         <div class="form-group row">
+
+                            <label class="col-md-4"><b>Статус визита:</b></label>
+                            <div class="col-md-8 text-right">
+
+                                <?php
+                                switch ($patient->status):
+                                    case 1:
+                                        ?>
+                                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+                                        <?php
+                                        break;
+                                    case 2:
+                                        ?>
+                                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+                                        <?php
+                                        break;
+                                    default:
+                                        ?>
+                                        <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+                                        <?php
+                                        break;
+                                endswitch;
+                                ?>
+                            </div>
 
 
                             <label class="col-md-4"><b>Дата рождение:</b></label>
@@ -118,9 +154,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 (
                                     ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
                                     IFNULL($pl, 0) +
-                                    (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) +
-                                    (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) +
-                                    (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type = 3)
+                                    (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5))
                                 )
                                  'balance'
                             FROM users us
@@ -248,39 +282,45 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 </div>
             <?php endif; ?>
 
-            <div class="col-md-12">
-                <div class="text-right">
-                    <?php
-                    if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
-                        $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-user_id="'.$patient->id.'"';
-                        $button_inner = "Выписать";
-                    }else {
-                        $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-user_id="'.$patient->id.'"';
-                        $button_inner = "Завершить";
-                    }
-                    ?>
-                    <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
-                        <i class="icon-paste2"></i> <?= $button_inner ?>
-                    </button>
-                </div>
-            </div>
+            <?php if ($activity): ?>
 
-            <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
+                <div class="col-md-12">
+                    <div class="text-right">
+                        <?php
+                        if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
+                            $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-user_id="'.$patient->id.'"';
+                            $button_inner = "Выписать";
+                        }else {
+                            $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-user_id="'.$patient->id.'"';
+                            $button_inner = "Завершить";
+                        }
+                        ?>
+                        <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                            <i class="icon-paste2"></i> <?= $button_inner ?>
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
+
+            <?php endif; ?>
 
         </div>
 
     </div>
 
 </div>
-<script type="text/javascript">
-    $( document ).ready(function() {
-        $('.cl_btn_balance').click(function(events) {
-            if (document.getElementById('id_selector_balance').dataset.balance_status != 1) {
-                new Noty({
-                    text: '<strong>Предупреждение!</strong><br>У пациента недостаточно средств.',
-                    type: 'error'
-                }).show();
-            }
+<?php if ($activity): ?>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            $('.cl_btn_balance').click(function(events) {
+                if (document.getElementById('id_selector_balance').dataset.balance_status != 1) {
+                    new Noty({
+                        text: '<strong>Предупреждение!</strong><br>У пациента недостаточно средств.',
+                        type: 'error'
+                    }).show();
+                }
+            });
         });
-    });
-</script>
+    </script>
+<?php endif; ?>

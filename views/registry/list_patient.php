@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(2);
+is_auth([2, 32]);
 $header = "Список пациентов";
 ?>
 <!DOCTYPE html>
@@ -11,7 +11,7 @@ $header = "Список пациентов";
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
- 
+
 	<!-- Page content -->
 	<div class="page-content">
 		<!-- Main sidebar -->
@@ -72,7 +72,15 @@ $header = "Список пациентов";
 								<tbody id="search_display">
 									<?php
 									$i = 1;
-									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC") as $row) {
+									$count_elem = 20;
+
+				                	$count = ceil(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem);
+
+				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
+
+				                	$offset = intval($_GET['of']) * $count_elem ;
+
+									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC LIMIT $count_elem OFFSET $offset ") as $row) {
 										?>
 										<tr>
 											<td><?= addZero($row['id']) ?></td>
@@ -180,6 +188,8 @@ $header = "Список пациентов";
 					</div>
 
 				</div>
+
+				<?php pagination_page($count, $count_elem, 4); ?>
 
 			</div>
             <!-- /content area -->

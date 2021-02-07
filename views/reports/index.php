@@ -88,8 +88,16 @@ $header = "Рабочий стол";
                     <?php endif; ?>
                     <!-- end -->
 
+                    <!-- Регистратура -->
+                    <?php if (permission([2, 8, 32])): ?>
+                        <a href="<?= viv('reports/registry/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Регистратура</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Регистратура</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
                     <!-- Касса -->
-                    <?php if (permission([3, 8])): ?>
+                    <?php if (permission([3, 8, 32])): ?>
                         <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Касса</button>

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(3);
+is_auth([3, 32]);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
     $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
@@ -31,7 +31,7 @@ if ($_GET['pk']) {
     }
     // prit($price);
     ?>
-    <div class="table-responsive mt-3">
+    <div class="table-responsive mt-3" id="check_detail">
         <table class="table table-hover">
             <thead>
                 <tr class="bg-dark">
@@ -95,6 +95,11 @@ if ($_GET['pk']) {
                         <td class="text-right"><?= number_format($row['count'] * $row['item_cost']) ?></td>
                     </tr>
                 <?php endforeach; ?>
+
+                <tr class="bg-dark">
+                    <td colspan="3" class="text-right">Итого:</td>
+                    <td><?= number_format($price['balance'] + $price_cost) ?></td>
+                </tr>
 
             </tbody>
         </table>

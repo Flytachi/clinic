@@ -156,6 +156,7 @@ $header = "Отчёт диагностики по услугам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
+
 					$sql = "SELECT
 								vs.accept_date,
 								(SELECT title FROM division WHERE id=vs.division_id) 'division',
@@ -168,7 +169,8 @@ $header = "Отчёт диагностики по услугам";
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 10";
+
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";

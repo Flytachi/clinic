@@ -96,26 +96,11 @@ $header = "Анализы";
                                                 ?>
                                             </td>
                                             <td>
-												<?php
-												switch ($row['standart_type']) {
-													case 1:
-														echo $row['standart_min']." ".$row['standart_sign']." ".$row['standart_max'];
-														break;
-													case 2:
-														if ($row['standart_fun'] == 2) {
-															echo "Положительный (+)";
-														}else {
-															echo "Отрицательный (-)";
-														};
-														break;
-													case 3:
-														echo "Жен (".$row['standart_sex0_min']." ".$row['standart_sex0_sign']." ".$row['standart_sex0_max'].") <br>";
-														echo "Муж (".$row['standart_sex1_min']." ".$row['standart_sex1_sign']." ".$row['standart_sex1_max'].")";
-														break;
-												}
-												?>
+												<?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
 											</td>
-											<td><?= $row['unit'] ?></td>
+											<td>
+												<?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
+											</td>
                                             <td><?= ($row['status']) ? "Активный" : "Не активный" ?></td>
                                             <td>
 												<div class="list-icons">

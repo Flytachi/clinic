@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth(5);
+is_auth();
 $header = "Завершёный пациенты";
 ?>
 <!DOCTYPE html>

@@ -145,7 +145,6 @@ $header = "Отчёт лаборатории по услугам";
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 					$sql = "SELECT
 								vs.accept_date,
-								(SELECT title FROM division WHERE id=vs.division_id) 'division',
 								vp.item_name,
 								vs.parent_id,
 								vs.direction,
@@ -201,8 +200,8 @@ $header = "Отчёт лаборатории по услугам";
 	                                <thead>
 	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>
+											<th style="width: 10%">Id</th>
 											<th style="width: 11%">Дата проведения</th>
-				                            <th>Отдел</th>
 				                            <th>Услуга</th>
 											<th>Специалист</th>
 				                            <th style="width: 10%">Тип визита</th>
@@ -214,8 +213,8 @@ $header = "Отчёт лаборатории по услугам";
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
 												<td><?= $i++ ?></td>
+												<td><?= $row['user_id'] ?></td>
 												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['division'] ?></td>
 												<td><?= $row['item_name'] ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>

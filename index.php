@@ -42,6 +42,12 @@ if ($_SESSION['session_id'] == "master") {
         case 12:
             render('physio/index');
             break;
+        case 13:
+            render('manipulation/index');
+            break;
+        case 32:
+            render('registry/index');
+            break;
     endswitch;
 }
 ?>

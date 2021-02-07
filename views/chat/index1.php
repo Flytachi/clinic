@@ -419,21 +419,24 @@ $header = "Пациент";
 
     </script>
 
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin="anonymous"></script>
+   <!--  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-	<script src="../../node_modules/socket.io/client-dist/socket.io.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.1/socket.io.js" crossorigin="anonymous"></script> -->
+
+	<script src="<?= stack("vendors/react/react.development.js") ?>"></script>
+	<script src="<?= stack("vendors/react/react-dom.development.js") ?>"></script>
+	<script src="<?= stack("vendors/react/babel.min.js") ?>"></script>
+	<script src="<?= stack("vendors/react/socketIo-client.js") ?>"></script>
+
+	<script src="../../node_modules/socket.io/client-dist/socket.io.min.js"></script>
+
 
     <script type="text/babel">
 
     	let element= <textarea name="enter-message" class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
 
-		let chat = io.connect('example.com/chat', {
-          withCredentials: true,
-          extraHeaders: {
-            "my-custom-header": "abcd"
-          }
-        });
+		let chat = io.connect('http://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>/chat',{ transports: ["websocket"] });
 
 		chat.emit('joinRoom', {'id' : id});
 
@@ -470,7 +473,7 @@ $header = "Пациент";
 			}
 		  render() {
 		    return (
-		      <textarea id={this.state.id} name="enter-message" onKeyPress={this.sendMessage} class="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
+		      <textarea id={this.state.id} name="enter-message" onKeyPress={this.sendMessage} className="form-control mb-3" rows="3" cols="1" placeholder="Enter your message..."></textarea>
 		    );
 		  }
 		}
