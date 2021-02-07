@@ -1645,11 +1645,9 @@ class VisitFailure extends Model
 
     public function clean()
     {
-        global $db;
-        
-        // $this->post = Mixin\clean_form($this->post);
-        // $this->post = Mixin\to_null($this->post);
-        // return True;
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
 
