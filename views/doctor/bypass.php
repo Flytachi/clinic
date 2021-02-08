@@ -42,10 +42,17 @@ if ($grant_id == $_SESSION['session_id']) {
     </div>
     <!-- /circle empty -->
 
-    <?php if (permission(5)): ?>
-        <?php BypassDateModel::table_form_doc() ?>
-    <?php elseif (permission(7)): ?>
-        <?php BypassDateModel::table_form_nurce() ?>
+    <?php if ($activity): ?>
+        <?php if (permission(5)): ?>
+            <?php BypassDateModel::table_form_doc() ?>
+        <?php elseif (permission(7)): ?>
+            <?php BypassDateModel::table_form_nurce() ?>
+        <?php endif; ?>
+    <?php else: ?>
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold">Внимание!</span> ведется разработка.
+        </div>
     <?php endif; ?>
 
 </div>

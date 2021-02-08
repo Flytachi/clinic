@@ -64,6 +64,17 @@ $header = "Пациент";
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Состояние пациента</h5>
+								<?php if ($activity): ?>
+									<?php if (permission(7)): ?>
+										<div class="header-elements">
+											<div class="list-icons">
+												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+													<i class="icon-plus22"></i>Добавить
+												</a>
+											</div>
+										</div>
+									<?php endif; ?>
+								<?php endif; ?>
 							</div>
 
 							<div class="table-responsive">
@@ -131,6 +142,24 @@ $header = "Пациент";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<?php if ($activity): ?>
+		<?php if (permission(7)): ?>
+			<div id="modal_add" class="modal fade" tabindex="-1">
+				<div class="modal-dialog">
+					<div class="modal-content border-3 border-info">
+						<div class="modal-header bg-info">
+							<h5 class="modal-title">Добавить примечание</h5>
+							<button type="button" class="close" data-dismiss="modal">×</button>
+						</div>
+
+						<?= PatientStatsModel::form() ?>
+
+					</div>
+				</div>
+			</div>
+		<?php endif; ?>
+	<?php endif; ?>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
