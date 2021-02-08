@@ -26,17 +26,19 @@ if (!isset($_GET['type'])) {
     <div class="card border-1 border-<?= $color ?>">
         <div class="card-header header-elements-inline alpha-<?= $color ?>">
             <h5 class="card-title">Динамика показателей</h5>
-            <div class="header-elements">
-                <div class="list-icons">
-                    <?php if (level() == 11): ?>
-                        <?php if (!$patient->completed or ($patient->completed and $_GET['type'] == 1)): ?>
-                            <a class="list-icons-item text-success mr-2" data-toggle="modal" data-target="#modal_add">
-                                <i class="icon-plus22"></i>Добавить
-                            </a>
+            <?php if ($activity): ?>
+                <div class="header-elements">
+                    <div class="list-icons">
+                        <?php if (level() == 11): ?>
+                            <?php if (!$patient->completed or ($patient->completed and $_GET['type'] == 1)): ?>
+                                <a class="list-icons-item text-success mr-2" data-toggle="modal" data-target="#modal_add">
+                                    <i class="icon-plus22"></i>Добавить
+                                </a>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
+                    </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <div class="card-body">
@@ -73,7 +75,7 @@ if (!isset($_GET['type'])) {
 
         <div class="card-header header-elements-inline">
             <h5 class="card-title">Персонал</h5>
-            <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+            <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
                 <div class="header-elements">
                     <div class="list-icons">
                         <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_member">
@@ -89,7 +91,7 @@ if (!isset($_GET['type'])) {
                 <thead>
                     <tr class="bg-info">
                         <th>ФИО</th>
-                        <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+                        <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
                             <th class="text-right">Действия</th>
                         <?php endif; ?>
                     </tr>
@@ -99,7 +101,7 @@ if (!isset($_GET['type'])) {
                         <?php foreach ($db->query("SELECT * FROM operation_member WHERE operation_id = $patient->pk") as $row): ?>
                             <tr>
                                 <td><?= get_full_name($row['member_id']) ?></td>
-                                <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+                                <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
                                     <td class="text-right">
                                         <a href="<?= del_url($row['id'], 'VisitMemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить члена персонала?')" class="btn btn-outline-danger btn-sm legitRipple"><i class="icon-trash"></i></a>
                                     </td>
@@ -117,15 +119,17 @@ if (!isset($_GET['type'])) {
 
         <div class="card-header header-elements-inline">
             <h5 class="card-title">Операционный осмотр</h5>
-            <?php if (level() == 5): ?>
-                <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id'] and (!$patient->completed or ($patient->completed and $_GET['type'] == 1))): ?>
-                    <div class="header-elements">
-                        <div class="list-icons">
-                            <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_inspection">
-                                <i class="icon-plus22"></i>Осмотр
-                            </a>
+            <?php if ($activity): ?>
+                <?php if (level() == 5): ?>
+                    <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id'] and (!$patient->completed or ($patient->completed and $_GET['type'] == 1))): ?>
+                        <div class="header-elements">
+                            <div class="list-icons">
+                                <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_inspection">
+                                    <i class="icon-plus22"></i>Осмотр
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             <?php endif; ?>
         </div>
@@ -167,16 +171,18 @@ if (!isset($_GET['type'])) {
 
         <div class="card-header header-elements-inline">
             <h5 class="card-title">Осмотр Анестезиолога</h5>
-            <?php if (level() == 11): ?>
-                <div class="header-elements">
-                    <div class="list-icons">
-                        <?php if (!$patient->completed or ($patient->completed and $_GET['type'] == 1)): ?>
-                            <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_inspection_anest">
-                                <i class="icon-plus22"></i>Осмотр
-                            </a>
-                        <?php endif; ?>
+            <?php if ($activity): ?>
+                <?php if (level() == 11): ?>
+                    <div class="header-elements">
+                        <div class="list-icons">
+                            <?php if (!$patient->completed or ($patient->completed and $_GET['type'] == 1)): ?>
+                                <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_inspection_anest">
+                                    <i class="icon-plus22"></i>Осмотр
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
@@ -217,63 +223,64 @@ if (!isset($_GET['type'])) {
 
 </div>
 
+<?php if ($activity): ?>
+    <div id="modal_add" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-3 border-info">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title">Добавить примечание</h5>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
 
-<div id="modal_add" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content border-3 border-info">
-            <div class="modal-header bg-info">
-                <h5 class="modal-title">Добавить примечание</h5>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <?= OperationStatsModel::form() ?>
+
             </div>
-
-            <?= OperationStatsModel::form() ?>
-
         </div>
     </div>
-</div>
 
 
-<div id="modal_add_inspection" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info">
-                <h6 class="modal-title">Осмотр</h6>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div id="modal_add_inspection" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h6 class="modal-title">Осмотр</h6>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <?php OperationInspectionModel::form() ?>
+
             </div>
-
-            <?php OperationInspectionModel::form() ?>
-
         </div>
     </div>
-</div>
 
-<div id="modal_add_inspection_anest" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info">
-                <h6 class="modal-title">Осмотр</h6>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div id="modal_add_inspection_anest" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h6 class="modal-title">Осмотр</h6>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <?php OperationInspectionModel::form_anest() ?>
+
             </div>
-
-            <?php OperationInspectionModel::form_anest() ?>
-
         </div>
     </div>
-</div>
 
-<div id="modal_add_member" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content border-3 border-info">
-            <div class="modal-header bg-info">
-                <h5 class="modal-title">Добавить примечание</h5>
-                <button type="button" class="close" data-dismiss="modal">×</button>
+    <div id="modal_add_member" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content border-3 border-info">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title">Добавить примечание</h5>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+                <?= OperationMemberModel::form() ?>
+
             </div>
-
-            <?= OperationMemberModel::form() ?>
-
         </div>
     </div>
-</div>
+<?php endif; ?>
 
 <div id="modal_show" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-lg">

@@ -61,7 +61,8 @@ $header = "Амбулаторные пациенты";
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
+										<th>Дата рождения</th>
+										<th>Дата приёма</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
                                         <th class="text-center" style="width:300px">Действия</th>
@@ -69,40 +70,17 @@ $header = "Амбулаторные пациенты";
                                 </thead>
                                 <tbody>
                                     <?php
-									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, vs.parent_id, vs.assist_id,
-												(
-													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
-												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
-									} else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint,
-												(
-													(YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
-												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
-									}
+									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, us.dateBith, vs.accept_date
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
+
                                     foreach($db->query($sql) as $row) {
-										if (division_assist() == 2) {
-											if ($row['parent_id'] == $row['assist_id']) {
-												$tr = "";
-											}elseif ($row['parent_id'] == $_SESSION['session_id']) {
-												$tr = "table-success";
-											}else {
-												$tr = "table-danger";
-											}
-										}else {
-											$tr = "";
-										}
                                         ?>
-                                        <tr class="<?= $tr ?>">
+                                        <tr>
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-											<td><?= $row['age'] ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
                                             <td><?= $row['name']; ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
@@ -112,9 +90,7 @@ $header = "Амбулаторные пациенты";
 												<?php if ($row['complaint']): ?>
 													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
 												<?php endif; ?>
-												<?php if ($tr != "table-danger"): ?>
-													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $row['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
-												<?php endif; ?>
+												<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $row['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
                                             </td>
                                         </tr>
                                         <?php

@@ -500,9 +500,31 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="<?= viv('maindoctor/stationary_current') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Стационарные пациенты</span>
+                                    <?php
+                                    $con_one = $db->query("SELECT id FROM visit WHERE service_id = 1 AND bed_id IS NOT NULL AND completed IS NULL")->rowCount();
+                                    if ($con_one) {
+                                        ?>
+                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_one?></span>
+                                        <?php
+                                    }
+                                    ?>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('maindoctor/list_operation') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
                                     <span>Операционные пациенты</span>
+                                    <?php
+                                    $con_one = $db->query("SELECT id FROM operation WHERE completed IS NULL")->rowCount();
+                                    if ($con_one) {
+                                        ?>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">
