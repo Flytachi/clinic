@@ -6,33 +6,33 @@ class Model
     protected $post;
     protected $table = '';
 
-    function set_post($post)
+    public function set_post($post)
     {
         $this->post = $post;
     }
 
-    function get_post()
+    public function get_post()
     {
         return $this->post;
     }
 
-    function clear_post()
+    public function clear_post()
     {
         unset($this->post);
     }
 
 
-    function set_table($table)
+    public function set_table($table)
     {
         $this->table = $table;
     }
 
-    function get_table()
+    public function get_table()
     {
         return $this->table;
     }
 
-    function form(int $pk = null)
+    public function form(int $pk = null)
     {
         /* Пример:
 
@@ -60,7 +60,7 @@ class Model
         */
     }
 
-    function get(int $pk)
+    public function get(int $pk)
     {
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
@@ -69,7 +69,7 @@ class Model
         return $this->form($object['id']);
     }
 
-    function get_or_404(int $pk)
+    public function get_or_404(int $pk)
     {
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
@@ -82,7 +82,7 @@ class Model
 
     }
 
-    function save()
+    public function save()
     {
         if($this->clean()){
             $object = Mixin\insert($this->table, $this->post);
@@ -93,7 +93,7 @@ class Model
         }
     }
 
-    function update()
+    public function update()
     {
         if($this->clean()){
             $pk = $this->post['id'];
@@ -106,14 +106,14 @@ class Model
         }
     }
 
-    function clean()
+    public function clean()
     {
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
     }
 
-    function delete(int $pk)
+    public function delete(int $pk)
     {
         $object = Mixin\delete($this->table, $pk);
         if ($object) {
@@ -124,12 +124,12 @@ class Model
 
     }
 
-    function stop()
+    public function stop()
     {
         exit;
     }
 
-    function mod($mod=null)
+    public function mod($mod=null)
     {
         switch ($mod) {
             case "test":
@@ -143,12 +143,12 @@ class Model
         exit;
     }
 
-    function success()
+    public function success()
     {
         echo 1;
     }
 
-    function error($message)
+    public function error($message)
     {
         echo $message;
     }
