@@ -2,6 +2,10 @@
 session_start();
 require_once 'functions/connection.php';
 
+// ini_set('error_reporting', E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+
 // Settings debugger
 
 if ($ini['GLOBAL_SETTING']['DEBUG']) {
