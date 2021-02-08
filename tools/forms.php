@@ -1634,11 +1634,11 @@ class VisitFailure extends Model
     {
         if($this->clean()){
             $pk = $this->post['id'];
-            // unset($this->post['id']);
-            // $object = Mixin\update($this->table, $this->post, $pk);
-            // if (!intval($object)){
-            //     $this->error($object);
-            // }
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
             $this->success($pk);
         }
     }
