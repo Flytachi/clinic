@@ -52,5 +52,5 @@
 	<script src="<?= stack("vendors/js/scriptJS/socket.js") ?>"></script>
 </head>
 <audio id="audio">
-    <source src="../../static/audio/music" type="audio/mpeg">
+    <source src="<?= stack("/audio/music") ?>" type="audio/mpeg">
 </audio>
