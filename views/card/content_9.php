@@ -38,6 +38,7 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
+						
 				        <?php include "content_tabs.php"; ?>
 
 						<div class="row">

@@ -187,7 +187,7 @@ $patient->curent_date = date('Y-m-d H:i');
                                 </div>
 
                                 <label class="col-md-4"><b>Размещён:</b></label>
-                                <div class="col-md-8 text-right">
+                                <div class="col-md-8 text-right" id="patient_location">
                                     <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
                                 </div>
 
@@ -284,24 +284,36 @@ $patient->curent_date = date('Y-m-d H:i');
 
             <?php if ($activity): ?>
 
-                <div class="col-md-12">
-                    <div class="text-right">
-                        <?php
-                        if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
-                            $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-user_id="'.$patient->id.'"';
-                            $button_inner = "Выписать";
-                        }else {
-                            $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-user_id="'.$patient->id.'"';
-                            $button_inner = "Завершить";
-                        }
-                        ?>
-                        <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
-                            <i class="icon-paste2"></i> <?= $button_inner ?>
-                        </button>
-                    </div>
-                </div>
+                <?php if (permission(5)): ?>
 
-                <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
+                    <div class="col-md-12">
+                        <div class="text-right">
+                            <?php
+                            if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
+                                $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-user_id="'.$patient->id.'"';
+                                $button_inner = "Выписать";
+                            }else {
+                                $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-user_id="'.$patient->id.'"';
+                                $button_inner = "Завершить";
+                            }
+                            ?>
+                            <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                                <i class="icon-paste2"></i> <?= $button_inner ?>
+                            </button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
+
+                <?php elseif (permission(7)): ?>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+                            <button data-grant_id="<?= $patient->grant_id ?>" data-parent="<?= get_full_name($_SESSION['session_id']) ?>" id="sweet_call_nurce" data-btn="Вызвать" data-question="Вы точно хотите срочно вызвать врача!" class="btn btn-outline-danger btn-md">Вызвать</button>
+                        </div>
+                    </div>
+
+                <?php endif; ?>
 
             <?php endif; ?>
 
