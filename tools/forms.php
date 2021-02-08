@@ -1576,7 +1576,7 @@ class LaboratoryUpStatus extends Model
     }
 
 }
-
+/*
 class VisitFailure extends Model
 {
     public $table = 'visit';
@@ -1649,7 +1649,7 @@ class VisitFailure extends Model
     }
 
 }
-
+*/
 class BypassDateModel extends Model
 {
     public $table = 'bypass_date';
