@@ -43,15 +43,17 @@ $header = "Пациент";
 
 					   		<div class="card-header header-elements-inline">
 					   			<h6 class="card-title">Расходные материалы</h6>
-								<?php if (permission(7)): ?>
-									<div class="header-elements">
-	                                   	<div class="list-icons">
-	                                       	<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-	                                           	<i class="icon-plus22"></i>Добавить
-	                                       	</a>
-	                                   	</div>
-	                               	</div>
-							    <?php endif; ?>
+								<?php if ($activity): ?>
+									<?php if (permission(7)): ?>
+										<div class="header-elements">
+		                                   	<div class="list-icons">
+		                                       	<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
+		                                           	<i class="icon-plus22"></i>Добавить
+		                                       	</a>
+		                                   	</div>
+		                               	</div>
+								    <?php endif; ?>
+								<?php endif; ?>
 						   	</div>
 
 						   	<div class="table-responsive">
@@ -129,20 +131,22 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-    <?php if (permission(7)): ?>
-		<div id="modal_add" class="modal fade" tabindex="-1">
-	        <div class="modal-dialog modal-lg">
-	            <div class="modal-content border-3 border-info">
-	                <div class="modal-header bg-info">
-	                    <h5 class="modal-title">Добавить расходный материал</h5>
-	                    <button type="button" class="close" data-dismiss="modal">×</button>
-	                </div>
+    <?php if ($activity): ?>
+		<?php if (permission(7)): ?>
+			<div id="modal_add" class="modal fade" tabindex="-1">
+		        <div class="modal-dialog modal-lg">
+		            <div class="modal-content border-3 border-info">
+		                <div class="modal-header bg-info">
+		                    <h5 class="modal-title">Добавить расходный материал</h5>
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                </div>
 
-	                <?= StoragePreparatForm::form() ?>
+		                <?= StoragePreparatForm::form() ?>
 
-	            </div>
-	        </div>
-	    </div>
+		            </div>
+		        </div>
+		    </div>
+	    <?php endif; ?>
     <?php endif; ?>
 
     <!-- Footer -->

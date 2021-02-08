@@ -3,12 +3,14 @@ if ($_GET['pk']) {
     $sql_con = "vs.id = {$_GET['pk']}";
     $agr = "?pk=".$_GET['pk'];
     $activity = False;
+    $sql = "SELECT * FROM visit vs
+                LEFT JOIN users us ON (vs.user_id = us.id)
+            WHERE $sql_con ORDER BY add_date ASC";
 } else {
     $sql_con = "us.id = {$_GET['id']}";
     $agr = "?id=".$_GET['id'];
     $activity = True;
 }
-
 $sql = "SELECT
             us.id, vs.id 'visit_id', vs.grant_id,
             us.dateBith, us.numberPhone, us.gender,
@@ -22,9 +24,9 @@ $sql = "SELECT
             LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
             LEFT JOIN wards wd ON(wd.id=bd.ward_id)
         WHERE $sql_con ORDER BY add_date ASC";
-
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 $patient->curent_date = date('Y-m-d H:i');
+// prit($patient);
 ?>
 <div class="card border-1 border-info">
 

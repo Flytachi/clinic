@@ -38,7 +38,7 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
-						
+
 				        <?php include "content_tabs.php"; ?>
 
 						<div class="row">
@@ -94,8 +94,10 @@ $header = "Пациент";
 																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>&type=1')" class="btn btn-outline-success btn-sm">После</button>
 															<?php else: ?>
 																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
-																<?php if ($patient->grant_id == $_SESSION['session_id'] and strtotime($row['oper_date']) <= strtotime(date('Y-m-d H:i'))): ?>
-																	<button onclick="Finish_date('<?= $row['id'] ?>', '<?= $row['oper_date'] ?>')" class="btn btn-outline-success btn-sm">Завершить</a>
+																<?php if ($activity): ?>
+																	<?php if ($patient->grant_id == $_SESSION['session_id'] and strtotime($row['oper_date']) <= strtotime(date('Y-m-d H:i'))): ?>
+																		<button onclick="Finish_date('<?= $row['id'] ?>', '<?= $row['oper_date'] ?>')" class="btn btn-outline-success btn-sm">Завершить</a>
+																	<?php endif; ?>
 																<?php endif; ?>
 															<?php endif; ?>
 														</td>
