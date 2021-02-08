@@ -5,6 +5,7 @@ $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbna
 // Site Constants
 date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
 // print_r(PDO::getAvailableDrivers());
+// prit($ini);
 try {
     $db = new PDO($DNS, $ini['DATABASE']['USER'], $ini['DATABASE']['PASS']);
     $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
