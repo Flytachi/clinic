@@ -1576,7 +1576,7 @@ class LaboratoryUpStatus extends Model
     }
 
 }
-
+/*
 class VisitFailure extends Model
 {
     public $table = 'visit';
@@ -1643,21 +1643,13 @@ class VisitFailure extends Model
         }
     }
 
-    public function clean()
-    {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        return True;
-    }
-
-
     public function success($pk)
     {
         echo "#PatientFailure_tr_$pk";
     }
 
 }
-
+*/
 class BypassDateModel extends Model
 {
     public $table = 'bypass_date';
