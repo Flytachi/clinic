@@ -1016,6 +1016,7 @@ class VisitPriceModel extends Model
                         url: $('#<?= __CLASS__ ?>_form').attr("action"),
                         data: $('#<?= __CLASS__ ?>_form').serializeArray(),
                         success: function (result) {
+                            // alert(result);
                             var result = JSON.parse(result);
 
                             if (result.status == "success") {
@@ -1130,8 +1131,14 @@ class VisitPriceModel extends Model
                 $this->error("Ошибка в price transfer");
             }
         }
+        if ($stat == 1) {
+            $stat = 1;
+        } else {
+            $stat = null;
+        }
 
-        $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+
+        $object = Mixin\update($this->table1, array('status' => $stat, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
         if (!intval($object)){
             $this->error($object);
         }
@@ -1174,16 +1181,18 @@ class VisitPriceModel extends Model
         if ($balance['balance_transfer'] != 0) {
             $this->post['price_transfer'] = $balance['balance_transfer'];
         }
-        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vs.priced_date IS NULL ORDER BY vp.item_cost") as $row) {
+        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
             $this->price($row, 0);
         }
         $this->up_invest();
+        Mixin\update($this->table1, array('status' => null), $this->ti);
     }
 
     public function add_bed()
     {
         global $db;
-        $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1")->fetch();
+        $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1 AND priced_date IS NULL AND completed IS NOT NULL")->fetch();
+        $this->ti = $ti['id'];
         $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
         $post['visit_id'] = $ti['id'];
         $post['user_id'] = $this->user_pk;
@@ -1192,7 +1201,6 @@ class VisitPriceModel extends Model
         $post['item_id'] = $ti['bed_id'];
         $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
         $post['item_cost'] = $this->bed_cost;
-        $post['price_date'] = date('Y-m-d H:i:s');
         $object = Mixin\insert($this->table, $post);
         if (!intval($object)) {
             $this->error($object);

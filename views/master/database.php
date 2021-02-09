@@ -62,7 +62,7 @@ $header = "Контроль базы данных";
                                     <?php foreach ($scanned_files as $value): ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
-                                            <td><?= substr($value, 3, 10); ?></td>
+                                            <td><?= substr($value, 0, 4); ?></td>
                                             <td>
                                                 <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>
                                                 <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 0)" class="list-icons-up text-danger"><i class="icon-arrow-down16"></i></a>
