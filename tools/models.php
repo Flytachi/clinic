@@ -243,9 +243,9 @@ class VisitModel extends Model
                     <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
                         <?php
-                            foreach ($db->query("SELECT * FROM users WHERE user_level = 15 AND status IS NULL ORDER BY id DESC") as $row) {
+                            foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row) {
                                 ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                                <option value="<?= $row['id'] ?>" class="text-success"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
                                 <?php
                             }
                         ?>
