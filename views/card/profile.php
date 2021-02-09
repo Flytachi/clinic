@@ -33,7 +33,7 @@ if ($_GET['pk']) {
 }
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-prit($patient);
+// prit($patient);
 ?>
 <div class="card border-1 border-info">
 
