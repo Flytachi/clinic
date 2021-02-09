@@ -13,7 +13,7 @@ if ($_GET['pk']) {
                 LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NOT NULL)
                 LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
             WHERE vs.id = {$_GET['pk']} ORDER BY add_date ASC";
-} else {
+} else if ($_GET['id']){
     $agr = "?id=".$_GET['id'];
     $activity = True;
     $sql = "SELECT
@@ -29,7 +29,6 @@ if ($_GET['pk']) {
                 LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
                 LEFT JOIN wards wd ON(wd.id=bd.ward_id)
             WHERE us.id = {$_GET['id']} ORDER BY add_date ASC";
-    $patient->curent_date = date('Y-m-d H:i');
 }
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
