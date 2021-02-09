@@ -56,11 +56,8 @@ $header = "Инвестиции ". addZero($_GET['pk']);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $i = 1;
-									foreach($db->query("SELECT *, balance_cash+balance_card+balance_transfer 'balance' FROM investment WHERE user_id = {$_GET['pk']} ORDER BY add_date DESC") as $row) {
-                                        ?>
-                                        <tr>
+									<?php $i=1; foreach ($db->query("SELECT *, balance_cash+balance_card+balance_transfer 'balance' FROM investment WHERE user_id = {$_GET['pk']} ORDER BY add_date DESC") as $row): ?>
+										<tr class="<?= (empty($row['status'])) ? "table-danger" : "" ?>">
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                             <td><?= $row['balance'] ?></td>
@@ -69,9 +66,7 @@ $header = "Инвестиции ". addZero($_GET['pk']);
 											<td><?= $row['balance_transfer'] ?></td>
 											<td><?= get_full_name($row['pricer_id']) ?></td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>

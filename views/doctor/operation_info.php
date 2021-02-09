@@ -11,6 +11,8 @@ $sql = "SELECT
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
+$activity = $_GET['activity'];
+
 if (!isset($_GET['type'])) {
     $color = "info";
 }else {

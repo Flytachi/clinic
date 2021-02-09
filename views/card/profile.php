@@ -1,31 +1,38 @@
 <?php
 if ($_GET['pk']) {
-    $sql_con = "vs.id = {$_GET['pk']}";
     $agr = "?pk=".$_GET['pk'];
     $activity = False;
-    $sql = "SELECT * FROM visit vs
-                LEFT JOIN users us ON (vs.user_id = us.id)
-            WHERE $sql_con ORDER BY add_date ASC";
+    $sql = "SELECT
+                us.id, vs.id 'visit_id', vs.grant_id,
+                us.dateBith, us.numberPhone, us.gender,
+                us.region, us.residenceAddress,
+                us.registrationAddress, vs.add_date, vs.accept_date,
+                vs.direction, vs.add_date, vs.discharge_date,
+                vs.complaint, vs.status, vp.item_name, vs.completed, vp.item_cost
+            FROM users us
+                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NOT NULL)
+                LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
+            WHERE vs.id = {$_GET['pk']} ORDER BY add_date ASC";
 } else {
-    $sql_con = "us.id = {$_GET['id']}";
     $agr = "?id=".$_GET['id'];
     $activity = True;
+    $sql = "SELECT
+                us.id, vs.id 'visit_id', vs.grant_id,
+                us.dateBith, us.numberPhone, us.gender,
+                us.region, us.residenceAddress,
+                us.registrationAddress, vs.accept_date,
+                vs.direction, vs.add_date, vs.discharge_date,
+                wd.floor, wd.ward, bd.bed, vs.complaint,
+                vs.status
+            FROM users us
+                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NULL)
+                LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
+                LEFT JOIN wards wd ON(wd.id=bd.ward_id)
+            WHERE us.id = {$_GET['id']} ORDER BY add_date ASC";
+    $patient->curent_date = date('Y-m-d H:i');
 }
-$sql = "SELECT
-            us.id, vs.id 'visit_id', vs.grant_id,
-            us.dateBith, us.numberPhone, us.gender,
-            us.region, us.residenceAddress,
-            us.registrationAddress, vs.accept_date,
-            vs.direction, vs.add_date, vs.discharge_date,
-            wd.floor, wd.ward, bd.bed, vs.complaint,
-            vs.status
-        FROM users us
-            LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NULL)
-            LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
-            LEFT JOIN wards wd ON(wd.id=bd.ward_id)
-        WHERE $sql_con ORDER BY add_date ASC";
+
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-$patient->curent_date = date('Y-m-d H:i');
 // prit($patient);
 ?>
 <div class="card border-1 border-info">
@@ -138,35 +145,46 @@ $patient->curent_date = date('Y-m-d H:i');
 
                 </fieldset>
 
-                <?php
-                $class_color_add = "text-success";
-                if ($patient->direction) {
-
+                <?php $class_color_add = "text-success"; ?>
+                <?php if ($patient->direction): ?>
+                    <?php
                     // Баланс пациента
                     $pl = 0;
-                    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
-                    foreach ($serv_id as $value) {
-                        $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
-                        foreach ($item_service as $pri_ze) {
-                            $pl += $pri_ze['price'];
+                    if ($activity) {
+                        $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
+                        foreach ($serv_id as $value) {
+                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+                            foreach ($item_service as $pri_ze) {
+                                $pl += $pri_ze['price'];
+                            }
                         }
+                        $sql = "SELECT
+                                    IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
+                                    (
+                                        ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
+                                        IFNULL($pl, 0) +
+                                        (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5))
+                                    )
+                                     'balance'
+                                FROM users us
+                                    LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
+                                    LEFT JOIN beds bd ON(bd.user_id = us.id)
+                                    LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                                    LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
+                                WHERE us.id = $patient->id";
+                        $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+                    } else {
+                        $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
+                        foreach ($serv_id as $value) {
+                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+                            foreach ($item_service as $pri_ze) {
+                                $pl += $pri_ze['price'];
+                            }
+                        }
+                        $price->balance = $pl + $patient->item_cost;
                     }
-                    $sql = "SELECT
-                                IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
-                                (
-                                    ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H') / 24) * bdt.price +
-                                    IFNULL($pl, 0) +
-                                    (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5))
-                                )
-                                 'balance'
-                            FROM users us
-                                LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
-                                LEFT JOIN beds bd ON(bd.user_id = us.id)
-                                LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                                LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                            WHERE us.id = $patient->id";
-                    $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
+                    // prit($price);
                     if ($price->balance >= 0) {
                         $class_card_balance = "text-success";
                         $class_color_add = "cl_btn_balance text-success";
@@ -190,7 +208,11 @@ $patient->curent_date = date('Y-m-d H:i');
 
                                 <label class="col-md-4"><b>Размещён:</b></label>
                                 <div class="col-md-8 text-right" id="patient_location">
-                                    <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
+                                    <?php if ($activity): ?>
+                                        <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
+                                    <?php else: ?>
+                                        <?= $patient->item_name ?>
+                                    <?php endif; ?>
                                 </div>
 
                                 <label class="col-md-4"><b>Дата размещения:</b></label>
@@ -203,15 +225,22 @@ $patient->curent_date = date('Y-m-d H:i');
                         <div class="col-md-6">
                             <div class="form-group row">
 
-                                <label class="col-md-4"><b>Баланс:</b></label>
-                                <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
-                                    <?= number_format($price->balance) ?>
-                                </div>
+                                <?php if ($activity): ?>
+                                    <label class="col-md-4"><b>Баланс:</b></label>
+                                    <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
+                                        <?= number_format($price->balance) ?>
+                                    </div>
+                                <?php else: ?>
+                                    <label class="col-md-4"><b>Прибыль:</b></label>
+                                    <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
+                                        <?= number_format($price->balance) ?>
+                                    </div>
+                                <?php endif; ?>
 
                                 <label class="col-md-3"><b>Прибывание:</b></label>
                                 <div class="col-md-9 text-right">
                                     <?php
-                                    $dr= date_diff(new \DateTime(), new \DateTime($patient->add_date));
+                                    $dr= date_diff(new \DateTime($patient->completed), new \DateTime($patient->add_date));
                                     $end_date = $dr->days + round($dr->h/24);
                                     if ($end_date == 1) {
                                         echo $end_date." день";
@@ -226,23 +255,26 @@ $patient->curent_date = date('Y-m-d H:i');
                                 </div>
 
                                 <label class="col-md-4"><b>Дата выписки:</b></label>
-                                <?php if ($patient->grant_id == $_SESSION['session_id']): ?>
-                                    <div class="col-md-8 text-right text-primary" data-toggle="modal" data-target="#modal_discharge_date">
-                                        <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Назначить дату выписки" ?>
-                                    </div>
+                                <?php if ($activity): ?>
+                                    <?php if ($patient->grant_id == $_SESSION['session_id']): ?>
+                                        <div class="col-md-8 text-right text-primary" data-toggle="modal" data-target="#modal_discharge_date">
+                                            <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Назначить дату выписки" ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="col-md-8 text-right <?= ($patient->discharge_date) ? "text-primary" : "text-danger" ?>">
+                                            <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Не назначено" ?>
+                                        </div>
+                                    <?php endif; ?>
                                 <?php else: ?>
-                                    <div class="col-md-8 text-right <?= ($patient->discharge_date) ? "text-primary" : "text-danger" ?>">
-                                        <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Не назначено" ?>
+                                    <div class="col-md-8 text-right">
+                                        <?= ($patient->completed) ? date('d.m.Y H:i', strtotime($patient->completed)) : "Не выписан" ?>
                                     </div>
                                 <?php endif; ?>
-
                             </div>
                         </div>
 
                     </fieldset>
-                    <?php
-                }
-                ?>
+                <?php endif; ?>
 
                 <?php if (!$patient->direction): ?>
                     <div class="col-md-12">
