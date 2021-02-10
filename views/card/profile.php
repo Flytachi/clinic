@@ -187,7 +187,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         $price->balance = $pl + $patient->item_cost;
                     }
 
-                    if (!$patient->priced_date) {
+                    if (!$activity and !$patient->priced_date) {
                         $price->balance = -$price->balance;
                     }
 
