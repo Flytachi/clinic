@@ -1131,14 +1131,14 @@ class VisitPriceModel extends Model
                 $this->error("Ошибка в price transfer");
             }
         }
-        if ($stat == 1) {
-            $stat = 1;
-        } else {
-            $stat = null;
-        }
+        // if ($stat == 1) {
+        //     $stat = 1;
+        // } else {
+        //     $stat = null;
+        // }
 
 
-        $object = Mixin\update($this->table1, array('status' => $stat, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+        $object = Mixin\update($this->table1, array('status' => $status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
         if (!intval($object)){
             $this->error($object);
         }
