@@ -45,7 +45,7 @@ $header = "Пациент";
 							if ($activity) {
 								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							} else {
-								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL";
+								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1";
 							}
 
 							$table_tr = "table-info";
@@ -89,29 +89,29 @@ $header = "Пациент";
 										</tr>
 									</thead>
 									<tbody>
-										<?php if ($activity): ?>
-											<?php foreach ($db->query($table_sql) as $row): ?>
-												<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
-													<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
-													<td class="text-right">
-														<?php if ($row['report_description']): ?>
-															<?php if ($row['service_id'] == 1): ?>
-																<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
-															<?php else: ?>
-																<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+										<?php foreach ($db->query($table_sql) as $row): ?>
+											<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
+												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
+												<td class="text-right">
+													<?php if ($row['report_description']): ?>
+														<?php if ($row['service_id'] == 1): ?>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+														<?php else: ?>
+															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+															<?php if ($activity): ?>
 																<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 															<?php endif; ?>
-														<?php else: ?>
-															<?php if ($row['service_id'] == 1): ?>
-																<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
-															<?php else: ?>
-																<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
-															<?php endif; ?>
 														<?php endif; ?>
-													</td>
-												</tr>
-											<?php endforeach; ?>
-										<?php endif; ?>
+													<?php else: ?>
+														<?php if ($row['service_id'] == 1): ?>
+															<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
+														<?php else: ?>
+															<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+														<?php endif; ?>
+													<?php endif; ?>
+												</td>
+											</tr>
+										<?php endforeach; ?>
 
 										<?php if ($patient->direction): ?>
 											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
