@@ -1138,7 +1138,7 @@ class VisitPriceModel extends Model
         // }
 
 
-        $object = Mixin\update($this->table1, array('status' => $status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+        $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
         if (!intval($object)){
             $this->error($object);
         }
