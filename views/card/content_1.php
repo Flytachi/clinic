@@ -42,12 +42,17 @@ $header = "Пациент";
 						if ($patient->direction) {
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL";
+							if ($activity) {
+								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+							} else {
+								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL";
+							}
+
 							$table_tr = "table-info";
 						} else {
 							$title = "Осмотр";
 							$table_label = "Мед Услуга";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "";
 						}
 						?>

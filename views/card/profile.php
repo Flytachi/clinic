@@ -10,7 +10,7 @@ if ($_GET['pk']) {
                 vs.direction, vs.add_date, vs.discharge_date,
                 vs.complaint, vs.status, vp.item_name, vs.completed, vp.item_cost
             FROM users us
-                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NOT NULL)
+                LEFT JOIN visit vs ON (vs.user_id = us.id)
                 LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
             WHERE vs.id = {$_GET['pk']} ORDER BY add_date ASC";
 } else if ($_GET['id']){
@@ -25,7 +25,7 @@ if ($_GET['pk']) {
                 wd.floor, wd.ward, bd.bed, vs.complaint,
                 vs.status
             FROM users us
-                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NULL)
+                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.completed IS NULL)
                 LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
                 LEFT JOIN wards wd ON(wd.id=bd.ward_id)
             WHERE us.id = {$_GET['id']} ORDER BY add_date ASC";
