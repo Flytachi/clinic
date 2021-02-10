@@ -76,7 +76,7 @@ $header = "Отчёт диагностики по услугам";
 									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите услугу</option>
 										<?php
-										foreach($db->query('SELECT * from service WHERE user_level = 10') as $row) {
+										foreach($db->query('SELECT * from service WHERE user_level IN(10)') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 											<?php
@@ -90,7 +90,7 @@ $header = "Отчёт диагностики по услугам";
 									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите специалиста</option>
 										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 10') as $row) {
+										foreach($db->query('SELECT * from users WHERE user_level IN(10)') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 											<?php
@@ -156,7 +156,6 @@ $header = "Отчёт диагностики по услугам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-
 					$sql = "SELECT
 								vs.accept_date,
 								(SELECT title FROM division WHERE id=vs.division_id) 'division',
@@ -169,8 +168,7 @@ $header = "Отчёт диагностики по услугам";
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 10";
-
+								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
