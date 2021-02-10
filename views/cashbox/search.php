@@ -12,7 +12,7 @@ switch ($_GET['tab']) {
         }
         foreach($db->query($sql) as $row) {
         ?>
-        <tr onclick="CheckAmb('get_mod.php?pk=<?= $row['id'] ?>')">
+        <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>')">
             <td><?= addZero($row['id']) ?></td>
             <td class="text-center">
                 <a>
@@ -32,7 +32,7 @@ switch ($_GET['tab']) {
         }
         foreach($db->query($sql) as $row) {
         ?>
-        <tr onclick="CheckSt('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
+        <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
             <td><?= addZero($row['id']) ?></td>
             <td class="text-center">
                 <a>
