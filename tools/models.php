@@ -1131,14 +1131,14 @@ class VisitPriceModel extends Model
                 $this->error("Ошибка в price transfer");
             }
         }
-        if ($stat == 1) {
-            $stat = 1;
-        } else {
-            $stat = null;
-        }
+        // if ($stat == 1) {
+        //     $stat = 1;
+        // } else {
+        //     $stat = null;
+        // }
 
 
-        $object = Mixin\update($this->table1, array('status' => $stat, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+        $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
         if (!intval($object)){
             $this->error($object);
         }
@@ -2365,11 +2365,11 @@ class LaboratoryAnalyzeModel extends Model
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
+            <input type="hidden" id="input_end" name="end"></input>
 
             <div class="modal-body">
 
                 <div class="text-right">
-                    <input type="hidden" id="input_end" name="end"></input>
                     <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить</button>
                     <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                 </div>
@@ -2528,7 +2528,7 @@ class LaboratoryAnalyzeModel extends Model
             }
         }
         if ($end) {
-            foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk AND parent_id = {$_SESSION['session_id']} ORDER BY add_date ASC") as $row) {
+            foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk ORDER BY add_date ASC") as $row) {
                 if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$user_pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
                     Mixin\update('users', array('status' => null), $user_pk);
                 }
