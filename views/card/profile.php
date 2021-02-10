@@ -5,15 +5,15 @@ if ($_GET['pk']) {
     $sql = "SELECT
                 us.id, vs.id 'visit_id', vs.grant_id,
                 us.dateBith, us.numberPhone, us.gender,
-                us.region, us.residenceAddress,
+                us.region, us.residenceAddress, vs.priced_date,
                 us.registrationAddress, vs.add_date, vs.accept_date,
                 vs.direction, vs.add_date, vs.discharge_date,
                 vs.complaint, vs.status, vp.item_name, vs.completed, vp.item_cost
             FROM users us
-                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NOT NULL)
+                LEFT JOIN visit vs ON (vs.user_id = us.id)
                 LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
             WHERE vs.id = {$_GET['pk']} ORDER BY add_date ASC";
-} else {
+} else if ($_GET['id']){
     $agr = "?id=".$_GET['id'];
     $activity = True;
     $sql = "SELECT
@@ -23,13 +23,12 @@ if ($_GET['pk']) {
                 us.registrationAddress, vs.accept_date,
                 vs.direction, vs.add_date, vs.discharge_date,
                 wd.floor, wd.ward, bd.bed, vs.complaint,
-                vs.status
+                vs.status, vs.priced_date
             FROM users us
-                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.direction IS NOT NULL AND vs.completed IS NULL)
+                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.completed IS NULL)
                 LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
                 LEFT JOIN wards wd ON(wd.id=bd.ward_id)
             WHERE us.id = {$_GET['id']} ORDER BY add_date ASC";
-    $patient->curent_date = date('Y-m-d H:i');
 }
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -81,7 +80,11 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                         break;
                                     default:
                                         ?>
-                                        <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+                                        <?php if ($patient->priced_date): ?>
+                                            <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+                                        <?php else: ?>
+                                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+                                        <?php endif; ?>
                                         <?php
                                         break;
                                 endswitch;
@@ -182,6 +185,10 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                             }
                         }
                         $price->balance = $pl + $patient->item_cost;
+                    }
+
+                    if (!$patient->priced_date) {
+                        $price->balance = -$price->balance;
                     }
 
                     // prit($price);
