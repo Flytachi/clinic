@@ -387,7 +387,7 @@ function write_excel($table, $file_name = "docs")
 
     //Отправляем заголовки с типом контекста и именем файла
     header("Content-Type:application/vnd.ms-excel");
-    header("Content-Disposition:attachment;filename=$file_name.xlsx'");
+    header("Content-Disposition:attachment;filename=$file_name.xlsx");
 
     //Сохраняем файл с помощью PHPExcel_IOFactory и указываем тип Excel
     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
