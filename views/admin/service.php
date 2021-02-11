@@ -45,7 +45,7 @@ $header = "Услуги";
 		              	<h5 class="card-title">Добавить Услугу</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
-								<a href="../templates/service.xlsx" class="btn" download>Шаблон</a>
+								<a href="<?= download_url('service', 'Service') ?>" class="btn">Шаблон</a>
 		                  	</div>
 		              	</div>
 		          	</div>

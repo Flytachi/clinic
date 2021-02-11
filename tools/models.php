@@ -1960,25 +1960,25 @@ class ServiceModel extends Model
 
     public function clean_excel()
     {
-        if ($this->post['user_level']) {
-            switch ($this->post['user_level']) {
-                case 'A':
-                    $this->post['user_level'] = 1;
-                    break;
-                case 'B':
-                    $this->post['user_level'] = 5;
-                    break;
-                case 'D':
-                    $this->post['user_level'] = 10;
-                    break;
-                case 'L':
-                    $this->post['user_level'] = 6;
-                    break;
-                case 'F':
-                    $this->post['user_level'] = 12;
-                    break;
-            }
-        }
+        // if ($this->post['user_level']) {
+        //     switch ($this->post['user_level']) {
+        //         case 'A':
+        //             $this->post['user_level'] = 1;
+        //             break;
+        //         case 'B':
+        //             $this->post['user_level'] = 5;
+        //             break;
+        //         case 'D':
+        //             $this->post['user_level'] = 10;
+        //             break;
+        //         case 'L':
+        //             $this->post['user_level'] = 6;
+        //             break;
+        //         case 'F':
+        //             $this->post['user_level'] = 12;
+        //             break;
+        //     }
+        // }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
         // $this->mod('test');
         return True;
@@ -1991,28 +1991,30 @@ class ServiceModel extends Model
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
                     $pick = $pirst[$key];
-                    switch ($pick) {
-                        case 'role':
-                            $pick = "user_level";
-                            break;
-                        case 'service':
-                            $pick = "name";
-                            break;
-                    }
+                    // switch ($pick) {
+                    //     case 'role':
+                    //         $pick = "user_level";
+                    //         break;
+                    //     case 'service':
+                    //         $pick = "name";
+                    //         break;
+                    // }
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
                     // prit($this->post);
-                    $object = Mixin\insert($this->table, $this->post);
+                    $object = Mixin\insert_or_update($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);
                     }
+                    // $this->stop();
                 }
             }else {
                 $pirst = $value_p;
                 unset($this->post['template']);
             }
         }
+        // $this->stop();
         $this->success();
     }
 

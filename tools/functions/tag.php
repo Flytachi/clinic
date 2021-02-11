@@ -77,4 +77,8 @@ function up_url($id, $model, $form=null){
     }
     return $result;
 }
+
+function download_url($table, $file_name){
+    return DIR."/model/download".EXT."?table=$table&file=$file_name";
+}
 ?>
