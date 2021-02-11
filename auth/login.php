@@ -2,7 +2,7 @@
 require_once '../tools/warframe.php';
 session_start();
 if ($_SESSION['session_id']) {
-    header('location: ../index.php');
+    header('location: ../index'.EXT);
 }
 ?>
 <!doctype html>
