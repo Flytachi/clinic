@@ -330,6 +330,7 @@ class VisitModel extends Model
                                 <th>Услуга</th>
                                 <th>Тип</th>
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -345,7 +346,7 @@ class VisitModel extends Model
 
         <script type="text/javascript">
 
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -359,7 +360,7 @@ class VisitModel extends Model
                         cols: 0
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -377,7 +378,7 @@ class VisitModel extends Model
                         cols: 0
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -703,25 +704,26 @@ class VisitModel extends Model
             if ($stat) {
                 $post_big['laboratory'] = True;
             }
-
-            $post_big = Mixin\clean_form($post_big);
-            $post_big = Mixin\to_null($post_big);
-            $object = Mixin\insert($this->table, $post_big);
-            if (!intval($object)){
-                $this->error($object);
-            }
-
-            if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
-                $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
-                $post['visit_id'] = $object;
-                $post['user_id'] = $this->post['user_id'];
-                $post['item_type'] = 1;
-                $post['item_id'] = $value;
-                $post['item_cost'] = $service['price'];
-                $post['item_name'] = $service['name'];
-                $object = Mixin\insert('visit_price', $post);
+            for ($i=0; $i < $this->post['count'][$key]; $i++) {
+                $post_big = Mixin\clean_form($post_big);
+                $post_big = Mixin\to_null($post_big);
+                $object = Mixin\insert($this->table, $post_big);
                 if (!intval($object)){
                     $this->error($object);
+                }
+
+                if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
+                    $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
+                    $post['visit_id'] = $object;
+                    $post['user_id'] = $this->post['user_id'];
+                    $post['item_type'] = 1;
+                    $post['item_id'] = $value;
+                    $post['item_cost'] = $service['price'];
+                    $post['item_name'] = $service['name'];
+                    $object = Mixin\insert('visit_price', $post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
                 }
             }
         }
@@ -764,7 +766,7 @@ class VisitModel extends Model
             $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
                 Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-               $this->success(2);
+                $this->success(2);
             }else {
                 $this->success(1);
             }
@@ -2000,6 +2002,7 @@ class ServiceModel extends Model
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
+                    // prit($this->post);
                     $object = Mixin\insert($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);

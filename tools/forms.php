@@ -497,6 +497,7 @@ class VisitRoute extends Model
                                 <th>Отдел</th>
                                 <th>Услуга</th>
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -515,7 +516,7 @@ class VisitRoute extends Model
         </form>
         <script type="text/javascript">
 
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -529,7 +530,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -547,7 +548,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -600,6 +601,7 @@ class VisitRoute extends Model
                                 <th>Отдел</th>
                                 <th>Услуга</th>
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -617,7 +619,7 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -631,7 +633,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -649,7 +651,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -688,6 +690,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -708,7 +711,7 @@ class VisitRoute extends Model
         </form>
         <script type="text/javascript">
 
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -728,7 +731,7 @@ class VisitRoute extends Model
                         cols: 2
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -752,7 +755,7 @@ class VisitRoute extends Model
                         cols: 2
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -794,6 +797,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -813,7 +817,7 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -833,7 +837,7 @@ class VisitRoute extends Model
                         cols: 2
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -857,7 +861,7 @@ class VisitRoute extends Model
                         cols: 2
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -909,6 +913,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -927,7 +932,7 @@ class VisitRoute extends Model
         </form>
         <script type="text/javascript">
 
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -941,7 +946,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -959,7 +964,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1014,6 +1019,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -1031,7 +1037,7 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -1045,7 +1051,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1063,7 +1069,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1115,6 +1121,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -1133,7 +1140,7 @@ class VisitRoute extends Model
         </form>
         <script type="text/javascript">
 
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -1147,7 +1154,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1165,7 +1172,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1220,6 +1227,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -1237,7 +1245,7 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -1251,7 +1259,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1269,7 +1277,7 @@ class VisitRoute extends Model
                         cols: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1308,6 +1316,7 @@ class VisitRoute extends Model
                             <tr class="bg-dark">
                                 <th>#</th>
                                 <th>Услуга</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -1327,7 +1336,7 @@ class VisitRoute extends Model
 
         </form>
         <script type="text/javascript">
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -1342,7 +1351,7 @@ class VisitRoute extends Model
                         head: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1361,7 +1370,7 @@ class VisitRoute extends Model
                         head: 1
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1441,24 +1450,25 @@ class VisitRoute extends Model
                     $post_big['manipulation'] = 1;
                 }
             }
+            for ($i=0; $i < $this->post['count'][$key]; $i++) {
+                $post_big = Mixin\clean_form($post_big);
+                $post_big = Mixin\to_null($post_big);
+                $object = Mixin\insert($this->table, $post_big);
+                if (!intval($object)){
+                    $this->error($object);
+                }
 
-            $post_big = Mixin\clean_form($post_big);
-            $post_big = Mixin\to_null($post_big);
-            $object = Mixin\insert($this->table, $post_big);
-            if (!intval($object)){
-                $this->error($object);
-            }
-
-            $service = $db->query("SELECT price, name FROM service WHERE id = {$post_big['service_id']}")->fetch();
-            $post['visit_id'] = $object;
-            $post['user_id'] = $this->post['user_id'];
-            $post['item_type'] = 1;
-            $post['item_id'] = $post_big['service_id'];
-            $post['item_cost'] = $service['price'];
-            $post['item_name'] = $service['name'];
-            $object = Mixin\insert('visit_price', $post);
-            if (!intval($object)){
-                $this->error($object);
+                $service = $db->query("SELECT price, name FROM service WHERE id = {$post_big['service_id']}")->fetch();
+                $post['visit_id'] = $object;
+                $post['user_id'] = $this->post['user_id'];
+                $post['item_type'] = 1;
+                $post['item_id'] = $post_big['service_id'];
+                $post['item_cost'] = $service['price'];
+                $post['item_name'] = $service['name'];
+                $object = Mixin\insert('visit_price', $post);
+                if (!intval($object)){
+                    $this->error($object);
+                }
             }
         }
         $this->success();
@@ -1610,7 +1620,6 @@ class VisitFailure extends Model
         <script type="text/javascript">
 
             $('#<?= __CLASS__ ?>_form').submit(function (events) {
-
                 events.preventDefault();
                 $.ajax({
                     type: $(this).attr("method"),
@@ -1618,10 +1627,10 @@ class VisitFailure extends Model
                     data: $(this).serializeArray(),
                     success: function (result) {
                         $('#modal_failure').modal('hide');
-                        $(result).css("background-color", "rgb(244, 67, 54)");
-                        $(result).css("color", "white");
-                        $(result).fadeOut(900, function() {
-                            // $(this).remove();
+                        $(result.replace("1#", "#")).css("background-color", "rgb(244, 67, 54)");
+                        $(result.replace("1#", "#")).css("color", "white");
+                        $(result.replace("1#", "#")).fadeOut(900, function() {
+                            $(this).remove();
                         });
                     },
                 });
@@ -1641,6 +1650,22 @@ class VisitFailure extends Model
             }
             $this->success($pk);
         }
+    }
+
+    public function clean()
+    {
+        global $db;
+        $visit = $db->query("SELECT direction FROM visit WHERE id = {$this->post['id']}")->fetch();
+        if ($visit['direction']) {
+            $form = new VisitModel;
+            $form->delete($this->post['id']);
+            $this->success($this->post['id']);
+        }else {
+            $this->post = Mixin\clean_form($this->post);
+            $this->post = Mixin\to_null($this->post);
+            return True;
+        }
+
     }
 
     public function success($pk)
