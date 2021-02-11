@@ -35,6 +35,18 @@ function viv($url=null){
     }
 }
 
+function viv_link($url){
+    if (EXT == ".php") {
+        if (viv($url) == $_SERVER['PHP_SELF']) {
+            return "active";
+        }
+    } else {
+        if (viv($url).".php" == $_SERVER['PHP_SELF']) {
+            return "active";
+        }
+    }
+}
+
 function img($url){
     return DIR."/views/$url";
 }
