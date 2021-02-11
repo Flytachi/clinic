@@ -19,9 +19,7 @@ $header = "Главная";
 		<?php include 'sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
-
 		<div class="content-wrapper">
 
 			<!-- Page header -->
@@ -34,7 +32,7 @@ $header = "Главная";
 				<div class="card">
 
 				    <div class="card-header header-elements-inline">
-				        <h5 class="card-title">Список Пользователей</h5>
+				        <h5 class="card-title">Список Визитов</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">
 				                <a class="list-icons-item" data-action="collapse"></a>

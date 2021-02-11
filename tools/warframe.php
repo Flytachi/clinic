@@ -365,7 +365,13 @@ function write_excel($table, $file_name = "docs")
         ));
     }
 
-    foreach ($db->query("SELECT * FROM $table") as $key => $row) {
+    if ($table = "service") {
+        $sql = "SELECT * FROM $table WHERE type != 101";
+    }else {
+        $sql = "SELECT * FROM $table";
+    }
+
+    foreach ($db->query($sql) as $key => $row) {
         $kt = $key+2;
         for ($i=0; $i < count($row); $i++) {
             $erch = "{$excel_column[$i]}$kt";

@@ -41,6 +41,76 @@ function insert($tb, $post)
     }
 }
 
+function insert_or_update($tb, $post)
+{
+    global $db;
+    if ($post['id'] > 0) {
+        // connect
+        $pk = $post['id'];
+        unset($post['id']);
+
+        // select
+        if ($db->query("SELECT id FROM $tb WHERE id = $pk")->fetchColumn()) {
+            // update
+            foreach (array_keys($post) as $key) {
+                if (isset($col)) {
+                    $col .= ", ".$key."=:".$key;
+                }else{
+                    $col = $key."=:".$key;
+                }
+            }
+            if (is_array($pk)) {
+                foreach ($pk as $key => $value) {
+                    if (isset($filter)) {
+                        $filter .= ", ".$key."=".$value;
+                    }else{
+                        $filter = $key."=".$value;
+                    }
+                }
+                $sql = "UPDATE $tb SET $col WHERE $filter";
+            }else {
+                $sql = "UPDATE $tb SET $col WHERE id = $pk";
+            }
+            try{
+                $stm = $db->prepare($sql)->execute($post);
+                return $stm;
+            }
+            catch (\PDOException $ex) {
+                return $ex->getMessage();
+            }
+        } else {
+            // insert
+            global $db;
+            $col = implode(",", array_keys($post));
+            $val = ":".implode(", :", array_keys($post));
+            $sql = "INSERT INTO $tb ($col) VALUES ($val)";
+            try{
+                $stm = $db->prepare($sql)->execute($post);
+                return $db->lastInsertId();
+            }
+            catch (\PDOException $ex) {
+                return $ex->getMessage();
+            }
+
+        }
+
+    } else {
+        // insert
+        global $db;
+        $col = implode(",", array_keys($post));
+        $val = ":".implode(", :", array_keys($post));
+        $sql = "INSERT INTO $tb ($col) VALUES ($val)";
+        try{
+            $stm = $db->prepare($sql)->execute($post);
+            return $db->lastInsertId();
+        }
+        catch (\PDOException $ex) {
+            return $ex->getMessage();
+        }
+
+    }
+}
+
 function update($tb, $post, $pk)
 {
     global $db;
