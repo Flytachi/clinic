@@ -256,7 +256,7 @@ class VisitModel extends Model
                     <label>Направитель:</label>
                     <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                        <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -389,98 +389,32 @@ class VisitModel extends Model
         <?php
     }
 
-    public function form_out_old($pk = null)
+    public function form_gudes($pk = null)
     {
         global $db;
         if($_SESSION['message']){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="0">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group row">
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($post['guide_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
                 </div>
             </div>
 
@@ -635,6 +569,19 @@ class VisitModel extends Model
             }
         </script>
         <?php
+    }
+
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+            $this->set_post($object);
+            return $this->form_gudes($object['id']);
+        }else{
+            Mixin\error('404');
+        }
+
     }
 
     public function save()

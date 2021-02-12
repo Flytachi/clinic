@@ -65,7 +65,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 										   <label class="col-md-4"><b>Статус:</b></label>
 										   <div class="col-md-8 text-right">
 											   <?php if ($patient->status): ?>
-
+												   <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
 											   <?php else: ?>
 												   <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
 											   <?php endif; ?>

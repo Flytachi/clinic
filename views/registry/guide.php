@@ -69,7 +69,7 @@ $header = "Врачи операторы";
 
               		<div class="card-body">
                   		<div class="table-responsive">
-	                      	<table class="table table-hover">
+	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
 	                              	<tr class="bg-blue">
                                         <th style="width:50px">№</th>
@@ -82,7 +82,7 @@ $header = "Врачи операторы";
 	                          	<tbody>
 	                              	<?php
                                     $i=1;
-	                              	foreach($db->query("SELECT * from guides") as $row) {
+	                              	foreach($db->query("SELECT * from guides ORDER BY name") as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $i++ ?></td>
