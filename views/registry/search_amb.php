@@ -59,7 +59,7 @@ $ser = $_GET['search']; $i; $cost = 0;
                 </td>
             <?php endif; ?>
             <td>
-                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" class="form-control counts" name="count" value="<?= ($_GET['selected'][$row['id']]) ? $_GET['selected'][$row['id']] : "1" ?>" min="1" max="1000000">
+                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" class="form-control counts" name="count[<?= $i ?>]" value="<?= ($_GET['selected'][$row['id']]) ? $_GET['selected'][$row['id']] : "1" ?>" min="1" max="1000000">
             </td>
             <td class="text-right text-success"><?= number_format($row['price']) ?></td>
 
