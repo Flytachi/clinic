@@ -81,11 +81,8 @@ $header = "Анализы";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $i = 1;
-                                    foreach($db->query('SELECT * from laboratory_analyze_type ORDER BY name') as $row) {
-                                        ?>
-                                        <tr>
+									<?php $i=1; foreach ($db->query("SELECT * from laboratory_analyze_type ORDER BY name") as $row): ?>
+										<tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= $row['code'] ?></td>
                                             <td><?= $row['name'] ?></td>
@@ -109,9 +106,7 @@ $header = "Анализы";
 				                                </div>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
