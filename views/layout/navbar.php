@@ -1,7 +1,7 @@
 <div class="navbar navbar-expand-md navbar-dark bg-info navbar-static"> <!-- fixed-top -->
 
         <a href="index.php" class="d-inline-block">
-            <img width="200" height="50" src="<?= stack("assets/images/company.png") ?>" alt="">
+            <img width="200" height="50" src="<?= stack("assets/images/logo.png") ?>" alt="">
         </a>
     <!-- <div class="navbar-brand">
 
