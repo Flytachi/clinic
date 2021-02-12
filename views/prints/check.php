@@ -41,7 +41,7 @@ is_auth();
         height: 90px;
         width: 110px;
         background: url(icon/company.png) no-repeat;
-        background: url("<?= img("prints/icon/company.png") ?>") no-repeat;
+        background: url("<?= stack("assets/images/company.png") ?>") no-repeat;
         background-size: 110px 90px;
     }*/
     .clientlogo{

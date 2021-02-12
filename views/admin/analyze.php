@@ -83,7 +83,7 @@ $header = "Анализы";
                                 <tbody>
                                     <?php
                                     $i = 1;
-                                    foreach($db->query('SELECT * from laboratory_analyze_type ORDER BY id DESC') as $row) {
+                                    foreach($db->query('SELECT * from laboratory_analyze_type ORDER BY name') as $row) {
                                         ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
