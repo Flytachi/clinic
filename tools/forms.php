@@ -1382,7 +1382,7 @@ class VisitRoute extends Model
 
     public function clean()
     {
-        $this->mod('test');
+        // $this->mod('test');
         if (is_array($this->post['service'])) {
             $this->save_rows();
         }
