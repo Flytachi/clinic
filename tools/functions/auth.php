@@ -22,6 +22,11 @@ function is_auth($arr = null){
     }
 }
 
+function gen_password()
+{
+    return "mentor".date('dH');
+}
+
 function logout(){
     return (DIR."/auth/logout".EXT);
 }

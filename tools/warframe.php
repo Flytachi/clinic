@@ -296,6 +296,113 @@ function read_excel($filepath){
     return $ar; //возвращаем массив
 }
 
+function write_excel($table, $file_name = "docs")
+{
+    global $db;
+    include 'PHPExcel/Classes/PHPExcel.php';
+
+    $table_label = $db->query("DESCRIBE $table")->fetchAll();
+    $excel_column = array(
+        0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D',
+        4 => 'E', 5 => 'F', 6 => 'G', 7 => 'H',
+        8 => 'I', 9 => 'J', 10 => 'K', 11 => 'L',
+        12 => 'M', 13 => 'N', 14 => 'O', 15 => 'P',
+        16 => 'Q', 17 => 'R', 18 => 'S', 19 => 'T',
+        20 => 'U', 21 => 'V', 22 => 'W', 23 => 'X',
+        24 => 'Y', 25 => 'Z');
+
+    //Создание объекта класса библиотеки
+    $objPHPExcel = new PHPExcel();
+
+    //Указываем страницу, с которой работаем
+    $objPHPExcel->setActiveSheetIndex(0);
+
+    //Получаем страницу, с которой будем работать
+    $active_sheet = $objPHPExcel->getActiveSheet();
+
+    //Создание новой страницы(пример)
+    //$objPHPExcel->createSheet();
+
+    //Ориентация и размер страницы
+    // $active_sheet->getPageSetup()
+       // ->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+    $active_sheet->getPageSetup()
+       ->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+    $active_sheet->getPageSetup()
+       ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+
+    //Имя страницы
+    $active_sheet->setTitle("Данные из docs");
+    $active_sheet->getRowDimension("1")->setRowHeight(25);
+
+    //Ширина стобцов
+    for ($i=0; $i < count($table_label); $i++) {
+        $erch = "{$excel_column[$i]}1";
+        $active_sheet->getColumnDimension($excel_column[$i])->setWidth(20);
+        $active_sheet->setCellValue($erch, $table_label[$i]['Field']);
+        $active_sheet->getStyle($erch)->getFont()->setBold(true);
+
+        if ($table_label[$i]['Field'] == "name") {
+            $active_sheet->getColumnDimension($excel_column[$i])->setWidth(70);
+        } else {
+            $active_sheet->getColumnDimensionByColumn($excel_column[$i])->setAutoSize(true);
+        }
+        $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+        $active_sheet->getStyle($erch)->applyFromArray(array(
+        	'borders'=>array(
+        		'allborders' => array(
+        			'style' => PHPExcel_Style_Border::BORDER_THIN,
+        			'color' => array('rgb' => '000000')
+    		      )
+             )
+        ));
+        $active_sheet->getStyle($erch)->applyFromArray(array(
+        	'fill' => array(
+        		'type' => PHPExcel_Style_Fill::FILL_SOLID,
+        		'color' => array('rgb' => 'EEEE11')
+        	)
+        ));
+    }
+
+    if ($table = "service") {
+        $sql = "SELECT * FROM $table WHERE type != 101";
+    }else {
+        $sql = "SELECT * FROM $table";
+    }
+
+    foreach ($db->query($sql) as $key => $row) {
+        $kt = $key+2;
+        for ($i=0; $i < count($row); $i++) {
+            $erch = "{$excel_column[$i]}$kt";
+            // echo "$erch => {$row[$table_label[$i]['Field']]}<br>";
+            $active_sheet->setCellValue($erch, $row[$table_label[$i]['Field']]);
+            $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+            $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $active_sheet->getStyle($erch)->applyFromArray(array(
+            	'borders'=>array(
+            		'allborders' => array(
+            			'style' => PHPExcel_Style_Border::BORDER_THIN,
+            			'color' => array('rgb' => '000000')
+        		      )
+                 )
+            ));
+        }
+    }
+    //Вставка данных из выборки
+
+    //Отправляем заголовки с типом контекста и именем файла
+    header("Content-Type:application/vnd.ms-excel");
+    header("Content-Disposition:attachment;filename=$file_name.xlsx");
+
+    //Сохраняем файл с помощью PHPExcel_IOFactory и указываем тип Excel
+    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+
+    //Отправляем файл
+    $objWriter->save('php://output');
+}
+
+
 function read_labaratory($filepath){
     require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
 

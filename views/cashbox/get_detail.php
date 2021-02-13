@@ -96,7 +96,7 @@ if ($_GET['pk']) {
                     </tr>
                 <?php endforeach; ?>
 
-                <tr class="bg-dark">
+                <tr class="table-primary">
                     <td colspan="3" class="text-right">Итого:</td>
                     <td><?= number_format($price['cost_bed'] + $price['cost_service'] + $price['cost_item_2'] + $price['cost_item_3']) ?></td>
                 </tr>

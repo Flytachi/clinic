@@ -1,9 +1,9 @@
 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
     <li class="nav-item">
-        <a href="<?= viv('reports/anest/content_1') ?>" class="nav-link <?= (viv('reports/anest/content_1')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Услуги</a>
+        <a href="<?= viv('reports/anest/content_1') ?>" class="nav-link <?= viv_link('reports/anest/content_1') ?> legitRipple">Услуги</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('reports/anest/content_2') ?>" class="nav-link <?= (viv('reports/anest/content_2')== $_SERVER['PHP_SELF']) ? "active show": "" ?> legitRipple">Визиты</a>
+        <a href="<?= viv('reports/anest/content_2') ?>" class="nav-link <?= viv_link('reports/anest/content_2') ?> legitRipple">Визиты</a>
     </li>
 </ul>
 

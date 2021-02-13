@@ -64,7 +64,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 										   <label class="col-md-4"><b>Статус:</b></label>
 										   <div class="col-md-8 text-right">
 											   <?php if ($patient->status): ?>
-
+												   <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
 											   <?php else: ?>
 												   <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
 											   <?php endif; ?>
@@ -181,6 +181,13 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 					<div class="card-body">
 
+						<?php
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						?>
+
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
                                 <thead>
@@ -275,6 +282,9 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
 														<?php else: ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
+															<?php if (permission([2,32]) and (level($row['route_id']) == 2 or level($row['route_id']) == 32)): ?>
+																<a onclick="Update('<?= up_url($row['id'], 'VisitModel') ?>')" class="dropdown-item"><i class="icon-users"></i> Направитель</a>
+															<?php endif; ?>
 															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													<?php endif; ?>
@@ -301,6 +311,21 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_update" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Обновить Даные<span id="vis_title"></h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<div class="modal-body" id="update_card">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg" id="modal_class_show">
 			<div class="modal-content border-3 border-info" id="report_show">
@@ -310,6 +335,17 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 	</div>
 
 	<script type="text/javascript">
+
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_update').modal('show');
+					$('#update_card').html(result);
+				},
+			});
+		};
 
 		function Check(events) {
 			$.ajax({

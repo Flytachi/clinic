@@ -12,7 +12,7 @@ $i; $cost = 0;
 
             <td>
                 <?php
-                if (in_array($row['id'], $_GET['selected'])) {
+                if (in_array($row['id'], array_keys($_GET['selected']))) {
                     $result = "checked";
                     $cost += $row['price'];
                 }else {
@@ -51,13 +51,16 @@ $i; $cost = 0;
                     </select>
                 </td>
             <?php endif; ?>
+            <td>
+                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" class="form-control counts" name="count[<?= $i ?>]" value="<?= ($_GET['selected'][$row['id']]) ? $_GET['selected'][$row['id']] : "1" ?>" min="1" max="1000000">
+            </td>
             <td class="text-right text-success"><?= number_format($row['price']) ?></td>
 
         </tr>
     <?php endforeach; ?>
 <?php endforeach; ?>
 <tr class="table-secondary">
-    <th class="text-right" colspan="<?= 5-$_GET['cols'] ?>">Итого:</th>
+    <th class="text-right" colspan="<?= 6-$_GET['cols'] ?>">Итого:</th>
     <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
 </tr>
 <script type="text/javascript">
@@ -91,16 +94,19 @@ $i; $cost = 0;
         var total = $('#total_price');
         var cost = total.text().replace(',','');
         if (the.checked) {
-
-            service.push(the.value);
+            service[the.value] = $("#count_input_"+the.value).val();
             total.text( number_format(Number(cost) + Number(price), '.', ',') );
-
         }else {
-
-            service.pop(the.value);
+            delete service[the.value];
             total.text( number_format(Number(cost) - Number(price), '.', ',') );
-
         }
+        // console.log(service);
     }
+
+    $(".counts").keyup(function() {
+        // console.log(this.value);
+        service[this.dataset.id] = this.value;
+        // console.log(service);
+    });
 
 </script>

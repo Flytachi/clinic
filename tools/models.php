@@ -256,7 +256,7 @@ class VisitModel extends Model
                     <label>Направитель:</label>
                     <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                        <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -330,6 +330,7 @@ class VisitModel extends Model
                                 <th>Услуга</th>
                                 <th>Тип</th>
                                 <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
                         </thead>
@@ -345,7 +346,7 @@ class VisitModel extends Model
 
         <script type="text/javascript">
 
-            let service = [];
+            let service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -359,7 +360,7 @@ class VisitModel extends Model
                         cols: 0
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -377,7 +378,7 @@ class VisitModel extends Model
                         cols: 0
                     },
                     success: function (result) {
-                        let service = [];
+                        let service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -388,98 +389,32 @@ class VisitModel extends Model
         <?php
     }
 
-    public function form_out_old($pk = null)
+    public function form_gudes($pk = null)
     {
         global $db;
         if($_SESSION['message']){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="0">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                            foreach ($db->query('SELECT * FROM users WHERE user_level = 15 AND status IS NULL') as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
-                                <?php
-                            }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5 OR level = 6 OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
-                            ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
-                        <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6 OR user_level = 10') as $row) {
-                            ?>
-                            <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-            </div>
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group row">
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($post['guide_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
                 </div>
             </div>
 
@@ -636,6 +571,19 @@ class VisitModel extends Model
         <?php
     }
 
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+            $this->set_post($object);
+            return $this->form_gudes($object['id']);
+        }else{
+            Mixin\error('404');
+        }
+
+    }
+
     public function save()
     {
         global $db;
@@ -703,25 +651,26 @@ class VisitModel extends Model
             if ($stat) {
                 $post_big['laboratory'] = True;
             }
-
-            $post_big = Mixin\clean_form($post_big);
-            $post_big = Mixin\to_null($post_big);
-            $object = Mixin\insert($this->table, $post_big);
-            if (!intval($object)){
-                $this->error($object);
-            }
-
-            if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
-                $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
-                $post['visit_id'] = $object;
-                $post['user_id'] = $this->post['user_id'];
-                $post['item_type'] = 1;
-                $post['item_id'] = $value;
-                $post['item_cost'] = $service['price'];
-                $post['item_name'] = $service['name'];
-                $object = Mixin\insert('visit_price', $post);
+            for ($i=0; $i < $this->post['count'][$key]; $i++) {
+                $post_big = Mixin\clean_form($post_big);
+                $post_big = Mixin\to_null($post_big);
+                $object = Mixin\insert($this->table, $post_big);
                 if (!intval($object)){
                     $this->error($object);
+                }
+
+                if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
+                    $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
+                    $post['visit_id'] = $object;
+                    $post['user_id'] = $this->post['user_id'];
+                    $post['item_type'] = 1;
+                    $post['item_id'] = $value;
+                    $post['item_cost'] = $service['price'];
+                    $post['item_name'] = $service['name'];
+                    $object = Mixin\insert('visit_price', $post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
                 }
             }
         }
@@ -764,7 +713,7 @@ class VisitModel extends Model
             $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
             if(!$status){
                 Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-               $this->success(2);
+                $this->success(2);
             }else {
                 $this->success(1);
             }
@@ -987,12 +936,24 @@ class VisitPriceModel extends Model
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
             <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <button type="button" onclick="printdiv('check_detail')">Чек</button>
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
             <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
         </form>
         <script type="text/javascript">
+
+            function printdiv(printpage) {
+                var divContents = document.getElementById(printpage).innerHTML;
+                var a = window.open('', '', 'height=500, width=500');
+                a.document.write('<html>');
+                a.document.write('<body > <h1>Div contents are <br>');
+                a.document.write(divContents);
+                a.document.write('</body></html>');
+                a.document.close();
+                a.print();
+            }
 
             function Proter(pk) {
                 event.preventDefault();
@@ -1958,25 +1919,25 @@ class ServiceModel extends Model
 
     public function clean_excel()
     {
-        if ($this->post['user_level']) {
-            switch ($this->post['user_level']) {
-                case 'A':
-                    $this->post['user_level'] = 1;
-                    break;
-                case 'B':
-                    $this->post['user_level'] = 5;
-                    break;
-                case 'D':
-                    $this->post['user_level'] = 10;
-                    break;
-                case 'L':
-                    $this->post['user_level'] = 6;
-                    break;
-                case 'F':
-                    $this->post['user_level'] = 12;
-                    break;
-            }
-        }
+        // if ($this->post['user_level']) {
+        //     switch ($this->post['user_level']) {
+        //         case 'A':
+        //             $this->post['user_level'] = 1;
+        //             break;
+        //         case 'B':
+        //             $this->post['user_level'] = 5;
+        //             break;
+        //         case 'D':
+        //             $this->post['user_level'] = 10;
+        //             break;
+        //         case 'L':
+        //             $this->post['user_level'] = 6;
+        //             break;
+        //         case 'F':
+        //             $this->post['user_level'] = 12;
+        //             break;
+        //     }
+        // }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
         // $this->mod('test');
         return True;
@@ -1989,27 +1950,30 @@ class ServiceModel extends Model
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
                     $pick = $pirst[$key];
-                    switch ($pick) {
-                        case 'role':
-                            $pick = "user_level";
-                            break;
-                        case 'service':
-                            $pick = "name";
-                            break;
-                    }
+                    // switch ($pick) {
+                    //     case 'role':
+                    //         $pick = "user_level";
+                    //         break;
+                    //     case 'service':
+                    //         $pick = "name";
+                    //         break;
+                    // }
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
-                    $object = Mixin\insert($this->table, $this->post);
+                    // prit($this->post);
+                    $object = Mixin\insert_or_update($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);
                     }
+                    // $this->stop();
                 }
             }else {
                 $pirst = $value_p;
                 unset($this->post['template']);
             }
         }
+        // $this->stop();
         $this->success();
     }
 

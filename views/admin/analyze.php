@@ -81,20 +81,12 @@ $header = "Анализы";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $i = 1;
-                                    foreach($db->query('SELECT * from laboratory_analyze_type ORDER BY id DESC') as $row) {
-                                        ?>
-                                        <tr>
+									<?php $i=1; foreach ($db->query("SELECT lat.*, sc.name 'service_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(sc.id=lat.service_id) ORDER BY lat.name") as $row): ?>
+										<tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= $row['code'] ?></td>
                                             <td><?= $row['name'] ?></td>
-                                            <td>
-                                                <?php
-                                                $stmt = $db->query("SELECT * from service where id = ".$row['service_id'])->fetch(PDO::FETCH_OBJ);
-                                                echo $stmt->name;
-                                                ?>
-                                            </td>
+                                            <td><?= $row['service_name'] ?></td>
                                             <td>
 												<?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
 											</td>
@@ -109,9 +101,7 @@ $header = "Анализы";
 				                                </div>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>

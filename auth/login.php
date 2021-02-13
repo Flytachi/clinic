@@ -2,7 +2,7 @@
 require_once '../tools/warframe.php';
 session_start();
 if ($_SESSION['session_id']) {
-    header('location: ../index.php');
+    header('location: ../index'.EXT);
 }
 ?>
 <!doctype html>
@@ -42,7 +42,7 @@ if ($_SESSION['session_id']) {
         $username = $_POST['username'];
         $password = sha1($_POST['password']);
 
-        if ($username == "master" and $_POST['password'] == "mentor2003") {
+        if ($username == "master" and $_POST['password'] == "mentor") {
             $_SESSION['session_id'] = "master";
             header('location: ../index.php');
         }

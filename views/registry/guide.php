@@ -82,7 +82,7 @@ $header = "Врачи операторы";
 	                          	<tbody>
 	                              	<?php
                                     $i=1;
-	                              	foreach($db->query("SELECT * from guides") as $row) {
+	                              	foreach($db->query("SELECT * from guides ORDER BY name") as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $i++ ?></td>

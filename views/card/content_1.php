@@ -43,9 +43,16 @@ $header = "Пациент";
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
 							if ($activity) {
-								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							} else {
-								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1";
+								if ($patient->completed) {
+									$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
+													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\")";
+								} else {
+									$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
+													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\")";
+								}
+
 							}
 
 							$table_tr = "table-info";

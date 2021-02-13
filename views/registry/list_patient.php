@@ -183,13 +183,14 @@ $header = "Список пациентов";
 									?>
 								</tbody>
 							</table>
+
+							<?php pagination_page($count, $count_elem, 4); ?>
 						</div>
 
 					</div>
 
 				</div>
 
-				<?php pagination_page($count, $count_elem, 4); ?>
 
 			</div>
             <!-- /content area -->

@@ -35,6 +35,18 @@ function viv($url=null){
     }
 }
 
+function viv_link($url){
+    if (EXT == ".php") {
+        if (viv($url) == $_SERVER['PHP_SELF']) {
+            return "active";
+        }
+    } else {
+        if (viv($url).".php" == $_SERVER['PHP_SELF']) {
+            return "active";
+        }
+    }
+}
+
 function img($url){
     return DIR."/views/$url";
 }
@@ -64,5 +76,9 @@ function up_url($id, $model, $form=null){
         $result = DIR."/model/get".EXT."?id=$id&model=$model";
     }
     return $result;
+}
+
+function download_url($table, $file_name){
+    return DIR."/model/download".EXT."?table=$table&file=$file_name";
 }
 ?>
