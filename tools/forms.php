@@ -1558,7 +1558,7 @@ class LaboratoryUpStatus extends Model
     {
         global $db;
 
-        foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND accept_date IS NULL AND completed IS NULL") as $value) {
+        foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND laboratory IS NOT NULL AND accept_date IS NULL AND completed IS NULL") as $value) {
             $this->post['id'] = $value['id'];
             $this->post['status'] = 2;
             $this->post['accept_date'] = date('Y-m-d H:i:s');

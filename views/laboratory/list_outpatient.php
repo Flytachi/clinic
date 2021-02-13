@@ -96,7 +96,7 @@ $header = "Амбулаторные пациенты";
                                             <td>
 												<?php
 												$item_vs = [];
-                                                foreach ($db->query("SELECT sc.name, vs.id, vs.laboratory_num FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.parent_id = vs.laboratory IS NOT NULL AND accept_date IS NOT NULL AND completed IS NULL") as $serv) {
+                                                foreach ($db->query("SELECT sc.name, vs.id, vs.laboratory_num FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.laboratory IS NOT NULL AND vs.accept_date IS NOT NULL AND vs.completed IS NULL") as $serv) {
                                                     echo $serv['name']."<br>";
 													$item_vs[] = $serv['id'];
 													$item_laboratory_num = $serv['laboratory_num'];

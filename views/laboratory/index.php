@@ -82,7 +82,7 @@ $header = "Приём пациетов";
 											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
 											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$row['id']} AND vs.accept_date IS NULL AND vs.completed IS NULL") as $serve): ?>
+												<?php foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$row['id']} AND vs.accept_date IS NULL AND vs.completed IS NULL AND vs.laboratory IS NOT NULL") as $serve): ?>
 													<?= $serve['name'] ?><br>
 												<?php endforeach; ?>
 											</td>
