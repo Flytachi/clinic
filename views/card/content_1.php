@@ -59,7 +59,7 @@ $header = "Пациент";
 						} else {
 							$title = "Осмотр";
 							$table_label = "Мед Услуга";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "";
 						}
 						?>

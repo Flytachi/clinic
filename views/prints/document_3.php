@@ -24,6 +24,13 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
     <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
+    <style media="screen">
+        body
+        {
+            font-size: 120% !important;
+        }
+    </style>
+
     <body onload="window.print();">
 
         <div class="row">
@@ -34,9 +41,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
             <div class="col-6 text-right h3">
                 <b>
-                    Медицинский оздоровительный комплекс<br>
-                    г.Бухара, ул. М.Икбол, ( )<br>
-                    Тел: (+998655050104)<br>
+                    <?php include 'title.php' ?>
                 </b>
             </div>
 

@@ -480,11 +480,20 @@ class VisitRoute extends Model
                 </select>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -509,10 +518,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
 
@@ -521,7 +526,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -584,11 +589,20 @@ class VisitRoute extends Model
                 </select>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -613,10 +627,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
             let service = {};
@@ -624,7 +634,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -672,11 +682,20 @@ class VisitRoute extends Model
             <input type="hidden" name="laboratory" value="1">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -704,10 +723,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
 
@@ -716,7 +731,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: [
                                 "<?php
@@ -779,11 +794,20 @@ class VisitRoute extends Model
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
             <input type="hidden" name="laboratory" value="1">
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -811,10 +835,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
             let service = {};
@@ -822,7 +842,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: [
                             "<?php
@@ -895,11 +915,20 @@ class VisitRoute extends Model
                 </select>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -925,10 +954,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
 
@@ -937,7 +962,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -1001,11 +1026,20 @@ class VisitRoute extends Model
                 </select>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -1031,10 +1065,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
             let service = {};
@@ -1042,7 +1072,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -1103,11 +1133,20 @@ class VisitRoute extends Model
                 </select>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -1133,10 +1172,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
 
@@ -1145,7 +1180,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -1209,11 +1244,20 @@ class VisitRoute extends Model
                 </select>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -1239,10 +1283,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
             let service = {};
@@ -1250,7 +1290,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -1301,11 +1341,20 @@ class VisitRoute extends Model
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
             <input type="hidden" name="division_grant" value="<?= division() ?>">
 
-            <div class="form-group-feedback form-group-feedback-right">
-                <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                <div class="form-control-feedback">
-                    <i class="icon-search4 font-size-base text-muted"></i>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
                 </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -1330,10 +1379,6 @@ class VisitRoute extends Model
 
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-            </div>
-
         </form>
         <script type="text/javascript">
             let service = {};
@@ -1341,7 +1386,7 @@ class VisitRoute extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "/views/registry/search_amb.php",
+                    url: "<?= ajax('service_table_search') ?>",
                     data: {
                         divisions: ["<?= division() ?>"],
                         search: $("#search_input").val(),
