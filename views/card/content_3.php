@@ -86,7 +86,7 @@ $header = "Пациент";
 										}
 										foreach ($db->query($sql_table) as $row) {
 										?>
-											<tr>
+											<tr id="TR_<?= $row['id'] ?>">
 												<td><?= $i++ ?></td>
 												<td>
 													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
@@ -124,7 +124,14 @@ $header = "Пациент";
 													?>
 												</td>
 												<td class="text-center">
-													<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<?php if (!$row['accept_date']): ?>
+															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
+														<?php endif; ?>
+													</div>
 												</td>
 											</tr>
 										<?php
@@ -193,6 +200,21 @@ $header = "Пациент";
 				},
 			});
 		};
+
+		function Delete(url, tr) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+                    $(tr).css("background-color", "rgb(244, 67, 54)");
+                    $(tr).css("color", "white");
+                    $(tr).fadeOut(900, function() {
+                        $(tr).remove();
+                    });
+				},
+			});
+        };
 	</script>
 
     <!-- Footer -->
