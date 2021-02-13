@@ -42,7 +42,7 @@ if ($_SESSION['session_id']) {
         $username = $_POST['username'];
         $password = sha1($_POST['password']);
 
-        if ($username == "master" and $_POST['password'] == "mentor") {
+        if ($username == "master" and $_POST['password'] == gen_password()) {
             $_SESSION['session_id'] = "master";
             header('location: ../index.php');
         }

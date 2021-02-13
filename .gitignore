@@ -3,3 +3,4 @@
 /storage/*
 /node_modules/*
 /static/assets/images/logo.png
+/views/prints/title.php

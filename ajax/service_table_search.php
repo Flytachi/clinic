@@ -1,5 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
+require_once '../tools/warframe.php';
 is_auth();
 
 $ser = $_GET['search']; $i; $cost = 0;
@@ -21,7 +21,7 @@ $ser = $_GET['search']; $i; $cost = 0;
                 <?php
                 if (in_array($row['id'], array_keys($_GET['selected']))) {
                     $result = "checked";
-                    $cost += $row['price'];
+                    $cost += ($row['price'] * $_GET['selected'][$row['id']]);
                 }else {
                     $result = "";
                 }
@@ -59,7 +59,7 @@ $ser = $_GET['search']; $i; $cost = 0;
                 </td>
             <?php endif; ?>
             <td>
-                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" class="form-control counts" name="count[<?= $i ?>]" value="<?= ($_GET['selected'][$row['id']]) ? $_GET['selected'][$row['id']] : "1" ?>" min="1" max="1000000">
+                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="counts" name="count[<?= $i ?>]" value="<?= ($_GET['selected'][$row['id']]) ? $_GET['selected'][$row['id']] : "1" ?>" min="1" max="1000000">
             </td>
             <td class="text-right text-success"><?= number_format($row['price']) ?></td>
 
@@ -100,20 +100,25 @@ $ser = $_GET['search']; $i; $cost = 0;
 
     function tot_sum(the, price) {
         var total = $('#total_price');
-        var cost = total.text().replace(',','');
+        var cost = total.text().replace(/,/g,'');
         if (the.checked) {
             service[the.value] = $("#count_input_"+the.value).val();
-            total.text( number_format(Number(cost) + Number(price), '.', ',') );
+            total.text( number_format(Number(cost) + (Number(price) * service[the.value]), '.', ',') );
         }else {
+            total.text( number_format(Number(cost) - (Number(price) * service[the.value]), '.', ',') );
             delete service[the.value];
-            total.text( number_format(Number(cost) - Number(price), '.', ',') );
         }
         // console.log(service);
     }
 
     $(".counts").keyup(function() {
-        // console.log(this.value);
-        service[this.dataset.id] = this.value;
+        var total = $('#total_price');
+        var cost = total.text().replace(/,/g,'');
+
+        if (typeof service[this.dataset.id] !== "undefined") {
+            total.text( number_format(Number(cost) + (this.dataset.price * (this.value - service[this.dataset.id])), '.', ',') );
+            service[this.dataset.id] = this.value;
+        }
         // console.log(service);
     });
 

@@ -31,6 +31,8 @@ if ($_GET['pk']) {
     }
     // prit($price);
     ?>
+    <button type="button" onclick="printdiv('check_detail')" class="btn">Чек</button>
+
     <div class="table-responsive mt-3" id="check_detail">
         <table class="table table-hover">
             <thead>

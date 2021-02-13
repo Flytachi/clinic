@@ -14,7 +14,7 @@ $pack = $db->query("SELECT report_title, report_description FROM visit WHERE id=
 ?>
     <h3 class="text-center"><?= $pack['report_title'] ?></h3>
     <p>
-        <h4 class="text-center"><b>Ghbvtxfybt</b></h4>
+        <h4 class="text-center"><b>Примечание</b></h4>
         <?= preg_replace("#\r?\n#", "<br />", $pack['report_description']) ?>
     </p>
 </div>

@@ -48,7 +48,7 @@ $header = "Контроль базы данных";
 				        <div class="table-responsive">
 				            <table class="table table-hover">
 				                <thead>
-				                    <tr class="bg-blue">
+				                    <tr class="bg-dark">
 				                        <th>#</th>
 				                        <th>Дата</th>
 				                        <th class="text-right" style="width: 100px">Действия</th>
@@ -119,10 +119,6 @@ $header = "Контроль базы данных";
             });
         }
     </script>
-
-    <!-- Footer -->
-    <?php include '../layout/footer.php' ?>
-    <!-- /footer -->
 
 </body>
 </html>

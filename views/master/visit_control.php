@@ -49,11 +49,12 @@ $header = "Главная";
 				        <div class="table-responsive">
 				            <table class="table table-hover">
 				                <thead>
-				                    <tr class="bg-blue">
+				                    <tr class="bg-dark">
 				                        <th style="width: 7%">Visit_id</th>
 				                        <th style="width: 7%">User_id</th>
                                         <th>ФИО</th>
                                         <th>Route_id</th>
+										<th>Status</th>
                                         <th>Service</th>
                                         <th>Cost</th>
 				                        <th class="text-right" style="width: 100px">Действия</th>
@@ -62,13 +63,14 @@ $header = "Главная";
 				                <tbody>
 				                    <?php
 				                    $i = 1;
-				                    foreach($db->query("SELECT vs.*, sc.name, vp.id 'vp_id', vp.item_cost FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) ORDER BY vs.id DESC") as $row) {
+				                    foreach($db->query("SELECT vs.*, sc.name, vp.id 'vp_id', vs.status, vp.item_cost FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) ORDER BY vs.id DESC") as $row) {
 				                        ?>
 				                        <tr id="TR_<?= $row['id'] ?>">
 				                            <td><?= $row['id'] ?></td>
 				                            <td><?= $row['user_id'] ?></td>
 				                            <td><?= get_full_name($row['user_id']); ?></td>
                                             <td><?= get_full_name($row['route_id']); ?></td>
+											<td><?= $row['status'] ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td><?= number_format($row['item_cost'], 1) ?></td>
 				                            <td class="text-right">
