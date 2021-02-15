@@ -70,12 +70,12 @@ class PatientForm extends Model
 
                         <div class="form-group">
                             <label>Адрес проживание:</label>
-                            <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>" required>
+                            <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>">
                         </div>
 
                         <div class="form-group">
                             <label>Адрес по прописке:</label>
-                            <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>" required>
+                            <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>">
                         </div>
 
 
@@ -105,7 +105,7 @@ class PatientForm extends Model
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label>Серия и номер паспорта:</label>
-                            <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>" required>
+                            <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>">
                         </div>
                         <div class="col-md-6">
                             <label>Телефон номер:</label>
@@ -115,21 +115,21 @@ class PatientForm extends Model
 
                     <div class="form-group">
                         <label>Место работы:</label>
-                        <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $post['placeWork']?>" required>
+                        <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $post['placeWork']?>">
                     </div>
 
                     <div class="form-group">
                         <label>Должность:</label>
-                        <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>" required>
+                        <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>">
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label class="d-block font-weight-semibold">Статус</label>
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
                             <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
                         </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>

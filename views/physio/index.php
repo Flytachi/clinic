@@ -58,6 +58,7 @@ $header = "Приём пациетов";
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     <?php
 									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id',
 												vs.user_id, vs.parent_id, vs.route_id,
