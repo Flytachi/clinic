@@ -1,12 +1,3 @@
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
-
 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
     <li class="nav-item">
         <a href="<?= viv('card/content_1').$agr ?>" class="nav-link <?= viv_link('card/content_1') ?> legitRipple" style="white-space:nowrap;">
