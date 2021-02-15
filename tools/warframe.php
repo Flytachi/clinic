@@ -120,7 +120,7 @@ function get_name($id = null) {
     return ucwords($stmt->last_name." ".$stmt->first_name);
 }
 
-function level() {
+function level($id = null) {
     /*
     level()
     */
@@ -128,7 +128,9 @@ function level() {
     if ($_SESSION['session_id'] == "master") {
         return "master";
     }
-    $id = $_SESSION['session_id'];
+    if(empty($id)){
+        $id = $_SESSION['session_id'];
+    }
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     return intval($stmt);
 }

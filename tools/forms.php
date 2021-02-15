@@ -437,6 +437,12 @@ class VisitUpStatus extends Model
         if(division_assist()){
             $this->post['assist_id'] = $_SESSION['session_id'];
         }
+        if (permission([12, 13])) {
+            $this->post['parent_id'] = $_SESSION['session_id'];
+            if (in_array(level($_GET['route_id']), [2, 32])) {
+                $this->post['grant_id'] = $_SESSION['session_id'];
+            }
+        }
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
@@ -2645,114 +2651,6 @@ class VisitRefundModel extends Model
         $this->post['price_card'] = -$this->post['price_card'];
         $this->post['price_transfer'] = -$this->post['price_transfer'];
         return True;
-    }
-
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
-    }
-
-}
-
-class VisitLaboratory extends Model
-{
-    public $table = 'visit';
-
-    public function update()
-    {
-        global $db;
-        foreach (json_decode($this->post['id']) as $id) {
-            $post['laboratory_num'] = $this->post['laboratory_num'];
-            $post = Mixin\clean_form($post);
-            $post = Mixin\to_null($post);
-
-            $pk = $id;
-            $object = Mixin\update($this->table, $post, $pk);
-            if (!intval($object)){
-                $this->error($object);
-            }
-        }
-        $this->success();
-
-    }
-
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
-    }
-
-}
-
-class AparatLaboratory extends Model
-{
-    public $table = 'visit';
-
-    public function clean()
-    {
-        global $db;
-        $this->post['template'] = read_labaratory($_FILES['template']['tmp_name']);
-        foreach ($this->post['template'] as $item) {
-            if ($item['type'] == "label") {
-                $dt = [];
-                $dt['laboratory_num'] = $item['label_lab'];
-                continue;
-            }
-            $dt['code'] = $item['code'];
-            $dt['result'] = $item['result'];
-            $this->post['data'][] = $dt;
-        }
-        unset($this->post['template']);
-        // prit($data);
-        foreach ($this->post['data'] as $arr) {
-            // prit($arr);
-            $visits = $db->query("SELECT lat.id 'analyze_id', vs.id 'visit_id', vs.user_id 'user_id', vs.service_id 'service_id', lat.code FROM visit vs LEFT JOIN laboratory_analyze_type lat ON(lat.service_id=vs.service_id) WHERE vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.laboratory_num = {$arr['laboratory_num']}")->fetchAll();
-            foreach ($visits as $post) {
-                if ($post['code'] == $arr['code']) {
-                    $post['result'] = $arr['result'];
-                    unset($post['code']);
-                    $object = Mixin\insert('laboratory_analyze', $post);
-                    if (!intval($object)){
-                        $this->error($object);
-                    }
-                }
-            }
-        }
-        $this->success();
-
     }
 
     public function success()

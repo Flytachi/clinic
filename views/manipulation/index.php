@@ -53,80 +53,68 @@ $header = "Приём пациетов";
                                         <th>Дата назначения</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
-                                        <th>Тип визита</th>
+										<th>Тип визита</th>
+                                        <th class="text-center" style="width: 30px">Кол-во</th>
                                         <th class="text-center">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id',
-												vs.user_id, vs.parent_id, vs.route_id,
-												vs.service_id, vs.direction,
-												vs.complaint, vs.add_date,
-												(
-												    (YEAR(CURRENT_DATE) - YEAR(us.dateBith)) -
-													(DATE_FORMAT(CURRENT_DATE, '%m%d') < DATE_FORMAT(us.dateBith, '%m%d'))
-												) 'age'
-											FROM users us
-												LEFT JOIN visit vs ON(us.id=vs.user_id)
-											WHERE
-												vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']}
-											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
-                                    foreach($db->query($sql) as $row) {
-                                        ?>
-                                        <tr id="PatientFailure_tr_<?= $row['visit_id'] ?>">
-                                            <td><?= addZero($row['id']) ?></td>
-                                            <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
-												<div class="text-muted">
-													<?php
-													if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													}
-													?>
-												</div>
-											</td>
-											<td><?= $row['age'] ?></td>
-											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-                                            <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
-											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
-											</td>
-                                            <td class="text-center">
-                                                <?php
-                                                if($row['direction']){
-                                                    ?>
-                                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
-                                                    <?php
-                                                }else{
-                                                    ?>
-                                                    <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
-                                                    <?php
-                                                }
-                                                ?>
-                                            </td>
-                                            <td class="text-center">
-                                            	<?php if (!division_assist()): ?>
-                                            		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
-                                            	<?php else: ?>
-                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"
-														<?php if (!$row['direction']): ?>
-															onclick="sendPatient(this)"
-														<?php endif; ?>
-                                            			>Принять</button>
-                                            		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</a>
-                                            	<?php endif; ?>
-												<?php if ($row['complaint']): ?>
-													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
-												<?php endif; ?>
-
-												<button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>');$('#renouncement').attr('data-userid', '<?= $row['user_id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $row['parent_id'] ?>');" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php foreach ($db->query("SELECT DISTINCT us.id, vs.service_id, vs.direction, us.dateBith, vs.complaint
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE
+												vs.completed IS NULL AND vs.status = 1 AND vs.manipulation IS NOT NULL
+											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $div): ?>
+											<?php $row = $db->query("SELECT COUNT(vs.id) 'qty', us.id, vs.id 'visit_id', vs.add_date, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.manipulation IS NOT NULL AND vs.user_id = {$div['id']} AND vs.service_id = {$div['service_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC")->fetch(); ?>
+											<tr id="PatientFailure_tr_<?= $row['visit_id'] ?>">
+	                                            <td><?= addZero($row['id']) ?></td>
+	                                            <td>
+													<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+													<div class="text-muted">
+														<?php
+														if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
+															echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
+														}
+														?>
+													</div>
+												</td>
+												<td><?= date('d.m.Y', strtotime($div['dateBith'])) ?></td>
+												<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+	                                            <td><?= $db->query("SELECT name FROM service WHERE id = {$div['service_id']}")->fetch()['name'] ?></td>
+												<td>
+													<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
+													<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												</td>
+	                                            <td class="text-center">
+	                                                <?php
+	                                                if($div['direction']){
+	                                                    ?>
+	                                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
+	                                                    <?php
+	                                                }else{
+	                                                    ?>
+	                                                    <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+	                                                    <?php
+	                                                }
+	                                                ?>
+	                                            </td>
+												<td class="text-center"><?= $row['qty'] ?></td>
+	                                            <td class="text-center">
+	                                            	<?php if (!division_assist()): ?>
+	                                            		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>&route_id=<?= $row['route_id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
+	                                            	<?php else: ?>
+	                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"
+															<?php if (!$row['direction']): ?>
+																onclick="sendPatient(this)"
+															<?php endif; ?>
+	                                            			>Принять</button>
+	                                            		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</a>
+	                                            	<?php endif; ?>
+													<?php if ($div['complaint']): ?>
+														<button onclick="swal('<?= $div['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
+													<?php endif; ?>
+													<button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>');$('#renouncement').attr('data-userid', '<?= $row['user_id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $row['parent_id'] ?>');" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+	                                            </td>
+	                                        </tr>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
