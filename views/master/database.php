@@ -47,7 +47,7 @@ $header = "База данных";
 				<?php elseif ($_POST['GET_START']): ?>
 
                     <?php
-                    FLUSH_clinic();
+                    Mixin\FLUSH_clinic();
                     division_temp();
                     $_user = users_temp();
                     $_service = service_temp();

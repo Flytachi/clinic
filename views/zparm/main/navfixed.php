@@ -6,7 +6,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#"><b>Z-Pharma 1.0</b></a>
+          <a class="brand" href="#"><b>Аптека+</b></a>
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">
               <li><a><i class="icon-user icon-large"></i> Добро пожаловать:<strong> <?php echo $_SESSION['SESS_FIRST_NAME'];?></strong></a></li>
@@ -80,7 +80,7 @@ echo "<b>Сегодня ". rus_date("l, j F Y")." года</b>";
 								?>
 
 				</a></li>
-              <li><a href="/auth/logout.php"><font color="red"><i class="icon-off icon-large"></i></font> Выход</a></li>
+              <li><a href="../index.php"><font color="red"><i class="icon-off icon-large"></i></font> Выход</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

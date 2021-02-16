@@ -1,9 +1,9 @@
 <?php
 /* Database config */
 $db_host		= 'localhost';
-$db_user		= 'clinic';
-$db_pass		= 'clin_pik27';
-$db_database	= 'clinic';
+$db_user		= 'zparm';
+$db_pass		= 'zparm';
+$db_database	= 'zparm';
 
 /* End config */
 

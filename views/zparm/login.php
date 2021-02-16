@@ -12,13 +12,13 @@
 	$errflag = false;
 
 	//Connect to mysql server
-	$link = ($GLOBALS["___mysqli_ston"] = mysqli_connect('localhost', 'u723643070_apt', "Bukhara7$!"));
+	$link = ($GLOBALS["___mysqli_ston"] = mysqli_connect('localhost', 'zparm', "zparm"));
 	if(!$link) {
 		die('Ошибка соединения с базой: ' . mysqli_error($GLOBALS["___mysqli_ston"]));
 	}
 
 	//Select database
-	$db = mysqli_select_db( $link, u723643070_apt);
+	$db = mysqli_select_db( $link, 'zparm');
 	if(!$db) {
 		die("Не могу выбрать базу");
 	}
