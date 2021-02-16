@@ -47,7 +47,7 @@ $header = "Главная";
 				    <div class="card-body">
 
 				        <div class="table-responsive">
-				            <table class="table table-hover">
+				            <table class="table table-hover table-sm datatable-basic">
 				                <thead>
 				                    <tr class="bg-dark">
 				                        <th style="width: 7%">Visit_id</th>

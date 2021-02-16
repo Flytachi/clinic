@@ -28,6 +28,11 @@
 	<script src="<?= stack("global_assets/js/plugins/notifications/sweet_alert.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
 	<!-- Theme JS files -->
 	<script src="<?= stack("global_assets/js/plugins/ui/moment/moment.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3.min.js") ?>"></script>
@@ -38,6 +43,14 @@
 
 	<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
+
+	<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+	<script src="<?= stack('global_assets/js/demo_pages/form_multiselect.js') ?>"></script>
+
+	<script src="<?= stack("global_assets/js/plugins/tables/datatables/datatables.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script>
 
 	<!-- JS chained -->
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
