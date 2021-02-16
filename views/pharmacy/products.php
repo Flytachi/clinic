@@ -2,777 +2,528 @@
 require_once '../../tools/warframe.php';
 is_auth(4);
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<?php include '../layout/head.php' ?>
 
-<?php
-	function formatMoney($number, $fractional=false) {
-		if ($fractional) {
-			$number = sprintf('%.2f', $number);
-			// echo " ff ". $number." ff ";
-		}
-		while (true) {
-			$replaced = preg_replace('/(-?\d+)(\d\d\d)/', '$1,$2', $number);
-			// echo " ff ". $replaced." ff ";
-			if ($replaced != $number) {
-				$number = $replaced;
-			} else {
-				break;
-			}
-		}
-		return $number;
-	}
-?>
+<?php include layout('head') ?>
 
-<script src="<?= stack("global_assets/js/plugins/extensions/jquery_ui/interactions.min.js")?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js")?>"></script>
+<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+	  .semi-transparent-button {
+  display: -webkit-inline-box;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 8px;
+  width: 100%;
+  max-width: 200px;
+  background: #fff; /* fallback color for old browsers */
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-out;
+}
+.semi-transparent-button:hover,
+.semi-transparent-button:focus,
+.semi-transparent-button:active {
+  background: #fff;
+  color: #000;
+  transition: all 0.5s ease-in;
+}
+.semi-transparent:focus {
+  outline: none;
+}
 
-<script src="<?= stack("assets/js/app.js")?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js")?>"></script>
+.is-blue {
+  background: #1e348e; /* fallback color for old browsers */
+  background: rgba(30, 52, 142, 0.5);
+}
+.is-blue:hover,
+.is-blue:focus,
+.is-blue:active {
+  background: #1e348e; /* fallback color for old browsers */
+  background: rgb(30, 52, 142);
+  color: #fff;
+}
 
-<script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js")?>"></script>
+.with-border {
+  border: 1px solid #fff;
+}
+.buttonss {
+    display: flex;
+    flex-wrap: wrap;
+     justify-content: flex-start;
+	 /*justify-content: space-around;*/
+    align-items: center;
+    align-content: center;
+    border-radius: 5px;
+	margin-top:15px ;
+}
+.blockk {
+    width: 177px;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+}
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
-<script src="<?= stack("global_assets/js/demo_pages/switchery.min.js")?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/switch.min.js")?>"></script>
-
+<link href="../style.css" media="screen" rel="stylesheet" type="text/css" />
+<!--sa poip up-->
+<script src="jeffartagame.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/application.js" type="text/javascript" charset="utf-8"></script>
+<link href="src/facebox.css" media="screen" rel="stylesheet" type="text/css" />
+<style type="text/css">
+.semi-transparent-button1 {  display: block;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 8px;
+  width: 80%;
+  max-width: 200px;
+  background: #fff; /* fallback color for old browsers */
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-out;
+}
+</style>
+<script src="lib/jquery.js" type="text/javascript"></script>
+<script src="src/facebox.js" type="text/javascript"></script>
+<script type="text/javascript">
+  jQuery(document).ready(function($) {
+    $('a[rel*=facebox]').facebox({
+      loadingImage : 'src/loading.gif',
+      closeImage   : 'src/closelabel.png'
+    })
+  })
+</script>
 
 </head>
+<?php
+if ($_SESSION['SESS_FIRST_NAME']== 'Kassir') {?>
+<div align="center"><font color="red" style="font:bold 22px 'Aleo';"> "Ошибка запроса.Подождите сейчас будете перенаправлены"</font> </div><br><?php echo "<meta http-equiv=\"refresh\" content=\"3;url=" . $_SERVER['HTTP_REFERER'] . "\">";
+?>
+		<?php exit () ;
+	}
+?>
+<?php
+function createRandomPassword() {
+	$chars = "003232303232023232023456789";
+	srand((double)microtime()*1000000);
+	$i = 0;
+	$pass = '' ;
+	while ($i <= 7) {
+
+		$num = rand() % 33;
+
+		$tmp = substr($chars, $num, 1);
+
+		$pass = $pass . $tmp;
+
+		$i++;
+
+	}
+	return $pass;
+}
+$finalcode='RS-'.createRandomPassword();
+?>
+
+<script>
+function sum() {
+            var txtFirstNumberValue = document.getElementById('txt1').value;
+            var txtSecondNumberValue = document.getElementById('txt2').value;
+            var result = parseInt(txtFirstNumberValue) - parseInt(txtSecondNumberValue);
+            if (!isNaN(result)) {
+                document.getElementById('txt3').value = result;
+
+            }
+
+			 var txtFirstNumberValue = document.getElementById('txt11').value;
+            var result = parseInt(txtFirstNumberValue);
+            if (!isNaN(result)) {
+                document.getElementById('txt22').value = result;
+            }
+
+			 var txtFirstNumberValue = document.getElementById('txt11').value;
+            var txtSecondNumberValue = document.getElementById('txt33').value;
+            var result = parseInt(txtFirstNumberValue) + parseInt(txtSecondNumberValue);
+            if (!isNaN(result)) {
+                document.getElementById('txt55').value = result;
+
+            }
+
+			 var txtFirstNumberValue = document.getElementById('txt4').value;
+			 var result = parseInt(txtFirstNumberValue);
+            if (!isNaN(result)) {
+                document.getElementById('txt5').value = result;
+				}
+
+        }
+</script>
+
+
+ <script language="javascript" type="text/javascript">
+/* Visit http://www.yaldex.com/ for full source code
+and get more free JavaScript, CSS and DHTML scripts! */
+<!-- Begin
+var timerID = null;
+var timerRunning = false;
+function stopclock (){
+if(timerRunning)
+clearTimeout(timerID);
+timerRunning = false;
+}
+function showtime () {
+var now = new Date();
+var hours = now.getHours();
+var minutes = now.getMinutes();
+var seconds = now.getSeconds()
+var timeValue = "" + ((hours >12) ? hours -12 :hours)
+if (timeValue == "0") timeValue = 12;
+timeValue += ((minutes < 10) ? ":0" : ":") + minutes
+timeValue += ((seconds < 10) ? ":0" : ":") + seconds
+timeValue += (hours >= 12) ? " P.M." : " A.M."
+document.clock.face.value = timeValue;
+timerID = setTimeout("showtime()",1000);
+timerRunning = true;
+}
+function startclock() {
+stopclock();
+showtime();
+}
+window.onload=startclock;
+// End -->
+</SCRIPT>
 
 <body>
-
-	<!-- Main navbar -->
-	<?php include '../layout/navbar.php' ?>
-	<!-- /main navbar -->
-
-	<!-- Page content -->
-	<div class="page-content">
-
-		<!-- Main sidebar -->
-		<?php include '../layout/sidebar.php' ?>
-		<!-- /main sidebar -->
-
-
-		<!-- Main content -->
-		<div class="content-wrapper">
-
-			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
-			<!-- /page header -->
-
-			<!-- Content area -->
-			<div class="content">
-
-				<div class="card">
-
-					<div class="card-body">
-
-						<div class="card-header header-elements-inline">
-			              	<h5 class="card-title">Шаблон</h5>
-			              	<div class="header-elements">
-		                  		<div class="list-icons">
-									<a href="../templates/product.xlsx" class="btn" download>Шаблон</a>
-			                      	<a class="list-icons-item" data-action="collapse"></a>
-			                  	</div>
-			              	</div>
-			          	</div>
-					
-						<?php ProductsModel::form_template(); ?>
-					</div>
-
-				</div>
-
-				<div class="card">
-
-					<div class="card-body">
-
-						<?php
-							$rowcount = $db->query("SELECT * FROM products ORDER BY qty_sold DESC")->rowcount();
-
-							$rowcount123 = $db->query("SELECT * FROM products where qty < 10 ORDER BY product_id DESC")->rowcount();
-
-							$rowcountjnvls = $db->query("SELECT `catg`, `qty` FROM `products` WHERE `catg` = 'ОЛСИМН' && `qty` < 10;")->rowcount();
-
-							$rowcountfixed = $db->query("SELECT `catg`, `qty` FROM `products` WHERE `catg` = 'Фиксированная' && `qty` < 10;")->rowcount();
-
-							$d1 = strtotime('+120 days');
-					        $d2 = date('Y-m-d', $d1);
-							$result = $db->prepare("SELECT * FROM products WHERE expiry_date BETWEEN :a AND :b ORDER by product_id DESC ");
-							$result->bindParam(':a', $d1);
-							$result->bindParam(':b', $d2);
-							$result->execute();
-							$rowcountexpd = $result->rowcount();
-						?>
-
-						<div class="row">
-							<div class="col-md-6">
-								Количество вида препаратов: <span class="badge badge-flat badge-pill border-success text-success-600"> <?= $rowcount;?></span>
-							</div>
-
-							<div class="col-md-6">
-								Общее количество препаратов оставшиеся меньше 10 шт: <span class="badge badge-flat badge-pill border-danger text-danger-600"><?= $rowcount123;?></span>
-							</div>
-						</div>
-					</div>
-
-				</div>
-
-				<div class="card">
-
-					<div class="card-body">
-
-						<div class="row">
-							<div class="col-md-2">
-								<a href="revision.php">
-									<button type="button" class="btn btn-info">ПЕЧАТЬ </button>
-
-								</a>
-							</div>
-
-						</div>
-					</div>
-
-				</div>
-
-				<div class="card">
-
-					<div class="card-body">
-							<div class="row">
-								<div class="col-md-10">
-
-									<input type="text" name="qty" id="qty"  class="form-control">
-								</div>
-								<div class="col-md-2">
-
-									<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_form_vertical" />Добавить</button>
-
-
-									<div id="modal_form_vertical" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-										<div class="modal-dialog">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title">Наименование</h5>
-													<button type="button" class="close" data-dismiss="modal">×</button>
-												</div>
-
-												<form action="saveproduct.php" method="POST">
-													<div class="modal-body">
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-10">
-																	<label>Наименование</label>
-																	<select name="product_code" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
-																		<option></option>
-
-																		<?php
-
-																		$result = $db->query("SELECT * FROM goods");
-																		for($i=0; $row = $result->fetch(); $i++){
-																		?>
-																			<option value="<?= $row['goodname'] ?>" ><?= $row['goodname'] ?></option>
-
-
-
-																		<?php
-																			}
-																		?>
-																	</select>
-																</div>
-
-																<div class="col-md-2">
-																	<a href="newpr.php">
-
-																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
-
-																	</a>
-																</div>
-															</div>
-														</div>
-
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-10">
-																	<label>Поставщик</label>
-																	<select name="supplier" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
-																		<option></option>
-
-																		<?php
-
-																		$result = $db->query("SELECT * FROM supliers");
-																		for($i=0; $row = $result->fetch(); $i++){
-																		?>
-																			<option value="<?= $row['suplier_name'] ?>" ><?= $row['suplier_name'] ?></option>
-
-
-																		<?php
-																			}
-																		?>
-																	</select>
-																</div>
-																<div class="col-md-2">
-																	<a href="supplier.php">
-
-																		<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
-																	</a>
-
-																</div>
-															</div>
-														</div>
-
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-6">
-																	<label>Счет фактура №</label>
-																	<input type="text" name="fakturanumber" placeholder="Ring street 12" class="form-control">
-																</div>
-																<div class="col-md-6">
-																	<label>От</label>
-																	<input class="form-control" name="sdate" type="date" name="date">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-4">
-																	<label>Целая.УП</label>
-																	<input id="e1" name="qtyu" class="form-control mult" type="number">
-																</div>
-																<div class="col-md-4">
-																	<label>Шт.остаток</label>
-																	<input id="e2" class="form-control mult" type="number">
-																</div>
-																<div class="col-md-4">
-																	<label>Таб.в упаковке (шт)</label>
-																	<input id="e3" class="form-control mult" type="number">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Производитель</label>
-																	<input type="text" name="gen_name" placeholder="Munich" class="form-control">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Ед.изм</label>
-																	<select name="ediz" class="form-control select select2-hidden-accessible" data-fouc="" tabindex="-1" aria-hidden="true">
-																		<option value="УП">УП</option>
-																        <option value="ПРТ">ПРТ</option>
-																        <option value="ШТ">ШТ</option>
-																        <option value="ОРГ">ОРГ</option>
-																        <option value="КВТ">КВТ</option>
-																        <option value="ФЛ">ФЛ</option>
-																	</select>
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Количество</label>
-																	<input id="e4" name="qty" type="text" class="form-control" readonly="" value="">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Цена прихода одной упаковки</label>
-																	<input id="e5" class="form-control mult" type="number" >
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Реальная цена одной </label>
-																	<input id="e6" name="o_price" type="text" class="form-control" readonly="" value="">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Процент продаж</label>
-																	<input id="e7" class="form-control mult" type="number">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Цена продажи</label>
-																	<input id="e8" name="price" class="form-control mult" type="number">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Прибыль</label>
-																	<input id="e9" name="profit" type="text" class="form-control" readonly="" value="">
-																</div>
-															</div>
-														</div>
-
-
-																<div class="form-group pt-2">
-									<label>Категория</label>
-									<div class="form-check">
-										<label class="form-check-label">
-											<input type="radio" class="form-check-input-styled" name="catg" value="2" checked data-fouc>
-											Препарат
-										</label>
-									</div>
-									<div class="form-check">
-										<label class="form-check-label">
-											<input type="radio" class="form-check-input-styled" name="catg" value="3" data-fouc>
-											Расходный материал
-										</label>
-									</div>
-
-									<div class="form-check">
-										<label class="form-check-label">
-											<input type="radio" class="form-check-input-styled" name="catg" value="4" data-fouc>
-											Анестезия
-										</label>
-									</div>
-
-								</div>
-
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Дата получения</label>
-																	<input class="form-control" name="date_arrival" type="date" name="date">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-
-																	<label>Срок годности</label>
-																	<input class="form-control" name="expiry_date" type="date" name="date">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Серия</label>
-																	<input type="text" name="product_name" placeholder="Munich" class="form-control">
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<div class="row">
-																<div class="col-md-12">
-																	<label>Штрих код</label>
-																	<input type="text" name="shcod" placeholder="Munich" class="form-control">
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div class="modal-footer">
-														<button type="button" class="btn btn-link legitRipple" data-dismiss="modal">Закрыть</button>
-														<button type="submit" class="btn bg-primary legitRipple">Сохранить</button>
-													</div>
-												</form>
-											</div>
-										</div>
-									</div>
-									<!-- <button type="button" class="btn btn-light legitRipple" data-toggle="modal" data-target="#modal_form_vertical">Launch <i class="icon-play3 ml-2"></i></button> -->
-								</div>
-							</div>
-
-					</div>
-
-
-
-				</div>
-
-				<div class="card">
-
-				    <div class="card-header header-elements-inline">
-				        <h5 class="card-title">	Препараты (товары)</h5>
-				        <div class="header-elements">
-				            <div class="list-icons">
-				                <a class="list-icons-item" data-action="collapse"></a>
-				            </div>
-				        </div>
-				    </div>
-
-				    <div class="card-body">
-
-				        <div class="table-responsive">
-				            <table class="table table-hover">
-				                <thead>
-				                    <tr class="bg-blue">
-					                    <th> Название </th>
-										<th> Производитель </th>
-										<th> Серия </th>
-										<th>Категория</th>
-										<th>Поставщик</th>
-										<th>Дата получения </th>
-										<th>Срок годности</th>
-										<th>Цена прихода</th>
-										<th>Цена  продажи</th>
-										<th>Кол-во</th>
-										<th>Остаток</th>
-										<th>Итого</th>
-										<th>№ Сч/Факт</th>
-										<th>Число.от</th>
-										<th>Ед.изм</th>
-										<th>Действия</th>
-
-				                    </tr>
-				                </thead>
-				                <tbody>
-
-				                	<?php
-
-				                	$result = $db->query("SELECT *, price * qty as total FROM products ORDER BY product_id DESC");
-									while($row = $result->fetch(PDO::FETCH_ASSOC)) {
-										$total=$row['total'];
-										$availableqty=$row['qty'];
-										if ($availableqty < 10) {
-										echo '<tr class="alert alert-warning record" style="color: #fff; background:#FF0000;">';
-										}
-										else {
-										echo '<tr class="record">';
-										}
-									?>
-
-
-										<td><?= $row['product_code']; ?></td>
-										<td><?= $row['gen_name']; ?></td>
-										<td><?= $row['product_name']; ?></td>
-										<td><?= $row['catg']; ?></td>
-										<td><?= $row['supplier']; ?></td>
-										<td><?= $row['date_arrival']; ?></td>
-										<td><?= $row['expiry_date']; ?></td>
-										<td><?= formatMoney($row['o_price'], true);?></td>
-										<td><?= formatMoney($row['price'], true);?></td>
-										<td><?= $row['qty_sold']; ?></td>
-										<td><?= $row['qty']; ?></td>
-										<td><?= formatMoney($row['total'], true);?></td>
-										<td><?= $row['fakturanumber']; ?></td>
-										<td><?= $row['sdate']; ?></td>
-										<td><?= $row['ediz']; ?></td>
-
-										<td>
-											<i class="icon-pencil7" data-toggle="modal" data-target="#a<?= $row['product_id'] ?>"></i>
-										<a href="deletproducts.php?id=<?= $row['product_id']; ?>" id="" class="delbutton" title="Удалить"><i class="icon-trash"></i></a></td>
-									</tr>
-									<?php
-											}
-										?>
-
-									<tr>
-										<td colspan="9">ИТОГ : </td>
-										<td><?= $db->query("SELECT SUM(qty_sold) FROM products")->fetch()[0] ?></td>
-										<td><?= $db->query("SELECT SUM(qty) FROM products")->fetch()[0] ?></td>
-
-
-										<td colspan="5"></td>
-
-									</tr>
-
-				                </tbody>
-				            </table>
-
-
-				        </div>
-
-				    </div>
-
-				</div>
-
+<?php include('navfixed.php');?>
+<div class="container-fluid">
+<div class="row-fluid">
+
+	<div class="span2">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li><a href="index.php"><i class="icon-dashboard icon-2x"></i> Личный кабинет </a></li>
+			<li><a href="sales.php?id=cash&invoice=<?php echo $finalcode ?>"><i class="icon-shopping-cart icon-2x"></i> Продажа</a>  </li>
+			<li class="active"><a href="products.php"><i class="icon-list-alt icon-2x"></i> Препараты (товары)</a>                                     </li>
+			<li><a href="customer.php"><i class="icon-group icon-2x"></i> Клиенты</a>                                    </li>
+			<li><a href="supplier.php"><i class="icon-group icon-2x"></i> Поставщики</a>                                    </li>
+			<li><a href="salesreport.php?d1=0&d2=0"><i class="icon-bar-chart icon-2x"></i> Отчет продаж</a>                </li>
+            <li><a href="sales_inventory.php"><i class="icon-table icon-2x"></i> Инвентаризация продаж</a>                </li><li><a href="all_prep.php"><i class="icon-table icon-2x"></i> Все наименования</a>                </li>
+
+
+			<br><br><br><br><br><br>
+			<li>
+			 <div class="hero-unit-clock">
+
+			<form name="clock">
+			<font color="white">Текущее время: <br></font>&nbsp;<input style="width:150px;" type="submit" class="trans" name="face" value="">
+			</form>
+			  </div>
+			</li>
+
+			</ul>
+          </div><!--/.well -->
+  </div><!--/span-->
+	<div class="span10">
+	<div class="contentheader">
+			<i class="icon-table"></i>Препараты</div>
+			<ul class="breadcrumb">
+			<li><a href="index.php">Панель управления</a></li> /
+			<li class="active">Препараты (товары)</li>
+			</ul>
+
+
+<div style="margin-top: -19px; margin-bottom: 21px;">
+
+<a  href="index.php"><button class="btn btn-default btn-large" style="float: left;"><i class="icon icon-circle-arrow-left icon-large"></i> Назад</button></a>
+			<?php
+			include('../connect.php');
+				$result = $db->prepare("SELECT * FROM products ORDER BY qty_sold DESC");
+				$result->execute();
+				$rowcount = $result->rowcount();
+			?>
+			<?php
+			include('../connect.php');
+				$result = $db->prepare("SELECT * FROM products where qty < 10 ORDER BY product_id DESC");
+				$result->execute();
+				$rowcount123 = $result->rowcount();
+			?>
+            <?php
+			include('../connect.php');
+				$result = $db->prepare("SELECT `catg`, `qty` FROM `products` WHERE `catg` = 'ОЛСИМН' && `qty` < 10;");
+				$result->execute();
+				$rowcountjnvls = $result->rowcount();
+			?>
+            <?php
+			include('../connect.php');
+				$result = $db->prepare("SELECT `catg`, `qty` FROM `products` WHERE `catg` = 'Фиксированная' && `qty` < 10;");
+				$result->execute();
+				$rowcountfixed = $result->rowcount();
+			?>
+            <?php
+			include('../connect.php');
+			$d1 = strtotime('+120 days');
+                $d2 = date('Y-m-d', $d1);
+				$result = $db->prepare("SELECT * FROM products WHERE expiry_date BETWEEN :a AND :b ORDER by product_id DESC ");
+				$result->bindParam(':a', $d1);
+				$result->bindParam(':b', $d2);
+				$result->execute();
+				$rowcountexpd = $result->rowcount();
+			?>
+				<div style="text-align:center;">
+			Количество вида препаратов:  <font color="green" style="font:bold 22px 'Aleo';">[<?php echo $rowcount;?>]</font>
 			</div>
-            <!-- /content area -->
-
-		</div>
-		<!-- /main content -->
-
-	</div>
-
-	<?php
-
-		$result1 = $db->query("SELECT *, price * qty as total FROM products ORDER BY product_id DESC");
-		while($row1 = $result1->fetch()) {
-	?>
-
-	<div id="a<?= $row1['product_id'] ?>" class="modal fade" tabindex="-1" style="display: none;" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">Наименование</h5>
-					<button type="button" class="close" data-dismiss="modal">×</button>
-				</div>
-
-				<form action="saveeditproduct.php" method="POST">
-					<div class="modal-body">
-						<input type="hidden" name="id" value="<?= $row1['product_id'] ?>">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-10">
-									<label>Наименование</label>
-									<select name="product_code" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
-										<option value="<?= $row1['product_code'] ?>"><?= $row1['product_code'] ?></option>
-
-										<?php
-
-										$result = $db->query("SELECT * FROM goods");
-										for($i=0; $row = $result->fetch(); $i++){
-										?>
-											<option value="<?= $row['goodname'] ?>" ><?= $row['goodname'] ?></option>
-
-
-
-										<?php
-											}
-										?>
-									</select>
-								</div>
-
-								<div class="col-md-2">
-									<a href="newpr.php">
-
-										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
-
-									</a>
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-10">
-									<label>Поставщик</label>
-									<select name="supplier" class="form-control select select2-hidden-accessible" data-placeholder="Введите название" data-fouc="" tabindex="-1" aria-hidden="true">
-										<option value="<?= $row1['supplier'] ?>"><?= $row1['supplier'] ?></option>
-
-										<?php
-
-										$result = $db->query("SELECT * FROM supliers");
-										for($i=0; $row = $result->fetch(); $i++){
-										?>
-											<option value="<?= $row['suplier_name'] ?>" ><?= $row['suplier_name'] ?></option>
-
-
-
-										<?php
-											}
-										?>
-									</select>
-								</div>
-								<div class="col-md-2">
-									<a href="supplier.php">
-
-										<button type="button" class="btn btn-info"><i class="icon-plus3"></i></button>
-									</a>
-
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-6">
-									<label>Счет фактура №</label>
-									<input type="text" name="fakturanumber" value="<?= $row1['fakturanumber'] ?>" placeholder="Ring street 12" class="form-control">
-								</div>
-								<div class="col-md-6">
-									<label>От</label>
-									<input class="form-control" name="sdate" value="<?= $row1['sdate'] ?>" type="date" name="date">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-4">
-									<label>Целая.УП</label>
-									<input id="e1" name="qtyu" class="form-control mult" value="<?= $row1['qtyu'] ?>" type="number">
-								</div>
-								<div class="col-md-4">
-									<label>Шт.остаток</label>
-									<input id="e2" class="form-control mult"  type="number">
-								</div>
-								<div class="col-md-4">
-									<label>Таб.в упаковке (шт)</label>
-									<input id="e3" class="form-control mult" type="number">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Производитель</label>
-									<input type="text" name="gen_name" value="<?= $row1['gen_name'] ?>" placeholder="Munich" class="form-control">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Ед.изм</label>
-									<select name="ediz" class="form-control select select2-hidden-accessible" value="<?= $row1['ediz'] ?>"  data-fouc="" tabindex="-1" aria-hidden="true">
-										<option value="УП">УП</option>
-								        <option value="ПРТ">ПРТ</option>
-								        <option value="ШТ">ШТ</option>
-								        <option value="ОРГ">ОРГ</option>
-								        <option value="КВТ">КВТ</option>
-								        <option value="ФЛ">ФЛ</option>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Количество</label>
-									<input id="e4" name="qty" type="text" value="<?= $row1['qty'] ?>" class="form-control" readonly="" value="">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Цена прихода одной упаковки</label>
-									<input id="e5" class="form-control mult" type="number" >
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Реальная цена одной </label>
-									<input id="e6" name="o_price" value="<?= $row1['o_price'] ?>" type="text" class="form-control" readonly="" value="">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Процент продаж</label>
-									<input id="e7" class="form-control mult" type="number">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Цена продажи</label>
-									<input id="e8" name="price" value="<?= $row1['price'] ?>" class="form-control mult" type="number">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Прибыль</label>
-									<input id="e9" name="profit" value="<?= $row1['profit'] ?>" type="text" class="form-control" readonly="" value="">
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Категория</label>
-									<select name="catg" class="form-control select select2-hidden-accessible"  data-fouc="" tabindex="-1" aria-hidden="true">
-										<option></option>
-										<?php foreach ($db->query("SELECT * FROM pharmacy_category") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ($row1['catg']==$row['id']) ? "selected" : ""?>><?= $row['name'] ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Дата получения</label>
-									<input class="form-control" name="date_arrival" value="<?= $row1['date_arrival'] ?>"  type="date" name="date">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Срок годности</label>
-									<input class="form-control" name="expiry_date" value="<?= $row1['expiry_date'] ?>" type="date" name="date">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Серия</label>
-									<input type="text" name="product_name" value="<?= $row1['product_name'] ?>" placeholder="Munich" class="form-control">
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-md-12">
-									<label>Штрих код</label>
-									<input type="text" name="shcod" value="<?= $row1['shcod'] ?>" placeholder="Munich" class="form-control">
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-link legitRipple" data-dismiss="modal">Закрыть</button>
-						<button type="submit" class="btn bg-primary legitRipple">Сохранить</button>
-					</div>
-				</form>
+			<div style="text-align:center;">
+			<font style="color:rgb(255, 95, 66);; font:bold 22px 'Aleo';">[<?php echo $rowcount123;?>]</font> Общее количество препаратов оставшиеся меньше 10 шт
 			</div>
-		</div>
-	</div>
-
-	<?php
-		}
-	?>
-
-	<script>
-
-		$('.mult').focusout(function() {
-			$('#e4').val( Number( $('#e1').val() ) * Number( $('#e3').val() ) + Number( $('#e2').val() ) );
-			$('#e6').val( Number( $('#e5').val() ) / Number( $('#e3').val() ) );
-		});
-
-		$('#e7').focusout(function() {
-
-			let price = Number( $('#e6').val() );
-
-			$('#e8').val( (Number( $('#e7').val() ) / 100) * price + price );
-
-			$('#e9').val( Number( $('#e8').val() )- price  );
-		});
-
-		$('#e8').focusout(function() {
-
-			$('#e9').val( Number( $('#e8').val() ) - Number( $('#e6').val() )  );
-		});
+</div>
 
 
-	</script>
+<input type="text" style="padding:15px;" name="filter" value="" id="filter" placeholder="Поиск..." autocomplete="off" />
+<a rel="facebox" href="addproduct.php"><Button type="submit" class="btn btn-info" style="float:right; width:230px; height:35px;" /><i class="icon-plus-sign icon-large"></i> Приход </button></a><br><br>
+</section>
+    <div class="buttonss" position: absolute; width: 100%>
+    <div class="blockk"><a rel="facebox" class="semi-transparent-button with-border" href="products_jnvls.php">ОЛСИМН<font style="color:#FF0000; font:bold 22px 'Aleo';">[<?php echo $rowcountjnvls;?>]</font></a></div>
+    <div class="blockk"><a rel="facebox" class="semi-transparent-button with-border" href="products_price.php">ФИКС<font style="color:#FF0000; font:bold 22px 'Aleo';">[<?php echo $rowcountfixed;?>]</font></a></div>
+    <div class="blockk"><a rel="facebox" class="semi-transparent-button with-border" href="products_expdate.php">ПО СРОКУ <font style="color:#FF0000; font:bold 22px 'Aleo';">[<?php echo $rowcountexpd;?>]</font></a></div>
+    <div class="blockk"><a class="semi-transparent-button with-border" href="revision.php">ПЕЧАТЬ <font style="color:#FF0000; font:bold 22px 'Aleo';">[]</font></a></div>
+</div>
+
+<table class="hoverTable" id="resultTable" data-responsive="table" style="text-align: left;">
+  <thead>
+		<tr>
+			<th width="12%"> Название </th>
+			<th width="14%"> Производитель </th>
+			<th width="13%"> Серия </th>
+			<th width="7%">Категория</th>
+			<th width="9%">Поставщик</th>
+			<th width="10%">Дата получения </th>
+			<th width="6%">Срок годности</th>
+			<th width="6%">Цена прихода</th>
+			<th width="6%">Цена  продажи</th>
+			<th width="5%">Кол-во</th>
+			<th width="8%">Остаток</th>
+			<th width="8%">Итого</th>
+			<th width="8%">№ Сч/Факт</th>
+			<th width="8%">Число.от</th>
+			<th width="8%">Ед.изм</th>
+		</tr>
+	</thead>
+	<tbody>
+
+			<?php
+			function formatMoney($number, $fractional=false) {
+					if ($fractional) {
+						$number = sprintf('%.2f', $number);
+					}
+					while (true) {
+						$replaced = preg_replace('/(-?\d+)(\d\d\d)/', '$1,$2', $number);
+						if ($replaced != $number) {
+							$number = $replaced;
+						} else {
+							break;
+						}
+					}
+					return $number;
+				}?>
+				<?php include('../connect.php');
+
+				$result = $db->prepare("SELECT *, price * qty as total FROM products ORDER BY product_id DESC");
+				$result->execute();
+while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+				$total=$row['total'];
+				$availableqty=$row['qty'];
+				if ($availableqty < 10) {
+				echo '<tr class="alert alert-warning record" style="color: #fff; background:#FF0000;">';
+				}
+				else {
+				echo '<tr class="record">';
+				}
+			?>
 
 
-	<!-- /page content -->
+		<td><?php echo $row['product_code']; ?></td>
+			<td><?php echo $row['gen_name']; ?></td>
+			<td><?php echo $row['product_name']; ?></td>
+            			<td><?php echo $row['catg']; ?></td>
 
-    <!-- Footer -->
-    <?php include '../layout/footer.php' ?>
-    <!-- /footer -->
+			  <td><?php echo $row['supplier']; ?></td>
+			<td><?php echo $row['date_arrival']; ?></td>
+			<td><?php echo $row['expiry_date']; ?></td>
+			<td><?php
+			$oprice=$row['o_price'];
+			echo formatMoney($oprice, true);
+			?></td>
+			<td><?php
+			$pprice=$row['price'];
+			echo formatMoney($pprice, true);
+			?></td>
+			<td><?php echo $row['qty_sold']; ?></td>
+			<td><?php echo $row['qty']; ?></td>
+			<td>
+			<?php
+			$total=$row['total'];
+			echo formatMoney($total, true);
+			?>
+			</td>
+			<td><?php echo $row['fakturanumber']; ?></td>
+			<td><?php echo $row['sdate']; ?></td>
+			<td><?php echo $row['ediz']; ?></td>
+            <td><?php echo $row['nnak']; ?></td>
+			<td><a rel="facebox" title="Редактировать" href="editproduct.php?id=<?php echo $row['product_id']; ?>"><button class="btn btn-warning"><i class="icon-edit"></i> </button> </a>
+			<a href="#" id="<?php echo $row['product_id']; ?>" class="delbutton" title="Удалить"><button class="btn btn-danger"><i class="icon-trash"></i></button></a></td>
+		</tr><?php
+				}
+			?>	<tr>
+		  <td>ИТОГ : </td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td><?php
+
+
+class Sample_class{
+
+        private $db;
+
+        public function __construct($database) {
+            $this->db = $database;
+        }
+
+        public function GetDistant($user_id,$status) {
+
+                    $query = $this->db->prepare("SELECT SUM(qty_sold) FROM products");
+
+                    $query->bindValue(1, $user_id);
+                    $query->bindValue(2, $status);
+
+                    try{ $query->execute();
+
+                     $rows =  $query->fetch();
+                     return $rows[0];
+
+              } catch (PDOException $e){die($e->getMessage());}
+            }
+    }
+
+$dist = new Sample_class($db);
+
+$user_id = 10;
+$status = 2;
+
+echo $dist->GetDistant($user_id,$status);
+?></td>
+		  <td><?php
+
+
+class Sampler_class{
+
+        private $db;
+
+        public function __construct($database) {
+            $this->db = $database;
+        }
+
+        public function GetDistant($user_id,$status) {
+
+                    $query = $this->db->prepare("SELECT SUM(qty) FROM products");
+
+                    $query->bindValue(1, $user_id);
+                    $query->bindValue(2, $status);
+
+                    try{ $query->execute();
+
+                     $rows =  $query->fetch();
+                     return $rows[0];
+
+              } catch (PDOException $e){die($e->getMessage());}
+            }
+    }
+
+$dist = new Sampler_class($db);
+
+$user_id = 10;
+$status = 2;
+
+echo $dist->GetDistant($user_id,$status);
+?></td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+		  <td>&nbsp;</td>
+	  </tr>
+
+
+	</tbody>
+</</table>
+<div class=" active-result"></div>
+</div>
+</div>
+<p>&nbsp;</p>
+<p>
+</p>
+<script type="text/javascript">
+//override defaults
+alertify.defaults.transition = "zoom";
+alertify.defaults.theme.ok = "ui positive button";
+alertify.defaults.theme.cancel = "ui black button";
+</script>
+<script type="text/javascript">
+$(function() {
+
+
+$(".delbutton").click(function(){
+
+//Save the link in a variable called element
+var element = $(this);
+
+//Find the id of the link that was clicked
+var del_id = element.attr("id");
+
+//Built a url to send
+var info = 'id=' + del_id;
+ if(confirm("Вы точно хотите удалить этот товар ? Если да намите ОК если нет ОТМЕНА"))
+		  {
+
+ $.ajax({
+   type: "GET",
+   url: "deleteproduct.php",
+   data: info,
+   success: function(){
+
+   }
+ });
+         $(this).parents(".record").animate({ backgroundColor: "#fbc7c7" }, "fast")
+		.animate({ opacity: "hide" }, "slow");
+
+ }
+
+return false;
+
+});
+
+});
+  </script><div class="targets-wrapper">
+
+
 </body>
+<?php include('footer.php');?>
+
 </html>

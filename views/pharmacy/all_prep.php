@@ -72,17 +72,17 @@ is_auth(4);
 			                  	</div>
 			              	</div>
 			          	</div>
-					
+
 						<?php GoodsModel::form_template(); ?>
 					</div>
 
 				</div>
 
 				<div class="card">
-					
+
 					<div class="card-body">
-						
-						<?php 
+
+						<?php
 							$rowcount = $db->query("SELECT * FROM goods ORDER BY id DESC")->rowcount();
 						?>
 
@@ -101,7 +101,7 @@ is_auth(4);
 						<form action="incoming.php" method="post" >
 							<div class="row">
 								<div class="col-md-10">
-									<input type="text" name="qty" id="qty"  class="form-control">	
+									<input type="text" name="qty" id="qty"  class="form-control">
 								</div>
 
 								<div class="col-md-2">
@@ -110,7 +110,7 @@ is_auth(4);
 							</div>
 						</form>
 					</div>
-					
+
 				</div>
 
 				<div class="card">
@@ -131,7 +131,7 @@ is_auth(4);
 
 				                	$count_elem = 6;
 
-				                	$count = round(intval($db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)']) / $count_elem); 
+				                	$count = round(intval($db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)']) / $count_elem);
 
 				                	echo $db->query("SELECT COUNT(*) FROM goods ")->fetch()['COUNT(*)'];
 
@@ -144,7 +144,7 @@ is_auth(4);
 				                	$result = $db->query($slq);
 									while($row = $result->fetch(PDO::FETCH_ASSOC)) {
 									?>
-							
+
 									<tr class="record">
 										<td><?= $row['goodname']; ?></td>
 
@@ -170,7 +170,7 @@ is_auth(4);
 
 				?>
 
-				
+
 
 			</div>
             <!-- /content area -->
@@ -192,7 +192,7 @@ is_auth(4);
 					<div class="modal-body">
 						<div class="form-group">
 							<div class="col-md-12">
-								<input type="text" name="goodname"  class="form-control">	
+								<input type="text" name="goodname"  class="form-control">
 							</div>
 						</div>
 
@@ -225,7 +225,7 @@ is_auth(4);
 						<div class="modal-body">
 							<div class="form-group">
 								<div class="col-md-12">
-									<input type="text" name="goodname" value="<?= $row['goodname'] ?>"  class="form-control">	
+									<input type="text" name="goodname" value="<?= $row['goodname'] ?>"  class="form-control">
 								</div>
 							</div>
 

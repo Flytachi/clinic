@@ -1,4 +1,4 @@
-<div class="sidebar sidebar-dark sidebar-main sidebar-expand-md">
+<div class="sidebar sidebar-dark sidebar-main sidebar-expand-md sidebar-fixed">
     <!-- Sidebar content -->
     <div class="sidebar-content">
 
@@ -32,30 +32,38 @@
 
             <ul class="nav nav-sidebar" data-nav-type="accordion">
                 <!-- Main -->
-                <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
+                <li class="nav-item-header">
+                    <div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i>
+                </li>
 
                 <li class="nav-item">
-                    <a href="<?= viv('master/index') ?>" class="nav-link legitRipple">
+                    <a href="<?= viv('master/index') ?>" class="nav-link legitRipple <?= viv_link('master/index') ?>">
                         <i class="icon-stack2"></i>
-                        <span>Главная</span>
+                        <span>Main</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= viv('master/database') ?>" class="nav-link legitRipple">
+                    <a href="<?= viv('master/server') ?>" class="nav-link legitRipple <?= viv_link('master/server') ?>">
                         <i class="icon-server"></i>
+                        <span>Server</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="<?= viv('master/database') ?>" class="nav-link legitRipple <?= viv_link('master/database') ?>">
+                        <i class="icon-database"></i>
                         <span>Database</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= viv('master/visit_control') ?>" class="nav-link legitRipple">
+                    <a href="<?= viv('master/visit_control') ?>" class="nav-link legitRipple <?= viv_link('master/visit_control') ?>">
                         <i class="icon-archive"></i>
-                        <span>Контроль визитов</span>
+                        <span>Сontrol of visits</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= viv('master/logs') ?>" class="nav-link legitRipple">
+                    <a href="<?= viv('master/logs') ?>" class="nav-link legitRipple <?= viv_link('master/logs') ?>">
                         <i class="icon-price-tag3"></i>
-                        <span>Логи</span>
+                        <span>Logs</span>
                     </a>
                 </li>
 

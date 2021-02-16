@@ -87,6 +87,7 @@ else $_SESSION['browser'] = "Неизвестный";
 
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
+require_once 'functions/base.php';
 require_once 'models.php';
 require_once 'forms.php';
 require_once 'forms_2.php';
