@@ -165,9 +165,9 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <ol>
                                     <?php foreach ($db->query("SELECT vs.id, sc.id 'serv_id', sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.laboratory IS NOT NULL AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN '$docs->add_date' AND '$docs->completed')") as $any): ?>
                                         <li>
-                                            <strong><?= $any['name'] ?>:</strong>
+                                            <strong><?= $any['name'] ?>:</strong><br>
                                             <?php foreach ($db->query("SELECT lat.name, la.result FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON(lat.id=la.analyze_id) WHERE la.visit_id = {$any['id']} AND la.service_id = {$any['serv_id']}") as $row): ?>
-                                                <ul><?= $row['name'] ?> - <?= $row['result'] ?></ul>
+                                                <?= $row['name'] ?> - <?= $row['result'] ?>;
                                             <?php endforeach; ?>
                                         </li>
                                     <?php endforeach; ?>

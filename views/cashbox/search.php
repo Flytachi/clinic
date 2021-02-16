@@ -25,10 +25,10 @@ switch ($_GET['tab']) {
         break;
     case 2:
         if(empty($_GET['search'])){
-            $sql = "SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.status IS NOT NULL AND us.status = 1";
+            $sql = "SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.priced_date IS NULL AND vs.service_id = 1";
         }else {
             $ser = $_GET['search'];
-            $sql = "SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.status IS NOT NULL AND us.status = 1 AND (us.id LIKE '%$ser%' OR us.first_name LIKE '%$ser%' OR us.last_name LIKE '%$ser%' OR us.father_name LIKE '%$ser%')";
+            $sql = "SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.priced_date IS NULL AND vs.service_id = 1 AND (us.id LIKE '%$ser%' OR us.first_name LIKE '%$ser%' OR us.last_name LIKE '%$ser%' OR us.father_name LIKE '%$ser%')";
         }
         foreach($db->query($sql) as $row) {
         ?>

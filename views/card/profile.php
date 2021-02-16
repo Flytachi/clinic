@@ -344,7 +344,7 @@ $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         </div>
                     </div>
 
-                    <input type="hidden" id="verification_url" value="<?= viv('doctor/verificaton') ?>">
+                    <input type="hidden" id="verification_url" value="<?= viv('card/verificaton') ?>">
 
                 <?php elseif (permission(7)): ?>
 

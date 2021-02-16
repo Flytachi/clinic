@@ -44,7 +44,7 @@ $header = "Пациент";
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Анализы Пациента</h5>
 								<?php if ($activity): ?>
-									<?php if (!$patient->direction or ($patient->direction and $patient->grant_id == $_SESSION['session_id'])): ?>
+									<?php if (!$patient->direction or $patient->direction): ?>
 										<div class="header-elements">
 											<div class="list-icons">
 												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">

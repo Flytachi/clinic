@@ -1,3 +1,8 @@
+<?php
+foreach ($db->query("SELECT id FROM users WHERE user_level IN (2, 32)") as $arr_users) {
+    $registrators[] = $arr_users['id'];
+}
+?>
 <!-- Widgets with charts -->
 <div class="row">
     <div class="col-sm-6 col-xl-3">
@@ -12,7 +17,7 @@
                 <div class="row">
                     <div class="col-md-6 text-left">
                         <!-- <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL")->rowCount() ?></span> -->
-                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
+                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>
@@ -38,7 +43,7 @@
                 <div class="row">
                     <div class="col-md-6 text-left">
                         <!-- <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND direction IS NULL")->rowCount() ?></span> -->
-                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE direction IS NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
+                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND vs.direction IS NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>
@@ -64,7 +69,7 @@
                 <div class="row">
                     <div class="col-md-6 text-left">
                         <!-- <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND direction IS NOT NULL")->rowCount() ?></span> -->
-                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE direction IS NOT NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
+                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND vs.direction IS NOT NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>

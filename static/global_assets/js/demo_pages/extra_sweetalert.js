@@ -43,12 +43,16 @@ var SweetAlert = function () {
 
             event.preventDefault();
             var url = this.dataset.href;
+            var question = this.dataset.question;
+            var btn = this.dataset.btn;
 
             // Verification
 
             if (this.dataset.btn == "Выписать") {
 
-                // Стационар
+                // -- Стационар --
+
+                // stage 1
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -61,7 +65,7 @@ var SweetAlert = function () {
                         if (data >= 1) {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно выписать!',
+                                title: 'Stage 1-1! Невозможно выписать!',
                                 text: 'У пациента есть не завершёные визиты.',
                                 type: 'error',
                                 padding: 30
@@ -72,6 +76,7 @@ var SweetAlert = function () {
 
                 });
 
+                // stage 2
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -84,7 +89,7 @@ var SweetAlert = function () {
                         if (data >= 1) {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно выписать!',
+                                title: 'Stage 1-2! Невозможно выписать!',
                                 text: 'Форма заключения не запонена.',
                                 type: 'error',
                                 padding: 30
@@ -95,6 +100,7 @@ var SweetAlert = function () {
 
                 });
 
+                // stage 3
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -108,7 +114,7 @@ var SweetAlert = function () {
                             if (!(data == 0)) {
                                 swal({
                                     position: 'top',
-                                    title: 'Невозможно выписать!',
+                                    title: 'Stage 1-3! Невозможно выписать!',
                                     text: 'Дата выписки не совпадает с сегоднешней.',
                                     type: 'error',
                                     padding: 30
@@ -118,7 +124,7 @@ var SweetAlert = function () {
                         }else {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно выписать!',
+                                title: 'Stage 1-3! Невозможно выписать!',
                                 text: 'Не назначена дата выписки.',
                                 type: 'error',
                                 padding: 30
@@ -129,6 +135,7 @@ var SweetAlert = function () {
                     },
                 });
 
+                // stage 4
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -141,7 +148,7 @@ var SweetAlert = function () {
                         if (data >= 1) {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно выписать!',
+                                title: 'Stage 1-4! Невозможно выписать!',
                                 text: 'В листе назначений есть не завершённые процедуры.',
                                 type: 'error',
                                 padding: 30
@@ -152,6 +159,7 @@ var SweetAlert = function () {
 
                 });
 
+                // stage 5
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -161,11 +169,10 @@ var SweetAlert = function () {
                         stage: 5,
                     },
                     success: function (data) {
-                        console.log(data);
                         if (data >= 1) {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно выписать!',
+                                title: 'Stage 1-5! Невозможно выписать!',
                                 text: 'У пациента есть не завершёные операции.',
                                 type: 'error',
                                 padding: 30
@@ -175,10 +182,41 @@ var SweetAlert = function () {
                     },
 
                 });
-                // --
+
+                // stage 6
+                // $.ajax({
+                //     type: "GET",
+                //     url: $('#verification_url').val(),
+                //     data: {
+                //         id: this.dataset.user_id,
+                //         main: 1,
+                //         stage: 6,
+                //     },
+                //     success: function (data) {
+                //         if (data >= 1) {
+                //             swal({
+                //                 position: 'top',
+                //                 title: 'Внимание!',
+                //                 html: "Есть не завершённые визиты диагностики!<br>"+question,
+                //                 type: 'warning',
+                //                 showCancelButton: true,
+                //                 confirmButtonText:btn
+                //             }).then(function(ivi) {
+                //                 if (ivi.value) {
+                //                     window.location = url;
+                //                 }
+                //             });
+                //             return 0;
+                //         }
+                //     },
+                // });
+
+                // ----
 
             } else {
-                // Амбулаторные
+                // -- Амбулаторные --
+
+                // stage 1
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -191,7 +229,7 @@ var SweetAlert = function () {
                         if (data == 0) {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно завершить!',
+                                title: 'Stage 0-1! Невозможно завершить!',
                                 text: 'У вас нет ни одного завершающего отчёта.',
                                 type: 'error',
                                 padding: 30
@@ -201,6 +239,7 @@ var SweetAlert = function () {
                     },
                 });
 
+                // stage 2
                 $.ajax({
                     type: "GET",
                     url: $('#verification_url').val(),
@@ -213,7 +252,7 @@ var SweetAlert = function () {
                         if (data >= 1) {
                             swal({
                                 position: 'top',
-                                title: 'Невозможно завершить!',
+                                title: 'Stage 0-2! Невозможно завершить!',
                                 text: 'У пациента есть не завершёные визиты.',
                                 type: 'error',
                                 padding: 30
@@ -222,16 +261,45 @@ var SweetAlert = function () {
                         }
                     },
                 });
-                // --
+
+                // stage 3
+                $.ajax({
+                    type: "GET",
+                    url: $('#verification_url').val(),
+                    data: {
+                        id: this.dataset.user_id,
+                        main: 0,
+                        stage: 3,
+                    },
+                    success: function (data) {
+                        if (data >= 1) {
+                            swal({
+                                position: 'top',
+                                title: 'Внимание!',
+                                html: "Есть не завершённые визиты диагностики!<br>"+question,
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText:btn
+                            }).then(function(ivi) {
+                                if (ivi.value) {
+                                    window.location = url;
+                                }
+                            });
+                            return 0;
+                        }
+                    },
+                });
+
+                // ----
             }
 
             swal({
                 position: 'top',
                 title: 'Вы уверены?',
-                text: this.dataset.question,
+                text: question,
                 type: 'info',
                 showCancelButton: true,
-                confirmButtonText: this.dataset.btn
+                confirmButtonText: btn
             }).then(function(ivi) {
                 if (ivi.value) {
                     window.location = url;
