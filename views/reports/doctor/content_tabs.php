@@ -1,18 +1,12 @@
 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
     <li class="nav-item">
-        <a href="<?= viv('reports/all/content_1') ?>" class="nav-link <?= viv_link('reports/all/content_1') ?> legitRipple">Услуги</a>
+        <a href="<?= viv('reports/doctor/content_1') ?>" class="nav-link <?= viv_link('reports/doctor/content_1') ?> legitRipple">Услуги</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('reports/all/content_2') ?>" class="nav-link <?= viv_link('reports/all/content_2') ?> legitRipple">Врачи</a>
+        <a href="<?= viv('reports/doctor/content_2') ?>" class="nav-link <?= viv_link('reports/doctor/content_2') ?> legitRipple">Пациенты</a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('reports/all/content_3') ?>" class="nav-link <?= viv_link('reports/all/content_3') ?> legitRipple">Визиты</a>
-    </li>
-    <li class="nav-item">
-        <a href="<?= viv('reports/all/content_4') ?>" class="nav-link <?= viv_link('reports/all/content_4') ?> legitRipple">Направители</a>
-    </li>
-    <li class="nav-item">
-        <a href="<?= viv('reports/all/content_5') ?>" class="nav-link <?= viv_link('reports/all/content_5') ?> legitRipple">Кол-во</a>
+        <a href="<?= viv('reports/doctor/content_3') ?>" class="nav-link <?= viv_link('reports/doctor/content_3') ?> legitRipple">Направленно</a>
     </li>
 </ul>
 
