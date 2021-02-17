@@ -2258,6 +2258,130 @@ class NotesModel extends Model
      }
  }
 
+class Storage extends Model
+{
+    public $table = 'storage';
+
+    public function form($pk = null)
+    {
+        global $CATEGORY;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="form-group">
+               <label>Препарат:</label>
+               <input type="text" class="form-control" name="name" placeholder="Введите название препарата" required value="<?= $post['name'] ?>">
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-3">
+                    <label>Код:</label>
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code'] ?>">
+                </div>
+
+                <div class="col-md-9">
+                    <label>Поставщик:</label>
+                    <input type="text" class="form-control" name="supplier" placeholder="Введите поставщик" required value="<?= $post['supplier'] ?>">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-4">
+                    <label>Кол-во:</label>
+                    <input type="text" class="form-control" name="qty" placeholder="Введите колличество" required value="<?= $post['qty'] ?>">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Цена прихода:</label>
+                    <input type="text" class="form-control" name="cost" placeholder="Введите цену" required value="<?= $post['cost'] ?>">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Цена расхода:</label>
+                    <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $post['price'] ?>">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-3">
+                    <label>Категория:</label>
+                    <select data-placeholder="Выбрать этаж" name="category" class="form-control form-control-select2" required>
+                        <option></option>
+                        <?php
+                        foreach ($CATEGORY as $key => $value) {
+                            ?>
+                            <option value="<?= $key ?>" <?= ($post['category'] == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Дата прихода:</label>
+                    <input type="date" class="form-control" name="add_date" placeholder="Введите дату" required value="<?= $post['add_date'] ?>">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Срок годности:</label>
+                    <input type="date" class="form-control" name="die_date" placeholder="Введите дату" required value="<?= $post['die_date'] ?>">
+                </div>
+
+            </div>
+
+            <div class="form-group">
+               <label>Счёт фактура:</label>
+               <input type="text" class="form-control" name="faktura" placeholder="Введите счёт" required value="<?= $post['faktura'] ?>">
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-success btn-sm">Добавить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+}
+
 class StoragePreparatForm extends Model
 {
     public $table = 'storage_preparat';
@@ -2468,17 +2592,17 @@ class StorageOrdersModel extends Model
 
                 <div class="form-group row">
 
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <label>Расходные материалы:</label>
                         <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required data-fouc>
                             <option></option>
-                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products") as $row): ?>
-                                <option value="<?= $row['product_id'] ?>" data-price="<?= $row['qty'] ?>"><?= $row['product_code'] ?></option>
+                            <?php foreach ($db->query("SELECT * FROM storage WHERE category = 3") as $row): ?>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <label>Количество:</label>
                         <input type="number" name="qty" value="1" class="form-control">
                     </div>

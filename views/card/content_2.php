@@ -36,19 +36,20 @@ $header = "Пациент";
 				    </div>
 
 				    <div class="card-body">
+
 				        <?php include "content_tabs.php"; ?>
 
-						<div class="card">
+						<div class="alert bg-warning alert-styled-left alert-dismissible">
+							<span class="font-weight-semibold">Технические работы</span>
+						</div>
+
+						<!-- <div class="card">
 
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Другие Визиты</h5>
 							</div>
 
-							<div class="alert bg-warning alert-styled-left alert-dismissible">
-								<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-								<span class="font-weight-semibold">Технические работы</span>
-							</div>
-							<!--
+
 							<div class="table-responsive">
 				                <table class="table table-hover table-sm">
 				                    <thead>
@@ -64,7 +65,6 @@ $header = "Пациент";
 				                    </thead>
 				                    <tbody>
 										<?php
-										/*
 										$i = 1;
 										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.route_id != {$_SESSION['session_id']} AND vs.parent_id != {$_SESSION['session_id']} AND vs.completed IS NOT NULL AND vs.laboratory IS NULL AND vs.diagnostic IS NULL ORDER BY id DESC") as $row) {
 										?>
@@ -83,13 +83,13 @@ $header = "Пациент";
 												</td>
 											</tr>
 										<?php
-										}*/
+										}
 									 	?>
 				                    </tbody>
 				                </table>
 				            </div>
-							-->
-						</div>
+
+						</div> -->
 
 				    </div>
 
