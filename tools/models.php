@@ -2723,9 +2723,8 @@ class PatientStatsModel extends Model
                     <div class="col-md-6">
                         <label>Состояние:</label>
                         <select placeholder="Введите состояние" name="stat" class="form-control form-control-select2">
-                            <option value="">Норма</option>
-                            <option value="1">Актив</option>
-                            <option value="2">Пассив</option>
+                            <option value="">Актив</option>
+                            <option value="1">Пассив</option>
                         </select>
                     </div>
 

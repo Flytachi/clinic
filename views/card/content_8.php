@@ -97,16 +97,12 @@ $header = "Пациент";
 										foreach ($db->query("SELECT * FROM user_stats WHERE visit_id=$patient->visit_id ORDER BY add_date DESC") as $row) {
 											switch ($row['stat']):
 												case 1:
-													$stat = "Актив";
-													$class_tr = "table-success";
-													break;
-												case 2:
 													$stat = "Пассив";
 													$class_tr = "table-danger";
 													break;
 												default:
-													$stat = "Норма";
-													$class_tr = "";
+													$stat = "Актив";
+													$class_tr = "table-success";
 													break;
 											endswitch;
 											?>
