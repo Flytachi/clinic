@@ -53,7 +53,7 @@ $header = "Отчёт врачей по визитам";
 										<?php
 										foreach($db->query('SELECT * from users WHERE user_level IN(5)') as $row) {
 											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" <?= ($_POST['route_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 											<?php
 										}
 										?>
@@ -94,15 +94,14 @@ $header = "Отчёт врачей по визитам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT DISTINCT vp.item_name,
+					$sql = "SELECT DISTINCT vs.division_id,
 								vs.direction,
-								sc.code,
-								(SELECT COUNT(*) FROM visit vsc WHERE vsc.route_id = vs.route_id AND vsc.service_id = vp.item_id AND  (DATE_FORMAT(vsc.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')) 'qty'
+								ds.title,
+								(SELECT COUNT(*) FROM visit vsc WHERE vsc.route_id = vs.route_id AND vsc.division_id = vs.division_id AND (DATE_FORMAT(vsc.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')) 'qty'
 							FROM visit vs
-								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-								LEFT JOIN service sc ON(sc.id=vs.service_id)
+								LEFT JOIN division ds ON(ds.id=vs.division_id)
 							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
+								vs.accept_date IS NOT NULL";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
@@ -136,8 +135,7 @@ $header = "Отчёт врачей по визитам";
 	                                <thead>
 	                                    <tr class="bg-info">
 											<th style="width: 50px">№</th>
-											<th style="width: 5%">Код</th>
-											<th>Услуга</th>
+											<th>Отдел</th>
 											<th style="width: 20%">Тип визита</th>
 											<th style="width: 10%" class="text-right">Кол-во</th>
 										</tr>
@@ -146,8 +144,7 @@ $header = "Отчёт врачей по визитам";
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
 												<td><?= $i++ ?></td>
-												<td><?= $row['code'] ?></td>
-												<td><?= $row['item_name'] ?></td>
+												<td><?= $row['title'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td class="text-right">
 													<?php
@@ -163,7 +160,7 @@ $header = "Отчёт врачей по визитам";
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
-											<th colspan="3">Общее кол-во стационарных: <?= $total_st ?> | Общее кол-во амбулаторных: <?= $total_am ?></th>
+											<th colspan="2">Общее кол-во стационарных: <?= $total_st ?> | Общее кол-во амбулаторных: <?= $total_am ?></th>
 											<th class="text-right">Общее кол-во:</th>
 											<th class="text-right"><?= $total_qty ?></th>
 										</tr>

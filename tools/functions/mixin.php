@@ -217,9 +217,14 @@ function FLUSH_clinic()
     // Mixin\T_flush('province');
     // Mixin\T_flush('region');
     T_flush('service');
+
+    T_flush('storage');
     T_flush('storage_orders');
     T_flush('storage_preparat');
-    T_flush('storage_type');
+    T_flush('storage_product');
+    T_flush('storage_supplier');
+    // T_flush('storage_expenditure');
+
     T_flush('templates');
     T_flush('users');
     T_flush('user_card');

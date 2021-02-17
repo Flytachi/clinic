@@ -200,6 +200,12 @@
                         case 4:
                             ?>
                             <li class="nav-item">
+                                <a href="<?= viv('pharmacy/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users"></i>
+                                    <span>Препараты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="orders.php" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Заказы</span>
@@ -212,31 +218,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="products.php" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Препараты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="supplier.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Поставщики</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="sales_inventory.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Инвентаризация продаж</span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>
-                                        Чат
-                                        <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
-                                    </span>
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php

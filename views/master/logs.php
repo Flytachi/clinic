@@ -32,6 +32,12 @@ $header = "Логи";
 
 				<?php parad("_SERVER ",$_SERVER); ?>
 				<?php parad("_SESSION ",$_SESSION); ?>
+				<?php
+				// $json = json_encode($_SERVER);
+				// $file = fopen('test.json','w+');
+				// fwrite($file, $json);
+				// fclose($file);
+				?>
 
 			</div>
             <!-- /content area -->
@@ -41,10 +47,6 @@ $header = "Логи";
 
 	</div>
 	<!-- /page content -->
-
-    <!-- Footer -->
-    <?php include '../layout/footer.php' ?>
-    <!-- /footer -->
 
 </body>
 </html>

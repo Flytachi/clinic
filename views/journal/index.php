@@ -59,7 +59,6 @@ $header = "Журнал";
                                         <th>Диагноз</th>
                                         <th>Отдел</th>
                                         <th>Дата выписки</th>
-                                        <th>Отказ</th>
                                         <th>Лечащий врач</th>
                                         <!-- <th class="text-center" style="width:210px">Действия</th> -->
                                     </tr>
@@ -77,8 +76,7 @@ $header = "Журнал";
                                             <td><?= $row['id'] ?></td>
                                             <td><?= $row['report_diagnostic'] ?></td>
                                             <td><?= division_title($row['parent_id']) ?></td>
-                                            <td><?= $row['completed'] ?></td>
-                                            <td></td>
+											<td><?= date('d.m.y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
