@@ -200,6 +200,12 @@
                         case 4:
                             ?>
                             <li class="nav-item">
+                                <a href="<?= viv('pharmacy/sales') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users"></i>
+                                    <span>Расходы</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('pharmacy/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-users"></i>
                                     <span>Препараты</span>

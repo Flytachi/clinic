@@ -32,6 +32,13 @@ if ($_GET['pk']) {
 }
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+if (!$patient) {
+    ?>
+    <script type="text/javascript">
+        location = "<?= DIR ?>/error/404<?= EXT ?>";
+    </script>
+    <?php
+}
 // prit($patient);
 ?>
 <div class="card border-1 border-info">

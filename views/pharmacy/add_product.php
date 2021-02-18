@@ -43,6 +43,25 @@ $header = "Добавить препарат";
 
 				</div>
 
+				<div class="card border-1 border-info">
+
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h6 class="card-title">Шаблон</h6>
+						<div class="header-elements">
+	                  		<div class="list-icons">
+								<a href="<?= download_url('storage', 'Preparats') ?>" class="btn">Шаблон</a>
+		                  	</div>
+		              	</div>
+					</div>
+
+					<div class="card-body">
+
+						<?php Storage::form_template() ?>
+
+					</div>
+
+				</div>
+
 			</div>
 
 			</div>

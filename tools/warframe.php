@@ -374,7 +374,7 @@ function write_excel($table, $file_name = "docs")
         ));
     }
 
-    if ($table = "service") {
+    if ($table == "service") {
         $sql = "SELECT * FROM $table WHERE type != 101";
     }else {
         $sql = "SELECT * FROM $table";

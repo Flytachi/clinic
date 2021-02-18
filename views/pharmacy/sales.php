@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(4);
-$header = "Препараты";
+$header = "Расходы";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,18 +32,7 @@ $header = "Препараты";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Препараты</h6>
-						<div class="header-elements">
-							<div class="list-icons">
-								<div class="header-elements">
-									<div class="list-icons">
-										<a href="<?= viv("pharmacy/add_product") ?>" class="list-icons-item text-success">
-											<i class="icon-plus22"></i>Добавить
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
+						<h6 class="card-title">Расходы</h6>
 					</div>
 
 					<div class="card-body">
@@ -52,49 +41,42 @@ $header = "Препараты";
 							<table class="table table-hover table-sm"> <!-- datatable-basic -->
                                 <thead>
                                     <tr class="bg-info">
+                                        <th>Ответственный</th>
                                         <th style="width:45%">Препарат</th>
                                         <th>Поставщик</th>
                                         <th>Код</th>
-										<th>Категория</th>
-                                        <th>Срок годности</th>
+                                        <th>Дата</th>
                                         <th class="text-right">Кол-во</th>
-                                        <th class="text-right">Цена ед.</th>
-                                        <th class="text-right" style="width:50px">Действия</th>
+                                        <th class="text-right">Сумма</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $total_qty=0;$total_price=0;foreach ($db->query("SELECT * FROM storage ORDER BY name ASC") as $row): ?>
+                                    <?php $total_qty=0;$total_amount=0;foreach ($db->query("SELECT * FROM storage_sales ORDER BY id DESC") as $row): ?>
                                         <tr>
+                                            <td><?= get_full_name($row['parent_id']) ?></td>
                                             <td><?= $row['name'] ?></td>
                                             <td><?= $row['supplier'] ?></td>
                                             <td><?= $row['code'] ?></td>
-                                            <td><?= $CATEGORY[$row['category']] ?></td>
-                                            <td><?= date("d.m.Y", strtotime($row['die_date'])) ?></td>
+                                            <td><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></td>
                                             <td class="text-right">
                                                 <?php
-                                                $total_qty += $row['qty'];
-                                                echo $row['qty'];
+                                                $total_qty += -$row['qty'];
+                                                echo -$row['qty'];
                                                 ?>
                                             </td>
-                                            <td class="text-right">
-                                                <?php
-                                                $total_price += ($row['qty'] * $row['price']);
-                                                echo number_format($row['price'], 1);
-                                                ?>
+                                            <td class="text-right text-success">
+												<?php $total_amount += -$row['amount']; if (-$row['amount'] > 0): ?>
+													<span class="text-success"><?= number_format(-$row['amount'], 1) ?></span>
+												<?php else: ?>
+													<span class="text-danger"><?= number_format(-$row['amount'], 1) ?></span>
+												<?php endif; ?>
                                             </td>
-											<td>
-												<div class="list-icons">
-													<a href="<?= up_url($row['id'], 'Storage') ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'Storage') ?>" onclick="return confirm('Вы уверены что хотите удалить препарат?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-												</div>
-											</td>
                                         </tr>
                                     <?php endforeach; ?>
-                                    <tr class="table-secondary text-right">
+                                    <tr class="table-secondary text-right ">
                                         <th colspan="5">Итого:</th>
                                         <th><?= $total_qty ?></th>
-                                        <th><?= number_format($total_price, 1) ?></th>
-										<th></th>
+                                        <th><?= number_format($total_amount, 1) ?></th>
                                     </tr>
                                 </tbody>
                             </table>

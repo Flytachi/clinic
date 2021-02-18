@@ -2262,6 +2262,25 @@ class Storage extends Model
 {
     public $table = 'storage';
 
+    public function form_template($pk = null)
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>" enctype="multipart/form-data">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="form-group">
+                <label>Шаблон:</label>
+                <input type="file" class="form-control" name="template" required>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function form($pk = null)
     {
         global $CATEGORY;
@@ -2357,6 +2376,52 @@ class Storage extends Model
 
         </form>
         <?php
+    }
+
+    public function clean()
+    {
+        if($_FILES['template']){
+            // prit('temlate');
+            $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
+            $this->save_excel();
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
+    public function clean_excel()
+    {
+        $this->post['cost'] = preg_replace("/,+/", "", $this->post['cost']);
+        $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
+        // $this->mod('test');
+        return True;
+    }
+
+    public function save_excel()
+    {
+        // prit($this->post['template']);
+        foreach ($this->post['template'] as $key_p => $value_p) {
+            if ($key_p) {
+                foreach ($value_p as $key => $value) {
+                    $pick = $pirst[$key];
+                    $this->post[$pick] = $value;
+                }
+                if($this->clean_excel()){
+                    // prit($this->post);
+                    $object = Mixin\insert_or_update($this->table, $this->post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
+                    // $this->stop();
+                }
+            }else {
+                $pirst = $value_p;
+                unset($this->post['template']);
+            }
+        }
+        // $this->stop();
+        $this->success();
     }
 
     public function success()
@@ -2596,8 +2661,13 @@ class StorageOrdersModel extends Model
                         <label>Расходные материалы:</label>
                         <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required data-fouc>
                             <option></option>
-                            <?php foreach ($db->query("SELECT * FROM storage WHERE category = 3") as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</option>
+                            <?php if (permission(11)): ?>
+                                <?php $sql = "SELECT * FROM storage WHERE category = 4"; ?>
+                            <?php else: ?>
+                                <?php $sql = "SELECT * FROM storage WHERE category IN (2, 3)"; ?>
+                            <?php endif; ?>
+                            <?php foreach ($db->query($sql) as $row): ?>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

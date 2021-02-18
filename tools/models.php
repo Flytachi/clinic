@@ -1790,12 +1790,12 @@ class ServiceModel extends Model
     public function form_template($pk = null)
     {
         ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="//TempFunc()" enctype="multipart/form-data">
+        <form method="post" action="<?= add_url() ?>" enctype="multipart/form-data">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="form-group">
                 <label>Шаблон:</label>
-                <input type="file" class="form-control" name="template" required id="url_template">
+                <input type="file" class="form-control" name="template" required>
             </div>
 
             <div class="text-right">
@@ -2754,9 +2754,9 @@ class PatientStatsModel extends Model
     }
 }
 
-class StoragePreparatModel extends Model
+class StorageHomeModel extends Model
 {
-    public $table = 'storage_preparat';
+    public $table = 'storage_home';
 
     public function form($pk = null)
     {
@@ -2868,7 +2868,7 @@ class StoragePreparatModel extends Model
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', (st.qty-st.qty_sold) 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.parent_id = $pk ORDER BY st.name ASC") as $row): ?>
+                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.parent_id = $pk ORDER BY st.name ASC") as $row): ?>
                                     <tr>
                                         <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
                                         <td><?= $i++ ?></td>
@@ -2913,49 +2913,103 @@ class StoragePreparatModel extends Model
     public function clean()
     {
         global $db;
-        // foreach ($this->post['orders'] as $order_pk => $qty) {
-        //     $order = $db->query("SELECT * FROM storage_orders WHERE id=$order_pk")->fetch();
-        //     $post = $db->query("SELECT {$this->post['parent_id']} 'user_id', product_id 'product', qty, profit, product_code, gen_name, product_name 'name', price FROM products WHERE product_id = {$order['preparat_id']}")->fetch();
-        //     $post['amount'] = $qty * $post['price'];
-        //     $post['profit'] = $qty * $post['profit'];
-        //     if($post['qty'] < $qty){
-        //         $this->error("В аптеке не хватает \"{$post['product_code']}\"!");
-        //     }
-        //     $object = Mixin\update('products', array('qty' => $post['qty']-$qty), array('product_id' => $order['preparat_id']));
-        //     if (intval($object)) {
-        //         $post['qty'] = $qty;
-        //         $object1 = Mixin\insert('sales_order', $post);
-        //         if (!intval($object1)) {
-        //             $this->error('sales_order'.$object1);
-        //         }
-        //     }else {
-        //         $this->error('products'.$object);
-        //     }
-        //     $post2['parent_id'] = $this->post['parent_id'];
-        //     $post2['preparat_id'] = $post['product'];
-        //     $post2['preparat_code'] = $post['product_code'];
-        //     $post2['first_qty'] = $qty;
-        //     $post2['qty'] = $qty;
-        //     $post2['price'] = $post['price'];
-        //     $post2['amount'] = $qty * $post['price'];
-        //     $infod = $db->query("SELECT id, first_qty, qty, amount FROM storage_preparat WHERE preparat_id = {$order['preparat_id']} AND price = {$post['price']}")->fetch();
-        //     if ($infod) {
-        //         $infod_pk = $infod['id'];
-        //         unset($infod['id']);
-        //         $infod['first_qty'] += $qty;
-        //         $infod['qty'] += $qty;
-        //         $infod['amount'] += $qty * $post['price'];
-        //         $object = Mixin\update('storage_preparat', $infod, $infod_pk);
-        //     } else {
-        //         $object = Mixin\insert('storage_preparat', $post2);
-        //     }
-        //     if (!intval($object)) {
-        //         $this->error($object);
-        //     }
-        //     $object = Mixin\delete('storage_orders', $order_pk);
-        // }
-        $this->mod('test');
+        $db->beginTransaction();
+        foreach ($this->post['orders'] as $order_pk => $qty) {
+            $order = $db->query("SELECT * FROM storage_orders WHERE id=$order_pk")->fetch();
+            $post = $db->query("SELECT * FROM storage WHERE id = {$order['preparat_id']}")->fetch();
+            if($post['qty'] < $qty){
+                $this->error("В аптеке не хватает \"{$post['name']}\"!");
+            }
+            unset($post['add_date']);
+            $post['parent_id'] = $this->post['parent_id'];
+            $post['status'] = level($post['parent_id']);
+            $object = Mixin\update('storage', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $order['preparat_id']);
+            if (!intval($object)) {
+                $this->error('storage '.$object);
+                $db->rollBack();
+            }
+            $arr = array(
+                'code' => $post['code'], 'name' => $post['name'],
+                'supplier' => $post['supplier'], 'qty' => $qty,
+                'price' => $post['price'], 'amount' => $qty * $post['price'],
+                'parent_id' => $post['parent_id']);
+            $this->add_sales($arr);
+            unset($post['qty_sold']);
+            $post['qty'] = $qty;
+            $this->storage_home($post);
+            $object = Mixin\delete('storage_orders', $order_pk);
+        }
+        $db->commit();
         $this->success();
+    }
+
+    public function add_sales($arr)
+    {
+        global $db;
+        $object = Mixin\insert('storage_sales', $arr);
+        if (!intval($object)) {
+            $this->error('storage_sales '.$object);
+            $db->rollBack();
+        }
+    }
+
+    public function storage_home($post)
+    {
+        global $db;
+        $post['preparat_id'] = $post['id']; unset($post['id']);
+        if ($pk = $db->query("SELECT id, qty FROM storage_home WHERE preparat_id = {$post['preparat_id']} AND status = {$post['status']} AND category = {$post['category']}")->fetch()) {
+            $object = Mixin\update('storage_home', array('qty' => $pk['qty']+$post['qty']), $pk['id']);
+            if (!intval($object)) {
+                $this->error('storage_home '.$object);
+                $db->rollBack();
+            }
+        }else {
+            $object = Mixin\insert('storage_home', $post);
+            if (!intval($object)) {
+                $this->error('storage_home '.$object);
+                $db->rollBack();
+            }
+        }
+
+    }
+
+    public function delete(int $pk)
+    {
+        global $db;
+        $db->beginTransaction();
+
+        $info = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        if ($info2 = $db->query("SELECT * FROM storage WHERE id = {$info['preparat_id']}")->fetch()) {
+            $object = Mixin\update('storage', array('qty' => $info2['qty']+$info['qty']), $info['preparat_id']);
+            if (!intval($object)) {
+                $this->error('storage '.$object);
+                $db->rollBack();
+            }
+        }else {
+            $info['id'] = $info['preparat_id']; unset($info['preparat_id']); unset($info['status']); unset($info['qty_sold']);
+            $info['add_date'] = date("Y-m-d");
+            $object = Mixin\insert('storage', $info);
+            if (!intval($object)) {
+                $this->error('storage '.$object);
+                $db->rollBack();
+            }
+        }
+
+        $arr = array(
+            'code' => $info['code'], 'name' => $info['name'],
+            'supplier' => $info['supplier'], 'qty' => -$info['qty'],
+            'price' => $info['price'], 'amount' => -$info['qty'] * $info['price'],
+            'parent_id' => $info['parent_id']);
+        $this->add_sales($arr);
+
+        $object = Mixin\delete($this->table, $pk);
+        if ($object) {
+            $db->commit();
+            $this->success();
+        } else {
+            Mixin\error('404');
+        }
+
     }
 
     public function success()

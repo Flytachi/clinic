@@ -43,6 +43,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="<?= viv('master/panel') ?>" class="nav-link legitRipple <?= viv_link('master/panel') ?>">
+                        <i class="icon-hammer-wrench"></i>
+                        <span>Сontrol Panel</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="<?= viv('master/server') ?>" class="nav-link legitRipple <?= viv_link('master/server') ?>">
                         <i class="icon-server"></i>
                         <span>Server</span>

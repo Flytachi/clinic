@@ -43,7 +43,7 @@ $header = "Пациент";
 							<span class="font-weight-semibold">Технические работы</span>
 						</div>
 
-					   	<!-- <div class="card">
+					   	<div class="card">
 
 					   		<div class="card-header header-elements-inline">
 					   			<h6 class="card-title">Расходные материалы</h6>
@@ -120,7 +120,7 @@ $header = "Пациент";
  							  	</table>
 					  		</div>
 
-					   	</div> -->
+					   	</div>
 
 				   	</div>
 
