@@ -463,9 +463,7 @@ function pagination_page($count, $elem, $count_button = 2)
 {
     $count -= 1;
 
-    echo "<div class=\"card card-body text-center\">";
-        echo "<ul class=\"pagination align-self-center\">";
-
+    echo "<ul class=\"pagination align-self-center justify-content-center mt-3\" >";
 
     for ($i= intval($_GET['of']) - 1, $a = 0; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i >= 0 and $a != $count_button; $i--, $a++) {
 
@@ -477,16 +475,17 @@ function pagination_page($count, $elem, $count_button = 2)
     // echo $mas[0];
 
     if(intval($_GET['of']) >= ($count_button + 1) and isset($mas)){
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>0</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>1</a></li>";
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor($mas[0] / 2) ) ."' class='page-link' legitRipple>...</a></li>";
     }
 
 
     foreach ($mas as $key) {
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
+        $label = $key + 1;
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$label</a></li>";
     }
 
-    echo "<li class=\"page-item active\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of']) ."\" class=\"page-link legitRipple\">". intval($_GET['of']) ."</a></li>";
+    echo "<li class=\"page-item active\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of']) ."\" class=\"page-link legitRipple\">". intval($_GET['of'] + 1) ."</a></li>";
 
 
 
@@ -497,17 +496,17 @@ function pagination_page($count, $elem, $count_button = 2)
 
 
     foreach ($mas1 as $key) {
-
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
+        $label = $key + 1;
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$label</a></li>";
     }
 
     if( ($count - intval($_GET['of'])) >= ($count_button + 1) and isset($mas1)){
+        $label = $count + 1;
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor((end($mas1)  + $count) / 2 )) ."' class='page-link' legitRipple>...</a></li>";
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count)."' class='page-link' legitRipple>$count</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count)."' class='page-link' legitRipple>$label</a></li>";
     }
 
-        echo "</ul>";
-    echo "</div>";
+    echo "</ul>";
 }
 
 ?>

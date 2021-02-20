@@ -14,14 +14,12 @@ $header = "Заявки";
 
 	<!-- Page content -->
 	<div class="page-content">
-
 		<!-- Main sidebar -->
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
 		<!-- Main content -->
-
 		<div class="content-wrapper">
 
 			<!-- Page header -->
@@ -103,7 +101,7 @@ $header = "Заявки";
 
 		function CallMed(id){
 			if (id) {
-				let obj = JSON.stringify({ type : 'alert_pharmacy_call',  id : id, message: "Забрать препараты!" });
+				let obj = JSON.stringify({ type : 'alert_pharmacy_call',  id : id, message: "Забрать препараты для пациентов!" });
 				conn.send(obj);
 			}
 		}

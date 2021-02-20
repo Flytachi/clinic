@@ -19,8 +19,15 @@ if ($grant_id == $_SESSION['session_id']) {
     <!-- Circle empty -->
     <div class="card card-body border-top-1 border-top-success">
         <div class="list-feed list-feed-rhombus list-feed-solid">
+
             <div class="list-feed-item border-info">
-                <strong>Врач: </strong><?= get_full_name($bypass['parent_id']) ?>
+                <strong>Препараты: </strong>
+                <ul>
+                    <?php foreach ($db->query("SELECT st.id, st.name, st.supplier, st.die_date, bp.qty FROM bypass_preparat bp LEFT JOIN storage st ON(bp.preparat_id=st.id) WHERE bp.bypass_id = {$bypass['id']}") as $serv): ?>
+                        <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['name'] ?> | <?= $serv['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['die_date'])) ?>)</li>
+                        <input type="hidden" class="products" value="<?= $serv['id'] ?>">
+                    <?php endforeach; ?>
+                </ul>
             </div>
 
             <div class="list-feed-item border-info">
@@ -28,21 +35,18 @@ if ($grant_id == $_SESSION['session_id']) {
             </div>
 
             <div class="list-feed-item border-info">
-                <strong>Препарат: </strong>
-                <?php foreach ($db->query("SELECT pt.product_id, pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$bypass['id']}") as $serv): ?>
-                    <?= $serv['product_code'] ?>,
-                    <input type="hidden" class="products" value="<?= $serv['product_id'] ?>">
-                <?php endforeach; ?>
+                <strong >Описание: </strong><?= $bypass['description'] ?>
             </div>
 
             <div class="list-feed-item border-info">
-                <strong >Описание: </strong><?= $bypass['description'] ?>
+                <strong>Врач: </strong><?= get_full_name($bypass['parent_id']) ?>
             </div>
+
         </div>
     </div>
     <!-- /circle empty -->
 
-    <?php if ($activity): ?>
+    <?php if ($activity or true): ?>
         <?php if (permission(5)): ?>
             <?php BypassDateModel::table_form_doc() ?>
         <?php elseif (permission(7)): ?>

@@ -409,22 +409,30 @@
                             ?>
                             <li class="nav-item">
                                 <a href="<?= viv('nurce/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
-                                    <span>Стационарные пациенты</span>
+                                    <i class="icon-bookmark"></i>
+                                    <span>Задания</span>
                                     <?php
-                                    $con_one = $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL")->rowCount();
+                                    $con_one = $db->query("SELECT DISTINCT b.user_id FROM bypass_date bd LEFT JOIN bypass b ON(b.id=bd.bypass_id) WHERE bd.date = CURRENT_DATE() AND status IS NOT NULL AND bd.completed IS NULL")->rowCount();
                                     if ($con_one) {
                                         ?>
-                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_one?></span>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
                                         <?php
                                     }
                                     ?>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('nurce/list_task') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('nurce/list_stationary') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
-                                    <span>Задания</span>
+                                    <span>Стационарные пациенты</span>
+                                    <?php
+                                    $con_two = $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL")->rowCount();
+                                    if ($con_two) {
+                                        ?>
+                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_two?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">

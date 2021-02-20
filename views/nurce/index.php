@@ -29,24 +29,51 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-					<li class="nav-item"><a href="#basic-justified-tab1" class="nav-link legitRipple active show" data-toggle="tab">1 Этаж</a></li>
-					<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">2 Этаж</a></li>
-					<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">3 Этаж</a></li>
-				</ul>
+                <div class="card border-1 border-info">
 
-				<div class="tab-content">
-
-					<div class="tab-pane fade active show" id="basic-justified-tab1">
-						<?php include 'tabs/floor_1.php' ?>
+					<div class="card-header text-dark header-elements-inline alpha-info">
+						<h5 class="card-title">Задачи на сегодня</h5>
 					</div>
 
-					<div class="tab-pane fade" id="basic-justified-tab2">
-						<?php include 'tabs/floor_2.php' ?>
-					</div>
+					<div class="card-body row">
 
-					<div class="tab-pane fade" id="basic-justified-tab3">
-						<?php include 'tabs/floor_3.php' ?>
+						<div class="col-md-6">
+
+							<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+								<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=0')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Не завершёные</a></li>
+								<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=1')" href="#" class="nav-link legitRipple" data-toggle="tab">Завершёные</a></li>
+							</ul>
+
+							<div id="tab_div">
+
+								<div class="table-responsive card">
+							        <table class="table table-hover table-sm">
+							            <thead>
+							                <tr class="bg-info">
+							                    <th style="width:50px;">№</th>
+							                    <th>ID</th>
+							                    <th>ФИО</th>
+							                </tr>
+							            </thead>
+							            <tbody>
+							                <?php $i=1;foreach ($db->query("SELECT DISTINCT b.user_id FROM bypass_date bd LEFT JOIN bypass b ON(b.id=bd.bypass_id) WHERE bd.date = CURRENT_DATE() AND status IS NOT NULL AND bd.completed IS NULL") as $row): ?>
+							                    <tr onclick="Check('<?= viv('nurce/task') ?>?pk=<?= $row['user_id'] ?>')">
+							                        <td><?= $i++ ?></td>
+							                        <td><?= addZero($row['user_id']) ?></td>
+							                        <td><?= get_full_name($row['user_id']) ?></td>
+							                    </tr>
+							                <?php endforeach; ?>
+							            </tbody>
+							        </table>
+							    </div>
+								
+							</div>
+
+
+                        </div>
+
+                        <div class="col-md-6" id="check_div"></div>
+
 					</div>
 
 				</div>
@@ -60,6 +87,27 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
+    <script type="text/javascript">
+        function Check(events) {
+            $.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#check_div').html(result);
+				},
+			});
+        }
+
+		function Tabs(events) {
+            $.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#tab_div').html(result);
+				},
+			});
+        }
+    </script>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

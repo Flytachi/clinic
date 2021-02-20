@@ -44,7 +44,7 @@ $header = "Пациент";
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Физиотерапия/Процедурная</h5>
 								<?php if ($activity): ?>
-									<?php if (!$patient->direction or $patient->direction): ?>
+									<?php if (!$patient->direction or $patient->direction and permission(5)): ?>
 										<div class="header-elements">
 											<div class="list-icons">
 												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
@@ -74,11 +74,11 @@ $header = "Пациент";
 										<?php
 										$i = 1;
 										if ($patient->completed) {
-											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation
+											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
 										} else {
-											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation
+											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\") ORDER BY vs.id DESC";
 										}
@@ -129,7 +129,7 @@ $header = "Пациент";
 														<?php elseif ($row['manipulation']): ?>
 															<a onclick="Check('<?= viv('manipulation/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
 														<?php endif; ?>
-														<?php if (!$row['accept_date']): ?>
+														<?php if (!$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
 															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 													</div>

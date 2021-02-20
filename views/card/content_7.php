@@ -10,7 +10,6 @@ $header = "Пациент";
 
 <script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
 
-<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js") ?>"></script>
 
 <body>
@@ -49,7 +48,7 @@ $header = "Пациент";
 							<span class="font-weight-semibold">Технические работы</span>
 						</div>
 
-						<!-- <div class="card">
+						<div class="card">
 
 							<div class="card-header header-elements-inline">
 								<h6 class="card-title">Лист назначений</h6>
@@ -88,8 +87,8 @@ $header = "Пациент";
 												<td><?= $i++ ?></td>
 												<td>
 													<?php
-													foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
-														echo $serv['product_code']."<br>";
+													foreach ($db->query("SELECT st.name FROM bypass_preparat bp LEFT JOIN storage st ON(bp.preparat_id=st.id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
+														echo $serv['name']."<br>";
 													}
 													?>
 												</td>
@@ -109,7 +108,7 @@ $header = "Пациент";
 													<?php endforeach; ?>
 												</td>
 												<td>
-													<button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
+													<button onclick="Check('<?= viv('card/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
 												</td>
 											</tr>
 											<?php
@@ -119,7 +118,7 @@ $header = "Пациент";
 								</table>
 							</div>
 
-						</div> -->
+						</div>
 
 				    </div>
 
@@ -143,7 +142,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">×</button>
 					</div>
 
-					<?= BypassModel::form() ?>
+					<?php BypassModel::form() ?>
 
 				</div>
 			</div>

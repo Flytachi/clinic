@@ -1,7 +1,12 @@
+<?php
+require_once '../../tools/warframe.php';
+is_auth();
+$pk_floor = $_GET['type'];
+?>
 <div class="card border-1 border-info">
 
     <div class="card-header text-dark header-elements-inline alpha-info">
-        <h6 class="card-title">2 Этаж</h6>
+        <h6 class="card-title"><?= $pk_floor ?> Этаж</h6>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>
@@ -26,7 +31,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = 2 AND vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
+                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = $pk_floor AND vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
                         ?>
                         <tr>
                             <td><?= addZero($row['user_id']) ?></td>
@@ -44,9 +49,9 @@
                             <td class="text-center">
                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-                                    <a href="<?= viv('card/content_1') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-users4"></i>Обход</a>
-                                    <a href="<?= viv('card/content_2') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-users4"></i>Лист назначений</a>
-                                    <a href="<?= viv('card/content_3') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+                                    <a href="<?= viv('card/content_1') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Обход</a>
+                                    <a href="<?= viv('card/content_5') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+                                    <a href="<?= viv('card/content_7') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначений</a>
                                 </div>
                             </td>
                         </tr>

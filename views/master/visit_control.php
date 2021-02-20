@@ -47,7 +47,7 @@ $header = "Главная";
 				    <div class="card-body">
 
 				        <div class="table-responsive">
-				            <table class="table table-hover table-sm datatable-basic">
+				            <table class="table table-hover table-sm">
 				                <thead>
 				                    <tr class="bg-dark">
 				                        <th style="width: 7%">Visit_id</th>
@@ -63,7 +63,12 @@ $header = "Главная";
 				                <tbody>
 				                    <?php
 				                    $i = 1;
-				                    foreach($db->query("SELECT vs.*, sc.name, vp.id 'vp_id', vs.status, vp.item_cost FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) ORDER BY vs.id DESC") as $row) {
+									$count_elem = 20;
+									$count = ceil(intval($db->query("SELECT COUNT(*) FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id)")->fetchColumn()) / $count_elem);
+									$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
+									$offset = intval($_GET['of']) * $count_elem;
+
+				                    foreach($db->query("SELECT vs.*, sc.name, vp.id 'vp_id', vs.status, vp.item_cost FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) ORDER BY vs.id DESC LIMIT $count_elem OFFSET $offset") as $row) {
 				                        ?>
 				                        <tr id="TR_<?= $row['id'] ?>">
 				                            <td><?= $row['id'] ?></td>
@@ -84,6 +89,7 @@ $header = "Главная";
 				                    ?>
 				                </tbody>
 				            </table>
+							<?php pagination_page($count, $count_elem, 2); ?>
 				        </div>
 
 				    </div>

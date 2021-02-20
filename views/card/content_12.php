@@ -39,16 +39,18 @@ $header = "Пациент";
 
 					   	<?php include "content_tabs.php"; ?>
 
-						<div class="alert bg-warning alert-styled-left alert-dismissible">
-							<span class="font-weight-semibold">Технические работы</span>
-						</div>
-
 					   	<div class="card">
 
 					   		<div class="card-header header-elements-inline">
-					   			<h6 class="card-title">Расходные материалы</h6>
+					   			<h6 class="card-title">
+					   				<?php if (permission(11)): ?>
+					   					Препараты
+					   				<?php else: ?>
+					   					Расходные материалы
+					   				<?php endif; ?>
+					   			</h6>
 								<?php if ($activity): ?>
-									<?php if (permission(7)): ?>
+									<?php if (permission([7,11])): ?>
 										<div class="header-elements">
 		                                   	<div class="list-icons">
 		                                       	<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
@@ -74,14 +76,25 @@ $header = "Пациент";
  								  	</thead>
  								  	<tbody>
 										<?php
-  									  	$sql = "SELECT DISTINCT vp.item_id,
-  									  			vp.item_name,
-  												vp.item_cost,
-  												vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'price',
-  												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
-  												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'total_count_all'
-						  					FROM visit_price vp
-											WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 3";
+  									  	if (permission(7)) {
+											$sql = "SELECT DISTINCT vp.item_id,
+	  									  			vp.item_name,
+	  												vp.item_cost,
+	  												vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'price',
+	  												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
+	  												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'total_count_all'
+							  					FROM visit_price vp
+												WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 3";
+  									  	}elseif (permission(11)) {
+											$sql = "SELECT DISTINCT vp.item_id,
+	                                                  vp.item_name,
+	                                                  vp.item_cost,
+	                                                  vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 4 AND item_id = vp.item_id) 'price',
+	                                                  (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 4 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
+	                                                  (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 4 AND item_id = vp.item_id) 'total_count_all'
+	                                              FROM visit_price vp
+	                                              WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 4";
+  									  	}
   									  	$total_total_price = $total_count_every = $total_count_all = 0;
   									  	?>
 									  	<?php $i=1; foreach ($db->query($sql) as $row): ?>
@@ -136,7 +149,7 @@ $header = "Пациент";
 	<!-- /page content -->
 
     <?php if ($activity): ?>
-		<?php if (permission(7)): ?>
+		<?php if (permission([7, 11])): ?>
 			<div id="modal_add" class="modal fade" tabindex="-1">
 		        <div class="modal-dialog modal-lg">
 		            <div class="modal-content border-3 border-info">
@@ -145,7 +158,11 @@ $header = "Пациент";
 		                    <button type="button" class="close" data-dismiss="modal">×</button>
 		                </div>
 
-		                <?= StoragePreparatForm::form() ?>
+		                <?php if (permission(7)): ?>
+		                	<?= StorageHomeForm::form() ?>
+						<?php elseif (permission(11)): ?>
+							<?= StorageHomeAnestForm::form() ?>
+		                <?php endif; ?>
 
 		            </div>
 		        </div>

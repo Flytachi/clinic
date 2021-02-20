@@ -2504,18 +2504,34 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
+                <legend><b>Препараты:</b></legend>
+
                 <div class="form-group row">
 
-                    <div class="col-md-9">
+                    <div class="col-md-12">
 
                         <label>Препарат:</label>
-                        <select class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
-                            <?php foreach ($db->query("SELECT product_id, product_code, qty FROM products WHERE catg = 2") as $row2): ?>
-                                <option value="<?= $row2['product_id'] ?>"><?= $row2['product_code'] ?> (<?= $row2['qty'] ?>)</option>
+                        <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
+                            <?php foreach ($db->query("SELECT * FROM storage WHERE category = 2") as $row): ?>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Препарат</th>
+                                    <th class="text-right" style="width:100px">Кол-во</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preparat_div"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="form-group row">
@@ -2533,29 +2549,22 @@ class BypassModel extends Model
 
                     <div class="col-md-6">
                         <label>Описание:</label>
-                        <input type="text" class="form-control" name="description" placeholder="Введите описание" required>
+                        <input type="text" class="form-control" name="description" placeholder="Введите описание">
                     </div>
 
                 </div>
 
-                <div class="form-group row">
-
-                    <div class="col-md-1 text-right">
-                        <button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm" style="margin-top:20px"><i class="icon-plus22 mr-2"></i>Добавить время</button>
-                    </div>
-
-                </div>
-
+                <legend><b>Время принятия:</b></legend>
                 <div class="form-group row" id="time_div">
                     <div class="col-md-3" id="time_input_0">
-                        <label>Время принятия:</label>
-                        <input type="time" name="time[0]" class="form-control">
+                        <input type="time" name="time[0]" class="form-control" required>
                     </div>
                 </div>
 
             </div>
 
             <div class="modal-footer">
+                <button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить время</button>
                 <button class="btn btn-outline-info btn-sm legitRipple" type="submit">Сохранить</button>
             </div>
 
@@ -2565,12 +2574,41 @@ class BypassModel extends Model
             function AddinputTime() {
                 i++;
                 $('#time_div').append(`
-                    <div class="col-md-3" id="time_input_`+ i +`">
-                        <label>Время принятия:</label>
-                        <input type="time" name="time[`+ i +`]" class="form-control">
+                    <div class="col-md-3" id="time_input_${i}">
+                        <div class="form-group-feedback form-group-feedback-right">
+                            <input type="time" name="time[${i}]" class="form-control" required>
+                            <div class="form-control-feedback text-danger">
+                                <i class="icon-minus-circle2" onclick="$('#time_input_`+ i +`').remove();"></i>
+                            </div>
+                        </div>
                     </div>
                 `);
             }
+
+            $('#select_preparat').on('change', function(events){
+                // $('#preparat_div').html();
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('bypass_table') ?>",
+                    data: $('#select_preparat').serializeArray(),
+                    success: function (result) {
+                        console.log(result);
+                        $('#preparat_div').html(result);
+                    },
+                });
+                // $('#select_preparat').val().forEach(function(i) {
+                //     $('#preparat_div').append(`
+                //         <tr class="table-secondary">
+                //             <td>${i}</td>
+                //             <td class="text-right">
+                //                 <input type="number" class="form-control" name="qty[${i}]" value="1" style="border-width: 0px 0; padding: 0.2rem 0;">
+                //             </td>
+                //         </tr>
+                //     `);
+                // });
+
+            })
         </script>
         <?php
     }
@@ -2585,6 +2623,7 @@ class BypassModel extends Model
                     $object1 = Mixin\insert($this->table, array(
                         'bypass_id' => $object,
                         'preparat_id' => $value,
+                        'qty' => $this->post_qty[$value],
                     ));
                     if (!intval($object1)) {
                         $this->error($object1);
@@ -2611,8 +2650,10 @@ class BypassModel extends Model
     {
         $this->post_preparat = $this->post['preparat'];
         $this->post_time = $this->post['time'];
+        $this->post_qty = $this->post['qty'];
         unset($this->post['preparat']);
         unset($this->post['time']);
+        unset($this->post['qty']);
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -2774,7 +2815,7 @@ class StorageHomeModel extends Model
                             <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
                                 <option></option>
                                 <?php
-                                foreach($db->query('SELECT * from users WHERE user_level = 7') as $row) {
+                                foreach($db->query("SELECT * from users WHERE user_level = 7") as $row) {
                                     ?>
                                     <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
                                     <?php
@@ -2791,22 +2832,30 @@ class StorageHomeModel extends Model
                         <table class="table table-hover table-sm">
                             <thead>
                                 <tr class="bg-blue">
-                                    <th style="width: 100px">№</th>
-                                    <th>Лекарства</th>
-                                    <th>Количество</th>
-                                    <th>Цена ед.</th>
-                                    <th>Сумма</th>
+                                    <th style="width: 70px">№</th>
+                                    <th style="width: 50%">Препарат</th>
+                                    <th class="text-center">На складе</th>
+                                    <th class="text-center">Количество</th>
+                                    <th class="text-right">Цена ед.</th>
+                                    <th class="text-right">Сумма</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, pt.product_code 'preparat_code', sr.qty, pt.price, sr.qty*pt.price 'total_price' FROM storage_orders sr LEFT JOIN products pt ON(pt.product_id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
+                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
                                     <tr>
                                         <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
                                         <td><?= $i++ ?></td>
-                                        <td><?= $row['preparat_code'] ?></td>
-                                        <td><?= $row['qty'] ?></td>
-                                        <td><?= number_format($row['price']) ?></td>
-                                        <td class="text-left">
+                                        <td><?= $row['name'] ?></td>
+                                        <td class="text-center">
+                                            <?php if ($row['qty_have'] > $row['qty']): ?>
+                                                <span class="text-success"><?= $row['qty_have'] ?></span>
+                                            <?php else: ?>
+                                                <span class="text-danger"><?= $row['qty_have'] ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="text-center"><?= $row['qty'] ?></td>
+                                        <td class="text-right"><?= number_format($row['price']) ?></td>
+                                        <td class="text-right">
                                             <?php
                                             $total_cost += $row['total_price'];
                                             echo number_format($row['total_price']);
@@ -2814,9 +2863,9 @@ class StorageHomeModel extends Model
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
-                                <tr>
-                                    <td colspan="4" class="text-right"><b>Итого:</b></td>
-                                    <td class="text-left"><b><?= number_format($total_cost) ?></b></td>
+                                <tr class="table-secondary">
+                                    <td colspan="5" class="text-right"><b>Итого:</b></td>
+                                    <td class="text-right"><b><?= number_format($total_cost) ?></b></td>
                                 </tr>
                             </tbody>
                         </table>
