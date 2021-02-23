@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(7);
-$header = "Склад";
+$header = "Заказы";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,52 +38,33 @@ $header = "Склад";
                 <div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h5 class="card-title">Склад</h5>
-						<div class="header-elements">
-							<div class="list-icons">
-								<a href="<?= viv('nurce/orders') ?>" class="list-icons-item text-success">
-									<i class="icon-plus22 mr-1"></i>Заказы
-								</a>
-							</div>
-						</div>
+						<h5 class="card-title">Заказы</h5>
 					</div>
 
 					<div class="card-body">
 
-						<?php
-						if($_SESSION['message']){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+                        <div id="form_card">
+                            <?php StorageOrdersModel::form() ?>
+                        </div>
 
-						<div class="table-responsive">
-                            <table class="table table-hover table-sm datatable-basic">
+						<div class="table-responsive card">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
-										<th>№</th>
                                         <th>Препарат</th>
-                                        <th>Ответственный</th>
-                                        <th>Изначально</th>
-                                        <th>Остаток</th>
-                                        <th class="text-right">Цена</th>
-                                        <th class="text-right">Сумма</th>
+                                        <th>Кол-во</th>
                                         <th class="text-right" style="width:70px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $i=1; foreach ($db->query("SELECT * FROM storage_home WHERE status = 7") as $row): ?>
+                                    <?php foreach ($db->query("SELECT so.id, st.name, st.supplier, st.die_date, so.qty FROM storage_orders so LEFT JOIN storage st ON(st.id=so.preparat_id) WHERE so.parent_id = {$_SESSION['session_id']}") as $row): ?>
                                         <tr>
-											<td><?= $i++ ?></td>
                                             <td><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</td>
-                                            <td><?= get_full_name($row['parent_id']) ?></td>
-                                            <td><?= $row['qty'] + $row['qty_sold'] ?></td>
                                             <td><?= $row['qty'] ?></td>
-                                            <td class="text-right"><?= number_format($row['price'],1) ?></td>
-                                            <td class="text-right"><?= number_format(($row['price'] * $row['qty']), 1) ?></td>
 											<td class="text-right">
 												<div class="list-icons">
-													<a href="<?= del_url($row['id'], 'StorageHomeModel') ?>" onclick="return confirm(`Возврат препарата - '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)' ?`)" class="list-icons-item text-danger-600"><i class="icon-reply"></i></a>
+                                                    <a onclick="Update('<?= up_url($row['id'], 'StorageOrdersModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                                    <a href="<?= del_url($row['id'], 'StorageOrdersModel') ?>" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 												</div>
 											</td>
                                         </tr>
@@ -104,6 +85,19 @@ $header = "Склад";
 
 	</div>
 	<!-- /page content -->
+
+    <script type="text/javascript">
+		function Update(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#form_card').html(result);
+				},
+			});
+		};
+	</script>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

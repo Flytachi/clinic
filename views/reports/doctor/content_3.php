@@ -94,9 +94,7 @@ $header = "Отчёт врачей по визитам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT DISTINCT vs.division_id,
-								vs.direction,
-								ds.title,
+					$sql = "SELECT DISTINCT vs.user_id
 								(SELECT COUNT(*) FROM visit vsc WHERE vsc.route_id = vs.route_id AND vsc.division_id = vs.division_id AND (DATE_FORMAT(vsc.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')) 'qty'
 							FROM visit vs
 								LEFT JOIN division ds ON(ds.id=vs.division_id)

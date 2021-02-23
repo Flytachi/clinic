@@ -71,7 +71,7 @@ $header = "Пациент";
 									<thead>
 										<tr class="bg-info">
 											<th style="width: 40px !important;">№</th>
-											<th style="width: 400px;">Препарат</th>
+											<th style="width: 45%;">Препарат</th>
 											<th>Описание</th>
 											<th class="text-center" style="width: 150px;">Метод введения </th>
 											<th class="text-center" style="width: 100px;">Время</th>
@@ -87,15 +87,15 @@ $header = "Пациент";
 												<td><?= $i++ ?></td>
 												<td>
 													<?php
-													foreach ($db->query("SELECT st.name FROM bypass_preparat bp LEFT JOIN storage st ON(bp.preparat_id=st.id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
-														echo $serv['name']."<br>";
+													foreach ($db->query("SELECT preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+														echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
 													}
 													?>
 												</td>
 												<td><?= $row['description'] ?></td>
 												<td><?= $methods[$row['method']] ?></td>
 												<td class="text-center">
-													<?php foreach ($db->query("SELECT bd.status, bd.completed, bt.time FROM bypass_date bd LEFT JOIN bypass_time bt ON(bt.id=bd.bypass_time_id) WHERE bd.bypass_id = {$row['id']} AND bd.date = CURRENT_DATE()") as $time): ?>
+													<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
 														<?php if ($time['status']): ?>
 															<?php if ($time['completed']): ?>
 																<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>

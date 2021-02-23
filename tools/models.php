@@ -1786,6 +1786,14 @@ class BedTypeModel extends Model
 class ServiceModel extends Model
 {
     public $table = 'service';
+    public $table_label = array(
+        'id' => 'id',
+        'division_id' => 'Отдел',
+        'code' => 'Код',
+        'name' => 'Услуга',
+        'price' => 'Цена',
+        'type' => 'Тип(1,2,3)',
+    );
 
     public function form_template($pk = null)
     {
@@ -1915,61 +1923,41 @@ class ServiceModel extends Model
 
     public function clean_excel()
     {
-        // if ($this->post['user_level']) {
-        //     switch ($this->post['user_level']) {
-        //         case 'A':
-        //             $this->post['user_level'] = 1;
-        //             break;
-        //         case 'B':
-        //             $this->post['user_level'] = 5;
-        //             break;
-        //         case 'D':
-        //             $this->post['user_level'] = 10;
-        //             break;
-        //         case 'L':
-        //             $this->post['user_level'] = 6;
-        //             break;
-        //         case 'F':
-        //             $this->post['user_level'] = 12;
-        //             break;
-        //     }
-        // }
+        global $db;
+        if ($this->table_label) {
+            foreach ($this->table_label as $key => $value) {
+                $post[$key] = $this->post[$value];
+            }
+            $this->post = $post;
+        }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
-        // $this->mod('test');
+        $this->post['user_level'] = $db->query("SELECT level FROM division WHERE id = {$this->post['division_id']}")->fetchColumn();
         return True;
     }
 
     public function save_excel()
     {
-        // prit($this->post['template']);
+        global $db;
+        $db->beginTransaction();
         foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
                     $pick = $pirst[$key];
-                    // switch ($pick) {
-                    //     case 'role':
-                    //         $pick = "user_level";
-                    //         break;
-                    //     case 'service':
-                    //         $pick = "name";
-                    //         break;
-                    // }
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
-                    // prit($this->post);
                     $object = Mixin\insert_or_update($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);
+                        $db->rollBack();
                     }
-                    // $this->stop();
                 }
             }else {
                 $pirst = $value_p;
                 unset($this->post['template']);
             }
         }
-        // $this->stop();
+        $db->commit();
         $this->success();
     }
 
@@ -2512,7 +2500,7 @@ class BypassModel extends Model
 
                         <label>Препарат:</label>
                         <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
-                            <?php foreach ($db->query("SELECT * FROM storage WHERE category = 2") as $row): ?>
+                            <?php foreach ($db->query("SELECT * FROM storage WHERE category = 2 AND qty != 0") as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -2615,14 +2603,20 @@ class BypassModel extends Model
 
     public function save()
     {
+        global $db;
         if($this->clean()){
+            $db->beginTransaction();
             $object = Mixin\insert($this->table, $this->post);
             if (intval($object)){
                 $this->set_table('bypass_preparat');
                 foreach ($this->post_preparat as $value) {
+                    $storage = $db->query("SELECT name, supplier, die_date FROM storage WHERE id = $value")->fetch();
                     $object1 = Mixin\insert($this->table, array(
                         'bypass_id' => $object,
                         'preparat_id' => $value,
+                        'preparat_name' => $storage['name'],
+                        'preparat_supplier' => $storage['supplier'],
+                        'preparat_die_date' => $storage['die_date'],
                         'qty' => $this->post_qty[$value],
                     ));
                     if (!intval($object1)) {
@@ -2639,6 +2633,7 @@ class BypassModel extends Model
                         $this->error($object1);
                     }
                 }
+                $db->commit();
                 $this->success();
             }else{
                 $this->error($object);
@@ -2835,15 +2830,16 @@ class StorageHomeModel extends Model
                                     <th style="width: 70px">№</th>
                                     <th style="width: 50%">Препарат</th>
                                     <th class="text-center">На складе</th>
-                                    <th class="text-center">Количество</th>
+                                    <th class="text-center">Ко-во (требуется)</th>
+                                    <th class="text-center" style="width: 100px">Ко-во</th>
                                     <th class="text-right">Цена ед.</th>
                                     <th class="text-right">Сумма</th>
+                                    <th class="text-right">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
-                                    <tr>
-                                        <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
+                                    <tr id="TR_<?= $row['id'] ?>">
                                         <td><?= $i++ ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td class="text-center">
@@ -2854,6 +2850,9 @@ class StorageHomeModel extends Model
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center"><?= $row['qty'] ?></td>
+                                        <td class="text-center table-primary">
+                                            <input type="number" class="form-control" name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
+                                        </td>
                                         <td class="text-right"><?= number_format($row['price']) ?></td>
                                         <td class="text-right">
                                             <?php
@@ -2861,11 +2860,17 @@ class StorageHomeModel extends Model
                                             echo number_format($row['total_price']);
                                             ?>
                                         </td>
+                                        <td class="text-right">
+                                            <div class="list-icons">
+                                                <a onclick="Delete('<?= del_url($row['id'], 'StorageOrdersModel') ?>', '#TR_<?= $row['id'] ?>')" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <tr class="table-secondary">
-                                    <td colspan="5" class="text-right"><b>Итого:</b></td>
+                                    <td colspan="6" class="text-right"><b>Итого:</b></td>
                                     <td class="text-right"><b><?= number_format($total_cost) ?></b></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2880,6 +2885,22 @@ class StorageHomeModel extends Model
             </div>
 
         </form>
+        <script type="text/javascript">
+            function Delete(url, tr) {
+                event.preventDefault();
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function (data) {
+                        $(tr).css("background-color", "rgb(244, 67, 54)");
+                        $(tr).css("color", "white");
+                        $(tr).fadeOut(900, function() {
+                            $(tr).remove();
+                        });
+                    },
+                });
+            };
+        </script>
         <?php
     }
 
@@ -2911,15 +2932,16 @@ class StorageHomeModel extends Model
                                     <th style="width: 70px">№</th>
                                     <th style="width: 50%">Препарат</th>
                                     <th class="text-center">На складе</th>
-                                    <th class="text-center">Количество</th>
+                                    <th class="text-center">Ко-во (требуется)</th>
+                                    <th class="text-center" style="width: 100px">Ко-во</th>
                                     <th class="text-right">Цена ед.</th>
                                     <th class="text-right">Сумма</th>
+                                    <th class="text-right">Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.parent_id = $pk ORDER BY st.name ASC") as $row): ?>
-                                    <tr>
-                                        <input type="hidden" name="orders[<?=$row['id'] ?>]" value="<?= $row['qty'] ?>">
+                                    <tr id="TR_<?= $row['id'] ?>">
                                         <td><?= $i++ ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td class="text-center">
@@ -2930,6 +2952,9 @@ class StorageHomeModel extends Model
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center"><?= $row['qty'] ?></td>
+                                        <td class="text-center table-primary">
+                                            <input type="number" class="form-control" name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
+                                        </td>
                                         <td class="text-right"><?= number_format($row['price']) ?></td>
                                         <td class="text-right">
                                             <?php
@@ -2937,11 +2962,17 @@ class StorageHomeModel extends Model
                                             echo number_format($row['total_price']);
                                             ?>
                                         </td>
+                                        <td class="text-right">
+                                            <div class="list-icons">
+                                                <a onclick="Delete('<?= del_url($row['id'], 'StorageOrdersModel') ?>', '#TR_<?= $row['id'] ?>')" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <tr class="table-secondary">
-                                    <td colspan="5" class="text-right"><b>Итого:</b></td>
+                                    <td colspan="6" class="text-right"><b>Итого:</b></td>
                                     <td class="text-right"><b><?= number_format($total_cost) ?></b></td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2956,6 +2987,22 @@ class StorageHomeModel extends Model
             </div>
 
         </form>
+        <script type="text/javascript">
+            function Delete(url, tr) {
+                event.preventDefault();
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function (data) {
+                        $(tr).css("background-color", "rgb(244, 67, 54)");
+                        $(tr).css("color", "white");
+                        $(tr).fadeOut(900, function() {
+                            $(tr).remove();
+                        });
+                    },
+                });
+            };
+        </script>
         <?php
     }
 
@@ -3006,6 +3053,7 @@ class StorageHomeModel extends Model
     {
         global $db;
         $post['preparat_id'] = $post['id']; unset($post['id']);
+        unset($post['qty_limit']);
         if ($pk = $db->query("SELECT id, qty FROM storage_home WHERE preparat_id = {$post['preparat_id']} AND status = {$post['status']} AND category = {$post['category']}")->fetch()) {
             $object = Mixin\update('storage_home', array('qty' => $pk['qty']+$post['qty']), $pk['id']);
             if (!intval($object)) {

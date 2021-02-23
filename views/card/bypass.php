@@ -20,12 +20,12 @@ if ($grant_id == $_SESSION['session_id']) {
     <div class="card card-body border-top-1 border-top-success">
         <div class="list-feed list-feed-rhombus list-feed-solid">
 
-            <div class="list-feed-item border-info">
+            <div class="list-feed-item border-info" style="margin-bottom: -25px;">
                 <strong>Препараты: </strong>
                 <ul>
-                    <?php foreach ($db->query("SELECT st.id, st.name, st.supplier, st.die_date, bp.qty FROM bypass_preparat bp LEFT JOIN storage st ON(bp.preparat_id=st.id) WHERE bp.bypass_id = {$bypass['id']}") as $serv): ?>
-                        <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['name'] ?> | <?= $serv['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['die_date'])) ?>)</li>
-                        <input type="hidden" class="products" value="<?= $serv['id'] ?>">
+                    <?php foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date, qty FROM bypass_preparat WHERE bypass_id = {$bypass['id']}") as $serv): ?>
+                        <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> | <?= $serv['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['preparat_die_date'])) ?>)</li>
+                        <input type="hidden" class="products" value="<?= $serv['preparat_id'] ?>">
                     <?php endforeach; ?>
                 </ul>
             </div>

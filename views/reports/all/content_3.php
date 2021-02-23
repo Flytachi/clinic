@@ -161,7 +161,7 @@ $header = "Общий отчёт по визитам";
 											<th style="width: 11%">Дата завершения</th>
 				                            <th>Услуга</th>
 											<th class="text-right">Цена</th>
-											<th class="text-center">Доля</th>
+											<th class="text-center">Скидка</th>
 											<th class="text-right">Сумма</th>
 										</tr>
 	                                </thead>

@@ -305,12 +305,24 @@ function read_excel($filepath){
     return $ar; //возвращаем массив
 }
 
-function write_excel($table, $file_name = "docs")
+function write_excel($table, $file_name = "docs", $table_label=null)
 {
     global $db;
     include 'PHPExcel/Classes/PHPExcel.php';
 
-    $table_label = $db->query("DESCRIBE $table")->fetchAll();
+    if ($table_label) {
+        foreach ($table_label as $key => $value) {
+            $labels[] = $value;
+        }
+        $sql_select = implode(array_keys($table_label), ", ");
+    }else {
+        $table_q = $db->query("DESCRIBE $table")->fetchAll();
+        foreach ($table_q as $key => $value) {
+            $labels[] = $value['Field'];
+        }
+        $sql_select = implode($labels, ", ");
+    }
+
     $excel_column = array(
         0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D',
         4 => 'E', 5 => 'F', 6 => 'G', 7 => 'H',
@@ -341,20 +353,20 @@ function write_excel($table, $file_name = "docs")
        ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
 
     //Имя страницы
-    $active_sheet->setTitle("Данные из docs");
+    $active_sheet->setTitle("Данные ".showTitle());
     $active_sheet->getRowDimension("1")->setRowHeight(25);
 
     //Ширина стобцов
-    for ($i=0; $i < count($table_label); $i++) {
-        $erch = "{$excel_column[$i]}1";
-        $active_sheet->getColumnDimension($excel_column[$i])->setWidth(20);
-        $active_sheet->setCellValue($erch, $table_label[$i]['Field']);
+    foreach ($labels as $key => $value) {
+        $erch = "{$excel_column[$key]}1";
+        $active_sheet->getColumnDimension($excel_column[$key])->setWidth(20);
+        $active_sheet->setCellValue($erch, $value);
         $active_sheet->getStyle($erch)->getFont()->setBold(true);
 
-        if ($table_label[$i]['Field'] == "name") {
-            $active_sheet->getColumnDimension($excel_column[$i])->setWidth(70);
+        if (in_array($value, ['Услуга', 'Препарат'])) {
+            $active_sheet->getColumnDimension($excel_column[$key])->setWidth(70);
         } else {
-            $active_sheet->getColumnDimensionByColumn($excel_column[$i])->setAutoSize(true);
+            $active_sheet->getColumnDimensionByColumn($excel_column[$key])->setAutoSize(true);
         }
         $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -375,17 +387,17 @@ function write_excel($table, $file_name = "docs")
     }
 
     if ($table == "service") {
-        $sql = "SELECT * FROM $table WHERE type != 101";
+        $sql = "SELECT $sql_select FROM $table WHERE type != 101";
     }else {
-        $sql = "SELECT * FROM $table";
+        $sql = "SELECT $sql_select FROM $table";
     }
 
     foreach ($db->query($sql) as $key => $row) {
         $kt = $key+2;
-        for ($i=0; $i < count($row); $i++) {
-            $erch = "{$excel_column[$i]}$kt";
-            // echo "$erch => {$row[$table_label[$i]['Field']]}<br>";
-            $active_sheet->setCellValue($erch, $row[$table_label[$i]['Field']]);
+        foreach ($labels as $key_st => $value) {
+            $erch = "{$excel_column[$key_st]}$kt";
+            // echo "$erch => ".$row[array_keys($row)[$key_st]]."<br>";
+            $active_sheet->setCellValue($erch, $row[array_keys($row)[$key_st]]);
             $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $active_sheet->getStyle($erch)->applyFromArray(array(

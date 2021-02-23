@@ -49,7 +49,7 @@ $header = "Добавить препарат";
 						<h6 class="card-title">Шаблон</h6>
 						<div class="header-elements">
 	                  		<div class="list-icons">
-								<a href="<?= download_url('storage', 'Preparats') ?>" class="btn">Шаблон - <?= $_SESSION['session_id'] ?></a>
+								<a href="<?= download_url('Storage', 'Препараты') ?>" class="btn">Шаблон - <?= $_SESSION['session_id'] ?></a>
 		                  	</div>
 		              	</div>
 					</div>

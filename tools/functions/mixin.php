@@ -48,7 +48,6 @@ function insert_or_update($tb, $post)
         // connect
         $pk = $post['id'];
         unset($post['id']);
-
         // select
         if ($db->query("SELECT id FROM $tb WHERE id = $pk")->fetchColumn()) {
             // update
@@ -81,6 +80,7 @@ function insert_or_update($tb, $post)
         } else {
             // insert
             global $db;
+            $post['id'] = $pk;
             $col = implode(",", array_keys($post));
             $val = ":".implode(", :", array_keys($post));
             $sql = "INSERT INTO $tb ($col) VALUES ($val)";

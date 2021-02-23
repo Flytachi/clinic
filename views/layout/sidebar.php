@@ -200,25 +200,19 @@
                         case 4:
                             ?>
                             <li class="nav-item">
-                                <a href="<?= viv('pharmacy/sales') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Расходы</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="<?= viv('pharmacy/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
+                                    <i class="icon-store"></i>
                                     <span>Препараты</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="orders.php" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
+                                <a href="<?= viv('pharmacy/orders') ?>" class="nav-link legitRipple">
+                                    <i class="icon-task "></i>
                                     <span>Заказы</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="application.php" class="nav-link legitRipple">
+                                <a href="<?= viv('pharmacy/application') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
                                 </a>
@@ -449,8 +443,16 @@
                             </li>
                             <li class="nav-item">
                                 <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
+                                    <i class="icon-store"></i>
                                     <span>Склад</span>
+                                    <?php
+                                    $con_tree = $db->query("SELECT id FROM storage_orders WHERE parent_id = {$_SESSION['session_id']}")->rowCount();
+                                    if ($con_tree) {
+                                        ?>
+                                        <span class="badge bg-indigo badge-pill ml-auto"><?=$con_tree?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
 
@@ -701,10 +703,10 @@
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
                                     <?php
-                                    $con_tree = $db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL")->rowCount();
-                                    if ($con_tree) {
+                                    $con_one = $db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL")->rowCount();
+                                    if ($con_one) {
                                         ?>
-                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
+                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_one?></span>
                                         <?php
                                     }
                                     ?>
@@ -718,8 +720,16 @@
                             </li>
                             <li class="nav-item">
                                 <a href="<?= viv('anesthetist/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
+                                    <i class="icon-store"></i>
                                     <span>Склад</span>
+                                    <?php
+                                    $con_two = $db->query("SELECT id FROM storage_orders WHERE parent_id = {$_SESSION['session_id']}")->rowCount();
+                                    if ($con_two) {
+                                        ?>
+                                        <span class="badge bg-indigo badge-pill ml-auto"><?=$con_two?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">

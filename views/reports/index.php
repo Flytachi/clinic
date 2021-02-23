@@ -80,6 +80,14 @@ $header = "Отчёты";
 
                 <article class="fade-out-siblings">
 
+                    <!-- Аптека -->
+                    <?php if (permission([4, 8])): ?>
+                        <a href="<?= viv('reports/pharmacy/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Аптека</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Аптека</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
                     <!-- Общий отчет -->
                     <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
                         <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>

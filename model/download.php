@@ -1,5 +1,7 @@
 <?php
 require_once '../tools/warframe.php';
-// prit($_GET);
-write_excel($_GET['table'], $_GET['file'])
+is_auth();
+
+$form = new $_GET['model'];
+write_excel($form->table, $_GET['file'], $form->table_label);
 ?>

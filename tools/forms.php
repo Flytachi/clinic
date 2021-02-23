@@ -1737,7 +1737,7 @@ class BypassDateModel extends Model
         $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
-        $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
+        $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']} ORDER BY time ASC")->fetchAll();
         $span = count($col);
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
@@ -1780,7 +1780,7 @@ class BypassDateModel extends Model
                                     <?php endif; ?>
                                     <?php
                                     $dat = $date->format('Y-m-d');
-                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND bypass_time_id = {$value['id']} AND date = '$dat'")->fetch();
+                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND time = '{$value['time']}' AND date = '$dat'")->fetch();
                                     ?>
                                     <td>
                                         <?= $time = date('H:i', strtotime($value['time'])) ?>
@@ -1798,9 +1798,9 @@ class BypassDateModel extends Model
                                             <?php else: ?>
                                                 <?php if ($grant): ?>
                                                     <?php if ($post['status']): ?>
-                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val=""></i>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['time'] ?>" data-val=""></i>
                                                     <?php else: ?>
-                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['id'] ?>" data-val="1"></i>
+                                                        <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['time'] ?>" data-val="1"></i>
                                                     <?php endif; ?>
                                                 <?php else: ?>
                                                     <?php if ($post['status']): ?>
@@ -1865,7 +1865,7 @@ class BypassDateModel extends Model
                         bypass_id: "<?= $_GET['pk'] ?>",
                         id: swet_input.dataset.id,
                         user_id: "<?= $bypass['user_id'] ?>",
-                        bypass_time_id: swet_input.dataset.time,
+                        time: swet_input.dataset.time,
                         date: swet_input.dataset.date,
                         status: swet_input.dataset.val,
                         products: products
@@ -1875,7 +1875,7 @@ class BypassDateModel extends Model
                         model: "<?= __CLASS__ ?>",
                         bypass_id: "<?= $_GET['pk'] ?>",
                         user_id: "<?= $bypass['user_id'] ?>",
-                        bypass_time_id: swet_input.dataset.time,
+                        time: swet_input.dataset.time,
                         date: swet_input.dataset.date,
                         status: swet_input.dataset.val,
                         products: products
@@ -1927,7 +1927,7 @@ class BypassDateModel extends Model
         $bypass = $db->query("SELECT user_id, visit_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
         $first_date = date_diff(new \DateTime(), new \DateTime($add_date))->days;
-        $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']}")->fetchAll();
+        $col = $db->query("SELECT id, time FROM bypass_time WHERE bypass_id = {$_GET['pk']} ORDER BY time ASC")->fetchAll();
         $span = count($col);
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
@@ -1969,7 +1969,7 @@ class BypassDateModel extends Model
                                     <?php endif; ?>
                                     <?php
                                     $dat = $date->format('Y-m-d');
-                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND bypass_time_id = {$value['id']} AND date = '$dat'")->fetch();
+                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND time = '{$value['time']}' AND date = '$dat'")->fetch();
                                     ?>
                                     <td>
                                         <?= date('H:i', strtotime($value['time'])) ?>
@@ -2283,6 +2283,20 @@ class NotesModel extends Model
 class Storage extends Model
 {
     public $table = 'storage';
+    public $table_label = array(
+        'id' => 'id',
+        'code' => 'Код',
+        'name' => 'Препарат',
+        'supplier' => 'Поставщик',
+        'category' => 'Категория(2,3,4)',
+        'qty' => 'Кол-во',
+        'qty_limit' => 'Лимит',
+        'cost' => 'Цена прихода',
+        'price' => 'Цена расхода',
+        'faktura' => 'Счёт фактура',
+        'add_date' => 'Дата поставки',
+        'die_date' => 'Срок годности',
+    );
 
     public function form_template($pk = null)
     {
@@ -2414,15 +2428,22 @@ class Storage extends Model
 
     public function clean_excel()
     {
+        if ($this->table_label) {
+            foreach ($this->table_label as $key => $value) {
+                $post[$key] = $this->post[$value];
+            }
+            $this->post = $post;
+        }
+        $this->post['parent_id'] = $_SESSION['session_id'];
         $this->post['cost'] = preg_replace("/,+/", "", $this->post['cost']);
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
-        // $this->mod('test');
         return True;
     }
 
     public function save_excel()
     {
-        // prit($this->post['template']);
+        global $db;
+        $db->beginTransaction();
         foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
@@ -2430,19 +2451,18 @@ class Storage extends Model
                     $this->post[$pick] = $value;
                 }
                 if($this->clean_excel()){
-                    // prit($this->post);
                     $object = Mixin\insert_or_update($this->table, $this->post);
                     if (!intval($object)){
                         $this->error($object);
+                        $db->rollBack();
                     }
-                    // $this->stop();
                 }
             }else {
                 $pirst = $value_p;
                 unset($this->post['template']);
             }
         }
-        // $this->stop();
+        $db->commit();
         $this->success();
     }
 
@@ -2674,33 +2694,43 @@ class StorageOrdersModel extends Model
     public function form($pk = null)
     {
         global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="modal-body">
                 <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+                <input type="hidden" name="id" value="<?= $pk ?>">
 
                 <div class="form-group row">
 
                     <div class="col-md-10">
                         <label>Расходные материалы:</label>
-                        <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required data-fouc>
+                        <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required <?= ($pk) ? "disabled" : "data-fouc" ?>>
                             <option></option>
                             <?php if (permission(11)): ?>
-                                <?php $sql = "SELECT * FROM storage WHERE category = 4"; ?>
+                                <?php $sql = "SELECT * FROM storage WHERE category = 4 AND qty != 0"; ?>
                             <?php else: ?>
-                                <?php $sql = "SELECT * FROM storage WHERE category IN (2, 3)"; ?>
+                                <?php $sql = "SELECT * FROM storage WHERE category IN (2, 3) AND qty != 0"; ?>
                             <?php endif; ?>
                             <?php foreach ($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['preparat_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="col-md-2">
                         <label>Количество:</label>
-                        <input type="number" name="qty" value="1" class="form-control">
+                        <input type="number" name="qty" value="<?= $post['qty'] ?>" class="form-control">
                     </div>
 
                 </div>
