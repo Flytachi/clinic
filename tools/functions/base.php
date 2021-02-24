@@ -68,4 +68,36 @@ function service_temp()
     }
 }
 
+function province_temp()
+{
+    global $db;
+    try {
+        $db->beginTransaction();
+
+        Mixin\insert('province', array('id' => 1, 'name' => "Ташкент"));
+
+        $db->commit();
+        return 200;
+    } catch (Exception $e) {
+        $db->rollBack();
+        return "Ошибка: " . $e->getMessage();
+    }
+}
+
+function region_temp()
+{
+    global $db;
+    try {
+        $db->beginTransaction();
+
+        Mixin\insert('region', array('id' => 1, 'province_id' => 1, 'name' => "Бектемирский район"));
+
+        $db->commit();
+        return 200;
+    } catch (Exception $e) {
+        $db->rollBack();
+        return "Ошибка: " . $e->getMessage();
+    }
+}
+
 ?>

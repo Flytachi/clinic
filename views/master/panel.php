@@ -31,99 +31,10 @@ $header = "Панель управления";
 			<div class="content">
 
 				<?php if ($_POST['INITIALIZE']): ?>
-
-					<?php $_initialize =  Mixin\T_INITIALIZE_database(); ?>
-
-					<?php if ($_initialize == 200): ?>
-						<div class="alert alert-primary" role="alert">
-                            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                            База данных создана!
-                        </div>
-					<?php else: ?>
-						<div class="alert bg-danger alert-styled-left alert-dismissible">
-							<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-							<span class="font-weight-semibold">Ошибка при создании базы данных!</span>
-					    </div>
-                    <?php endif; ?>
-
-				<?php elseif ($_POST['INITIALIZE_pharmacy']): ?>
-
 					<?php
-					$db->beginTransaction();
-
-					$sql = <<<EOSQL
-						CREATE TABLE IF NOT EXISTS `storage` (
-							 `id` int(11) NOT NULL AUTO_INCREMENT,
-							 `parent_id` int(11) NOT NULL,
-							 `code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `name` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `supplier` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `category` tinyint(4) DEFAULT NULL,
-							 `qty` int(11) NOT NULL,
-							 `qty_sold` int(11) NOT NULL DEFAULT 0,
-							 `cost` decimal(65,1) NOT NULL DEFAULT 0.0,
-							 `price` decimal(65,1) NOT NULL DEFAULT 0.0,
-							 `faktura` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `add_date` date NOT NULL,
-							 `die_date` date NOT NULL,
-							 PRIMARY KEY (`id`)
-						) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-						CREATE TABLE IF NOT EXISTS `storage_home` (
-							 `id` int(11) NOT NULL AUTO_INCREMENT,
-							 `preparat_id` int(11) NOT NULL,
-							 `status` tinyint(4) DEFAULT NULL,
-							 `parent_id` int(11) NOT NULL,
-							 `code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `name` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `supplier` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `category` tinyint(4) DEFAULT NULL,
-							 `qty` int(11) NOT NULL,
-							 `qty_sold` int(11) NOT NULL DEFAULT 0,
-							 `cost` decimal(65,1) NOT NULL DEFAULT 0.0,
-							 `price` decimal(65,1) NOT NULL DEFAULT 0.0,
-							 `faktura` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `die_date` date NOT NULL,
-							 PRIMARY KEY (`id`)
-						) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-						 CREATE TABLE IF NOT EXISTS `storage_orders` (
-							 `id` int(11) NOT NULL AUTO_INCREMENT,
-							 `user_id` int(11) DEFAULT NULL,
-							 `parent_id` int(11) NOT NULL,
-							 `preparat_id` int(11) NOT NULL,
-							 `qty` smallint(6) NOT NULL,
-							 `date` date NOT NULL,
-							 PRIMARY KEY (`id`)
-						) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-						 CREATE TABLE IF NOT EXISTS `storage_product_name` (
-							 `name` varchar(700) COLLATE utf8mb4_unicode_ci NOT NULL
-						) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-						 CREATE TABLE IF NOT EXISTS `storage_sales` (
-							 `id` int(11) NOT NULL AUTO_INCREMENT,
-							 `code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `name` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `supplier` varchar(700) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-							 `qty` int(11) NOT NULL,
-							 `price` decimal(65,1) NOT NULL DEFAULT 0.0,
-							 `amount` decimal(65,1) DEFAULT 0.0,
-							 `parent_id` int(11) DEFAULT NULL,
-							 `user_id` int(11) DEFAULT NULL,
-							 `operation_id` int(11) DEFAULT NULL,
-							 `add_date` datetime NOT NULL DEFAULT current_timestamp(),
-							 PRIMARY KEY (`id`)
-						) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-						CREATE TABLE IF NOT EXISTS `storage_supplier_name` (
-							`name` varchar(700) COLLATE utf8mb4_unicode_ci NOT NULL
-						) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-						EOSQL;
-					$db->exec($sql);
-
-					$db->commit();
-					$_initialize = 200;
+					$file = file_get_contents($_FILES['file_database']['tmp_name']);
+					$data = json_decode($file, true);
+					$_initialize =  Mixin\T_INITIALIZE_database($data);
 					?>
 
 					<?php if ($_initialize == 200): ?>
@@ -142,6 +53,8 @@ $header = "Панель управления";
 
                     <?php
                     $flush = Mixin\T_FLUSH_database();
+					// $_province = province_temp();
+					// $_region = region_temp();
                     $_division = division_temp();
                     $_user = users_temp();
                     $_service = service_temp();
@@ -152,14 +65,44 @@ $header = "Панель управления";
                             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
                             Новая база данных готова к использованию!
                             <ul>
+
 								<?php if ($_division == 200): ?>
                                     <li>Очищены/Созданы отделы</li>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка создания отделов</li>
+									<?php if ($_division): ?>
+										<ol class="text-danger">
+	                                        <li><?= $_division ?></li>
+	                                    </ol>
+									<?php endif; ?>
                                 <?php endif; ?>
+
+								<?php if ($_province == 200): ?>
+                                    <li>Очищен/Создан список областей</li>
+                                <?php else: ?>
+                                    <li class="text-danger">Ошибка при создании списока областей</li>
+									<?php if ($_province): ?>
+										<ol class="text-danger">
+	                                        <li><?= $_province ?></li>
+	                                    </ol>
+									<?php endif; ?>
+                                <?php endif; ?>
+
+								<?php if ($_region == 200): ?>
+                                    <li>Очищен/Создан список регионов</li>
+                                <?php else: ?>
+                                    <li class="text-danger">Ошибка при создании списока регионов</li>
+									<?php if ($_region): ?>
+										<ol class="text-danger">
+	                                        <li><?= $_region ?></li>
+	                                    </ol>
+									<?php endif; ?>
+                                <?php endif; ?>
+
                                 <li>Очищены склады</li>
 								<li>Очищены заказы</li>
                                 <li>Очищены визиты</li>
+
                                 <li>Очищены услуги</li>
                                 <?php if ($_service == 200): ?>
                                     <li>Создана услуга</li>
@@ -168,10 +111,13 @@ $header = "Панель управления";
                                     </ol>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка создания услуги</li>
-                                    <ol class="text-danger">
-                                        <li><?= $_service ?></li>
-                                    </ol>
+									<?php if ($_service): ?>
+										<ol class="text-danger">
+	                                        <li><?= $_service ?></li>
+	                                    </ol>
+									<?php endif; ?>
                                 <?php endif; ?>
+
                                 <li>Очищены пользователи</li>
                                 <?php if ($_user == 200): ?>
                                     <li>Создан администратор</li>
@@ -181,10 +127,13 @@ $header = "Панель управления";
                                     </ol>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка создания администратора</li>
-                                    <ol class="text-danger">
-                                        <li><?= $_user ?></li>
-                                    </ol>
+									<?php if ($_user): ?>
+										<ol class="text-danger">
+	                                        <li><?= $_user ?></li>
+	                                    </ol>
+									<?php endif; ?>
                                 <?php endif; ?>
+
                             </ul>
 
                         </div>
@@ -212,28 +161,31 @@ $header = "Панель управления";
                         }
                         ?>
 
-                        <form action="" method="post">
-                            <input style="display:none;" id="btn_INITIALIZE" type="submit" value="INITIALIZE" name="INITIALIZE"></input>
-                            <input style="display:none;" id="btn_GET_START" type="submit" value="GET_START" name="GET_START"></input>
-
-                            <input style="display:none;" id="btn_INITIALIZE_pharmacy" type="submit" value="INITIALIZE_pharmacy" name="INITIALIZE_pharmacy"></input>
-                        </form>
-
                         <div class="form-group row">
 
 
                             <div class="col-6">
-                                <legend>The main</legend>
-                                <a class="btn text-primary" onclick="Conf('#btn_INITIALIZE')">Initialize the database</a>
-                                <a class="btn text-danger" onclick="Conf('#btn_GET_START')">GET START</a>
-                            </div>
 
-                            <div class="col-6">
-                                <legend>In detail</legend>
-                                <div class="form-group">
-                                    <span class="mr-5" style="font-size: 1rem;"><b>Pharmacy</b></span>
-                                    <a class="btn text-primary" onclick="Conf('#btn_INITIALIZE_pharmacy')">Initialize the database</a>
-                                </div>
+								<form action="" method="post" enctype="multipart/form-data">
+									<legend>The main</legend>
+		                            <input style="display:none;" id="btn_INITIALIZE" type="submit" value="INITIALIZE" name="INITIALIZE"></input>
+		                            <input style="display:none;" id="btn_GET_START" type="submit" value="GET_START" name="GET_START"></input>
+
+									<div class="form-group row">
+
+						                <div class="col-md-7">
+						                   	<input type="file" class="form-control" name="file_database" onchange="Chemp(this)" accept="application/json">
+						                </div>
+
+						                <div class="col-md-5" style="margin-top: 10px;">
+						                    <button type="button" class="btn btn-primary btn-sm" onclick="Conf('#btn_INITIALIZE')" id="btn_ini" disabled>Initialize the database</button>
+											<button type="button" class="btn btn-danger btn-sm" onclick="Conf('#btn_GET_START')">GET START</button>
+						                </div>
+
+						            </div>
+
+		                        </form>
+
                             </div>
 
                         </div>
@@ -253,6 +205,14 @@ $header = "Панель управления";
 	<!-- /page content -->
 
     <script type="text/javascript">
+		function Chemp(input) {
+			if (input.value.match(/\.?[^.]+$/)[0] == ".json") {
+				$('#btn_ini').attr("disabled", false);
+			}else {
+				$('#btn_ini').attr("disabled", true);
+			}
+		}
+
 		function Conf(btn) {
 			swal({
 				position: 'top',

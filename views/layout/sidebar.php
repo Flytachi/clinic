@@ -212,9 +212,15 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('pharmacy/application') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('pharmacy/users') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('pharmacy/application') ?>" class="nav-link legitRipple">
+                                    <i class="icon-task "></i>
+                                    <span>Все заявки</span>
                                 </a>
                             </li>
                             <li class="nav-item">

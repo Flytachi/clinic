@@ -405,7 +405,7 @@ class VisitReport extends Model
                 }
                 $this->clear_post();
                 $this->set_post(array(
-                    'status' => null,
+                    'status' => ($row['direction']) ? 0 : null,
                     'completed' => date('Y-m-d H:i:s')
                 ));
                 $object = Mixin\update($this->table, $this->post, $pk);
@@ -1557,39 +1557,45 @@ class VisitFinish extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $this->post['status'] = null;
         $this->post['completed'] = date('Y-m-d H:i:s');
+        $db->beginTransaction();
         foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
-            if ($inf['grant_id'] == $inf['parent_id'] and ($inf['direction'] or 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount())) {
-                if (!$inf['direction']) {
-                    Mixin\update($this->table1, array('status' => null), $pk);
-                }
-                if ($inf['direction']) {
-                    $pk_arr = array('user_id' => $pk);
-                    $object = Mixin\updatePro($this->table2, array('user_id' => null), $pk_arr);
-                }
-            }
-            if ($inf['assist_id']) {
-                if (!$inf['direction']) {
-                    $this->post['grant_id'] = $_SESSION['session_id'];
-                    Mixin\update($this->table1, array('status' => null), $pk);
-                }
-            }
-            $this->post['id'] = $inf['id'];
+            $this->status_controller($pk, $inf);
             $this->update();
         }
+        $db->commit();
         $this->success();
+    }
+
+    public function status_controller($pk, $inf)
+    {
+        global $db;
+        $this->post['status'] = ($inf['direction']) ? 0 : null;
+        if ($inf['grant_id'] == $inf['parent_id'] and ($inf['direction'] or 1 == $db->query("SELECT * FROM visit WHERE user_id=$pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount())) {
+            if (!$inf['direction']) {
+                Mixin\update($this->table1, array('status' => null), $pk);
+            }
+            if ($inf['direction']) {
+                $pk_arr = array('user_id' => $pk);
+                $object = Mixin\update($this->table2, array('user_id' => null), $pk_arr);
+            }
+        }
+        if ($inf['assist_id']) {
+            if (!$inf['direction']) {
+                $this->post['grant_id'] = $_SESSION['session_id'];
+                Mixin\update($this->table1, array('status' => null), $pk);
+            }
+        }
+        $this->post['id'] = $inf['id'];
     }
 
     public function update()
     {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if ($object != 1){
-                $this->error($object);
-            }
+        $pk = $this->post['id'];
+        unset($this->post['id']);
+        $object = Mixin\update($this->table, $this->post, $pk);
+        if ($object != 1){
+            $this->error($object);
         }
     }
 
@@ -2306,7 +2312,7 @@ class Storage extends Model
 
             <div class="form-group">
                 <label>Шаблон:</label>
-                <input type="file" class="form-control" name="template" required>
+                <input type="file" class="form-control" name="template" accept="application/vnd.ms-excel" required>
             </div>
 
             <div class="text-right">

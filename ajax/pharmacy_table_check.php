@@ -17,7 +17,9 @@ is_auth();
             </tr>
         </thead>
         <tbody>
-            <?php if ($_GET['type']): ?>
+            <?php if ($_GET['type'] == 2): ?>
+                <?php $sql = "SELECT * FROM storage WHERE DATEDIFF(die_date, CURRENT_DATE()) <= 10 ORDER BY name ASC"; ?>
+            <?php elseif ($_GET['type'] == 1): ?>
                 <?php $sql = "SELECT * FROM storage WHERE 10 >= qty ORDER BY name ASC"; ?>
             <?php else: ?>
                 <?php $sql = "SELECT * FROM storage WHERE qty_limit IS NOT NULL AND qty_limit >= qty AND 10 < qty ORDER BY name ASC"; ?>
@@ -25,7 +27,10 @@ is_auth();
             <?php foreach ($db->query($sql) as $row): ?>
                 <?php
                 $tr="";
-                if ($row['qty'] <= 10) {
+                if ($dr= date_diff(new \DateTime(), new \DateTime($row['die_date']))->days <= 10) {
+                    // Предупреждение срока годности
+                    $tr = "bg-teal text-dark";
+                }elseif ($row['qty'] <= 10) {
                     // Предупреждение критическое
                     $tr = "bg-danger";
                 }elseif ($row['qty_limit'] and $row['qty'] <= $row['qty_limit']){

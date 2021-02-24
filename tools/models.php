@@ -1024,6 +1024,7 @@ class VisitPriceModel extends Model
         }else {
             $this->post = Mixin\clean_form($this->post);
             $this->post = Mixin\to_null($this->post);
+            $this->status = ($this->post['bed_cost']) ? null : 1;
             return True;
         }
     }
@@ -1088,14 +1089,8 @@ class VisitPriceModel extends Model
                 $this->error("Ошибка в price transfer");
             }
         }
-        // if ($stat == 1) {
-        //     $stat = 1;
-        // } else {
-        //     $stat = null;
-        // }
 
-
-        $object = Mixin\update($this->table1, array('status' => 1, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+        $object = Mixin\update($this->table1, array('status' => $this->status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
         if (!intval($object)){
             $this->error($object);
         }
@@ -1803,7 +1798,7 @@ class ServiceModel extends Model
 
             <div class="form-group">
                 <label>Шаблон:</label>
-                <input type="file" class="form-control" name="template" required>
+                <input type="file" class="form-control" name="template" accept="application/vnd.ms-excel" required>
             </div>
 
             <div class="text-right">
@@ -2387,10 +2382,22 @@ class LaboratoryAnalyzeModel extends Model
     public function save()
     {
         global $db;
-        $end = ($this->post['end']) ? true : false;
+        $this->end = ($this->post['end']) ? true : false;
         unset($this->post['end']);
-        $user_pk = $this->post['user_id'];
+        $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
+
+        $db->beginTransaction();
+        $this->analize_save();
+        $this->finish();
+
+        $db->commit();
+        $this->success();
+    }
+
+    public function analize_save()
+    {
+        global $db;
         foreach ($this->post as $val) {
             if ($val['id']) {
                 $pk = $val['id'];
@@ -2402,7 +2409,7 @@ class LaboratoryAnalyzeModel extends Model
                 }
                 $object = Mixin\update($this->table, $val, $pk);
             }else {
-                $val['user_id'] = $user_pk;
+                $val['user_id'] = $this->user_pk;
                 unset($val['id']);
                 if ($val['deviation']) {
                     $val['deviation'] = 1;
@@ -2410,41 +2417,41 @@ class LaboratoryAnalyzeModel extends Model
                     $val['deviation'] = null;
                 }
                 $val['service_id'] = $db->query("SELECT service_id FROM visit WHERE id = {$val['visit_id']}")->fetch()['service_id'];
-                // prit($val);
-                // $this->stop();
                 $object = Mixin\insert('laboratory_analyze', $val);
             }
             if (!intval($object)){
                 $this->error($object);
             }
         }
-        if ($end) {
-            foreach ($db->query("SELECT id, grant_id, parent_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $user_pk ORDER BY add_date ASC") as $row) {
-                if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$user_pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
-                    Mixin\update('users', array('status' => null), $user_pk);
+    }
+
+    public function finish()
+    {
+        global $db;
+        if ($this->end) {
+            foreach ($db->query("SELECT id, grant_id, parent_id, direction FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND laboratory IS NOT NULL AND status = 2 AND user_id = $this->user_pk ORDER BY add_date ASC") as $row) {
+                if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id=$this->user_pk AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
+                    Mixin\update('users', array('status' => null), $this->user_pk);
                 }
                 $this->clear_post();
                 $this->set_table('visit');
                 $this->set_post(array(
                     'id' => $row['id'],
-                    'status' => 0,
+                    'status' => ($row['direction']) ? 0 : null,
                     'completed' => date('Y-m-d H:i:s')
                 ));
                 $this->update();
             }
         }
-        $this->success();
     }
 
     public function update()
     {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if (!intval($object)){
-                $this->error($object);
-            }
+        $pk = $this->post['id'];
+        unset($this->post['id']);
+        $object = Mixin\update($this->table, $this->post, $pk);
+        if (!intval($object)){
+            $this->error($object);
         }
     }
 
@@ -3019,7 +3026,12 @@ class StorageHomeModel extends Model
             unset($post['add_date']);
             $post['parent_id'] = $this->post['parent_id'];
             $post['status'] = level($post['parent_id']);
-            $object = Mixin\update('storage', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $order['preparat_id']);
+            // расход препеарата
+            if ($post['qty']-$qty == 0) {
+                $object = Mixin\delete('storage', $order['preparat_id']);
+            }else {
+                $object = Mixin\update('storage', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $order['preparat_id']);
+            }
             if (!intval($object)) {
                 $this->error('storage '.$object);
                 $db->rollBack();

@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(4);
-$header = "Заявки";
+$header = "Заказы";
 ?>
 <!DOCTYPE html>
 <html lang="en">

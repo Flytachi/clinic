@@ -51,11 +51,35 @@ $header = "Склад";
 					<div class="card-body">
 
 						<?php
+						$count_preparat = $db->query("SELECT SUM(qty) FROM storage_home")->fetchColumn();
+						$count_date = $db->query("SELECT COUNT(*) FROM storage_home WHERE DATEDIFF(die_date, CURRENT_DATE()) <= 10")->fetchColumn();
 						if($_SESSION['message']){
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
 						?>
+
+						<?php if ($count_preparat): ?>
+							<div class="card card-body border-top-1 border-top-info">
+								<div class="list-feed list-feed-rhombus list-feed-solid">
+									<?php if ($count_preparat != 0): ?>
+										<div class="list-feed-item">
+											<strong>Общее кол-во препаратов: </strong>
+											<span class="text-primary"><?= number_format($count_preparat) ?></span>
+										</div>
+									<?php endif; ?>
+
+									<?php if ($count_date != 0): ?>
+										<div class="list-feed-item">
+											<strong>Истёк срок годности <span onclick="Check('<?= ajax('nurce_table_check') ?>')" class="text-danger">(менее 10 дней)</span>: </strong>
+											<span><?= number_format($count_date) ?></span>
+										</div>
+									<?php endif; ?>
+								</div>
+							</div>
+						<?php endif; ?>
+
+						<div id="check_div"></div>
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
@@ -73,7 +97,15 @@ $header = "Склад";
                                 </thead>
                                 <tbody>
                                     <?php $i=1; foreach ($db->query("SELECT * FROM storage_home WHERE status = 7") as $row): ?>
-                                        <tr>
+										<?php
+										$tr="";
+										if ($dr= date_diff(new \DateTime(), new \DateTime($row['die_date']))->days <= 10) {
+											// Предупреждение срока годности
+											$tr = "bg-danger";
+											$btn = "text-success";
+										}
+										?>
+										<tr class="<?= $tr ?>">
 											<td><?= $i++ ?></td>
                                             <td><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>
@@ -83,7 +115,7 @@ $header = "Склад";
                                             <td class="text-right"><?= number_format(($row['price'] * $row['qty']), 1) ?></td>
 											<td class="text-right">
 												<div class="list-icons">
-													<a href="<?= del_url($row['id'], 'StorageHomeModel') ?>" onclick="return confirm(`Возврат препарата - '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)' ?`)" class="list-icons-item text-danger-600"><i class="icon-reply"></i></a>
+													<a href="<?= del_url($row['id'], 'StorageHomeModel') ?>" onclick="return confirm(`Возврат препарата - '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)' ?`)" class="list-icons-item <?= ($btn) ? $btn :"text-danger" ?>"><i class="icon-reply"></i></a>
 												</div>
 											</td>
                                         </tr>
@@ -104,6 +136,23 @@ $header = "Склад";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+        function Check(events) {
+            $.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#check_div').html(result);
+					setTimeout(function () {
+						$('#check_card').fadeOut(900, function() {
+                            $(this).remove();
+                        });
+		            }, 5000)
+				},
+			});
+        }
+    </script>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

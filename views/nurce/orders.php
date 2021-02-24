@@ -52,14 +52,16 @@ $header = "Заказы";
                                 <thead>
                                     <tr class="bg-info">
                                         <th>Препарат</th>
+										<th>Дата заказа</th>
                                         <th>Кол-во</th>
                                         <th class="text-right" style="width:70px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($db->query("SELECT so.id, st.name, st.supplier, st.die_date, so.qty FROM storage_orders so LEFT JOIN storage st ON(st.id=so.preparat_id) WHERE so.parent_id = {$_SESSION['session_id']}") as $row): ?>
+                                    <?php foreach ($db->query("SELECT so.id, st.name, st.supplier, st.die_date, so.qty, so.date FROM storage_orders so LEFT JOIN storage st ON(st.id=so.preparat_id) WHERE so.parent_id = {$_SESSION['session_id']}") as $row): ?>
                                         <tr>
                                             <td><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</td>
+											<td><?= date("d.m.Y", strtotime($row['date'])) ?></td>
                                             <td><?= $row['qty'] ?></td>
 											<td class="text-right">
 												<div class="list-icons">

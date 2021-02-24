@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(4);
-$header = "Заявки";
+$header = "Пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,14 +14,12 @@ $header = "Заявки";
 
 	<!-- Page content -->
 	<div class="page-content">
-
 		<!-- Main sidebar -->
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
 		<!-- Main content -->
-
 		<div class="content-wrapper">
 
 			<!-- Page header -->
@@ -55,19 +53,19 @@ $header = "Заявки";
 				            <table class="table table-hover table-sm">
 				                <thead>
 				                    <tr class="bg-blue">
-                                        <th>№</th>
-                                        <th>ФИО</th>
-				                        <th>Роль</th>
-                                        <th>Отдел</th>
+				                        <th>ID</th>
+				                        <th>ФИО</th>
+				                        <th>Отдел</th>
+                                        <th>Лечащий врач</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
-                                    <?php $i=1; foreach ($db->query("SELECT DISTINCT parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NULL") as $row): ?>
-                                        <tr onclick="Check('<?= viv('pharmacy/orders_preparat') ?>?pk=<?= $row['parent_id'] ?>')">
-                                            <td><?= $i++ ?></td>
-                                            <td><?= get_full_name($row['parent_id']) ?></td>
-                                            <td><?= level_name($row['parent_id']) ?></td>
+                                    <?php foreach ($db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NOT NULL") as $row): ?>
+                                        <tr onclick="Check('<?= viv('pharmacy/users_preparat') ?>?pk=<?= $row['user_id'] ?>')">
+                                            <td><?= addZero($row['user_id']) ?></td>
+                                            <td><?= get_full_name($row['user_id']) ?></td>
                                             <td><?= division_title($row['parent_id']) ?></td>
+                                            <td><?= get_full_name($row['parent_id']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
 				                </tbody>
@@ -83,7 +81,7 @@ $header = "Заявки";
 			</div>
             <!-- /content area -->
 
-		</div>navbar
+		</div>
 		<!-- /main content -->
 
 	</div>
@@ -103,7 +101,7 @@ $header = "Заявки";
 
 		function CallMed(id){
 			if (id) {
-				let obj = JSON.stringify({ type : 'alert_pharmacy_call',  id : id, message: "Забрать препараты!" });
+				let obj = JSON.stringify({ type : 'alert_pharmacy_call',  id : id, message: "Забрать препараты для пациентов!" });
 				conn.send(obj);
 			}
 		}
