@@ -43,13 +43,13 @@ $header = "Пациент";
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
 							if ($activity) {
-								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+								$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							} else {
 								if ($patient->completed) {
-									$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
+									$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
 													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\")";
 								} else {
-									$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
+									$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
 													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\")";
 								}
 
@@ -59,7 +59,7 @@ $header = "Пациент";
 						} else {
 							$title = "Осмотр";
 							$table_label = "Мед Услуга";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "";
 						}
 						?>
@@ -100,7 +100,7 @@ $header = "Пациент";
 											<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
-													<?php if ($row['report_description']): ?>
+													<?php if ($row['report_title']): ?>
 														<?php if ($row['service_id'] == 1): ?>
 															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 														<?php else: ?>
@@ -111,9 +111,9 @@ $header = "Пациент";
 														<?php endif; ?>
 													<?php else: ?>
 														<?php if ($row['service_id'] == 1): ?>
-															<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 														<?php else: ?>
-															<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 														<?php endif; ?>
 													<?php endif; ?>
 												</td>
@@ -214,24 +214,6 @@ $header = "Пациент";
 
 	<?php if ($activity): ?>
 		<script type="text/javascript">
-
-			function CleanFormFinish(id, name) {
-				$('#report_editor').html('');
-				$('#repfun_id').val(id);
-				$('#modal_report_finish').modal('show');
-				if (name) {
-					$('#report_title').val(name);
-				}
-			}
-
-			function CleanForm(id, name) {
-				$('#report_editor').html('');
-				$('#rep_id').val(id);
-				$('#modal_report_add').modal('show');
-				if (name) {
-					$('#report_title').val(name);
-				}
-			}
 
 			function Update(events) {
 				$.ajax({

@@ -55,6 +55,10 @@ function stack($url){
     return DIR."/static/$url";
 }
 
+function node($url){
+    return DIR."/node_modules/$url";
+}
+
 function ajax($url)
 {
     return DIR."/ajax/$url".EXT;

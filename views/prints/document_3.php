@@ -7,7 +7,7 @@ $sql = "SELECT  us.id,
             us.registrationAddress,
             vs.id 'visit_id',
             vs.parent_id,
-            vs.report_diagnostic, vs.report_title, vs.report_description, vs.report_recommendation,
+            vs.report_title, vs.report, vs.report_diagnostic, vs.report_description, vs.report_recommendation,
             vs.add_date, vs.completed
         FROM users us
             LEFT JOIN visit vs ON(us.id=vs.user_id)
@@ -31,7 +31,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
         }
     </style>
 
-    <body onload="window.print();">
+    <body>
 
         <div class="row">
 
@@ -103,7 +103,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <strong>Клинический диагноз:</strong>
                             </td>
                             <td>
-                                <?= ($docs->report_diagnostic) ? $docs->report_diagnostic : '<span class="text-muted">Нет данных</span>' ?>
+                                <?= ($docs->report) ? str_replace("Сопутствующие заболевания:", '', stristr(str_replace("Клинический диагноз:", '', stristr($docs->report, "Клинический диагноз:")), "Сопутствующие заболевания:", true)) : '<span class="text-muted">Нет данных</span>' ?>
                             </td>
                         </tr>
                         <tr>
@@ -111,7 +111,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <strong>Сопутствующие заболевания:</strong>
                             </td>
                             <td>
-                                <?= ($docs->report_title) ? $docs->report_title : '<span class="text-muted">Нет данных</span>' ?>
+                                <?= ($docs->report) ? str_replace("Жалобы:", '', stristr(str_replace("Сопутствующие заболевания:", '', stristr($docs->report, "Сопутствующие заболевания:")), "Жалобы:", true)) : '<span class="text-muted">Нет данных</span>' ?>
                             </td>
                         </tr>
                         <tr>
@@ -119,7 +119,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <strong>Жалобы:</strong>
                             </td>
                             <td>
-                                <?= ($docs->report_description) ? $docs->report_description : '<span class="text-muted">Нет данных</span>' ?>
+                                <?= ($docs->report) ? str_replace("Anamnesis morbi:", '', stristr(str_replace("Жалобы:", '', stristr($docs->report, "Жалобы:")), "Anamnesis morbi:", true)) : '<span class="text-muted">Нет данных</span>' ?>
                             </td>
                         </tr>
                         <tr>
@@ -127,7 +127,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <strong>Anamnesis morbi:</strong>
                             </td>
                             <td>
-                                <?= ($docs->report_recommendation) ? $docs->report_recommendation : '<span class="text-muted">Нет данных</span>' ?>
+                                <?= ($docs->report) ? str_replace("Anamnesis morbi:", '', stristr($docs->report, "Anamnesis morbi:")) : '<span class="text-muted">Нет данных</span>' ?>
                             </td>
                         </tr>
 
@@ -139,14 +139,15 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         </tr>
 
                         <!-- Результаты визитов -->
-                        <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit vs LEFT JOIN division ds ON(ds.id=vs.division_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.direction IS NOT NULL AND vs.laboratory IS NULL AND vs.service_id != 1 AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN '$docs->add_date' AND '$docs->completed')") as $div): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit vs LEFT JOIN division ds ON(ds.id=vs.division_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.direction IS NOT NULL AND vs.laboratory IS NULL AND vs.service_id != 1 AND (DATE_FORMAT(vs.completed, '%Y-%m-%d %H:%i') BETWEEN \"$docs->add_date\" AND \"$docs->completed\")") as $div): ?>
                             <tr>
                                 <td colspan="2">
                                     <strong><?= $div['title'] ?>: </strong>
                                     <ol>
-                                        <?php foreach ($db->query("SELECT * FROM visit WHERE user_id = $docs->id AND completed IS NOT NULL AND direction IS NOT NULL AND (DATE_FORMAT(completed, '%Y-%m-%d') BETWEEN '$docs->add_date' AND '$docs->completed') AND division_id = {$div['division_id']}") as $row): ?>
+                                        <?php foreach ($db->query("SELECT * FROM visit WHERE user_id = $docs->id AND completed IS NOT NULL AND direction IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(completed, '%Y-%m-%d %H:%i') BETWEEN \"$docs->add_date\" AND \"$docs->completed\") AND division_id = {$div['division_id']}") as $row): ?>
                                             <li>
-                                                <strong><?= $row['report_title'] ?>: <?= division($row['division_id']) ?></strong> <?= $row['report_recommendation'] ?>
+                                                <strong><?= $row['report_title'] ?>:</strong>
+                                                <?= str_replace("Рекомендация:", '', stristr($row['report'], "Рекомендация:")); ?>
                                             </li>
                                         <?php endforeach; ?>
                                     </ol>
@@ -163,7 +164,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                         <tr>
                             <td colspan="2">
                                 <ol>
-                                    <?php foreach ($db->query("SELECT vs.id, sc.id 'serv_id', sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.laboratory IS NOT NULL AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN '$docs->add_date' AND '$docs->completed')") as $any): ?>
+                                    <?php foreach ($db->query("SELECT vs.id, sc.id 'serv_id', sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.laboratory IS NOT NULL AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d %H:%i') BETWEEN \"$docs->add_date\" AND \"$docs->completed\")") as $any): ?>
                                         <li>
                                             <strong><?= $any['name'] ?>:</strong><br>
                                             <?php foreach ($db->query("SELECT lat.name, la.result FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON(lat.id=la.analyze_id) WHERE la.visit_id = {$any['id']} AND la.service_id = {$any['serv_id']}") as $row): ?>

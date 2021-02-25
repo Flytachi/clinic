@@ -121,6 +121,25 @@ $header = "Рабочий стол";
 				},
 			});
 		}
+
+		function PrintLab(url) {
+			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
+				$.ajax({
+					type: "GET",
+					url: url,
+					success: function (data) {
+						let ww = window.open();
+						ww.document.write(data);
+						ww.focus();
+						ww.print();
+						ww.close();
+					},
+				});
+			}else {
+				let we = window.open(url,'mywindow');
+				setTimeout(function() {we.close()}, 100);
+			}
+		}
 	</script>
 
 	<!-- Footer -->

@@ -169,7 +169,7 @@ class VisitReport extends Model
 {
     public $table = 'visit';
 
-    public function form($pk = null)
+    public function form_2($pk = null)
     {
         global $db, $patient;
         if($pk){
@@ -296,6 +296,119 @@ class VisitReport extends Model
         <?php
     }
 
+    public function form($pk = null)
+    {
+        global $db, $patient;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        ?>
+        <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
+
+            <div class="modal-header bg-info">
+                <h5 class="modal-title">Заключение</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="id" value="<?= $pk ?>">
+
+                <h1>
+                    <div class="col-md-8 offset-md-2">
+                        <input type="text" style="font-size:1.3rem;" name="report_title" value="<?= ($post['report_title']) ? $post['report_title'] : $post['name'] ?>" class="form-control" placeholder="Названия отчета">
+                    </div>
+                </h1>
+
+                <!-- The toolbar will be rendered in this container. -->
+                <div id="toolbar-container"></div>
+
+                <!-- This container will become the editable. -->
+                <div id="editor">
+                    <?php if ($post['report']): ?>
+                        <?= $post['report'] ?>
+                    <?php else: ?>
+                        <br><span class="text-big"><strong>Рекомендация:</strong></span>
+                    <?php endif; ?>
+                </div>
+
+                <textarea id="tickets-editor" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
+
+            </div>
+
+            <div class="modal-footer">
+                <?php if (level() == 10): ?>
+                    <input style="display:none;" id="btn_end_submit" type="submit" value="Завершить" name="end" id="end"></input>
+                    <button class="btn btn-outline-danger btn-sm" type="button" onclick="Verification()">Завершить</button>
+                    <script type="text/javascript">
+                        function Verification() {
+                            event.preventDefault();
+
+
+                            if ($('#editor').html() == `<p><br data-cke-filler="true"></p>`) {
+                                swal({
+                                    position: 'top',
+                                    title: 'Невозможно завершить!',
+                                    text: 'Не написан отчёт.',
+                                    type: 'error',
+                                    padding: 30
+                                });
+                                return 0;
+                            }
+
+                            swal({
+                                position: 'top',
+                                title: 'Внимание!',
+                                text: 'Вы точно хотите завершить визит пациента?',
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Да'
+                            }).then(function(ivi) {
+                                if (ivi.value) {
+                                    $('#btn_end_submit').click();
+                                }
+                            });
+                        }
+                    </script>
+                <?php endif; ?>
+                <?php if (level() == 12 or level() == 13): ?>
+                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end" id="end"></input>
+                <?php else: ?>
+                    <button type="submit" class="btn btn-outline-info btn-sm" id="submit">Сохранить</button>
+                <?php endif; ?>
+            </div>
+
+        </form>
+        <script>
+            DecoupledEditor
+                .create( document.querySelector( '#editor' ) )
+                .then( editor => {
+                    const toolbarContainer = document.querySelector( '#toolbar-container' );
+
+                    toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+
+                    editor.model.document.on( 'change:data', ( evt, data ) => {
+                        console.log( data );
+                        $('textarea#tickets-editor').html( editor.getData() );
+                    } );
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+
+              document.getElementById( 'submit' ).onclick = () => {
+                  textarea.value = editor.getData();
+              }
+              document.getElementById( 'end' ).onclick = () => {
+                  textarea.value = editor.getData();
+              }
+        </script>
+        <?php
+    }
+
     public function form_finish($pk = null)
     {
         global $db, $patient;
@@ -315,30 +428,26 @@ class VisitReport extends Model
             <div class="modal-body">
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="id" id="repfun_id" value="<?= $pk ?>">
+                <input type="hidden" name="id" value="<?= $pk ?>">
+                <input type="hidden" name="report_title" value="<?= $post['name'] ?>">
 
-                <div class="row">
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Клинический диагноз:</label>
-                        <textarea rows="3" cols="3" name="report_diagnostic" class="form-control" placeholder="Клинический диагноз"><?= $post['report_diagnostic'] ?></textarea>
-                    </div>
 
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Сопутствующие заболевания:</label>
-                        <textarea rows="3" cols="3" name="report_title" class="form-control" placeholder="Сопутствующие заболевания"><?= $post['report_title'] ?></textarea>
-                    </div>
+                <!-- The toolbar will be rendered in this container. -->
+                <div id="toolbar-container2"></div>
 
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Жалоба:</label>
-                        <textarea rows="5" cols="3" name="report_description" class="form-control" placeholder="Жалоба"><?= $post['report_description'] ?></textarea>
-                    </div>
-
-                    <div class="col-md-10 offset-md-1">
-                        <label class="col-form-label">Анамнез Морби:</label>
-                        <textarea rows="3" cols="3" name="report_recommendation" class="form-control" placeholder="Анамнез Морби"><?= $post['report_recommendation'] ?></textarea>
-                    </div>
-
+                <!-- This container will become the editable. -->
+                <div id="editor2">
+                    <?php if ($post['report']): ?>
+                        <?= $post['report'] ?>
+                    <?php else: ?>
+                        <span class="text-big"><strong>Клинический диагноз:</strong></span>
+                        <p></p><span class="text-big"><strong>Сопутствующие заболевания:</strong></span>
+                        <p></p><span class="text-big"><strong>Жалобы:</strong></span>
+                        <p></p><span class="text-big"><strong>Anamnesis morbi:</strong></span>
+                    <?php endif; ?>
                 </div>
+
+                <textarea id="tickets-editor2" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
 
             </div>
 
@@ -347,17 +456,41 @@ class VisitReport extends Model
                     <!-- <a href="<?= up_url($_GET['user_id'], 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента!')" class="btn btn-outline-danger">Завершить</a> -->
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php endif; ?>
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm" id="submit">Сохранить</button>
             </div>
 
         </form>
+        <script>
+            DecoupledEditor
+                .create( document.querySelector( '#editor2' ) )
+                .then( editor2 => {
+                    const toolbarContainer2 = document.querySelector( '#toolbar-container2' );
+
+                    toolbarContainer2.appendChild( editor2.ui.view.toolbar.element );
+
+                    editor2.model.document.on( 'change:data', ( evt, data ) => {
+                        console.log( data );
+                        $('textarea#tickets-editor2').html( editor2.getData() );
+                    } );
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+
+              document.getElementById( 'submit' ).onclick = () => {
+                  textarea.value = editor2.getData();
+              }
+              document.getElementById( 'end' ).onclick = () => {
+                  textarea.value = editor2.getData();
+              }
+        </script>
         <?php
     }
 
     public function get_or_404($pk)
     {
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        $object = $db->query("SELECT vs.*, sc.name FROM $this->table vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id = $pk")->fetch();
         if(division_assist() == 2){
             if ($object['parent_id'] = $object['assist_id'] or $object['parent_id'] == $_SESSION['session_id']) {
                 if($object){
@@ -419,6 +552,21 @@ class VisitReport extends Model
             }
         }
         $this->success();
+    }
+
+    public function clean()
+    {
+        if (empty($this->post['report'])) {
+            unset($this->post['report']);
+        }else {
+            $report = $this->post['report'];
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        if ($report) {
+            $this->post['report'] = $report;
+        }
+        return True;
     }
 
     public function success()
@@ -1559,7 +1707,7 @@ class VisitFinish extends Model
         global $db;
         $this->post['completed'] = date('Y-m-d H:i:s');
         $db->beginTransaction();
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report_description IS NOT NULL AND report_recommendation IS NOT NULL))") as $inf){
+        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report IS NOT NULL))") as $inf){
             $this->status_controller($pk, $inf);
             $this->update();
         }

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Flytachi/clinic#readme",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-decoupled-document": "^25.0.0",
     "express": "^4.17.1",
     "ini": "^2.0.0",
     "mariadb": "^2.5.2",

@@ -44,10 +44,6 @@ $header = "Пациент";
 
 						<?php include "content_tabs.php"; ?>
 
-						<div class="alert bg-warning alert-styled-left alert-dismissible">
-							<span class="font-weight-semibold">Технические работы</span>
-						</div>
-
 						<div class="card">
 
 							<div class="card-header header-elements-inline">

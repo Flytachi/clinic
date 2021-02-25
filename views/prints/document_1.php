@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 is_auth();
 
-$docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_title, vs.report_description, vs.report_diagnostic, vs.report_recommendation, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+$docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_title, vs.report, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,20 +39,9 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
             </div>
 
             <h3 class="text-center h1"><b><?= $docs->report_title ?></b></h3>
-            <div class="h3 text-justify">
-                <p>
-                    <?= preg_replace("#\r?\n#", "<br />", $docs->report_description) ?>
-                </p>
-                <p>
-                    <span class="h2"><b>Диагноз:</b></span>
-                    <?= preg_replace("#\r?\n#", "<br />", $docs->report_diagnostic) ?>
-                </p>
-                <p>
-                    <span class="h2"><b>Рекомендации:</b></span>
-                    <?= preg_replace("#\r?\n#", "<br />", $docs->report_recommendation) ?>
-                </p>
+            <div class="h3">
+                <?= $docs->report ?>
             </div>
-
 
         </div>
 
