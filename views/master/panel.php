@@ -53,8 +53,8 @@ $header = "Панель управления";
 
                     <?php
                     $flush = Mixin\T_FLUSH_database();
-					// $_province = province_temp();
-					// $_region = region_temp();
+					$_province = province_temp();
+					$_region = region_temp();
                     $_division = division_temp();
                     $_user = users_temp();
                     $_service = service_temp();

@@ -153,7 +153,7 @@ $header = "Пациент";
 
 	<?php if ($activity): ?>
 		<div id="modal_report_add" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 				<div class="modal-content border-3 border-info" id="form_card">
 
 					<?php // VisitReport::form(); ?>
@@ -163,7 +163,7 @@ $header = "Пациент";
 		</div>
 
 		<div id="modal_report_finish" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 				<div class="modal-content border-3 border-info" id="form_card_finish">
 
 					<?php // VisitReport::form_finish(); ?>
