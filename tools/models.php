@@ -3027,11 +3027,8 @@ class StorageHomeModel extends Model
             $post['parent_id'] = $this->post['parent_id'];
             $post['status'] = level($post['parent_id']);
             // расход препеарата
-            if ($post['qty']-$qty == 0) {
-                $object = Mixin\delete('storage', $order['preparat_id']);
-            }else {
-                $object = Mixin\update('storage', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $order['preparat_id']);
-            }
+            $object = Mixin\update('storage', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $order['preparat_id']);
+
             if (!intval($object)) {
                 $this->error('storage '.$object);
                 $db->rollBack();
@@ -3089,7 +3086,7 @@ class StorageHomeModel extends Model
 
         $info = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
         if ($info2 = $db->query("SELECT * FROM storage WHERE id = {$info['preparat_id']}")->fetch()) {
-            $object = Mixin\update('storage', array('qty' => $info2['qty']+$info['qty']), $info['preparat_id']);
+            $object = Mixin\update('storage', array('qty' => $info2['qty']+$info['qty'], 'qty_sold' => $info2['qty_sold']-$info['qty']), $info['preparat_id']);
             if (!intval($object)) {
                 $this->error('storage '.$object);
                 $db->rollBack();

@@ -102,7 +102,7 @@ $header = "Пациент";
 												<td class="text-right">
 													<?php if ($row['report_title']): ?>
 														<?php if ($row['service_id'] == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 															<?php if ($activity): ?>
@@ -111,7 +111,7 @@ $header = "Пациент";
 														<?php endif; ?>
 													<?php else: ?>
 														<?php if ($row['service_id'] == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 														<?php endif; ?>
@@ -156,7 +156,7 @@ $header = "Пациент";
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content border-3 border-info" id="form_card">
 
-					<?php VisitReport::form(); ?>
+					<?php // VisitReport::form(); ?>
 
 				</div>
 			</div>
@@ -166,7 +166,7 @@ $header = "Пациент";
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content border-3 border-info" id="form_card_finish">
 
-					<?php VisitReport::form_finish(); ?>
+					<?php // VisitReport::form_finish(); ?>
 
 				</div>
 			</div>

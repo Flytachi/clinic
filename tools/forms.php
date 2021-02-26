@@ -440,10 +440,12 @@ class VisitReport extends Model
                     <?php if ($post['report']): ?>
                         <?= $post['report'] ?>
                     <?php else: ?>
-                        <span class="text-big"><strong>Клинический диагноз:</strong></span>
-                        <p></p><span class="text-big"><strong>Сопутствующие заболевания:</strong></span>
-                        <p></p><span class="text-big"><strong>Жалобы:</strong></span>
-                        <p></p><span class="text-big"><strong>Anamnesis morbi:</strong></span>
+                        <span class="text-big"><strong>Клинический диагноз:</strong></span><br>
+                        <span class="text-big"><strong>Сопутствующие заболевания:</strong></span><br>
+                        <span class="text-big"><strong>Жалобы:</strong></span><br>
+                        <span class="text-big"><strong>Anamnesis morbi:</strong></span><br>
+                        <span class="text-big"><strong>Объективно:</strong></span><br>
+                        <span class="text-big"><strong>Рекомендация:</strong></span>
                     <?php endif; ?>
                 </div>
 
@@ -625,7 +627,7 @@ class VisitRoute extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <?php
-                    foreach($db->query("SELECT * from division WHERE level in (5,12) AND id !=". division()) as $row) {
+                    foreach($db->query("SELECT * from division WHERE level in (5) AND id !=". division()) as $row) {
                         ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php
@@ -734,7 +736,7 @@ class VisitRoute extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
                     <?php
-                    foreach($db->query("SELECT * from division WHERE level in (5,12) AND id !=". division()) as $row) {
+                    foreach($db->query("SELECT * from division WHERE level in (5) AND id !=". division()) as $row) {
                         ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php

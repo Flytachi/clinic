@@ -127,14 +127,14 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                                 <strong>Anamnesis morbi:</strong>
                             </td>
                             <td>
-                                <?= ($docs->report) ? str_replace("Anamnesis morbi:", '', stristr($docs->report, "Anamnesis morbi:")) : '<span class="text-muted">Нет данных</span>' ?>
+                                <?= ($docs->report) ? str_replace("Объективно:", '', stristr(str_replace("Anamnesis morbi:", '', stristr($docs->report, "Anamnesis morbi:")), "Объективно:", true)) : '<span class="text-muted">Нет данных</span>' ?>
                             </td>
                         </tr>
 
                         <tr>
                             <td colspan="2">
-                                <strong>Объектив: </strong>
-                                <?= $db->query("SELECT description FROM visit_inspection WHERE visit_id = $docs->visit_id AND parent_id = $docs->parent_id ORDER BY id ASC")->fetch()['description']; ?>
+                                <strong>Объективно: </strong>
+                                <?= ($docs->report) ? str_replace("Рекомендация:", '', stristr(str_replace("Объективно:", '', stristr($docs->report, "Объективно:")), "Рекомендация:", true)) : '<span class="text-muted">Нет данных</span>' ?>
                             </td>
                         </tr>
 
@@ -192,7 +192,7 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                             <strong>Рекомендация:</strong>
                         </td>
                         <td>
-                            <?= $db->query("SELECT recommendation FROM visit_inspection WHERE visit_id = $docs->visit_id AND parent_id = $docs->parent_id ORDER BY id DESC")->fetch()['recommendation']; ?>
+                            <?= ($docs->report) ? str_replace("Рекомендация:", '', stristr($docs->report, "Рекомендация:")) : '<span class="text-muted">Нет данных</span>' ?>
                         </td>
 
                     </tbody>

@@ -363,6 +363,27 @@ if (!$patient) {
 
                 <?php endif; ?>
 
+            <?php else: ?>
+
+                <div class="col-md-12">
+                    <div class="text-right">
+                        <button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-danger btn-sm">Выписка</button>
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+            		function Check(events) {
+            			$.ajax({
+            				type: "GET",
+            				url: events,
+            				success: function (result) {
+            					$('#modal_report_show').modal('show');
+            					$('#report_show').html(result);
+            				},
+            			});
+            		};
+            	</script>
+
             <?php endif; ?>
 
         </div>

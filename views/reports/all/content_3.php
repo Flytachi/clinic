@@ -44,6 +44,7 @@ $header = "Общий отчёт по визитам";
                     <div class="card-body">
 
 						<form action="" method="post">
+
 							<div class="form-group row">
 
 								<div class="col-md-3">
@@ -69,6 +70,38 @@ $header = "Общий отчёт по визитам";
 										</span>
 									</div>
 								</div>
+
+								<div class="col-md-3">
+									<label>Отдел:</label>
+									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
+									   <option value="">Выберите отдел</option>
+										<?php
+										foreach($db->query("SELECT * FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
+											?>
+											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+											<?php
+										}
+										?>
+									</select>
+								</div>
+
+								<div class="col-md-3">
+									<label>Услуга:</label>
+									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
+										<option value="">Выберите услугу</option>
+										<?php
+										foreach($db->query("SELECT * from service WHERE user_level IN(5, 6, 10, 12)") as $row) {
+											?>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+											<?php
+										}
+										?>
+									</select>
+								</div>
+
+							</div>
+
+							<div class="form-group row">
 
 								<div class="col-md-3">
 				                    <label>Тип визита:</label>
@@ -109,11 +142,12 @@ $header = "Общий отчёт по визитам";
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 					$sql = "SELECT
 								vs.user_id, vs.accept_date,
-								vs.completed, vp.item_name,
+								vs.completed, dv.title, vp.item_name,
 								vp.item_cost, vs.priced_date,
 								vp.sale, (vp.price_cash + vp.price_card + vp.price_transfer) 'price'
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
+								LEFT JOIN division dv ON(dv.id=vs.division_id)
 							WHERE
 								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
 
@@ -123,6 +157,12 @@ $header = "Общий отчёт по визитам";
 					}
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+					}
+					if ($_POST['division_id']) {
+						$sql .= " AND vs.division_id = {$_POST['division_id']}";
+					}
+					if ($_POST['service_id']) {
+						$sql .= " AND vs.service_id = {$_POST['service_id']}";
 					}
 					if ($_POST['direction']) {
 						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
@@ -159,6 +199,7 @@ $header = "Общий отчёт по визитам";
 	                                        <th>Пациент</th>
 				                            <th style="width: 11%">Дата приёма</th>
 											<th style="width: 11%">Дата завершения</th>
+											<th>Отдел</th>
 				                            <th>Услуга</th>
 											<th class="text-right">Цена</th>
 											<th class="text-center">Скидка</th>
@@ -172,6 +213,7 @@ $header = "Общий отчёт по визитам";
 												<td><?= get_full_name($row['user_id']) ?></td>
 												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row['completed']) ? date('d.m.y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= $row['title'] ?></td>
 												<td><?= $row['item_name'] ?></td>
 												<td class="text-right text-success"> <?= number_format($row['item_cost']); ?> </td>
 												<td class="text-center"><?= ($row['sale']) ? $row['sale']."%" : '<span class="text-muted">Нет</span>'?></td>
@@ -187,7 +229,7 @@ $header = "Общий отчёт по визитам";
 										<?php endforeach; ?>
 										<tr class="table-secondary">
 											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
-											<th colspan="5" class="text-right">Итого:</th>
+											<th colspan="6" class="text-right">Итого:</th>
 											<td class="text-right text-success"><?= number_format($total_price) ?></td>
 										</tr>
 	                                </tbody>
@@ -206,6 +248,13 @@ $header = "Общий отчёт по визитам";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+		$(function(){
+			$("#parent_id").chained("#division");
+			$("#service").chained("#division");
+		});
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

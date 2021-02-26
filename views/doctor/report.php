@@ -17,5 +17,6 @@ $pack = $db->query("SELECT report_title, report FROM visit WHERE id= {$_GET['pk'
 </div>
 
 <div class="modal-footer">
+    <button onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-outline-info btn-sm">Печать</button>
     <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
 </div>

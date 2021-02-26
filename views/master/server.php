@@ -64,7 +64,7 @@ $header = "Контроль базы данных";
                                             <td><?= $i++ ?></td>
                                             <td><?= substr($value, 0, 19); ?></td>
                                             <td>
-                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-success"><i class="icon-upload"></i></a>
+                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
                                                 <a href="/dump/<?= $value ?>" class="list-icons-up text-dark" download><i class="icon-download"></i></a>
                                             </td>
                                         </tr>
@@ -86,5 +86,34 @@ $header = "Контроль базы данных";
 	</div>
 	<!-- /page content -->
 
+	<script type="text/javascript">
+		function Conf(url, file, st) {
+			var wha = "Вы уверены что хотите откатить базу данных?";
+			swal({
+				position: 'top',
+				title: wha,
+				type: 'info',
+				showCancelButton: true,
+				confirmButtonText: "Уверен"
+			}).then(function(ivi) {
+				if (ivi.value) {
+					swal({
+						position: 'top',
+						title: 'Внимание!',
+						text: 'Вернуть данные назад будет невозможно!',
+						type: 'warning',
+						showCancelButton: true,
+						confirmButtonText: "Да"
+					}).then(function(ivi) {
+						if (ivi.value) {
+							console.log(file);
+							location = url+"?file="+file;
+						}
+					});
+				}
+
+			});
+		}
+	</script>
 </body>
 </html>
