@@ -64,7 +64,7 @@ $header = "Журнал";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $i=1; foreach ($db->query("SELECT vs.id, vs.user_id, vs.add_date, us.region, us.residenceAddress, us.numberPhone, vs.report, vs.completed, vs.parent_id FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id)  WHERE vs.direction IS NOT NULL AND vs.service_id = 1") as $row): ?>
+                                    <?php $i=1; foreach ($db->query("SELECT vs.id, vs.user_id, vs.add_date, us.region, us.residenceAddress, us.numberPhone, vs.report, vs.completed, vs.parent_id FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id)  WHERE vs.direction IS NOT NULL AND vs.service_id = 1 ORDER BY vs.add_date") as $row): ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= addZero($row['user_id']) ?></td>
