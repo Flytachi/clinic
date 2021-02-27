@@ -7,7 +7,7 @@ $sql = "SELECT  us.id,
             us.registrationAddress,
             vs.id 'visit_id',
             vs.parent_id,
-            vs.report_title, vs.report, vs.report_diagnostic, vs.report_description, vs.report_recommendation,
+            vs.report_title, vs.report,
             vs.add_date, vs.completed
         FROM users us
             LEFT JOIN visit vs ON(us.id=vs.user_id)

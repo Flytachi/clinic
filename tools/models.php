@@ -3157,11 +3157,28 @@ class OperationMemberModel extends Model
 
                 <div class="form-group">
                     <label>Член персонала:</label>
-                    <select placeholder="Введите состояние" name="member_id" class="form-control form-control-select2">
-                        <?php foreach ($db->query("SELECT us.id, IFNULL(opm.id, NULL) 'opm_id' FROM users us LEFT JOIN operation_member opm ON(opm.member_id=us.id AND opm.status IS NULL AND opm.operation_id=$patient->pk) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($row['opm_id']) ? "disabled" : "" ?>><?= get_full_name($row['id']) ?></option>
+                    <select placeholder="Введите члена персонала" class="form-control form-control-select2">
+                        <?php foreach ($db->query("SELECT us.id, IFNULL(opm.id, NULL) 'opm_id' FROM users us LEFT JOIN operation_member opm ON(opm.member_name=us.first_name AND opm.status IS NULL AND opm.operation_id=$patient->pk) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
+                            <option value="<?= get_full_name($row['id']) ?>"><?= get_full_name($row['id']) ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Имя специолиста:</label>
+                    <input type="text" class="form-control" name="member_name" placeholder="Введите имя специолиста" required value="<?= $post['member_name']?>">
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-form-label col-md-3">Оператор</label>
+                    <div class="col-md-3">
+                        <input type="checkbox" class="swit" name="member_operator" <?= ($post['member_operator']==1) ? "checked" : "" ?>>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label>Сумма:</label>
+                        <input type="number" class="form-control" name="price" value="<?= $post['member_name']?>" placeholder="Введите сумму">
+                    </div>
                 </div>
 
             </div>
@@ -3172,6 +3189,8 @@ class OperationMemberModel extends Model
             </div>
 
         </form>
+        <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+        <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <?php
     }
 

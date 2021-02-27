@@ -3,13 +3,16 @@ require_once '../../tools/warframe.php';
 is_auth();
 $sql = "SELECT
             op.id 'pk', op.user_id 'id', vs.id 'visit_id', vs.grant_id,
-            vs.accept_date, vs.direction, vs.add_date,
+            vs.accept_date, vs.direction, vs.add_date, sc.name,
             vs.discharge_date, vs.complaint, op.completed
         FROM operation op
             LEFT JOIN visit vs ON (vs.id = op.visit_id)
+            LEFT JOIN service sc ON (sc.id = op.service_id)
         WHERE vs.status = 2 AND op.id = {$_GET['pk']}";
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+
+$total_opetrator_price = 0;
 
 $activity = $_GET['activity'];
 
@@ -23,6 +26,11 @@ if (!isset($_GET['type'])) {
     }
 }
 ?>
+
+<div class="col-md-12 text-center">
+    <h3> <b>Операция:</b> <?= $patient->name ?></h3>
+</div>
+
 <div class="col-md-7">
 
     <div class="card border-1 border-<?= $color ?>">
@@ -76,50 +84,6 @@ if (!isset($_GET['type'])) {
     <div class="card">
 
         <div class="card-header header-elements-inline">
-            <h5 class="card-title">Персонал</h5>
-            <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
-                <div class="header-elements">
-                    <div class="list-icons">
-                        <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_member">
-                            <i class="icon-plus22"></i>Добавить
-                        </a>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover table-sm">
-                <thead>
-                    <tr class="bg-info">
-                        <th>ФИО</th>
-                        <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
-                            <th class="text-right">Действия</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($patient->direction): ?>
-                        <?php foreach ($db->query("SELECT * FROM operation_member WHERE operation_id = $patient->pk") as $row): ?>
-                            <tr>
-                                <td><?= get_full_name($row['member_id']) ?></td>
-                                <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
-                                    <td class="text-right">
-                                        <a href="<?= del_url($row['id'], 'VisitMemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить члена персонала?')" class="btn btn-outline-danger btn-sm legitRipple"><i class="icon-trash"></i></a>
-                                    </td>
-                                <?php endif; ?>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <div class="card-header header-elements-inline">
             <h5 class="card-title">Операционный осмотр</h5>
             <?php if ($activity): ?>
                 <?php if (level() == 5): ?>
@@ -158,7 +122,7 @@ if (!isset($_GET['type'])) {
                             <tr>
                                 <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                 <td class="text-right">
-                                    <button onclick="Check('<?= viv('doctor/operation_inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-<?= $color ?> btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                    <button onclick="Check('<?= viv('card/operation_inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-<?= $color ?> btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -212,10 +176,68 @@ if (!isset($_GET['type'])) {
                                 <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                 <td><?= get_full_name($row['parent_id']) ?></td>
                                 <td class="text-right">
-                                    <button onclick="Check('<?= viv('doctor/operation_inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-<?= $color ?> btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                    <button onclick="Check('<?= viv('card/operation_inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-<?= $color ?> btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-header header-elements-inline">
+            <h5 class="card-title">Персонал</h5>
+            <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+                <div class="header-elements">
+                    <div class="list-icons">
+                        <a class="list-icons-item text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_member">
+                            <i class="icon-plus22"></i>Добавить
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr class="bg-info">
+                        <th>ФИО</th>
+                        <th>Сумма</th>
+                        <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+                            <th class="text-right" style="width:50px">Действия</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($patient->direction): ?>
+                        <?php foreach ($db->query("SELECT * FROM operation_member WHERE operation_id = $patient->pk") as $row): ?>
+                            <tr>
+                                <td><?= get_full_name($row['member_id']) ?></td>
+                                <td class="text-right text-success">
+                                    <?php
+                                    $total_opetrator_price += $row['price'];
+                                    echo number_format($row['price']);
+                                    ?>
+                                </td>
+                                <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+                                    <td class="text-right">
+                                        <div class="list-icons">
+                                            <a onclick="Update('<?= up_url($row['id'], 'MemberModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                            <a href="<?= del_url($row['id'], 'VisitMemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить члена персонала?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                        </div>
+                                    </td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr class="table-secondary">
+                            <th class="text-right">Итого:</th>
+                            <th class="text-right"><?= number_format($total_opetrator_price) ?></th>
+                        </tr>
                     <?php endif; ?>
                 </tbody>
             </table>

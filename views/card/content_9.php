@@ -90,10 +90,10 @@ $header = "Пациент";
 														<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 														<td class="text-right">
 															<?php if ($row['completed']): ?>
-																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>&type=0&activity=<?= $activity ?>')" class="btn btn-outline-warning btn-sm">До</button>
-																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>&type=1&activity=<?= $activity ?>')" class="btn btn-outline-success btn-sm">После</button>
+																<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&type=0&activity=<?= $activity ?>')" class="btn btn-outline-warning btn-sm">До</button>
+																<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&type=1&activity=<?= $activity ?>')" class="btn btn-outline-success btn-sm">После</button>
 															<?php else: ?>
-																<button type="button" onclick="Show_info('<?= viv('doctor/operation_info') ?>?pk=<?= $row['id'] ?>&activity=<?= $activity ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
+																<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&activity=<?= $activity ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
 																<?php if ($activity): ?>
 																	<?php if ($patient->grant_id == $_SESSION['session_id'] and strtotime($row['oper_date']) <= strtotime(date('Y-m-d H:i'))): ?>
 																		<button onclick="Finish_date('<?= $row['id'] ?>', '<?= $row['oper_date'] ?>')" class="btn btn-outline-success btn-sm">Завершить</a>
