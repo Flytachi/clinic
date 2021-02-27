@@ -31,12 +31,12 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
-				foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
-					$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
-					// prit($value);
-					Mixin\update('visit', array('report' => $report), $value['id']);
-					// prit($report);
-				}
+				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
+				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
+				// 	// prit($value);
+				// 	Mixin\update('visit', array('report' => $report), $value['id']);
+				// 	// prit($report);
+				// }
 				?>
 
 				<?php parad("_SERVER ",$_SERVER); ?>
