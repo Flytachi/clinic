@@ -48,7 +48,7 @@ $header = "Отчёт врачей по визитам";
 
 								<div class="col-md-3">
 				                    <label>Специалиста:</label>
-									<select id="route_id" name="route_id" class="form-control form-control-select2" data-fouc>
+									<select id="route_id" name="route_id" class="form-control form-control-select2" data-fouc required>
 										<option value="">Выберите специалиста</option>
 										<?php
 										foreach($db->query('SELECT * from users WHERE user_level IN(5)') as $row) {
@@ -94,15 +94,15 @@ $header = "Отчёт врачей по визитам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT DISTINCT vs.user_id
-								(SELECT COUNT(*) FROM visit vsc WHERE vsc.route_id = vs.route_id AND vsc.division_id = vs.division_id AND (DATE_FORMAT(vsc.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')) 'qty'
+					$sql = "SELECT DISTINCT vs.division_id,
+								(SELECT title FROM division ds WHERE ds.id=vs.division_id) 'title',
+								(SELECT COUNT(DISTINCT vsc.user_id) FROM visit vsc WHERE vsc.route_id = vs.route_id AND vsc.division_id = vs.division_id AND (DATE_FORMAT(vsc.accept_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")) 'qty'
 							FROM visit vs
-								LEFT JOIN division ds ON(ds.id=vs.division_id)
 							WHERE
 								vs.accept_date IS NOT NULL";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
-						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
 					}
 					if ($_POST['route_id']) {
 						$sql .= " AND vs.route_id = {$_POST['route_id']}";

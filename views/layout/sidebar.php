@@ -6,8 +6,8 @@
         <div class="sidebar-user-material">
             <div class="sidebar-user-material-body">
                 <div class="card-body text-center">
-                    <h4 class="mb-0 text-white text-shadow-dark siya"><?= get_full_name() ?></h4>
-                    <span class="font-size-sm text-white text-shadow-dark siya"><?= level_name() ." ". division_name() ?></span>
+                    <h4 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h4>
+                    <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ." ". division_name() ?></span>
                 </div>
 
                 <div class="sidebar-user-material-footer">
