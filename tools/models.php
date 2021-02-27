@@ -3148,17 +3148,26 @@ class OperationMemberModel extends Model
     public function form($pk = null)
     {
         global $db, $patient;
+        if($pk){
+            $post = $this->post;
+            $operation_id = $post['operation_id'];
+        }else{
+            $post = array();
+            $operation_id = $patient->pk;
+        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="operation_id" value="<?= $patient->pk ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="operation_id" value="<?= $operation_id ?>">
 
             <div class="modal-body">
 
                 <div class="form-group">
                     <label>Член персонала:</label>
-                    <select placeholder="Введите члена персонала" class="form-control form-control-select2">
-                        <?php foreach ($db->query("SELECT us.id, IFNULL(opm.id, NULL) 'opm_id' FROM users us LEFT JOIN operation_member opm ON(opm.member_name=us.first_name AND opm.status IS NULL AND opm.operation_id=$patient->pk) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
+                    <select placeholder="Введите члена персонала" class="form-control form-control-select2" onchange="$('#member_name').val(this.value)">
+                        <option>Введите члена персонала</option>
+                        <?php foreach ($db->query("SELECT us.id, IFNULL(opm.id, NULL) 'opm_id' FROM users us LEFT JOIN operation_member opm ON(opm.member_name=us.first_name AND opm.operation_id=$operation_id) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
                             <option value="<?= get_full_name($row['id']) ?>"><?= get_full_name($row['id']) ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -3166,7 +3175,7 @@ class OperationMemberModel extends Model
 
                 <div class="form-group">
                     <label>Имя специолиста:</label>
-                    <input type="text" class="form-control" name="member_name" placeholder="Введите имя специолиста" required value="<?= $post['member_name']?>">
+                    <input type="text" class="form-control" name="member_name" id="member_name" placeholder="Введите имя специолиста" required value="<?= $post['member_name'] ?>">
                 </div>
 
                 <div class="form-group row">
@@ -3177,7 +3186,7 @@ class OperationMemberModel extends Model
 
                     <div class="col-md-5">
                         <label>Сумма:</label>
-                        <input type="number" class="form-control" name="price" value="<?= $post['member_name']?>" placeholder="Введите сумму">
+                        <input type="number" class="form-control" name="price" value="<?= $post['price']?>" placeholder="Введите сумму">
                     </div>
                 </div>
 
@@ -3196,6 +3205,9 @@ class OperationMemberModel extends Model
 
     public function clean()
     {
+        if ($this->post['member_operator']) {
+            $this->post['member_operator'] = 1;
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

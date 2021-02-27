@@ -119,7 +119,6 @@ $header = "Услуги";
 
 	<script type="text/javascript">
 		function Update(events) {
-			events
 			$.ajax({
 				type: "GET",
 				url: events,

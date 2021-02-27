@@ -216,8 +216,8 @@ if (!isset($_GET['type'])) {
                 <tbody>
                     <?php if ($patient->direction): ?>
                         <?php foreach ($db->query("SELECT * FROM operation_member WHERE operation_id = $patient->pk") as $row): ?>
-                            <tr>
-                                <td><?= get_full_name($row['member_id']) ?></td>
+                            <tr class="table-<?= ($row['member_operator']) ? "warning" : "" ?>">
+                                <td><?= $row['member_name'] ?></td>
                                 <td class="text-right text-success">
                                     <?php
                                     $total_opetrator_price += $row['price'];
@@ -227,8 +227,8 @@ if (!isset($_GET['type'])) {
                                 <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
                                     <td class="text-right">
                                         <div class="list-icons">
-                                            <a onclick="Update('<?= up_url($row['id'], 'MemberModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                                            <a href="<?= del_url($row['id'], 'VisitMemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить члена персонала?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                            <a onclick="Update2('<?= up_url($row['id'], 'OperationMemberModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                                            <a href="<?= del_url($row['id'], 'OperationMemberModel') ?>" onclick="return confirm('Вы уверены что хотите удалить члена персонала?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                         </div>
                                     </td>
                                 <?php endif; ?>
@@ -245,6 +245,19 @@ if (!isset($_GET['type'])) {
 
     </div>
 
+</div>
+
+<div class="col-md-12">
+    <table class="table">
+        <tbody>
+
+            <tr class="table-secondary">
+                <td>Сумма персонала операции</td>
+                <td>2</td>
+            </tr>
+
+        </tbody>
+    </table>
 </div>
 
 <?php if ($activity): ?>
@@ -299,7 +312,11 @@ if (!isset($_GET['type'])) {
                     <button type="button" class="close" data-dismiss="modal">×</button>
                 </div>
 
-                <?= OperationMemberModel::form() ?>
+                <div id="form_card2">
+
+                    <?= OperationMemberModel::form() ?>
+
+                </div>
 
             </div>
         </div>
@@ -322,6 +339,17 @@ if (!isset($_GET['type'])) {
             success: function (data) {
                 $('#modal_show').modal('show');
                 $('#div_show').html(data);
+            },
+        });
+    };
+
+    function Update2(events) {
+        $.ajax({
+            type: "GET",
+            url: events,
+            success: function (result) {
+                $('#modal_add_member').modal('show');
+                $('#form_card2').html(result);
             },
         });
     };
