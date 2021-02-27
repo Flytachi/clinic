@@ -67,7 +67,6 @@ $header = "Пациент";
 											<thead>
 												<tr class="bg-info">
 						                            <th>Операция</th>
-													<th>Оператор</th>
 													<th style="width: 12%;">Дата назначения</th>
 													<th style="width: 12%;">Дата операции</th>
 													<th style="width: 12%;">Дата завершения</th>
@@ -75,10 +74,9 @@ $header = "Пациент";
 												</tr>
 											</thead>
 											<tbody>
-												<?php foreach ($db->query("SELECT op.id, sc.name, op.parent_id, op.add_date, op.oper_date, op.completed FROM operation op LEFT JOIN service sc ON(sc.id=op.service_id) WHERE op.visit_id = $patient->visit_id AND op.user_id = $patient->id") as $row): ?>
+												<?php foreach ($db->query("SELECT op.id, sc.name, op.add_date, op.oper_date, op.completed FROM operation op LEFT JOIN service sc ON(sc.id=op.item_id) WHERE op.visit_id = $patient->visit_id AND op.user_id = $patient->id") as $row): ?>
 													<tr>
 														<td><?= $row['name'] ?></td>
-														<td><?= get_full_name($row['parent_id']) ?></td>
 														<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 														<?php if (!$row['completed'] and $patient->grant_id == $_SESSION['session_id']): ?>
 															<td class="text-primary" onclick="Oper_date('<?= $row['id'] ?>', '<?= date('Y-m-d', strtotime($row['oper_date'])) ?>', '<?= date('H:i', strtotime($row['oper_date'])) ?>')">

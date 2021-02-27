@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 is_auth();
 $sql = "SELECT
             op.id 'pk', op.user_id 'id', vs.id 'visit_id', vs.grant_id,
-            vs.accept_date, vs.direction, vs.add_date, sc.name,
-            vs.discharge_date, vs.complaint, op.completed
+            vs.accept_date, vs.direction, vs.add_date, vs.discharge_date,
+            vs.complaint, op.completed, op.item_name, op.item_cost
         FROM operation op
             LEFT JOIN visit vs ON (vs.id = op.visit_id)
-            LEFT JOIN service sc ON (sc.id = op.service_id)
         WHERE vs.status = 2 AND op.id = {$_GET['pk']}";
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -28,7 +27,7 @@ if (!isset($_GET['type'])) {
 ?>
 
 <div class="col-md-12 text-center">
-    <h3> <b>Операция:</b> <?= $patient->name ?></h3>
+    <h3> <b>Операция:</b> <?= $patient->item_name ?></h3>
 </div>
 
 <div class="col-md-7">
@@ -252,8 +251,20 @@ if (!isset($_GET['type'])) {
         <tbody>
 
             <tr class="table-secondary">
-                <td>Сумма персонала операции</td>
-                <td>2</td>
+                <td>Стоимость персонала операции</td>
+                <td class="text-right"><?= number_format($total_opetrator_price, 1) ?></td>
+            </tr>
+            <tr class="table-secondary">
+                <td>Стоимость препаратов</td>
+                <td class="text-right">100</td>
+            </tr>
+            <tr class="table-secondary">
+                <td>Начальная стоимость операции</td>
+                <td class="text-right"><?= number_format($patient->item_cost, 1) ?></td>
+            </tr>
+            <tr class="table-primary">
+                <th>Общая стоимость операции</th>
+                <th class="text-right"><?= number_format($total_opetrator_price + $patient->item_cost, 1) ?></th>
             </tr>
 
         </tbody>

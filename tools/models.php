@@ -3256,13 +3256,9 @@ class OperationModel extends Model
                     <label>Отдел:</label>
                     <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php
-                        foreach($db->query("SELECT * from division WHERE level = 5") as $row) {
-                            ?>
+                        <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -3280,30 +3276,13 @@ class OperationModel extends Model
 
             <div class="form-group row">
 
-                <div class="col-md-6">
-                    <label>Выберите специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" data-fouc required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
-                            ?>
-                            <option class="d-flex justify-content-between" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="service_id" id="service_id" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="item_id" id="item_id" class="form-control select-price" required data-fouc>
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from service WHERE user_level = 5 AND type = 3') as $row) {
-                            ?>
+                        <?php foreach ($db->query("SELECT * from service WHERE user_level = 5 AND type = 3") as $row): ?>
                             <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -3316,8 +3295,7 @@ class OperationModel extends Model
         </form>
         <script type="text/javascript">
             $(function(){
-                $("#parent_id").chained("#division_id");
-                $("#service_id").chained("#division_id");
+                $("#item_id").chained("#division_id");
             });
         </script>
         <?php
@@ -3415,23 +3393,26 @@ class OperationModel extends Model
     {
         global $db;
         if($this->clean()){
+            $db->beginTransaction();
+            $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['item_id']}")->fetch();
+            $this->post['item_name'] = $service['name'];
+            $this->post['item_cost'] = $service['price'];
             $object = Mixin\insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
             }
-            $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
             $post['visit_id'] = $this->post['visit_id'];
             $post['operation_id'] = $object;
             $post['user_id'] = $this->post['user_id'];
             $post['item_type'] = 5;
-            $post['item_id'] = $this->post['service_id'];
+            $post['item_id'] = $this->post['item_id'];
             $post['item_cost'] = $service['price'];
             $post['item_name'] = $service['name'];
             $object = Mixin\insert('visit_price', $post);
             if (!intval($object)){
                 $this->error($object);
             }
-
+            $db->commit();
             $this->success();
         }
     }

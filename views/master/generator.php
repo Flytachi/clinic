@@ -144,15 +144,6 @@ $json = array(
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 	",
 	"
-	CREATE TABLE IF NOT EXISTS `members` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `name` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL,
-        `price` decimal(65,1) NOT NULL DEFAULT 0.0,
-        `add_date` timestamp NOT NULL DEFAULT current_timestamp(),
-        PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-	",
-	"
 	CREATE TABLE IF NOT EXISTS `multi_accounts` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `slot` varchar(15) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
