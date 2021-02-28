@@ -26,12 +26,12 @@ is_auth();
             <tbody>
                 <?php
                 $i = 1;
-                // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                //             lat.standart_min, lat.standart_sign, lat.standart_max,
-                //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
-                $norm = "lat.name, lat.code, lat.standart";
-                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.service_id 'ser_id', $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['pk']}") as $row) {
+                // $norm = "scl.name, scl.code, scl.standart_type, scl.standart_fun,
+                //             scl.standart_min, scl.standart_sign, scl.standart_max,
+                //             scl.standart_sex0_min, scl.standart_sex0_sign, scl.standart_sex0_max,
+                //             scl.standart_sex1_min, scl.standart_sex1_sign, scl.standart_sex1_max";
+                $norm = "scl.name, scl.code, scl.standart";
+                foreach ($db->query("SELECT vl.id, vl.result, vl.deviation, vl.description, scl.service_id 'ser_id', $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['pk']}") as $row) {
                     ?>
                     <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                         <td><?= $i++ ?></td>

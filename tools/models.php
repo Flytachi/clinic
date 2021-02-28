@@ -643,7 +643,7 @@ class VisitModel extends Model
             if ($level_divis == 12) {
                 $post_big['physio'] = 1;
             }elseif ($level_divis == 13) {
-                $post_big['manipulation'] = 1;
+                $post_big['manipusclion'] = 1;
             }
             $post_big['parent_id'] = $this->post['parent_id'][$key];
             $post_big['grant_id'] = $post_big['parent_id'];
@@ -1100,7 +1100,7 @@ class VisitPriceModel extends Model
         }
     }
 
-    public function ambulator_price()
+    public function ambusclor_price()
     {
         global $db;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
@@ -1178,7 +1178,7 @@ class VisitPriceModel extends Model
             if (isset($this->bed_cost)) {
                 $this->stationar_price();
             }else {
-                $this->ambulator_price();
+                $this->ambusclor_price();
             }
             $this->success();
         }
@@ -1790,7 +1790,7 @@ class ServiceModel extends Model
         'type' => 'Тип(1,2,3)',
     );
 
-    public function form_template($pk = null)
+    public function form_tempscle($pk = null)
     {
         ?>
         <form method="post" action="<?= add_url() ?>" enctype="multipart/form-data">
@@ -1798,7 +1798,7 @@ class ServiceModel extends Model
 
             <div class="form-group">
                 <label>Шаблон:</label>
-                <input type="file" class="form-control" name="template" accept="application/vnd.ms-excel" required>
+                <input type="file" class="form-control" name="tempscle" accept="application/vnd.ms-excel" required>
             </div>
 
             <div class="text-right">
@@ -1902,10 +1902,10 @@ class ServiceModel extends Model
 
     public function clean()
     {
-        // parad("_FILES",$_FILES['template']);
-        if($_FILES['template']){
-            // prit('temlate');
-            $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
+        // parad("_FILES",$_FILES['tempscle']);
+        if($_FILES['tempscle']){
+            // prit('temscle');
+            $this->post['tempscle'] = read_excel($_FILES['tempscle']['tmp_name']);
             $this->save_excel();
         }
         $this->post = Mixin\clean_form($this->post);
@@ -1934,7 +1934,7 @@ class ServiceModel extends Model
     {
         global $db;
         $db->beginTransaction();
-        foreach ($this->post['template'] as $key_p => $value_p) {
+        foreach ($this->post['tempscle'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
                     $pick = $pirst[$key];
@@ -1949,7 +1949,7 @@ class ServiceModel extends Model
                 }
             }else {
                 $pirst = $value_p;
-                unset($this->post['template']);
+                unset($this->post['tempscle']);
             }
         }
         $db->commit();
@@ -1973,6 +1973,100 @@ class ServiceModel extends Model
         <div class="alert bg-danger alert-styled-left alert-dismissible">
             <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
             <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
+}
+
+class ServiceAnalyzeModel extends Model
+{
+    public $table = 'service_analyze';
+
+    public function form($pk = null)
+    {
+        global $db;
+        if($pk){
+            $post = $this->post;
+        }else{
+            $post = array();
+        }
+        if($_SESSION['message']){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+
+            <div class="form-group">
+                <label>Услуга:</label>
+                <select data-placeholder="Выбрать услугу" name="service_id" class="form-control form-control-select2" required>
+                    <option></option>
+                    <?php foreach ($db->query("SELECT * from service WHERE user_level = 6") as $row): ?>
+                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label>Норматив:</label>
+                            <textarea class="form-control" name="standart" rows="3" cols="2" placeholder="Норматив"><?= $post['standart']?></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Ед:</label>
+                            <textarea class="form-control" name="unit" rows="3" cols="2" placeholder="Единица"><?= $post['unit']?></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label>Название:</label>
+                            <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label>Код:</label>
+                            <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            '.$message.'
         </div>
         ';
         render();
@@ -2140,103 +2234,9 @@ class GuideModel extends Model
     }
 }
 
-class LaboratoryAnalyzeTypeModel extends Model
+class VisitAnalyzeModel extends Model
 {
-    public $table = 'laboratory_analyze_type';
-
-    public function form($pk = null)
-    {
-        global $db;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $pk ?>">
-
-            <div class="form-group">
-                <label>Услуга:</label>
-                <select data-placeholder="Выбрать услугу" name="service_id" class="form-control form-control-select2" required>
-                    <option></option>
-                    <?php foreach ($db->query('SELECT * from service WHERE user_level = 6') as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <label>Норматив:</label>
-                            <textarea class="form-control" name="standart" rows="3" cols="2" placeholder="Норматив"><?= $post['standart']?></textarea>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Ед:</label>
-                            <textarea class="form-control" name="unit" rows="3" cols="2" placeholder="Единица"><?= $post['unit']?></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label>Название:</label>
-                            <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-12">
-                            <label>Код:</label>
-                            <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $post['code']?>">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
-            </div>
-
-        </form>
-        <?php
-    }
-
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
-        </div>
-        ';
-        render();
-    }
-}
-
-class LaboratoryAnalyzeModel extends Model
-{
-    public $table = 'laboratory_analyze';
+    public $table = 'visit_analyze';
 
     public function table_form($pk = null)
     {
@@ -2278,18 +2278,12 @@ class LaboratoryAnalyzeModel extends Model
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $i = 0;
-                            foreach ($db->query("SELECT vs.id, vs.service_id, sc.name FROM visit vs LEFT JOIN service sc ON (sc.id=vs.service_id) WHERE vs.completed IS NULL AND vs.laboratory IS NOT NULL AND vs.status = 2 AND vs.user_id = {$_GET['id']} ORDER BY vs.add_date ASC") as $row_parent) {
-                                $norm = "lat.name, lat.code, lat.standart";
-                                $s = 1;
-                                ?>
+                            <?php $i = 0; foreach ($db->query("SELECT vs.id, vs.service_id, sc.name FROM visit vs LEFT JOIN service sc ON (sc.id=vs.service_id) WHERE vs.completed IS NULL AND vs.laboratory IS NOT NULL AND vs.status = 2 AND vs.user_id = {$_GET['id']} ORDER BY vs.add_date ASC") as $row_parent): ?>
+                                <?php $norm = "scl.name, scl.code, scl.standart"; $s = 1; ?>
                                 <tr>
                                     <th colspan="9" class="text-center"><?= $row_parent['name'] ?></th>
                                 </tr>
-                                <?php
-                                foreach ($db->query("SELECT la.id, la.result, la.deviation, la.description, lat.id 'analyze_id', $norm, sc.name 'ser_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(lat.service_id=sc.id) LEFT JOIN laboratory_analyze la ON(la.user_id={$_GET['id']} AND la.analyze_id=lat.id AND la.visit_id ={$row_parent['id']}) WHERE lat.service_id = {$row_parent['service_id']}") as $row) {
-                                    ?>
+                                <?php foreach ($db->query("SELECT vl.id, vl.result, vl.deviation, vl.description, scl.id 'analyze_id', $norm, sc.name 'ser_name' FROM service_analyze scl LEFT JOIN service sc ON(scl.service_id=sc.id) LEFT JOIN visit_analyze vl ON(vl.user_id={$_GET['id']} AND vl.analyze_id=scl.id AND vl.visit_id ={$row_parent['id']}) WHERE scl.service_id = {$row_parent['service_id']}") as $row): ?>
                                     <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                                         <td><?= $s++ ?></td>
                                         <td><?= $row['ser_name'] ?></td>
@@ -2315,11 +2309,8 @@ class LaboratoryAnalyzeModel extends Model
                                             <input type="text" class="form-control" placeholder="Введите примечание" name="<?= $i ?>[description]" value="<?= $row['description'] ?>">
                                         </th>
                                     </tr>
-                                    <?php
-                                    $i++;
-                                }
-                            }
-                            ?>
+                                <?php $i++; endforeach; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -2417,7 +2408,7 @@ class LaboratoryAnalyzeModel extends Model
                     $val['deviation'] = null;
                 }
                 $val['service_id'] = $db->query("SELECT service_id FROM visit WHERE id = {$val['visit_id']}")->fetch()['service_id'];
-                $object = Mixin\insert('laboratory_analyze', $val);
+                $object = Mixin\insert('visit_analyze', $val);
             }
             if (!intval($object)){
                 $this->error($object);
@@ -3692,9 +3683,9 @@ class MultiAccountsModel extends Model
     }
 }
 
-class TemplateModel extends Model
+class TempscleModel extends Model
 {
-    public $table = 'templates';
+    public $table = 'tempscles';
 
     public function form($pk = null)
     {

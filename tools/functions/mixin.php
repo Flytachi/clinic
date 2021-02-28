@@ -201,42 +201,11 @@ function T_FLUSH_database()
 
     try {
         $db->beginTransaction();
-        T_flush('beds');
-        T_flush('bed_type');
-        T_flush('bypass');
-        T_flush('bypass_date');
-        T_flush('bypass_time');
-        T_flush('bypass_preparat');
-        T_flush('chat');
-        T_flush('division');
-        T_flush('guides');
-        T_flush('investment');
-        T_flush('laboratory_analyze');
-        T_flush('laboratory_analyze_type');
-        T_flush('members');
-        T_flush('multi_accounts');
-        T_flush('notes');
-        T_flush('operation');
-        T_flush('operation_inspection');
-        T_flush('operation_member');
-        T_flush('operation_stats');
-        // Mixin\T_flush('province');
-        // Mixin\T_flush('region');
-        T_flush('service');
 
-        T_flush('storage');
-        T_flush('storage_home');
-        T_flush('storage_orders');
-        T_flush('storage_sales');
+        foreach ($db->query("SHOW TABlES") as $table) {
+            T_flush($table['Tables_in_clinic']);
+        }
 
-        T_flush('templates');
-        T_flush('users');
-        T_flush('user_card');
-        T_flush('user_stats');
-        T_flush('visit');
-        T_flush('visit_price');
-        T_flush('visit_inspection');
-        T_flush('wards');
         $db->commit();
         return 200;
     } catch (Exception $e) {

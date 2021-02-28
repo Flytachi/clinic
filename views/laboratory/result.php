@@ -9,6 +9,6 @@ is_auth();
 
 <div id="modal_result_show_content">
 
-    <?php LaboratoryAnalyzeModel::table_form(); ?>
+    <?php VisitAnalyzeModel::table_form(); ?>
 
 </div>

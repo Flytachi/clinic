@@ -55,7 +55,7 @@ $header = "Пациент";
 									<?php endif; ?>
 								<?php else: ?>
 									<div class="header-elements">
-										<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm btn-outline-info">Печать</button>
+										<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
 									</div>
 								<?php endif; ?>
 							</div>

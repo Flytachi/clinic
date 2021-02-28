@@ -1759,7 +1759,7 @@ class VisitFinish extends Model
 class LaboratoryUpStatus extends Model
 {
     public $table = 'visit';
-    public $table2 = 'laboratory_analyze';
+    public $table2 = 'visit_analyze';
 
     public function get_or_404($pk)
     {
