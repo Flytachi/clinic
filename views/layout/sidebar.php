@@ -78,6 +78,26 @@
                                     <span>Класификация персонала</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
+                                    <i class="icon-bag"></i>
+                                    <span>Услуги</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/preparats') ?>" class="nav-link legitRipple">
+                                    <i class="icon-package"></i>
+                                    <span>Препараты к услугам</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
+                                    <i class="icon-fire"></i>
+                                    <span>Анализы</span>
+                                </a>
+                            </li>
+
                             <li class="nav-item">
                                 <a href="<?= viv('admin/ward') ?>" class="nav-link legitRipple">
                                     <i class="icon-switch22"></i>
@@ -90,18 +110,6 @@
                                     <span>Койки</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
-                                    <i class="icon-bag"></i>
-                                    <span>Услуги</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
-                                    <i class="icon-fire"></i>
-                                    <span>Анализы</span>
-                                </a>
-                            </li>
                             <!--<li class="nav-item">
                                 <a href="#" class="nav-link legitRipple">
                                     <i class="icon-store"></i>
@@ -112,12 +120,6 @@
                                 <a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">
                                     <i class="icon-width"></i>
                                     <span>Склад</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Врачи операторы</span>
                                 </a>
                             </li>
                             <li class="nav-item">

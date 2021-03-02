@@ -94,10 +94,11 @@ else $_SESSION['browser'] = "Неизвестный";
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'functions/base.php';
-require_once 'models.php';
-require_once 'forms.php';
-require_once 'forms_2.php';
+require_once 'functions/model.php';
 
+foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/tools/models") as $filename) {
+    require_once 'models/'.$filename;
+}
 
 function get_full_name($id = null) {
     global $db;

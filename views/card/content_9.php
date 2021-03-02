@@ -181,6 +181,7 @@ $header = "Пациент";
 				url: events,
 				success: function (result) {
 					$('#content_data').html(result);
+					title_data_url = events;
 					EchartsLines.init();
 				},
 			});

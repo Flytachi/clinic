@@ -48,25 +48,15 @@
         <li class="nav-item">
             <a href="<?= viv('card/content_9').$agr ?>" class="nav-link <?= viv_link('card/content_9') ?> legitRipple" style="white-space:nowrap;"><i class="icon-bed2 mr-1"></i>Операционный блок</a>
         </li>
-        <li class="nav-item">
-            <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= viv_link('card/content_10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-fire mr-1"></i>Анестезия</a>
-        </li>
     <?php endif; ?>
-
     <?php if (!permission([11])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-pulse2 mr-1"></i>Физиотерапия/Процедурная</a>
+            <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= viv_link('card/content_10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-pulse2 mr-1"></i>Физиотерапия/Процедурная</a>
         </li>
     <?php endif; ?>
-    <?php if (permission([7, 11])): ?>
+    <?php if (permission([7])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_12').$agr ?>" class="nav-link <?= viv_link('card/content_12') ?> legitRipple" style="white-space:nowrap;">
-                <?php if (permission(11)): ?>
-                    Препараты
-                <?php else: ?>
-                    Расходные материалы
-                <?php endif; ?>
-            </a>
+            <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;">Расходные материалы</a>
         </li>
     <?php endif; ?>
 </ul>
