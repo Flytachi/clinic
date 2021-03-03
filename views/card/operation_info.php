@@ -229,7 +229,7 @@ if (!isset($_GET['type'])) {
                                 <td class="text-right text-success">
                                     <?php
                                     $total_opetrator_price += $row['price'];
-                                    echo number_format($row['price']);
+                                    echo number_format($row['price'], 1);
                                     ?>
                                 </td>
                                 <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
@@ -244,7 +244,7 @@ if (!isset($_GET['type'])) {
                         <?php endforeach; ?>
                         <tr class="table-secondary">
                             <th class="text-right">Итого:</th>
-                            <th class="text-right"><?= number_format($total_opetrator_price) ?></th>
+                            <th class="text-right"><?= number_format($total_opetrator_price, 1) ?></th>
                             <?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
                                 <th></th>
                             <?php endif; ?>
@@ -300,7 +300,7 @@ if (!isset($_GET['type'])) {
                                 <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission([8,11]))): ?>
                                     <td class="text-right">
                                         <div class="list-icons">
-                                            <button onclick="Delete('<?= del_url($row['id'], 'OperationServiceForm') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
+                                            <button onclick="Delete('<?= del_url($row['id'], 'OperationServiceModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
                                         </div>
                                     </td>
                                 <?php endif; ?>
@@ -409,7 +409,7 @@ if (!isset($_GET['type'])) {
     <div class="card border-1 border-<?= $color ?>">
 
         <div class="card-header header-elements-inline">
-            <h5 class="card-title">Дополнительные расходы</h5>
+            <h5 class="card-title">Расходы</h5>
             <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(8))): ?>
                 <div class="header-elements">
                     <div class="list-icons">
@@ -486,7 +486,7 @@ if (!isset($_GET['type'])) {
                 <td class="text-right"><?= number_format($total_preparats_price, 1) ?></td>
             </tr>
             <tr class="table-secondary">
-                <td>Стоимость расходников</td>
+                <td>Стоимость расходов</td>
                 <td class="text-right"><?= number_format($total_other_price, 1) ?></td>
             </tr>
             <tr class="table-secondary">

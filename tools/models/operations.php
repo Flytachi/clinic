@@ -351,7 +351,7 @@ class OperationInspectionModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" id="submit"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
             </div>
 
         </form>
@@ -401,9 +401,6 @@ class OperationInspectionModel extends Model
                 } );
 
               document.getElementById( 'submit' ).onclick = () => {
-                  textarea.value = editor.getData();
-              }
-              document.getElementById( 'end' ).onclick = () => {
                   textarea.value = editor.getData();
               }
 
@@ -499,7 +496,7 @@ class OperationMemberModel extends Model
 
                     <div class="col-md-5">
                         <label>Сумма:</label>
-                        <input type="number" class="form-control" name="price" value="<?= $post['price']?>" placeholder="Введите сумму">
+                        <input type="number" class="form-control" name="price" step="0.1" value="<?= $post['price']?>" placeholder="Введите сумму">
                     </div>
                 </div>
 
@@ -921,7 +918,7 @@ class OperationСonsumablesModel extends Model
 
                     <div class="col-md-2">
                         <label>Сумма:</label>
-                        <input type="number" name="item_cost" value="<?= ($post['item_cost']) ? $post['item_cost'] : "0" ?>" class="form-control" required>
+                        <input type="number" name="item_cost" step="0.1" value="<?= ($post['item_cost']) ? $post['item_cost'] : "0" ?>" class="form-control" required>
                     </div>
 
                 </div>

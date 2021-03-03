@@ -1031,7 +1031,7 @@ class VisitInspectionModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-outline-info btn-sm" id="submit_insp">Сохранить</button>
             </div>
 
         </form>
@@ -1052,10 +1052,7 @@ class VisitInspectionModel extends Model
                     console.error( error );
                 } );
 
-              document.getElementById( 'submit' ).onclick = () => {
-                  textarea.value = editor.getData();
-              }
-              document.getElementById( 'end' ).onclick = () => {
+              document.getElementById( 'submit_insp' ).onclick = () => {
                   textarea.value = editor.getData();
               }
         </script>
@@ -1558,10 +1555,14 @@ class VisitReport extends Model
               document.getElementById( 'submit' ).onclick = () => {
                   textarea.value = editor.getData();
               }
-              document.getElementById( 'end' ).onclick = () => {
-                  textarea.value = editor.getData();
-              }
         </script>
+        <?php if (permission([10,12,13])): ?>
+            <script type="text/javascript">
+                document.getElementById( 'end' ).onclick = () => {
+                    textarea.value = editor.getData();
+                }
+            </script>
+        <?php endif; ?>
         <?php
     }
 
@@ -1638,9 +1639,9 @@ class VisitReport extends Model
               document.getElementById( 'submit' ).onclick = () => {
                   textarea.value = editor2.getData();
               }
-              document.getElementById( 'end' ).onclick = () => {
-                  textarea.value = editor2.getData();
-              }
+              // document.getElementById( 'end' ).onclick = () => {
+              //     textarea.value = editor2.getData();
+              // }
         </script>
         <?php
     }
