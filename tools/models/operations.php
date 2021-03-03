@@ -533,7 +533,7 @@ class OperationMemberModel extends Model
 
                     <div class="col-md-5">
                         <label>Сумма:</label>
-                        <input type="number" class="form-control" name="price" step="0.1" value="<?= $post['price']?>" placeholder="Введите сумму">
+                        <input type="number" class="form-control" name="price" step="0.1" value="<?= ($post['price']) ? $post['price'] : "0"?>" placeholder="Введите сумму">
                     </div>
                 </div>
 

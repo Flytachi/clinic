@@ -1,13 +1,14 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
+
 $sql = "SELECT
             op.id 'pk', op.user_id 'id', vs.id 'visit_id', vs.grant_id, op.oper_date,
             vs.accept_date, vs.direction, vs.add_date, vs.discharge_date,
             vs.complaint, op.completed, op.item_id, op.item_name, op.item_cost
         FROM operation op
             LEFT JOIN visit vs ON (vs.id = op.visit_id)
-        WHERE vs.status = 2 AND op.id = {$_GET['pk']}";
+        WHERE op.id = {$_GET['pk']}";
 
 $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
