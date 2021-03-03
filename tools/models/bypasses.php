@@ -260,7 +260,7 @@ class BypassDateModel extends Model
                                     <?php endif; ?>
                                     <?php
                                     $dat = $date->format('Y-m-d');
-                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND time = '{$value['time']}' AND date = '$dat'")->fetch();
+                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND time = \"{$value['time']}\" AND date = \"$dat\"")->fetch();
                                     ?>
                                     <td>
                                         <?= $time = date('H:i', strtotime($value['time'])) ?>
@@ -449,7 +449,7 @@ class BypassDateModel extends Model
                                     <?php endif; ?>
                                     <?php
                                     $dat = $date->format('Y-m-d');
-                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND time = '{$value['time']}' AND date = '$dat'")->fetch();
+                                    $post = $db->query("SELECT * FROM bypass_date WHERE bypass_id = {$_GET['pk']} AND time = \"{$value['time']}\" AND date = \"$dat\"")->fetch();
                                     ?>
                                     <td>
                                         <?= date('H:i', strtotime($value['time'])) ?>
