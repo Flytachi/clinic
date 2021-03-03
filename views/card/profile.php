@@ -186,7 +186,7 @@ if (!$patient) {
                     } else {
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
                         foreach ($serv_id as $value) {
-                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5)")->fetchAll();
                             foreach ($item_service as $pri_ze) {
                                 $pl += $pri_ze['price'];
                             }
@@ -367,17 +367,25 @@ if (!$patient) {
 
                 <div class="col-md-12">
                     <div class="text-right">
-                        <button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-danger btn-sm">Выписка</button>
+                        <button onclick="Check_kwin('<?= viv('doctor/report') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-danger btn-sm">Выписка</button>
                     </div>
                 </div>
 
+                <div id="modal_report_kwin" class="modal fade" tabindex="-1">
+            		<div class="modal-dialog modal-lg">
+            			<div class="modal-content border-3 border-info" id="report_show">
+
+            			</div>
+            		</div>
+            	</div>
+
                 <script type="text/javascript">
-            		function Check(events) {
+            		function Check_kwin(events) {
             			$.ajax({
             				type: "GET",
             				url: events,
             				success: function (result) {
-            					$('#modal_report_show').modal('show');
+            					$('#modal_report_kwin').modal('show');
             					$('#report_show').html(result);
             				},
             			});

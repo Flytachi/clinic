@@ -92,11 +92,6 @@ $header = "Пациент";
 																<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&type=1&activity=<?= $activity ?>')" class="btn btn-outline-success btn-sm">После</button>
 															<?php else: ?>
 																<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&activity=<?= $activity ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
-																<?php if ($activity): ?>
-																	<?php if ($patient->grant_id == $_SESSION['session_id'] and strtotime($row['oper_date']) <= strtotime(date('Y-m-d H:i'))): ?>
-																		<button onclick="Finish_date('<?= $row['id'] ?>', '<?= $row['oper_date'] ?>')" class="btn btn-outline-success btn-sm">Завершить</a>
-																	<?php endif; ?>
-																<?php endif; ?>
 															<?php endif; ?>
 														</td>
 													</tr>
@@ -158,20 +153,6 @@ $header = "Пациент";
 				</div>
 			</div>
 		</div>
-
-		<div id="modal_finish_date" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-md">
-				<div class="modal-content border-3 border-info">
-					<div class="modal-header bg-info">
-						<h5 class="modal-title">Дата завершения операции</h5>
-						<button type="button" class="close" data-dismiss="modal">×</button>
-					</div>
-
-					<?php OperationModel::form_finish() ?>
-
-				</div>
-			</div>
-		</div>
 	<?php endif; ?>
 
 	<script type="text/javascript">
@@ -192,12 +173,6 @@ $header = "Пациент";
 			$('#oper_id').val(pk);
 			$('#oper_date').val(date);
 			$('#oper_time').val(time);
-		};
-
-		function Finish_date(pk, date) {
-			$('#modal_finish_date').modal('show');
-			$('#finish_id').val(pk);
-			document.getElementById('OperationModel_form').dataset.c_date = date;
 		};
 	</script>
 

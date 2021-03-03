@@ -737,7 +737,7 @@ class VisitPriceModel extends Model
             function Proter(pk) {
                 event.preventDefault();
 
-                if ($('#prot_item').val() != 0) {
+                if (Math.round($('#prot_item').val()) != 0) {
 
                     if ($('#prot_item').val() < 0) {
                         var text = "Нехватка средств!";
@@ -887,7 +887,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
-            $this->items[] = $row['visit_id'];
+            $this->items[] = $row['id'];
             if ($this->post['sale'] > 0) {
                 $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->post['sale'] / 100));
             }

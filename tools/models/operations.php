@@ -103,6 +103,11 @@ class OperationModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" id="finish_id">
 
+            <div class="modal-header bg-info">
+                <h5 class="modal-title">Дата завершения операции</h5>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+
             <div class="modal-body">
 
                 <div class="form-group row">
@@ -151,6 +156,38 @@ class OperationModel extends Model
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function update()
+    {
+        global $db;
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+
+            if ($this->post['completed']) {
+                $post_price = $db->query("SELECT id, item_cost FROM visit_price WHERE operation_id = {$pk}")->fetch();
+                $post_price_pk = $post_price['id']; unset($post_price['id']);
+                $post_price['item_cost'] += $db->query("SELECT SUM(price) FROM operation_member WHERE operation_id = {$pk}")->fetchColumn();
+                $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_service WHERE operation_id = {$pk}")->fetchColumn();
+                $post_price['item_cost'] += $db->query("SELECT SUM(item_cost*item_qty) FROM operation_preparat WHERE operation_id = {$pk}")->fetchColumn();
+                $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_consumables WHERE operation_id = {$pk}")->fetchColumn();
+                $db->beginTransaction();
+
+                $object = Mixin\update('visit_price', $post_price, $post_price_pk);
+                if (!intval($object)){
+                    $this->error($object);
+                }
+            }
+
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+            }
+            $db->commit();
+            $this->success();
+
+        }
     }
 
     public function save()

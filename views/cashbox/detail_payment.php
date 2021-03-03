@@ -71,7 +71,7 @@ $staus = 0;
                                     <?php
                                     // prit($db->query("SELECT vsp.* FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id) WHERE vs.user_id = {$_GET['pk']} AND vsp.price_date IS NOT NULL ORDER BY price_date DESC")->fetchAll());
                                     $i = 1;
-									foreach($db->query("SELECT vs.id as id_visit, vsp.* FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id) WHERE vs.user_id = {$_GET['pk']} AND vsp.price_date IS NOT NULL ORDER BY price_date DESC") as $row) {
+									foreach($db->query("SELECT vsp.* FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id) WHERE vs.user_id = {$_GET['pk']} AND vsp.price_date IS NOT NULL ORDER BY price_date DESC") as $row) {
 										if (empty($temp_old)) {
 											$temp_old = $row['price_date'];
 											$color = "";
@@ -91,9 +91,9 @@ $staus = 0;
 											$temp_old = $row['price_date'];
 										}
 
-										$mas .=  $row['id_visit'] . ",";
+										$mas .=  $row['id'] . ",";
 										?>
-                                        <tr class="<?= $color ?>" onclick="addArray(this)" data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id_visit'] ?>">
+                                        <tr class="<?= $color ?>" onclick="addArray(this)" data-color="<?= $color ?>" data-status="true" data-id="<?= $row['id'] ?>">
                                             <td><?= $i++ ?></td>
                                             <td><?= date('d.m.Y H:i', strtotime($row['price_date'])) ?></td>
                                             <td><?= $row['item_name'] ?></td>
