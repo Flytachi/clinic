@@ -373,7 +373,7 @@ if (!$patient) {
 
                 <div id="modal_report_kwin" class="modal fade" tabindex="-1">
             		<div class="modal-dialog modal-lg">
-            			<div class="modal-content border-3 border-info" id="report_show">
+            			<div class="modal-content border-3 border-info" id="report_show_kwin">
 
             			</div>
             		</div>
@@ -386,7 +386,7 @@ if (!$patient) {
             				url: events,
             				success: function (result) {
             					$('#modal_report_kwin').modal('show');
-            					$('#report_show').html(result);
+            					$('#report_show_kwin').html(result);
             				},
             			});
             		};

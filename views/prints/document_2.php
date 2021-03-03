@@ -78,10 +78,6 @@ if ($_GET['items']) {
                             <tbody>
                                 <?php
                                 $i = 1;
-                                // $norm = "scl.name, scl.code, scl.standart_type, scl.standart_fun,
-                                //             scl.standart_min, scl.standart_sign, scl.standart_max,
-                                //             scl.standart_sex0_min, scl.standart_sex0_sign, scl.standart_sex0_max,
-                                //             scl.standart_sex1_min, scl.standart_sex1_sign, scl.standart_sex1_max";
                                 $norm = "scl.name, scl.code, scl.standart";
                                 $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = $item";
                                 foreach ($db->query($sql) as $row) {
@@ -123,10 +119,6 @@ if ($_GET['items']) {
                         <tbody>
                             <?php
                             $i = 1;
-                            // $norm = "scl.name, scl.code, scl.standart_type, scl.standart_fun,
-                            //             scl.standart_min, scl.standart_sign, scl.standart_max,
-                            //             scl.standart_sex0_min, scl.standart_sex0_sign, scl.standart_sex0_max,
-                            //             scl.standart_sex1_min, scl.standart_sex1_sign, scl.standart_sex1_max";
                             $norm = "scl.name, scl.code, scl.standart";
                             $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['id']}";
                             foreach ($db->query($sql) as $row) {
