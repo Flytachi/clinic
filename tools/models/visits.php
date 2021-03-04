@@ -1688,7 +1688,6 @@ class VisitReport extends Model
         unset($this->post['end']);
         if($this->clean()){
             $db->beginTransaction();
-            $this->mod('test');
             $pk = $this->post['id']; unset($this->post['id']);
             $object = Mixin\update($this->table, $this->post, $pk);
             if ($end) {
