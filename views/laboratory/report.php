@@ -20,14 +20,13 @@ is_auth();
                     <th class="text-right" style="width:12%">Норма</th>
                     <th class="text-right" style="width:7%">Ед</th>
                     <th class="text-right" style="width:10%">Результат</th>
-                    <!-- <th class="text-center" style="width:25%">Примечание</th> -->
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $i = 1;
                 $norm = "scl.name, scl.code, scl.standart";
-                foreach ($db->query("SELECT vl.id, vl.result, vl.deviation, vl.description, scl.service_id 'ser_id', $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['pk']}") as $row) {
+                foreach ($db->query("SELECT vl.id, vl.result, vl.deviation, scl.service_id 'ser_id', $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['pk']}") as $row) {
                     ?>
                     <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                         <td><?= $i++ ?></td>
@@ -40,7 +39,6 @@ is_auth();
                             <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                         </td>
                         <td class="text-right"><?= $row['result'] ?></td>
-                        <!-- <td><?= $row['description'] ?></td> -->
                     </tr>
                     <?php
                 }

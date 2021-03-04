@@ -39,26 +39,21 @@ $header = "Пациент";
 
 						<?php include "content_tabs.php"; ?>
 
-						<div class="card">
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-fire2 mr-2"></i>Анализы Пациента
+							<?php if ($activity and permission(5)): ?>
+								<a class="float-right <?= $class_color_add ?> mr-1" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-plus22"></i>Добавить
+								</a>
+								<a class="float-right text-info mr-1" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-drawer3 mr-1"></i>Сводка анализов
+								</a>
+							<?php else: ?>
+								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right <?= $class_color_add ?> mr-1"><i class="icon-printer2"></i></a>
+							<?php endif; ?>
+						</legend>
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Анализы Пациента</h5>
-								<?php if ($activity): ?>
-									<?php if (!$patient->direction or $patient->direction and permission(5)): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php else: ?>
-									<div class="header-elements">
-										<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
-									</div>
-								<?php endif; ?>
-							</div>
+						<div class="card">
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
