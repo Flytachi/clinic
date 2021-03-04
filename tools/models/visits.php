@@ -1716,7 +1716,7 @@ class VisitReport extends Model
                 }
             }
         }
-        // $db->commit();
+        $db->commit();
         $this->success();
     }
 
