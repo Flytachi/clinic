@@ -31,7 +31,7 @@ if ($_GET['items']) {
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= stack("assets/images/logo.png") ?>" width="400" height="120">
+                <img src="<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h3">

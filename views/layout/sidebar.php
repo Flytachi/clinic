@@ -117,9 +117,9 @@
                                 </a>
                             </li> -->
                             <li class="nav-item">
-                                <a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Склад</span>
+                                <a href="<?= viv('admin/setting') ?>" class="nav-link legitRipple">
+                                    <i class="icon-setting2"></i>
+                                    <span>Настройки</span>
                                 </a>
                             </li>
                             <li class="nav-item">
