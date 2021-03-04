@@ -40,10 +40,10 @@ $header = "Пациент";
 						<?php include "content_tabs.php"; ?>
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
-							<i class="icon-fire2 mr-2"></i>Диагностика Пациента
+							<i class="icon-fire2 mr-2"></i>Диагностика
 							<?php if ($activity and permission(5)): ?>
-								<a class="float-right <?= $class_color_add ?> mr-1" data-toggle="modal" data-target="#modal_route">
-									<i class="icon-plus22"></i>Добавить
+								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
 						</legend>

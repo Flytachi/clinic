@@ -42,15 +42,19 @@ $header = "Пациент";
 				        <?php include "content_tabs.php"; ?>
 
 						<!-- Zoom option -->
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-pulse2 mr-2"></i>Динамика показателей
+						</legend>
+
 						<div class="card border-1 border-warning">
-							<div class="card-header header-elements-inline alpha-warning">
+							<!-- <div class="card-header header-elements-inline alpha-warning">
 								<h5 class="card-title">Динамика показателей</h5>
 								<div class="header-elements">
 									<div class="list-icons">
 										<a class="list-icons-item" data-action="collapse"></a>
 									</div>
 								</div>
-							</div>
+							</div> -->
 
 							<div class="card-body">
 								<div class="chart-container">
@@ -60,22 +64,16 @@ $header = "Пациент";
 						</div>
 						<!-- /zoom option -->
 
-						<div class="card">
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-clipboard2 mr-2"></i>Состояние
+							<?php if ($activity and permission(7)): ?>
+								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+									<i class="icon-plus22 mr-1"></i>Добавить
+								</a>
+							<?php endif; ?>
+						</legend>
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Состояние пациента</h5>
-								<?php if ($activity): ?>
-									<?php if (permission(7)): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-							</div>
+						<div class="card">
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">

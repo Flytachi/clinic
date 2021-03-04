@@ -17,7 +17,7 @@
     <?php endif; ?>
     <?php if (!$activity or permission([5])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_2').$agr ?>" class="nav-link <?= viv_link('card/content_2') ?> legitRipple" style="white-space:nowrap;">Другие визиты</a>
+            <a href="<?= viv('card/content_2').$agr ?>" class="nav-link <?= viv_link('card/content_2') ?> legitRipple" style="white-space:nowrap;"><i class="icon-clipboard6 mr-1"></i>Другие визиты</a>
         </li>
     <?php endif; ?>
     <?php if (!$activity or !permission([11])): ?>
@@ -27,7 +27,7 @@
     <?php endif; ?>
     <?php if (!$activity or permission([5])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_4').$agr ?>" class="nav-link <?= viv_link('card/content_4') ?> legitRipple" style="white-space:nowrap;">Визиты</a>
+            <a href="<?= viv('card/content_4').$agr ?>" class="nav-link <?= viv_link('card/content_4') ?> legitRipple" style="white-space:nowrap;"><i class="icon-vcard mr-1"></i>Мои заключения</a>
         </li>
     <?php endif; ?>
     <li class="nav-item">
@@ -51,12 +51,12 @@
     <?php endif; ?>
     <?php if (!$activity or !permission([11])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= viv_link('card/content_10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-pulse2 mr-1"></i>Физиотерапия/Процедурная</a>
+            <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= viv_link('card/content_10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-googleplus5 mr-1"></i>Физиотерапия/Процедурная</a>
         </li>
     <?php endif; ?>
     <?php if (!$activity or permission([7])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;">Расходные материалы</a>
+            <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-puzzle3 mr-1"></i>Расходные материалы</a>
         </li>
     <?php endif; ?>
 </ul>

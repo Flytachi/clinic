@@ -64,25 +64,19 @@ $header = "Пациент";
 						}
 						?>
 
-						<div class="card">
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-repo-forked mr-2"></i><?= $title ?>
+							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+								<a class="float-right text-info" data-toggle="modal" data-target="#modal_add_inspection">
+									<i class="icon-plus22 mr-1"></i>Осмотр
+								</a>
+								<a class="float-right <?= $class_color_add ?> mr-2" data-toggle="modal" data-target="#modal_add_service">
+									<i class="icon-plus22 mr-1"></i>Услуга
+								</a>
+							<?php endif; ?>
+						</legend>
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title"><?= $title ?></h5>
-								<?php if ($activity): ?>
-									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item <?= $class_color_add ?> mr-3" data-toggle="modal" data-target="#modal_add_service">
-													<i class="icon-plus22"></i>Услуга
-												</a>
-												<a class="list-icons-item text-info mr-1" data-toggle="modal" data-target="#modal_add_inspection">
-													<i class="icon-plus22"></i>Осмотр
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-							</div>
+						<div class="card">
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">

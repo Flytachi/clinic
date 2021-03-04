@@ -39,16 +39,15 @@ $header = "Пациент";
 
 				        <?php include "content_tabs.php"; ?>
 
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-clipboard6 mr-2"></i>Другие визиты
+						</legend>
+
 						<div class="alert bg-warning alert-styled-left alert-dismissible">
 							<span class="font-weight-semibold">Технические работы</span>
 						</div>
 
 						<!-- <div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Другие Визиты</h5>
-							</div>
-
 
 							<div class="table-responsive">
 				                <table class="table table-hover table-sm">

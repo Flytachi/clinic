@@ -44,23 +44,19 @@ $header = "Пациент";
 
 						<?php include "content_tabs.php"; ?>
 
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-magazine mr-2"></i>Лист назначений
+							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+									<i class="icon-plus22 mr-1"></i>Добавить
+								</a>
+								<!-- <a class="float-right text-info mr-2" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-drawer3 mr-1"></i>Сводка анализов
+								</a> -->
+							<?php endif; ?>
+						</legend>
+
 						<div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h6 class="card-title">Лист назначений</h6>
-								<?php if ($activity): ?>
-									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-
-							</div>
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered">

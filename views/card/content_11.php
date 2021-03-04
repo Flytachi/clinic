@@ -39,22 +39,16 @@ $header = "Пациент";
 
 					   	<?php include "content_tabs.php"; ?>
 
-					   	<div class="card">
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-puzzle3 mr-2"></i>Расходные материалы
+							<?php if ($activity and permission(7)): ?>
+								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+									<i class="icon-plus22 mr-1"></i>Добавить
+								</a>
+							<?php endif; ?>
+						</legend>
 
-					   		<div class="card-header header-elements-inline">
-					   			<h6 class="card-title">Расходные материалы</h6>
-								<?php if ($activity): ?>
-									<?php if (permission([7])): ?>
-										<div class="header-elements">
-		                                   	<div class="list-icons">
-		                                       	<a class="list-icons-item text-success" data-toggle="modal" data-target="#modal_add">
-		                                           	<i class="icon-plus22"></i>Добавить
-		                                       	</a>
-		                                   	</div>
-		                               	</div>
-								    <?php endif; ?>
-								<?php endif; ?>
-						   	</div>
+					   	<div class="card">
 
 						   	<div class="table-responsive">
 							   	<table class="table table-hover table-sm table-bordered">
