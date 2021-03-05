@@ -23,8 +23,6 @@
 	<script src="<?= stack("vendors/js/box.js") ?>"></script>
 	<!-- /core JS files -->
 
-
-
 	<script src="<?= stack("global_assets/js/plugins/notifications/jgrowl.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/notifications/noty.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/notifications/sweet_alert.min.js") ?>"></script>

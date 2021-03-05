@@ -129,18 +129,28 @@ $header = "Препараты";
 							<table class="table table-hover table-sm datatable-basic">
                                 <thead>
                                     <tr class="bg-info">
-                                        <th style="width:45%">Препарат</th>
+                                        <th style="width:35%">Препарат</th>
                                         <th>Поставщик</th>
                                         <th>Код</th>
 										<th>Категория</th>
                                         <th>Срок годности</th>
+										<th class="text-right">Бронь</th>
                                         <th class="text-right">Кол-во</th>
                                         <th class="text-right">Цена ед.</th>
                                         <!-- <th class="text-right" style="width:50px">Действия</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($db->query("SELECT * FROM storage ORDER BY name ASC") as $row): ?>
+									<?php
+									$sql = "SELECT st.*,
+									 		(
+												IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) +
+												IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
+
+											) 'reservation'
+											FROM storage st ORDER BY st.name ASC";
+								 	?>
+                                    <?php foreach ($db->query($sql) as $row): ?>
 										<?php
 										$tr="";
 										if ($dr= date_diff(new \DateTime(), new \DateTime($row['die_date']))->days <= 10) {
@@ -160,7 +170,8 @@ $header = "Препараты";
                                             <td><?= $row['code'] ?></td>
                                             <td><?= $CATEGORY[$row['category']] ?></td>
                                             <td><?= date("d.m.Y", strtotime($row['die_date'])) ?></td>
-                                            <td class="text-right"><?= $row['qty'] ?></td>
+                                            <td class="text-right"><?= $row['reservation'] ?></td>
+											<td class="text-right"><?= $row['qty'] ?></td>
                                             <td class="text-right"><?= number_format($row['price'], 1) ?></td>
 											<!--
 											<td>
