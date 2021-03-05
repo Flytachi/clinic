@@ -419,7 +419,7 @@ class VisitModel extends Model
             if ($level_divis == 12) {
                 $post_big['physio'] = 1;
             }elseif ($level_divis == 13) {
-                $post_big['manipusclion'] = 1;
+                $post_big['manipulation'] = 1;
             }
             $post_big['parent_id'] = $this->post['parent_id'][$key];
             $post_big['grant_id'] = $post_big['parent_id'];
