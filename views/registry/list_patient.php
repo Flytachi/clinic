@@ -26,13 +26,6 @@ $header = "Список пациентов";
 			<?php include layout('header') ?>
 			<!-- /page header -->
 
-			<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-			<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-			<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-			<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-			<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
-
 			<!-- Content area -->
 			<div class="content">
 
@@ -142,7 +135,7 @@ $header = "Список пациентов";
 																break;
 															case 2:
 																?>
-																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
 																<?php
 																break;
 															default:
@@ -184,7 +177,8 @@ $header = "Список пациентов";
 								</tbody>
 							</table>
 
-							<?php pagination_page($count, $count_elem, 4); ?>
+							<?php pagination_page($count, $count_elem, 2); ?>
+
 						</div>
 
 					</div>

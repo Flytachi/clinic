@@ -31,7 +31,7 @@ if ($_GET['items']) {
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= stack("assets/images/logo.png") ?>" width="400" height="120">
+                <img src="<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h3">
@@ -78,12 +78,8 @@ if ($_GET['items']) {
                             <tbody>
                                 <?php
                                 $i = 1;
-                                // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                                //             lat.standart_min, lat.standart_sign, lat.standart_max,
-                                //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                                //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
-                                $norm = "lat.name, lat.code, lat.standart";
-                                $sql = "SELECT la.id, la.result, la.deviation, $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = $item";
+                                $norm = "scl.name, scl.code, scl.standart";
+                                $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = $item";
                                 foreach ($db->query($sql) as $row) {
                                     ?>
                                     <tr id="text-b">
@@ -123,12 +119,8 @@ if ($_GET['items']) {
                         <tbody>
                             <?php
                             $i = 1;
-                            // $norm = "lat.name, lat.code, lat.standart_type, lat.standart_fun,
-                            //             lat.standart_min, lat.standart_sign, lat.standart_max,
-                            //             lat.standart_sex0_min, lat.standart_sex0_sign, lat.standart_sex0_max,
-                            //             lat.standart_sex1_min, lat.standart_sex1_sign, lat.standart_sex1_max";
-                            $norm = "lat.name, lat.code, lat.standart";
-                            $sql = "SELECT la.id, la.result, la.deviation, $norm, lat.unit FROM laboratory_analyze la LEFT JOIN laboratory_analyze_type lat ON (la.analyze_id = lat.id) WHERE la.visit_id = {$_GET['id']}";
+                            $norm = "scl.name, scl.code, scl.standart";
+                            $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['id']}";
                             foreach ($db->query($sql) as $row) {
                                 ?>
                                 <tr id="text-b">

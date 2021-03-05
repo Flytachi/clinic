@@ -16,7 +16,7 @@ if ($_SESSION['session_id'] == "master") {
             render('cashbox/index');
             break;
         case 4:
-            render('pharmacy/all_prep');
+            render('pharmacy/index');
             break;
         case 5:
             render('doctor/index');

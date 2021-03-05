@@ -31,8 +31,7 @@ if ($_GET['pk']) {
                             bdt.price 'bed_price',
                             ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
-                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,4)) 'cost_item_2',
-                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type = 3) 'cost_item_3'
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2'
                             -- vs.add_date
                         FROM users us
                             LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
@@ -49,7 +48,7 @@ if ($_GET['pk']) {
                 }
                 // prit($price);
 
-                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'] + $price['cost_item_3'];
+                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'];
                 ?>
                 <table class="table table-hover">
                     <tbody>

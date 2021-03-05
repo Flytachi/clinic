@@ -87,7 +87,7 @@ is_auth();
     <div id="invoice-POS" >
 
         <center>
-            <img src="<?= stack("assets/images/logo.png") ?>" alt="альтернативный текст" height="100" width="140">
+            <img src="<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>" alt="альтернативный текст" height="100" width="140">
             <div class="logo"></div>
         </center>
 
@@ -119,7 +119,7 @@ is_auth();
                     <?php $total_price = 0; ?>
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
-                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = $item AND price_date IS NOT NULL")->fetch() ?>
+                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
                         <tr class="service" style="font-size:150%;">
         					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>

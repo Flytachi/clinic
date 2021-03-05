@@ -6,8 +6,8 @@
         <div class="sidebar-user-material">
             <div class="sidebar-user-material-body">
                 <div class="card-body text-center">
-                    <h4 class="mb-0 text-white text-shadow-dark siya"><?= get_full_name() ?></h4>
-                    <span class="font-size-sm text-white text-shadow-dark siya"><?= level_name() ." ". division_name() ?></span>
+                    <h4 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h4>
+                    <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ." ". division_name() ?></span>
                 </div>
 
                 <div class="sidebar-user-material-footer">
@@ -78,6 +78,26 @@
                                     <span>Класификация персонала</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
+                                    <i class="icon-bag"></i>
+                                    <span>Услуги</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/preparats') ?>" class="nav-link legitRipple">
+                                    <i class="icon-package"></i>
+                                    <span>Препараты к услугам</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
+                                    <i class="icon-fire"></i>
+                                    <span>Анализы</span>
+                                </a>
+                            </li>
+
                             <li class="nav-item">
                                 <a href="<?= viv('admin/ward') ?>" class="nav-link legitRipple">
                                     <i class="icon-switch22"></i>
@@ -90,18 +110,6 @@
                                     <span>Койки</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
-                                    <i class="icon-bag"></i>
-                                    <span>Услуги</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
-                                    <i class="icon-fire"></i>
-                                    <span>Анализы</span>
-                                </a>
-                            </li>
                             <!--<li class="nav-item">
                                 <a href="#" class="nav-link legitRipple">
                                     <i class="icon-store"></i>
@@ -109,15 +117,9 @@
                                 </a>
                             </li> -->
                             <li class="nav-item">
-                                <a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Склад</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/member') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Врачи операторы</span>
+                                <a href="<?= viv('admin/setting') ?>" class="nav-link legitRipple">
+                                    <i class="icon-setting2"></i>
+                                    <span>Настройки</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -200,67 +202,33 @@
                         case 4:
                             ?>
                             <li class="nav-item">
-                                <a href="orders.php" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
+                                <a href="<?= viv('pharmacy/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-store"></i>
+                                    <span>Препараты</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('pharmacy/orders') ?>" class="nav-link legitRipple">
+                                    <i class="icon-task "></i>
                                     <span>Заказы</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="application.php" class="nav-link legitRipple">
+                                <a href="<?= viv('pharmacy/users') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="sales.php?id=cash&invoice" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Продажа</span>
+                                <a href="<?= viv('pharmacy/application') ?>" class="nav-link legitRipple">
+                                    <i class="icon-task "></i>
+                                    <span>Все заявки</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="products.php" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Препараты (товары)</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="customer.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Клиенты</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="supplier.php" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Поставщики</span>
-                                </a>
-                            </li>
-                            <!-- <li class="nav-item">
-                                <a href="#" class="nav-link legitRipple">
-                                    <i class="icon-bed2"></i>
-                                    <span>Отчет продаж</span>
-                                </a>
-                            </li> -->
-                            <li class="nav-item">
-                                <a href="sales_inventory.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Инвентаризация продаж</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="all_prep.php" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>Все наименования</span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="<?= viv('chat/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-width"></i>
-                                    <span>
-                                        Чат
-                                        <span class="badge bg-danger badge-pill ml-auto" id="noticeus" data-idchat="<?=$value['id']?>"><?= $count?></span>
-                                    </span>
+                                <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-stack-text"></i>
+                                    <span>Отчёт</span>
                                 </a>
                             </li>
                             <?php
@@ -359,7 +327,7 @@
                                     <i class="icon-display"></i>
                                     <span>Рабочий стол</span>
                                     <?php
-                                    $con_one = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.laboratory IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_one = $db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.laboratory IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
                                     if ($con_one) {
                                         ?>
                                         <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
@@ -443,22 +411,30 @@
                             ?>
                             <li class="nav-item">
                                 <a href="<?= viv('nurce/index') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
-                                    <span>Стационарные пациенты</span>
+                                    <i class="icon-bookmark"></i>
+                                    <span>Задания</span>
                                     <?php
-                                    $con_one = $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL")->rowCount();
+                                    $con_one = $db->query("SELECT DISTINCT b.user_id FROM bypass_date bd LEFT JOIN bypass b ON(b.id=bd.bypass_id) WHERE bd.date = CURRENT_DATE() AND status IS NOT NULL AND bd.completed IS NULL")->rowCount();
                                     if ($con_one) {
                                         ?>
-                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_one?></span>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
                                         <?php
                                     }
                                     ?>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('nurce/list_task') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('nurce/list_stationary') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
-                                    <span>Задания</span>
+                                    <span>Стационарные пациенты</span>
+                                    <?php
+                                    $con_two = $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL")->rowCount();
+                                    if ($con_two) {
+                                        ?>
+                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_two?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -475,8 +451,16 @@
                             </li>
                             <li class="nav-item">
                                 <a href="<?= viv('nurce/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
+                                    <i class="icon-store"></i>
                                     <span>Склад</span>
+                                    <?php
+                                    $con_tree = $db->query("SELECT id FROM storage_orders WHERE parent_id = {$_SESSION['session_id']}")->rowCount();
+                                    if ($con_tree) {
+                                        ?>
+                                        <span class="badge bg-indigo badge-pill ml-auto"><?=$con_tree?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
 
@@ -727,10 +711,10 @@
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
                                     <?php
-                                    $con_tree = $db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL")->rowCount();
-                                    if ($con_tree) {
+                                    $con_one = $db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL")->rowCount();
+                                    if ($con_one) {
                                         ?>
-                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_tree?></span>
+                                        <span class="badge bg-green badge-pill ml-auto"><?=$con_one?></span>
                                         <?php
                                     }
                                     ?>
@@ -744,8 +728,16 @@
                             </li>
                             <li class="nav-item">
                                 <a href="<?= viv('anesthetist/storage') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users2"></i>
+                                    <i class="icon-store"></i>
                                     <span>Склад</span>
+                                    <?php
+                                    $con_two = $db->query("SELECT id FROM storage_orders WHERE parent_id = {$_SESSION['session_id']}")->rowCount();
+                                    if ($con_two) {
+                                        ?>
+                                        <span class="badge bg-indigo badge-pill ml-auto"><?=$con_two?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -779,7 +771,7 @@
                                     <i class="icon-display"></i>
                                     <span>Рабочий стол</span>
                                     <?php
-                                    $con_one = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_one = $db->query("SELECT DISTINCT us.id, vs.service_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.physio IS NOT NULL ORDER BY vs.add_date ASC")->rowCount();
                                     if ($con_one) {
                                         ?>
                                         <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
@@ -860,7 +852,7 @@
                                     <i class="icon-display"></i>
                                     <span>Рабочий стол</span>
                                     <?php
-                                    $con_one = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_one = $db->query("SELECT DISTINCT us.id, vs.service_id  FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
                                     if ($con_one) {
                                         ?>
                                         <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>

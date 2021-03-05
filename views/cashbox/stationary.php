@@ -68,16 +68,16 @@ $header = "Рабочий стол";
                                         </thead>
                                         <tbody id="search_display">
                                             <?php
-                                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NOT NULL AND priced_date IS NULL AND service_id = 1") as $row) {
+                                            foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.priced_date IS NULL AND vs.service_id = 1") as $row) {
                                                 ?>
-                                                    <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
-                                                        <td><?= addZero($row['id']) ?></td>
-                                                        <td class="text-center">
-                                                            <a>
-                                                                <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
+                                                <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
+                                                    <td><?= addZero($row['id']) ?></td>
+                                                    <td class="text-center">
+                                                        <a>
+                                                            <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+                                                        </a>
+                                                    </td>
+                                                </tr>
                                                 <?php
                                             }
                                             ?>

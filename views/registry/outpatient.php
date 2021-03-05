@@ -26,13 +26,6 @@ $header = "Рабочий стол";
 			<?php include layout('header') ?>
 			<!-- /page header -->
 
-			<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-			<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-			<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-			<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-			<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
-
 			<!-- Content area -->
 			<div class="content">
 

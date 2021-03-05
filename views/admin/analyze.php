@@ -49,7 +49,7 @@ $header = "Анализы";
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php LaboratoryAnalyzeTypeModel::form(); ?>
+                      	<?php ServiceAnalyzeModel::form(); ?>
                   	</div>
 
             	</div>
@@ -81,7 +81,7 @@ $header = "Анализы";
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php $i=1; foreach ($db->query("SELECT lat.*, sc.name 'service_name' FROM laboratory_analyze_type lat LEFT JOIN service sc ON(sc.id=lat.service_id) ORDER BY lat.name") as $row): ?>
+									<?php $i=1; foreach ($db->query("SELECT scl.*, sc.name 'service_name' FROM service_analyze scl LEFT JOIN service sc ON(sc.id=scl.service_id) ORDER BY scl.name") as $row): ?>
 										<tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= $row['code'] ?></td>
@@ -96,8 +96,8 @@ $header = "Анализы";
                                             <td><?= ($row['status']) ? "Активный" : "Не активный" ?></td>
                                             <td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'LaboratoryAnalyzeTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row['id'], 'ServiceAnalyzeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row['id'], 'ServiceAnalyzeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
                                             </td>
                                         </tr>

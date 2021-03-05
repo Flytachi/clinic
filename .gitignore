@@ -1,6 +1,5 @@
-/tools/functions/setting.ini
-/dump/*
-/storage/*
-/node_modules/*
-/static/assets/images/logo.png
-/views/prints/title.php
+tools/functions/setting.ini
+dump/*
+storage/*
+node_modules
+views/prints/title.php

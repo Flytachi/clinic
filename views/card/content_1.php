@@ -43,13 +43,13 @@ $header = "Пациент";
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
 							if ($activity) {
-								$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+								$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							} else {
 								if ($patient->completed) {
-									$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
+									$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
 													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\")";
 								} else {
-									$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
+									$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
 													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\")";
 								}
 
@@ -59,30 +59,24 @@ $header = "Пациент";
 						} else {
 							$title = "Осмотр";
 							$table_label = "Мед Услуга";
-							$table_sql = "SELECT vs.id, vs.report_description, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
+							$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "";
 						}
 						?>
 
-						<div class="card">
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-repo-forked mr-2"></i><?= $title ?>
+							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+								<a class="float-right text-info" data-toggle="modal" data-target="#modal_add_inspection">
+									<i class="icon-plus22 mr-1"></i>Осмотр
+								</a>
+								<a class="float-right <?= $class_color_add ?> mr-2" data-toggle="modal" data-target="#modal_add_service">
+									<i class="icon-plus22 mr-1"></i>Услуга
+								</a>
+							<?php endif; ?>
+						</legend>
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title"><?= $title ?></h5>
-								<?php if ($activity): ?>
-									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item <?= $class_color_add ?> mr-3" data-toggle="modal" data-target="#modal_add_service">
-													<i class="icon-plus22"></i>Услуга
-												</a>
-												<a class="list-icons-item text-info mr-1" data-toggle="modal" data-target="#modal_add_inspection">
-													<i class="icon-plus22"></i>Осмотр
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-							</div>
+						<div class="card">
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
@@ -100,9 +94,9 @@ $header = "Пациент";
 											<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
-													<?php if ($row['report_description']): ?>
+													<?php if ($row['report_title']): ?>
 														<?php if ($row['service_id'] == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 															<?php if ($activity): ?>
@@ -111,9 +105,9 @@ $header = "Пациент";
 														<?php endif; ?>
 													<?php else: ?>
 														<?php if ($row['service_id'] == 1): ?>
-															<button onclick="CleanFormFinish('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Дополнить</button>
+															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<button onclick="CleanForm('<?= $row['id'] ?>', '<?= $row['name'] ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 														<?php endif; ?>
 													<?php endif; ?>
 												</td>
@@ -153,20 +147,20 @@ $header = "Пациент";
 
 	<?php if ($activity): ?>
 		<div id="modal_report_add" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 				<div class="modal-content border-3 border-info" id="form_card">
 
-					<?php VisitReport::form(); ?>
+					<?php // VisitReport::form(); ?>
 
 				</div>
 			</div>
 		</div>
 
 		<div id="modal_report_finish" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 				<div class="modal-content border-3 border-info" id="form_card_finish">
 
-					<?php VisitReport::form_finish(); ?>
+					<?php // VisitReport::form_finish(); ?>
 
 				</div>
 			</div>
@@ -214,24 +208,6 @@ $header = "Пациент";
 
 	<?php if ($activity): ?>
 		<script type="text/javascript">
-
-			function CleanFormFinish(id, name) {
-				$('#report_editor').html('');
-				$('#repfun_id').val(id);
-				$('#modal_report_finish').modal('show');
-				if (name) {
-					$('#report_title').val(name);
-				}
-			}
-
-			function CleanForm(id, name) {
-				$('#report_editor').html('');
-				$('#rep_id').val(id);
-				$('#modal_report_add').modal('show');
-				if (name) {
-					$('#report_title').val(name);
-				}
-			}
 
 			function Update(events) {
 				$.ajax({

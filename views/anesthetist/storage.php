@@ -59,7 +59,7 @@ $header = "Рабочий стол";
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm">
-                                <thead>
+								<thead>
                                     <tr class="bg-info">
                                         <th>Препарат</th>
                                         <th>Ответственный</th>
@@ -67,18 +67,23 @@ $header = "Рабочий стол";
                                         <th>Остаток</th>
                                         <th>Цена</th>
                                         <th>Сумма</th>
-                                        <!-- <th class="text-center" style="width:210px">Действия</th> -->
+                                        <th class="text-center" style="width:70px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($db->query("SELECT st.* FROM storage_preparat st LEFT JOIN users us ON(us.id=st.parent_id) WHERE us.user_level = 11") as $row): ?>
-                                        <tr>
-                                            <td><?= $row['preparat_code'] ?></td>
+                                    <?php foreach ($db->query("SELECT * FROM storage_home WHERE status = 11") as $row): ?>
+										<tr>
+                                            <td><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>
-                                            <td><?= $row['first_qty'] ?></td>
+                                            <td><?= $row['qty'] + $row['qty_sold'] ?></td>
                                             <td><?= $row['qty'] ?></td>
-                                            <td><?= $row['price'] ?></td>
-                                            <td><?= $row['amount'] ?></td>
+                                            <td class="text-right"><?= number_format($row['price'],1) ?></td>
+                                            <td class="text-right"><?= number_format(($row['price'] * $row['qty']), 1) ?></td>
+											<td class="text-right">
+												<div class="list-icons">
+													<a href="<?= del_url($row['id'], 'StorageHomeModel') ?>" onclick="return confirm(`Возврат препарата - '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)' ?`)" class="list-icons-item text-danger-600"><i class="icon-reply"></i></a>
+												</div>
+											</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

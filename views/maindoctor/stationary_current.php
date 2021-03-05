@@ -57,7 +57,7 @@ $header = "Текущие стационарные пациенты";
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach ($db->query("SELECT * FROM visit vs WHERE vs.service_id = 1 AND vs.bed_id IS NOT NULL AND vs.completed IS NULL ORDER BY vs.add_date DESC") as $row): ?>
+									<?php foreach ($db->query("SELECT vs.*, us.dateBith FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.service_id = 1 AND vs.bed_id IS NOT NULL AND vs.completed IS NULL ORDER BY vs.add_date DESC") as $row): ?>
 										<tr>
 											<td><?= addZero($row['user_id']) ?></td>
 											<td>

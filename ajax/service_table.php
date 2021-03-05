@@ -6,7 +6,7 @@ $i; $cost = 0;
 ?>
 <?php foreach ($_GET['divisions'] as $divis_pk): ?>
 
-    <?php foreach ($db->query("SELECT sc.id, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN ({$_GET['types']})") as $row): ?>
+    <?php foreach ($db->query("SELECT sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN ({$_GET['types']})") as $row): ?>
         <?php $i++; ?>
         <tr>
 
@@ -45,9 +45,15 @@ $i; $cost = 0;
             <?php if (!$_GET['head']): ?>
                 <td>
                     <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="form-control select" required>
-                        <?php foreach ($db->query("SELECT id from users WHERE division_id = $divis_pk") as $par): ?>
-                            <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
-                        <?php endforeach; ?>
+                        <?php if ($row['user_level'] == 6): ?>
+                            <?php foreach ($db->query("SELECT id from users WHERE user_level = 6") as $par): ?>
+                                <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($db->query("SELECT id from users WHERE division_id = $divis_pk") as $par): ?>
+                                <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
                 </td>
             <?php endif; ?>

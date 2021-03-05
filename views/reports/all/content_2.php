@@ -60,14 +60,10 @@ $header = "Общий отчёт по врачам";
 								<div class="col-md-3">
 									<label>Отдел:</label>
 									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
-									   <option value="">Выберите отдел</option>
-										<?php
-										foreach($db->query("SELECT * FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-											<?php
-										}
-										?>
+								   		<option value="">Выберите отдел</option>
+								   		<?php foreach ($db->query("SELECT * FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+									   		<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+									   	<?php endforeach; ?>
 									</select>
 								</div>
 
@@ -75,13 +71,9 @@ $header = "Общий отчёт по врачам";
 									<label>Услуга:</label>
 									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите услугу</option>
-										<?php
-										foreach($db->query("SELECT * from service WHERE user_level IN(5, 6, 10, 12)") as $row) {
-											?>
+										<?php foreach ($db->query("SELECT * from service WHERE user_level IN(5, 6, 10, 12)") as $row): ?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-											<?php
-										}
-										?>
+									   	<?php endforeach; ?>
 									</select>
 								</div>
 
@@ -89,14 +81,9 @@ $header = "Общий отчёт по врачам";
 									<label>Специалист:</label>
 									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите специалиста</option>
-										<?php
-										$parent_sql = "SELECT * from users WHERE user_level IN(5, 6, 10, 12)";
-										foreach($db->query($parent_sql) as $row) {
-											?>
+										<?php foreach ($db->query("SELECT * from users WHERE user_level IN(5, 6, 10, 12)") as $row): ?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
-											<?php
-										}
-										?>
+									   	<?php endforeach; ?>
 									</select>
 								</div>
 
@@ -108,13 +95,9 @@ $header = "Общий отчёт по врачам";
 									<label>Пациент:</label>
 									<select class="form-control form-control-select2" name="user_id" data-fouc>
 										<option value="">Выберите пациента</option>
-										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
-											?>
+										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-											<?php
-										}
-										?>
+									   	<?php endforeach; ?>
 									</select>
 								</div>
 
@@ -160,7 +143,7 @@ $header = "Общий отчёт по врачам";
 					if ($_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
 					}
-					$total_price=0;
+					$total_price = $total_price_share = 0;
 					$i=1;
 					?>
 					<div class="card border-1 border-info">
@@ -198,11 +181,20 @@ $header = "Общий отчёт по врачам";
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= $row['item_name'] ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
-												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>"><?= number_format($row['item_cost']) ?></td>
-												<td class="text-center"><?= ($row['share']) ? $row['share']."%" : '<span class="text-muted">Нет</span>'?></td>
-												<td class="text-right text-success">
+												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>">
 													<?php
-													$total_price += $row['share_price'];
+													if ($row['priced_date']) {
+														$total_price += $row['item_cost'];
+													}
+													echo number_format($row['item_cost']);
+													?>
+												</td>
+												<td class="text-center"><?= ($row['share']) ? $row['share']."%" : '<span class="text-muted">Нет</span>'?></td>
+												<td class="text-right text-<?= ($row['priced_date']) ? "success" : "danger" ?>">
+													<?php
+													if ($row['priced_date']) {
+														$total_price_share += $row['share_price'];
+													}
 													echo number_format($row['share_price']);
 													?>
 												</td>
@@ -210,8 +202,10 @@ $header = "Общий отчёт по врачам";
 										<?php endforeach; ?>
 										<tr class="table-secondary">
 											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
-											<th colspan="5" class="text-right">Итого:</th>
-											<td class="text-right text-success"><?= number_format($total_price) ?></td>
+											<th colspan="3" class="text-right">Итого:</th>
+											<td class="text-right text-success"><?= number_format($total_price, 1) ?></td>
+											<td></td>
+											<td class="text-right text-success"><?= number_format($total_price_share, 1) ?></td>
 										</tr>
 									</tbody>
 								</table>

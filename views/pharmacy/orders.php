@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(4);
-$header = "Заявки";
+$header = "Заказы";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +41,7 @@ $header = "Заявки";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h5 class="card-title">Список Пациентов</h5>
+						<h5 class="card-title">Список заказов</h5>
 						<div class="header-elements">
 							<div class="list-icons">
 								<a class="list-icons-item" data-action="collapse"></a>
@@ -83,7 +83,7 @@ $header = "Заявки";
 			</div>
             <!-- /content area -->
 
-		</div>navbar
+		</div>
 		<!-- /main content -->
 
 	</div>

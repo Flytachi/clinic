@@ -1,5 +1,28 @@
 <?php
 
+function ModelDir($dir) {
+
+   $result = array();
+
+   $cdir = scandir($dir);
+   foreach ($cdir as $key => $value)
+   {
+      if (!in_array($value,array(".","..")))
+      {
+         if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
+         {
+            $result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value);
+         }
+         else
+         {
+            $result[] = $value;
+         }
+      }
+   }
+
+   return $result;
+}
+
 function parad($title, $value) {
     echo "<strong>$title</strong>";
     echo "<pre>";
@@ -55,6 +78,10 @@ function stack($url){
     return DIR."/static/$url";
 }
 
+function node($url){
+    return DIR."/node_modules/$url";
+}
+
 function ajax($url)
 {
     return DIR."/ajax/$url".EXT;
@@ -78,7 +105,7 @@ function up_url($id, $model, $form=null){
     return $result;
 }
 
-function download_url($table, $file_name){
-    return DIR."/model/download".EXT."?table=$table&file=$file_name";
+function download_url($model, $file_name){
+    return DIR."/model/download".EXT."?model=$model&file=$file_name";
 }
 ?>

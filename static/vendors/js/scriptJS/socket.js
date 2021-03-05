@@ -298,6 +298,15 @@ conn.onmessage = function(e) {
             html: d.message
         });
     }
+  }else if (d.type == "alert_pharmacy_call"){
+    if(d.id == id){
+        swal({
+            position: 'top',
+            title: 'Внимание! Вызов с аптеки!',
+            type: 'warning',
+            html: d.message
+        });
+    }
   }else if (d.type == "accept_patient" ) {
 
       // События для монитора, принятие к доктору

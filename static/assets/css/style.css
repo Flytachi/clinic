@@ -101,7 +101,7 @@ input:focus{
    color: red;  }
 ::-moz-placeholder {  /* Firefox 19+ */
    color: red;  }
-:-ms-input-placeholder {  
+:-ms-input-placeholder {
    color: #333;  }
 
 /* Link */

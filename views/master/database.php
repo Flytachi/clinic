@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth('master');
-$header = "Контроль базы данных";
+$header = "База данных";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@ $header = "Контроль базы данных";
                 <div class="card">
 
 				    <div class="card-header header-elements-inline">
-				        <h5 class="card-title">Дамп базы данных</h5>
+				        <h5 class="card-title">База данных</h5>
 				    </div>
 
 				    <div class="card-body">
@@ -46,26 +46,30 @@ $header = "Контроль базы данных";
                         ?>
 
 				        <div class="table-responsive">
-				            <table class="table table-hover">
+				            <table class="table table-hover table-sm">
 				                <thead>
 				                    <tr class="bg-dark">
-				                        <th>#</th>
-				                        <th>Дата</th>
-				                        <th class="text-right" style="width: 100px">Действия</th>
+				                        <th>Table</th>
+                                        <td>Records</td>
+				                        <th class="text-right" style="width: 100px">Action</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
-                                    <?php
-                                     $scanned_files = array_diff(scandir("../../dump"), array('..', '.'));
-                                     $i = 1;
-                                    ?>
-                                    <?php foreach ($scanned_files as $value): ?>
+                                    <?php foreach ($db->query("show tables") as $row): ?>
                                         <tr>
-                                            <td><?= $i++ ?></td>
-                                            <td><?= substr($value, 0, 19); ?></td>
+                                            <td><?= $row['Tables_in_clinic'] ?></td>
                                             <td>
-                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>
-                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 0)" class="list-icons-up text-danger"><i class="icon-arrow-down16"></i></a>
+                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_clinic']}")->fetchColumn() ?>
+                                                <?php if ($rec == 0): ?>
+                                                    <span class="text-success"><?= $rec ?></span>
+                                                <?php elseif ($rec <= 10000000000): ?>
+                                                    <span class="text-dark"><?= $rec ?></span>
+                                                <?php else: ?>
+                                                    <span class="text-danger"><?= $rec ?></span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -85,40 +89,6 @@ $header = "Контроль базы данных";
 
 	</div>
 	<!-- /page content -->
-
-    <script type="text/javascript">
-        function Conf(url, file, st) {
-            if (st == 1) {
-                var wha = "Вы уверены что хотите откатить базу данных?";
-            }else {
-                var wha = "Вы уверены что хотите удалить базу данных?";
-            }
-            swal({
-                position: 'top',
-                title: wha,
-                type: 'info',
-                showCancelButton: true,
-                confirmButtonText: "Уверен"
-            }).then(function(ivi) {
-                if (ivi.value) {
-                    swal({
-                        position: 'top',
-                        title: 'Внимание!',
-                        text: 'Вернуть данные назад будет невозможно!',
-                        type: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: "Да"
-                    }).then(function(ivi) {
-                        if (ivi.value) {
-                            console.log(file);
-                            location = url+"?file="+file+"&status="+st;
-                        }
-                    });
-                }
-
-            });
-        }
-    </script>
 
 </body>
 </html>

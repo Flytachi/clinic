@@ -65,8 +65,13 @@ $header = "Все пациенты";
                                 </thead>
                                 <tbody id="search_display">
                                     <?php
-                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC")->fetchAll());
-									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 ORDER BY us.id ASC") as $row) {
+									$i = 1;
+									$count_elem = 20;
+				                	$count = ceil(intval($db->query("SELECT COUNT(DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date) FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15")->fetchColumn()) / $count_elem);
+				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
+				                	$offset = intval($_GET['of']) * $count_elem;
+
+									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 ORDER BY us.id ASC LIMIT $count_elem OFFSET $offset") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -83,7 +88,10 @@ $header = "Все пациенты";
                                     ?>
                                 </tbody>
                             </table>
+
                         </div>
+
+						<?php pagination_page($count, $count_elem, 2); ?>
 
 					</div>
 

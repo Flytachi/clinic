@@ -10,7 +10,6 @@ $header = "Пациент";
 
 <script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
 
-<script src="<?= stack("global_assets/js/demo_pages/form_multiselect.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js") ?>"></script>
 
 <body>
@@ -45,30 +44,26 @@ $header = "Пациент";
 
 						<?php include "content_tabs.php"; ?>
 
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-magazine mr-2"></i>Лист назначений
+							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+									<i class="icon-plus22 mr-1"></i>Добавить
+								</a>
+								<!-- <a class="float-right text-info mr-2" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-drawer3 mr-1"></i>Сводка анализов
+								</a> -->
+							<?php endif; ?>
+						</legend>
+
 						<div class="card">
-
-							<div class="card-header header-elements-inline">
-								<h6 class="card-title">Лист назначений</h6>
-								<?php if ($activity): ?>
-									<?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-
-							</div>
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered">
 									<thead>
 										<tr class="bg-info">
 											<th style="width: 40px !important;">№</th>
-											<th style="width: 400px;">Препарат</th>
+											<th style="width: 45%;">Препарат</th>
 											<th>Описание</th>
 											<th class="text-center" style="width: 150px;">Метод введения </th>
 											<th class="text-center" style="width: 100px;">Время</th>
@@ -84,15 +79,15 @@ $header = "Пациент";
 												<td><?= $i++ ?></td>
 												<td>
 													<?php
-													foreach ($db->query("SELECT pt.product_code FROM bypass_preparat bp LEFT JOIN products pt ON(bp.preparat_id=pt.product_id) WHERE bp.bypass_id = {$row['id']}") as $serv) {
-														echo $serv['product_code']."<br>";
+													foreach ($db->query("SELECT preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+														echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
 													}
 													?>
 												</td>
 												<td><?= $row['description'] ?></td>
 												<td><?= $methods[$row['method']] ?></td>
 												<td class="text-center">
-													<?php foreach ($db->query("SELECT bd.status, bd.completed, bt.time FROM bypass_date bd LEFT JOIN bypass_time bt ON(bt.id=bd.bypass_time_id) WHERE bd.bypass_id = {$row['id']} AND bd.date = CURRENT_DATE()") as $time): ?>
+													<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
 														<?php if ($time['status']): ?>
 															<?php if ($time['completed']): ?>
 																<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
@@ -105,7 +100,7 @@ $header = "Пациент";
 													<?php endforeach; ?>
 												</td>
 												<td>
-													<button onclick="Check('<?= viv('doctor/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
+													<button onclick="Check('<?= viv('card/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
 												</td>
 											</tr>
 											<?php
@@ -139,7 +134,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">×</button>
 					</div>
 
-					<?= BypassModel::form() ?>
+					<?php BypassModel::form() ?>
 
 				</div>
 			</div>

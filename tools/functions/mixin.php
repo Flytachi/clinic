@@ -41,16 +41,18 @@ function insert($tb, $post)
     }
 }
 
-function insert_or_update($tb, $post)
+function insert_or_update($tb, $post, $name_pk)
 {
     global $db;
-    if ($post['id'] > 0) {
+    $lb = ($name_pk) ? $name_pk : "id";
+
+    if (isset($post[$lb])) {
         // connect
-        $pk = $post['id'];
-        unset($post['id']);
+        $pk = $post[$lb];
+        unset($post[$lb]);
 
         // select
-        if ($db->query("SELECT id FROM $tb WHERE id = $pk")->fetchColumn()) {
+        if ($db->query("SELECT $lb FROM $tb WHERE $lb = \"$pk\"")->fetchColumn()) {
             // update
             foreach (array_keys($post) as $key) {
                 if (isset($col)) {
@@ -69,7 +71,7 @@ function insert_or_update($tb, $post)
                 }
                 $sql = "UPDATE $tb SET $col WHERE $filter";
             }else {
-                $sql = "UPDATE $tb SET $col WHERE id = $pk";
+                $sql = "UPDATE $tb SET $col WHERE $lb = \"$pk\"";
             }
             try{
                 $stm = $db->prepare($sql)->execute($post);
@@ -81,6 +83,7 @@ function insert_or_update($tb, $post)
         } else {
             // insert
             global $db;
+            $post[$lb] = $pk;
             $col = implode(",", array_keys($post));
             $val = ":".implode(", :", array_keys($post));
             $sql = "INSERT INTO $tb ($col) VALUES ($val)";
@@ -183,14 +186,52 @@ function error($url){
     exit;
 }
 
-
+function T_create($sql)
+{
+    global $db;
+    $db->exec($sql);
+}
 
 function T_flush($table)
 {
     global $db;
-    $PDOStatement = $db->prepare("TRUNCATE TABLE $table;");
-    $PDOStatement->execute();
-    return True;
+    $db->exec("TRUNCATE TABLE $table;");
+}
+
+function T_FLUSH_database()
+{
+    global $db;
+
+    try {
+        $db->beginTransaction();
+
+        foreach ($db->query("SHOW TABlES") as $table) {
+            T_flush($table['Tables_in_clinic']);
+        }
+
+        $db->commit();
+        return 200;
+    } catch (Exception $e) {
+        $db->rollBack();
+        return "Ошибка: " . $e->getMessage();
+    }
+
+}
+
+function T_INITIALIZE_database($data)
+{
+    global $db;
+    try {
+        $db->beginTransaction();
+        foreach ($data as $table_sql) {
+            $db->exec($table_sql);
+        }
+        $db->commit();
+        return 200;
+    } catch (Exception $e) {
+        $db->rollBack();
+        return "Ошибка: " . $e->getMessage();
+    }
 }
 
 ?>

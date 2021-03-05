@@ -21,7 +21,6 @@ class Model
         unset($this->post);
     }
 
-
     public function set_table($table)
     {
         $this->table = $table;

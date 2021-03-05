@@ -59,13 +59,12 @@ $header = "Журнал";
                                         <th>Диагноз</th>
                                         <th>Отдел</th>
                                         <th>Дата выписки</th>
-                                        <th>Отказ</th>
                                         <th>Лечащий врач</th>
                                         <!-- <th class="text-center" style="width:210px">Действия</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php $i=1; foreach ($db->query("SELECT vs.id, vs.user_id, vs.add_date, us.region, us.residenceAddress, us.numberPhone, vs.report_diagnostic, vs.completed, vs.parent_id FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id)  WHERE vs.direction IS NOT NULL AND vs.service_id = 1") as $row): ?>
+                                    <?php $i=1; foreach ($db->query("SELECT vs.id, vs.user_id, vs.add_date, us.region, us.residenceAddress, us.numberPhone, vs.report, vs.completed, vs.parent_id FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id)  WHERE vs.direction IS NOT NULL AND vs.service_id = 1 ORDER BY vs.add_date") as $row): ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= addZero($row['user_id']) ?></td>
@@ -75,10 +74,9 @@ $header = "Журнал";
                                             <td><?= $row['numberPhone'] ?></td>
                                             <td></td>
                                             <td><?= $row['id'] ?></td>
-                                            <td><?= $row['report_diagnostic'] ?></td>
+                                            <td><?= str_replace("Сопутствующие заболевания:", '', stristr(str_replace("Клинический диагноз:", '', stristr($row['report'], "Клинический диагноз:")), "Сопутствующие заболевания:", true)) ?></td>
                                             <td><?= division_title($row['parent_id']) ?></td>
-                                            <td><?= $row['completed'] ?></td>
-                                            <td></td>
+											<td><?= date('d.m.y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>

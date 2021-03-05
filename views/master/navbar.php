@@ -1,4 +1,4 @@
-<div class="navbar navbar-expand-md navbar-dark bg-dark navbar-static" >
+<div class="navbar navbar-expand-md navbar-dark bg-dark navbar-static fixed-top">
     <div class="navbar-brand">
         <a href="index.php" class="d-inline-block">
             <img src="<?= stack("global_assets/images/logo_light.png") ?>" alt="">

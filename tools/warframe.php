@@ -64,6 +64,12 @@ $FLOOR = array(
     3 => "3 этаж",
 );
 
+$CATEGORY = array(
+    2 => "Лекарства",
+    3 => "Расходные материалы",
+    4 => "Наркотические вещества",
+);
+
 $methods = array(
     1 => "Через рот",
     2 => "Внутримышечный (в/м)",
@@ -87,10 +93,12 @@ else $_SESSION['browser'] = "Неизвестный";
 
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
-require_once 'models.php';
-require_once 'forms.php';
-require_once 'forms_2.php';
+require_once 'functions/base.php';
+require_once 'functions/model.php';
 
+foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/tools/models") as $filename) {
+    require_once 'models/'.$filename;
+}
 
 function get_full_name($id = null) {
     global $db;
@@ -120,7 +128,7 @@ function get_name($id = null) {
     return ucwords($stmt->last_name." ".$stmt->first_name);
 }
 
-function level() {
+function level($id = null) {
     /*
     level()
     */
@@ -128,7 +136,9 @@ function level() {
     if ($_SESSION['session_id'] == "master") {
         return "master";
     }
-    $id = $_SESSION['session_id'];
+    if(empty($id)){
+        $id = $_SESSION['session_id'];
+    }
     $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     return intval($stmt);
 }
@@ -296,12 +306,24 @@ function read_excel($filepath){
     return $ar; //возвращаем массив
 }
 
-function write_excel($table, $file_name = "docs")
+function write_excel($table, $file_name = "docs", $table_label=null)
 {
     global $db;
     include 'PHPExcel/Classes/PHPExcel.php';
 
-    $table_label = $db->query("DESCRIBE $table")->fetchAll();
+    if ($table_label) {
+        foreach ($table_label as $key => $value) {
+            $labels[] = $value;
+        }
+        $sql_select = implode(array_keys($table_label), ", ");
+    }else {
+        $table_q = $db->query("DESCRIBE $table")->fetchAll();
+        foreach ($table_q as $key => $value) {
+            $labels[] = $value['Field'];
+        }
+        $sql_select = implode($labels, ", ");
+    }
+
     $excel_column = array(
         0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D',
         4 => 'E', 5 => 'F', 6 => 'G', 7 => 'H',
@@ -332,20 +354,20 @@ function write_excel($table, $file_name = "docs")
        ->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
 
     //Имя страницы
-    $active_sheet->setTitle("Данные из docs");
+    $active_sheet->setTitle("Данные ".showTitle());
     $active_sheet->getRowDimension("1")->setRowHeight(25);
 
     //Ширина стобцов
-    for ($i=0; $i < count($table_label); $i++) {
-        $erch = "{$excel_column[$i]}1";
-        $active_sheet->getColumnDimension($excel_column[$i])->setWidth(20);
-        $active_sheet->setCellValue($erch, $table_label[$i]['Field']);
+    foreach ($labels as $key => $value) {
+        $erch = "{$excel_column[$key]}1";
+        $active_sheet->getColumnDimension($excel_column[$key])->setWidth(20);
+        $active_sheet->setCellValue($erch, $value);
         $active_sheet->getStyle($erch)->getFont()->setBold(true);
 
-        if ($table_label[$i]['Field'] == "name") {
-            $active_sheet->getColumnDimension($excel_column[$i])->setWidth(70);
+        if (in_array($value, ['Услуга', 'Препарат'])) {
+            $active_sheet->getColumnDimension($excel_column[$key])->setWidth(70);
         } else {
-            $active_sheet->getColumnDimensionByColumn($excel_column[$i])->setAutoSize(true);
+            $active_sheet->getColumnDimensionByColumn($excel_column[$key])->setAutoSize(true);
         }
         $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -365,18 +387,18 @@ function write_excel($table, $file_name = "docs")
         ));
     }
 
-    if ($table = "service") {
-        $sql = "SELECT * FROM $table WHERE type != 101";
+    if ($table == "service") {
+        $sql = "SELECT $sql_select FROM $table WHERE type != 101";
     }else {
-        $sql = "SELECT * FROM $table";
+        $sql = "SELECT $sql_select FROM $table";
     }
 
     foreach ($db->query($sql) as $key => $row) {
         $kt = $key+2;
-        for ($i=0; $i < count($row); $i++) {
-            $erch = "{$excel_column[$i]}$kt";
-            // echo "$erch => {$row[$table_label[$i]['Field']]}<br>";
-            $active_sheet->setCellValue($erch, $row[$table_label[$i]['Field']]);
+        foreach ($labels as $key_st => $value) {
+            $erch = "{$excel_column[$key_st]}$kt";
+            // echo "$erch => ".$row[array_keys($row)[$key_st]]."<br>";
+            $active_sheet->setCellValue($erch, $row[array_keys($row)[$key_st]]);
             $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
             $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $active_sheet->getStyle($erch)->applyFromArray(array(
@@ -454,9 +476,7 @@ function pagination_page($count, $elem, $count_button = 2)
 {
     $count -= 1;
 
-    echo "<div class=\"card card-body text-center\">";
-        echo "<ul class=\"pagination align-self-center\">";
-
+    echo "<ul class=\"pagination align-self-center justify-content-center mt-3\" >";
 
     for ($i= intval($_GET['of']) - 1, $a = 0; $i < intval($_GET['of']) and $i >= (intval($_GET['of']) - $elem) and  $i >= 0 and $a != $count_button; $i--, $a++) {
 
@@ -468,16 +488,17 @@ function pagination_page($count, $elem, $count_button = 2)
     // echo $mas[0];
 
     if(intval($_GET['of']) >= ($count_button + 1) and isset($mas)){
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>0</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=0' class='page-link' legitRipple>1</a></li>";
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor($mas[0] / 2) ) ."' class='page-link' legitRipple>...</a></li>";
     }
 
 
     foreach ($mas as $key) {
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
+        $label = $key + 1;
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$label</a></li>";
     }
 
-    echo "<li class=\"page-item active\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of']) ."\" class=\"page-link legitRipple\">". intval($_GET['of']) ."</a></li>";
+    echo "<li class=\"page-item active\"><a href=\"". $_SERVER['PHP_SELF'] ."?of=". ($_GET['of']) ."\" class=\"page-link legitRipple\">". intval($_GET['of'] + 1) ."</a></li>";
 
 
 
@@ -488,17 +509,17 @@ function pagination_page($count, $elem, $count_button = 2)
 
 
     foreach ($mas1 as $key) {
-
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$key</a></li>";
+        $label = $key + 1;
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($key)."' class='page-link' legitRipple>$label</a></li>";
     }
 
     if( ($count - intval($_GET['of'])) >= ($count_button + 1) and isset($mas1)){
+        $label = $count + 1;
         echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".(floor((end($mas1)  + $count) / 2 )) ."' class='page-link' legitRipple>...</a></li>";
-        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count)."' class='page-link' legitRipple>$count</a></li>";
+        echo "<li class=page-item><a href='". $_SERVER['PHP_SELF'] ."?of=".($count)."' class='page-link' legitRipple>$label</a></li>";
     }
 
-        echo "</ul>";
-    echo "</div>";
+    echo "</ul>";
 }
 
 ?>

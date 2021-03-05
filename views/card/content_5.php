@@ -39,26 +39,21 @@ $header = "Пациент";
 
 						<?php include "content_tabs.php"; ?>
 
-						<div class="card">
+						<legend class="font-weight-semibold text-uppercase font-size-sm">
+							<i class="icon-fire2 mr-2"></i>Анализы
+							<?php if ($activity and permission(5)): ?>
+								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-plus22 mr-1"></i>Добавить
+								</a>
+								<a class="float-right text-info mr-2" data-toggle="modal" data-target="#modal_route">
+									<i class="icon-drawer3 mr-1"></i>Сводка анализов
+								</a>
+							<?php else: ?>
+								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right <?= $class_color_add ?> mr-1"><i class="icon-printer2"></i></a>
+							<?php endif; ?>
+						</legend>
 
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">Анализы Пациента</h5>
-								<?php if ($activity): ?>
-									<?php if (!$patient->direction or ($patient->direction and $patient->grant_id == $_SESSION['session_id'])): ?>
-										<div class="header-elements">
-											<div class="list-icons">
-												<a class="list-icons-item <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
-													<i class="icon-plus22"></i>Добавить
-												</a>
-											</div>
-										</div>
-									<?php endif; ?>
-								<?php else: ?>
-									<div class="header-elements">
-										<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm btn-outline-info">Печать</button>
-									</div>
-								<?php endif; ?>
-							</div>
+						<div class="card">
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
@@ -78,11 +73,11 @@ $header = "Пациент";
 										<?php
 										$i = 1;
 										if ($patient->completed) {
-											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name
+											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.laboratory IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
 										} else {
-											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name
+											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.laboratory IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\") ORDER BY vs.id DESC";
 										}
@@ -113,7 +108,7 @@ $header = "Пациент";
 																break;
 															case 2:
 																?>
-																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
 																<?php
 																break;
 															default:
@@ -129,8 +124,8 @@ $header = "Пациент";
 													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-														<?php if (!$row['accept_date']): ?>
+														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<?php if (!$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
 															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 													</div>

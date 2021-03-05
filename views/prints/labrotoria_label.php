@@ -39,7 +39,7 @@ is_auth();
         //float: left;
         height: 90px;
         width: 110px;
-        background: url("<?= stack("assets/images/logo.png") ?>") no-repeat;
+        background: url("<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>") no-repeat;
         background-size: 110px 90px;
     }
     .clientlogo{
@@ -89,7 +89,7 @@ is_auth();
             <div class="info">
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
-                    <b>ID</b>: <?= $_GET['num'] ?></br>
+                    <b>ID</b>: <?= $_GET['id'] ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?>
                 </p>
             </div>

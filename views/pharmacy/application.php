@@ -38,47 +38,91 @@ $header = "Заявки";
 				}
 				?>
 
-				<div class="card border-1 border-info">
+                <form method="post" action="<?= add_url() ?>">
+                    <input type="hidden" name="model" value="StorageHomeModel">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h5 class="card-title">Список Пациентов</h5>
-						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
-						</div>
-					</div>
+                    <div class="card border-1 border-info">
 
-					<div class="card-body">
+                        <div class="card-header text-dark header-elements-inline alpha-info">
+                            <h5 class="card-title">Список Заявок</h5>
+                            <div class="header-elements">
+                                <div class="list-icons">
+                                    <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
+                                        <option></option>
+                                        <?php
+                                        foreach($db->query("SELECT * from users WHERE user_level = 7") as $row) {
+                                            ?>
+                                            <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
+                                            <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-						<div class="table-responsive card">
-				            <table class="table table-hover table-sm">
-				                <thead>
-				                    <tr class="bg-blue">
-				                        <th>ID</th>
-				                        <th>ФИО</th>
-				                        <th>Отдел</th>
-                                        <th>Лечащий врач</th>
-				                    </tr>
-				                </thead>
-				                <tbody>
-                                    <?php foreach ($db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NOT NULL") as $row): ?>
-                                        <tr onclick="Check('<?= viv('pharmacy/application_preparat') ?>?pk=<?= $row['user_id'] ?>')">
-                                            <td><?= addZero($row['user_id']) ?></td>
-                                            <td><?= get_full_name($row['user_id']) ?></td>
-                                            <td><?= division_title($row['parent_id']) ?></td>
-                                            <td><?= get_full_name($row['parent_id']) ?></td>
+                        <div class="card-body">
+
+                            <div class="table-responsive card">
+                                <table class="table table-hover table-sm">
+                                    <thead>
+                                        <tr class="bg-blue">
+                                            <th style="width: 50%">Препарат</th>
+                                            <th class="text-center">На складе</th>
+                                            <th class="text-center">Ко-во (требуется)</th>
+                                            <th class="text-center" style="width: 100px">Ко-во</th>
+                                            <th class="text-right">Цена ед.</th>
+                                            <th class="text-right">Сумма</th>
+                                            <th class="text-right">Действия</th>
                                         </tr>
-                                    <?php endforeach; ?>
-				                </tbody>
-				            </table>
-				        </div>
+                                    </thead>
+                                    <tbody>
+                                        <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) ORDER BY sr.preparat_id") as $row): ?>
+                                            <tr id="TR_<?= $row['id'] ?>">
+                                                <td><?= $row['name'] ?></td>
+                                                <td class="text-center">
+                                                    <?php if ($row['qty_have'] > $row['qty']): ?>
+                                                        <span class="text-success"><?= $row['qty_have'] ?></span>
+                                                    <?php else: ?>
+                                                        <span class="text-danger"><?= $row['qty_have'] ?></span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td class="text-center"><?= $row['qty'] ?></td>
+                                                <td class="text-center table-primary">
+                                                    <input type="number" class="form-control" name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
+                                                </td>
+                                                <td class="text-right"><?= number_format($row['price']) ?></td>
+                                                <td class="text-right">
+                                                    <?php
+                                                    $total_cost += $row['total_price'];
+                                                    echo number_format($row['total_price']);
+                                                    ?>
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="list-icons">
+                                                        <a onclick="Delete('<?= del_url($row['id'], 'StorageOrdersModel') ?>', '#TR_<?= $row['id'] ?>')" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        <tr class="table-secondary">
+                                            <td colspan="5" class="text-right"><b>Итого:</b></td>
+                                            <td class="text-right"><b><?= number_format($total_cost) ?></b></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-					</div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-sm btn-outline-success" <?= ($total_cost) ? "" : "disabled" ?>>Отправить</button>
+                            </div>
 
-				</div>
+                        </div>
 
-                <div id="user_preparat_div"></div>
+                    </div>
+
+                </form>
 
 			</div>
             <!-- /content area -->
@@ -91,15 +135,20 @@ $header = "Заявки";
 
     <script type="text/javascript">
 
-        function Check(events) {
+        function Delete(url, tr) {
+            event.preventDefault();
             $.ajax({
-				type: "GET",
-				url: events,
-				success: function (result) {
-					$('#user_preparat_div').html(result);
-				},
-			});
-        }
+                type: "GET",
+                url: url,
+                success: function (data) {
+                    $(tr).css("background-color", "rgb(244, 67, 54)");
+                    $(tr).css("color", "white");
+                    $(tr).fadeOut(900, function() {
+                        $(tr).remove();
+                    });
+                },
+            });
+        };
 
 		function CallMed(id){
 			if (id) {

@@ -258,7 +258,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 															break;
 														case 2:
 															?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
 															<?php
 															break;
 														default:
