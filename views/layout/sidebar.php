@@ -118,7 +118,7 @@
                             </li> -->
                             <li class="nav-item">
                                 <a href="<?= viv('admin/setting') ?>" class="nav-link legitRipple">
-                                    <i class="icon-setting2"></i>
+                                    <i class="icon-cog2"></i>
                                     <span>Настройки</span>
                                 </a>
                             </li>
