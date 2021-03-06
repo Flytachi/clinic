@@ -700,9 +700,9 @@ class NotesModel extends Model
      }
  }
 
-class TempscleModel extends Model
+class TemplateModel extends Model
 {
-    public $table = 'tempscles';
+    public $table = 'templates';
 
     public function form($pk = null)
     {
