@@ -119,10 +119,10 @@ $header = "Отчёт аптеки по расходам";
 						<div class="card-body">
 
 							<div class="table-responsive card">
-								<table class="table table-hover table-sm id="table"">
+								<table class="table table-hover table-sm" id="table">
 									<thead>
 										<tr class="bg-info">
-											<th>Ответственный</th>
+											<th>Тип расхода</th>
 											<th style="width:40%">Препарат</th>
 											<th>Поставщик</th>
 											<th>Код</th>
@@ -134,7 +134,16 @@ $header = "Отчёт аптеки по расходам";
 									<tbody>
 										<?php $total_qty=0;$total_amount=0;foreach ($db->query($sql) as $row): ?>
 											<tr>
-												<td><?= get_full_name($row['parent_id']) ?></td>
+												<td>
+													<?php if (!$row['operation_id'] AND !$row['parent_id']): ?>
+														Внешний
+													<?php elseif($row['operation_id']): ?>
+														Операционный
+													<?php else: ?>
+														Внутренний
+													<?php endif; ?>
+												</td>
+												<!-- <td><?= get_full_name($row['parent_id']) ?></td> -->
 												<td><?= $row['name'] ?></td>
 												<td><?= $row['supplier'] ?></td>
 												<td><?= $row['code'] ?></td>

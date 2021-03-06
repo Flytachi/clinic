@@ -41,7 +41,7 @@ function insert($tb, $post)
     }
 }
 
-function insert_or_update($tb, $post, $name_pk)
+function insert_or_update($tb, $post, $name_pk = null)
 {
     global $db;
     $lb = ($name_pk) ? $name_pk : "id";
@@ -50,9 +50,13 @@ function insert_or_update($tb, $post, $name_pk)
         // connect
         $pk = $post[$lb];
         unset($post[$lb]);
+        $where = "$lb = $pk";
+        if ($name_pk and !intval($pk)) {
+            $where = "$lb = \"$pk\"";
+        }
 
         // select
-        if ($db->query("SELECT $lb FROM $tb WHERE $lb = \"$pk\"")->fetchColumn()) {
+        if ($db->query("SELECT $lb FROM $tb WHERE ".$where)->fetchColumn()) {
             // update
             foreach (array_keys($post) as $key) {
                 if (isset($col)) {
@@ -71,7 +75,7 @@ function insert_or_update($tb, $post, $name_pk)
                 }
                 $sql = "UPDATE $tb SET $col WHERE $filter";
             }else {
-                $sql = "UPDATE $tb SET $col WHERE $lb = \"$pk\"";
+                $sql = "UPDATE $tb SET $col WHERE ".$where;
             }
             try{
                 $stm = $db->prepare($sql)->execute($post);

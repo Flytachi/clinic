@@ -1,6 +1,11 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
+
+$comp = $db->query("SELECT * FROM company")->fetchAll();
+foreach ($comp as $value) {
+    $company[$value['const_label']] = $value['const_value'];
+}
 ?>
 <style>
     #invoice-POS{
@@ -35,15 +40,6 @@ is_auth();
     #top{min-height: 100px;}
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
-
-    /*.logo{
-        //float: left;
-        height: 90px;
-        width: 110px;
-        background: url(icon/company.png) no-repeat;
-        background: url("<?= stack("assets/images/logo.png") ?>") no-repeat;
-        background-size: 110px 90px;
-    }*/
     .clientlogo{
         float: left;
         height: 60px;
@@ -87,8 +83,7 @@ is_auth();
     <div id="invoice-POS" >
 
         <center>
-            <img src="<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>" alt="альтернативный текст" height="100" width="140">
-            <div class="logo"></div>
+            <img src="<?= $company['print_header_logotype'] ?>" alt="альтернативный текст" height="100" width="140">
         </center>
 
         <div id="mid">

@@ -1,6 +1,11 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
+
+$comp = $db->query("SELECT * FROM company")->fetchAll();
+foreach ($comp as $value) {
+    $company[$value['const_label']] = $value['const_value'];
+}
 ?>
 <style>
     #invoice-POS{
@@ -35,21 +40,6 @@ is_auth();
     #mid{min-height: 80px;}
     #bot{ min-height: 50px;}
 
-    #top .logo{
-        //float: left;
-        height: 90px;
-        width: 110px;
-        background: url("<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>") no-repeat;
-        background-size: 110px 90px;
-    }
-    .clientlogo{
-        float: left;
-    	height: 60px;
-    	width: 60px;
-    	background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
-    	background-size: 60px 60px;
-        border-radius: 50px;
-    }
     .info{
       display: block;
       //float:left;

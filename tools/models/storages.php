@@ -14,6 +14,7 @@ class Storage extends Model
         'cost' => 'Цена прихода',
         'price' => 'Цена расхода',
         'faktura' => 'Счёт фактура',
+        'shtrih' => 'Штрих код',
         'add_date' => 'Дата поставки',
         'die_date' => 'Срок годности',
     );
@@ -240,9 +241,21 @@ class StorageOrdersModel extends Model
                         <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required <?= ($pk) ? "disabled" : "data-fouc" ?>>
                             <option></option>
                             <?php if (permission(11)): ?>
-                                <?php $sql = "SELECT * FROM storage WHERE category = 4 AND qty != 0"; ?>
+                                <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
+                                    (
+                                        st.qty -
+                                        IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
+                                        IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
+                                    ) 'qty'
+                                    FROM storage st WHERE st.category = 4 AND st.qty != 0"; ?>
                             <?php else: ?>
-                                <?php $sql = "SELECT * FROM storage WHERE category IN (2, 3) AND qty != 0"; ?>
+                                <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
+                                                (
+                                                    st.qty -
+                                                    IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
+                                                    IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
+                                                ) 'qty'
+                                                FROM storage st WHERE st.category IN (2, 3) AND st.qty != 0"; ?>
                             <?php endif; ?>
                             <?php foreach ($db->query($sql) as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['preparat_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
@@ -557,8 +570,9 @@ class StorageHomeModel extends Model
             $this->storage_home($post);
             $object = Mixin\delete('storage_orders', $order_pk);
         }
-        $db->commit();
-        $this->success();
+        $this->mod('test');
+        // $db->commit();
+        // $this->success();
     }
 
     public function add_sales($arr)
@@ -751,6 +765,104 @@ class StorageHomeForm extends Model
         render();
     }
 
+}
+
+class StorageSale extends Model
+{
+    public $table = 'storage';
+
+    public function form()
+    {
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+
+            <div class="table-responsive card">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr class="bg-info">
+                            <th style="width:55%">Препарат</th>
+                            <th class="text-right" style="width: 100px">Кол-во</th>
+                            <th class="text-right">Цена ед.</th>
+                            <th class="text-right" style="width:50px">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sale_items">
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-outline-success btn-sm">Продажа</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function clean()
+    {
+        global $db;
+        $db->beginTransaction();
+        if (!$this->post['preparat']) {
+            $this->error('Пустой запрос!');
+        }
+        foreach ($this->post['preparat'] as $key => $value) {
+            $qty = $this->post['qty'][$key];
+            if ($qty > $value) {
+                $this->error('Ошибка в колличестве!');
+            }
+            $post = $db->query("SELECT * FROM storage WHERE id = $key")->fetch();
+            unset($post['add_date']);
+            $post['parent_id'] = $this->post['parent_id'];
+            // расход препеарата
+            $object = Mixin\update('storage', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $key);
+            if (!intval($object)) {
+                $this->error('storage '.$object);
+                $db->rollBack();
+            }
+            $arr = array(
+                'code' => $post['code'], 'name' => $post['name'],
+                'supplier' => $post['supplier'], 'qty' => $qty,
+                'price' => $post['price'], 'amount' => $qty * $post['price']);
+            $this->add_sales($arr);
+        }
+        $db->commit();
+        $this->success();
+    }
+
+    public function add_sales($arr)
+    {
+        global $db;
+        $object = Mixin\insert('storage_sales', $arr);
+        if (!intval($object)) {
+            $this->error('storage_sales '.$object);
+            $db->rollBack();
+        }
+    }
+
+    public function success()
+    {
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
+    }
+
+    public function error($message)
+    {
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
+    }
 }
 
 ?>

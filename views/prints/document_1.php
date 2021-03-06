@@ -2,6 +2,11 @@
 require_once '../../tools/warframe.php';
 is_auth();
 
+$comp = $db->query("SELECT * FROM company")->fetchAll();
+foreach ($comp as $value) {
+    $company[$value['const_label']] = $value['const_value'];
+}
+
 $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_title, vs.report, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
@@ -15,12 +20,14 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn() ?>" width="400" height="120">
+                <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h3">
                 <b>
-                    <?php include 'title.php' ?>
+                    <?= $company['print_header_title'] ?><br>
+                    <?= $company['print_header_address'] ?><br>
+                    <?= $company['print_header_phones'] ?>
                 </b>
             </div>
 

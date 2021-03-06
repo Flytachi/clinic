@@ -118,7 +118,7 @@
                             </li> -->
                             <li class="nav-item">
                                 <a href="<?= viv('admin/setting') ?>" class="nav-link legitRipple">
-                                    <i class="icon-setting2"></i>
+                                    <i class="icon-cog2"></i>
                                     <span>Настройки</span>
                                 </a>
                             </li>
@@ -202,6 +202,12 @@
                         case 4:
                             ?>
                             <li class="nav-item">
+                                <a href="<?= viv('pharmacy/sale') ?>" class="nav-link legitRipple">
+                                    <i class="icon-coins"></i>
+                                    <span>Продажа</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('pharmacy/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-store"></i>
                                     <span>Препараты</span>
@@ -211,12 +217,28 @@
                                 <a href="<?= viv('pharmacy/orders') ?>" class="nav-link legitRipple">
                                     <i class="icon-task "></i>
                                     <span>Заказы</span>
+                                    <?php
+                                    $con_one = $db->query("SELECT DISTINCT parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NULL")->rowCount();
+                                    if ($con_one) {
+                                        ?>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="<?= viv('pharmacy/users') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Пациенты</span>
+                                    <?php
+                                    $con_two = $db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NOT NULL")->rowCount();
+                                    if ($con_two) {
+                                        ?>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_two?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">

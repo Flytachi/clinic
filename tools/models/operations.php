@@ -149,7 +149,7 @@ class OperationModel extends Model
             $this->post['completed'] = $this->post['finish_date']." ".$this->post['finish_time'];
             unset($this->post['finish_date']);
             unset($this->post['finish_time']);
-        }else {
+        }elseif ($this->post['oper_date']){
             $this->post['oper_date'] .= " ".$this->post['oper_time'];
             unset($this->post['oper_time']);
         }
@@ -164,6 +164,7 @@ class OperationModel extends Model
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
+            $db->beginTransaction();
 
             if ($this->post['completed']) {
                 $post_price = $db->query("SELECT id, item_cost FROM visit_price WHERE operation_id = {$pk}")->fetch();
@@ -172,8 +173,9 @@ class OperationModel extends Model
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_service WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost*item_qty) FROM operation_preparat WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_consumables WHERE operation_id = {$pk}")->fetchColumn();
-                $db->beginTransaction();
 
+                $this->storage_sales($pk);
+                // обновление цены
                 $object = Mixin\update('visit_price', $post_price, $post_price_pk);
                 if (!intval($object)){
                     $this->error($object);
@@ -187,6 +189,40 @@ class OperationModel extends Model
             $db->commit();
             $this->success();
 
+        }
+    }
+
+    public function storage_sales($pk)
+    {
+        global $db;
+        $sql = "SELECT st.id, st.code,
+                    st.name, st.supplier,
+                    opp.item_qty 'qty',
+                    (st.qty - opp.item_qty) 'storage_qty',
+                    (st.qty_sold + opp.item_qty) 'storage_qty_sold',
+                    (st.price * opp.item_qty) 'amount',
+                    st.price, $pk 'operation_id'
+                FROM operation_preparat opp
+                    LEFT JOIN storage st ON(st.id=opp.item_id)
+                WHERE opp.operation_id = $pk";
+        foreach ($db->query($sql) as $post) {
+            $object = Mixin\update('storage', array('qty' => $post['storage_qty'], 'qty_sold' => $post['storage_qty_sold']), $post['id']);
+            if (!intval($object)) {
+                $this->error('storage '.$object);
+                $db->rollBack();
+            }
+            unset($post['id'], $post['storage_qty'], $post['storage_qty_sold']);
+            $this->add_sales($post);
+        }
+    }
+
+    public function add_sales($arr)
+    {
+        global $db;
+        $object = Mixin\insert('storage_sales', $arr);
+        if (!intval($object)) {
+            $this->error('storage_sales '.$object);
+            $db->rollBack();
         }
     }
 
@@ -831,7 +867,13 @@ class OperationPreparatModel extends Model
                         <label>Препарат:</label>
                         <select data-placeholder="Выберите материал" name="item_id" class="form-control select-price" required>
                             <option></option>
-                            <?php foreach ($db->query("SELECT * FROM storage WHERE category AND qty != 0") as $row): ?>
+                            <?php $sql = "SELECT st.id, st.price, st.name,
+                                            (
+                                                st.qty -
+                                                IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0)
+                                            ) 'qty'
+                                            FROM storage st WHERE st.category AND st.qty != 0"; ?>
+                            <?php foreach ($db->query($sql) as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['item_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> (в наличии - <?= $row['qty'] ?>)</option>
                             <?php endforeach; ?>
                         </select>

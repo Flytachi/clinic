@@ -20,7 +20,7 @@ class ServiceModel extends Model
 
             <div class="form-group">
                 <label>Шаблон:</label>
-                <input type="file" class="form-control" name="tempscle" accept="application/vnd.ms-excel" required>
+                <input type="file" class="form-control" name="template" accept="application/vnd.ms-excel" required>
             </div>
 
             <div class="text-right">
@@ -124,10 +124,10 @@ class ServiceModel extends Model
 
     public function clean()
     {
-        // parad("_FILES",$_FILES['tempscle']);
-        if($_FILES['tempscle']){
-            // prit('temscle');
-            $this->post['tempscle'] = read_excel($_FILES['tempscle']['tmp_name']);
+        // parad("_FILES",$_FILES['template']);
+        if($_FILES['template']){
+            // prit('template');
+            $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
             $this->save_excel();
         }
         $this->post = Mixin\clean_form($this->post);
@@ -156,7 +156,7 @@ class ServiceModel extends Model
     {
         global $db;
         $db->beginTransaction();
-        foreach ($this->post['tempscle'] as $key_p => $value_p) {
+        foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
                 foreach ($value_p as $key => $value) {
                     $pick = $pirst[$key];
@@ -171,7 +171,7 @@ class ServiceModel extends Model
                 }
             }else {
                 $pirst = $value_p;
-                unset($this->post['tempscle']);
+                unset($this->post['template']);
             }
         }
         $db->commit();

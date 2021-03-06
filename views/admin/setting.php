@@ -37,47 +37,6 @@ $header = "Настройки";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php if ($_FILES): ?>
-					<?php
-
-					if ($_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-						$fileTmpPath = $_FILES['logo']['tmp_name'];
-						$fileName = $_FILES['logo']['name'];
-						$fileSize = $_FILES['logo']['size'];
-						$fileType = $_FILES['logo']['type'];
-
-						$fileNameCmps = explode(".", $fileName);
-						$fileExtension = strtolower(end($fileNameCmps));
-						$newFileName = sha1(time() . $fileName) . '.' . $fileExtension;
-						$allowedfileExtensions = array('jpg', 'png');
-
-						if (in_array($fileExtension, $allowedfileExtensions)) {
-							$uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR."/storage/";
-							$dest_path = $uploadFileDir . $newFileName;
-
-							$select = $db->query("SELECT const_value FROM company WHERE const_label = 'logotype'")->fetchColumn();
-							if ($select) {
-								unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
-							}
-
-							$logo = Mixin\insert_or_update("company", array('const_label' => 'logotype', 'const_value' => "/storage/".$newFileName), "const_label");
-							if(intval($logo) and move_uploaded_file($fileTmpPath, $dest_path)){
-							  	echo 'File is successfully uploaded.';
-							}
-							else{
-							  	echo 'Ошибка.';
-							}
-
-						}else {
-							// Ошибка расширения
-						}
-					}else {
-						// Ошибка при загрузке
-					}
-
-					?>
-				<?php endif; ?>
-
 				<div class="card">
 
 				    <div class="card-header header-elements-inline">
@@ -91,10 +50,49 @@ $header = "Настройки";
 
 				    <div class="card-body">
 
-						<form action="" method="post" enctype="multipart/form-data">
+						<?php
+						if($_SESSION['message']){
+				            echo $_SESSION['message'];
+				            unset($_SESSION['message']);
+				        }
+						$comp = $db->query("SELECT * FROM company")->fetchAll();
+						foreach ($comp as $value) {
+							$company[$value['const_label']] = $value['const_value'];
+						}
+						?>
 
-							<input type="file" name="logo" class="form-control">
-							<!-- <input type="text" name="title" class="form-control"> -->
+						<form action="admin_model" method="post" enctype="multipart/form-data">
+
+							<fieldset class="mb-3">
+								<legend class="text-uppercase font-size-sm font-weight-bold">Печать</legend>
+
+								<div class="form-group row">
+									<div class="col-form-label col-lg-2">
+										<img class="border-1" src="<?= $company['print_header_logotype'] ?>" width="200" height="60">
+									</div>
+									<label class="col-form-label col-lg-1 font-weight-bold">Иконка печати:</label>
+									<div class="col-lg-9">
+										<input type="file" name="logo" class="form-control">
+									</div>
+								</div>
+
+								<div class="form-group row">
+									<label class="col-form-label col-lg-1 font-weight-bold">Заглавие:</label>
+									<div class="col-lg-3">
+										<input type="text" name="print_header_title" value="<?= $company['print_header_title'] ?>" placeholder="Введите заглавие" class="form-control">
+									</div>
+									<label class="col-form-label col-lg-1 font-weight-bold">Адрес:</label>
+									<div class="col-lg-3">
+										<input type="text" name="print_header_address" value="<?= $company['print_header_address'] ?>" placeholder="Введите адрес" class="form-control">
+									</div>
+									<label class="col-form-label col-lg-1 font-weight-bold">Телефон:</label>
+									<div class="col-lg-3">
+										<input type="text" name="print_header_phones" value="<?= $company['print_header_phones'] ?>" placeholder="Введите телефон" class="form-control">
+									</div>
+								</div>
+
+							</fieldset>
+
 							<button type="submit" class="btn">Send</button>
 
 						</form>
