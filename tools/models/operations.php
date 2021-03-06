@@ -149,7 +149,7 @@ class OperationModel extends Model
             $this->post['completed'] = $this->post['finish_date']." ".$this->post['finish_time'];
             unset($this->post['finish_date']);
             unset($this->post['finish_time']);
-        }else {
+        }elseif ($this->post['oper_date']){
             $this->post['oper_date'] .= " ".$this->post['oper_time'];
             unset($this->post['oper_time']);
         }
@@ -164,6 +164,7 @@ class OperationModel extends Model
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
+            $db->beginTransaction();
 
             if ($this->post['completed']) {
                 $post_price = $db->query("SELECT id, item_cost FROM visit_price WHERE operation_id = {$pk}")->fetch();
@@ -172,7 +173,6 @@ class OperationModel extends Model
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_service WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost*item_qty) FROM operation_preparat WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_consumables WHERE operation_id = {$pk}")->fetchColumn();
-                $db->beginTransaction();
 
                 $this->storage_sales($pk);
                 // обновление цены
