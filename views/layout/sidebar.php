@@ -134,6 +134,12 @@
                                     <span>Мульти-аккаунт</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('admin/visit_control') ?>" class="nav-link legitRipple">
+                                    <i class="icon-archive"></i>
+                                    <span>Контроль визитов</span>
+                                </a>
+                            </li>
                             <?php
                             break;
                         case 2:

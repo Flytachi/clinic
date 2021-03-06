@@ -1,11 +1,11 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth('master');
-$header = "Главная";
+is_auth(1);
+$header = "Визиты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<?php include 'head.php' ?>
+<?php include layout('head') ?>
 
 <body>
 	<!-- Main navbar -->
@@ -16,14 +16,14 @@ $header = "Главная";
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include 'sidebar.php' ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 		<!-- Main content -->
 		<div class="content-wrapper">
 
 			<!-- Page header -->
-			<?php include '../layout/header.php' ?>
+			<?php include layout('header') ?>
 			<!-- /page header -->
 
 			<!-- Content area -->
@@ -49,7 +49,7 @@ $header = "Главная";
 				        <div class="table-responsive">
 				            <table class="table table-hover table-sm">
 				                <thead>
-				                    <tr class="bg-dark">
+				                    <tr class="bg-info">
 				                        <th style="width: 7%">Visit_id</th>
 				                        <th style="width: 7%">User_id</th>
                                         <th>ФИО</th>
@@ -123,5 +123,8 @@ $header = "Главная";
         }
     </script>
 
+	<!-- Footer -->
+    <?php include layout('footer') ?>
+    <!-- /footer -->
 </body>
 </html>
