@@ -107,6 +107,18 @@ $header = "Продажа";
 	<!-- /page content -->
 
 	<script type="text/javascript">
+
+		function Sum() {
+			var total_cost = document.getElementById('total_cost');
+			var sum = Number(total_cost.textContent.replace(/,/g,''));
+			var inputs = document.getElementsByClassName('counts');
+			var new_sum = 0;
+			for (var input of inputs) {
+				new_sum += Number(input.value * input.dataset.price);
+			}
+			total_cost.textContent = number_format(new_sum, 1);
+		}
+
         function Search_storage(events) {
             event.preventDefault();
 			$.ajax({

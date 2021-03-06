@@ -12,20 +12,25 @@ is_auth();
 
             ) 'reservation'
             FROM storage st WHERE st.id = $id";
+    $row = $db->query($sql)->fetch();
     ?>
-    <?php foreach ($db->query($sql) as $row): ?>
-        <tr id="sales_table-<?= $row['id'] ?>">
-            <input type="hidden" name="preparat[<?= $row['id'] ?>]" value="<?= $row['qty'] - $row['reservation'] ?>">
-            <td><?= $row['name'] ?> | <?= $row['supplier'] ?></td>
-            <td class="text-right">
-                <input type="number" class="form-control" name="qty[<?= $row['id'] ?>]" value="1" max="<?= $row['qty'] - $row['reservation'] ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
-            </td>
-            <td class="text-right"><?= number_format($row['price'], 1) ?></td>
-            <td class="text-right">
-                <div class="list-icons">
-                    <a onclick="$('#sales_table-<?= $row['id'] ?>').remove();" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
-                </div>
-            </td>
-        </tr>
-    <?php endforeach; ?>
+    <tr id="sales_table-<?= $row['id'] ?>">
+        <input type="hidden" name="preparat[<?= $row['id'] ?>]" value="<?= $row['qty'] - $row['reservation'] ?>">
+        <td><?= $row['name'] ?> | <?= $row['supplier'] ?></td>
+        <td class="text-right">
+            <input type="number" class="form-control counts" name="qty[<?= $row['id'] ?>]"
+                    data-price="<?= $row['price'] ?>" onkeyup="Sum(); "
+                    value="1" min="1" max="<?= $row['qty'] - $row['reservation'] ?>"
+                    style="border-width: 0px 0; padding: 0.2rem 0;">
+        </td>
+        <td class="text-right"><?= number_format($row['price'], 1) ?></td>
+        <td class="text-right">
+            <div class="list-icons">
+                <a onclick="$('#sales_table-<?= $row['id'] ?>').remove(); Sum();" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
+            </div>
+        </td>
+    </tr>
+    <script type="text/javascript">
+        Sum();
+    </script>
 <?php endif; ?>

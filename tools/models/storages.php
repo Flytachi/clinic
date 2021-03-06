@@ -790,11 +790,19 @@ class StorageSale extends Model
                     <tbody id="sale_items">
 
                     </tbody>
+                    <tbody>
+                        <tr class="table-secondary">
+                            <th colspan="2" class="text-right">Итого:</th>
+                            <th class="text-right" id="total_cost">0</th>
+                            <th></th>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-success btn-sm">Продажа</button>
+                <input type="submit" name="btn_type" value="Возврат" class="btn btn-outline-danger btn-sm">
+                <input type="submit" name="btn_type" value="Продажа" class="btn btn-outline-success btn-sm">
             </div>
 
         </form>
@@ -804,14 +812,19 @@ class StorageSale extends Model
     public function clean()
     {
         global $db;
+        // $this->mod('test');
         $db->beginTransaction();
         if (!$this->post['preparat']) {
             $this->error('Пустой запрос!');
         }
         foreach ($this->post['preparat'] as $key => $value) {
-            $qty = $this->post['qty'][$key];
-            if ($qty > $value) {
-                $this->error('Ошибка в колличестве!');
+            if ($this->post['btn_type'] == "Продажа") {
+                $qty = $this->post['qty'][$key];
+                if ($qty > $value) {
+                    $this->error('Ошибка в колличестве!');
+                }
+            }else {
+                $qty = -$this->post['qty'][$key];
             }
             $post = $db->query("SELECT * FROM storage WHERE id = $key")->fetch();
             unset($post['add_date']);
