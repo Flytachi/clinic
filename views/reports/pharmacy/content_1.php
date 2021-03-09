@@ -97,21 +97,6 @@ $header = "Отчёт аптеки по расходам";
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					// if ($_POST['division_id']) {
-					// 	$sql .= " AND vs.division_id = {$_POST['division_id']}";
-					// }
-					// if ($_POST['service_id']) {
-					// 	$sql .= " AND vs.service_id = {$_POST['service_id']}";
-					// }
-					// if ($_POST['parent_id']) {
-					// 	$sql .= " AND vs.parent_id = {$_POST['parent_id']}";
-					// }
-					// if ($_POST['user_id']) {
-					// 	$sql .= " AND vs.user_id = {$_POST['user_id']}";
-					// }
-					// if ($_POST['direction']) {
-					// 	$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
-					// }
 					if (!$_POST['type_1'] or !$_POST['type_2'] or !$_POST['type_3']) {
 						if ($_POST['type_1']) {
 							if (!$_POST['type_2'] and !$_POST['type_3']) {
