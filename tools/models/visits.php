@@ -1174,7 +1174,7 @@ class VisitAnalyzeModel extends Model
                                                         <input type="text" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                                     </td>
                                                     <td>
-                                                        <div class="form-check">
+                                                        <div class="list-icons">
                                                             <label class="form-check-label">
                                                                 <input data-id="TR_<?= $i ?>" type="checkbox" class="swit bg-danger cek_a" name="<?= $i ?>[deviation]" <?= ($row['deviation']) ? "checked" : "" ?>>
                                                             </label>

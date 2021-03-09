@@ -2,10 +2,15 @@
     font-family: 'DejaVu Sans' !important;
 }
 
-body {
-    margin-top: 20px;
-    margin-right: 20px;
-    margin-left: 20px;
+@media print {
+    html, body{
+        height: 297mm;
+        width: 210mm;
+    }
+}
+
+@page {
+    margin: 15mm 10mm 10mm 15mm;
 }
 
 .my_hr-1 {

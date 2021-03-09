@@ -106,6 +106,20 @@ $header = "Продажа";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_amount" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Оплата</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?php StorageSale::modal(); ?>
+
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
 
 		function Sum() {
@@ -133,7 +147,7 @@ $header = "Продажа";
 			});
         }
 
-        function Check(item) {
+        function Check(item){
 			$.ajax({
 				type: "GET",
 				url: "<?= ajax('pharmacy_select_item') ?>",
