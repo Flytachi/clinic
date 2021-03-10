@@ -461,6 +461,9 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
+        if ($this->post['bed_stat']) {
+            $this->mod('test');
+        }
         if (is_array($this->post['service'])) {
             $this->save_rows();
         }

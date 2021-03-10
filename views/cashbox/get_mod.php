@@ -26,10 +26,10 @@ if ($_GET['pk']) {
                 $sql = "SELECT
                             vs.id,
                             IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) 'balance',
-                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) 'bed_days',
+                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H')) 'bed_hours',
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
-                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
+                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H')) * (bdt.price / 24) 'cost_bed',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2'
                             -- vs.add_date

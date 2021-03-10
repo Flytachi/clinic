@@ -773,7 +773,7 @@ class StorageSale extends Model
     public function form()
     {
         ?>
-        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form" onsubmit="AmountSubmit(this)">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="table-responsive card">
@@ -810,6 +810,36 @@ class StorageSale extends Model
 
         </form>
         <script type="text/javascript">
+
+            if (sessionStorage['message']) {
+                var mes = JSON.parse(sessionStorage['message']);
+                setTimeout( function() {
+                        new Noty(mes).show();
+                    }, 100)
+                delete sessionStorage['message'];
+            }
+
+            function AmountSubmit(){
+                event.preventDefault();
+                $.ajax({
+                    type: $('#<?= __CLASS__ ?>_form').attr("method"),
+                    url: $('#<?= __CLASS__ ?>_form').attr("action"),
+                    data: $('#<?= __CLASS__ ?>_form').serializeArray(),
+                    success: function (data) {
+                        var result = JSON.parse(data);
+                        // console.log(result);
+                        if (result.type == "success") {
+                            Print(result.val);
+                            delete result.val;
+                        }
+                        sessionStorage['message'] = data;
+                        setTimeout( function() {
+                                location.reload();
+                            }, 300)
+                    },
+                });
+            }
+
             function Amount_check(btn_type){
                 $('#modal_amount').modal('show');
                 var price = $('#total_cost').text().replace(/,/g,'');
@@ -817,6 +847,7 @@ class StorageSale extends Model
                 $('#total_amount_original').val(price);
                 $('#type_btn').val(btn_type);
             }
+
         </script>
         <?php
     }
@@ -904,7 +935,7 @@ class StorageSale extends Model
             function Submit_amount() {
                 $('#modal_amount').modal('hide');
                 $('#form_amounts').html($('#amount_body'));
-                $('#<?= __CLASS__ ?>_form').submit();
+                AmountSubmit();
             }
 
             function Checkert(event) {
@@ -1047,28 +1078,26 @@ class StorageSale extends Model
             $this->error('storage_sales '.$object);
             $db->rollBack();
         }
+        $this->items[] = $object;
     }
 
     public function success()
     {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
+        echo json_encode(array(
+            'type' => "success",
+            'text' => "Успешно",
+            'val' => viv('prints/check_pharm')."?items=".json_encode($this->items)
+        ));
+        exit;
     }
 
     public function error($message)
     {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
+        echo json_encode(array(
+            'type' => "error",
+            'text' => $message
+        ));
+        exit;
     }
 }
 
