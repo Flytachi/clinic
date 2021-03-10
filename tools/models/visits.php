@@ -462,7 +462,7 @@ class VisitModel extends Model
     {
         global $db;
         if ($this->post['bed_stat']) {
-            $this->mod('test');
+            $this->bed_edit();
         }
         if (is_array($this->post['service'])) {
             $this->save_rows();
@@ -476,6 +476,63 @@ class VisitModel extends Model
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function bed_edit()
+    {
+        global $db;
+        unset($this->post['bed_stat']);
+        $visit = $db->query("SELECT * FROM visit WHERE id = {$this->post['id']}")->fetch();
+
+        $this->bed_price($visit);
+        $this->change_beds($visit);
+        // $this->mod('test');
+        $this->update();
+    }
+
+    public function change_beds($visit)
+    {
+        global $db;
+        $bed_old = $db->query("SELECT * FROM beds WHERE id = {$visit['bed_id']}")->fetch();
+        $bed_new = $db->query("SELECT * FROM beds WHERE id = {$this->post['bed_id']}")->fetch();
+        $bed_old['user_id'] = null;
+        $bed_new['user_id'] = $visit['user_id'];
+        $object = Mixin\insert_or_update('beds', $bed_old);
+        if (!intval($object)) {
+            $this->error($object);
+        }
+        $object = Mixin\insert_or_update('beds', $bed_new);
+        if (!intval($object)) {
+            $this->error($object);
+        }
+    }
+
+    public function bed_price($visit)
+    {
+        global $db;
+        $sql = "SELECT wd.floor,
+                    wd.ward, bd.bed,
+                    ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) 'bed_cost'
+                FROM visit vs
+                    LEFT JOIN beds bd ON(bd.id=vs.bed_id)
+                    LEFT JOIN wards wd ON(wd.id=bd.ward_id)
+                    LEFT JOIN bed_type bdt ON(bdt.id=bd.types)
+                    LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
+                WHERE vs.id = {$visit['id']} ORDER BY vp.add_date DESC";
+        $bed = $db->query($sql)->fetch();
+        if ($bed['bed_cost'] > 0) {
+            $post['visit_id'] = $visit['id'];
+            $post['user_id'] = $visit['user_id'];
+            $post['status'] = 0;
+            $post['item_type'] = 101;
+            $post['item_id'] = $visit['bed_id'];
+            $post['item_cost'] = $bed['bed_cost'];
+            $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
+            $object = Mixin\insert('visit_price', $post);
+            if (!intval($object)) {
+                $this->error($object);
+            }
+        }
     }
 
     public function delete(int $pk)

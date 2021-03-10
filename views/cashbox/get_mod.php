@@ -26,19 +26,21 @@ if ($_GET['pk']) {
                 $sql = "SELECT
                             vs.id,
                             IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) 'balance',
-                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H')) 'bed_hours',
+                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), IFNULL(vp.add_date, vs.add_date)), '%H')) 'bed_hours',
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
-                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H')) * (bdt.price / 24) 'cost_bed',
+                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) 'cost_bed',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
-                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2'
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2',
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)) 'cost_beds'
                             -- vs.add_date
                         FROM users us
                             LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
                             LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
                             LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                             LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                        WHERE us.id = $pk";
+                            LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
+                        WHERE us.id = $pk ORDER BY vp.add_date DESC";
                 $price = $db->query($sql)->fetch();
                 foreach ($serv_id as $value) {
                     $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
@@ -48,7 +50,7 @@ if ($_GET['pk']) {
                 }
                 // prit($price);
 
-                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'];
+                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'] + $price['cost_beds'];
                 ?>
                 <table class="table table-hover">
                     <tbody>

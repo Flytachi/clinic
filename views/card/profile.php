@@ -171,9 +171,9 @@ if (!$patient) {
                         $sql = "SELECT
                                     IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
                                     (
-                                        ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), vs.add_date), '%H')) * (bdt.price / 24) +
+                                        ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) +
                                         IFNULL($pl, 0) +
-                                        (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5))
+                                        (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
                                     )
                                      'balance'
                                 FROM users us
@@ -181,7 +181,8 @@ if (!$patient) {
                                     LEFT JOIN beds bd ON(bd.user_id = us.id)
                                     LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                                     LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                                WHERE us.id = $patient->id";
+                                    LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
+                                WHERE us.id = $patient->id ORDER BY vp.add_date DESC";
                         $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     } else {
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
@@ -198,7 +199,6 @@ if (!$patient) {
                         $price->balance = -$price->balance;
                     }
 
-                    // prit($price);
                     if ($price->balance >= 0) {
                         $class_card_balance = "text-success";
                         $class_color_add = "cl_btn_balance text-success";
@@ -412,10 +412,10 @@ if (!$patient) {
                                         <div class="form-group row">
     										<label class="col-lg-3 col-form-label">Койка:</label>
     										<div class="col-lg-9">
-    											<select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control select-price" required data-fouc>
+    											<select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="form-control select-price" required data-fouc>
                                                     <option></option>
                                                     <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
-                                                        <?php if ($row['user_id'] and $row['user_id'] != $patient->id): ?>
+                                                        <?php if ($row['user_id']): ?>
                                                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
                                                         <?php else: ?>
                                                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" <?= ($row['bed'] == $patient->bed) ? "selected" : "" ?>><?= $row['bed'] ?> койка</option>
