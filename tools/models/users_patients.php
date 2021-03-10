@@ -236,7 +236,9 @@ class PatientForm extends Model
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_level" value="15">
-            <input type="hidden" name="status" value="0">
+            <?php if (!$pk): ?>
+                <input type="hidden" name="status" value="0">
+            <?php endif; ?>
 
             <div class="row">
                 <div class="col-md-3">
@@ -266,91 +268,106 @@ class PatientForm extends Model
 
                         <div class="form-group">
                             <div class="form-group">
-                                <label>Выбирите регион:</label>
-                                <select data-placeholder="Выбрать регион" name="region" class="form-control form-control-select2" required>
+                                <label>Выбирите область:</label>
+                                <select data-placeholder="Выбрать область" id="province" class="form-control form-control-select2" required>
                                     <option></option>
                                     <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
-                                        <optgroup label="<?= $province['name'] ?>">
-                                            <?php foreach ($db->query("SELECT * FROM region WHERE province_id = {$province['id']}") as $region): ?>
-                                                <option value="<?= $region['name'] ?>" <?= ($post['region'] == $region['name']) ? "selected" : "" ?>><?= $region['name'] ?></option>
-                                            <?php endforeach; ?>
-                                        </optgroup>
+                                        <option value="<?= $province['id'] ?>"><?= $province['name'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>Адрес проживание:</label>
-                            <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Адрес по прописке:</label>
-                            <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>">
-                        </div>
-
-
-                        <div class="form-group">
-                           <label class="d-block font-weight-semibold">Пол</label>
-
-                                <div class="form-check form-check-inline">
-                                    <label class="form-check-label">
-                                        <input type="radio" name="gender" <?php if(1 == $post['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
-                                        Мужчина
-                                    </label>
-                                </div>
-
-                                <div class="form-check form-check-inline">
-                                    <label class="form-check-label">
-                                        <input type="radio" name="gender" <?php if(0 == $post['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
-                                        Женщина
-                                    </label>
-                                </div>
+                            <div class="form-group">
+                                <label>Выбирите регион:</label>
+                                <select data-placeholder="Выбрать регион" name="region" id="region" class="form-control form-control-select2" required>
+                                    <option></option>
+                                    <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
+                                        <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($post['region'] == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
 
                     </fieldset>
                 </div>
 
                 <div class="col-md-9">
+                    <fieldset>
 
-                    <div class="form-group row">
-                        <div class="col-md-6">
-                            <label>Серия и номер паспорта:</label>
-                            <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label>Адрес проживание:</label>
+                                <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Адрес по прописке:</label>
+                                <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>">
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label>Телефон номер:</label>
-                            <input type="text" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label>Серия и номер паспорта:</label>
+                                <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Телефон номер:</label>
+                                <input type="text" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label>Место работы:</label>
-                        <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $post['placeWork']?>">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Должность:</label>
-                        <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>">
-                    </div>
-
-                    <!-- <div class="form-group">
-                        <label class="d-block font-weight-semibold">Статус</label>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
-                            <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
+                        <div class="form-group">
+                            <label>Место работы:</label>
+                            <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $post['placeWork']?>">
                         </div>
-                    </div> -->
 
+                        <div class="form-group">
+                            <label>Должность:</label>
+                            <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>">
+                        </div>
+
+                        <div class="form-group">
+                           <label class="d-block font-weight-semibold">Пол</label>
+
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" name="gender" <?php if(1 == $post['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
+                                    Мужчина
+                                </label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" name="gender" <?php if(0 == $post['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
+                                    Женщина
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <label class="d-block font-weight-semibold">Статус</label>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
+                                <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
+                            </div>
+                        </div> -->
+
+                    </fieldset>
                 </div>
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
             </div>
 
         </form>
+        <script type="text/javascript">
+            $(function(){
+                $("#region").chained("#province");
+            });
+        </script>
         <?php
     }
 

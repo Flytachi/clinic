@@ -8,7 +8,7 @@ if ($_GET['pk']) {
                 us.region, us.residenceAddress, vs.priced_date,
                 us.registrationAddress, vs.add_date, vs.accept_date,
                 vs.direction, vs.add_date, vs.discharge_date,
-                vs.complaint, vs.status, vp.item_name, vs.completed, vp.item_cost
+                vs.complaint, vs.status, vp.item_name, vs.completed
             FROM users us
                 LEFT JOIN visit vs ON (vs.user_id = us.id)
                 LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
@@ -187,12 +187,12 @@ if (!$patient) {
                     } else {
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
                         foreach ($serv_id as $value) {
-                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5)")->fetchAll();
+                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
                             foreach ($item_service as $pri_ze) {
-                                $pl += $pri_ze['price'];
+                                $price->balance += $pri_ze['price'];
                             }
                         }
-                        $price->balance = $pl + $patient->item_cost;
+                        // prit($price->balance);
                     }
 
                     if (!$activity and !$patient->priced_date) {

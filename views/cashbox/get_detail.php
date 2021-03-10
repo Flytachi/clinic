@@ -32,10 +32,16 @@ if ($_GET['pk']) {
     }
     // prit($price);
     ?>
-    <button type="button" onclick="printdiv('check_detail')" class="btn">Чек</button>
 
-    <div class="table-responsive mt-3" id="check_detail">
-        <table class="table table-hover">
+    <legend class="font-weight-semibold text-uppercase font-size-sm">
+        <i class="icon-cogs mr-2"></i>Детально
+        <a class="float-right text-dark mr-1" onclick="printdiv('check_detail')">
+            <i class="icon-printer2"></i>
+        </a>
+    </legend>
+
+    <div class="table-responsive mt-3 card" id="check_detail">
+        <table class="table table-hover table-sm">
             <thead>
                 <tr class="bg-dark">
                     <th class="text-left" colspan="2">Наименование</th>
@@ -55,7 +61,13 @@ if ($_GET['pk']) {
                     <?php endforeach; ?>
                 <?php endforeach; ?>
                 <tr class="table-warning">
-                    <td>Койка (<?= $price['bed_hours'] ?> часов)</td>
+                    <td>
+                        Койка (<?= $price['bed_hours'] ?> часов)
+                        <?php if ($price['bed_hours'] > 24): ?>
+                            &#8776;
+                            (<?= round($price['bed_hours'] / 24, 0, PHP_ROUND_HALF_DOWN) ?> дней и <?= $price['bed_hours'] % 24 ?> часов)
+                        <?php endif; ?>
+                    </td>
                     <td colspan="2"><?= $price['bed_type'] ?> (<?= number_format($price['bed_price']) ?>/день)</td>
                     <td class="text-right"><?= number_format($price['cost_bed']) ?></td>
                 </tr>
@@ -95,7 +107,7 @@ if ($_GET['pk']) {
 
                 <tr class="table-primary">
                     <td colspan="3" class="text-right">Итого:</td>
-                    <td><?= number_format($price['cost_bed'] + $price['cost_service'] + $price['cost_item_2']) ?></td>
+                    <td><?= number_format($price['cost_beds'] + $price['cost_bed'] + $price['cost_service'] + $price['cost_item_2']) ?></td>
                 </tr>
 
             </tbody>

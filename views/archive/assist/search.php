@@ -5,12 +5,12 @@ is_auth();
 if(empty($_GET['search'])){
     $sql = "SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date
             FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
-            WHERE us.user_level = 15 ORDER BY us.add_date DESC LIMIT 20";
+            WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']} ORDER BY us.id ASC LIMIT 20";
 }else {
     $ser = $_GET['search'];
     $sql = "SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date
             FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
-            WHERE us.user_level = 15
+            WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']}
                 AND (us.id LIKE '%$ser%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$ser%'))";
 }
 foreach($db->query($sql) as $row) {

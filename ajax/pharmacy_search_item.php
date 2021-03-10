@@ -12,7 +12,7 @@ is_auth();
                 IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
 
             ) 'reservation'
-            FROM storage st WHERE st.category IN (2,3) AND st.qty > 0 AND (st.shtrih LIKE '$ser' OR st.name LIKE '%$ser%') ORDER BY st.name ASC";
+            FROM storage st WHERE st.category IN (2,3) AND st.qty > 0 AND (st.shtrih LIKE '$ser' OR LOWER(st.name) LIKE LOWER('%$ser%')) ORDER BY st.name ASC";
     $i=0;
     ?>
     <?php foreach ($db->query($sql) as $row): ?>

@@ -199,12 +199,6 @@ class VisitModel extends Model
             </div>
 
         </form>
-        <script type="text/javascript">
-            $(function(){
-                $("#parent_id").chained("#division_id");
-                $("#service_id").chained("#division_id");
-            });
-        </script>
         <?php
     }
 
@@ -483,10 +477,8 @@ class VisitModel extends Model
         global $db;
         unset($this->post['bed_stat']);
         $visit = $db->query("SELECT * FROM visit WHERE id = {$this->post['id']}")->fetch();
-
         $this->bed_price($visit);
         $this->change_beds($visit);
-        // $this->mod('test');
         $this->update();
     }
 
@@ -987,6 +979,7 @@ class VisitPriceModel extends Model
         $post['visit_id'] = $ti['id'];
         $post['user_id'] = $this->user_pk;
         $post['pricer_id'] = $this->post['pricer_id'];
+        $post['status'] = 0;
         $post['item_type'] = 101;
         $post['item_id'] = $ti['bed_id'];
         $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";

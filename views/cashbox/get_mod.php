@@ -6,9 +6,9 @@ if ($_GET['pk']) {
 
     if($_GET['mod'] == "st"){
         ?>
-        <div class="card">
+        <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk) ?></em></h5>
+                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
 
@@ -17,6 +17,10 @@ if ($_GET['pk']) {
             </div>
 
             <div class="card-body">
+
+                <legend class="font-weight-semibold text-uppercase font-size-sm">
+                    <i class="icon-calculator3 mr-2"></i>Информация
+                </legend>
 
                 <?php
                 $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
@@ -50,7 +54,7 @@ if ($_GET['pk']) {
                 }
                 // prit($price);
 
-                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'] + $price['cost_beds'];
+                $price_cost -= round($price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'] + $price['cost_beds']);
                 ?>
                 <table class="table table-hover">
                     <tbody>
@@ -88,10 +92,10 @@ if ($_GET['pk']) {
         <?php
     }elseif ($_GET['mod'] == "rf"){
         ?>
-        <div class="card">
+        <div class="card border-1 border-dark">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk); ?></em></h5>
+                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
             </div>
 
             <div class="card-body">
@@ -137,15 +141,20 @@ if ($_GET['pk']) {
         <?php
     }else {
         ?>
-        <div class="card">
+        <div class="card border-1 border-dark">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk); ?></em></h5>
+                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
             </div>
 
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
+
+                <legend class="font-weight-semibold text-uppercase font-size-sm">
+                    <i class="icon-bag mr-2"></i>Услуги
+                </legend>
+
+                <div class="table-responsive card">
+                    <table class="table table-hover table-sm">
                         <thead>
                             <tr class="bg-blue">
                                 <th class="text-left">Дата и время</th>
@@ -165,7 +174,9 @@ if ($_GET['pk']) {
                                         <td><?= $row['item_name'] ?></td>
                                         <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
                                         <th class="text-center">
-                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
+                                            <div class="list-icons">
+                                                <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
+                                            </div>
                                         </th>
                                     </tr>
                                 <?php
@@ -174,14 +185,15 @@ if ($_GET['pk']) {
 
                         </tbody>
                     </table>
-                    <br>
-                    <div class="text-left">
-                        <strong>Итого: </strong><strong id="total_title"></strong>
-                    </div>
-                    <div class="text-right">
-                        <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
-                    </div>
                 </div>
+
+                <div class="text-left">
+                    <strong>Итого: </strong><strong id="total_title"></strong>
+                </div>
+                <div class="text-right">
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                </div>
+
             </div>
 
         </div>
