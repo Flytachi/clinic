@@ -22,7 +22,7 @@ foreach($db->query($sql) as $row) {
         <td><?= $row['numberPhone'] ?></td>
         <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
         <td class="text-center">
-            <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+            <a href="<?= viv('archive/assist/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
         </td>
     </tr>
     <?php
