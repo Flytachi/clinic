@@ -3,27 +3,29 @@ require_once '../../tools/warframe.php';
 is_auth([3, 32]);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
-    $ps = $db->query("SELECT bed_id FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
-    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
+    
+    // Скрипт подсчёта средств -----
     $sql = "SELECT
                 vs.id,
                 IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) 'balance',
-                ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), IFNULL(vp.add_date, vs.add_date)), '%H')) 'bed_hours',
+                @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
+                @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
+                @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
                 bdt.name 'bed_type',
                 bdt.price 'bed_price',
-                ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) 'cost_bed',
+                @bed_hours * (bdt.price / 24) 'cost_bed',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2',
                 (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)) 'cost_beds'
                 -- vs.add_date
             FROM users us
                 LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
-                LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
-                LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
-            WHERE us.id = $pk ORDER BY vp.add_date DESC";
+                LEFT JOIN beds bd ON(bd.id = vs.bed_id)
+                LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+            WHERE us.id = $pk";
     $price = $db->query($sql)->fetch();
+    $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
     foreach ($serv_id as $value) {
         $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
         foreach ($item_service as $pri_ze) {
@@ -31,6 +33,7 @@ if ($_GET['pk']) {
         }
     }
     // prit($price);
+    // Скрипт -----
     ?>
 
     <legend class="font-weight-semibold text-uppercase font-size-sm">

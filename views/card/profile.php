@@ -169,9 +169,12 @@ if (!$patient) {
                             }
                         }
                         $sql = "SELECT
+                                    @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
+                                    @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
+                                    @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
                                     IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
                                     (
-                                        ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) +
+                                        @bed_hours * (bdt.price / 24) +
                                         IFNULL($pl, 0) +
                                         (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
                                     )
@@ -181,8 +184,7 @@ if (!$patient) {
                                     LEFT JOIN beds bd ON(bd.user_id = us.id)
                                     LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                                     LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                                    LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
-                                WHERE us.id = $patient->id ORDER BY vp.add_date DESC";
+                                WHERE us.id = $patient->id";
                         $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     } else {
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
@@ -370,68 +372,7 @@ if (!$patient) {
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
 
-                                <form method="post" action="<?= add_url() ?>">
-                                    <input type="hidden" name="model" value="VisitModel">
-                                    <input type="hidden" name="bed_stat" value="1">
-                                    <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
-
-                                    <div class="modal-body">
-
-                                        <div class="form-group row">
-    										<label class="col-lg-3 col-form-label">Этаж:</label>
-    										<div class="col-lg-9">
-    											<select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
-                                                    <option></option>
-                                                    <?php foreach ($FLOOR as $key => $value): ?>
-                                                        <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
-                                                            <option value="<?= $key ?>" <?= ($key == $patient->floor) ? "selected" : "" ?>><?= $value ?></option>
-                                                        <?php else: ?>
-                                                            <option value="<?= $key ?>" disabled><?= $value ?></option>
-                                                        <?php endif; ?>
-                                                    <?php endforeach; ?>
-    											</select>
-    										</div>
-    									</div>
-
-                                        <div class="form-group row">
-    										<label class="col-lg-3 col-form-label">Палата:</label>
-    										<div class="col-lg-9">
-    											<select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
-                                                    <option></option>
-                                                    <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
-                                                        <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
-                                                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ($row['ward'] == $patient->ward) ? "selected" : "" ?>><?= $row['ward'] ?> палата</option>
-                                                        <?php else: ?>
-                                                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" disabled><?= $row['ward'] ?> палата</option>
-                                                        <?php endif; ?>
-                                                    <?php endforeach; ?>
-    											</select>
-    										</div>
-    									</div>
-
-                                        <div class="form-group row">
-    										<label class="col-lg-3 col-form-label">Койка:</label>
-    										<div class="col-lg-9">
-    											<select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="form-control select-price" required data-fouc>
-                                                    <option></option>
-                                                    <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
-                                                        <?php if ($row['user_id']): ?>
-                                                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
-                                                        <?php else: ?>
-                                                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" <?= ($row['bed'] == $patient->bed) ? "selected" : "" ?>><?= $row['bed'] ?> койка</option>
-                                                        <?php endif; ?>
-                                                    <?php endforeach; ?>
-    											</select>
-    										</div>
-    									</div>
-
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
-                                    </div>
-
-                                </form>
+                                <?php VisitModel::form_beds(); ?>
 
                             </div>
                         </div>

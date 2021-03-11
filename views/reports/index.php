@@ -161,6 +161,14 @@ $header = "Отчёты";
                     <?php endif; ?>
                     <!-- end -->
 
+                    <!-- Доход -->
+                    <?php if (permission(8)): ?>
+                        <a href="<?= viv('reports/income/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Доход</a>
+                    <?php else: ?>
+                        <button class="btn btn-outline-danger" style="font-size:1rem;">Доход</button>
+                    <?php endif; ?>
+                    <!-- end -->
+
                 </article>
 
 			</div>

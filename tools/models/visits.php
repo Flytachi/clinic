@@ -341,6 +341,76 @@ class VisitModel extends Model
         <?php
     }
 
+    public function form_beds($pk = null)
+    {
+        global $db, $FLOOR, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="bed_stat" value="1">
+            <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label">Этаж:</label>
+                    <div class="col-lg-9">
+                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php foreach ($FLOOR as $key => $value): ?>
+                                <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
+                                    <option value="<?= $key ?>" <?= ($key == $patient->floor) ? "selected" : "" ?>><?= $value ?></option>
+                                <?php else: ?>
+                                    <option value="<?= $key ?>" disabled><?= $value ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label">Палата:</label>
+                    <div class="col-lg-9">
+                        <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
+                                <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ($row['ward'] == $patient->ward) ? "selected" : "" ?>><?= $row['ward'] ?> палата</option>
+                                <?php else: ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" disabled><?= $row['ward'] ?> палата</option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label">Койка:</label>
+                    <div class="col-lg-9">
+                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="form-control select-price" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)") as $row): ?>
+                                <?php if ($row['user_id']): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
+                                <?php else: ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" ><?= $row['bed'] ?> койка</option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+
     public function get_or_404(int $pk)
     {
         global $db;
@@ -1752,7 +1822,7 @@ class VisitReport extends Model
             if ($end) {
                 $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
                 if ($row['assist_id']) {
-                    if ($row['grant_id'] != $row['route_id']) {
+                    if ($row['grant_id'] != $row['route_id'] or !$db->query("SELECT * FROM visit WHERE id != {$pk} AND completed IS NULL")->fetchColumn()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
