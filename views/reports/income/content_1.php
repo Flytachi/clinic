@@ -215,7 +215,7 @@ $header = "Доход";
 											<td class="text-<?= ($income_pharm_sum_all > 0) ? "success" : "danger" ?>"><?= number_format($income_pharm_sum_all, 1) ?></td>
 										</tr>
 										<tr class="table-secondary">
-											<th class="text-center">Общий доход (Для особо тупых)</th>
+											<th class="text-center">Общий доход</th>
 											<?php
 												$income_all_sum = $db->query("SELECT SUM(price_cash) 'price_cash', SUM(price_card) 'price_card', SUM(price_transfer) 'price_transfer' FROM visit_price WHERE price_date IS NOT NULL AND (DATE_FORMAT(price_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")")->fetch();
 												$income_all_sum_cash = $income_all_sum['price_cash'] + $income_pharm_sum_cash + $income_invest_up_sum_cash;
