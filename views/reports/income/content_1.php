@@ -7,17 +7,6 @@ $header = "Доход";
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
-
-<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
-
-
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -85,10 +74,6 @@ $header = "Доход";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					// Обработка
-					if ($_POST['date_start'] and $_POST['date_end']) {
-						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-					}
 					?>
 					<div class="card border-1 border-info">
 
@@ -119,7 +104,7 @@ $header = "Доход";
 										<tr class="table-primary">
 											<td class="text-center">Инвестиции (не израсходованы)</td>
 											<?php
-												$income_invest_up_sum = $db->query("SELECT SUM(balance_cash) 'price_cash', SUM(balance_card) 'price_card', SUM(balance_transfer) 'price_transfer' FROM investment WHERE status IS NOT NULL AND(DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")")->fetch();
+												$income_invest_up_sum = $db->query("SELECT SUM(balance_cash) 'price_cash', SUM(balance_card) 'price_card', SUM(balance_transfer) 'price_transfer' FROM investment WHERE status IS NOT NULL AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")")->fetch();
 												$income_invest_up_sum_cash = $income_invest_up_sum['price_cash'];
 												$income_invest_up_sum_card = $income_invest_up_sum['price_card'];
 												$income_invest_up_sum_transfer = $income_invest_up_sum['price_transfer'];
@@ -246,13 +231,6 @@ $header = "Доход";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
-
-	<script type="text/javascript">
-		$(function(){
-			$("#service").chained("#division");
-			$("#parent_id").chained("#division");
-		});
-	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
