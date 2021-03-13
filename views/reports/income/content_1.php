@@ -221,7 +221,7 @@ $header = "Доход";
 												$income_all_sum_cash = $income_all_sum['price_cash'] + $income_pharm_sum_cash + $income_invest_up_sum_cash;
 												$income_all_sum_card = $income_all_sum['price_card'] + $income_pharm_sum_card + $income_invest_up_sum_card;
 												$income_all_sum_transfer = $income_all_sum['price_transfer'] + $income_pharm_sum_transfer + $income_invest_up_sum_transfer;
-												$income_all_sum_all = $income_all_sum_cash + $income_all_sum_card + $income_all_sum_transfer + $income_invest_up_sum_all;
+												$income_all_sum_all = $income_all_sum_cash + $income_all_sum_card + $income_all_sum_transfer;
 											?>
 											<td class="text-<?= ($income_all_sum_cash > 0) ? "success" : "danger" ?>"><?= number_format($income_all_sum_cash, 1) ?></td>
 											<td class="text-<?= ($income_all_sum_card > 0) ? "success" : "danger" ?>"><?= number_format($income_all_sum_card, 1) ?></td>

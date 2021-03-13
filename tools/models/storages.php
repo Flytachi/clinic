@@ -158,7 +158,10 @@ class Storage extends Model
         $this->post['parent_id'] = $_SESSION['session_id'];
         $this->post['cost'] = preg_replace("/,+/", "", $this->post['cost']);
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
-        return True;
+        if ($this->post['qty']) {
+            return True;
+        }
+        return False;
     }
 
     public function save_excel()
