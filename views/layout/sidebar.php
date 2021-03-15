@@ -175,6 +175,14 @@
                                 <a href="<?= viv('cashbox/refund') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Возврат</span>
+                                    <?php
+                                    $con_one = $db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NULL AND status = 5 AND add_date")->rowCount();
+                                    if ($con_one) {
+                                        ?>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -303,12 +311,12 @@
                                     <span>Завершёные пациенты</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <!-- <li class="nav-item">
                                 <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
                                     <i class="icon-users"></i>
                                     <span>Мои шаблоны</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="nav-item">
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>
@@ -890,6 +898,14 @@
                                 <a href="<?= viv('cashbox/refund') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Возврат</span>
+                                    <?php
+                                    $con_one = $db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NULL AND status = 5 AND add_date")->rowCount();
+                                    if ($con_one) {
+                                        ?>
+                                        <span class="badge bg-danger badge-pill ml-auto"><?=$con_one?></span>
+                                        <?php
+                                    }
+                                    ?>
                                 </a>
                             </li>
                             <li class="nav-item">
