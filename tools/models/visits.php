@@ -1242,8 +1242,8 @@ class VisitAnalyzeModel extends Model
             <div class="modal-body">
 
                 <div class="text-right" style="margin-bottom:10px;">
-                    <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить</button>
-                    <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить все</button>
+                    <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить все</button>
                 </div>
 
                 <div id="modal_message">
@@ -1336,7 +1336,7 @@ class VisitAnalyzeModel extends Model
                 swal({
                     position: 'top',
                     title: 'Внимание!',
-                    text: 'Вы точно хотите завершить визит пациента?',
+                    text: 'Вы точно хотите завершить все анализы пациента?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Да'
