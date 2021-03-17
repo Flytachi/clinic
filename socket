@@ -1,2 +1,0 @@
-#!/bin/bash
-`node /srv/http/clinic.loc/socket.js`
