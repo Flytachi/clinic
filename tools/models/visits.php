@@ -2983,9 +2983,18 @@ class VisitFinish extends Model
         global $db;
         $this->post['completed'] = date('Y-m-d H:i:s');
         $db->beginTransaction();
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report IS NOT NULL))") as $inf){
-            $this->status_controller($pk, $inf);
-            $this->update();
+
+        if (!permission([12])) {
+            foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report IS NOT NULL))") as $inf){
+                $this->status_controller($pk, $inf);
+                $this->update();
+            }
+        }else {
+            $this->post['accept_date'] = date('Y-m-d H:i:s');
+            foreach($db->query("SELECT * FROM visit WHERE id=$pk AND completed IS NULL AND physio IS NOT NULL") as $inf){
+                $this->status_controller($inf['user_id'], $inf);
+                $this->update();
+            }
         }
         $db->commit();
         $this->success();

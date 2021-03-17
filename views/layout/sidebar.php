@@ -156,6 +156,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('reports/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-stack-text"></i>
                                     <span>Отчёт</span>
@@ -325,6 +331,12 @@
                             </li>
 
                             <li class="nav-item">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-archive"></i>
                                     <span>Архив</span>
@@ -402,6 +414,12 @@
                             </li>
 
                             <li class="nav-item">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-archive"></i>
                                     <span>Архив</span>
@@ -446,7 +464,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('journal/index') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Журнал</span>
                                 </a>
@@ -516,6 +534,12 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-archive"></i>
@@ -662,6 +686,12 @@
                             </li>
 
                             <li class="nav-item">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('archive/all/list') ?>" class="nav-link legitRipple">
                                     <i class="icon-archive"></i>
                                     <span>Архив</span>
@@ -747,7 +777,9 @@
                                     <i class="icon-users2 "></i>
                                     <span>Амбулаторные пациенты</span>
                                     <?php
-                                    $con_two = $db->query("SELECT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.add_date ASC")->rowCount();
+                                    $con_two = $db->query("SELECT DISTINCT us.id
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.direction IS NULL AND vs.physio IS NOT NULL ORDER BY vs.accept_date ASC")->rowCount();
                                     if ($con_two) {
                                         ?>
                                         <span class="badge bg-blue badge-pill ml-auto"><?=$con_two?></span>
@@ -918,6 +950,12 @@
                                 <a href="<?= viv('cashbox/list_investment') ?>" class="nav-link legitRipple">
                                     <i class="icon-display"></i>
                                     <span>Инвестиции</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
+                                    <i class="icon-users2"></i>
+                                    <span>Журнал</span>
                                 </a>
                             </li>
                             <li class="nav-item">

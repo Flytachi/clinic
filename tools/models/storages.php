@@ -120,6 +120,11 @@ class Storage extends Model
                     <input type="date" class="form-control" name="die_date" placeholder="Введите дату" required value="<?= $post['die_date'] ?>">
                 </div>
 
+                <div class="col-md-3">
+                    <label>Штрих код:</label>
+                    <input type="text" class="form-control" name="shtrih" placeholder="Введите код" required value="<?= $post['shtrih'] ?>">
+                </div>
+
             </div>
 
             <div class="form-group">

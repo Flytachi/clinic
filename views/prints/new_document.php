@@ -16,7 +16,7 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Document Test </title>
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 </head>
 <body>

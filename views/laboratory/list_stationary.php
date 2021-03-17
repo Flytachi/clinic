@@ -63,7 +63,7 @@ $header = "Стационарные пациенты";
                                     <?php
 									$sql = "SELECT DISTINCT us.id, vs.route_id, us.dateBith
 											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
-											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.laboratory IS NOT NULL ORDER BY vs.accept_date DESC";
+											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.laboratory IS NOT NULL AND vs.accept_date IS NOT NULL ORDER BY vs.accept_date DESC";
                                     foreach($db->query($sql) as $row) {
                                         ?>
 										<tr>

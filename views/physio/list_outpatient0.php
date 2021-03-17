@@ -1,13 +1,11 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(6);
+is_auth(12);
 $header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-
-<script src="<?= stack("global_assets/js/demo_pages/content_cards_header.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -40,30 +38,23 @@ $header = "Амбулаторные пациенты";
 
 					<div class="card-body">
 
-						<?php
-			            if($_SESSION['message']){
-			                echo $_SESSION['message'];
-			                unset($_SESSION['message']);
-			            }
-			            ?>
-
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm datatable-basic">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>
                                         <th>Мед услуга</th>
-                                        <th>Направитель</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+                                        <th class="text-center" style="width:300px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-									$sql = "SELECT DISTINCT us.id, vs.route_id, us.dateBith
+									$sql = "SELECT DISTINCT us.id, us.dateBith
 											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
-											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.laboratory IS NOT NULL AND vs.accept_date IS NOT NULL ORDER BY vs.accept_date DESC";
+											WHERE vs.completed IS NULL AND vs.direction IS NULL AND vs.physio IS NOT NULL ORDER BY vs.add_date ASC";
+
                                     foreach($db->query($sql) as $row) {
                                         ?>
                                         <tr>
@@ -72,21 +63,13 @@ $header = "Амбулаторные пациенты";
 											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
 												<?php
-                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.laboratory IS NOT NULL AND vs.accept_date IS NOT NULL AND vs.completed IS NULL") as $serv) {
+												foreach ($db->query("SELECT DISTINCT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL") as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
-                                                ?>
-                                            </td>
-											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												?>
 											</td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
-                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-                                                    <a onclick="ResultShow('<?= viv('laboratory/result') ?>?id=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
-                                                </div>
+												<button onclick="MListVisit(<?= $row['id'] ?>)" class="btn btn-outline-primary btn-sm">Детально</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -100,6 +83,7 @@ $header = "Амбулаторные пациенты";
 
 				</div>
 
+
 			</div>
             <!-- /content area -->
 
@@ -110,7 +94,7 @@ $header = "Амбулаторные пациенты";
 	<!-- /page content -->
 
 	<div id="modal_result_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-full">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info" id="modal_result_show_content">
 
 			</div>
@@ -118,42 +102,51 @@ $header = "Амбулаторные пациенты";
 	</div>
 
 	<!-- Footer -->
-    <?php include layout('footer') ?>
-    <!-- /footer -->
+	<?php include layout('footer') ?>
+	<!-- /footer -->
 
 	<script type="text/javascript">
 
-		function ResultShow(events) {
+		function ListVisit(events){
 			$.ajax({
 				type: "GET",
-				url: events,
+				url: "<?= ajax('physio_table_visit') ?>",
+				data: {
+					user_id: events,
+				},
 				success: function (result) {
-					$('#modal_result_show').modal('show');
 					$('#modal_result_show_content').html(result);
 				},
 			});
-		};
-
-		function PrintLab(url) {
-			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
-				$.ajax({
-					type: "GET",
-					url: url,
-					success: function (data) {
-						let ww = window.open();
-						ww.document.write(data);
-						ww.focus();
-						ww.print();
-						ww.close();
-					},
-				});
-			}else {
-				let we = window.open(url,'mywindow');
-				setTimeout(function() {we.close()}, 100);
-			}
 		}
 
-	</script>
+		function MListVisit(events) {
+			$('#modal_result_show').modal('show');
+			ListVisit(events);
+		};
 
+		function Complt(url, ev) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+                    ListVisit(ev);
+				},
+			});
+        };
+
+		function Delete(url, ev) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+                    ListVisit(ev);
+				},
+			});
+        };
+
+	</script>
 </body>
 </html>

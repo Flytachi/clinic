@@ -13,7 +13,6 @@ if ($_GET['items']) {
     $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,10 +20,15 @@ if ($_GET['items']) {
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
     <style>
-        body
-        {
-            font-size: 120% !important;
+
+        #text-b {
+            font-size: 120%;
         }
+
+        #text-h {
+            font-size: 120%;
+        }
+
     </style>
 
     <body>
@@ -35,7 +39,7 @@ if ($_GET['items']) {
                 <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
             </div>
 
-            <div class="col-6 text-right h4">
+            <div class="col-6 text-right h3">
                 <b>
                     <?= $company['print_header_title'] ?><br>
                     <?= $company['print_header_address'] ?><br>
@@ -68,7 +72,7 @@ if ($_GET['items']) {
                     <h1 class="text-center"><b><?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?></b></h1>
 
                     <div class="table-responsive card">
-                        <table class="minimalistBlack">
+                        <table class="table table-bordered table-sm">
                             <thead>
                                 <t id="text-h">
                                     <th style="width:3%">№</th>
@@ -109,7 +113,7 @@ if ($_GET['items']) {
                 <h1 class="text-center"><b><?= $db->query("SELECT name FROM service WHERE id={$docs->service_id}")->fetch()['name'] ?></b></h1>
 
                 <div class="table-responsive card">
-                    <table class="minimalistBlack">
+                    <table class="table table-bordered table-sm">
                         <thead>
                             <tr id="text-h">
                                 <th style="width:3%">№</th>
