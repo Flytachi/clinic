@@ -23,7 +23,6 @@ if ($_GET['pk']) {
                 </legend>
 
                 <?php
-
                 $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
                 $pk_visit = $ps['id'];
                 $completed = $ps['completed'];
