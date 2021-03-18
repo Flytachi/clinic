@@ -71,7 +71,7 @@ $header = "Завершёный пациенты";
 				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
 				                	$offset = intval($_GET['of']) * $count_elem;
 
-									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']} ORDER BY us.id ASC LIMIT $count_elem OFFSET $offset") as $row) {
+									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']} ORDER BY us.id DESC LIMIT $count_elem OFFSET $offset") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
