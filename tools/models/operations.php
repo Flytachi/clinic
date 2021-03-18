@@ -957,7 +957,7 @@ class OperationPreparatModel extends Model
 
 }
 
-class OperationСonsumablesModel extends Model
+class OperationConsumablesModel extends Model
 {
     public $table = 'operation_consumables';
 

@@ -571,7 +571,7 @@ if (!isset($_GET['type'])) {
 
                 <div id="form_card_consumables">
 
-                    <?php OperationСonsumablesModel::form() ?>
+                    <?php OperationConsumablesModel::form() ?>
 
                 </div>
 
