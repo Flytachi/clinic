@@ -41,7 +41,7 @@ $header = "Пациент";
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-calculator3 mr-2"></i>Расходы
-                            <a onclick="Print('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
+                            <a onclick="Print('<?= viv('prints/document_4') ?>?id=<?= $patient->visit_id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 						</legend>
 
 					   	<div class="card">

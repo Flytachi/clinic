@@ -834,6 +834,7 @@ class VisitPriceModel extends Model
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
             <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <button onclick="SaleCheck(<?= $pk ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
@@ -847,6 +848,20 @@ class VisitPriceModel extends Model
                 document.body.innerHTML = printContents;
                 window.print();
                 document.body.innerHTML = originalContents;
+            }
+
+            function SaleCheck(pk){
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('cashbox_sale_table') ?>",
+                    data: {pk:pk},
+                    success: function (result) {
+                        swal({
+                            type: 'warning',
+                            html: result,
+                        });
+                    }
+                });
             }
 
             function Proter(pk) {
@@ -865,7 +880,6 @@ class VisitPriceModel extends Model
                     }).show();
 
                 }else {
-
                     $.ajax({
                         type: $('#<?= __CLASS__ ?>_form').attr("method"),
                         url: $('#<?= __CLASS__ ?>_form').attr("action"),
@@ -875,11 +889,9 @@ class VisitPriceModel extends Model
                             var result = JSON.parse(result);
 
                             if (result.status == "success") {
-
                                 // Выдача выписки
                                 var url = "<?= viv('prints/document_3') ?>?id="+pk;
                                 Print(url);
-
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;
                                 setTimeout( function() {
@@ -891,7 +903,6 @@ class VisitPriceModel extends Model
 
                         },
                     });
-
                 }
             }
 
@@ -944,14 +955,14 @@ class VisitPriceModel extends Model
             }else {
                 $post['price_cash'] = $this->post['price_cash'];
                 $this->post['price_cash'] = 0;
-                $temp = $row['item_cost'] - $post['price_cash'];
+                $temp = round($row['item_cost'] - $post['price_cash']);
                 if ($this->post['price_card'] >= $temp) {
                     $this->post['price_card'] -= $temp;
                     $post['price_card'] = $temp;
                 }else {
                     $post['price_card'] = $this->post['price_card'];
                     $this->post['price_card'] = 0;
-                    $temp = $temp - $post['price_card'];
+                    $temp = round($temp - $post['price_card']);
                     if ($this->post['price_transfer'] >= $temp) {
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
@@ -969,7 +980,7 @@ class VisitPriceModel extends Model
             }else {
                 $post['price_card'] = $this->post['price_card'];
                 $this->post['price_card'] = 0;
-                $temp = $row['item_cost'] - $post['price_card'];
+                $temp = round($row['item_cost'] - $post['price_card']);
                 if ($this->post['price_transfer'] >= $temp) {
                     $this->post['price_transfer'] -= $temp;
                     $post['price_transfer'] = $temp;
@@ -1123,6 +1134,7 @@ class VisitPriceModel extends Model
             'status' => "error" ,
             'message' => $value
         ));
+        exit;
     }
 
 }

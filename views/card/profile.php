@@ -176,7 +176,7 @@ if (!$patient) {
                                     (
                                         @bed_hours * (bdt.price / 24) +
                                         IFNULL($pl, 0) +
-                                        (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
+                                        (SELECT IFNULL(SUM(price_cash + price_card + price_transfer), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
                                     )
                                      'balance'
                                 FROM users us
