@@ -1834,7 +1834,7 @@ class VisitReport extends Model
             if ($end) {
                 $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
                 if ($row['assist_id']) {
-                    if ($row['grant_id'] != $row['route_id'] or !$db->query("SELECT * FROM visit WHERE id != {$pk} AND completed IS NULL")->fetchColumn()) {
+                    if ($row['grant_id'] != $row['route_id'] or !$db->query("SELECT * FROM visit WHERE id != {$pk} AND user_id = {$row['user_id']} AND completed IS NULL")->fetchColumn()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
