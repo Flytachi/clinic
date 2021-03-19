@@ -427,8 +427,8 @@ if (!isset($_GET['type'])) {
                                     <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(8))): ?>
                                         <td class="text-right">
                                             <div class="list-icons">
-                                                <button onclick="UpdateOperations('<?= up_url($row['id'], 'OperationСonsumablesModel') ?>', 'consumables')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
-                                                <button onclick="Delete('<?= del_url($row['id'], 'OperationСonsumablesModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
+                                                <button onclick="UpdateOperations('<?= up_url($row['id'], 'OperationConsumablesModel') ?>', 'consumables')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
+                                                <button onclick="Delete('<?= del_url($row['id'], 'OperationConsumablesModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
                                             </div>
                                         </td>
                                     <?php endif; ?>
@@ -494,7 +494,7 @@ if (!isset($_GET['type'])) {
 
         <?php if ($activity and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed and strtotime($patient->oper_date) <= strtotime(date('Y-m-d H:i'))): ?>
             <div class="text-right">
-                <button onclick="Finish_date('<?= $patient->pk ?>', '<?= $patient->oper_date ?>')" class="btn btn-outline-success btn-sm mt-2">Завершить</a>
+                <button onclick="Finish_date('<?= $patient->pk ?>', '<?= $patient->visit_id ?>', '<?= $patient->oper_date ?>')" class="btn btn-outline-success btn-sm mt-2">Завершить</a>
             </div>
         <?php endif; ?>
 
@@ -647,9 +647,10 @@ if (!isset($_GET['type'])) {
         });
     };
 
-    function Finish_date(pk, date) {
+    function Finish_date(pk, visit_id, date) {
         $('#modal_finish_date').modal('show');
         $('#finish_id').val(pk);
+        $('#visit_id').val(visit_id);
         document.getElementById('OperationModel_form').dataset.c_date = date;
     };
 </script>
