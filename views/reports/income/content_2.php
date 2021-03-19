@@ -106,18 +106,33 @@ $header = "Доход";
 					$sql = "SELECT us.id,
 								IFNULL (us.share, 0) 'share',
 								-- Амбулатор
-								@amb_service_amount := IFNULL(
+								--
+								@amb_service_amount_1 := IFNULL(
 									(
-										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-										WHERE vs.direction IS NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vs.direction IS NULL AND sc.type = 1 AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
 									)
-									, 0) 'amb_service_amount',
-								@amb_service_count := IFNULL(
+									, 0) 'amb_service_amount_1',
+								@amb_service_amount_2 := IFNULL(
 									(
-										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-										WHERE vs.direction IS NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vs.direction IS NULL AND sc.type = 2 AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
 									)
-									, 0) 'amb_service_count',
+									, 0) 'amb_service_amount_2',
+								--
+								@amb_service_count_1 := IFNULL(
+									(
+										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vs.direction IS NULL AND sc.type = 1 AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+									)
+									, 0) 'amb_service_count_1',
+								@amb_service_count_2 := IFNULL(
+									(
+										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vs.direction IS NULL AND sc.type = 2 AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+									)
+									, 0) 'amb_service_count_2',
+								--
 								@amb_users_count := IFNULL(
 									(
 										SELECT COUNT(DISTINCT vs.user_id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
@@ -136,7 +151,9 @@ $header = "Доход";
 										WHERE vs.direction IS NULL AND vs.route_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
 									)
 									, 0) 'amb_service_route_count',
-
+								--
+								@amb_service_amount_1 + @amb_service_amount_2 'amb_service_amount',
+								@amb_service_count_1 + @amb_service_count_2 'amb_service_count',
 								-- Стационар
 								@sta_service_amount := IFNULL(
 									(
@@ -190,7 +207,7 @@ $header = "Доход";
 							FROM users us
 							WHERE us.id = {$_POST['parent_id']}";
 					$information = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-					// prit($information);
+					prit($information);
 					?>
 					<div class="card card-body border-1 border-primary">
 						<div class="text-center">

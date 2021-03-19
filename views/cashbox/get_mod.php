@@ -23,7 +23,6 @@ if ($_GET['pk']) {
                 </legend>
 
                 <?php
-
                 $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
                 $pk_visit = $ps['id'];
                 $completed = $ps['completed'];
@@ -72,6 +71,10 @@ if ($_GET['pk']) {
                             <td class="text-right text-danger"><?= number_format($price_cost) ?></td>
                         </tr>
                         <tr class="table-secondary">
+                            <td>Скидка</td>
+                            <td class="text-right">0%</td>
+                        </tr>
+                        <tr class="table-secondary">
                             <td>Разница</td>
                             <?php if (($price['balance'] + $price_cost) > 0): ?>
                                 <td class="text-right text-success"><?= number_format($price['balance'] + $price_cost) ?></td>
@@ -88,6 +91,7 @@ if ($_GET['pk']) {
                 <div class="text-right mt-3">
 
                     <?php VisitPriceModel::form_button() ?>
+                    
                 </div>
 
                 <div id="detail_div"></div>

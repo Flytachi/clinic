@@ -163,7 +163,7 @@ if (!$patient) {
                     if ($activity) {
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
                         foreach ($serv_id as $value) {
-                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
+                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']}")->fetchAll();
                             foreach ($item_service as $pri_ze) {
                                 $pl += $pri_ze['price'];
                             }
@@ -189,7 +189,7 @@ if (!$patient) {
                     } else {
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
                         foreach ($serv_id as $value) {
-                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
+                            $item_service = $db->query("SELECT SUM(price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
                             foreach ($item_service as $pri_ze) {
                                 $price->balance += $pri_ze['price'];
                             }
