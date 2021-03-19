@@ -6,9 +6,9 @@ if ($_GET['pk']) {
 
     if($_GET['mod'] == "st"){
         ?>
-        <div class="card">
+        <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk) ?></em></h5>
+                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
 
@@ -18,28 +18,37 @@ if ($_GET['pk']) {
 
             <div class="card-body">
 
+                <legend class="font-weight-semibold text-uppercase font-size-sm">
+                    <i class="icon-calculator3 mr-2"></i>Информация
+                </legend>
+
                 <?php
                 $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
                 $pk_visit = $ps['id'];
                 $completed = $ps['completed'];
-                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
+
+                // Скрипт подсчёта средств -----
                 $sql = "SELECT
                             vs.id,
                             IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) 'balance',
-                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) 'bed_days',
+                            @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
+                            @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
+                            @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
-                            ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H') / 24) * bdt.price 'cost_bed',
+                            @bed_hours * (bdt.price / 24) 'cost_bed',
                             (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
-                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2'
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2',
+                            (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)) 'cost_beds'
                             -- vs.add_date
                         FROM users us
                             LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
-                            LEFT JOIN beds bd ON(bd.id = {$ps['bed_id']})
-                            LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                             LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
+                            LEFT JOIN beds bd ON(bd.id = vs.bed_id)
+                            LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
                         WHERE us.id = $pk";
                 $price = $db->query($sql)->fetch();
+                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
                 foreach ($serv_id as $value) {
                     $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
                     foreach ($item_service as $pri_ze) {
@@ -47,8 +56,9 @@ if ($_GET['pk']) {
                     }
                 }
                 // prit($price);
+                // Скрипт -----
 
-                $price_cost -= $price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'];
+                $price_cost -= round($price['cost_service'] + $price['cost_bed'] + $price['cost_item_2'] + $price['cost_beds']);
                 ?>
                 <table class="table table-hover">
                     <tbody>
@@ -59,6 +69,10 @@ if ($_GET['pk']) {
                         <tr class="table-secondary">
                             <td>Сумма к оплате</td>
                             <td class="text-right text-danger"><?= number_format($price_cost) ?></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Скидка</td>
+                            <td class="text-right">0%</td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Разница</td>
@@ -77,6 +91,7 @@ if ($_GET['pk']) {
                 <div class="text-right mt-3">
 
                     <?php VisitPriceModel::form_button() ?>
+                    
                 </div>
 
                 <div id="detail_div"></div>
@@ -86,10 +101,10 @@ if ($_GET['pk']) {
         <?php
     }elseif ($_GET['mod'] == "rf"){
         ?>
-        <div class="card">
+        <div class="card border-1 border-dark">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk); ?></em></h5>
+                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
             </div>
 
             <div class="card-body">
@@ -135,15 +150,20 @@ if ($_GET['pk']) {
         <?php
     }else {
         ?>
-        <div class="card">
+        <div class="card border-1 border-dark">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><em><?= get_full_name($pk); ?></em></h5>
+                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
             </div>
 
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
+
+                <legend class="font-weight-semibold text-uppercase font-size-sm">
+                    <i class="icon-bag mr-2"></i>Услуги
+                </legend>
+
+                <div class="table-responsive card">
+                    <table class="table table-hover table-sm">
                         <thead>
                             <tr class="bg-blue">
                                 <th class="text-left">Дата и время</th>
@@ -163,7 +183,9 @@ if ($_GET['pk']) {
                                         <td><?= $row['item_name'] ?></td>
                                         <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
                                         <th class="text-center">
-                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
+                                            <div class="list-icons">
+                                                <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
+                                            </div>
                                         </th>
                                     </tr>
                                 <?php
@@ -172,14 +194,15 @@ if ($_GET['pk']) {
 
                         </tbody>
                     </table>
-                    <br>
-                    <div class="text-left">
-                        <strong>Итого: </strong><strong id="total_title"></strong>
-                    </div>
-                    <div class="text-right">
-                        <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary border-transparent legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
-                    </div>
                 </div>
+
+                <div class="text-left">
+                    <strong>Итого: </strong><strong id="total_title"></strong>
+                </div>
+                <div class="text-right">
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                </div>
+
             </div>
 
         </div>

@@ -97,7 +97,11 @@ $header = "Заявки";
                                                 </td>
                                                 <td class="text-center"><?= $row['qty'] ?></td>
                                                 <td class="text-center table-primary">
-                                                    <input type="number" id="input_count-<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="form-control" name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>" style="border-width: 0px 0; padding: 0.2rem 0;" disabled>
+                                                    <input type="number" id="input_count-<?= $row['id'] ?>"
+															data-price="<?= $row['price'] ?>" class="form-control counts"
+															min="1" max="<?= $row['qty_have'] ?>"
+															name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>"
+															style="border-width: 0px 0; padding: 0.2rem 0;" disabled>
                                                 </td>
                                                 <td class="text-right"><?= number_format($row['price']) ?></td>
                                                 <td class="text-right"><?= $row['total_price']; ?></td>
@@ -110,16 +114,16 @@ $header = "Заявки";
                                             </tr>
                                         <?php endforeach; ?>
                                         <tr class="table-secondary">
-                                            <td colspan="7" class="text-right"><b>Итого:</b></td>
-                                            <td class="text-right"><b id="total_cost">0</b></td>
-                                            <td></td>
+                                            <th colspan="7" class="text-right">Итого:</th>
+                                            <th class="text-right" id="total_cost">0</th>
+                                            <th></th>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
 
                             <div class="text-right">
-                                <button type="submit" class="btn btn-sm btn-outline-success" <?= ($total_cost) ? "" : "disabled" ?>>Отправить</button>
+                                <button type="submit" id="btn_send" class="btn btn-sm btn-outline-success" disabled>Отправить</button>
                             </div>
 
                         </div>
@@ -138,6 +142,31 @@ $header = "Заявки";
 	<!-- /page content -->
 
     <script type="text/javascript">
+		function SendVerification(){
+			var btn = document.getElementById('btn_send');
+			var total_cost = document.getElementById('total_cost');
+			var sum = Number(total_cost.textContent.replace(/,/g,''));
+			if (sum > 0) {
+				btn.disabled = false;
+			}else {
+				btn.disabled = true;
+			}
+		}
+
+		$(".counts").keyup(function() {
+			var total_cost = document.getElementById('total_cost');
+			var sum = Number(total_cost.textContent.replace(/,/g,''));
+			var inputs = document.getElementsByClassName('counts');
+			var new_sum = 0;
+
+			for (var input of inputs) {
+				if (!input.disabled) {
+					new_sum += Number(input.value * input.dataset.price);
+				}
+			}
+			total_cost.textContent = number_format(new_sum, 1);
+			SendVerification();
+	    });
 
 		function On_check(check) {
 			var input = $('#'+check.value);
@@ -148,6 +177,7 @@ $header = "Заявки";
 				input.removeAttr("disabled");
 				Upsum(input);
 			}
+			SendVerification();
 		}
 
 		function Downsum(input) {

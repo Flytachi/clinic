@@ -78,7 +78,7 @@ foreach ($comp as $value) {
 
 </style>
 
-<body onload="window.print();" style="color: black; font-size: 140%;">
+<body style="color: black; font-size: 140%;">
 
     <div id="invoice-POS" >
 
@@ -89,13 +89,8 @@ foreach ($comp as $value) {
         <div id="mid">
 
             <div class="info">
-                <span style="text-align: center;">
-                    <h2><?= $_GET['id'] ?></h2>
-                </span>
                 <p class="h4">
-                    <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?></br>
-                    <b>Дата рождения</b>:<?= date('d.m.Y', strtotime($db->query("SELECT dateBith FROM users WHERE id = ". $_GET['id'] ."")->fetch()['dateBith'])) ?>
                 </p>
             </div>
 
@@ -106,7 +101,7 @@ foreach ($comp as $value) {
             <div id="table">
                 <table>
                     <tr class="tabletitle">
-                        <td class="item"><h2>Услуга</h2></td>
+                        <td class="item"><h2>Препарат</h2></td>
                         <td class="Hours"><h2>шт</h2></td>
                         <td class="Rate"><h2>сумма</h2></td>
                     </tr>
@@ -114,15 +109,15 @@ foreach ($comp as $value) {
                     <?php $total_price = 0; ?>
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
-                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
+                        <?php $row = $db->query("SELECT name, qty, (amount_cash + amount_card + amount_transfer) 'amount' FROM storage_sales WHERE id = $item")->fetch() ?>
                         <tr class="service" style="font-size:150%;">
-        					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
-        					<td class="tableitem"><p class="itemtext">1</p></td>
+        					<td class="tableitem"><p class="itemtext"><?= $row['name'] ?></p></td>
+        					<td class="tableitem"><p class="itemtext"><?= $row['qty'] ?></p></td>
         					<td class="tableitem">
                                 <p class="itemtext">
                                     <?php
-                                    echo number_format($row['price']);
-                                    $total_price += $row['price'];
+                                    echo number_format($row['amount']);
+                                    $total_price += $row['amount'];
                                     ?>
                                 </p>
                             </td>

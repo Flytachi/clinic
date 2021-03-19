@@ -86,7 +86,8 @@ $header = "Рабочий стол";
 					                                    <a href="<?= viv('card/content_1') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Обход</a>
 					                                    <a href="<?= viv('card/content_5') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 					                                    <a href="<?= viv('card/content_7') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначений</a>
-					                                </div>
+														<a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать пробирки</a>
+													</div>
 					                            </td>
 					                        </tr>
 					                        <?php

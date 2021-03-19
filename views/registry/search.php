@@ -6,7 +6,8 @@ if(empty($_GET['search'])){
     $sql = "SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC LIMIT 20";
 }else {
     $ser = $_GET['search'];
-    $sql = "SELECT * FROM users WHERE user_level = 15 AND (id LIKE '%$ser%' OR first_name LIKE '%$ser%' OR last_name LIKE '%$ser%' OR father_name LIKE '%$ser%')";
+    $sql = "SELECT * FROM users WHERE user_level = 15
+            AND (id LIKE '%$ser%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$ser%'))";
 }
 $i = 1;
 foreach($db->query($sql) as $row) {

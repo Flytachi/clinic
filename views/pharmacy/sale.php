@@ -106,7 +106,33 @@ $header = "Продажа";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_amount" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Оплата</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?php StorageSale::modal(); ?>
+
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
+
+		function Sum() {
+			var total_cost = document.getElementById('total_cost');
+			var sum = Number(total_cost.textContent.replace(/,/g,''));
+			var inputs = document.getElementsByClassName('counts');
+			var new_sum = 0;
+			for (var input of inputs) {
+				new_sum += Number(input.value * input.dataset.price);
+			}
+			total_cost.textContent = number_format(new_sum, 1);
+		}
+
         function Search_storage(events) {
             event.preventDefault();
 			$.ajax({
@@ -121,7 +147,7 @@ $header = "Продажа";
 			});
         }
 
-        function Check(item) {
+        function Check(item){
 			$.ajax({
 				type: "GET",
 				url: "<?= ajax('pharmacy_select_item') ?>",

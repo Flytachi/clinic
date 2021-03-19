@@ -61,12 +61,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= viv('master/visit_control') ?>" class="nav-link legitRipple <?= viv_link('master/visit_control') ?>">
-                        <i class="icon-archive"></i>
-                        <span>Сontrol of visits</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="<?= viv('master/logs') ?>" class="nav-link legitRipple <?= viv_link('master/logs') ?>">
                         <i class="icon-price-tag3"></i>
                         <span>Logs</span>

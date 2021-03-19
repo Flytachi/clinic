@@ -199,12 +199,6 @@ class VisitModel extends Model
             </div>
 
         </form>
-        <script type="text/javascript">
-            $(function(){
-                $("#parent_id").chained("#division_id");
-                $("#service_id").chained("#division_id");
-            });
-        </script>
         <?php
     }
 
@@ -347,6 +341,76 @@ class VisitModel extends Model
         <?php
     }
 
+    public function form_beds($pk = null)
+    {
+        global $db, $FLOOR, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="bed_stat" value="1">
+            <input type="hidden" name="id" value="<?= $patient->visit_id ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label">Этаж:</label>
+                    <div class="col-lg-9">
+                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php foreach ($FLOOR as $key => $value): ?>
+                                <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
+                                    <option value="<?= $key ?>" <?= ($key == $patient->floor) ? "selected" : "" ?>><?= $value ?></option>
+                                <?php else: ?>
+                                    <option value="<?= $key ?>" disabled><?= $value ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label">Палата:</label>
+                    <div class="col-lg-9">
+                        <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
+                                <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ($row['ward'] == $patient->ward) ? "selected" : "" ?>><?= $row['ward'] ?> палата</option>
+                                <?php else: ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" disabled><?= $row['ward'] ?> палата</option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-3 col-form-label">Койка:</label>
+                    <div class="col-lg-9">
+                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="form-control select-price" required data-fouc>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)") as $row): ?>
+                                <?php if ($row['user_id']): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
+                                <?php else: ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" ><?= $row['bed'] ?> койка</option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+
     public function get_or_404(int $pk)
     {
         global $db;
@@ -461,6 +525,9 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
+        if ($this->post['bed_stat']) {
+            $this->bed_edit();
+        }
         if (is_array($this->post['service'])) {
             $this->save_rows();
         }
@@ -473,6 +540,61 @@ class VisitModel extends Model
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function bed_edit()
+    {
+        global $db;
+        unset($this->post['bed_stat']);
+        $visit = $db->query("SELECT * FROM visit WHERE id = {$this->post['id']}")->fetch();
+        $this->bed_price($visit);
+        $this->change_beds($visit);
+        $this->update();
+    }
+
+    public function change_beds($visit)
+    {
+        global $db;
+        $bed_old = $db->query("SELECT * FROM beds WHERE id = {$visit['bed_id']}")->fetch();
+        $bed_new = $db->query("SELECT * FROM beds WHERE id = {$this->post['bed_id']}")->fetch();
+        $bed_old['user_id'] = null;
+        $bed_new['user_id'] = $visit['user_id'];
+        $object = Mixin\insert_or_update('beds', $bed_old);
+        if (!intval($object)) {
+            $this->error($object);
+        }
+        $object = Mixin\insert_or_update('beds', $bed_new);
+        if (!intval($object)) {
+            $this->error($object);
+        }
+    }
+
+    public function bed_price($visit)
+    {
+        global $db;
+        $sql = "SELECT wd.floor,
+                    wd.ward, bd.bed,
+                    ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) 'bed_cost'
+                FROM visit vs
+                    LEFT JOIN beds bd ON(bd.id=vs.bed_id)
+                    LEFT JOIN wards wd ON(wd.id=bd.ward_id)
+                    LEFT JOIN bed_type bdt ON(bdt.id=bd.types)
+                    LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
+                WHERE vs.id = {$visit['id']} ORDER BY vp.add_date DESC";
+        $bed = $db->query($sql)->fetch();
+        if ($bed['bed_cost'] > 0) {
+            $post['visit_id'] = $visit['id'];
+            $post['user_id'] = $visit['user_id'];
+            $post['status'] = 0;
+            $post['item_type'] = 101;
+            $post['item_id'] = $visit['bed_id'];
+            $post['item_cost'] = $bed['bed_cost'];
+            $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
+            $object = Mixin\insert('visit_price', $post);
+            if (!intval($object)) {
+                $this->error($object);
+            }
+        }
     }
 
     public function delete(int $pk)
@@ -712,6 +834,7 @@ class VisitPriceModel extends Model
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
             <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <button onclick="SaleCheck(<?= $pk ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
@@ -725,6 +848,20 @@ class VisitPriceModel extends Model
                 document.body.innerHTML = printContents;
                 window.print();
                 document.body.innerHTML = originalContents;
+            }
+
+            function SaleCheck(pk){
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('cashbox_sale_table') ?>",
+                    data: {pk:pk},
+                    success: function (result) {
+                        swal({
+                            type: 'warning',
+                            html: result,
+                        });
+                    }
+                });
             }
 
             function Proter(pk) {
@@ -743,7 +880,6 @@ class VisitPriceModel extends Model
                     }).show();
 
                 }else {
-
                     $.ajax({
                         type: $('#<?= __CLASS__ ?>_form').attr("method"),
                         url: $('#<?= __CLASS__ ?>_form').attr("action"),
@@ -753,11 +889,9 @@ class VisitPriceModel extends Model
                             var result = JSON.parse(result);
 
                             if (result.status == "success") {
-
                                 // Выдача выписки
                                 var url = "<?= viv('prints/document_3') ?>?id="+pk;
                                 Print(url);
-
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;
                                 setTimeout( function() {
@@ -769,7 +903,6 @@ class VisitPriceModel extends Model
 
                         },
                     });
-
                 }
             }
 
@@ -822,14 +955,14 @@ class VisitPriceModel extends Model
             }else {
                 $post['price_cash'] = $this->post['price_cash'];
                 $this->post['price_cash'] = 0;
-                $temp = $row['item_cost'] - $post['price_cash'];
+                $temp = round($row['item_cost'] - $post['price_cash']);
                 if ($this->post['price_card'] >= $temp) {
                     $this->post['price_card'] -= $temp;
                     $post['price_card'] = $temp;
                 }else {
                     $post['price_card'] = $this->post['price_card'];
                     $this->post['price_card'] = 0;
-                    $temp = $temp - $post['price_card'];
+                    $temp = round($temp - $post['price_card']);
                     if ($this->post['price_transfer'] >= $temp) {
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
@@ -847,7 +980,7 @@ class VisitPriceModel extends Model
             }else {
                 $post['price_card'] = $this->post['price_card'];
                 $this->post['price_card'] = 0;
-                $temp = $row['item_cost'] - $post['price_card'];
+                $temp = round($row['item_cost'] - $post['price_card']);
                 if ($this->post['price_transfer'] >= $temp) {
                     $this->post['price_transfer'] -= $temp;
                     $post['price_transfer'] = $temp;
@@ -927,6 +1060,7 @@ class VisitPriceModel extends Model
         $post['visit_id'] = $ti['id'];
         $post['user_id'] = $this->user_pk;
         $post['pricer_id'] = $this->post['pricer_id'];
+        $post['status'] = 0;
         $post['item_type'] = 101;
         $post['item_id'] = $ti['bed_id'];
         $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
@@ -1000,6 +1134,7 @@ class VisitPriceModel extends Model
             'status' => "error" ,
             'message' => $value
         ));
+        exit;
     }
 
 }
@@ -1119,8 +1254,8 @@ class VisitAnalyzeModel extends Model
             <div class="modal-body">
 
                 <div class="text-right" style="margin-bottom:10px;">
-                    <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить</button>
-                    <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                    <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить все</button>
+                    <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить все</button>
                 </div>
 
                 <div id="modal_message">
@@ -1174,7 +1309,7 @@ class VisitAnalyzeModel extends Model
                                                         <input type="text" class="form-control result_check" name="<?= $i ?>[result]" value="<?= $row['result'] ?>">
                                                     </td>
                                                     <td>
-                                                        <div class="form-check">
+                                                        <div class="list-icons">
                                                             <label class="form-check-label">
                                                                 <input data-id="TR_<?= $i ?>" type="checkbox" class="swit bg-danger cek_a" name="<?= $i ?>[deviation]" <?= ($row['deviation']) ? "checked" : "" ?>>
                                                             </label>
@@ -1213,7 +1348,7 @@ class VisitAnalyzeModel extends Model
                 swal({
                     position: 'top',
                     title: 'Внимание!',
-                    text: 'Вы точно хотите завершить визит пациента?',
+                    text: 'Вы точно хотите завершить все анализы пациента?',
                     type: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Да'
@@ -1699,7 +1834,7 @@ class VisitReport extends Model
             if ($end) {
                 $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
                 if ($row['assist_id']) {
-                    if ($row['grant_id'] != $row['route_id']) {
+                    if ($row['grant_id'] != $row['route_id'] or !$db->query("SELECT * FROM visit WHERE id != {$pk} AND user_id = {$row['user_id']} AND completed IS NULL")->fetchColumn()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
@@ -2860,9 +2995,18 @@ class VisitFinish extends Model
         global $db;
         $this->post['completed'] = date('Y-m-d H:i:s');
         $db->beginTransaction();
-        foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report IS NOT NULL))") as $inf){
-            $this->status_controller($pk, $inf);
-            $this->update();
+
+        if (!permission([12])) {
+            foreach($db->query("SELECT * FROM visit WHERE user_id=$pk AND parent_id= {$_SESSION['session_id']} AND accept_date IS NOT NULL AND completed IS NULL AND (service_id = 1 OR (report_title IS NOT NULL AND report IS NOT NULL))") as $inf){
+                $this->status_controller($pk, $inf);
+                $this->update();
+            }
+        }else {
+            $this->post['accept_date'] = date('Y-m-d H:i:s');
+            foreach($db->query("SELECT * FROM visit WHERE id=$pk AND completed IS NULL AND physio IS NOT NULL") as $inf){
+                $this->status_controller($inf['user_id'], $inf);
+                $this->update();
+            }
         }
         $db->commit();
         $this->success();

@@ -193,8 +193,7 @@ function nodateformat($var=""){
 
 function showTitle() //Функция title
 {
-    $title = "Clinic";
-    return $title;
+    return "MedLine";
 }
 
 function form($name) //Функция title

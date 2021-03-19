@@ -196,12 +196,15 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $i = 1;
-                                    foreach($db->query("SELECT vs.id, vs.route_id, vs.direction, vs.laboratory, vs.add_date, vs.completed, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$_GET['id']} AND
-									(vs.status != 5 OR vs.status IS NULL) AND parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY add_date DESC") as $row) {
-										?>
-                                        <tr>
+									<?php $sql = "SELECT vs.id,
+														vs.route_id, vs.direction, vs.laboratory,
+														vs.add_date, vs.completed, sc.name
+														FROM visit vs
+															LEFT JOIN service sc ON(vs.service_id=sc.id)
+														WHERE vs.user_id = {$_GET['id']} AND (vs.status != 5 OR vs.status IS NULL)
+														AND vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY vs.add_date DESC"; ?>
+									<?php $i=1;foreach ($db->query($sql) as $row): ?>
+										<tr>
                                             <td><?= $i++ ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
@@ -219,19 +222,20 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													<?php else: ?>
 														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
-															<a href="<?= viv('archive/card/content_1') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
+															<a href="<?= viv('card/content_1') ?>?pk=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
 															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
 														<?php else: ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
+															<?php if (permission([2,32]) and (level($row['route_id']) == 2 or level($row['route_id']) == 32)): ?>
+																<a onclick="Update('<?= up_url($row['id'], 'VisitModel') ?>')" class="dropdown-item"><i class="icon-users"></i> Направитель</a>
+															<?php endif; ?>
 															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													<?php endif; ?>
                                                 </div>
 											</td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>

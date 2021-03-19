@@ -35,6 +35,14 @@ $header = "Завершёный пациенты";
 					<div class="card-header text-dark header-elements-inline alpha-info">
 						<h6 class="card-title">Завершёный пациенты</h6>
 						<div class="header-elements">
+							<form action="#" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 							<div class="list-icons">
 								<a class="list-icons-item" data-action="collapse"></a>
 							</div>
@@ -55,10 +63,15 @@ $header = "Завершёный пациенты";
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody  id="search_display">
                                     <?php
-                                    // prit($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY us.add_date DESC")->fetchAll());
-									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']} ORDER BY us.id ASC") as $row) {
+									$i = 1;
+									$count_elem = 20;
+				                	$count = ceil(intval($db->query("SELECT COUNT(DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date) FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']}")->fetchColumn()) / $count_elem);
+				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
+				                	$offset = intval($_GET['of']) * $count_elem;
+
+									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NOT NULL AND vs.assist_id = {$_SESSION['session_id']} ORDER BY us.id DESC LIMIT $count_elem OFFSET $offset") as $row) {
                                         ?>
                                         <tr>
                                             <td><?= addZero($row['id']) ?></td>
@@ -77,6 +90,8 @@ $header = "Завершёный пациенты";
                             </table>
                         </div>
 
+						<?php pagination_page($count, $count_elem, 2); ?>
+
 					</div>
 
 				</div>
@@ -90,6 +105,21 @@ $header = "Завершёный пациенты";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "search.php",
+				data: {
+					search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

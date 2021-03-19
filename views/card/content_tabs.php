@@ -59,6 +59,11 @@
             <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-puzzle3 mr-1"></i>Расходные материалы</a>
         </li>
     <?php endif; ?>
+    <?php if (!$activity): ?>
+        <li class="nav-item">
+            <a href="<?= viv('card/content_12').$agr ?>" class="nav-link <?= viv_link('card/content_12') ?> legitRipple" style="white-space:nowrap;"><i class="icon-calculator3 mr-1"></i>Расходы</a>
+        </li>
+    <?php endif; ?>
 </ul>
 
 <?php

@@ -102,6 +102,7 @@ class OperationModel extends Model
         <form method="post" action="<?= add_url() ?>" onsubmit="Chek_fin_date()" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" id="finish_id">
+            <input type="hidden" name="visit_id" id="visit_id">
 
             <div class="modal-header bg-info">
                 <h5 class="modal-title">Дата завершения операции</h5>
@@ -167,13 +168,14 @@ class OperationModel extends Model
             $db->beginTransaction();
 
             if ($this->post['completed']) {
-                $post_price = $db->query("SELECT id, item_cost FROM visit_price WHERE operation_id = {$pk}")->fetch();
+                $post_price = $db->query("SELECT id, item_cost FROM visit_price WHERE operation_id = {$pk} AND visit_id = {$this->post['visit_id']}")->fetch();
+                unset($this->post['visit_id']);
                 $post_price_pk = $post_price['id']; unset($post_price['id']);
+                $post_price['item_cost'] = $db->query("SELECT SUM(item_cost) FROM operation WHERE id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(price) FROM operation_member WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_service WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost*item_qty) FROM operation_preparat WHERE operation_id = {$pk}")->fetchColumn();
                 $post_price['item_cost'] += $db->query("SELECT SUM(item_cost) FROM operation_consumables WHERE operation_id = {$pk}")->fetchColumn();
-
                 $this->storage_sales($pk);
                 // обновление цены
                 $object = Mixin\update('visit_price', $post_price, $post_price_pk);
@@ -872,7 +874,7 @@ class OperationPreparatModel extends Model
                                                 st.qty -
                                                 IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0)
                                             ) 'qty'
-                                            FROM storage st WHERE st.category AND st.qty != 0"; ?>
+                                            FROM storage st WHERE st.category AND st.qty != 0 ORDER BY st.name"; ?>
                             <?php foreach ($db->query($sql) as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['item_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> (в наличии - <?= $row['qty'] ?>)</option>
                             <?php endforeach; ?>
@@ -957,7 +959,7 @@ class OperationPreparatModel extends Model
 
 }
 
-class OperationСonsumablesModel extends Model
+class OperationConsumablesModel extends Model
 {
     public $table = 'operation_consumables';
 

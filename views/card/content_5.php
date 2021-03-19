@@ -45,9 +45,11 @@ $header = "Пациент";
 								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-								<a class="float-right text-info mr-2" data-toggle="modal" data-target="#modal_route">
-									<i class="icon-drawer3 mr-1"></i>Сводка анализов
-								</a>
+								<?php if ($patient->direction): ?>
+									<a onclick="AnalizeCheck(<?= $patient->visit_id ?>)" class="float-right text-info mr-2">
+										<i class="icon-drawer3 mr-1"></i>Сводка анализов
+									</a>
+								<?php endif; ?>
 							<?php else: ?>
 								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right <?= $class_color_add ?> mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
@@ -125,7 +127,7 @@ $header = "Пациент";
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
 														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-														<?php if (!$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
+														<?php if ($patient->direction and !$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
 															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 													</div>
@@ -188,6 +190,17 @@ $header = "Пациент";
 	</div>
 
 	<script type="text/javascript">
+		function AnalizeCheck(visit) {
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('list_analize') ?>?pk="+visit,
+				success: function (data) {
+					$('#modal_report_show').modal('show');
+					$('#report_show').html(data);
+				},
+			});
+		}
+
 		function Check(events) {
 			$.ajax({
 				type: "GET",
