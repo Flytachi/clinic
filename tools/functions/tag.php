@@ -25,13 +25,13 @@ function ModelDir($dir) {
 
 function parad($title, $value) {
     echo "<strong>$title</strong>";
-    echo "<pre>";
+    echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
     print_r($value);
     echo "</pre>";
 }
 
 function prit($value) {
-    echo "<pre>";
+    echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
     print_r($value);
     echo "</pre>";
 }

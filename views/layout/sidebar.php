@@ -953,6 +953,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
+                                    <i class="icon-collaboration"></i>
+                                    <span>Заметки</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="<?= viv('archive/journal') ?>" class="nav-link legitRipple">
                                     <i class="icon-users2"></i>
                                     <span>Журнал</span>
