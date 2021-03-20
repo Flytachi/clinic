@@ -89,23 +89,23 @@ function ajax($url)
 
 
 function add_url(){
-    return DIR."/model/create_to_update".EXT."?";
+    return DIR."/hook/create_to_update".EXT."?";
 }
 
 function del_url($id, $model){
-    return DIR."/model/delete".EXT."?id=$id&model=$model";
+    return DIR."/hook/delete".EXT."?id=$id&model=$model";
 }
 
 function up_url($id, $model, $form=null){
     if ($form) {
-        $result = DIR."/model/get".EXT."?id=$id&model=$model&form=$form";
+        $result = DIR."/hook/get".EXT."?id=$id&model=$model&form=$form";
     }else {
-        $result = DIR."/model/get".EXT."?id=$id&model=$model";
+        $result = DIR."/hook/get".EXT."?id=$id&model=$model";
     }
     return $result;
 }
 
 function download_url($model, $file_name){
-    return DIR."/model/download".EXT."?model=$model&file=$file_name";
+    return DIR."/hook/download".EXT."?model=$model&file=$file_name";
 }
 ?>

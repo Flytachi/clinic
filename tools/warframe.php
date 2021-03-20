@@ -8,11 +8,11 @@ require_once 'functions/connection.php';
 
 // Settings debugger
 
-if ($ini['GLOBAL_SETTING']['DEBUG']) {
+if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
 
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
 
-    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR or $_SERVER['HTTP_HOST'] == $ini['SOCKET']['HOST']) {
+    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
         define('DIR', "");
     }else {
         define('DIR', ROOT_DIR);
@@ -96,8 +96,8 @@ require_once 'functions/tag.php';
 require_once 'functions/base.php';
 require_once 'functions/model.php';
 
-foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/tools/models") as $filename) {
-    require_once 'models/'.$filename;
+foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/models") as $filename) {
+    require_once $_SERVER['DOCUMENT_ROOT'].DIR."/models/".$filename;
 }
 
 function get_full_name($id = null) {
