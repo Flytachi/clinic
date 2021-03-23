@@ -596,25 +596,31 @@ class VisitModel extends Model
     public function delete(int $pk)
     {
         global $db;
-        // Нахождение id визита
-        $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
-        $object = Mixin\delete($this->table, $pk);
-        $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
-        if (!intval($object)) {
-            $this->error($object, 1);
-        }
-        if (intval($object)) {
-            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
-            if(!$status){
-                Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-                $this->success(2);
-            }else {
-                $this->success(1);
-            }
-        } else {
-            $this->error($object, 1);
-        }
+        if (!$_GET['type']) {
 
+            // Нахождение id визита
+            $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
+            $object = Mixin\delete($this->table, $pk);
+            $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
+            if (!intval($object)) {
+                $this->error($object, 1);
+            }
+            if (intval($object)) {
+                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
+                if(!$status){
+                    Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    $this->success(2);
+                }else {
+                    $this->success(1);
+                }
+            } else {
+                $this->error($object, 1);
+            }
+
+        }else {
+            $object = Mixin\update($this->table, array('status' => 5), $pk);
+            $this->success(1);
+        }
     }
 
     public function success($stat=null)

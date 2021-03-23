@@ -34,60 +34,44 @@ $header = "Стационарные пациенты";
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
 						<h6 class="card-title">Стационарные пациенты</h6>
-						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
-						</div>
 					</div>
 
 					<div class="card-body">
 
-                        <div class="table-responsive">
+						<div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
+										<th>Дата назначения</th>
 										<th>Дата рождения</th>
-                                        <th>Дата приёма</th>
-                                        <th>Мед услуга</th>
-                                        <th>Направитель</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+										<th>Мед услуга</th>
+                                        <th class="text-center" style="width:300px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-									$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, us.dateBith, vs.accept_date
-											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-											WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NOT NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
+									$sql = "SELECT DISTINCT us.id, us.dateBith, vs.add_date
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.direction IS NOT NULL AND vs.physio IS NOT NULL AND vs.add_date IS NOT NULL ORDER BY vs.add_date ASC";
 
                                     foreach($db->query($sql) as $row) {
                                         ?>
-										<tr>
+                                        <tr>
                                             <td><?= addZero($row['id']) ?></td>
-                                            <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
-												<div class="text-muted">
-													<?php
-													if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													}
-													?>
-												</div>
-                                            </td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
+											<td><?= date('d.m.Y', strtotime($row['add_date'])) ?></td>
 											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
-                                            <td><?= $row['name']; ?></td>
-											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+                                            <td>
+												<?php
+												foreach ($db->query("SELECT DISTINCT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL") as $serv) {
+                                                    echo $serv['name']."<br>";
+                                                }
+												?>
 											</td>
                                             <td class="text-center">
-												<?php if ($row['complaint']): ?>
-													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
-												<?php endif; ?>
-												<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $row['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+												<button onclick="MListVisit(<?= $row['id'] ?>)" class="btn btn-outline-primary btn-sm">Детально</button>
                                             </td>
                                         </tr>
                                         <?php
@@ -120,24 +104,53 @@ $header = "Стационарные пациенты";
 	</div>
 
 	<!-- Footer -->
-    <?php include layout('footer') ?>
-    <!-- /footer -->
+	<?php include layout('footer') ?>
+	<!-- /footer -->
 
 	<script type="text/javascript">
 
-		function ResultShow(events, title) {
+		function ListVisit(events, type = null){
 			$.ajax({
 				type: "GET",
-				url: events,
+				url: "<?= ajax('physio_table_visit') ?>",
+				data: {
+					user_id: events,
+					type: type,
+				},
 				success: function (result) {
-					$('#modal_result_show').modal('show');
 					$('#modal_result_show_content').html(result);
-					$('#report_title').val(title);
 				},
 			});
+		}
+
+		function MListVisit(events, type = null) {
+			$('#modal_result_show').modal('show');
+			ListVisit(events, type);
 		};
 
-	</script>
+		function Complt(url, ev) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+					console.log(data);
+                    ListVisit(ev);
+				},
+			});
+        };
 
+		function Delete(url, ev) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+                    ListVisit(ev);
+				},
+			});
+        };
+
+	</script>
 </body>
 </html>

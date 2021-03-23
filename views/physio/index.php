@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(12);
-$header = "Приём пациетов";
+$header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,88 +33,50 @@ $header = "Приём пациетов";
 				<div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Пациенты на приём</h6>
-						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
-						</div>
+						<h6 class="card-title">Амбулаторные пациенты</h6>
 					</div>
 
 					<div class="card-body">
 
 						<div class="table-responsive">
-							<table class="table table-hover table-sm datatable-basic">
+                            <table class="table table-hover table-sm datatable-basic">
                                 <thead>
                                     <tr class="bg-info">
                                         <th>ID</th>
                                         <th>ФИО</th>
-										<th>Возраст</th>
-                                        <th>Дата назначения</th>
-                                        <th>Мед услуга</th>
-                                        <th>Направитель</th>
-										<th>Тип визита</th>
-                                        <th class="text-center" style="width: 30px">Кол-во</th>
-                                        <th class="text-center">Действия</th>
+										<th>Дата назначения</th>
+										<th>Дата рождения</th>
+										<th>Мед услуга</th>
+                                        <th class="text-center" style="width:300px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach ($db->query("SELECT DISTINCT us.id, vs.service_id, vs.direction, us.dateBith, vs.complaint
-											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE
-												vs.completed IS NULL AND vs.status = 1 AND vs.physio IS NOT NULL
-											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC") as $div): ?>
-											<?php $row = $db->query("SELECT COUNT(vs.id) 'qty', us.id, vs.id 'visit_id', vs.add_date, vs.route_id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE vs.completed IS NULL AND vs.status = 1 AND vs.physio IS NOT NULL AND vs.user_id = {$div['id']} AND vs.service_id = {$div['service_id']} ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC")->fetch(); ?>
-											<tr id="PatientFailure_tr_<?= $row['visit_id'] ?>">
-	                                            <td><?= addZero($row['id']) ?></td>
-	                                            <td>
-													<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
-													<div class="text-muted">
-														<?php
-														if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-															echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-														}
-														?>
-													</div>
-												</td>
-												<td><?= date('d.m.Y', strtotime($div['dateBith'])) ?></td>
-												<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-	                                            <td><?= $db->query("SELECT name FROM service WHERE id = {$div['service_id']}")->fetch()['name'] ?></td>
-												<td>
-													<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-													<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
-												</td>
-	                                            <td class="text-center">
-	                                                <?php
-	                                                if($div['direction']){
-	                                                    ?>
-	                                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
-	                                                    <?php
-	                                                }else{
-	                                                    ?>
-	                                                    <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
-	                                                    <?php
-	                                                }
-	                                                ?>
-	                                            </td>
-												<td class="text-center"><?= $row['qty'] ?></td>
-	                                            <td class="text-center">
-	                                            	<?php if (!division_assist()): ?>
-	                                            		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>&route_id=<?= $row['route_id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</a>
-	                                            	<?php else: ?>
-	                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"
-															<?php if (!$row['direction']): ?>
-																onclick="sendPatient(this)"
-															<?php endif; ?>
-	                                            			>Принять</button>
-	                                            		<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</a>
-	                                            	<?php endif; ?>
-													<?php if ($div['complaint']): ?>
-														<button onclick="swal('<?= $div['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
-													<?php endif; ?>
-													<button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>');$('#renouncement').attr('data-userid', '<?= $row['user_id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $row['parent_id'] ?>');" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
-	                                            </td>
-	                                        </tr>
-									<?php endforeach; ?>
+                                    <?php
+									$sql = "SELECT DISTINCT us.id, us.dateBith, vs.priced_date
+											FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id)
+											WHERE vs.completed IS NULL AND vs.direction IS NULL AND vs.physio IS NOT NULL AND vs.priced_date IS NOT NULL ORDER BY vs.priced_date ASC";
+
+                                    foreach($db->query($sql) as $row) {
+                                        ?>
+                                        <tr>
+                                            <td><?= addZero($row['id']) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
+											<td><?= date('d.m.Y', strtotime($row['priced_date'])) ?></td>
+											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+                                            <td>
+												<?php
+												foreach ($db->query("SELECT DISTINCT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL") as $serv) {
+                                                    echo $serv['name']."<br>";
+                                                }
+												?>
+											</td>
+                                            <td class="text-center">
+												<button onclick="MListVisit(<?= $row['id'] ?>, 1)" class="btn btn-outline-primary btn-sm">Детально</button>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -122,7 +84,7 @@ $header = "Приём пациетов";
 					</div>
 
 				</div>
-			</td>
+
 
 			</div>
             <!-- /content area -->
@@ -133,24 +95,61 @@ $header = "Приём пациетов";
 	</div>
 	<!-- /page content -->
 
-    <!-- Failure modal -->
-	<div id="modal_failure" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content border-1 border-danger">
+	<div id="modal_result_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content border-3 border-info" id="modal_result_show_content">
 
-				<div class="modal-header bg-danger">
-					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<?= VisitFailure::form(); ?>
 			</div>
 		</div>
 	</div>
-	<!-- /failure modal -->
 
-    <!-- Footer -->
-    <?php include layout('footer') ?>
-    <!-- /footer -->
+	<!-- Footer -->
+	<?php include layout('footer') ?>
+	<!-- /footer -->
+
+	<script type="text/javascript">
+
+		function ListVisit(events, type){
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('physio_table_visit') ?>",
+				data: {
+					user_id: events,
+					type: type,
+				},
+				success: function (result) {
+					$('#modal_result_show_content').html(result);
+				},
+			});
+		}
+
+		function MListVisit(events, type) {
+			$('#modal_result_show').modal('show');
+			ListVisit(events, type);
+		};
+
+		function Complt(url, ev) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+                    ListVisit(ev);
+				},
+			});
+        };
+
+		function Delete(url, ev) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: url,
+				success: function (data) {
+                    ListVisit(ev, 1);
+				},
+			});
+        };
+
+	</script>
 </body>
 </html>
