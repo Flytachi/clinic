@@ -142,6 +142,23 @@ class UserModel extends Model
                                     <?php
                                 }
                             ?>
+
+                            <?php if (module('module_zetta_pacs')): ?>
+                                <legend><b>ZeTTa PACS</b></legend>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>PACS Логин:</label>
+                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" required value="<?= $post['pacs_login'] ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>PACS пароль:</label>
+                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" required value="<?= $post['pacs_password'] ?>">
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
 

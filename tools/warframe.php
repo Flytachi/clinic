@@ -100,6 +100,20 @@ foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/models") as $filename) {
     require_once $_SERVER['DOCUMENT_ROOT'].DIR."/models/".$filename;
 }
 
+function module($value=null)
+{
+    global $db;
+    if ($value) {
+        return $db->query("SELECT const_value FROM company WHERE const_label = '$value'")->fetchColumn();
+    } else {
+        foreach ($db->query("SELECT * FROM company WHERE const_label LIKE 'module_%'") as $row) {
+            $modules[$row['const_label']] = $row['const_value'];
+        }
+        return $modules;
+    }
+
+}
+
 function get_full_name($id = null) {
     global $db;
     if($id){
@@ -112,6 +126,14 @@ function get_full_name($id = null) {
         $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }
     return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
+}
+
+function zeTTa_data()
+{
+    global $db;
+    $id = $_SESSION['session_id'];
+    $stmt = $db->query("SELECT pacs_login, pacs_password from users where id = $id")->fetch(PDO::FETCH_OBJ);
+    return $stmt;
 }
 
 function get_name($id = null) {
