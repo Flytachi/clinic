@@ -23,6 +23,12 @@ function number_format(number, decimals, decPoint, thousandsSep) {
     return s.join(dec)
 }
 
+String.prototype.FirstUpperWords = function () {
+    return this.replace(/\w+/g, function(a){
+        return a.charAt(0).toUpperCase() + a.slice(1).toLowerCase()
+    })
+}
+
 function Print(events) {
     var WinPrint = window.open(``,'ABC','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
     $.ajax({

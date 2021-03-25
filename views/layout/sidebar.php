@@ -126,12 +126,15 @@
                                     <span>Мульти-аккаунт</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/visit_control') ?>" class="nav-link legitRipple">
-                                    <i class="icon-archive"></i>
-                                    <span>Контроль визитов</span>
-                                </a>
-                            </li>
+                            <li class="nav-item nav-item-submenu">
+    							<a href="#" class="nav-link legitRipple"><i class="icon-stack2"></i> <span>Контроль</span></a>
+
+    							<ul class="nav nav-group-sub" data-submenu-title="Контроль">
+    								<li class="nav-item"><a href="<?= viv('admin/control_visit') ?>" class="nav-link legitRipple">Визиты</a></li>
+                                    <li class="nav-item"><a href="<?= viv('admin/control_user') ?>" class="nav-link legitRipple">Пациент</a></li>
+    								<li class="nav-item"><a href="<?= viv('admin/control_bed') ?>" class="nav-link legitRipple">Койки</a></li>
+    							</ul>
+    						</li>
                             <?php
                             break;
                         case 2:
