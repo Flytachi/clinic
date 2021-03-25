@@ -260,6 +260,7 @@ class PatientForm extends Model
             <div class="row">
 
                 <div class="col-md-12">
+
                     <legend><b>Паспорт</b></legend>
 
                     <div class="form-group row">
@@ -268,7 +269,7 @@ class PatientForm extends Model
                             <input type="text" name="passport_seria" id="passport_serial_input" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport_seria']?>">
                         </div>
                         <div class="col-md-6">
-                            <label id="label_pin_fl_input">PINFL:</label>
+                            <label id="label_pin_fl_input" data-popup="tooltip" title="" data-original-title="14 цифр с идентификатора">PINFL:</label>
                             <input type="text" name="passport_pin_fl" id="pin_fl_input" placeholder="PINFL паспорта" class="form-control" value="<?= $post['passport_pin_fl']?>">
                         </div>
                     </div>
