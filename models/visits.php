@@ -28,6 +28,11 @@ class VisitModel extends Model
                         <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
                         <?php endforeach; ?>
+                        <?php /*foreach ($db->query("SELECT us.id, us.status, (SELECT COUNT(id) FROM visit WHERE user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) 'dir_status' FROM users us WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
+                            <?php if ($row['dir_status'] == 0): ?>
+                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
+                            <?php endif; ?>
+                        <?php endforeach;*/ ?>
                     </select>
                 </div>
 

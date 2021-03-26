@@ -133,6 +133,8 @@ $header = "Визиты";
 											<th>ФИО</th>
 											<th>Регистратор</th>
 											<th>Дата регистрации</th>
+											<th class="text-center">Status 1</th>
+											<th class="text-center">Status 2</th>
 											<th class="text-center">Status</th>
 										</tr>
 									</thead>
@@ -143,6 +145,70 @@ $header = "Визиты";
 												<td><?= get_full_name($row['id']); ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+												<?php if ($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()): ?>
+													<?php if ($stm_dr['direction']): ?>
+														<td>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
+														</td>
+														<td>
+															<?php
+															switch ($stm_dr['status']):
+																case 1:
+																	?>
+																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+																	<?php
+																	break;
+																case 2:
+																	?>
+																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+																	<?php
+																	break;
+																default:
+																	?>
+																	<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+																	<?php
+																	break;
+															endswitch;
+															?>
+														</td>
+													<?php else: ?>
+														<td>
+															<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+														</td>
+														<td>
+															<?php
+															switch ($stm_dr['status']):
+																case 1:
+																	?>
+																	<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+																	<?php
+																	break;
+																case 2:
+																	?>
+																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+																	<?php
+																	break;
+																default:
+																	?>
+																	<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+																	<?php
+																	break;
+															endswitch;
+															?>
+														</td>
+													<?php endif; ?>
+												<?php else: ?>
+													<td>
+														<?php if ($row['status']): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Status error</span>
+														<?php else: ?>
+															<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
+														<?php endif; ?>
+													</td>
+													<td>
+														<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Не активный</span>
+													</td>
+												<?php endif; ?>
 												<td class="text-center">
 													<div class="dropdown">
 														<?php if ($row['status']): ?>
@@ -197,9 +263,11 @@ $header = "Визиты";
 						if (data == 1) {
 							badge.className = "badge bg-success dropdown-toggle";
 							badge.innerHTML = "Active";
+							badge.onclick = `Change(${id}, 1)`;
 						}else if (data == 0) {
 							badge.className = "badge bg-secondary dropdown-toggle";
 							badge.innerHTML = "Pasive";
+							badge.onclick = `Change(${id}, 0)`;
 						}
                     }
 				},
