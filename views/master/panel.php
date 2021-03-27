@@ -196,29 +196,34 @@ $header = "Панель управления";
 								<legend>The settings</legend>
 
 								<?php
-								$comp = $db->query("SELECT * FROM company")->fetchAll();
-								foreach ($comp as $value) {
-								    $company[$value['const_label']] = $value['const_value'];
+								try {
+									$comp = $db->query("SELECT * FROM company")->fetchAll();
+									foreach ($comp as $value) {
+									    $company[$value['const_label']] = $value['const_value'];
+									}
+									?>
+									<div class="table-responsive">
+										<table class="table table-sm table-bordered">
+											<tbody>
+												<tr>
+													<th>ZeTTa PACS</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<?php
+								} catch (\Exception $e) {
+									echo "Не установлена база данных";
 								}
 								// prit($company);
 								?>
-
-								<div class="table-responsive">
-									<table class="table table-sm table-bordered">
-										<tbody>
-											<tr>
-												<th>ZeTTa PACS</th>
-												<td class="text-right">
-													<div class="list-icons">
-														<label class="form-check-label">
-															<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
-														</label>
-													</div>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
 
 							</div>
 

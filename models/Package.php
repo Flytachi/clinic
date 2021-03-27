@@ -10,6 +10,12 @@ class PackageModel extends Model
         if($pk){
             $post = $this->post;
             $post['items'] = json_decode($post['items']);
+            foreach ($post['items'] as $key => $value) {
+                $service_pk[] = $key;
+                if (!isset($division) or ($division and !in_array($value->division_id, $division))) {
+                    $division[] = $value->division_id;
+                }
+            }
         }else{
             $post = array();
         }
@@ -27,36 +33,31 @@ class PackageModel extends Model
                 <input type="text" name="name" value="<?= $post['name'] ?>" class="form-control" placeholder="Введите название пакета" required>
             </div>
 
-            <?php
-            prit($post['items']);
-            ?>
-
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" <?= (!$post) ? "data-fouc" : "" ?>>
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <optgroup label="Диогностика">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <optgroup label="Лаборатория">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <optgroup label="Остальные">
                         <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                 </select>
             </div>
-
 
             <div class="form-group-feedback form-group-feedback-right row">
 
@@ -90,6 +91,75 @@ class PackageModel extends Model
                             </tr>
                         </thead>
                         <tbody id="table_form">
+
+                            <?php if ($post['items']): ?>
+                                <?php $i; $cost=0; foreach ($division as $divis_pk): ?>
+
+                                    <?php foreach ($db->query("SELECT sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN (1,2) AND sc.id IN (".implode(', ', $service_pk).")") as $row): ?>
+                                        <?php $i++; ?>
+                                        <tr>
+
+                                            <td>
+                                                <?php
+                                                if (in_array($row['id'], $service_pk)) {
+                                                    $result = "checked";
+                                                    $cost += ($row['price'] * ((array) $post['items'])[$row['id']]->count);
+                                                }else {
+                                                    $result = "";
+                                                }
+                                                ?>
+                                                <input type="checkbox" name="service[<?= $i ?>]" value="<?= $row['id'] ?>" class="form-input-styled" onchange="tot_sum(this, <?= $row['price'] ?>)" <?= $result ?>>
+                                                <input type="hidden" name="division_id[<?= $i ?>]" value="<?= $divis_pk ?>">
+                                            </td>
+
+                                            <?php if ($_GET['cols'] < 2): ?>
+                                                <td><?= $row['title'] ?></td>
+                                            <?php endif; ?>
+                                            <td><?= $row['name'] ?></td>
+                                            <?php if ($_GET['cols'] < 1): ?>
+                                                <td>
+                                                    <?php switch ($row['type']) {
+                                                        case 1:
+                                                            echo "Обычная";
+                                                            break;
+                                                        case 2:
+                                                            echo "Консультация";
+                                                            break;
+                                                        case 3:
+                                                            echo "Операционная";
+                                                            break;
+                                                    } ?>
+                                                </td>
+                                            <?php endif; ?>
+                                            <?php if (!$_GET['head']): ?>
+                                                <td>
+                                                    <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="form-control select" required>
+                                                        <?php if ($row['user_level'] == 6): ?>
+                                                            <?php foreach ($db->query("SELECT id from users WHERE user_level = 6") as $par): ?>
+                                                                <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
+                                                            <?php endforeach; ?>
+                                                        <?php else: ?>
+                                                            <?php foreach ($db->query("SELECT id from users WHERE division_id = $divis_pk") as $par): ?>
+                                                                <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
+                                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
+                                                    </select>
+                                                </td>
+                                            <?php endif; ?>
+                                            <td style="width:70px;">
+                                                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="counts" name="count[<?= $i ?>]" value="<?= ((array) $post['items'])[$row['id']]->count ?>" min="1" max="1000000">
+                                            </td>
+                                            <td class="text-right text-success"><?= number_format($row['price']) ?></td>
+
+                                        </tr>
+                                    <?php endforeach; ?>
+
+                                <?php endforeach; ?>
+                                <tr class="table-secondary">
+                                    <th class="text-right" colspan="<?= 6-$_GET['cols'] ?>">Итого:</th>
+                                    <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
+                                </tr>
+                            <?php endif; ?>
 
                         </tbody>
                     </table>

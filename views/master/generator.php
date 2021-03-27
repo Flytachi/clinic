@@ -53,8 +53,8 @@ foreach ($db->query("SHOW TABlES") as $table) {
 		$column.=",";
 		unset($col);
 	}
-
 	$column_keys = substr($column.$keys,0,-1);
+
 	$sql .= $column_keys.")";
 	$sql .= $DB_FOOTER.";";
 	$json[] = $sql;
