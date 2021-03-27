@@ -350,13 +350,9 @@ class StorageHomeModel extends Model
                         <div class="list-icons">
                             <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
                                 <option></option>
-                                <?php
-                                foreach($db->query("SELECT * from users WHERE user_level = 7") as $row) {
-                                    ?>
+                                <?php foreach ($db->query("SELECT * from users WHERE user_level = 7") as $row): ?>
                                     <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
-                                    <?php
-                                }
-                                ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
@@ -369,7 +365,8 @@ class StorageHomeModel extends Model
                             <thead>
                                 <tr class="bg-blue">
                                     <th style="width: 70px">№</th>
-                                    <th style="width: 50%">Препарат</th>
+                                    <th style="width: 10%">Дата</th>
+                                    <th style="width: 40%">Препарат</th>
                                     <th class="text-center">На складе</th>
                                     <th class="text-center">Ко-во (требуется)</th>
                                     <th class="text-center" style="width: 100px">Ко-во</th>
@@ -379,9 +376,11 @@ class StorageHomeModel extends Model
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
+                                <?php # $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.date = CURRENT_DATE() AND sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
+                                <?php $total_cost=0;$i=1; foreach ($db->query("SELECT sr.id, st.name, sr.date, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) WHERE sr.user_id = $pk ORDER BY sr.preparat_id") as $row): ?>
                                     <tr id="TR_<?= $row['id'] ?>">
                                         <td><?= $i++ ?></td>
+                                        <td><?= date('d.m.Y', strtotime($row['date'])) ?></td>
                                         <td><?= $row['name'] ?></td>
                                         <td class="text-center">
                                             <?php if ($row['qty_have'] > $row['qty']): ?>
@@ -409,7 +408,7 @@ class StorageHomeModel extends Model
                                     </tr>
                                 <?php endforeach; ?>
                                 <tr class="table-secondary">
-                                    <td colspan="6" class="text-right"><b>Итого:</b></td>
+                                    <td colspan="7" class="text-right"><b>Итого:</b></td>
                                     <td class="text-right"><b><?= number_format($total_cost) ?></b></td>
                                     <td></td>
                                 </tr>

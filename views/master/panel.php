@@ -7,6 +7,9 @@ $header = "Панель управления";
 <html lang="en">
 <?php include 'head.php' ?>
 
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("vendors/js/custom.js") ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include 'navbar.php' ?>
@@ -164,7 +167,7 @@ $header = "Панель управления";
                         <div class="form-group row">
 
 
-                            <div class="col-6">
+                            <div class="col-md-6">
 
 								<form action="" method="post" enctype="multipart/form-data">
 									<legend>The main</legend>
@@ -188,6 +191,37 @@ $header = "Панель управления";
 
                             </div>
 
+							<div class="col-md-6">
+
+								<legend>The settings</legend>
+
+								<?php
+								$comp = $db->query("SELECT * FROM company")->fetchAll();
+								foreach ($comp as $value) {
+								    $company[$value['const_label']] = $value['const_value'];
+								}
+								// prit($company);
+								?>
+
+								<div class="table-responsive">
+									<table class="table table-sm table-bordered">
+										<tbody>
+											<tr>
+												<th>ZeTTa PACS</th>
+												<td class="text-right">
+													<div class="list-icons">
+														<label class="form-check-label">
+															<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
+														</label>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+
+							</div>
+
                         </div>
 
 
@@ -205,6 +239,22 @@ $header = "Панель управления";
 	<!-- /page content -->
 
     <script type="text/javascript">
+		function Const_ZP(input) {
+			$.ajax({
+				type: "POST",
+				url: "<?= ajax('master_controller') ?>",
+				data: Object.assign({}, { module: input.name }, $(input).serializeArray()),
+				success: function (data) {
+					if (data == 1) {
+						new Noty({
+							text: "Успешно",
+							type: 'success'
+						}).show();
+					}
+				},
+			});
+		}
+
 		function Chemp(input) {
 			if (input.value.match(/\.?[^.]+$/)[0] == ".json") {
 				$('#btn_ini').attr("disabled", false);

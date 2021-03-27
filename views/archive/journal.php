@@ -60,7 +60,7 @@ $header = "Журнал";
                                         <th>Отдел</th>
                                         <th>Дата выписки</th>
                                         <th>Лечащий врач</th>
-                                        <!-- <th class="text-center" style="width:210px">Действия</th> -->
+                                        <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -78,6 +78,13 @@ $header = "Журнал";
                                             <td><?= division_title($row['parent_id']) ?></td>
 											<td><?= date('d.m.y H:i', strtotime($row['completed'])) ?></td>
                                             <td><?= get_full_name($row['parent_id']) ?></td>
+											<td class="text-right">
+												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													<a href="<?= viv('card/content_1') ?>?pk=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
+													<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
+                                                </div>
+											</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

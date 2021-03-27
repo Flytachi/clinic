@@ -39,12 +39,18 @@ $header = "Пациент";
 
 						<?php include "content_tabs.php"; ?>
 
-						<legend class="font-weight-semibold text-uppercase font-size-sm">
-							<i class="icon-fire2 mr-2"></i>Диагностика
+						<legend class="font-weight-semibold font-size-sm">
+							<i class="icon-fire2 mr-2"></i><span class="text-uppercase">Диагностика</span>
 							<?php if ($activity and permission(5)): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
+								<a class="float-right text-uppercase <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
+								<?php if (module('module_zetta_pacs')): ?>
+									<?php $zeT = zeTTa_data(); ?>
+									<a href="zetta://URL=http://192.168.10.14&LID=<?= $zeT->pacs_login ?>&LPW=<?= $zeT->pacs_password ?>&LICD=0492&PID=<?= $patient->id ?>&VTYPE=W" class="float-right text-violet mr-2">
+										ZeTTa-PACS
+									</a>
+								<?php endif; ?>
 							<?php endif; ?>
 						</legend>
 

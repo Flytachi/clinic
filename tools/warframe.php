@@ -8,11 +8,11 @@ require_once 'functions/connection.php';
 
 // Settings debugger
 
-if ($ini['GLOBAL_SETTING']['DEBUG']) {
+if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
 
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
 
-    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR or $_SERVER['HTTP_HOST'] == $ini['SOCKET']['HOST']) {
+    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
         define('DIR', "");
     }else {
         define('DIR', ROOT_DIR);
@@ -96,8 +96,22 @@ require_once 'functions/tag.php';
 require_once 'functions/base.php';
 require_once 'functions/model.php';
 
-foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/tools/models") as $filename) {
-    require_once 'models/'.$filename;
+foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/models") as $filename) {
+    require_once $_SERVER['DOCUMENT_ROOT'].DIR."/models/".$filename;
+}
+
+function module($value=null)
+{
+    global $db;
+    if ($value) {
+        return $db->query("SELECT const_value FROM company WHERE const_label = '$value'")->fetchColumn();
+    } else {
+        foreach ($db->query("SELECT * FROM company WHERE const_label LIKE 'module_%'") as $row) {
+            $modules[$row['const_label']] = $row['const_value'];
+        }
+        return $modules;
+    }
+
 }
 
 function get_full_name($id = null) {
@@ -112,6 +126,14 @@ function get_full_name($id = null) {
         $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
     }
     return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
+}
+
+function zeTTa_data()
+{
+    global $db;
+    $id = $_SESSION['session_id'];
+    $stmt = $db->query("SELECT pacs_login, pacs_password from users where id = $id")->fetch(PDO::FETCH_OBJ);
+    return $stmt;
 }
 
 function get_name($id = null) {

@@ -20,9 +20,9 @@ is_auth();
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($db->query("SELECT DISTINCT sc.id, sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL") as $value): ?>
+                <?php foreach ($db->query("SELECT DISTINCT sc.id, sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL AND vs.status != 5") as $value): ?>
                     <?php
-                    $li = $db->query("SELECT vs.id, COUNT(sc.name) 'count' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL AND vs.service_id = {$value['id']}")->fetch();
+                    $li = $db->query("SELECT vs.id, COUNT(sc.name) 'count' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL AND vs.service_id = {$value['id']} AND vs.status != 5")->fetch();
                     ?>
                     <tr>
                         <td>
@@ -31,7 +31,7 @@ is_auth();
                         <td class="text-center"><?= $li['count'] ?></td>
                         <td class="text-right">
                             <a onclick="Complt('<?= up_url($li['id'], 'VisitFinish') ?>', '<?= $_GET['user_id'] ?>')" class="text-success">Завершить</a>
-                            <a onclick="Delete('<?= del_url($li['id'], 'VisitModel') ?>', '<?= $_GET['user_id'] ?>')" class="text-danger">Отменить</a>
+                            <a onclick="Delete('<?= del_url($li['id'], 'VisitModel') ?><?= ($_GET['type']) ? "&type=1" : "" ?>', '<?= $_GET['user_id'] ?>')" class="text-danger">Отменить</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
