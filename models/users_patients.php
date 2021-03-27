@@ -95,7 +95,7 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $post['share'] ?>">
+                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $post['share'] ?>">
                                 </div>
                             </div>
 
