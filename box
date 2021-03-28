@@ -1,0 +1,6 @@
+#!/usr/bin/env php
+<?php
+require_once 'tools/Console/core.php';
+
+new Console\Core($argc, $argv);
+?>

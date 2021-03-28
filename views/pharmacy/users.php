@@ -60,7 +60,8 @@ $header = "Пациенты";
 				                    </tr>
 				                </thead>
 				                <tbody>
-                                    <?php foreach ($db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NOT NULL") as $row): ?>
+								 	<?php #foreach ($db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE date = CURRENT_DATE() AND user_id IS NOT NULL") as $row): ?>
+                                    <?php foreach ($db->query("SELECT DISTINCT user_id, parent_id FROM storage_orders WHERE user_id IS NOT NULL") as $row): ?>
                                         <tr onclick="Check('<?= viv('pharmacy/users_preparat') ?>?pk=<?= $row['user_id'] ?>')">
                                             <td><?= addZero($row['user_id']) ?></td>
                                             <td><?= get_full_name($row['user_id']) ?></td>

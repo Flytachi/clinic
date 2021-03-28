@@ -74,6 +74,9 @@ $header = "Пациент";
 									<i class="icon-plus22 mr-1"></i>Услуга
 								</a>
 							<?php endif; ?>
+							<a href="#" class="float-right text-teal mr-2" data-toggle="modal" data-target="#modal_package">
+								<i class="icon-bag mr-1"></i>Пакеты
+							</a>
 						</legend>
 
 						<div class="card">
@@ -196,6 +199,20 @@ $header = "Пациент";
 				</div>
 			</div>
 		</div>
+
+		<div id="modal_package" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Назначить пакет</h6>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+					<?php VisitRoute::form_package() ?>
+
+				</div>
+			</div>
+		</div>
 	<?php endif; ?>
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
@@ -245,6 +262,7 @@ $header = "Пациент";
 				},
 			});
 		};
+
 	</script>
 
     <!-- Footer -->

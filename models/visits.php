@@ -25,13 +25,14 @@ class VisitModel extends Model
                     <label>Пациент:</label>
                     <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php
-                            foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row) {
-                                ?>
-                                <option value="<?= $row['id'] ?>" class="text-success"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                                <?php
-                            }
-                        ?>
+                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
+                        <?php endforeach; ?>
+                        <?php /*foreach ($db->query("SELECT us.id, us.status, (SELECT COUNT(id) FROM visit WHERE user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) 'dir_status' FROM users us WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
+                            <?php if ($row['dir_status'] == 0): ?>
+                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
+                            <?php endif; ?>
+                        <?php endforeach;*/ ?>
                     </select>
                 </div>
 
@@ -218,17 +219,17 @@ class VisitModel extends Model
 
             <div class="form-group row">
 
-                <div class="col-md-3">
+                <div class="col-md-5">
                     <label>Пациент:</label>
                     <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 AND status IS NULL ORDER BY id DESC") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
+                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($row['status']) ? "disabled" : "" ?>><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label>Этаж:</label>
                     <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
                         <option></option>
@@ -242,7 +243,7 @@ class VisitModel extends Model
                     </select>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label>Палата:</label>
                     <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
                         <option></option>
@@ -410,7 +411,6 @@ class VisitModel extends Model
         <?php
     }
 
-
     public function get_or_404(int $pk)
     {
         global $db;
@@ -481,16 +481,16 @@ class VisitModel extends Model
             $post_big['division_id'] = $this->post['division_id'][$key];
             $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
             if ($level_divis == 12) {
-                $post_big['physio'] = 1;
+                $post_big['physio'] = True;
             }elseif ($level_divis == 13) {
-                $post_big['manipulation'] = 1;
+                $post_big['manipulation'] = True;
+            }elseif ($level_divis == 10) {
+                $post_big['diagnostic'] = True;
+            }elseif ($level_divis == 6) {
+                $post_big['laboratory'] = True;
             }
             $post_big['parent_id'] = $this->post['parent_id'][$key];
             $post_big['grant_id'] = $post_big['parent_id'];
-            $stat = $db->query("SELECT * FROM division WHERE id={$post_big['division_id']} AND level=6")->fetch();
-            if ($stat) {
-                $post_big['laboratory'] = True;
-            }
             for ($i=0; $i < $this->post['count'][$key]; $i++) {
                 $post_big = Mixin\clean_form($post_big);
                 $post_big = Mixin\to_null($post_big);
@@ -513,6 +513,7 @@ class VisitModel extends Model
                     }
                 }
             }
+            unset($post_big);
         }
         // Обновление статуса у пациента
         $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
@@ -600,25 +601,31 @@ class VisitModel extends Model
     public function delete(int $pk)
     {
         global $db;
-        // Нахождение id визита
-        $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
-        $object = Mixin\delete($this->table, $pk);
-        $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
-        if (!intval($object)) {
-            $this->error($object, 1);
-        }
-        if (intval($object)) {
-            $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
-            if(!$status){
-                Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-                $this->success(2);
-            }else {
-                $this->success(1);
-            }
-        } else {
-            $this->error($object, 1);
-        }
+        if (!$_GET['type']) {
 
+            // Нахождение id визита
+            $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
+            $object = Mixin\delete($this->table, $pk);
+            $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
+            if (!intval($object)) {
+                $this->error($object, 1);
+            }
+            if (intval($object)) {
+                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
+                if(!$status){
+                    Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    $this->success(2);
+                }else {
+                    $this->success(1);
+                }
+            } else {
+                $this->error($object, 1);
+            }
+
+        }else {
+            $object = Mixin\update($this->table, array('status' => 5), $pk);
+            $this->success(1);
+        }
     }
 
     public function success($stat=null)
@@ -1947,7 +1954,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2052,7 +2059,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2132,7 +2139,6 @@ class VisitRoute extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="laboratory" value="1">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
             <div class="form-group">
@@ -2154,7 +2160,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2239,7 +2245,6 @@ class VisitRoute extends Model
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-            <input type="hidden" name="laboratory" value="1">
 
             <div class="form-group">
                 <label>Лаборатория</label>
@@ -2260,7 +2265,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2341,7 +2346,6 @@ class VisitRoute extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="diagnostic" value="1">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
             <div class="form-group">
@@ -2367,7 +2371,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2452,7 +2456,6 @@ class VisitRoute extends Model
             <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="diagnostic" value="1">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
             <div class="form-group">
@@ -2478,7 +2481,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2559,7 +2562,6 @@ class VisitRoute extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="physio_manipulation" value="1">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
             <div class="form-group">
@@ -2585,7 +2587,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2670,7 +2672,6 @@ class VisitRoute extends Model
             <input type="hidden" name="status" value="1">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="physio_manipulation" value="1">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
             <div class="form-group">
@@ -2696,7 +2697,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2793,7 +2794,7 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
                     </div>
                 </div>
 
@@ -2867,8 +2868,70 @@ class VisitRoute extends Model
         <?php
     }
 
+    public function form_package($pk = null)
+    {
+        global $db, $patient;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="package" value="1">
+            <?php if($patient->direction): ?>
+                <input type="hidden" name="direction" value="1">
+                <input type="hidden" name="status" value="1">
+            <?php endif; ?>
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+
+                    <div class="col-md-12">
+                        <label>Пакеты:</label>
+                        <select data-placeholder="Выбрать пакет" class="form-control form-control-select2" required onchange="Change_Package_list(this)">
+                            <option></option>
+                            <?php foreach ($db->query("SELECT * FROM package WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <div id="package_item_result"></div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <div class="text-right">
+                    <button onclick="FirstClick(this)" type="submit" class="btn btn-sm btn-outline-info">Отправить</button>
+                </div>
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            function Change_Package_list(params) {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= ajax('card_package_items') ?>",
+                    data: { id:params.value },
+                    success: function (result) {
+                        $('#package_item_result').html(result);
+                    },
+                });
+            }
+        </script>
+        <?php
+    }
+
     public function clean()
     {
+        if($this->post['package']){
+            $this->save_package();
+        }
         if (is_array($this->post['service'])) {
             $this->save_rows();
         }
@@ -2903,6 +2966,58 @@ class VisitRoute extends Model
         }
     }
 
+    public function save_package()
+    {
+        global $db;
+        // $this->mod('test');
+        foreach ($this->post['service'] as $key => $value) {
+
+            $post_big['direction'] = $this->post['direction'];
+            $post_big['route_id'] = $this->post['route_id'];
+            $post_big['grant_id'] = $this->post['grant_id'];
+            $post_big['user_id'] = $this->post['user_id'];
+            if($this->post['direction']){$post_big['direction'] = $this->post['direction'];}
+            if($this->post['status']){$post_big['status'] = $this->post['status'];}            
+            $post_big['service_id'] = $value;
+            $post_big['division_id'] = $this->post['division_id'][$key];
+            $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
+            if ($level_divis == 12) {
+                $post_big['physio'] = True;
+            }elseif ($level_divis == 13) {
+                $post_big['manipulation'] = True;
+            }elseif ($level_divis == 10) {
+                $post_big['diagnostic'] = True;
+            }elseif ($level_divis == 6) {
+                $post_big['laboratory'] = True;
+            }
+            $post_big['parent_id'] = $this->post['parent_id'][$key];
+            for ($i=0; $i < $this->post['count'][$key]; $i++) {
+                $post_big = Mixin\clean_form($post_big);
+                $post_big = Mixin\to_null($post_big);
+                $object = Mixin\insert($this->table, $post_big);
+                if (!intval($object)){
+                    $this->error($object);
+                }
+
+                if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
+                    $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
+                    $post['visit_id'] = $object;
+                    $post['user_id'] = $this->post['user_id'];
+                    $post['item_type'] = 1;
+                    $post['item_id'] = $value;
+                    $post['item_cost'] = $service['price'];
+                    $post['item_name'] = $service['name'];
+                    $object = Mixin\insert('visit_price', $post);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
+                }
+            }
+            unset($post_big);
+        }
+        $this->success();
+    }
+
     public function save_rows()
     {
         global $db;
@@ -2923,19 +3038,15 @@ class VisitRoute extends Model
                 $post_big['parent_id'] = $this->post['parent_id'][$key];
                 $post_big['division_id'] = $this->post['division_id'][$key];
             }
-            if ($this->post['diagnostic']) {
-                $post_big['diagnostic'] = $this->post['diagnostic'];
-            }
-            if ($this->post['laboratory']) {
-                $post_big['laboratory'] = $this->post['laboratory'];
-            }
-            if ($this->post['physio_manipulation']) {
-                $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
-                if ($level_divis == 12) {
-                    $post_big['physio'] = 1;
-                } elseif ($level_divis == 13) {
-                    $post_big['manipulation'] = 1;
-                }
+            $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
+            if ($level_divis == 12) {
+                $post_big['physio'] = True;
+            }elseif ($level_divis == 13) {
+                $post_big['manipulation'] = True;
+            }elseif ($level_divis == 10) {
+                $post_big['diagnostic'] = True;
+            }elseif ($level_divis == 6) {
+                $post_big['laboratory'] = True;
             }
             for ($i=0; $i < $this->post['count'][$key]; $i++) {
                 $post_big = Mixin\clean_form($post_big);
@@ -2957,6 +3068,7 @@ class VisitRoute extends Model
                     $this->error($object);
                 }
             }
+            unset($post_big);
         }
         $this->success();
     }
@@ -3090,6 +3202,7 @@ class VisitFailure extends Model
                     url: $(this).attr("action"),
                     data: $(this).serializeArray(),
                     success: function (result) {
+                        console.log(result);
                         $('#modal_failure').modal('hide');
                         $(result.replace("1#", "#")).css("background-color", "rgb(244, 67, 54)");
                         $(result.replace("1#", "#")).css("color", "white");
@@ -3119,10 +3232,13 @@ class VisitFailure extends Model
     public function clean()
     {
         global $db;
-        $visit = $db->query("SELECT direction FROM visit WHERE id = {$this->post['id']}")->fetch();
+        $visit = $db->query("SELECT direction, bed_id FROM visit WHERE id = {$this->post['id']}")->fetch();
         if ($visit['direction']) {
             $form = new VisitModel;
+            ob_start();
             $form->delete($this->post['id']);
+            ob_clean();
+            Mixin\update('beds', array('user_id' => null), $visit['bed_id']);
             $this->success($this->post['id']);
         }else {
             $this->post = Mixin\clean_form($this->post);
@@ -3132,7 +3248,7 @@ class VisitFailure extends Model
 
     }
 
-    public function success($pk)
+    public function success($pk = null)
     {
         echo "#PatientFailure_tr_$pk";
     }

@@ -95,7 +95,7 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $post['share'] ?>">
+                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $post['share'] ?>">
                                 </div>
                             </div>
 
@@ -142,6 +142,23 @@ class UserModel extends Model
                                     <?php
                                 }
                             ?>
+
+                            <?php if (module('module_zetta_pacs')): ?>
+                                <legend><b>ZeTTa PACS</b></legend>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>PACS Логин:</label>
+                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" required value="<?= $post['pacs_login'] ?>">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>PACS пароль:</label>
+                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" required value="<?= $post['pacs_password'] ?>">
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
 
@@ -241,121 +258,144 @@ class PatientForm extends Model
             <?php endif; ?>
 
             <div class="row">
-                <div class="col-md-3">
-                    <fieldset>
 
-                        <div class="form-group">
-                            <label>Фамилия пациента:</label>
-                            <input type="text" name="last_name" class="form-control" placeholder="Введите Фамилия" value="<?= $post['last_name']?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Имя пациента:</label>
-                            <input type="text" name="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Отчество пациента:</label>
-                            <input type="text" name="father_name" class="form-control" placeholder="Введите Отчество" value="<?= $post['father_name']?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Дата рождение:</label>
-                            <div class="input-group">
-                                <span class="input-group-prepend">
-                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                                </span>
-                                <input type="date" name="dateBith" class="form-control daterange-single" value="<?= $post['dateBith']?>" required>
-                            </div>
-                        </div>
+                <div class="col-md-12">
 
-                        <div class="form-group">
-                            <div class="form-group">
-                                <label>Выбирите область:</label>
-                                <select data-placeholder="Выбрать область" id="province" class="form-control form-control-select2">
-                                    <option></option>
-                                    <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
-                                        <option value="<?= $province['id'] ?>"><?= $province['name'] ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
+                    <legend><b>Паспорт</b></legend>
 
-                        <div class="form-group">
-                            <div class="form-group">
-                                <label>Выбирите регион:</label>
-                                <select data-placeholder="Выбрать регион" name="region" id="region" class="form-control form-control-select2">
-                                    <option></option>
-                                    <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
-                                        <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($post['region'] == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label id="label_passport_serial_input">Серия:</label>
+                            <input type="text" name="passport_seria" id="passport_serial_input" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport_seria']?>">
                         </div>
+                        <div class="col-md-6">
+                            <label id="label_pin_fl_input" data-popup="tooltip" title="" data-original-title="14 цифр с идентификатора">PINFL:</label>
+                            <input type="text" name="passport_pin_fl" id="pin_fl_input" placeholder="PINFL паспорта" class="form-control" value="<?= $post['passport_pin_fl']?>">
+                        </div>
+                    </div>
 
-                    </fieldset>
+                    <button type="button" class="btn btn-sm btn-large btn-block" onclick="SearchData(this, 'Подождите...')">Получить данные</button>
+
                 </div>
 
-                <div class="col-md-9">
-                    <fieldset>
+                <div class="col-md-12">
+                    <legend><b>Личные даные</b></legend>
 
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <label>Адрес проживание:</label>
-                                <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label>Адрес по прописке:</label>
-                                <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>">
-                            </div>
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <fieldset>
+
+                                <div class="form-group">
+                                    <label>Фамилия пациента:</label>
+                                    <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Введите Фамилия" value="<?= $post['last_name']?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Имя пациента:</label>
+                                    <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Введите имя" value="<?= $post['first_name']?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Отчество пациента:</label>
+                                    <input type="text" name="father_name" id="father_name" class="form-control" placeholder="Введите Отчество" value="<?= $post['father_name']?>" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Дата рождение:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+                                            <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                        </span>
+                                        <input type="date" name="dateBith" id="birth_date" class="form-control daterange-single" value="<?= $post['dateBith']?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Выбирите область:</label>
+                                        <select data-placeholder="Выбрать область" id="province" class="form-control form-control-select2">
+                                            <option></option>
+                                            <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
+                                                <option value="<?= $province['id'] ?>"><?= $province['name'] ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Выбирите регион:</label>
+                                        <select data-placeholder="Выбрать регион" name="region" id="region" class="form-control form-control-select2">
+                                            <option></option>
+                                            <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
+                                                <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($post['region'] == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </fieldset>
                         </div>
+                        <div class="col-md-6">
+                            <fieldset>
 
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <label>Серия и номер паспорта:</label>
-                                <input type="text" name="passport" placeholder="Серия паспорта" class="form-control" value="<?= $post['passport']?>">
-                            </div>
-                            <div class="col-md-6">
-                                <label>Телефон номер:</label>
-                                <input type="text" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
-                            </div>
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <label>Адрес проживание:</label>
+                                        <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['residenceAddress']?>">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Адрес по прописке:</label>
+                                        <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $post['registrationAddress']?>">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <label>Телефон номер:</label>
+                                        <input type="text" name="numberPhone" class="form-control" value="<?= ($post['numberPhone']) ? $post['numberPhone'] : '+998'?>" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Место работы:</label>
+                                    <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $post['placeWork']?>">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Должность:</label>
+                                    <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>">
+                                </div>
+
+                                <div class="form-group">
+                                   <label class="d-block font-weight-semibold">Пол</label>
+
+                                    <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" id="gender_1" <?php if(1 == $post['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
+                                            Мужчина
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="gender" id="gender_0" <?php if(0 == $post['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
+                                            Женщина
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="form-group">
+                                    <label class="d-block font-weight-semibold">Статус</label>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
+                                        <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
+                                    </div>
+                                </div> -->
+
+                            </fieldset>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Место работы:</label>
-                            <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $post['placeWork']?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Должность:</label>
-                            <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $post['position']?>">
-                        </div>
-
-                        <div class="form-group">
-                           <label class="d-block font-weight-semibold">Пол</label>
-
-                            <div class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="radio" name="gender" <?php if(1 == $post['gender']){echo "checked";} ?> value="1" class="form-check-input" name="unstyled-radio-left" checked>
-                                    Мужчина
-                                </label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <label class="form-check-label">
-                                    <input type="radio" name="gender" <?php if(0 == $post['gender']){echo "checked";} ?> value="0" class="form-check-input" name="unstyled-radio-left">
-                                    Женщина
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- <div class="form-group">
-                            <label class="d-block font-weight-semibold">Статус</label>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
-                                <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
-                            </div>
-                        </div> -->
-
-                    </fieldset>
                 </div>
+
             </div>
 
             <div class="text-right">
@@ -367,6 +407,77 @@ class PatientForm extends Model
             $(function(){
                 $("#region").chained("#province");
             });
+
+            function SearchData(btn, btn_new) {
+        		var l_pin = document.getElementById('label_pin_fl_input');
+        		var l_serial = document.getElementById('label_passport_serial_input');
+
+
+        		var pin = document.getElementById('pin_fl_input');
+        		var serial = document.getElementById('passport_serial_input');
+        		var btn_old = btn.innerHTML;
+
+        		if (pin.value && serial.value) {
+
+        			btn.innerHTML = btn_new;
+        			btn.disabled = true;
+
+        			$.ajax({
+        				type: "POST",
+        				url: "<?= ajax("MVD_api") ?>",
+        				data: {
+        					pin_fl: pin.value,
+        					seria: serial.value
+        				},
+        				success: function (response) {
+
+        					try {
+        						var data = JSON.parse(JSON.parse(response));
+        						if (data.Status == 1) {
+
+        							var result = data.Data;
+        							$('#last_name').val(result.surname_latin.FirstUpperWords());
+                                    $('#first_name').val(result.name_latin.FirstUpperWords());
+        							$('#father_name').val(result.patronym_latin.FirstUpperWords());
+        							$('#birth_date').val(result.birth_date);
+
+        							if (result.sex == 1) {
+        								$('#gender_1').prop('checked', true);
+        							}else {
+        								$('#gender_0').prop('checked', true);
+        							}
+
+        							l_pin.className = "text-success";
+        							l_serial.className = "text-success";
+        							pin.className = "form-control border-success";
+        							serial.className = "form-control border-success";
+        						}else{
+        							l_pin.className = "text-danger";
+        							l_serial.className = "text-danger";
+        							pin.className = "form-control border-danger";
+        							serial.className = "form-control border-danger";
+
+        						}
+        						console.log(data);
+        					}catch (e) {
+
+        						l_pin.className = "text-danger";
+        						l_serial.className = "text-danger";
+        						pin.className = "form-control border-danger";
+        						serial.className = "form-control border-danger";
+        						// инструкции для обработки ошибок
+        						console.log("Ошибка"); // передать объект исключения обработчику ошибок
+
+        					}finally {
+        						btn.innerHTML = btn_old;
+        						btn.disabled = false;
+        					}
+
+        				},
+        			});
+
+        		}
+        	}
         </script>
         <?php
     }

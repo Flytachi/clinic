@@ -77,6 +77,7 @@ class Model
             return $this->form($object['id']);
         }else{
             Mixin\error('404');
+            exit;
         }
 
     }
@@ -87,6 +88,7 @@ class Model
             $object = Mixin\insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
+                exit;
             }
             $this->success();
         }
@@ -100,6 +102,7 @@ class Model
             $object = Mixin\update($this->table, $this->post, $pk);
             if (!intval($object)){
                 $this->error($object);
+                exit;
             }
             $this->success();
         }
@@ -119,6 +122,7 @@ class Model
             $this->success();
         } else {
             Mixin\error('404');
+            exit;
         }
 
     }
@@ -153,4 +157,5 @@ class Model
     }
 
 }
+
 ?>

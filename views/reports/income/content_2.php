@@ -171,10 +171,16 @@ $header = "Доход";
 								--
 								@sta_service_count_1 := IFNULL(
 									(
-										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-										WHERE vp.item_type IN (1) AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vp.item_type IN (1) AND sc.type = 1 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
 									)
 									, 0) 'sta_service_count_1',
+								@sta_service_count_2 := IFNULL(
+									(
+										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vp.item_type IN (1) AND sc.type = 2 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+									)
+									, 0) 'sta_service_count_2',
 								@sta_service_count_3 := IFNULL(
 									(
 										SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
@@ -184,10 +190,16 @@ $header = "Доход";
 								--
 								@sta_service_amount_1 := IFNULL(
 									(
-										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-										WHERE vp.item_type IN (1) AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vp.item_type IN (1) AND sc.type = 1 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
 									)
 									, 0) 'sta_service_amount_1',
+								@sta_service_amount_2 := IFNULL(
+									(
+										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
+										WHERE vp.item_type IN (1) AND sc.type = 2 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+									)
+									, 0) 'sta_service_amount_2',
 								@sta_service_amount_3 := IFNULL(
 									(
 										SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
@@ -195,8 +207,8 @@ $header = "Доход";
 									)
 									, 0) 'sta_service_amount_3',
 								--
-								@sta_service_count_1 + @sta_service_count_3 'sta_service_count',
-								@sta_service_amount_1 + @sta_service_amount_3 'sta_service_amount',
+								@sta_service_count_1 + @sta_service_count_2 + @sta_service_count_3 'sta_service_count',
+								@sta_service_amount_1 + @sta_service_amount_2 + @sta_service_amount_3 'sta_service_amount',
 								--
 								@sta_grant_visit_count := IFNULL(
 									(
@@ -276,12 +288,14 @@ $header = "Доход";
 										<li><b>Колличество проведёных услуг:</b> <span class="text-primary"><?= $information->sta_service_count ?></span></li>
 										<ul>
 											<li><b>Обычные:</b> <span class="text-primary"><?= $information->sta_service_count_1 ?></span></li>
+											<li><b>Консультации:</b> <span class="text-primary"><?= $information->sta_service_count_2 ?></span></li>
 											<li><b>Операции:</b> <span class="text-primary"><?= $information->sta_service_count_3 ?></span></li>
 										</ul>
 
 										<li><b>Сумма проведёных услуг:</b> <span class="text-success"><?= number_format($information->sta_service_amount) ?></span></li>
 										<ul>
 											<li><b>Обычные:</b> <span class="text-success"><?= number_format($information->sta_service_amount_1) ?></span></li>
+											<li><b>Консультации:</b> <span class="text-success"><?= number_format($information->sta_service_amount_2) ?></span></li>
 											<li><b>Операции:</b> <span class="text-success"><?= number_format($information->sta_service_amount_3) ?></span></li>
 										</ul>
 
@@ -295,13 +309,13 @@ $header = "Доход";
 								<li><b>Общее колличество проведёных услуг:</b> <span class="text-primary"><?= $information->amb_service_count + $information->sta_service_count ?></span></li>
 								<ul>
 									<li><b>Обычные:</b> <span class="text-primary"><?= $information->amb_service_count_1 + $information->sta_service_count_1 ?></span></li>
-									<li><b>Консультации:</b> <span class="text-primary"><?= $information->amb_service_count_2 ?></span></li>
+									<li><b>Консультации:</b> <span class="text-primary"><?= $information->amb_service_count_2 + $information->sta_service_count_2 ?></span></li>
 									<li><b>Операции:</b> <span class="text-primary"><?= $information->sta_service_count_3 ?></span></li>
 								</ul>
 								<li><b>Общая сумма проведёных услуг:</b> <span class="text-success"><?= number_format($information->amb_service_amount + $information->sta_service_amount) ?></span></li>
 								<ul>
 									<li><b>Обычные:</b> <span class="text-success"><?= number_format($information->amb_service_amount_1 + $information->sta_service_amount_1) ?></span></li>
-									<li><b>Консультации:</b> <span class="text-success"><?= number_format($information->amb_service_amount_2) ?></span></li>
+									<li><b>Консультации:</b> <span class="text-success"><?= number_format($information->amb_service_amount_2 + $information->sta_service_amount_2) ?></span></li>
 									<li><b>Операции:</b> <span class="text-success"><?= number_format($information->sta_service_amount_3) ?></span></li>
 								</ul>
 
