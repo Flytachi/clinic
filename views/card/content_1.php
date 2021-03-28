@@ -208,11 +208,8 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<div class="modal-body">
+					<?php VisitRoute::form_package() ?>
 
-
-
-					</div>
 				</div>
 			</div>
 		</div>
@@ -265,6 +262,7 @@ $header = "Пациент";
 				},
 			});
 		};
+
 	</script>
 
     <!-- Footer -->

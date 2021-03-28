@@ -93,7 +93,7 @@ class PackageModel extends Model
                         <tbody id="table_form">
 
                             <?php if ($post['items']): ?>
-                                <?php $i; $cost=0; foreach ($division as $divis_pk): ?>
+                                <?php $i=$cost=0; foreach ($division as $divis_pk): ?>
 
                                     <?php foreach ($db->query("SELECT sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN (1,2) AND sc.id IN (".implode(', ', $service_pk).")") as $row): ?>
                                         <?php $i++; ?>
@@ -166,6 +166,7 @@ class PackageModel extends Model
                 </div>
 
             </div>
+            
 
         </form>
 
@@ -229,18 +230,29 @@ class PackageModel extends Model
         unset($this->post['division_id']);
         unset($this->post['parent_id']);
         unset($this->post['count']);
-        $this->mod('test');
         return True;
     }
 
     public function success()
     {
-        echo "Успешно";
+        $_SESSION['message'] = '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Успешно
+        </div>
+        ';
+        render();
     }
 
     public function error($message)
     {
-        echo $message;
+        $_SESSION['message'] = '
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> '.$message.'</span>
+        </div>
+        ';
+        render();
     }
 }
 
