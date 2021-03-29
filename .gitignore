@@ -1,4 +1,5 @@
 tools/functions/setting.ini
+tools/PHPExcel
 dump/*
 storage/*
 node_modules

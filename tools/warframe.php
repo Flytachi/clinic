@@ -336,13 +336,13 @@ function write_excel($table, $file_name = "docs", $table_label=null)
         foreach ($table_label as $key => $value) {
             $labels[] = $value;
         }
-        $sql_select = implode(array_keys($table_label), ", ");
+        $sql_select = implode(", ", array_keys($table_label));
     }else {
         $table_q = $db->query("DESCRIBE $table")->fetchAll();
         foreach ($table_q as $key => $value) {
             $labels[] = $value['Field'];
         }
-        $sql_select = implode($labels, ", ");
+        $sql_select = implode(", ", $labels);
     }
 
     $excel_column = array(
