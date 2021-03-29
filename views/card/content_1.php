@@ -74,9 +74,9 @@ $header = "Пациент";
 									<i class="icon-plus22 mr-1"></i>Услуга
 								</a>
 							<?php endif; ?>
-							<a href="#" class="float-right text-teal mr-2" data-toggle="modal" data-target="#modal_package">
+							<!-- <a href="#" class="float-right text-teal mr-2" data-toggle="modal" data-target="#modal_package">
 								<i class="icon-bag mr-1"></i>Пакеты
-							</a>
+							</a> -->
 						</legend>
 
 						<div class="card">
@@ -208,7 +208,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<?php VisitRoute::form_package() ?>
+					<?php // VisitRoute::form_package() ?>
 
 				</div>
 			</div>
