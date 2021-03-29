@@ -36,12 +36,21 @@
                         </li>
                     <?php endif; ?>
 
-                    <li class="nav-item">
+                    <?php if (permission(5)): ?>
+                        <li class="nav-item">
+                            <a href="<?= viv('doctor/package') ?>" class="nav-link legitRipple">
+                                <i class="icon-bag"></i>
+                                <span>Пакеты<span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <!-- <li class="nav-item">
                         <a href="<?= logout() ?>" class="nav-link">
                             <i class="icon-switch2"></i>
                             <span>Logout</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>
