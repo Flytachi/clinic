@@ -43,6 +43,12 @@
                                 <span>Пакеты<span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
+                                <i class="icon-users"></i>
+                                <span>Шаблоны</span>
+                            </a>
+                        </li>
                     <?php endif; ?>
 
                     <!-- <li class="nav-item">
@@ -329,12 +335,6 @@
                                     <span>Завершёные пациенты</span>
                                 </a>
                             </li>
-                            <!-- <li class="nav-item">
-                                <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Мои шаблоны</span>
-                                </a>
-                            </li> -->
                             <li class="nav-item">
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>

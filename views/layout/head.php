@@ -14,6 +14,7 @@
 	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("vendors/css/style.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("vendors/css/ckeditor.css") ?>" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->

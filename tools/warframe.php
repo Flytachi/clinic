@@ -8,19 +8,20 @@ require_once 'functions/connection.php';
 
 // Settings debugger
 
-if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
+// if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
 
-    define('ROOT_DIR', "/".basename(dirname(__DIR__)));
+//     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
 
-    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
-        define('DIR', "");
-    }else {
-        define('DIR', ROOT_DIR);
-    }
+//     if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
+//         define('DIR', "");
+//     }else {
+//         define('DIR', ROOT_DIR);
+//     }
 
-}else {
-    define('DIR', "");
-}
+// }else {
+//     define('DIR', "");
+// }
+define('DIR', "");
 
 // END Settings debugger
 
