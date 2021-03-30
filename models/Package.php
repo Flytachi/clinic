@@ -233,11 +233,13 @@ class PackageModel extends Model
                 'count' => $this->post['count'][$key],
             );
         }
-        $this->post['items'] = json_encode($items);
         unset($this->post['service']);
         unset($this->post['division_id']);
         unset($this->post['parent_id']);
         unset($this->post['count']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        $this->post['items'] = json_encode($items);
         return True;
     }
 
