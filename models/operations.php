@@ -466,6 +466,7 @@ class OperationInspectionModel extends Model
                 .create( document.querySelector( '.document-editor__editable' ))
                 .then( editor => {
                     const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+                    const textarea = document.querySelector('#document-editor__area');
 
                     toolbarContainer.appendChild( editor.ui.view.toolbar.element );
 
@@ -473,7 +474,7 @@ class OperationInspectionModel extends Model
 
                     editor.model.document.on( 'change:data', ( evt, data ) => {
                         console.log( data );
-                        $('textarea#document-editor__area').html( editor.getData() );
+                        textarea.value = editor.getData();
                     } );
                 } )
                 .catch( err => {
