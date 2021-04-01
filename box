@@ -1,37 +1,6 @@
 #!/usr/bin/env php
 <?php
-require_once 'tools/functions/model.php';
+require_once 'tools/Console/core.php';
 
-if ($argc > 1) {
-
-    $option = $argv[1];
-    if (stristr($option, ":", true) == "new" or $option == "new") {
-
-        $argument = str_replace(":", "", stristr($option, ":"));
-
-        if ($argument == "model") {
-
-            if (isset($argv[2])) {
-
-                $Model = new ModelCreate($argv[2]);
-                if ($Model->create()) {
-                    echo "\033[32m". "Model successfully created\n";
-                }else {
-                    echo "\033[31m"."Error while creating model\n";
-                }
-
-            }else {
-                echo "\033[33m"."Enter model name\n";
-            }
-
-        }else {
-            echo "\033[31m"."Not such argument\n";
-        }
-
-    }else {
-        echo "\033[31m"."Not such option\n";
-    }
-
-} else {
-    echo "\033[31m"."Enter option name\n";
-}
+new Console\Core($argc, $argv);
+?>

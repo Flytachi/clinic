@@ -36,12 +36,27 @@
                         </li>
                     <?php endif; ?>
 
-                    <li class="nav-item">
+                    <?php if (permission(5)): ?>
+                        <li class="nav-item">
+                            <a href="<?= viv('doctor/package') ?>" class="nav-link legitRipple">
+                                <i class="icon-bag"></i>
+                                <span>Пакеты<span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
+                                <i class="icon-users"></i>
+                                <span>Шаблоны</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+                    <!-- <li class="nav-item">
                         <a href="<?= logout() ?>" class="nav-link">
                             <i class="icon-switch2"></i>
                             <span>Logout</span>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>
@@ -320,12 +335,6 @@
                                     <span>Завершёные пациенты</span>
                                 </a>
                             </li>
-                            <!-- <li class="nav-item">
-                                <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
-                                    <i class="icon-users"></i>
-                                    <span>Мои шаблоны</span>
-                                </a>
-                            </li> -->
                             <li class="nav-item">
                                 <a href="<?= viv('note/index') ?>" class="nav-link legitRipple">
                                     <i class="icon-collaboration"></i>

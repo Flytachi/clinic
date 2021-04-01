@@ -492,10 +492,12 @@ if (!isset($_GET['type'])) {
             </table>
         </div>
 
-        <?php if ($activity and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed and strtotime($patient->oper_date) <= strtotime(date('Y-m-d H:i'))): ?>
-            <div class="text-right">
-                <button onclick="Finish_date('<?= $patient->pk ?>', '<?= $patient->visit_id ?>', '<?= $patient->oper_date ?>')" class="btn btn-outline-success btn-sm mt-2">Завершить</a>
-            </div>
+        <?php if ($activity and $patient->grant_id == $_SESSION['session_id'] and !$patient->completed): ?>
+            <?php if(strtotime($patient->oper_date) <= strtotime(date('Y-m-d H:i'))): ?>
+                <div class="text-right">
+                    <button onclick="Finish_date('<?= $patient->pk ?>', '<?= $patient->visit_id ?>', '<?= $patient->oper_date ?>')" class="btn btn-outline-success btn-sm mt-2">Завершить</a>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
     </div>

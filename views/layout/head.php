@@ -14,6 +14,7 @@
 	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("vendors/css/style.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("vendors/css/ckeditor.css") ?>" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->
@@ -38,10 +39,14 @@
 	<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
+	<script src="<?= stack("global_assets/js/plugins/buttons/spin.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/buttons/ladda.min.js") ?>"></script>
 	<!-- /theme JS files -->
 
 	<script src="<?= stack("assets/js/app.js") ?>"></script>
 
+	<script src="<?= stack("global_assets/js/demo_pages/components_buttons.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
 

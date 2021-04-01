@@ -415,13 +415,16 @@ class OperationInspectionModel extends Model
 
             <div class="modal-body">
 
-                <!-- The toolbar will be rendered in this container. -->
-                <div id="toolbar-container"></div>
+                <div class="document-editor">
+                    <div class="document-editor__toolbar"></div>
+                    <div class="document-editor__editable-container">
+                        <div class="document-editor__editable">
+                            
+                        </div>
+                    </div>
+                </div>
 
-                <!-- This container will become the editable. -->
-                <div id="editor"></div>
-
-                <textarea id="tickets-editor" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
+                <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
 
             </div>
 
@@ -460,25 +463,27 @@ class OperationInspectionModel extends Model
             });
 
             DecoupledEditor
-                .create( document.querySelector( '#editor' ) )
+                .create( document.querySelector( '.document-editor__editable' ))
                 .then( editor => {
-                    const toolbarContainer = document.querySelector( '#toolbar-container' );
+                    const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+                    const textarea = document.querySelector('#document-editor__area');
 
                     toolbarContainer.appendChild( editor.ui.view.toolbar.element );
 
+                    window.editor = editor;
+
                     editor.model.document.on( 'change:data', ( evt, data ) => {
                         console.log( data );
-                        $('textarea#tickets-editor').html( editor.getData() );
+                        textarea.value = editor.getData();
                     } );
                 } )
-                .catch( error => {
-                    console.error( error );
-                } );
-
-              document.getElementById( 'submit' ).onclick = () => {
-                  textarea.value = editor.getData();
-              }
-
+                .catch( err => {
+                    console.error( err );
+                } 
+            );
+            document.getElementById( 'submit' ).onclick = () => {
+                textarea.value = editor.getData();
+            }
         </script>
         <?php
     }
