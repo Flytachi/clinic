@@ -53,8 +53,9 @@ require_once 'functions/tag.php';
 require_once 'functions/base.php';
 require_once 'functions/model.php';
 
-foreach (ModelDir($_SERVER['DOCUMENT_ROOT'].DIR."/models") as $filename) {
-    require_once $_SERVER['DOCUMENT_ROOT'].DIR."/models/".$filename;
+// Подключение Моделей
+foreach (get_dir_contents('models') as $filename) {
+    require_once $filename;
 }
 
 function module($value=null)
