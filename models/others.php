@@ -406,6 +406,25 @@ class BedModel extends Model
         <?php
     }
 
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+            $this->set_post($object);
+            if ($_GET['type']) {
+                $object['user_id'] = null;
+                $this->set_post($object);
+                return $this->update();
+            }
+            return $this->form($object['id']);
+        }else{
+            Mixin\error('404');
+            exit;
+        }
+
+    }
+
     public function success()
     {
         $_SESSION['message'] = '
