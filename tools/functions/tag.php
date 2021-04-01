@@ -1,27 +1,21 @@
 <?php
 
-function ModelDir($dir) {
+function get_dir_contents($dir, $filter = '', &$results = array()) {
+    $dir = $_SERVER['DOCUMENT_ROOT']."/$dir";
+    $files = scandir($dir);
 
-   $result = array();
+    foreach($files as $key => $value){
+        $path = realpath($dir.DIRECTORY_SEPARATOR.$value); 
 
-   $cdir = scandir($dir);
-   foreach ($cdir as $key => $value)
-   {
-      if (!in_array($value,array(".","..")))
-      {
-         if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
-         {
-            $result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-         }
-         else
-         {
-            $result[] = $value;
-         }
-      }
-   }
+        if(!is_dir($path)) {
+            if(empty($filter) || preg_match($filter, $path)) $results[] = $path;
+        } elseif($value != "." && $value != "..") {
+            get_dir_contents($path, $filter, $results);
+        }
+    }
 
-   return $result;
-}
+    return $results;
+} 
 
 function parad($title, $value) {
     echo "<strong>$title</strong>";

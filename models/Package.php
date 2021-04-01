@@ -26,6 +26,7 @@ class PackageModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
             <input type="hidden" name="autor_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group">
@@ -93,6 +94,12 @@ class PackageModel extends Model
                         <tbody id="table_form">
 
                             <?php if ($post['items']): ?>
+
+                                <script type="text/javascript">var service = {};</script>
+                                <?php foreach ($post['items'] as $key => $value): ?>
+                                    <script type="text/javascript">service["<?= $key ?>"] = "<?= $value->count ?>";</script>
+                                <?php endforeach; ?>
+
                                 <?php $i=$cost=0; foreach ($division as $divis_pk): ?>
 
                                     <?php foreach ($db->query("SELECT sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN (1,2) AND sc.id IN (".implode(', ', $service_pk).")") as $row): ?>
@@ -159,6 +166,7 @@ class PackageModel extends Model
                                     <th class="text-right" colspan="<?= 6-$_GET['cols'] ?>">Итого:</th>
                                     <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
                                 </tr>
+
                             <?php endif; ?>
 
                         </tbody>
@@ -225,11 +233,13 @@ class PackageModel extends Model
                 'count' => $this->post['count'][$key],
             );
         }
-        $this->post['items'] = json_encode($items);
         unset($this->post['service']);
         unset($this->post['division_id']);
         unset($this->post['parent_id']);
         unset($this->post['count']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        $this->post['items'] = json_encode($items);
         return True;
     }
 

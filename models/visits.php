@@ -1161,13 +1161,15 @@ class VisitInspectionModel extends Model
 
             <div class="modal-body">
 
-                <!-- The toolbar will be rendered in this container. -->
-                <div id="toolbar-container"></div>
+                <div class="document-editor">
+                    <div class="document-editor__toolbar"></div>
+                    <div class="document-editor__editable-container">
+                        <div class="document-editor__editable">
+                        </div>
+                    </div>
+                </div>
 
-                <!-- This container will become the editable. -->
-                <div id="editor"></div>
-
-                <textarea id="tickets-editor" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
+                <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
 
             </div>
 
@@ -1178,24 +1180,27 @@ class VisitInspectionModel extends Model
         </form>
         <script type="text/javascript">
             DecoupledEditor
-                .create( document.querySelector( '#editor' ) )
+                .create( document.querySelector( '.document-editor__editable' ))
                 .then( editor => {
-                    const toolbarContainer = document.querySelector( '#toolbar-container' );
+                    const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+                    const textarea = document.querySelector('#document-editor__area');
 
                     toolbarContainer.appendChild( editor.ui.view.toolbar.element );
 
+                    window.editor = editor;
+
                     editor.model.document.on( 'change:data', ( evt, data ) => {
                         console.log( data );
-                        $('textarea#tickets-editor').html( editor.getData() );
+                        textarea.value = editor.getData();
                     } );
                 } )
-                .catch( error => {
-                    console.error( error );
-                } );
-
-              document.getElementById( 'submit_insp' ).onclick = () => {
-                  textarea.value = editor.getData();
-              }
+                .catch( err => {
+                    console.error( err );
+                } 
+            );
+            document.getElementById( 'submit_insp' ).onclick = () => {
+                textarea.value = editor.getData();
+            }
         </script>
         <?php
     }
@@ -1622,25 +1627,58 @@ class VisitReport extends Model
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="id" value="<?= $pk ?>">
 
+                <div class="col-md-4 offset-md-8">
+                    <select data-placeholder="Выбрать пациента" class="form-control form-control-select2" onchange="ChangePack(this)">
+                        <option value="0">Шаблоны</option>
+                        <?php foreach ($db->query("SELECT * FROM templates WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <h1>
                     <div class="col-md-8 offset-md-2">
                         <input type="text" style="font-size:1.3rem;" name="report_title" value="<?= ($post['report_title']) ? $post['report_title'] : $post['name'] ?>" class="form-control" placeholder="Названия отчета">
                     </div>
                 </h1>
+                
+                <div id="document_<?= __CLASS__ ?>">
 
-                <!-- The toolbar will be rendered in this container. -->
-                <div id="toolbar-container"></div>
+                    <div class="document-editor">
+                        <div class="document-editor__toolbar"></div>
+                        <div class="document-editor__editable-container">
+                            <div class="document-editor__editable" id="document-editor__editable_template">
+                                <!-- <div id="document-editor__editable_template"></div> -->
+                                <?= $post['report'] ?>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- This container will become the editable. -->
-                <div id="editor">
-                    <?php if ($post['report']): ?>
-                        <?= $post['report'] ?>
-                    <?php else: ?>
-                        <br><span class="text-big"><strong>Рекомендация:</strong></span>
-                    <?php endif; ?>
+                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
+
+                    <script>
+                        DecoupledEditor
+                            .create( document.querySelector( '.document-editor__editable' ))
+                            .then( editor => {
+                                const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+                                const textarea = document.querySelector('#document-editor__area');
+
+                                toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+
+                                window.editor = editor;
+
+                                editor.model.document.on( 'change:data', ( evt, data ) => {
+                                    console.log( data );
+                                    textarea.value = editor.getData();
+                                } );
+                            } )
+                            .catch( err => {
+                                console.error( err );
+                            } 
+                        );
+                    </script>
+
                 </div>
-
-                <textarea id="tickets-editor" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
 
             </div>
 
@@ -1690,32 +1728,30 @@ class VisitReport extends Model
 
         </form>
         <script>
-            DecoupledEditor
-                .create( document.querySelector( '#editor' ) )
-                .then( editor => {
-                    const toolbarContainer = document.querySelector( '#toolbar-container' );
+            function ChangePack(params) {
 
-                    toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+                $.ajax({
+                    type: "POST",
+                    url: "<?= ajax('change_templates') ?>",
+                    data: {
+                        pk: params.value,
+                    },
+                    success: function (result) {
+                        $('#document_<?= __CLASS__ ?>').html(result);
+                    },
+                });
 
-                    editor.model.document.on( 'change:data', ( evt, data ) => {
-                        console.log( data );
-                        $('textarea#tickets-editor').html( editor.getData() );
-                    } );
-                } )
-                .catch( error => {
-                    console.error( error );
-                } );
-
-              document.getElementById( 'submit' ).onclick = () => {
-                  textarea.value = editor.getData();
-              }
+            }
+            document.getElementById( 'submit' ).onclick = () => {
+                textarea.value = editor.getData();
+            }
         </script>
         <?php if (permission([10,12,13])): ?>
-            <script type="text/javascript">
-                document.getElementById( 'end' ).onclick = () => {
-                    textarea.value = editor.getData();
-                }
-            </script>
+        <script type="text/javascript">
+            document.getElementById( 'end' ).onclick = () => {
+                textarea.value = editor.getData();
+            }
+        </script>
         <?php endif; ?>
         <?php
     }
@@ -1742,25 +1778,25 @@ class VisitReport extends Model
                 <input type="hidden" name="id" value="<?= $pk ?>">
                 <input type="hidden" name="report_title" value="<?= $post['name'] ?>">
 
-
-                <!-- The toolbar will be rendered in this container. -->
-                <div id="toolbar-container2"></div>
-
-                <!-- This container will become the editable. -->
-                <div id="editor2">
-                    <?php if ($post['report']): ?>
-                        <?= $post['report'] ?>
-                    <?php else: ?>
-                        <span class="text-big"><strong>Клинический диагноз:</strong></span><br>
-                        <span class="text-big"><strong>Сопутствующие заболевания:</strong></span><br>
-                        <span class="text-big"><strong>Жалобы:</strong></span><br>
-                        <span class="text-big"><strong>Anamnesis morbi:</strong></span><br>
-                        <span class="text-big"><strong>Объективно:</strong></span><br>
-                        <span class="text-big"><strong>Рекомендация:</strong></span>
-                    <?php endif; ?>
+                <div class="document-editor2">
+                    <div class="document-editor2__toolbar"></div>
+                    <div class="document-editor2__editable-container">
+                        <div class="document-editor2__editable">
+                            <?php if ($post['report']): ?>
+                                <?= $post['report'] ?>
+                            <?php else: ?>
+                                <span class="text-big"><strong>Клинический диагноз:</strong></span><br>
+                                <span class="text-big"><strong>Сопутствующие заболевания:</strong></span><br>
+                                <span class="text-big"><strong>Жалобы:</strong></span><br>
+                                <span class="text-big"><strong>Anamnesis morbi:</strong></span><br>
+                                <span class="text-big"><strong>Объективно:</strong></span><br>
+                                <span class="text-big"><strong>Рекомендация:</strong></span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
 
-                <textarea id="tickets-editor2" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
+                <textarea id="document-editor2__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="report" rows="1"></textarea>
 
             </div>
 
@@ -1775,27 +1811,27 @@ class VisitReport extends Model
         </form>
         <script>
             DecoupledEditor
-                .create( document.querySelector( '#editor2' ) )
-                .then( editor2 => {
-                    const toolbarContainer2 = document.querySelector( '#toolbar-container2' );
+                .create( document.querySelector( '.document-editor2__editable' ))
+                .then( editor => {
+                    const toolbarContainer = document.querySelector( '.document-editor2__toolbar' );
+                    const textarea2 = document.querySelector('#document-editor2__area');
 
-                    toolbarContainer2.appendChild( editor2.ui.view.toolbar.element );
+                    toolbarContainer.appendChild( editor.ui.view.toolbar.element );
 
-                    editor2.model.document.on( 'change:data', ( evt, data ) => {
+                    window.editor = editor;
+
+                    editor.model.document.on( 'change:data', ( evt, data ) => {
                         console.log( data );
-                        $('textarea#tickets-editor2').html( editor2.getData() );
+                        textarea2.value = editor.getData();
                     } );
                 } )
-                .catch( error => {
-                    console.error( error );
-                } );
-
-              document.getElementById( 'submit' ).onclick = () => {
-                  textarea.value = editor2.getData();
-              }
-              // document.getElementById( 'end' ).onclick = () => {
-              //     textarea.value = editor2.getData();
-              // }
+                .catch( err => {
+                    console.error( err );
+                } 
+            );
+            document.getElementById( 'submit' ).onclick = () => {
+                textarea2.value = editor.getData();
+            }
         </script>
         <?php
     }
@@ -1954,7 +1990,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -2059,7 +2098,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -2160,7 +2202,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>                    
                     </div>
                 </div>
 
@@ -2265,7 +2310,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -2371,7 +2419,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -2481,7 +2532,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>                    
                     </div>
                 </div>
 
@@ -2587,7 +2641,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>                
                     </div>
                 </div>
 
@@ -2697,7 +2754,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -2794,7 +2854,10 @@ class VisitRoute extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button onclick="FirstClick(this)" type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -2907,7 +2970,10 @@ class VisitRoute extends Model
 
             <div class="modal-footer">
                 <div class="text-right">
-                    <button onclick="FirstClick(this)" type="submit" class="btn btn-sm btn-outline-info">Отправить</button>
+                    <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                        <span class="ladda-label">Сохранить</span>
+                        <span class="ladda-spinner"></span>
+                    </button>
                 </div>
             </div>
 

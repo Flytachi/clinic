@@ -10,14 +10,14 @@ is_auth();
 
 <div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
-$pack = $db->query("SELECT report_title, report, direction FROM visit WHERE id = {$_GET['pk']}")->fetch();
+$pack = $db->query("SELECT report_title, report, service_id FROM visit WHERE id = {$_GET['pk']}")->fetch();
 ?>
     <h3 class="text-center"><?= $pack['report_title'] ?></h3>
     <?= $pack['report'] ?>
 </div>
 
 <div class="modal-footer">
-    <?php if ($pack['direction']): ?>
+    <?php if ($pack['service_id'] == 1): ?>
         <button onclick="Print('<?= viv('prints/document_3') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
     <?php else: ?>
         <button onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
