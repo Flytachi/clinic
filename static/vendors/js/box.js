@@ -23,16 +23,6 @@ function number_format(number, decimals, decPoint, thousandsSep) {
     return s.join(dec)
 }
 
-function FirstClick(item) {
-    // item.style.display = "none"; 
-    // var element = document.createElement("div");
-    // element.id = "Something";
-    // element.className = "btn btn-sm";
-    // element.disabled = true;
-    // element.innerHTML = "Loading...";
-    // item.parentElement.appendChild(element); 
-}
-
 String.prototype.FirstUpperWords = function () {
     return this.replace(/\w+/g, function(a){
         return a.charAt(0).toUpperCase() + a.slice(1).toLowerCase()
@@ -106,6 +96,8 @@ $( document ).ready(function() {
         }
         document.getElementById('timedisplay').innerHTML = hours + ':' + minutes + ':' + seconds;
     }
-    setInterval(getDate, 0);
+    if (document.querySelector( '#timedisplay' )) {
+        setInterval(getDate, 0);
+    }
 
 });

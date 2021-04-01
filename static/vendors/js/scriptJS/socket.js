@@ -41,18 +41,12 @@ function addZero(number){
 }
 
 conn.onerror = function(error) {
-    new Noty({
-        text: 'Сокет сервер не включён!',
-        type: 'error'
-    }).show();
+    console.log("Сокет сервер не включён!");
     conn.close();
 };
 
 conn.onclose = function(error) {
-    new Noty({
-        text: 'Сокет сервер был  выключен!',
-        type: 'error'
-    }).show();
+    console.log("Сокет сервер был  выключен!");
     conn.close();
 };
 
