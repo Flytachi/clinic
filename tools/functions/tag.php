@@ -1,7 +1,6 @@
 <?php
 
 function get_dir_contents($dir, $filter = '', &$results = array()) {
-    $dir = $_SERVER['DOCUMENT_ROOT']."/$dir";
     $files = scandir($dir);
 
     foreach($files as $key => $value){
