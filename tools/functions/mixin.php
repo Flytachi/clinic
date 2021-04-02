@@ -202,6 +202,26 @@ function T_flush($table)
     $db->exec("TRUNCATE TABLE $table;");
 }
 
+function T_DELETE_database()
+{
+    global $db;
+
+    try {
+        $db->beginTransaction();
+
+        foreach ($db->query("SHOW TABlES") as $table) {
+            $db->exec("DROP TABLE {$table['Tables_in_clinic']}");
+        }
+
+        $db->commit();
+        return 200;
+    } catch (\Exception $e) {
+        $db->rollBack();
+        return "Ошибка: " . $e->getMessage();
+    }
+
+}
+
 function T_FLUSH_database()
 {
     global $db;
@@ -215,7 +235,7 @@ function T_FLUSH_database()
 
         $db->commit();
         return 200;
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $db->rollBack();
         return "Ошибка: " . $e->getMessage();
     }
@@ -232,7 +252,7 @@ function T_INITIALIZE_database($data)
         }
         $db->commit();
         return 200;
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         $db->rollBack();
         return "Ошибка: " . $e->getMessage();
     }

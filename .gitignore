@@ -1,4 +1,4 @@
-tools/functions/setting.ini
+setting.ini
 tools/PHPExcel
 dump/*
 storage/*
