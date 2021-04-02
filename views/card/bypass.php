@@ -24,8 +24,12 @@ if ($grant_id == $_SESSION['session_id']) {
                 <strong>Препараты: </strong>
                 <ul>
                     <?php foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date, qty FROM bypass_preparat WHERE bypass_id = {$bypass['id']}") as $serv): ?>
-                        <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> | <?= $serv['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['preparat_die_date'])) ?>)</li>
-                        <input type="hidden" class="products" value="<?= $serv['preparat_id'] ?>">
+                        <?php if ($serv['preparat_id']): ?>
+                            <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> | <?= $serv['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['preparat_die_date'])) ?>)</li>
+                            <input type="hidden" class="products" value="<?= $serv['preparat_id'] ?>">
+                        <?php else: ?>
+                            <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?></li>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </ul>
             </div>

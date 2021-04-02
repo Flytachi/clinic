@@ -2,32 +2,6 @@
 require_once '../../tools/warframe.php';
 is_auth(1);
 
-if ($_POST) {
-
-    $tit = Mixin\insert_or_update("company", array('const_label' => "print_header_title", 'const_value' => $_POST['print_header_title']), "const_label");
-    $adr = Mixin\insert_or_update("company", array('const_label' => "print_header_address", 'const_value' => $_POST['print_header_address']), "const_label");
-    $tel = Mixin\insert_or_update("company", array('const_label' => "print_header_phones", 'const_value' => $_POST['print_header_phones']), "const_label");
-
-    if ($tit + $adr + $tel == 0) {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Новые данные записаны.
-        </div>
-        ';
-        render();
-    }else {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Данные обновлены.
-        </div>
-        ';
-        render();
-    }
-
-}
-
 if ($_FILES['print_header_logotype']['name']) {
 
     if ($_FILES['print_header_logotype']['error'] === UPLOAD_ERR_OK) {
@@ -57,7 +31,6 @@ if ($_FILES['print_header_logotype']['name']) {
                     File is successfully uploaded.
                 </div>
                 ';
-                render();
             }else{
                 $_SESSION['message'] = '
                 <div class="alert alert-danger" role="alert">
@@ -87,5 +60,32 @@ if ($_FILES['print_header_logotype']['name']) {
         render();
     }
 
+}else{
+    $_SESSION['message'] = "";
 }
+
+if ($_POST) {
+
+    $tit = Mixin\insert_or_update("company", array('const_label' => "print_header_title", 'const_value' => $_POST['print_header_title']), "const_label");
+    $adr = Mixin\insert_or_update("company", array('const_label' => "print_header_address", 'const_value' => $_POST['print_header_address']), "const_label");
+    $tel = Mixin\insert_or_update("company", array('const_label' => "print_header_phones", 'const_value' => $_POST['print_header_phones']), "const_label");
+
+    if ($tit + $adr + $tel == 0) {
+        $_SESSION['message'] .= '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Новые данные записаны.
+        </div>
+        ';
+    }else {
+        $_SESSION['message'] .= '
+        <div class="alert alert-primary" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+            Данные обновлены.
+        </div>
+        ';
+    }
+
+}
+render();
 ?>

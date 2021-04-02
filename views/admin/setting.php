@@ -61,7 +61,7 @@ $header = "Настройки";
 						}
 						?>
 
-						<form action="admin_model" method="post" enctype="multipart/form-data">
+						<form action="<?= viv('admin/admin_model') ?>" method="post" enctype="multipart/form-data">
 
 							<fieldset class="mb-3">
 								<legend class="text-uppercase font-size-sm font-weight-bold">Печать</legend>
@@ -72,7 +72,7 @@ $header = "Настройки";
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Иконка печати:</label>
 									<div class="col-lg-9">
-										<input type="file" name="logo" class="form-control">
+										<input type="file" name="print_header_logotype" class="form-control">
 									</div>
 								</div>
 
