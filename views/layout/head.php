@@ -65,11 +65,11 @@
 		let id = <?= $_SESSION['session_id'] ?>;
 		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 	</script>
-	<script src="<?= stack("vendors/js/scriptJS/socket.js") ?>"></script>
+	<script src="<?= stack("vendors/js/socket.js") ?>"></script>
 
 	<!-- JS CKEditor -->
 	<script src="<?= node("@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor.js") ?>"></script>
 </head>
-<audio id="audio">
+<!-- <audio id="audio">
     <source src="<?= stack("/audio/music") ?>" type="audio/mpeg">
-</audio>
+</audio> -->
