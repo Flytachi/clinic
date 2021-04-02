@@ -50,7 +50,7 @@ $header = "Пациент";
 								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-								<a href="<?= viv('prints/sheet') ?>?id=<?= $patient->visit_id ?>" class="float-right text-info mr-2">
+								<a onclick="Print('<?= viv('prints/sheet') ?>?id=<?= $patient->visit_id ?>')" class="float-right text-info mr-2">
 									<i class="icon-drawer3 mr-1"></i>Лист
 								</a>
 							<?php endif; ?>

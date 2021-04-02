@@ -54,7 +54,7 @@ require_once 'functions/base.php';
 require_once 'functions/model.php';
 
 // Подключение Моделей
-foreach (get_dir_contents('models') as $filename) {
+foreach (get_dir_contents($_SERVER['DOCUMENT_ROOT']."/models/") as $filename) {
     require_once $filename;
 }
 
