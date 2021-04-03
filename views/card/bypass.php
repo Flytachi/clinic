@@ -28,7 +28,7 @@ if ($grant_id == $_SESSION['session_id']) {
                             <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> | <?= $serv['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['preparat_die_date'])) ?>)</li>
                             <input type="hidden" class="products" value="<?= $serv['preparat_id'] ?>">
                         <?php else: ?>
-                            <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?></li>
+                            <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> <span class="text-orange">(Сторонний)</span></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </ul>

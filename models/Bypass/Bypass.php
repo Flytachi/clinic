@@ -27,7 +27,7 @@ class BypassModel extends Model
 
                     <div class="col-md-9">
                         <label>Препарат:</label>
-                        <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
+                        <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" data-fouc>
                             <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
                                 (
                                     st.qty -
@@ -99,10 +99,9 @@ class BypassModel extends Model
 
         </form>
         <script type="text/javascript">
-            const i = 0;
-            const s = 0;
+            let i = 1;
+            let s = 0;
             function AddinputTime() {
-                i++;
                 $('#time_div').append(`
                     <div class="col-md-3" id="time_input_${i}">
                         <div class="form-group-feedback form-group-feedback-right">
@@ -113,29 +112,25 @@ class BypassModel extends Model
                         </div>
                     </div>
                 `);
+                i++;
             }
 
             function AddPreparat() {
-                swal({
-                    position: 'top',
-                    html: '<h3>В разработке</h3>',
-                    type: 'warning',
-                });
-                // $('#preparat_div_outside').append(`
-                // <tr class="table-secondary" id="preparat_outside_tr-${s}">
-                //     <td>
-                //         <div class="form-group-feedback form-group-feedback-right">
-                //             <input class="form-control" type="text" name="preparat_outside[${s}]" style="border-width: 0px 0; padding: 0.2rem 0;">
-                //             <div class="form-control-feedback text-danger">
-                //                 <i class="icon-minus-circle2" onclick="$('#preparat_outside_tr-${s}').remove();"></i>
-                //             </div>
-                //         </div>ы
-                //     </td>
-                //     <td class="text-right">
-                //         <input type="number" class="form-control" name="qty_outside[${s}]" value="1" style="border-width: 0px 0; padding: 0.2rem 0;">
-                //     </td>
-                // </tr>`);
-                // s++;
+                $('#preparat_div_outside').append(`
+                <tr class="table-secondary" id="preparat_outside_tr-${s}">
+                    <td>
+                        <div class="form-group-feedback form-group-feedback-right">
+                            <input class="form-control" type="text" name="preparat_outside[${s}]" required style="border-width: 0px 0; padding: 0.2rem 0;">
+                            <div class="form-control-feedback text-danger">
+                                <i class="icon-minus-circle2" onclick="$('#preparat_outside_tr-${s}').remove();"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <input type="number" class="form-control" name="qty_outside[${s}]" value="1" style="border-width: 0px 0; padding: 0.2rem 0;">
+                    </td>
+                </tr>`);
+                s++;
             }
 
             $('#select_preparat').on('change', function(events){

@@ -24,8 +24,12 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
                 <tr>
                     <td>
                         <?php foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date, qty FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $prep): ?>
-                            <span class="text-primary"><?= $prep['qty'] ?> шт</span> - <?= $prep['preparat_name'] ?> | <?= $prep['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($prep['preparat_die_date'])) ?>)<br>
-                            <?php $perk[$prep['preparat_id']] = $prep['qty'] ?>
+                            <?php if($prep['preparat_id']): ?>
+                                <span class="text-primary"><?= $prep['qty'] ?> шт</span> - <?= $prep['preparat_name'] ?> | <?= $prep['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($prep['preparat_die_date'])) ?>)<br>
+                                <?php $perk[$prep['preparat_id']] = $prep['qty'] ?>
+                            <?php else: ?>
+                                <span class="text-primary"><?= $prep['qty'] ?> шт</span> - <?= $prep['preparat_name'] ?> <span class="text-orange">(Сторонний)</span><br>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                         <ul>
                             <?php foreach ($db->query("SELECT time, status, completed FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $value): ?>
