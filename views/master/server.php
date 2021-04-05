@@ -56,13 +56,13 @@ $header = "Контроль базы данных";
 				                </thead>
 				                <tbody>
                                     <?php
-                                     $scanned_files = array_diff(scandir("../../dump"), array('..', '.'));
-                                     $i = 1;
+									$scanned_files = array_diff(scandir("../../dump"), array('..', '.'));
+									$i = 1;
                                     ?>
                                     <?php foreach ($scanned_files as $value): ?>
-                                        <tr>
+                                        <tr> 
                                             <td><?= $i++ ?></td>
-                                            <td><?= substr($value, 0, 19); ?></td>
+                                            <td><?= pathinfo($value, PATHINFO_FILENAME); ?></td>
                                             <td>
                                                 <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
                                                 <a href="/dump/<?= $value ?>" class="list-icons-up text-dark" download><i class="icon-download"></i></a>
