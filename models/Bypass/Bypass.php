@@ -25,10 +25,9 @@ class BypassModel extends Model
 
                 <div class="form-group row">
 
-                    <div class="col-md-12">
-
+                    <div class="col-md-9">
                         <label>Препарат:</label>
-                        <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" required data-fouc>
+                        <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" data-fouc>
                             <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
                                 (
                                     st.qty -
@@ -40,6 +39,11 @@ class BypassModel extends Model
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Сторонний препарат:</label>
+                        <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить препарат</button>
                     </div>
 
                 </div>
@@ -54,6 +58,7 @@ class BypassModel extends Model
                                 </tr>
                             </thead>
                             <tbody id="preparat_div"></tbody>
+                            <tbody id="preparat_div_outside"></tbody>
                         </table>
                     </div>
                 </div>
@@ -94,19 +99,38 @@ class BypassModel extends Model
 
         </form>
         <script type="text/javascript">
-            var i = 0;
+            let i = 1;
+            let s = 0;
             function AddinputTime() {
-                i++;
                 $('#time_div').append(`
                     <div class="col-md-3" id="time_input_${i}">
                         <div class="form-group-feedback form-group-feedback-right">
                             <input type="time" name="time[${i}]" class="form-control" required>
                             <div class="form-control-feedback text-danger">
-                                <i class="icon-minus-circle2" onclick="$('#time_input_`+ i +`').remove();"></i>
+                                <i class="icon-minus-circle2" onclick="$('#time_input_${i}').remove();"></i>
                             </div>
                         </div>
                     </div>
                 `);
+                i++;
+            }
+
+            function AddPreparat() {
+                $('#preparat_div_outside').append(`
+                <tr class="table-secondary" id="preparat_outside_tr-${s}">
+                    <td>
+                        <div class="form-group-feedback form-group-feedback-right">
+                            <input class="form-control" type="text" name="preparat_outside[${s}]" required style="border-width: 0px 0; padding: 0.2rem 0;">
+                            <div class="form-control-feedback text-danger">
+                                <i class="icon-minus-circle2" onclick="$('#preparat_outside_tr-${s}').remove();"></i>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-right">
+                        <input type="number" class="form-control" name="qty_outside[${s}]" value="1" style="border-width: 0px 0; padding: 0.2rem 0;">
+                    </td>
+                </tr>`);
+                s++;
             }
 
             $('#select_preparat').on('change', function(events){
@@ -145,43 +169,79 @@ class BypassModel extends Model
             $object = Mixin\insert($this->table, $this->post);
             if (intval($object)){
                 $this->set_table('bypass_preparat');
-                foreach ($this->post_preparat as $value) {
-                    $storage = $db->query("SELECT name, supplier, die_date FROM storage WHERE id = $value")->fetch();
-                    $object1 = Mixin\insert($this->table, array(
-                        'bypass_id' => $object,
-                        'preparat_id' => $value,
-                        'preparat_name' => $storage['name'],
-                        'preparat_supplier' => $storage['supplier'],
-                        'preparat_die_date' => $storage['die_date'],
-                        'qty' => $this->post_qty[$value],
-                    ));
-                    if (!intval($object1)) {
-                        $this->error($object1);
-                    }
-                }
+                $this->preparats_create($object);
+
                 $this->set_table('bypass_time');
-                foreach ($this->post_time as $value) {
-                    $object1 = Mixin\insert($this->table, array(
-                        'bypass_id' => $object,
-                        'time' => $value,
-                    ));
-                    if (!intval($object1)) {
-                        $this->error($object1);
-                    }
-                }
+                $this->time_create($object);
+
                 $db->commit();
                 $this->success();
+                $this->dd();
             }else{
                 $this->error($object);
             }
         }
     }
 
+    public function preparats_create(Int $object)
+    {
+        global $db;
+        if ($this->post_preparat) {
+            foreach ($this->post_preparat as $value) {
+                $storage = $db->query("SELECT name, supplier, die_date FROM storage WHERE id = $value")->fetch();
+                $object1 = Mixin\insert($this->table, array(
+                    'bypass_id' => $object,
+                    'preparat_id' => $value,
+                    'preparat_name' => $storage['name'],
+                    'preparat_supplier' => $storage['supplier'],
+                    'preparat_die_date' => $storage['die_date'],
+                    'qty' => $this->post_qty[$value],
+                ));
+                if (!intval($object1)) {
+                    $this->error($object1);
+                }
+            }
+        }
+        if ($this->post_preparat_outside) {
+            foreach ($this->post_preparat_outside as $key => $value) {
+                $object1 = Mixin\insert($this->table, array(
+                    'bypass_id' => $object,
+                    'preparat_id' => null,
+                    'preparat_name' => $value,
+                    'preparat_supplier' => null,
+                    'preparat_die_date' => null,
+                    'qty' => $this->post_qty_outside[$key],
+                ));
+                if (!intval($object1)) {
+                    $this->error($object1);
+                }
+            }
+        }
+    }
+
+    public function time_create(Int $object)
+    {
+        global $db;
+        foreach ($this->post_time as $value) {
+            $object1 = Mixin\insert($this->table, array(
+                'bypass_id' => $object,
+                'time' => $value,
+            ));
+            if (!intval($object1)) {
+                $this->error($object1);
+            }
+        }
+    }
+
     public function clean()
     {
+        $this->post_preparat_outside = $this->post['preparat_outside'];
+        $this->post_qty_outside = $this->post['qty_outside'];
         $this->post_preparat = $this->post['preparat'];
         $this->post_time = $this->post['time'];
         $this->post_qty = $this->post['qty'];
+        unset($this->post['preparat_outside']);
+        unset($this->post['qty_outside']);
         unset($this->post['preparat']);
         unset($this->post['time']);
         unset($this->post['qty']);

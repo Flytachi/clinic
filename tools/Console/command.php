@@ -29,6 +29,10 @@ class __Make
     {
         if ($this->argument == "setting") {
             $this->create_setting();
+        }elseif ($this->argument == "storage") {
+            $this->create_storage();
+        }elseif ($this->argument == "dump") {
+            $this->create_dump();
         }else {
 
             try {
@@ -85,6 +89,24 @@ class __Make
         }
         echo "\033[33m". " $file_name уже существует!\n";
         return 0;
+    }
+
+    public function create_storage()
+    {
+        $result = exec("mkdir storage && chmod 777 storage && echo 1");
+        if ($result) {
+            echo "\033[33m"." Директория storage создана.\n";
+        }
+        return 1;
+    }
+
+    public function create_dump()
+    {
+        $result = exec("mkdir dump && echo 1");
+        if ($result) {
+            echo "\033[33m"." Директория dump создана.\n";
+        }
+        return 1;
     }
 
     public function help()
@@ -189,9 +211,9 @@ class __Db
         require_once dirname(__DIR__, 1).'/functions/connection.php';
         require_once dirname(__DIR__, 1).'/functions/mixin.php';
         
-        $_clean = Mixin\T_DELETE_database();
-        if ($_clean == 200) {
-            echo "\033[32m"." База данных успешно очищена.\n";
+        $_delete = Mixin\T_DELETE_database();
+        if ($_delete == 200) {
+            echo "\033[32m"." База данных успешно удалена.\n";
             return 1;
         }
     }

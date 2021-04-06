@@ -136,13 +136,19 @@ class Model
     {
         switch ($mod) {
             case "test":
-                prit($this);
+                dd($this);
                 break;
 
             default:
                 echo "Не назначен мод";
                 break;
         }
+        exit;
+    }
+
+    public function dd()
+    {
+        dd($this);
         exit;
     }
 

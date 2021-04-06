@@ -355,6 +355,7 @@ class BypassDateModel extends Model
     public function clean()
     {
         global $db, $patient;
+        // $this->dd();
         if ($this->post['products']) {
             $user_pk = $this->post['user_id'];
             if ($this->post['completed']) {
@@ -446,6 +447,11 @@ class BypassDateModel extends Model
             }
             unset($this->post['user_id']);
             unset($this->post['products']);
+            if ($this->post['visit_id']) {
+                unset($this->post['visit_id']);
+            }
+        }else {
+            unset($this->post['user_id']);
             if ($this->post['visit_id']) {
                 unset($this->post['visit_id']);
             }
