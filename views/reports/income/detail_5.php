@@ -14,7 +14,8 @@ $sql = "SELECT vs.accept_date, vs.user_id, ds.title, (vp.price_cash + vp.price_c
             LEFT JOIN bed_type bdt ON(bdt.id=bd.types)
         WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL 
             AND vs.grant_id={$_POST['parent_id']} 
-            AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
+            AND vs.priced_date IS NOT NULL 
+            AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
 // $detail = $db->query($sql)->fetchAll(PDO::FETCH_OBJ);
 // dd($detail);
 $total_price = 0; $i = 1;
