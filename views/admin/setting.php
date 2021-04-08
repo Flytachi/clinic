@@ -93,14 +93,36 @@ $header = "Настройки";
 
 							</fieldset>
 
-							<button type="submit" class="btn">Send</button>
+							<div class="text-right">
+								<button type="submit" class="btn">Send</button>
+							</div>
+
+						</form>
+
+				    </div>
+
+					<div class="card-body">
+
+						<form action="<?= viv('admin/admin_model') ?>" method="post" enctype="multipart/form-data">
+
+							<fieldset class="mb-3">
+
+								<div class="form-group">
+									<label>Резидент (процент):</label>
+									<input type="number" name="const_foreigner_sale" value="<?= $company['const_foreigner_sale'] ?>" placeholder="Введите процент" class="form-control">
+								</div>
+
+							</fieldset>
+
+							<div class="text-right">
+								<button type="submit" class="btn">Send</button>
+							</div>
 
 						</form>
 
 				    </div>
 
 				</div>
-
 
 			</div>
             <!-- /content area -->

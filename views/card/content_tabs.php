@@ -30,9 +30,11 @@
             <a href="<?= viv('card/content_4').$agr ?>" class="nav-link <?= viv_link('card/content_4') ?> legitRipple" style="white-space:nowrap;"><i class="icon-vcard mr-1"></i>Мои заключения</a>
         </li>
     <?php endif; ?>
-    <li class="nav-item">
-        <a href="<?= viv('card/content_5').$agr ?>" class="nav-link <?= viv_link('card/content_5') ?> legitRipple" style="white-space:nowrap;"><i class="icon-fire2 mr-1"></i>Анализы</a>
-    </li>
+    <?php if(module('module_laboratory')): ?>
+        <li class="nav-item">
+            <a href="<?= viv('card/content_5').$agr ?>" class="nav-link <?= viv_link('card/content_5') ?> legitRipple" style="white-space:nowrap;"><i class="icon-fire2 mr-1"></i>Анализы</a>
+        </li>
+    <?php endif; ?>
     <li class="nav-item">
         <a href="<?= viv('card/content_6').$agr ?>" class="nav-link <?= viv_link('card/content_6') ?> legitRipple" style="white-space:nowrap;"><i class="icon-pulse2 mr-1"></i>Диагностика</a>
     </li>

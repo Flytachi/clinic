@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(6);
+is_module('module_laboratory');
 $header = "Приём пациетов";
 ?>
 <!DOCTYPE html>

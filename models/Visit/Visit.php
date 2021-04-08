@@ -66,11 +66,13 @@ class VisitModel extends Model
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
-                    <optgroup label="Лаборатория">
-                        <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </optgroup>
+                    <?php if(module('module_laboratory')): ?>
+                        <optgroup label="Лаборатория">
+                            <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
                     <optgroup label="Остальные">
                         <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>

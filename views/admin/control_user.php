@@ -63,7 +63,7 @@ $header = "Визиты";
 									<label>Пациент:</label>
 									<select name="user_id" class="form-control form-control-select2">
 										<option value="">Выберите пациента</option>
-										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
+										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
@@ -139,7 +139,7 @@ $header = "Визиты";
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($db->query($sql) as $row): ?>
+										<?php foreach ($db->query($sql." ORDER BY id DESC") as $row): ?>
 											<tr>
 												<td><?= addZero($row['id']) ?></td>
 												<td><?= get_full_name($row['id']); ?></td>
@@ -210,23 +210,26 @@ $header = "Визиты";
 													</td>
 												<?php endif; ?>
 												<td class="text-center">
-													<div class="dropdown">
-														<?php if ($row['status']): ?>
-															<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
-														<?php else: ?>
-															<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
-														<?php endif; ?>
+													<div class="list-icons">
+														<div class="dropdown">
+															<?php if ($row['status']): ?>
+																<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
+															<?php else: ?>
+																<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
+															<?php endif; ?>
 
-														<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
-															<a onclick="Change(<?= $row['id'] ?>, 1)" class="dropdown-item">
-																<span class="badge badge-mark mr-2 border-success"></span>
-																Active
-															</a>
-															<a onclick="Change(<?= $row['id'] ?>, 0)" class="dropdown-item">
-																<span class="badge badge-mark mr-2 border-secondary"></span>
-																Pasive
-															</a>
+															<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
+																<a onclick="Change(<?= $row['id'] ?>, 1)" class="dropdown-item">
+																	<span class="badge badge-mark mr-2 border-success"></span>
+																	Active
+																</a>
+																<a onclick="Change(<?= $row['id'] ?>, 0)" class="dropdown-item">
+																	<span class="badge badge-mark mr-2 border-secondary"></span>
+																	Pasive
+																</a>
+															</div>
 														</div>
+														<a href="<?= del_url($row['id'], 'PatientForm') ?>" onclick="return confirm('Вы уверены что хотите удалить пациета?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													</div>
 												</td>
 											</tr>

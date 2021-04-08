@@ -38,16 +38,7 @@ if ($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) {
 // END File extension
 
 require_once 'constant.php';
-
-// Browser
-if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $_SESSION['browser'] = "Firefox";
-elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Opera") !== false) $_SESSION['browser'] = "Opera";
-elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Chrome") !== false) $_SESSION['browser'] = "Chrome";
-elseif (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false) $_SESSION['browser'] = "Internet Explorer";
-elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Safari") !== false) $_SESSION['browser'] = "Safari";
-else $_SESSION['browser'] = "Неизвестный";
-
-
+require_once 'functions/session.php';
 require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'functions/base.php';
@@ -58,19 +49,9 @@ foreach (get_dir_contents($_SERVER['DOCUMENT_ROOT']."/models/") as $filename) {
     require_once $filename;
 }
 
-function module($value=null)
-{
-    global $db;
-    if ($value) {
-        return $db->query("SELECT const_value FROM company WHERE const_label = '$value'")->fetchColumn();
-    } else {
-        foreach ($db->query("SELECT * FROM company WHERE const_label LIKE 'module_%'") as $row) {
-            $modules[$row['const_label']] = $row['const_value'];
-        }
-        return $modules;
-    }
-
-}
+// Module
+require_once 'module.php';
+// END Module
 
 function get_full_name($id = null) {
     global $db;

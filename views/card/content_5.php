@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
+is_module('module_laboratory');
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -51,7 +52,7 @@ $header = "Пациент";
 									</a>
 								<?php endif; ?>
 							<?php else: ?>
-								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right <?= $class_color_add ?> mr-1"><i class="icon-printer2"></i></a>
+								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
 						</legend>
 

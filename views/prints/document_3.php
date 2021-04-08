@@ -88,18 +88,20 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                 <?php endforeach; ?>
             </p>
 
-            <h4 class="text-center"><strong>Результаты лабораторных и инструментальных исследований:</strong></h4>
-            <p>
-                <!-- Результаты лабораторных и инструментальных исследований -->
-                <?php foreach ($db->query("SELECT vs.id, sc.id 'serv_id', sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.laboratory IS NOT NULL AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d %H:%i') BETWEEN \"$docs->add_date\" AND \"$docs->completed\")") as $any): ?>
-                    <li>
-                        <strong><?= $any['name'] ?>:</strong>
-                        <?php foreach ($db->query("SELECT scl.name, vl.result FROM visit_analyze vl LEFT JOIN service_analyze scl ON(scl.id=vl.analyze_id) WHERE vl.visit_id = {$any['id']} AND vl.service_id = {$any['serv_id']}") as $row): ?>
-                            <?= $row['name'] ?> - <?= $row['result'] ?>;
-                        <?php endforeach; ?>
-                    </li>
-                <?php endforeach; ?>
-            </p>
+            <?php if(module('module_laboratory')): ?>
+                <h4 class="text-center"><strong>Результаты лабораторных и инструментальных исследований:</strong></h4>
+                <p>
+                    <!-- Результаты лабораторных и инструментальных исследований -->
+                    <?php foreach ($db->query("SELECT vs.id, sc.id 'serv_id', sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = $docs->id AND vs.completed IS NOT NULL AND vs.laboratory IS NOT NULL AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d %H:%i') BETWEEN \"$docs->add_date\" AND \"$docs->completed\")") as $any): ?>
+                        <li>
+                            <strong><?= $any['name'] ?>:</strong>
+                            <?php foreach ($db->query("SELECT scl.name, vl.result FROM visit_analyze vl LEFT JOIN service_analyze scl ON(scl.id=vl.analyze_id) WHERE vl.visit_id = {$any['id']} AND vl.service_id = {$any['serv_id']}") as $row): ?>
+                                <?= $row['name'] ?> - <?= $row['result'] ?>;
+                            <?php endforeach; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </p>
+            <?php endif; ?>
 
             <div class="table-responsive card">
                 <table class="table table-bordered table-sm">

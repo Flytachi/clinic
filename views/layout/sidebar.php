@@ -98,12 +98,14 @@
                                     <span>Препараты к услугам</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
-                                    <i class="icon-fire"></i>
-                                    <span>Анализы</span>
-                                </a>
-                            </li>
+                            <?php if(module('module_laboratory')): ?>
+                                <li class="nav-item">
+                                    <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
+                                        <i class="icon-fire"></i>
+                                        <span>Анализы</span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
 
                             <li class="nav-item">
                                 <a href="<?= viv('admin/ward') ?>" class="nav-link legitRipple">

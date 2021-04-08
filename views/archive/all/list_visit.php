@@ -172,11 +172,13 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
 						<h6 class="card-title">Визиты</h6>
-						<div class="header-elements">
-							<div class="list-icons">
-								<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm btn-outline-info">Печать</button>
+						<?php if(module('module_laboratory')): ?>
+							<div class="header-elements">
+								<div class="list-icons">
+									<button onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="btn btn-sm btn-outline-info">Печать</button>
+								</div>
 							</div>
-						</div>
+						<?php endif; ?>
 					</div>
 
 					<div class="card-body">
@@ -273,7 +275,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                             <td class="text-right">
 												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<?php if ($row['laboratory']): ?>
+													<?php if (module('module_laboratory') and $row['laboratory']): ?>
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
 														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													<?php else: ?>
@@ -358,33 +360,39 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 			});
 		};
 
-		items = [];
-
-		function Change_lab(tbody, id) {
-			if (tbody.dataset.stat == 1) {
-				tbody.dataset.stat = "0";
-				tbody.className = "";
-
-				for(let a = 0; a < items.length; a++){
-            		if(items[a] == id ){
-            			items.splice(a, 1);
-	            	}
-            	}
-
-			}else {
-				tbody.dataset.stat = "1";
-				tbody.className = "table-warning";
-				items.push(id);
-			}
-		}
-
-		function PrePrint(url) {
-			if (items.length != 0) {
-				Print(url+`&items=[${items}]`);
-			}
-		}
-
 	</script>
+
+	<?php if(module('module_laboratory')): ?>
+		<script type="text/javascript">
+
+			items = [];
+
+			function Change_lab(tbody, id) {
+				if (tbody.dataset.stat == 1) {
+					tbody.dataset.stat = "0";
+					tbody.className = "";
+
+					for(let a = 0; a < items.length; a++){
+						if(items[a] == id ){
+							items.splice(a, 1);
+						}
+					}
+
+				}else {
+					tbody.dataset.stat = "1";
+					tbody.className = "table-warning";
+					items.push(id);
+				}
+			}
+
+			function PrePrint(url) {
+				if (items.length != 0) {
+					Print(url+`&items=[${items}]`);
+				}
+			}
+
+		</script>
+	<?php endif; ?>
 
 	<!-- Footer -->
 	<?php include layout('footer') ?>

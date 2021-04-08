@@ -215,6 +215,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												<tr>
+													<th>Laboratory</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= ($company['module_laboratory']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 											</tbody>
 										</table>
 									</div>
@@ -222,7 +232,7 @@ $header = "Панель управления";
 								} catch (\Exception $e) {
 									echo "Не установлена база данных";
 								}
-								// prit($company);
+								// dd(module());
 								?>
 
 							</div>
