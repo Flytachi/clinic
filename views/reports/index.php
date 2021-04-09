@@ -130,13 +130,15 @@ $header = "Отчёты";
                         <!-- end -->
                     <?php endif; ?>
 
-                    <!-- Диагностика -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
+                    <?php if(module('module_diagnostic')): ?>
+                        <!-- Диагностика -->
+                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                            <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
+                        <?php endif; ?>
+                        <!-- end -->
                     <?php endif; ?>
-                    <!-- end -->
 
                     <!-- Анестезия -->
                     <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>

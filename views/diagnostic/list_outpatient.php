@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(10);
+is_module('module_diagnostic');
 $header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>

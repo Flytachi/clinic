@@ -85,7 +85,9 @@ $header = "Амбулаторные пациенты";
 													<?php if(module('module_laboratory')): ?>
 														<a href="<?= viv('card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 													<?php endif; ?>
-													<a href="<?= viv('card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
+													<?php if(module('module_diagnostic')): ?>
+														<a href="<?= viv('card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
+													<?php endif; ?>
 												</div>
                                             </td>
                                         </tr>

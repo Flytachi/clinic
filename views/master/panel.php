@@ -206,21 +206,31 @@ $header = "Панель управления";
 										<table class="table table-sm table-bordered">
 											<tbody>
 												<tr>
-													<th>ZeTTa PACS</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
 													<th>Laboratory</th>
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
 																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= ($company['module_laboratory']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Diagnostic</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= ($company['module_diagnostic']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>ZeTTa PACS</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

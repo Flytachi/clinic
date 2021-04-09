@@ -22,4 +22,8 @@ function is_module($value = null){
 if (!module('module_laboratory')) {
     unset($PERSONAL[6]);
 }
+
+if (!module('module_diagnostic')) {
+    unset($PERSONAL[10]);
+}
 ?>
