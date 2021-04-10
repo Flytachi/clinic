@@ -58,6 +58,16 @@ $header = "Отчёт аптеки по расходам";
 								</div>
 
 								<div class="col-md-3">
+									<label>Специалист:</label>
+									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
+										<option value="">Выберите специалиста</option>
+										<?php foreach($db->query("SELECT * from users WHERE user_level IN(7)") as $row):?>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+										<?php endforeach; ?>
+									</select>
+								</div>
+
+								<div class="col-md-3">
 									<label class="d-block font-weight-semibold">Тип расхода</label>
 									<div class="custom-control custom-checkbox">
 										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="type_1" <?= (!$_POST or $_POST['type_1']) ? "checked" : "" ?>>
@@ -96,6 +106,9 @@ $header = "Отчёт аптеки по расходам";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+					}
+					if ($_POST['parent_id']) {
+						$sql .= " AND parent_id = {$_POST['parent_id']}";
 					}
 					if (!$_POST['type_1'] or !$_POST['type_2'] or !$_POST['type_3']) {
 						if ($_POST['type_1']) {
@@ -140,6 +153,7 @@ $header = "Отчёт аптеки по расходам";
 									<thead>
 										<tr class="bg-info">
 											<th>Тип расхода</th>
+											<th>Получатель</th>
 											<th>Препарат</th>
 											<th>Поставщик</th>
 											<th>Код</th>
@@ -164,7 +178,7 @@ $header = "Отчёт аптеки по расходам";
 														Внутренний
 													<?php endif; ?>
 												</td>
-												<!-- <td><?= get_full_name($row['parent_id']) ?></td> -->
+												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= $row['name'] ?></td>
 												<td><?= $row['supplier'] ?></td>
 												<td><?= $row['code'] ?></td>
@@ -207,7 +221,7 @@ $header = "Отчёт аптеки по расходам";
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary text-right">
-											<th colspan="5">Итого:</th>
+											<th colspan="6">Итого:</th>
 											<th class="text-center"><?= $total_qty ?></th>
 											<th></th>
 											<th><?= number_format($total_amount_cash, 1) ?></th>

@@ -219,7 +219,7 @@ $header = "";
 		</div>
 		<!-- /main content -->
 
-	</div>user_id
+	</div>
 	<!-- /page content -->
 
     <script type="text/javascript">
