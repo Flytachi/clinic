@@ -64,11 +64,19 @@ $count_date = 10; // Количество отображемых дней
             border-collapse: collapse;
             border: 3px solid black;
         }
+
+        .line {
+            display:inline-block;
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;   background:url(APNGImageWithWhiteBackgroundAndASingleDiagonalLineInTheMiddle.png);
+            background-size:100% 100%;
+        }
     </style>
 
     <body>
 
-        <div class="table-responsive card">
+        <div class="table-responsive card line">
             
             <table class="minimalistBlack">
                 <thead>
@@ -86,9 +94,9 @@ $count_date = 10; // Количество отображемых дней
                         <th class="text-center" colspan="4">Назначения</th>
                         <th>Вр.</th>
                         <th>Исп.</th>
-                        <?php for($i=-$old_date; $i < ($count_date - $old_date); $i++): ?>
+                       <?php for($i=-$old_date; $i < ($count_date - $old_date); $i++): ?>
                             <?php $date = new DateTime('+'.$i.' day'); ?>
-                            <td height="55px" class="trasform_text"><b><?= $date->format('d.m') ?></b></td>
+                            <td height="55px" class="trasform_text" width='50%'><b><?= $date->format('d.m') ?></b></td>
                         <?php endfor; ?>
                     </tr>
                 </thead>
