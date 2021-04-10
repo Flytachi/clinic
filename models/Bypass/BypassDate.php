@@ -59,8 +59,16 @@ class BypassDateModel extends Model
                                     <td>
                                         <?= $time = date('H:i', strtotime($value['time'])) ?>
                                     </td>
+                                    <?php 
+                                    $status_lite = true;
+                                    if ($add_date == $dat) {
+                                        $status_lite = false;
+                                    }else {
+                                        $status_lite = ($dat." ".$time < $this_date->format('Y-m-d H:i')) ? true : false;
+                                    }
+                                    ?>
                                     <td>
-                                        <?php if ($dat." ".$time < $this_date->format('Y-m-d H:i')): ?>
+                                        <?php if ($status_lite): ?>
                                             <?php if ($post['status']): ?>
                                                 <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                             <?php else: ?>
@@ -283,7 +291,7 @@ class BypassDateModel extends Model
                     </tbody>
                 </table>
             </div>
-
+            
         </form>
         <script type="text/javascript">
             $(".tolltip").on('mouseenter', function() {
