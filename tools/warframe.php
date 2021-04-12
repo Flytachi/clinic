@@ -2,11 +2,8 @@
 session_start();
 require_once 'functions/connection.php';
 
-// ini_set('error_reporting', E_ALL);
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
+// Settings mod
 
-// Settings debugger
 if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
 
@@ -18,6 +15,16 @@ if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
 
 }else {
     define('DIR', "");
+}
+
+// END Settings mod
+
+// Settings debugger
+
+if ($ini['GLOBAL_SETTING']['DEBUG']) {
+    ini_set('error_reporting', E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
 }
 
 // END Settings debugger

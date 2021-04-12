@@ -67,7 +67,7 @@ class __Make
         # Скрыть расширения Файлов
         # Так же надо настроить сервер
         HIDE_EXTENSION = false
-        
+        DEBUG = false
         ROOT_MOD = true
         
         [DATABASE]
@@ -102,7 +102,7 @@ class __Make
 
     public function create_dump()
     {
-        $result = exec("mkdir dump && echo 1");
+        $result = exec("mkdir dump && chmod 777 dump && echo 1");
         if ($result) {
             echo "\033[33m"." Директория dump создана.\n";
         }
