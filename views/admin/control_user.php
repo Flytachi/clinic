@@ -63,7 +63,7 @@ $header = "Визиты";
 									<label>Пациент:</label>
 									<select name="user_id" class="form-control form-control-select2">
 										<option value="">Выберите пациента</option>
-										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
+										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
@@ -73,12 +73,12 @@ $header = "Визиты";
 									<label class="d-block font-weight-semibold">Статус</label>
 									<div class="custom-control custom-checkbox">
 										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="status_true" <?= (!$_POST or $_POST['status_true']) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
+										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Активный</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
 										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="status_false" <?= (!$_POST or $_POST['status_false']) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
+										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Пассивный</label>
 									</div>
 								</div>
 
@@ -145,56 +145,36 @@ $header = "Визиты";
 												<td><?= get_full_name($row['id']); ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-												<?php if ($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()): ?>
+												<?php if ($stm_dr = $db->query("SELECT direction, status FROM visit WHERE (completed IS NULL OR priced_date IS NULL) AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()): ?>
 													<?php if ($stm_dr['direction']): ?>
 														<td>
 															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 														</td>
 														<td>
-															<?php
-															switch ($stm_dr['status']):
-																case 1:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
-																	<?php
-																	break;
-																case 2:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-																	<?php
-																	break;
-																default:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-																	<?php
-																	break;
-															endswitch;
-															?>
+															<?php if ($stm_dr['status'] == 0): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+															<?php elseif ($stm_dr['status'] == 1): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+															<?php elseif ($stm_dr['status'] == 2): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+															<?php else: ?>
+																<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+															<?php endif; ?>
 														</td>
 													<?php else: ?>
 														<td>
 															<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
 														</td>
 														<td>
-															<?php
-															switch ($stm_dr['status']):
-																case 1:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-																	<?php
-																	break;
-																case 2:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-																	<?php
-																	break;
-																default:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-																	<?php
-																	break;
-															endswitch;
-															?>
+															<?php if ($stm_dr['status'] == 0): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+															<?php elseif ($stm_dr['status'] == 1): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+															<?php elseif ($stm_dr['status'] == 2): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+															<?php else: ?>
+																<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+															<?php endif; ?>
 														</td>
 													<?php endif; ?>
 												<?php else: ?>

@@ -96,31 +96,19 @@ $header = "Пациент";
 												<td><?= $row['name'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td>
-													<?php
-													if ($row['completed']) {
-														?>
+													<?php if ($row['completed']): ?>
 														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-														<?php
-													} else {
-														switch ($row['status']):
-															case 1:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-																<?php
-																break;
-															case 2:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-																<?php
-																break;
-															default:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-																<?php
-																break;
-														endswitch;
-													}
-													?>
+													<?php else: ?>
+														<?php if ($row['status'] == 0): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+														<?php elseif ($row['status'] == 1): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+														<?php elseif ($row['status'] == 2): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+														<?php else: ?>
+															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+														<?php endif; ?>
+													<?php endif; ?>
 												</td>
 												<td class="text-center">
 													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
