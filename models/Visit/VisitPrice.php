@@ -317,7 +317,7 @@ class VisitPriceModel extends Model
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
                     }else {
-                        $this->error("Ошибка в price transfer dwedwewed");
+                        $this->error("Ошибка в price transfer");
                     }
                 }
             }
@@ -484,7 +484,7 @@ class VisitPriceModel extends Model
         ';
         echo json_encode(array(
             'status' => "error" ,
-            'message' => $value
+            'message' => dd($this)
         ));
         exit;
     }
