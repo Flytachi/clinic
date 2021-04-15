@@ -21,7 +21,7 @@ $sql = "SELECT  us.id,
             vs.service_id = 1";
 $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($docs);
-$old_date = 2; // Дни назад
+$old_date = 6; // Дни назад
 $count_date = 10; // Количество отображемых дней
 ?>
 
