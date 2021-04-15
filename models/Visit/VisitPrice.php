@@ -288,11 +288,11 @@ class VisitPriceModel extends Model
             'status' => $status
         );
         if (!$status) {
-            if (in_array($row['item_type'], [1,5])) {
+            if ($this->sale_service > 0 and in_array($row['item_type'], [1,5])) {
                 $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->sale_service / 100));
                 $post['sale'] = $this->sale_service;
             }
-            if (in_array($row['item_type'], [101])) {
+            if ($this->sale_bed > 0 and in_array($row['item_type'], [101])) {
                 $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->sale_bed / 100));
                 $post['sale'] = $this->sale_bed;
             }
