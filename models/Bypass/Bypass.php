@@ -21,15 +21,21 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
-                <legend><b>Препараты:</b></legend>
+                <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                    <li class="nav-item">
+                        <a onclick="Tab_Diet_Preparat(this, 0)" class="nav-link legitRipple active" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a onclick="Tab_Diet_Preparat(this, 1)" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>
+                    </li>
+                </ul>
 
                 <div class="form-group row">
-
-                    <div class="col-md-9">
-                        <label>Препарат:</label>
+                    <div class="col-md-9" id="div_live">
+                    
                         <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" data-fouc>
                             <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
-                                (
+                                ( 
                                     st.qty -
                                     IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
                                     IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
@@ -39,13 +45,8 @@ class BypassModel extends Model
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
 
-                    <div class="col-md-3">
-                        <label>Сторонний препарат:</label>
-                        <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить препарат</button>
                     </div>
-
                 </div>
 
                 <div class="card">
@@ -156,7 +157,18 @@ class BypassModel extends Model
                 //     `);
                 // });
 
-            })
+            });
+
+            function Tab_Diet_Preparat(params, t) {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= ajax('bypass_table_checkout') ?>",
+                    data: { type:t },
+                    success: function (result) {
+                        $('#div_live').html(result);
+                    },
+                });
+            }
         </script>
         <?php
     }

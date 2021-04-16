@@ -137,6 +137,7 @@ $header = "Пациент";
 					<div class="modal-header bg-info">
 						<h5 class="modal-title">Назначить препарат</h5>
 						<button type="button" class="close" data-dismiss="modal">×</button>
+					
 					</div>
 
 					<?php BypassModel::form() ?>
