@@ -20,9 +20,14 @@ if ($grant_id == $_SESSION['session_id']) {
     <div class="card card-body border-top-1 border-top-success">
         <div class="list-feed list-feed-rhombus list-feed-solid">
 
-            <div class="list-feed-item border-info" style="margin-bottom: -25px;">
-                <strong>Препараты: </strong>
-                <ul>
+            <?php if ($bypass['diet_id']): ?>
+                <div class="list-feed-item border-info">
+                    <strong>Диета: </strong><?= $db->query("SELECT name FROM diet WHERE id = {$bypass['diet_id']}")->fetchColumn(); ?>
+                </div>
+            <?php else: ?>
+                <div class="list-feed-item border-info" style="margin-bottom: -25px;">
+                    <strong>Препараты: </strong>
+                    <ul>
                     <?php foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date, qty FROM bypass_preparat WHERE bypass_id = {$bypass['id']}") as $serv): ?>
                         <?php if ($serv['preparat_id']): ?>
                             <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> | <?= $serv['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($serv['preparat_die_date'])) ?>)</li>
@@ -31,8 +36,9 @@ if ($grant_id == $_SESSION['session_id']) {
                             <li><span class="text-primary"><?= $serv['qty'] ?> шт</span> - <?= $serv['preparat_name'] ?> <span class="text-orange">(Сторонний)</span></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
             <div class="list-feed-item border-info">
                 <strong>Метод: </strong><?= $methods[$bypass['method']] ?>

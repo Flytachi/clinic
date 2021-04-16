@@ -8,6 +8,7 @@ class StorageHomeModel extends Model
     {
         global $db, $pk;
         ?>
+        <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
@@ -60,7 +61,11 @@ class StorageHomeModel extends Model
                                         </td>
                                         <td class="text-center"><?= $row['qty'] ?></td>
                                         <td class="text-center table-primary">
-                                            <input type="number" class="form-control" name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
+                                            <input type="number" id="input_count-<?= $row['id'] ?>"
+                                                data-price="<?= $row['price'] ?>" class="form-control counts"
+                                                min="1" max="<?= $row['qty_have'] ?>"
+                                                name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>"
+                                                style="border-width: 0px 0; padding: 0.2rem 0;" disabled>
                                         </td>
                                         <td class="text-right"><?= number_format($row['price']) ?></td>
                                         <td class="text-right">
@@ -72,14 +77,15 @@ class StorageHomeModel extends Model
                                         <td class="text-right">
                                             <div class="list-icons">
                                                 <a onclick="Delete('<?= del_url($row['id'], 'StorageOrdersModel') ?>', '#TR_<?= $row['id'] ?>')" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
+                                                <input type="checkbox" class="swit" value="input_count-<?= $row['id'] ?>" onchange="On_check(this)">
                                             </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                                 <tr class="table-secondary">
-                                    <td colspan="7" class="text-right"><b>Итого:</b></td>
-                                    <td class="text-right"><b><?= number_format($total_cost) ?></b></td>
-                                    <td></td>
+                                    <th colspan="7" class="text-right">Итого:</th>
+                                    <th class="text-right" id="total_cost">0</th>
+                                    <th></th>
                                 </tr>
                             </tbody>
                         </table>
@@ -109,6 +115,71 @@ class StorageHomeModel extends Model
                     },
                 });
             };
+
+            function SendVerification(){
+                var btn = document.getElementById('btn_send');
+                var total_cost = document.getElementById('total_cost');
+                var sum = Number(total_cost.textContent.replace(/,/g,''));
+                if (sum > 0) {
+                    btn.disabled = false;
+                }else {
+                    btn.disabled = true;
+                }
+            }
+
+            $(".counts").keyup(function() {
+                var total_cost = document.getElementById('total_cost');
+                var sum = Number(total_cost.textContent.replace(/,/g,''));
+                var inputs = document.getElementsByClassName('counts');
+                var new_sum = 0;
+
+                for (var input of inputs) {
+                    if (!input.disabled) {
+                        new_sum += Number(input.value * input.dataset.price);
+                    }
+                }
+                total_cost.textContent = number_format(new_sum, 1);
+                SendVerification();
+            });
+
+            function On_check(check) {
+                var input = $('#'+check.value);
+                if(!input.prop('disabled')){
+                    input.attr("disabled", "disabled");
+                    Downsum(input);
+                }else {
+                    input.removeAttr("disabled");
+                    Upsum(input);
+                }
+                SendVerification();
+            }
+
+            function Downsum(input) {
+                var input_total = $('#total_cost');
+                var total = Number(input_total.text().replace(/,/g,''));
+                var new_total = number_format(total - Number(input.val() * input.data().price), 1);
+                input_total.text(new_total);
+            }
+
+            function Upsum(input) {
+                var input_total = $('#total_cost');
+                var total = Number(input_total.text().replace(/,/g,''));
+                var new_total = number_format(total + Number(input.val() * input.data().price), 1);
+                input_total.text(new_total);
+            }
+
+            function tot_sum(the, price) {
+                var total = $('#total_price');
+                var cost = total.text().replace(/,/g,'');
+                if (the.checked) {
+                    service[the.value] = $("#count_input_"+the.value).val();
+                    total.text( number_format(Number(cost) + (Number(price) * service[the.value]), '.', ',') );
+                }else {
+                    total.text( number_format(Number(cost) - (Number(price) * service[the.value]), '.', ',') );
+                    delete service[the.value];
+                }
+                // console.log(service);
+            }
         </script>
         <?php
     }
@@ -215,6 +286,32 @@ class StorageHomeModel extends Model
         <?php
     }
 
+    public function form_refund()
+    {
+        global $db;
+        ?>
+        <form method="get" action="<?= del_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" id="input_id">
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="input_name" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Кол-во:</label>
+                    <input type="number" class="form-control" id="input_qty" name="qty" placeholder="Введите колличество" min="1" required>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-outline-info btn-sm legitRipple" type="submit">Отправить</button>
+            </div>
+
+        </form>
+        <?php
+    }
+
     public function clean()
     {
         global $db;
@@ -284,11 +381,13 @@ class StorageHomeModel extends Model
     public function delete(int $pk)
     {
         global $db;
+        $qty = $_GET['qty'];
         $db->beginTransaction();
 
         $info = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        $qty_original = $info['qty'];
         if ($info2 = $db->query("SELECT * FROM storage WHERE id = {$info['preparat_id']}")->fetch()) {
-            $object = Mixin\update('storage', array('qty' => $info2['qty']+$info['qty'], 'qty_sold' => $info2['qty_sold']-$info['qty']), $info['preparat_id']);
+            $object = Mixin\update('storage', array('qty' => $info2['qty']+$qty, 'qty_sold' => $info2['qty_sold']-$qty), $info['preparat_id']);
             if (!intval($object)) {
                 $this->error('storage '.$object);
                 $db->rollBack();
@@ -296,6 +395,7 @@ class StorageHomeModel extends Model
         }else {
             $info['id'] = $info['preparat_id']; unset($info['preparat_id']); unset($info['status']); unset($info['qty_sold']);
             $info['add_date'] = date("Y-m-d");
+            $info['qty'] = $qty;
             $object = Mixin\insert('storage', $info);
             if (!intval($object)) {
                 $this->error('storage '.$object);
@@ -305,12 +405,15 @@ class StorageHomeModel extends Model
 
         $arr = array(
             'code' => $info['code'], 'name' => $info['name'],
-            'supplier' => $info['supplier'], 'qty' => -$info['qty'],
-            'price' => $info['price'], 'amount' => -$info['qty'] * $info['price'],
+            'supplier' => $info['supplier'], 'qty' => -$qty,
+            'price' => $info['price'], 'amount' => -$qty * $info['price'],
             'parent_id' => $info['parent_id']);
         $this->add_sales($arr);
-
-        $object = Mixin\delete($this->table, $pk);
+        if ($qty == $qty_original) {
+            $object = Mixin\delete($this->table, $pk);
+        }else {
+            $object = Mixin\update($this->table, array('qty' => $qty_original - $qty), $pk);
+        }
         if ($object) {
             $db->commit();
             $this->success();

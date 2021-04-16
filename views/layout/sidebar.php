@@ -144,6 +144,13 @@
                                 </a>
                             </li>
                             <li class="nav-item nav-item-submenu">
+    							<a href="#" class="nav-link legitRipple"><i class="icon-stack2"></i> <span>Аптека</span></a>
+
+    							<ul class="nav nav-group-sub" data-submenu-title="Контроль">
+    								<li class="nav-item"><a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple">Препараты</a></li>
+    							</ul>
+    						</li>
+                            <li class="nav-item nav-item-submenu">
     							<a href="#" class="nav-link legitRipple"><i class="icon-stack2"></i> <span>Контроль</span></a>
 
     							<ul class="nav nav-group-sub" data-submenu-title="Контроль">

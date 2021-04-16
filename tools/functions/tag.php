@@ -85,7 +85,7 @@ function add_url(){
     return DIR."/hook/create_to_update".EXT."?";
 }
 
-function del_url($id, $model){
+function del_url($id = null, $model = null){
     return DIR."/hook/delete".EXT."?id=$id&model=$model";
 }
 
@@ -98,7 +98,7 @@ function up_url($id, $model, $form=null){
     return $result;
 }
 
-function download_url($model, $file_name){
-    return DIR."/hook/download".EXT."?model=$model&file=$file_name";
+function download_url($model, $file_name, $is_null = false){
+    return DIR."/hook/download".EXT."?model=$model&file=$file_name&is_null=$is_null";
 }
 ?>

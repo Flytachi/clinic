@@ -1,11 +1,19 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(4);
-$header = "Добавить препарат";
+is_auth(1);
+$header = "Аптека";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -19,7 +27,9 @@ $header = "Добавить препарат";
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
+
 		<!-- Main content -->
+
 		<div class="content-wrapper">
 
 			<!-- Page header -->
@@ -29,27 +39,12 @@ $header = "Добавить препарат";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+                <div class="card border-1 border-info">
 
 					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Добавить препарат</h6>
-					</div>
-
-					<div class="card-body">
-
-						<?php Storage::form() ?>
-
-					</div>
-
-				</div>
-
-				<div class="card border-1 border-info">
-
-					<div class="card-header text-dark header-elements-inline alpha-info">
-						<h6 class="card-title">Шаблон</h6>
+						<h6 class="card-title">Препараты в аптеке</h6>
 						<div class="header-elements">
 	                  		<div class="list-icons">
-								<a href="<?= download_url('Storage', 'Препараты', true) ?>" class="btn">Лист поступления</a>
 								<a href="<?= download_url('Storage', 'Препараты') ?>" class="btn">Шаблон</a>
 		                  	</div>
 		              	</div>
@@ -64,8 +59,6 @@ $header = "Добавить препарат";
 				</div>
 
 			</div>
-
-			</div>
             <!-- /content area -->
 
 		</div>
@@ -77,5 +70,6 @@ $header = "Добавить препарат";
     <!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->
+
 </body>
 </html>

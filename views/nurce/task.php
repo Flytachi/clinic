@@ -23,6 +23,9 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
             <?php foreach ($db->query($sql) as $row): ?>
                 <tr>
                     <td>
+                    <?php if ($diet = $db->query("SELECT diet_id FROM bypass WHERE id = {$row['id']}")->fetchColumn()): ?>
+                        <strong>Диета: </strong><?= $db->query("SELECT name FROM diet WHERE id = $diet")->fetchColumn(); ?>
+                    <?php else: ?>
                         <?php foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date, qty FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $prep): ?>
                             <?php if($prep['preparat_id']): ?>
                                 <span class="text-primary"><?= $prep['qty'] ?> шт</span> - <?= $prep['preparat_name'] ?> | <?= $prep['preparat_supplier'] ?> (годен до <?= date("d.m.Y", strtotime($prep['preparat_die_date'])) ?>)<br>
@@ -31,6 +34,8 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
                                 <span class="text-primary"><?= $prep['qty'] ?> шт</span> - <?= $prep['preparat_name'] ?> <span class="text-orange">(Сторонний)</span><br>
                             <?php endif; ?>
                         <?php endforeach; ?>
+                    <?php endif; ?>
+                        
                         <ul>
                             <?php foreach ($db->query("SELECT time, status, completed FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $value): ?>
                                 <?php if ($value['status']): ?>

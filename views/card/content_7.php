@@ -79,13 +79,16 @@ $header = "Пациент";
 												<td><?= $i++ ?></td>
 												<td>
 													<?php
-													foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
-														if ($serv['preparat_id']) {
-															echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
-														} else {
-															echo $serv['preparat_name']."<br>";
+													if ($row['diet_id']) {
+														echo $db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
+													}else {
+														foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+															if ($serv['preparat_id']) {
+																echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
+															} else {
+																echo $serv['preparat_name']."<br>";
+															}
 														}
-														
 													}
 													?>
 												</td>

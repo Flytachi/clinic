@@ -273,10 +273,14 @@ function read_excel($filepath){
     return $ar; //возвращаем массив
 }
 
-function write_excel($table, $file_name = "docs", $table_label=null)
+function write_excel($table, $file_name = "docs", $table_label=null, $is_null = false)
 {
     global $db;
     include 'PHPExcel/Classes/PHPExcel.php';
+
+    if ($is_null) {
+        unset($table_label['id']);
+    }
 
     if ($table_label) {
         foreach ($table_label as $key => $value) {
@@ -354,31 +358,34 @@ function write_excel($table, $file_name = "docs", $table_label=null)
         ));
     }
 
-    if ($table == "service") {
-        $sql = "SELECT $sql_select FROM $table WHERE type != 101";
-    }else {
-        $sql = "SELECT $sql_select FROM $table";
-    }
+    if (!$is_null) {
 
-    foreach ($db->query($sql) as $key => $row) {
-        $kt = $key+2;
-        foreach ($labels as $key_st => $value) {
-            $erch = "{$excel_column[$key_st]}$kt";
-            // echo "$erch => ".$row[array_keys($row)[$key_st]]."<br>";
-            $active_sheet->setCellValue($erch, $row[array_keys($row)[$key_st]]);
-            $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
-            $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-            $active_sheet->getStyle($erch)->applyFromArray(array(
-            	'borders'=>array(
-            		'allborders' => array(
-            			'style' => PHPExcel_Style_Border::BORDER_THIN,
-            			'color' => array('rgb' => '000000')
-        		      )
-                 )
-            ));
+        if ($table == "service") {
+            $sql = "SELECT $sql_select FROM $table WHERE type != 101";
+        }else {
+            $sql = "SELECT $sql_select FROM $table";
         }
+    
+        foreach ($db->query($sql) as $key => $row) {
+            $kt = $key+2;
+            foreach ($labels as $key_st => $value) {
+                $erch = "{$excel_column[$key_st]}$kt";
+                // echo "$erch => ".$row[array_keys($row)[$key_st]]."<br>";
+                $active_sheet->setCellValue($erch, $row[array_keys($row)[$key_st]]);
+                $active_sheet->getStyle($erch)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $active_sheet->getStyle($erch)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                $active_sheet->getStyle($erch)->applyFromArray(array(
+                    'borders'=>array(
+                        'allborders' => array(
+                            'style' => PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('rgb' => '000000')
+                          )
+                     )
+                ));
+            }
+        }
+
     }
-    //Вставка данных из выборки
 
     //Отправляем заголовки с типом контекста и именем файла
     header("Content-Type:application/vnd.ms-excel");

@@ -31,6 +31,11 @@ var BootstrapMultiselect = function() {
         // Basic initialization
         $('.multiselect').multiselect();
 
+        $('.my_multiselect').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true
+        });
+
         // Limit options number
         $('.multiselect-number').multiselect({
             numberDisplayed: 1
