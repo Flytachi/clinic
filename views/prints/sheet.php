@@ -105,9 +105,13 @@ $count_date = 10; // Количество отображемых дней
                         <tr>
                             <td rowspan="2"><?= $s++ ?></td>
                             <td rowspan="2" colspan="4" style="font-size: 100% !important;">
+                            <?php if ($bypass['diet_id']): ?>
+                                <?= $db->query("SELECT name FROM diet WHERE id = {$bypass['diet_id']}")->fetchColumn() ?>
+                            <?php else: ?>
                                 <?php foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$bypass['id']}") as $bypass_preparat): ?>
                                     <?= $bypass_preparat['qty'] ." - ". $bypass_preparat['preparat_name'] ?><br>
                                 <?php endforeach; ?>
+                            <?php endif; ?>
                             </td>
                             <td rowspan="2" class="text-center">
                                 <?php foreach ($db->query("SELECT * FROM bypass_time WHERE bypass_id = {$bypass['id']}") as $bypass_time): ?>

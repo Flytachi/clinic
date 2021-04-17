@@ -15,10 +15,17 @@ if ($_POST['type']) {
             </select>
         </div>
     </div>
+    
+    <legend><b>Время принятия:</b></legend>
+    <div class="form-group row" id="time_div"></div>
+    <?php foreach ($DIET_TIME as $time): ?>
+        <script type="text/javascript">
+            AddinputTime("<?= $time ?>");
+        </script>
+    <?php endforeach; ?>
+    
     <script type="text/javascript">
-        $( document ).ready(function() {
-            Select2Selects.init();
-        });
+        Select2Selects.init();
     </script>
     <?php
 } else {
@@ -91,10 +98,8 @@ if ($_POST['type']) {
     </div>
 
     <script type="text/javascript">
-        $( document ).ready(function() {
-            BootstrapMultiselect.init();
-            Select2Selects.init();
-        });
+        BootstrapMultiselect.init();
+        Select2Selects.init();
         $('#select_preparat').on('change', function(events){
             // $('#preparat_div').html();
 

@@ -38,15 +38,15 @@ if ($grant_id == $_SESSION['session_id']) {
                     <?php endforeach; ?>
                     </ul>
                 </div>
+
+                <div class="list-feed-item border-info">
+                    <strong>Метод: </strong><?= $methods[$bypass['method']] ?>
+                </div>
+
+                <div class="list-feed-item border-info">
+                    <strong >Описание: </strong><?= $bypass['description'] ?>
+                </div>
             <?php endif; ?>
-
-            <div class="list-feed-item border-info">
-                <strong>Метод: </strong><?= $methods[$bypass['method']] ?>
-            </div>
-
-            <div class="list-feed-item border-info">
-                <strong >Описание: </strong><?= $bypass['description'] ?>
-            </div>
 
             <div class="list-feed-item border-info">
                 <strong>Врач: </strong><?= get_full_name($bypass['parent_id']) ?>

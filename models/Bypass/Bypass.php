@@ -112,11 +112,11 @@ class BypassModel extends Model
         <script type="text/javascript">
             let i = 1;
             let s = 0;
-            function AddinputTime() {
+            function AddinputTime(time = null) {
                 $('#time_div').append(`
                     <div class="col-md-3" id="time_input_${i}">
                         <div class="form-group-feedback form-group-feedback-right">
-                            <input type="time" name="time[${i}]" class="form-control" required>
+                            <input type="time" name="time[${i}]" class="form-control" value="${time}" required>
                             <div class="form-control-feedback text-danger">
                                 <i class="icon-minus-circle2" onclick="$('#time_input_${i}').remove();"></i>
                             </div>

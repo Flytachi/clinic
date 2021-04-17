@@ -74,9 +74,11 @@ $header = "Пациент";
 									<i class="icon-plus22 mr-1"></i>Услуга
 								</a>
 							<?php endif; ?>
-							<a href="#" class="float-right text-teal mr-2" data-toggle="modal" data-target="#modal_package">
-								<i class="icon-bag mr-1"></i>Пакеты
-							</a>
+							<?php if ($activity and permission(5)): ?>
+								<a href="#" class="float-right text-teal mr-2" data-toggle="modal" data-target="#modal_package">
+									<i class="icon-bag mr-1"></i>Пакеты
+								</a>
+							<?php endif; ?>
 						</legend>
 
 						<div class="card">

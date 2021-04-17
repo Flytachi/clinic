@@ -39,15 +39,10 @@ $header = "Услуги";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="card border-1 border-primary">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="card-header text-dark header-elements-inline alpha-primary">
 		              	<h5 class="card-title">Добавить Услугу</h5>
-		              	<div class="header-elements">
-	                  		<div class="list-icons">
-								<a href="<?= download_url('ServiceModel', 'Услуги') ?>" class="btn">Шаблон</a>
-		                  	</div>
-		              	</div>
 		          	</div>
 
 		          	<div class="card-body">
@@ -85,13 +80,13 @@ $header = "Услуги";
 
 	        	</div>
 
-        		<div class="card">
+        		<div class="card border-1 border-primary">
 
-	          		<div class="card-header header-elements-inline">
+	          		<div class="card-header text-dark header-elements-inline alpha-primary">
 	                  	<h5 class="card-title">Список Услуг</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
-								<a href="../templates/service.xlsx" class="btn" download>EXEL</a>
+							  	<a href="<?= download_url('ServiceModel', 'Услуги') ?>" class="btn">Шаблон</a>
 								<form action="" method="post">
 									<input style="display:none;" id="btn_flush" type="submit" value="FLUSH" name="flush"></input>
 								</form>
