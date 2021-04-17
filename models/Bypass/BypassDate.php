@@ -6,7 +6,7 @@ class BypassDateModel extends Model
 
     public function table_form_doc($pk = null)
     {
-        global $db, $methods, $grant;
+        global $db, $grant;
         $this_date = new \DateTime();
         $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
@@ -204,7 +204,7 @@ class BypassDateModel extends Model
 
     public function table_form_nurce($pk = null)
     {
-        global $db, $methods;
+        global $db;
         $this_date = new \DateTime();
         $bypass = $db->query("SELECT user_id, visit_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));

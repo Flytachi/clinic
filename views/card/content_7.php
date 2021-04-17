@@ -73,14 +73,14 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i=1;
-										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id") as $row) {
+										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id ORDER BY diet_id DESC") as $row) {
 											?>
 											<tr>
 												<td><?= $i++ ?></td>
 												<td>
 													<?php
 													if ($row['diet_id']) {
-														echo $db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
+														echo "<b>Диета: </b>".$db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
 													}else {
 														foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
 															if ($serv['preparat_id']) {
