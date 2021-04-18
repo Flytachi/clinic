@@ -98,8 +98,6 @@ if ($_POST['type']) {
     </div>
 
     <script type="text/javascript">
-        BootstrapMultiselect.init();
-        Select2Selects.init();
         $('#select_preparat').on('change', function(events){
             // $('#preparat_div').html();
 
@@ -108,12 +106,13 @@ if ($_POST['type']) {
                 url: "<?= ajax('bypass_table') ?>",
                 data: $('#select_preparat').serializeArray(),
                 success: function (result) {
-                    console.log(result);
                     $('#preparat_div').html(result);
                 },
             });
 
         });
+        BootstrapMultiselect.init();
+        Select2Selects.init();
     </script>
     <?php
 }

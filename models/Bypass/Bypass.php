@@ -152,7 +152,6 @@ class BypassModel extends Model
                     url: "<?= ajax('bypass_table') ?>",
                     data: $('#select_preparat').serializeArray(),
                     success: function (result) {
-                        console.log(result);
                         $('#preparat_div').html(result);
                     },
                 });

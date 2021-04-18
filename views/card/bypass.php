@@ -58,7 +58,7 @@ if ($grant_id == $_SESSION['session_id']) {
 
     <?php if ($activity or true): ?>
         <?php if (permission(5) or $bypass['diet_id']): ?>
-            <?php $grant = ($bypass['diet_id']) ? true : false; ?>
+            <?php $grant = (permission(7) and $bypass['diet_id']) ? true : $grant; ?>
             <?php BypassDateModel::table_form_doc() ?>
         <?php elseif (permission(7)): ?>
             <?php BypassDateModel::table_form_nurce() ?>
