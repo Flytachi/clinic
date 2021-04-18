@@ -56,69 +56,77 @@ $header = "Пациент";
 							</a>
 						</legend>
 
-						<div class="card">
+							<?php if ($activity and !$patient->completed): ?>
 
-							<div class="table-responsive">
-								<table class="table table-hover table-sm table-bordered">
-									<thead>
-										<tr class="bg-info">
-											<th style="width: 40px !important;">№</th>
-											<th style="width: 45%;">Препарат</th>
-											<th>Описание</th>
-											<th class="text-center" style="width: 150px;">Метод введения </th>
-											<th class="text-center" style="width: 100px;">Время</th>
-											<th class="text-right" style="width: 150px;">Действия</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										$i=1;
-										foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id ORDER BY diet_id DESC") as $row) {
-											?>
-											<tr>
-												<td><?= $i++ ?></td>
-												<td>
-													<?php
-													if ($row['diet_id']) {
-														echo "<b>Диета: </b>".$db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
-													}else {
-														foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
-															if ($serv['preparat_id']) {
-																echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
-															} else {
-																echo $serv['preparat_name']."<br>";
-															}
-														}
-													}
+								<div class="card">
+									<div class="table-responsive">
+										<table class="table table-hover table-sm table-bordered">
+											<thead>
+												<tr class="bg-info">
+													<th style="width: 40px !important;">№</th>
+													<th style="width: 45%;">Препарат</th>
+													<th>Описание</th>
+													<th class="text-center" style="width: 150px;">Метод введения </th>
+													<th class="text-center" style="width: 100px;">Время</th>
+													<th class="text-right" style="width: 150px;">Действия</th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php
+												$i=1;
+												foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id ORDER BY diet_id DESC") as $row) {
 													?>
-												</td>
-												<td><?= $row['description'] ?></td>
-												<td><?= $methods[$row['method']] ?></td>
-												<td class="text-center">
-													<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
-														<?php if ($time['status']): ?>
-															<?php if ($time['completed']): ?>
-																<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
-															<?php else: ?>
-																<span class="text-danger"><?= date('H:i', strtotime($time['time'])) ?></span><br>
-															<?php endif; ?>
-														<?php else: ?>
-															<span class="text-muted"><?= date('H:i', strtotime($time['time'])) ?></span><br>
-														<?php endif; ?>
-													<?php endforeach; ?>
-												</td>
-												<td>
-													<button onclick="Check('<?= viv('card/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
-												</td>
-											</tr>
-											<?php
-										}
-										?>
-									</tbody>
-								</table>
-							</div>
+													<tr>
+														<td><?= $i++ ?></td>
+														<td>
+															<?php
+															if ($row['diet_id']) {
+																echo "<b>Диета: </b>".$db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
+															}else {
+																foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+																	if ($serv['preparat_id']) {
+																		echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
+																	} else {
+																		echo $serv['preparat_name']."<br>";
+																	}
+																}
+															}
+															?>
+														</td>
+														<td><?= $row['description'] ?></td>
+														<td><?= $methods[$row['method']] ?></td>
+														<td class="text-center">
+															<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
+																<?php if ($time['status']): ?>
+																	<?php if ($time['completed']): ?>
+																		<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+																	<?php else: ?>
+																		<span class="text-danger"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+																	<?php endif; ?>
+																<?php else: ?>
+																	<span class="text-muted"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+																<?php endif; ?>
+															<?php endforeach; ?>
+														</td>
+														<td>
+															<button onclick="Check('<?= viv('card/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
+														</td>
+													</tr>
+													<?php
+												}
+												?>
+											</tbody>
+										</table>
+									</div>
+								</div>
 
-						</div>
+							<?php else: ?>
+
+								<div class="alert bg-warning alert-styled-left alert-dismissible">
+									<span class="font-weight-semibold">Технические работы</span>
+								</div>
+
+							<?php endif; ?>
 
 				    </div>
 
