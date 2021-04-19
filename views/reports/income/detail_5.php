@@ -43,7 +43,7 @@ $total_price = 0; $i = 1;
                 <td><?= get_full_name($row['user_id']) ?></td>
                 <td><?= $row['title'] ?></td>
                 <td>
-                    <?= round($row['bed_hours'] / 24, 0, PHP_ROUND_HALF_DOWN) ?> дней и <?= $row['bed_hours'] % 24 ?> часов
+                    <?= floor($row['bed_hours'] / 24) ?> дней и <?= $row['bed_hours'] % 24 ?> часов
                 </td>
                 <td class="text-right"><?= number_format($row['bed_price']) ?></td>
                 <td class="text-right">

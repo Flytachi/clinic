@@ -264,13 +264,8 @@ if (!$patient) {
                                 <div class="col-md-9 text-right">
                                     <?php
                                     $dr= date_diff(new \DateTime($patient->completed), new \DateTime($patient->add_date));
-                                    $end_date = $dr->days + round($dr->h/24);
-                                    if ($end_date == 1) {
-                                        echo $end_date." день";
-                                    }elseif (in_array($end_date, [2,3,4])) {
-                                        echo $end_date." дня";
-                                    }elseif ($end_date >= 5) {
-                                        echo $end_date." дней";
+                                    if ($dr->h >= 1) {
+                                        echo $dr->days." д. ".$dr->h." ч.";
                                     }else {
                                         echo "Прибыл сегодня";
                                     }
