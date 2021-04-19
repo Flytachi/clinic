@@ -126,6 +126,20 @@ $header = "Рабочий стол";
 		</div>
 	</div>
 
+	<div id="modal_sale" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Скидка</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<div id="modal_sale_div"></div>
+
+			</div>
+		</div>
+	</div>
+
 	<!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->

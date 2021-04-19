@@ -172,7 +172,7 @@ class VisitPriceModel extends Model
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
             <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
-            <button onclick="SaleCheck(<?= $pk ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
+            <button onclick="SaleCheck(<?= $pk_visit ?>, <?= round($price['cost_bed'] + $price['cost_beds'], 1) ?>, <?= round($price['cost_service'], 1) ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
             <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
             <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed) ? "" : "disabled" ?>>Расщёт</button>
@@ -188,22 +188,26 @@ class VisitPriceModel extends Model
                 document.body.innerHTML = originalContents;
             }
 
-            function SaleCheck(pk){
+            function SaleCheck(pk, bed_cost, service_cost){
                 $.ajax({
                     type: "GET",
-                    url: "<?= ajax('cashbox_sale_table') ?>",
+                    url: "<?= ajax('cashbox_sale') ?>",
                     data: {pk:pk},
                     success: function (result) {
-                        swal({
-                            type: 'warning',
-                            html: result,
-                        });
+                        $('#modal_sale').modal('show');
+                        $('#modal_sale_div').html(result);
+                        $('#bed_price_sale').val(bed_cost);
+                        $('#bed_price_original_sale').val(bed_cost);
+                        $('#service_price_sale').val(service_cost);
+                        $('#service_price_original_sale').val(service_cost);
                     }
                 });
             }
 
             function Proter(pk) {
                 event.preventDefault();
+
+                // $('#<?= __CLASS__ ?>_form').submit();
 
                 if (Math.round($('#prot_item').val()) != 0) {
 
@@ -285,6 +289,16 @@ class VisitPriceModel extends Model
             'price_date' => date("Y-m-d H:i"),
             'status' => $status
         );
+        if (!$status) {
+            if ($this->sale_service > 0 and in_array($row['item_type'], [1,5])) {
+                $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->sale_service / 100));
+                $post['sale'] = $this->sale_service;
+            }
+            if ($this->sale_bed > 0 and in_array($row['item_type'], [101])) {
+                $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->sale_bed / 100));
+                $post['sale'] = $this->sale_bed;
+            }
+        }
         if ($this->post['price_cash'])
         {
             if ($this->post['price_cash'] >= $row['item_cost']) {
@@ -305,7 +319,9 @@ class VisitPriceModel extends Model
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
                     }else {
-                        $this->error("Ошибка в price transfer");
+                        if (!in_array($temp, [-1,0,1])) {
+                            $this->error("Ошибка в price cash => transfer");
+                        }
                     }
                 }
             }
@@ -323,7 +339,9 @@ class VisitPriceModel extends Model
                     $this->post['price_transfer'] -= $temp;
                     $post['price_transfer'] = $temp;
                 }else {
-                    $this->error("Ошибка в price transfer");
+                    if (!in_array($temp, [-1,0,1])) {
+                        // $this->error("Ошибка в price card => transfer");
+                    }
                 }
             }
         }
@@ -333,10 +351,9 @@ class VisitPriceModel extends Model
                 $this->post['price_transfer'] -= $row['item_cost'];
                 $post['price_transfer'] = $row['item_cost'];
             }else {
-                $this->error("Ошибка в price transfer");
+                $this->error("Ошибка в price transfer => transfer");
             }
         }
-
         $object = Mixin\update($this->table1, array('status' => $this->status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
         if (!intval($object)){
             $this->error($object);
@@ -347,7 +364,7 @@ class VisitPriceModel extends Model
         }
     }
 
-    public function ambusclor_price()
+    public function ambulator_price()
     {
         global $db;
         foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
@@ -378,7 +395,7 @@ class VisitPriceModel extends Model
         if ($balance['balance_transfer'] != 0) {
             $this->post['price_transfer'] = $balance['balance_transfer'];
         }
-        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.operation_id, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
+        foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.operation_id, vp.item_type, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
             if ($row['operation_id']) {
                 Mixin\update('operation', array('priced_date' => date('Y-m-d H:i:s')), $row['operation_id']);
                 unset($row['operation_id']);
@@ -392,8 +409,10 @@ class VisitPriceModel extends Model
     public function add_bed()
     {
         global $db;
-        $ti = $db->query("SELECT * FROM $this->table1 WHERE user_id = $this->user_pk AND service_id = 1 AND priced_date IS NULL AND completed IS NOT NULL")->fetch();
+        $ti = $db->query("SELECT vs.*, vss.sale_bed, vss.sale_service FROM $this->table1 vs LEFT JOIN visit_sale vss ON(vss.visit_id=vs.id) WHERE vs.user_id = $this->user_pk AND vs.service_id = 1 AND vs.priced_date IS NULL AND vs.completed IS NOT NULL")->fetch();
         $this->ti = $ti['id'];
+        $this->sale_bed = $ti['sale_bed'];
+        $this->sale_service = $ti['sale_service'];
         $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
         $post['visit_id'] = $ti['id'];
         $post['user_id'] = $this->user_pk;
@@ -430,7 +449,7 @@ class VisitPriceModel extends Model
             if (isset($this->bed_cost)) {
                 $this->stationar_price();
             }else {
-                $this->ambusclor_price();
+                $this->ambulator_price();
             }
             $db->commit();
             $this->success();

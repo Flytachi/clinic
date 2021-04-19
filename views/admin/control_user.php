@@ -61,7 +61,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select name="user_id" class="form-control form-control-select2">
+									<select name="user_id" class="form-control myselect">
 										<option value="">Выберите пациента</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
@@ -73,12 +73,12 @@ $header = "Визиты";
 									<label class="d-block font-weight-semibold">Статус</label>
 									<div class="custom-control custom-checkbox">
 										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="status_true" <?= (!$_POST or $_POST['status_true']) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
+										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Активный</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
 										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="status_false" <?= (!$_POST or $_POST['status_false']) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
+										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Пассивный</label>
 									</div>
 								</div>
 
@@ -139,62 +139,42 @@ $header = "Визиты";
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($db->query($sql) as $row): ?>
+										<?php foreach ($db->query($sql." ORDER BY id DESC") as $row): ?>
 											<tr>
 												<td><?= addZero($row['id']) ?></td>
 												<td><?= get_full_name($row['id']); ?></td>
 												<td><?= get_full_name($row['parent_id']) ?></td>
 												<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-												<?php if ($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()): ?>
+												<?php if ($stm_dr = $db->query("SELECT direction, status FROM visit WHERE (completed IS NULL OR priced_date IS NULL) AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()): ?>
 													<?php if ($stm_dr['direction']): ?>
 														<td>
 															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 														</td>
 														<td>
-															<?php
-															switch ($stm_dr['status']):
-																case 1:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
-																	<?php
-																	break;
-																case 2:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-																	<?php
-																	break;
-																default:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-																	<?php
-																	break;
-															endswitch;
-															?>
+															<?php if ($stm_dr['status'] == 0): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+															<?php elseif ($stm_dr['status'] == 1): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+															<?php elseif ($stm_dr['status'] == 2): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+															<?php else: ?>
+																<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+															<?php endif; ?>
 														</td>
 													<?php else: ?>
 														<td>
 															<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
 														</td>
 														<td>
-															<?php
-															switch ($stm_dr['status']):
-																case 1:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-																	<?php
-																	break;
-																case 2:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-																	<?php
-																	break;
-																default:
-																	?>
-																	<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-																	<?php
-																	break;
-															endswitch;
-															?>
+															<?php if ($stm_dr['status'] == 0): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+															<?php elseif ($stm_dr['status'] == 1): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+															<?php elseif ($stm_dr['status'] == 2): ?>
+																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+															<?php else: ?>
+																<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+															<?php endif; ?>
 														</td>
 													<?php endif; ?>
 												<?php else: ?>
@@ -210,23 +190,26 @@ $header = "Визиты";
 													</td>
 												<?php endif; ?>
 												<td class="text-center">
-													<div class="dropdown">
-														<?php if ($row['status']): ?>
-															<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
-														<?php else: ?>
-															<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
-														<?php endif; ?>
+													<div class="list-icons">
+														<div class="dropdown">
+															<?php if ($row['status']): ?>
+																<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
+															<?php else: ?>
+																<a href="#" id="status_change_<?= $row['id'] ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
+															<?php endif; ?>
 
-														<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
-															<a onclick="Change(<?= $row['id'] ?>, 1)" class="dropdown-item">
-																<span class="badge badge-mark mr-2 border-success"></span>
-																Active
-															</a>
-															<a onclick="Change(<?= $row['id'] ?>, 0)" class="dropdown-item">
-																<span class="badge badge-mark mr-2 border-secondary"></span>
-																Pasive
-															</a>
+															<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
+																<a onclick="Change(<?= $row['id'] ?>, 1)" class="dropdown-item">
+																	<span class="badge badge-mark mr-2 border-success"></span>
+																	Active
+																</a>
+																<a onclick="Change(<?= $row['id'] ?>, 0)" class="dropdown-item">
+																	<span class="badge badge-mark mr-2 border-secondary"></span>
+																	Pasive
+																</a>
+															</div>
 														</div>
+														<a href="<?= del_url($row['id'], 'PatientForm') ?>" onclick="return confirm('Вы уверены что хотите удалить пациета?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													</div>
 												</td>
 											</tr>

@@ -10,7 +10,7 @@ $header = "Отчёты";
 <style media="screen">
 .fade-out-siblings {
      --gutter: 2.5rem;
-     background: #fffff;
+     background: #ffffff;
      text-align: center;
      grid-gap: 2.5rem;
      padding: 1.5rem;
@@ -120,21 +120,25 @@ $header = "Отчёты";
                     <?php endif; ?>
                     <!-- end -->
 
-                    <!-- Лаборатория -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Лаборатория</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
+                    <?php if(module('module_laboratory')): ?>
+                        <!-- Лаборатория -->
+                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                            <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Лаборатория</a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
+                        <?php endif; ?>
+                        <!-- end -->
                     <?php endif; ?>
-                    <!-- end -->
 
-                    <!-- Диагностика -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
+                    <?php if(module('module_diagnostic')): ?>
+                        <!-- Диагностика -->
+                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                            <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
+                        <?php endif; ?>
+                        <!-- end -->
                     <?php endif; ?>
-                    <!-- end -->
 
                     <!-- Анестезия -->
                     <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>

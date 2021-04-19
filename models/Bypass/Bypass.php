@@ -21,73 +21,84 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
-                <legend><b>Препараты:</b></legend>
+                <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                    <li class="nav-item">
+                        <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
+                    </li>
+                    <li class="nav-item">
+                        <a onclick="Tab_Diet_Preparat(this, 1)" href="#" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>
+                    </li>
+                </ul>
 
-                <div class="form-group row">
+                <div id="div_live">
 
-                    <div class="col-md-9">
-                        <label>Препарат:</label>
-                        <select id="select_preparat" class="form-control multiselect-full-featured" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple" data-fouc>
-                            <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
-                                (
-                                    st.qty -
-                                    IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
-                                    IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
-                                ) 'qty'
-                                FROM storage st WHERE st.category = 2 AND st.qty != 0";?>
-                            <?php foreach ($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-9">
+                            <label>Препараты:</label>
+                            <select id="select_preparat" class="form-control my_multiselect" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
+                                <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
+                                    ( 
+                                        st.qty -
+                                        IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
+                                        IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
+                                    ) 'qty'
+                                    FROM storage st WHERE st.category = 2 AND st.qty != 0";?>
+                                <?php foreach ($db->query($sql) as $row): ?>
+                                    <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
 
-                    <div class="col-md-3">
-                        <label>Сторонний препарат:</label>
-                        <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить препарат</button>
-                    </div>
+                        </div>
 
-                </div>
-
-                <div class="card">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Препарат</th>
-                                    <th class="text-right" style="width:100px">Кол-во</th>
-                                </tr>
-                            </thead>
-                            <tbody id="preparat_div"></tbody>
-                            <tbody id="preparat_div_outside"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-
-                    <div class="col-md-6">
-                        <label>Метод:</label>
-                        <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
-                            <option></option>
-                            <?php foreach ($methods as $key => $value): ?>
-                                <option value="<?= $key ?>"><?= $value ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <div class="col-md-3">
+                            <label>Сторонний препарат:</label>
+                            <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить препарат</button>
+                        </div>
 
                     </div>
 
-                    <div class="col-md-6">
-                        <label>Описание:</label>
-                        <input type="text" class="form-control" name="description" placeholder="Введите описание">
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Препарат</th>
+                                        <th class="text-right" style="width:100px">Кол-во</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="preparat_div"></tbody>
+                                <tbody id="preparat_div_outside"></tbody>
+                            </table>
+                        </div>
                     </div>
 
-                </div>
+                    <div class="form-group row">
 
-                <legend><b>Время принятия:</b></legend>
-                <div class="form-group row" id="time_div">
-                    <div class="col-md-3" id="time_input_0">
-                        <input type="time" name="time[0]" class="form-control" required>
+                        <div class="col-md-6">
+                            <label>Метод:</label>
+                            <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
+                                <option></option>
+                                <?php foreach ($methods as $key => $value): ?>
+                                    <option value="<?= $key ?>"><?= $value ?></option>
+                                <?php endforeach; ?>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Описание:</label>
+                            <input type="text" class="form-control" name="description" placeholder="Введите описание">
+                        </div>
+
                     </div>
+
+                    <legend><b>Время принятия:</b></legend>
+                    <div class="form-group row" id="time_div">
+                        <div class="col-md-3" id="time_input_0">
+                            <input type="time" name="time[0]" class="form-control" required>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -101,11 +112,11 @@ class BypassModel extends Model
         <script type="text/javascript">
             let i = 1;
             let s = 0;
-            function AddinputTime() {
+            function AddinputTime(time = null) {
                 $('#time_div').append(`
                     <div class="col-md-3" id="time_input_${i}">
                         <div class="form-group-feedback form-group-feedback-right">
-                            <input type="time" name="time[${i}]" class="form-control" required>
+                            <input type="time" name="time[${i}]" class="form-control" value="${time}" required>
                             <div class="form-control-feedback text-danger">
                                 <i class="icon-minus-circle2" onclick="$('#time_input_${i}').remove();"></i>
                             </div>
@@ -141,22 +152,22 @@ class BypassModel extends Model
                     url: "<?= ajax('bypass_table') ?>",
                     data: $('#select_preparat').serializeArray(),
                     success: function (result) {
-                        console.log(result);
                         $('#preparat_div').html(result);
                     },
                 });
-                // $('#select_preparat').val().forEach(function(i) {
-                //     $('#preparat_div').append(`
-                //         <tr class="table-secondary">
-                //             <td>${i}</td>
-                //             <td class="text-right">
-                //                 <input type="number" class="form-control" name="qty[${i}]" value="1" style="border-width: 0px 0; padding: 0.2rem 0;">
-                //             </td>
-                //         </tr>
-                //     `);
-                // });
 
-            })
+            });
+
+            function Tab_Diet_Preparat(params, t) {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= ajax('bypass_table_checkout') ?>",
+                    data: { type:t },
+                    success: function (result) {
+                        $('#div_live').html(result);
+                    },
+                });
+            }
         </script>
         <?php
     }
@@ -248,6 +259,7 @@ class BypassModel extends Model
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+        // $this->dd();
     }
 
     public function success()

@@ -28,78 +28,50 @@ foreach($db->query($sql) as $row) {
         <td><?= $row['numberPhone'] ?></td>
         <td><?= $row['region'] ?></td>
         <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-        <?php
-        if($stm_dr = $db->query("SELECT direction, status FROM visit WHERE completed IS NULL AND user_id={$row['id']} ORDER BY add_date ASC")->fetch()){
-            if($stm_dr['direction']){
-                ?>
+        <?php if ($stm_dr = $db->query("SELECT direction, status FROM visit WHERE (completed IS NULL OR priced_date IS NULL) AND user_id={$row['id']} AND status NOT IN (5,6) ORDER BY add_date ASC")->fetch()): ?>
+            <?php if ($stm_dr['direction']): ?>
                 <td>
                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
                 </td>
                 <td>
-                    <?php
-                    switch ($stm_dr['status']):
-                        case 1:
-                            ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
-                            <?php
-                            break;
-                        case 2:
-                            ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-                            <?php
-                            break;
-                        default:
-                            ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-                            <?php
-                            break;
-                    endswitch;
-                    ?>
+                    <?php if ($stm_dr['status'] == 0): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+                    <?php elseif ($stm_dr['status'] == 1): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+                    <?php elseif ($stm_dr['status'] == 2): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+                    <?php else: ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+                    <?php endif; ?>
                 </td>
-                <?php
-            }else{
-                ?>
+            <?php else: ?>
                 <td>
                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
                 </td>
                 <td>
-                    <?php
-                    switch ($stm_dr['status']):
-                        case 1:
-                            ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-                            <?php
-                            break;
-                        case 2:
-                            ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
-                            <?php
-                            break;
-                        default:
-                            ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-                            <?php
-                            break;
-                    endswitch;
-                    ?>
+                    <?php if ($stm_dr['status'] == 0): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+                    <?php elseif ($stm_dr['status'] == 1): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+                    <?php elseif ($stm_dr['status'] == 2): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+                    <?php else: ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+                    <?php endif; ?>
                 </td>
-                <?php
-            }
-        }else {
-            ?>
-                <td>
-                    <?= ($row['status']) ?
-                    '<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Status error</span>' :
-                    '<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>'
-                    ?>
-
-                </td>
-                <td>
-                    <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Не активный</span>
-                </td>
-            <?php
-        }
-        ?>
+            <?php endif; ?>
+        <?php else: ?>
+            <td>
+                <?php if ($row['status']): ?>
+                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Status error</span>
+                <?php else: ?>
+                    <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
+                <?php endif; ?>
+            </td>
+            <td>
+                <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Не активный</span>
+            </td>
+        <?php endif; ?>
         <td class="text-center">
             <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
             <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">

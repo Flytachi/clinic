@@ -69,7 +69,9 @@ $header = "База данных";
                                                 <?php endif; ?>
                                             </td>
                                             <td>
-
+												<?php if ($rec != 0): ?>
+													<a onclick="Conf('<?= viv('master/flush') ?>', '<?= $row['Tables_in_clinic'] ?>')" class="list-icons-up text-danger">flush</a>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -89,6 +91,33 @@ $header = "База данных";
 
 	</div>
 	<!-- /page content -->
+	<script type="text/javascript">
+		function Conf(url, name) {
+			var wha = `Вы уверены что хотите очистить базу данных ${name}?`;
+			swal({
+				position: 'top',
+				title: wha,
+				type: 'info',
+				showCancelButton: true,
+				confirmButtonText: "Уверен"
+			}).then(function(ivi) {
+				if (ivi.value) {
+					swal({
+						position: 'top',
+						title: 'Внимание!',
+						text: 'Вернуть данные назад будет невозможно!',
+						type: 'warning',
+						showCancelButton: true,
+						confirmButtonText: "Да"
+					}).then(function(ivi) {
+						if (ivi.value) {
+							location = url+"?tb_name="+name;
+						}
+					});
+				}
 
+			});
+		}
+	</script>
 </body>
 </html>

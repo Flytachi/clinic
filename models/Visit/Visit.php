@@ -25,14 +25,13 @@ class VisitModel extends Model
                     <label>Пациент:</label>
                     <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                        <?php endforeach; ?>
-                        <?php /*foreach ($db->query("SELECT us.id, us.status, (SELECT COUNT(id) FROM visit WHERE user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) 'dir_status' FROM users us WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
-                            <?php if ($row['dir_status'] == 0): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT us.id, us.status, vs.user_id 'stationar' FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
+                            <?php if ($row['stationar']): ?>
+                                <option value="<?= $row['id'] ?>" disabled><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(стационар лечится)---" : "---(стационар оплачивается)---" ?></option>
+                            <?php else: ?>
                                 <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
                             <?php endif; ?>
-                        <?php endforeach;*/ ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -61,16 +60,20 @@ class VisitModel extends Model
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
-                    <optgroup label="Диогностика">
-                        <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </optgroup>
-                    <optgroup label="Лаборатория">
-                        <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </optgroup>
+                    <?php if(module('module_diagnostic')): ?>
+                        <optgroup label="Диогностика">
+                            <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
+                    <?php if(module('module_laboratory')): ?>
+                        <optgroup label="Лаборатория">
+                            <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
                     <optgroup label="Остальные">
                         <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>

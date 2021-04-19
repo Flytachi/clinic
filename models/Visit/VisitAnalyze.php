@@ -23,7 +23,7 @@ class VisitAnalyzeModel extends Model
             <div class="modal-body">
 
                 <div class="text-right" style="margin-bottom:10px;">
-                    <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить все</button>
+                    <!-- <button type="button" onclick="Proter_lab()" class="btn btn-outline-danger btn-sm">Завершить все</button> -->
                     <button type="submit" id="btn_submit" class="btn btn-outline-info btn-sm">Сохранить все</button>
                 </div>
 

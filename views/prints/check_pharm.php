@@ -50,7 +50,7 @@ foreach ($comp as $value) {
     }
     .info{
       display: block;
-      //float:left;
+      /* float:left; */
       margin-left: 0;
     }
     .title{
@@ -61,10 +61,10 @@ foreach ($comp as $value) {
       width: 100%;
       border-collapse: collapse;
     }
-    td{
-      //padding: 5px 0 5px 15px;
-      //border: 1px solid #EEE
-    }
+    /* td{
+      padding: 5px 0 5px 15px;
+      border: 1px solid #EEE
+    } */
     .tabletitle{
       background: #9e9e9e;
     }

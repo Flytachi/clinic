@@ -74,45 +74,47 @@
                         case 1:
                             ?>
                             <li class="nav-item">
-                                <a href="<?= viv('admin/index') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/index') ?>" class="nav-link legitRipple <?= viv_link('admin/index') ?>">
                                     <i class="icon-users"></i>
                                     <span>Персонал</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('admin/division') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/division') ?>" class="nav-link legitRipple <?= viv_link('admin/division') ?>">
                                     <i class="icon-users"></i>
                                     <span>Класификация персонала</span>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/service') ?>" class="nav-link legitRipple <?= viv_link('admin/service') ?>">
                                     <i class="icon-bag"></i>
                                     <span>Услуги</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('admin/preparats') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/preparats') ?>" class="nav-link legitRipple <?= viv_link('admin/preparats') ?>">
                                     <i class="icon-package"></i>
                                     <span>Препараты к услугам</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple">
-                                    <i class="icon-fire"></i>
-                                    <span>Анализы</span>
-                                </a>
-                            </li>
+                            <?php if(module('module_laboratory')): ?>
+                                <li class="nav-item">
+                                    <a href="<?= viv('admin/analyze') ?>" class="nav-link legitRipple <?= viv_link('admin/analyze') ?>">
+                                        <i class="icon-fire"></i>
+                                        <span>Анализы</span>
+                                    </a>
+                                </li>
+                            <?php endif; ?>
 
                             <li class="nav-item">
-                                <a href="<?= viv('admin/ward') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/ward') ?>" class="nav-link legitRipple <?= viv_link('admin/ward') ?>">
                                     <i class="icon-switch22"></i>
                                     <span>Палаты</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('admin/bed') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/bed') ?>" class="nav-link legitRipple <?= viv_link('admin/bed') ?>">
                                     <i class="icon-bed2"></i>
                                     <span>Койки</span>
                                 </a>
@@ -124,30 +126,37 @@
                                 </a>
                             </li> -->
                             <li class="nav-item">
-                                <a href="<?= viv('admin/setting') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/setting') ?>" class="nav-link legitRipple <?= viv_link('admin/setting') ?>">
                                     <i class="icon-cog2"></i>
                                     <span>Настройки</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('admin/guide') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/guide') ?>" class="nav-link legitRipple <?= viv_link('admin/guide') ?>">
                                     <i class="icon-width"></i>
                                     <span>Направители</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="<?= viv('admin/multi_account') ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('admin/multi_account') ?>" class="nav-link legitRipple <?= viv_link('admin/multi_account') ?>">
                                     <i class="icon-width"></i>
                                     <span>Мульти-аккаунт</span>
                                 </a>
                             </li>
-                            <li class="nav-item nav-item-submenu">
+                            <li class="nav-item nav-item-submenu <?= viv_link('admin/storage', 'nav-item-expanded nav-item-open') ?>">
+    							<a href="#" class="nav-link legitRipple"><i class="icon-stack2"></i> <span>Аптека</span></a>
+
+    							<ul class="nav nav-group-sub" data-submenu-title="Контроль">
+    								<li class="nav-item"><a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple <?= viv_link('admin/storage') ?>">Препараты</a></li>
+    							</ul>
+    						</li>
+                            <li class="nav-item nav-item-submenu <?= viv_link('admin/control_visit', 'nav-item-expanded nav-item-open') ?> <?= viv_link('admin/control_user', 'nav-item-expanded nav-item-open') ?> <?= viv_link('admin/control_bed', 'nav-item-expanded nav-item-open') ?>">
     							<a href="#" class="nav-link legitRipple"><i class="icon-stack2"></i> <span>Контроль</span></a>
 
     							<ul class="nav nav-group-sub" data-submenu-title="Контроль">
-    								<li class="nav-item"><a href="<?= viv('admin/control_visit') ?>" class="nav-link legitRipple">Визиты</a></li>
-                                    <li class="nav-item"><a href="<?= viv('admin/control_user') ?>" class="nav-link legitRipple">Пациент</a></li>
-    								<li class="nav-item"><a href="<?= viv('admin/control_bed') ?>" class="nav-link legitRipple">Койки</a></li>
+    								<li class="nav-item"><a href="<?= viv('admin/control_visit') ?>" class="nav-link legitRipple <?= viv_link('admin/control_visit') ?>">Визиты</a></li>
+                                    <li class="nav-item"><a href="<?= viv('admin/control_user') ?>" class="nav-link legitRipple <?= viv_link('admin/control_user') ?>">Пациент</a></li>
+    								<li class="nav-item"><a href="<?= viv('admin/control_bed') ?>" class="nav-link legitRipple <?= viv_link('admin/control_bed') ?>">Койки</a></li>
     							</ul>
     						</li>
                             <?php

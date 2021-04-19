@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth(10);
+is_module('module_diagnostic');
 $header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>
@@ -135,7 +136,7 @@ $header = "Амбулаторные пациенты";
 	<!-- /page content -->
 
 	<div id="modal_result_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 			<div class="modal-content border-3 border-info" id="modal_result_show_content">
 
 			</div>

@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
+is_module('module_laboratory');
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -45,14 +46,13 @@ $header = "Пациент";
 								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-								<?php if ($patient->direction): ?>
-									<a onclick="AnalizeCheck(<?= $patient->visit_id ?>)" class="float-right text-info mr-2">
-										<i class="icon-drawer3 mr-1"></i>Сводка анализов
-									</a>
-								<?php endif; ?>
+								
 							<?php else: ?>
-								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right <?= $class_color_add ?> mr-1"><i class="icon-printer2"></i></a>
+								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
+							<a onclick="AnalizeCheck(<?= $patient->visit_id ?>)" class="float-right text-info mr-2">
+								<i class="icon-drawer3 mr-1"></i>Сводка анализов
+							</a>
 						</legend>
 
 						<div class="card">
@@ -96,31 +96,19 @@ $header = "Пациент";
 												<td><?= $row['name'] ?></td>
 												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td>
-													<?php
-													if ($row['completed']) {
-														?>
+													<?php if ($row['completed']): ?>
 														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-														<?php
-													} else {
-														switch ($row['status']):
-															case 1:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-																<?php
-																break;
-															case 2:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-																<?php
-																break;
-															default:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-																<?php
-																break;
-														endswitch;
-													}
-													?>
+													<?php else: ?>
+														<?php if ($row['status'] == 0): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+														<?php elseif ($row['status'] == 1): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+														<?php elseif ($row['status'] == 2): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+														<?php else: ?>
+															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+														<?php endif; ?>
+													<?php endif; ?>
 												</td>
 												<td class="text-center">
 													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>

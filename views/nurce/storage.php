@@ -114,9 +114,7 @@ $header = "Склад";
                                             <td class="text-right"><?= number_format($row['price'],1) ?></td>
                                             <td class="text-right"><?= number_format(($row['price'] * $row['qty']), 1) ?></td>
 											<td class="text-right">
-												<div class="list-icons">
-													<a href="<?= del_url($row['id'], 'StorageHomeModel') ?>" onclick="return confirm(`Возврат препарата - '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)' ?`)" class="list-icons-item <?= ($btn) ? $btn :"text-danger" ?>"><i class="icon-reply"></i></a>
-												</div>
+												<a href="#" type="button" onclick="Refund(<?= $row['id'] ?>, '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date('d.m.Y', strtotime($row['die_date'])) ?>)', <?= $row['qty'] ?>)"><i class="icon-reply"></i></a>
 											</td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -137,7 +135,30 @@ $header = "Склад";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_refund" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Вернуть препарат в аптеку</h6>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?php StorageHomeModel::form_refund(); ?>
+				
+			</div>
+		</div>
+	</div>
+
+	<?php //del_url($row['id'], 'StorageHomeModel') ?>
 	<script type="text/javascript">
+
+		function Refund(params, name, qty) {
+			document.querySelector('#input_id').value = params;
+			document.querySelector('#input_name').value = name;
+			document.querySelector('#input_qty').max = qty;
+			$('#modal_refund').modal("show");
+		}
+
         function Check(events) {
             $.ajax({
 				type: "GET",

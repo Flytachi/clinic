@@ -68,7 +68,7 @@ if ($_GET['pk']) {
                         Койка (<?= $price['bed_hours'] ?> часов)
                         <?php if ($price['bed_hours'] > 24): ?>
                             &#8776;
-                            (<?= round($price['bed_hours'] / 24, 0, PHP_ROUND_HALF_DOWN) ?> дней и <?= $price['bed_hours'] % 24 ?> часов)
+                            (<?= floor($price['bed_hours'] / 24) ?> дней и <?= $price['bed_hours'] % 24 ?> часов)
                         <?php endif; ?>
                     </td>
                     <td colspan="2"><?= $price['bed_type'] ?> (<?= number_format($price['bed_price']) ?>/день)</td>

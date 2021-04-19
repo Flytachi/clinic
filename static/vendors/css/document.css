@@ -1,6 +1,9 @@
 *{
     font-family: 'DejaVu Sans' !important;
 }
+body{
+    color: black !important;
+}
 
 @media print {
     html, body{

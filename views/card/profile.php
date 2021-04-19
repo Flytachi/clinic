@@ -264,13 +264,8 @@ if (!$patient) {
                                 <div class="col-md-9 text-right">
                                     <?php
                                     $dr= date_diff(new \DateTime($patient->completed), new \DateTime($patient->add_date));
-                                    $end_date = $dr->days + round($dr->h/24);
-                                    if ($end_date == 1) {
-                                        echo $end_date." день";
-                                    }elseif (in_array($end_date, [2,3,4])) {
-                                        echo $end_date." дня";
-                                    }elseif ($end_date >= 5) {
-                                        echo $end_date." дней";
+                                    if ($dr->h >= 1) {
+                                        echo $dr->days." д. ".$dr->h." ч.";
                                     }else {
                                         echo "Прибыл сегодня";
                                     }
@@ -380,7 +375,7 @@ if (!$patient) {
 
                     <div class="col-md-12">
                         <div class="text-right">
-                            <button data-grant_id="<?= $patient->grant_id ?>" data-parent="<?= get_full_name($_SESSION['session_id']) ?>" id="sweet_call_nurce" data-btn="Вызвать" data-question="Вы точно хотите срочно вызвать врача!" class="btn btn-outline-danger btn-md">Вызвать</button>
+                            <button data-grant_id="<?= $patient->grant_id ?>" data-parent="<?= get_full_name($_SESSION['session_id']) ?>" id="sweet_call_nurce" data-btn="Вызвать" data-question="Вы точно хотите срочно вызвать врача!" class="btn btn-outline-danger btn-sm">Вызвать</button>
                         </div>
                     </div>
 

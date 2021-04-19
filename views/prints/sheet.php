@@ -21,7 +21,7 @@ $sql = "SELECT  us.id,
             vs.service_id = 1";
 $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 // prit($docs);
-$old_date = 2; // Дни назад
+$old_date = 6; // Дни назад
 $count_date = 10; // Количество отображемых дней
 ?>
 
@@ -64,11 +64,19 @@ $count_date = 10; // Количество отображемых дней
             border-collapse: collapse;
             border: 3px solid black;
         }
+
+        .line {
+            display:inline-block;
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;   background:url(APNGImageWithWhiteBackgroundAndASingleDiagonalLineInTheMiddle.png);
+            background-size:100% 100%;
+        }
     </style>
 
     <body>
 
-        <div class="table-responsive card">
+        <div class="table-responsive card line">
             
             <table class="minimalistBlack">
                 <thead>
@@ -86,20 +94,24 @@ $count_date = 10; // Количество отображемых дней
                         <th class="text-center" colspan="4">Назначения</th>
                         <th>Вр.</th>
                         <th>Исп.</th>
-                        <?php for($i=-$old_date; $i < ($count_date - $old_date); $i++): ?>
+                       <?php for($i=-$old_date; $i < ($count_date - $old_date); $i++): ?>
                             <?php $date = new DateTime('+'.$i.' day'); ?>
-                            <td height="55px" class="trasform_text"><b><?= $date->format('d.m') ?></b></td>
+                            <td height="55px" class="trasform_text" width='50%'><b><?= $date->format('d.m') ?></b></td>
                         <?php endfor; ?>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $s=1;foreach ($db->query("SELECT * FROM bypass WHERE user_id = $docs->id AND visit_id = $docs->visit_id") as $bypass): ?>
+                    <?php $s=1;foreach ($db->query("SELECT * FROM bypass WHERE user_id = $docs->id AND visit_id = $docs->visit_id ORDER BY diet_id DESC") as $bypass): ?>
                         <tr>
                             <td rowspan="2"><?= $s++ ?></td>
                             <td rowspan="2" colspan="4" style="font-size: 100% !important;">
+                            <?php if ($bypass['diet_id']): ?>
+                                <b>Диета: </b><?= $db->query("SELECT name FROM diet WHERE id = {$bypass['diet_id']}")->fetchColumn() ?>
+                            <?php else: ?>
                                 <?php foreach ($db->query("SELECT * FROM bypass_preparat WHERE bypass_id = {$bypass['id']}") as $bypass_preparat): ?>
                                     <?= $bypass_preparat['qty'] ." - ". $bypass_preparat['preparat_name'] ?><br>
                                 <?php endforeach; ?>
+                            <?php endif; ?>
                             </td>
                             <td rowspan="2" class="text-center">
                                 <?php foreach ($db->query("SELECT * FROM bypass_time WHERE bypass_id = {$bypass['id']}") as $bypass_time): ?>
