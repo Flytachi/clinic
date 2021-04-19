@@ -51,14 +51,14 @@ function viv($url=null){
     }
 }
 
-function viv_link($url){
+function viv_link($url, $class = ""){
     if (EXT == ".php") {
         if (viv($url) == $_SERVER['PHP_SELF']) {
-            return "active";
+            return "active $class";
         }
     } else {
         if (viv($url).".php" == $_SERVER['PHP_SELF']) {
-            return "active";
+            return "active $class";
         }
     }
 }

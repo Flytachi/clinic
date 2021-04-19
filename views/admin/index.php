@@ -39,9 +39,9 @@ $header = "Персонал";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="card border-1 border-primary">
 
-				    <div class="card-header header-elements-inline">
+				    <div class="card-header text-dark header-elements-inline alpha-primary">
 				        <h5 class="card-title">Добавить Пользователя</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">
@@ -56,9 +56,9 @@ $header = "Персонал";
 
 				</div>
 
-				<div class="card">
+				<div class="card border-1 border-primary">
 
-				    <div class="card-header header-elements-inline">
+				    <div class="card-header text-dark header-elements-inline alpha-primary">
 				        <h5 class="card-title">Список Пользователей</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">
