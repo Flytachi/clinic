@@ -61,7 +61,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select name="user_id" class="form-control form-control-select2">
+									<select name="user_id" class="form-control myselect">
 										<option value="">Выберите пациента</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
