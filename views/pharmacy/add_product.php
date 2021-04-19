@@ -50,7 +50,6 @@ $header = "Добавить препарат";
 						<div class="header-elements">
 	                  		<div class="list-icons">
 								<a href="<?= download_url('Storage', 'Препараты', true) ?>" class="btn">Лист поступления</a>
-								<a href="<?= download_url('Storage', 'Препараты') ?>" class="btn">Шаблон</a>
 		                  	</div>
 		              	</div>
 					</div>

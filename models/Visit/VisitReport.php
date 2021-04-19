@@ -46,8 +46,7 @@ class VisitReport extends Model
                         <div class="document-editor__toolbar"></div>
                         <div class="document-editor__editable-container">
                             <div class="document-editor__editable" id="document-editor__editable_template">
-                                <!-- <div id="document-editor__editable_template"></div> -->
-                                <?= $post['report'] ?>
+                                <?= ($post['report']) ? $post['report'] : "<br><strong>Рекомендация:</strong>" ?>
                             </div>
                         </div>
                     </div>

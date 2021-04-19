@@ -97,7 +97,7 @@ $header = "";
                             </div> -->
 
                             <div class="text-right">
-                                <button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
+                                <button type="submit" id="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
                             </div>
 
 
@@ -141,7 +141,7 @@ $header = "";
 					// 	}
 					// }
 					?>
-					<div class="card border-1 border-info">
+					<div class="card border-1 border-info" id="table_div">
 
                         <div class="card-header text-dark header-elements-inline alpha-info">
                             <h6 class="card-title">Beds</h6>
@@ -186,20 +186,19 @@ $header = "";
                                                         <?php if($row['status']): ?>
                                                             <span class="badge badge-success">Normal</span>
                                                         <?php else: ?>
-                                                            <span class="badge badge-danger">Error 1</span>
+                                                            <span class="badge badge-danger">Error (pleace change passive)</span>
                                                         <?php endif; ?>   
                                                     <?php else: ?>
                                                         <?php if($row['status']): ?>
-                                                            <span class="badge badge-danger">Error 2</span>
+                                                            <span class="badge badge-danger">Error!</span>
                                                         <?php else: ?>
                                                             <span class="badge badge-secondary">Normal</span>
-                                                        <?php endif; ?>   
-                                                        
+                                                        <?php endif; ?>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-right">
 													<div class="list-icons">
-														<a onclick="Update('<?= up_url($row['id'], 'BedModel') ?>')" href="" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+														<a onclick="Update('<?= up_url($row['id'], 'BedModel') ?>')" href="#" class="list-icons-item text-danger-600"><i class="icon-undo"></i></a>
 													</div>
 												</td>
                                             </tr>
@@ -223,15 +222,15 @@ $header = "";
 	<!-- /page content -->
 
     <script type="text/javascript">
-        function Update(events) {
-			// $.ajax({
-			// 	type: "GET",
-			// 	url: events+"&type=1",
-			// 	success: function (result) {
-			// 		console.log(result);
-			// 	},
-			// });
-            location = events+"&type=1";
+        function Update(events, tr) {
+            event.preventDefault();
+			$.ajax({
+				type: "GET",
+				url: events+"&type=1",
+				success: function (result) {
+					$('#submit').click();
+				},
+			});
 		};
         $(function(){
             $("#ward").chained("#floor");

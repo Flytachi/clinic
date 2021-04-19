@@ -66,7 +66,8 @@ $header = "Контроль базы данных";
                                             <td>
                                                 <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
                                                 <a href="/dump/<?= $value ?>" class="list-icons-up text-dark" download><i class="icon-download"></i></a>
-                                            </td>
+												<a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
+											</td>
                                         </tr>
                                     <?php endforeach; ?>
 				                </tbody>
@@ -87,7 +88,7 @@ $header = "Контроль базы данных";
 	<!-- /page content -->
 
 	<script type="text/javascript">
-		function Conf(url, file, st) {
+		function Conf(url, file, is_delete) {
 			var wha = "Вы уверены что хотите откатить базу данных?";
 			swal({
 				position: 'top',
@@ -106,8 +107,11 @@ $header = "Контроль базы данных";
 						confirmButtonText: "Да"
 					}).then(function(ivi) {
 						if (ivi.value) {
-							console.log(file);
-							location = url+"?file="+file;
+							var ups = url+"?file="+file;
+							if (is_delete) {
+								ups += "&is_delete="+is_delete;
+							}
+							location = ups;
 						}
 					});
 				}

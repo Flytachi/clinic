@@ -50,13 +50,13 @@ $header = "Аптека";
 						<?php if ($_POST['flush']): ?>
 
 							<?php
-							Mixin\T_flush('storage');
+							$__storage = Mixin\T_flush('storage');
 							?>
 
-							<?php if (intval($task) == 1): ?>
+							<?php if (!$__storage): ?>
 								<div class="alert alert-primary" role="alert">
 									<button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-									Услуги успешно очищены!
+									Препараты успешно очищены!
 								</div>
 							<?php else: ?>
 								<div class="alert bg-danger alert-styled-left alert-dismissible">
@@ -171,7 +171,7 @@ $header = "Аптека";
 		function Conf() {
 			swal({
                 position: 'top',
-                title: 'Вы уверены что хотите очистить список услуг?',
+                title: 'Вы уверены что хотите очистить список препаратов?',
                 type: 'info',
                 showCancelButton: true,
                 confirmButtonText: "Уверен"
