@@ -31,6 +31,7 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
+				echo session_id();
 				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
 				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
 				// 	// dd($value);

@@ -146,7 +146,7 @@
                             <li class="nav-item nav-item-submenu <?= viv_link('admin/storage', 'nav-item-expanded nav-item-open') ?>">
     							<a href="#" class="nav-link legitRipple"><i class="icon-stack2"></i> <span>Аптека</span></a>
 
-    							<ul class="nav nav-group-sub" data-submenu-title="Контроль">
+    							<ul class="nav nav-group-sub" data-submenu-title="Аптека">
     								<li class="nav-item"><a href="<?= viv('admin/storage') ?>" class="nav-link legitRipple <?= viv_link('admin/storage') ?>">Препараты</a></li>
     							</ul>
     						</li>
