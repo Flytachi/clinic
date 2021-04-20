@@ -63,7 +63,7 @@ class Model
     {
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
-        prit($object);
+        // dd($object);
         $this->set_post($object);
         return $this->form($object['id']);
     }
@@ -113,6 +113,17 @@ class Model
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function jquery_init()
+    {
+        ?>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                Select2Selects.init();
+            });
+        </script>
+        <?php
     }
 
     public function delete(int $pk)

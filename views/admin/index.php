@@ -8,12 +8,10 @@ $header = "Персонал";
 <?php include layout('head') ?>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 
 <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
