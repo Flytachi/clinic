@@ -49,7 +49,7 @@ $header = "";
 
                                 <div class="col-md-2">
                                     <label>Этаж:</label>
-                                    <select name="floor" id="floor" class="form-control myselect">
+                                    <select name="floor" id="floor" class="<?= $classes['form-select'] ?>">
                                         <option value="">Выбрать этаж</option>
                                         <?php foreach ($FLOOR as $key => $value): ?>
                                             <option value="<?= $key ?>" <?= ($_POST['floor'] == $key) ? "selected" : "" ?>><?= $value ?></option>
@@ -59,7 +59,7 @@ $header = "";
 
                                 <div class="col-md-2">
                                     <label>Палата:</label>
-                                    <select name="ward" id="ward" class="form-control myselect">
+                                    <select name="ward" id="ward" class="<?= $classes['form-select'] ?>">
                                         <option value="">Выбрать палату</option>
                                         <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
                                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ($_POST['ward'] == $row['id']) ? "selected" : "" ?>><?= $row['ward'] ?> палата</option>
@@ -69,7 +69,7 @@ $header = "";
 
                                 <div class="col-md-3">
                                     <label>Койка:</label>
-                                    <select name="bed" id="bed" class="form-control select-price">
+                                    <select name="bed" id="bed" class="<?= $classes['form-select_price'] ?>">
                                         <option value="">Выбрать койку</option>
                                         <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
                                             <?php if ($row['user_id']): ?>

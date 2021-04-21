@@ -50,6 +50,6 @@ $classes = array(
     "card" => "card border-1 border-primary",
     "card-header" => "card-header text-dark header-elements-inline alpha-primary",
     "form-select" => "form-control form-control-select2",
-    "form-myselect" => "form-control myselect",
+    "form-select_price" => "form-control myselect",
 )
 ?>

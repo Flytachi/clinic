@@ -71,7 +71,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select name="user_id" class="form-control myselect">
+									<select name="user_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите пациента</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
@@ -81,7 +81,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Отдел:</label>
-									<select id="division" name="division_id" class="form-control myselect">
+									<select id="division" name="division_id" class="<?= $classes['form-select'] ?>">
 									   <option value="">Выберите отдел</option>
 									   <optgroup label="Врачи">
 				                           <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
@@ -108,7 +108,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Услуга:</label>
-									<select id="service" name="service_id" class="form-control myselect">
+									<select id="service" name="service_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите услугу</option>
 										<?php foreach ($db->query("SELECT * from service WHERE 1") as $row): ?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
@@ -122,7 +122,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Тип визита:</label>
-									<select class="form-control myselect" name="direction">
+									<select class="<?= $classes['form-select'] ?>" name="direction">
 				                        <option value="">Выберите тип визита</option>
 										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
 										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
