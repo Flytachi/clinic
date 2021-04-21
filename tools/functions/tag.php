@@ -52,13 +52,30 @@ function viv($url=null){
 }
 
 function viv_link($url, $class = ""){
-    if (EXT == ".php") {
-        if (viv($url) == $_SERVER['PHP_SELF']) {
-            return "active $class";
+
+    if (is_array($url)) {
+        
+        foreach ($url as $value) {
+            if (EXT == ".php") {
+                if (viv($value) == $_SERVER['PHP_SELF']) {
+                    return "active $class";
+                }
+            } else {
+                if (viv($value).".php" == $_SERVER['PHP_SELF']) {
+                    return "active $class";
+                }
+            }
         }
+
     } else {
-        if (viv($url).".php" == $_SERVER['PHP_SELF']) {
-            return "active $class";
+        if (EXT == ".php") {
+            if (viv($url) == $_SERVER['PHP_SELF']) {
+                return "active $class";
+            }
+        } else {
+            if (viv($url).".php" == $_SERVER['PHP_SELF']) {
+                return "active $class";
+            }
         }
     }
 }
