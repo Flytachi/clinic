@@ -88,17 +88,11 @@ $header = "Приём пациетов";
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
                                             <td class="text-center">
-                                                <?php
-                                                if($row['direction']){
-                                                    ?>
+												<?php if($row['direction']): ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
-                                                    <?php
-                                                }else{
-                                                    ?>
+												<?php else: ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
-                                                    <?php
-                                                }
-                                                ?>
+												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
 												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"

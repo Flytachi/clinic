@@ -73,7 +73,7 @@ $header = "Амбулаторные пациенты";
 											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
                                             <td>
 												<?php
-                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.laboratory IS NOT NULL AND vs.accept_date IS NOT NULL AND vs.completed IS NULL") as $serv) {
+                                                foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = {$row['id']} AND vs.status = 2 AND vs.laboratory IS NOT NULL AND vs.accept_date IS NOT NULL AND vs.completed IS NULL") as $serv) {
                                                     echo $serv['name']."<br>";
                                                 }
                                                 ?>
@@ -114,6 +114,20 @@ $header = "Амбулаторные пациенты";
 		<div class="modal-dialog modal-full">
 			<div class="modal-content border-3 border-info" id="modal_result_show_content">
 
+			</div>
+		</div>
+	</div>
+
+	<div id="modal_failure" class="modal fade" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content border-1 border-danger">
+
+				<div class="modal-header bg-danger">
+					<h5 class="modal-title">Отказ услуги: <span id="vis_title"></h5>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+
+				<?= VisitFailure::form(); ?>
 			</div>
 		</div>
 	</div>

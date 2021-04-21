@@ -54,7 +54,7 @@ $header = "Персонал";
 
 				</div>
 
-				<div class="<?= $classes['card'] ?>y">
+				<div class="<?= $classes['card'] ?>">
 
 				    <div class="<?= $classes['card-header'] ?>">
 				        <h5 class="card-title">Список Пользователей</h5>

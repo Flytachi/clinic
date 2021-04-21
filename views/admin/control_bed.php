@@ -30,9 +30,9 @@ $header = "";
 			<!-- Content area -->
 			<div class="content">   
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -141,9 +141,9 @@ $header = "";
 					// 	}
 					// }
 					?>
-					<div class="card border-1 border-info" id="table_div">
+					<div class="<?= $classes['card'] ?>" id="table_div">
 
-                        <div class="card-header text-dark header-elements-inline alpha-info">
+                        <div class="<?= $classes['card-header'] ?>">
                             <h6 class="card-title">Beds</h6>
                             <div class="header-elements">
                                 <div class="list-icons">

@@ -607,28 +607,67 @@ class VisitModel extends Model
         if (!$_GET['type']) {
 
             // Нахождение id визита
-            $object_sel = $db->query("SELECT vs.*, vp.id 'vp_id' FROM $this->table vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.id = $pk")->fetch(PDO::FETCH_OBJ);
-            $object = Mixin\delete($this->table, $pk);
-            $object1 = Mixin\delete('visit_price', $object_sel->vp_id);
-            if (!intval($object)) {
-                $this->error($object, 1);
-            }
-            if (intval($object)) {
-                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
-                if(!$status){
+            $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+
+            if ($object_sel->direction) {
+                $db->beginTransaction();
+
+                if ($object_sel->service_id == 1) {
+                    // Удаляем все визиты внутри гланого визита
+
+                    foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
+                        $object = Mixin\delete($this->table, $value['id']);
+                        if (!intval($object)) {
+                            $this->error($object, 1);
+                            $db->rollBack();
+                        }
+                        Mixin\delete('visit_price', $value['id'], 'visit_id');
+                    }
+    
+                    // Удаляем главный визит
+                    $object = Mixin\delete($this->table, $pk);
+                    if (!intval($object)) {
+                        $this->error($object, 1);
+                        $db->rollBack();
+                    }
+                    Mixin\delete('visit_price', $pk, 'visit_id');
+                    // Освобождаем койку
+                    Mixin\update($this->table2, array('user_id' => null), $object_sel->bed_id);
+                    // Обновляем статус
                     Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
-                    $this->success(2);
-                }else {
-                    $this->success(1);
+    
+                    $success = 2;
+    
+                }else{
+    
+                    // Удаляем визит
+                    $object = Mixin\delete($this->table, $pk);
+                    if (!intval($object)) {
+                        $this->error($object, 1);
+                        $db->rollBack();
+                    }
+                    Mixin\delete('visit_price', $pk, 'visit_id');
+    
+                    // Обновляем статус
+                    $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
+                    if(!$status){
+                        Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                        $success = 2;
+                    }else {
+                        $success = 1;
+                    }
                 }
-            } else {
-                $this->error($object, 1);
+
+                $db->commit();
+                $this->success($success);
             }
 
         }else {
             $object = Mixin\update($this->table, array('status' => 5), $pk);
             $this->success(1);
         }
+
+        
     }
 
     public function success($stat=null)

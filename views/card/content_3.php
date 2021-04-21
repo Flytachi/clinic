@@ -71,12 +71,12 @@ $header = "Пациент";
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.route_id = $patient->grant_id AND vs.laboratory IS NULL AND vs.diagnostic IS NULL AND vs.physio IS NULL
-																AND vs.manipulation IS NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
+																AND vs.manipulation IS NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
 										} else {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.route_id = $patient->grant_id AND vs.laboratory IS NULL AND vs.diagnostic IS NULL AND vs.physio IS NULL
-															AND vs.manipulation IS NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\") ORDER BY vs.id DESC";
+															AND vs.manipulation IS NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"CURRENT_TIMESTAMP()\") ORDER BY vs.id DESC";
 										}
 										foreach ($db->query($sql_table) as $row) {
 										?>

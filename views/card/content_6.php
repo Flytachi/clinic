@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
-$session->is_module('module_diagnostic');
+$session->is_auth();
+is_module('module_diagnostic');
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
@@ -77,11 +77,11 @@ $header = "Пациент";
 										if ($patient->completed) {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
-															WHERE vs.user_id = $patient->id AND vs.diagnostic IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
+															WHERE vs.user_id = $patient->id AND vs.diagnostic IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
 										} else {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
-															WHERE vs.user_id = $patient->id AND vs.diagnostic IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i') BETWEEN \"$patient->add_date\" AND \"CURRENT_DATE()\") ORDER BY vs.id DESC";
+															WHERE vs.user_id = $patient->id AND vs.diagnostic IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"CURRENT_TIMESTAMP()\") ORDER BY vs.id DESC";
 										}
 										foreach ($db->query($sql_table) as $row) {
 										?>

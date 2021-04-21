@@ -37,9 +37,9 @@ $header = "Мульти-аккаунт";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить Палату</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
@@ -54,9 +54,9 @@ $header = "Мульти-аккаунт";
 
 	        	</div>
 
-        		<div class="card">
+        		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header header-elements-inline">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Палат</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">

@@ -42,9 +42,9 @@ $header = "Визиты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -166,9 +166,9 @@ $header = "Визиты";
 						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
 					}
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Visits</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -243,7 +243,7 @@ $header = "Визиты";
 				type: "GET",
 				url: url,
 				success: function (data) {
-                    // $('#message').html(data);
+                    $('#message').html(data);
                     $(tr).css("background-color", "rgb(244, 67, 54)");
                     $(tr).css("color", "white");
                     $(tr).fadeOut(900, function() {
