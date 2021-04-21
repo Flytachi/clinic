@@ -63,8 +63,8 @@
                 <!-- Main -->
                 <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
 
-                <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id IS NULL AND level = ".level()." ORDER BY sort ASC") as $row): ?>
-                   
+                <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id IS NULL AND level = $session->session_level ORDER BY sort ASC") as $row): ?>
+                    
                     <?php if($row['is_parent']): ?>
                     
                         <li class="nav-item nav-item-submenu <?= viv_link(json_decode($row['is_active']), 'nav-item-expanded nav-item-open') ?>">
@@ -94,8 +94,22 @@
                                         <i class="<?= $row['icon'] ?>"></i>
                                         <span><?= $row['name'] ?></span>
                                         <?php if($row['script']): ?>
-
-                                            <?php $side = $db->query($row['script'])->rowCount() ?>
+                                            <?php
+                                            if ($row['script_item']) {
+                                                $srt = (array) json_decode($row['script_item']);
+                                                
+                                                foreach (array_values($srt) as $key => $value) {
+                                                    if ($value == "division_") {
+                                                        # code...
+                                                    }else {
+                                                        $val[$key] = $session->{$value};
+                                                    }
+                                                }
+                                                $new_script = str_replace(array_keys($srt), $val, $row['script']);
+                                                unset($val);
+                                            }
+                                            ?>
+                                            <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
                                             <?php if($side): ?>
                                                 <span class="<?= $row['badge_class'] ?>"><?= $side ?></span>
                                             <?php endif; ?>
@@ -111,12 +125,26 @@
                                     <i class="<?= $row['icon'] ?>"></i>
                                     <span><?= $row['name'] ?></span>
                                     <?php if($row['script']): ?>
-                                        
-                                        <?php $side = $db->query($row['script'])->rowCount() ?>
+                                        <?php
+                                        if ($row['script_item']) {
+                                            $srt = (array) json_decode($row['script_item']);
+                                            
+                                            foreach (array_values($srt) as $key => $value) {
+                                                if ($value == "division_") {
+                                                    # code...
+                                                }else {
+                                                    $val[$key] = $session->{$value};
+                                                }
+                                            }
+                                            $new_script = str_replace(array_keys($srt), $val, $row['script']);
+                                            unset($val);
+                                        }
+                                        ?>
+                                        <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
                                         <?php if($side): ?>
-                                            <span class="badge bg-danger badge-pill ml-auto"><?=$side?></span>
+                                            <span class="<?= $row['badge_class'] ?>"><?= $side ?></span>
                                         <?php endif; ?>
-                                        <?php unset($side) ?>
+                                        <?php unset($side); unset($new_script); ?>
 
                                     <?php endif; ?>
                                 </a>
