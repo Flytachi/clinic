@@ -5,7 +5,8 @@ class Session
     public $login_url = DIR."/auth/login".EXT;
     public $index_url = "../index".EXT; //../index.php
     public $logout_url = DIR."/auth/logout".EXT;
-    
+
+    private $life_session = 15; // minute
     private $table = "sessions";
     protected $session_id;
     protected $session_login;
@@ -49,27 +50,24 @@ class Session
         }
 
         // проверка прав
-        if ($_SESSION['session_id'] == "master") {
-            return True;
-        }
-        if ($arr){
-            $perk =level();
-            if (is_array($arr)){
-                if(!in_array($perk, $arr)){
-                    Mixin\error('423');
-                }
-            }else{
-                if(intval($arr) != $perk){
-                    Mixin\error('423');
+        if ($_SESSION['session_id'] != "master") {
+            if ($arr){
+                $perk =level();
+                if (is_array($arr)){
+                    if(!in_array($perk, $arr)){
+                        Mixin\error('423');
+                    }
+                }else{
+                    if(intval($arr) != $perk){
+                        Mixin\error('423');
+                    }
                 }
             }
         }
         // присвоение и создание в базе сессии
         if ($_SESSION['session_id']) {
-            $this->init();
-            $this->session_create_or_update();
+            $this->session_check();
         }
-        // dd($this);
         // dd($_SESSION);
     }
 
@@ -99,11 +97,38 @@ class Session
         }
     }
 
+    private function session_check()
+    {
+        global $db;
+        $this->session_old_delete();
+        $sid = session_id();
+        $object = $db->query("SELECT * FROM $this->table WHERE session_id = \"$sid\"")->fetch();
+        if ($object) {
+            $this->init();
+            $this->session_create_or_update();  
+        }else {
+            $this->destroy();
+        }
+    }
+
+    private function session_old_delete()
+    {
+        global $db;
+        $stmt = $db->prepare("DELETE FROM $this->table WHERE last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
+        $stmt->execute();
+    }
+
     private function session_create_or_update()
     {
         global $db;
         $date = date("Y-m-d H:i:s");
-        $new_ses = array('session_id' => session_id(), 'self_id' => $this->session_id, 'self_ip' => $_SERVER['REMOTE_ADDR'], 'self_login' => $this->session_login, 'self_render' => $_SERVER['PHP_SELF'], 'update_date' => $date);
+        $new_ses = array(
+            'session_id' => session_id(), 
+            'self_id' => $this->session_id, 
+            'self_ip' => $_SERVER['REMOTE_ADDR'], 
+            'self_login' => $this->session_login, 
+            'self_render' => $_SERVER['PHP_SELF'], 
+            'last_update' => $date);
         Mixin\insert_or_update($this->table, $new_ses, 'session_id');        
     }
 
