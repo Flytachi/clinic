@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
+$session->is_auth();
 
 $sql = "SELECT
             op.id 'pk', op.user_id 'id', vs.id 'visit_id', vs.grant_id, op.oper_date,

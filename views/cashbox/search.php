@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth([3, 32]);
+$session->is_auth([3, 32]);
 
 switch ($_GET['tab']) {
     case 1:

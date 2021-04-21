@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(7);
+$session->is_auth(7);
 $pk = $_GET['pk'];
 
 $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypass_id=bs.id) WHERE bs.user_id = $pk AND bd.status IS NOT NULL AND bd.date = CURRENT_DATE() ORDER BY bs.diet_id DESC";

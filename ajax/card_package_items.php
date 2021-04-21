@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-is_auth();
+$session->is_auth();
 
 $package = $db->query("SELECT * FROM package WHERE id = {$_POST['id']}")->fetch();
 $post['items'] = json_decode($package['items']);

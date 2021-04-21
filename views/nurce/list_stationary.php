@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(7);
+$session->is_auth(7);
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>

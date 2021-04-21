@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-is_auth();
+$session->is_auth();
 ?>
 <div class="modal-header bg-info">
     <h5 class="modal-title">Детально</h5>

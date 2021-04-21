@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 is_auth();
-is_module('module_diagnostic');
+$session->is_module('module_diagnostic');
 $header = "Пациент";
 ?>
 <!DOCTYPE html>

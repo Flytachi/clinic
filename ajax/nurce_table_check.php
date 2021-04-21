@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-is_auth();
+$session->is_auth();
 ?>
 <div class="table-responsive card" id="check_card">
     <table class="table table-hover table-sm">
