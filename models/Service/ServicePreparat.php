@@ -36,7 +36,7 @@ class ServicePreparatModel extends Model
                 <div class="col-md-10">
                     <div class="form-group">
                         <label>Препарат:</label>
-                        <select data-placeholder="Выбрать услугу" name="preparat_id" class="<?= $classes['form-myselect'] ?>" required>
+                        <select data-placeholder="Выбрать услугу" name="preparat_id" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT * from storage") as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?php if($row['id'] == $post['preparat_id']){echo'selected';} ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</option>

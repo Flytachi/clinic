@@ -245,28 +245,20 @@ class BedModel extends Model
                 <label>Выбирите этаж:</label>
                 <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
-                    <?php
-                    foreach ($FLOOR as $key => $value) {
-                        ?>
+                    <?php foreach ($FLOOR as $key => $value): ?>
                         <option value="<?= $key ?>" <?= ($post['floor'] == $key) ? 'selected': '' ?>><?= $value ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="form-group">
-               <label>Палата:</label>
-               <select data-placeholder="Выбрать палату" name="ward_id" id="ward_id" class="<?= $classes['form-select'] ?>" required>
-                   <option></option>
-                   <?php
-                   foreach($db->query('SELECT * from wards') as $row) {
-                       ?>
-                       <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?php if($row['id'] == $post['ward_id']){echo'selected';} ?>><?= $row['ward'] ?> палата</option>
-                       <?php
-                   }
-                   ?>
-               </select>
+                <label>Палата:</label>
+                <select data-placeholder="Выбрать палату" name="ward_id" id="ward_id" class="<?= $classes['form-select'] ?>" required>
+                    <option></option>
+                    <?php foreach($db->query("SELECT * from wards") as $row): ?>
+                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?php if($row['id'] == $post['ward_id']){echo'selected';} ?>><?= $row['ward'] ?> палата</option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="form-group">
@@ -278,13 +270,9 @@ class BedModel extends Model
                 <label>Тип:</label>
                 <select data-placeholder="Выбрать тип" name="types" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
-                    <?php
-                    foreach($db->query('SELECT * from bed_type') as $row) {
-                        ?>
+                    <?php foreach($db->query('SELECT * from bed_type') as $row): ?>
                         <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['types']){echo'selected';} ?>><?= $row['name'] ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
