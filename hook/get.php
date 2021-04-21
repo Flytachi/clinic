@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-is_auth();
+$session->is_auth();
 if ($_GET['id']) {
     $form = new $_GET['model'];
     unset($_GET['model']);

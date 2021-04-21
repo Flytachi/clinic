@@ -6,7 +6,7 @@ class UserModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $PERSONAL;
+        global $db, $PERSONAL, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -49,30 +49,21 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Выбирите роль:</label>
-                            <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="form-control form-control-select2" required>
+                            <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php
-                                foreach ($PERSONAL as $key => $value) {
-                                    ?>
+                                <?php foreach ($PERSONAL as $key => $value): ?>
                                     <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
-                                    <?php
-                                }
-                                ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Отдел:</label>
-                            <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="form-control form-control-select2" required >
+                            <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php
-                                foreach($db->query('SELECT * from division') as $row) {
-                                    ?>
+                                <?php foreach ($db->query('SELECT * FROM division') as $row): ?>
                                     <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
-
-                                    <?php
-                                }
-                                ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
@@ -106,56 +97,49 @@ class UserModel extends Model
                                 </div>
                             </div>
 
-                            <?php
-                                if(!$pk){
-                                    ?>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Пароль:</label>
-                                            <input type="password" class="form-control" name="password" placeholder="Введите Пароль" required>
-                                        </div>
+                            <?php if (!$pk): ?>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Пароль:</label>
+                                        <input type="password" class="form-control" name="password" placeholder="Введите Пароль" required>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Повторите пароль:</label>
-                                            <input type="password" class="form-control" name="password2" placeholder="Введите Пароль" required>
-                                        </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Повторите пароль:</label>
+                                        <input type="password" class="form-control" name="password2" placeholder="Введите Пароль" required>
                                     </div>
-                                    <?php
-                                }
-                                else {
-                                    ?>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Пароль:</label>
-                                            <input type="password" class="form-control" name="password" placeholder="Введите Пароль">
-                                        </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Пароль:</label>
+                                        <input type="password" class="form-control" name="password" placeholder="Введите Пароль">
                                     </div>
+                                </div>
 
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Повторите пароль:</label>
-                                            <input type="password" class="form-control" name="password2" placeholder="Введите Пароль">
-                                        </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Повторите пароль:</label>
+                                        <input type="password" class="form-control" name="password2" placeholder="Введите Пароль">
                                     </div>
-                                    <?php
-                                }
-                            ?>
+                                </div>
+                            <?php endif; ?>
 
                             <?php if (module('module_zetta_pacs')): ?>
                                 <legend><b>ZeTTa PACS</b></legend>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>PACS Логин:</label>
-                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" required value="<?= $post['pacs_login'] ?>">
+                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $post['pacs_login'] ?>">
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>PACS пароль:</label>
-                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" required value="<?= $post['pacs_password'] ?>">
+                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $post['pacs_password'] ?>">
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -178,6 +162,9 @@ class UserModel extends Model
             </script>
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function clean()

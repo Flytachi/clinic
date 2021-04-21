@@ -155,7 +155,7 @@ class WardModel extends Model
 
     public function form($pk = null)
     {
-        global $FLOOR;
+        global $FLOOR, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -172,15 +172,11 @@ class WardModel extends Model
 
             <div class="form-group">
                 <label>Выбирите этаж:</label>
-                <select data-placeholder="Выбрать этаж" name="floor" id="floor" class="form-control form-control-select2" required>
+                <select data-placeholder="Выбрать этаж" name="floor" id="floor" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
-                    <?php
-                    foreach ($FLOOR as $key => $value) {
-                        ?>
+                    <?php foreach ($FLOOR as $key => $value): ?>
                         <option value="<?= $key ?>"<?= ($post['floor']  == $key) ? 'selected': '' ?>><?= $value ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -195,6 +191,9 @@ class WardModel extends Model
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function success()
@@ -226,7 +225,7 @@ class BedModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $FLOOR;
+        global $db, $FLOOR, $classes;
         if($pk){
             $post = $this->post;
             $post['floor'] = $db->query("SELECT * FROM wards WHERE id = ". $post['ward_id'])->fetch()['floor'];
@@ -244,7 +243,7 @@ class BedModel extends Model
 
             <div class="form-group">
                 <label>Выбирите этаж:</label>
-                <select data-placeholder="Выбрать этаж" id="floor" class="form-control form-control-select2" required>
+                <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php
                     foreach ($FLOOR as $key => $value) {
@@ -258,7 +257,7 @@ class BedModel extends Model
 
             <div class="form-group">
                <label>Палата:</label>
-               <select data-placeholder="Выбрать палату" name="ward_id" id="ward_id" class="form-control form-control-select2" required>
+               <select data-placeholder="Выбрать палату" name="ward_id" id="ward_id" class="<?= $classes['form-select'] ?>" required>
                    <option></option>
                    <?php
                    foreach($db->query('SELECT * from wards') as $row) {
@@ -277,7 +276,7 @@ class BedModel extends Model
 
             <div class="form-group">
                 <label>Тип:</label>
-                <select data-placeholder="Выбрать тип" name="types" class="form-control form-control-select2" required>
+                <select data-placeholder="Выбрать тип" name="types" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php
                     foreach($db->query('SELECT * from bed_type') as $row) {
@@ -300,6 +299,9 @@ class BedModel extends Model
             });
         </script>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function get_or_404(int $pk)

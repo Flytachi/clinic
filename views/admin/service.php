@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "Услуги";
 ?>
 <!DOCTYPE html>
@@ -14,7 +14,6 @@ $header = "Услуги";
 <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
-
 
 <body>
 	<!-- Main navbar -->
@@ -39,9 +38,9 @@ $header = "Услуги";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-primary">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header text-dark header-elements-inline alpha-primary">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить Услугу</h5>
 		          	</div>
 
@@ -80,9 +79,9 @@ $header = "Услуги";
 
 	        	</div>
 
-        		<div class="card border-1 border-primary">
+        		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header text-dark header-elements-inline alpha-primary">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Услуг</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">

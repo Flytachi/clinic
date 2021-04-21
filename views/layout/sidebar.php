@@ -29,7 +29,7 @@
 
                     <?php if ($_SESSION['master_status']): ?>
                         <li class="nav-item">
-                            <a href="<?= logout_avatar() ?>" class="nav-link">
+                            <a href="<?= $session->logout_avatar_link() ?>" class="nav-link">
                                 <i class="icon-arrow-down16"></i>
                                 <span>Logout in avatar</span>
                             </a>
@@ -51,12 +51,6 @@
                         </li>
                     <?php endif; ?>
 
-                    <!-- <li class="nav-item">
-                        <a href="<?= logout() ?>" class="nav-link">
-                            <i class="icon-switch2"></i>
-                            <span>Logout</span>
-                        </a>
-                    </li> -->
                 </ul>
             </div>
         </div>

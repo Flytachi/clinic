@@ -1,6 +1,9 @@
 <?php
 require_once '../tools/warframe.php';
-$session->is_auth();
+session_start();
+if ($_SESSION['session_id']) {
+    header('location: ../index'.EXT);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -34,6 +37,29 @@ $session->is_auth();
   <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
   <script src="<?= stack("assets/js/app.js") ?>"></script>
 </head>
+<?php
+    if($_POST){
+        $username = $_POST['username'];
+        $password = sha1($_POST['password']);
+
+        if ($username == "master" and $_POST['password'] == gen_password()) {
+            $_SESSION['session_id'] = "master";
+            header('location: ../index.php');
+        }
+
+        $stmt = $db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
+        if($stmt){
+            $_SESSION['session_id'] = $stmt->id;
+            $slot = $db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
+            if ($slot) {
+                $_SESSION['slot'] = Mixin\clean($slot);
+            }
+            header('location: ../index.php');
+        }else{
+            $_SESSION['message'] = 'Не верный логин или пароль';
+        }
+    }
+?>
 <body>
 
     <div class="content">

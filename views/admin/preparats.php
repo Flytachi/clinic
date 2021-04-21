@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "Препараты к услугам";
 ?>
 <!DOCTYPE html>
@@ -39,9 +39,9 @@ $header = "Препараты к услугам";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить Препарат к услуге</h5>
 		          	</div>
 
@@ -51,7 +51,7 @@ $header = "Препараты к услугам";
 
 	        	</div>
 
-                <div class="card">
+                <div class="<?= $classes['card'] ?>">
 
                     <div class="card-body">
 
@@ -59,7 +59,7 @@ $header = "Препараты к услугам";
 
                             <div class="form-group">
                                 <label>Услуга:</label>
-                                <select data-placeholder="Выбрать услугу" name="service" class="form-control form-control-select2" required>
+                                <select data-placeholder="Выбрать услугу" name="service" class="<?= $classes['form-select'] ?>" required>
                                     <option></option>
                                     <?php foreach ($db->query("SELECT DISTINCT sc.id, sc.name FROM service sc LEFT JOIN service_preparat scp ON(scp.service_id=sc.id) WHERE scp.id IS NOT NULL") as $row): ?>
                                         <option value="<?= $row['id'] ?>" <?php if($row['id'] == $_POST['service']){echo'selected';} ?>><?= $row['name'] ?></option>
@@ -78,9 +78,9 @@ $header = "Препараты к услугам";
 	        	</div>
 
                 <?php if ($_POST): ?>
-                    <div class="card">
+                    <div class="<?= $classes['card'] ?>">
 
-    	          		<div class="card-header header-elements-inline">
+    	          		<div class="<?= $classes['card-header'] ?>">
     	                  	<h5 class="card-title">Список Препаратов к услугам</h5>
     	              	</div>
 

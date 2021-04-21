@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth('master');
+$session->is_auth('master');
 $header = "Контроль базы данных";
 ?>
 <!DOCTYPE html>

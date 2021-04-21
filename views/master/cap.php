@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth('master');
+$session->is_auth('master');
 
 if ($_GET['is_delete']) {
     unlink("../../dump/".$_GET['file']);

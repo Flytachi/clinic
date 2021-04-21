@@ -24,6 +24,27 @@ var FormLayouts = function() {
             return;
         };
 
+        // Format myselect
+        function MyFormat(params) {
+            var originalOption = params.element;
+            if (!params.id) { return params.text; }
+
+            var $params = '<div class="d-flex justify-content-between"><span>'+ params.text +'</span>';
+            if ($(originalOption).data('name')) { $params +='<span>'+ $(originalOption).data('name') +'</span>'; }
+            if ($(originalOption).data('price')) { $params +='<span>'+ $(originalOption).data('price') +'</span>'; }
+            $params += '</div>';
+
+            return $params;
+        }
+
+        // Initialize with options
+        $('.myselect').select2({
+            templateResult: MyFormat,
+            templateSelection: MyFormat,
+            escapeMarkup: function(m) { return m; }
+        });
+        
+
         // Basic example
         $('.form-control-select2').select2();
 

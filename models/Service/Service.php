@@ -33,7 +33,7 @@ class ServiceModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $PERSONAL;
+        global $db, $PERSONAL, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -52,36 +52,27 @@ class ServiceModel extends Model
 
                 <div class="col-md-5">
                     <label>Выбирите Роль:</label>
-                    <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="form-control form-control-select2" required>
+                    <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php
-                        foreach ($PERSONAL as $key => $value) {
-                            ?>
+                        <?php foreach ($PERSONAL as $key => $value): ?>
                             <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-4">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="form-control form-control-select2" required >
+                    <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required >
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from division') as $row) {
-                            ?>
+                        <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
-
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-3">
                     <label>Тип:</label>
-                    <select name="type" class="form-control form-control-select2" required >
+                    <select name="type" class="<?= $classes['form-select'] ?>" required>
                         <option value="1" <?= ($post['type']==1) ? 'selected': '' ?>>Обычная</option>
                         <option value="2" <?= ($post['type']==2) ? 'selected': '' ?>>Консультация</option>
                         <option value="3" <?= ($post['type']==3) ? 'selected': '' ?>>Операционная</option>
@@ -120,6 +111,9 @@ class ServiceModel extends Model
             });
         </script>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function clean()

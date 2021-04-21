@@ -1,6 +1,6 @@
 <?php
 require_once 'tools/warframe.php';
-is_auth();
+$session->is_auth();
 
 if ($_SESSION['session_id'] == "master") {
     render('master/index');

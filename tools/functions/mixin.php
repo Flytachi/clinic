@@ -176,10 +176,11 @@ function updatePro($tb, $post, $pk)
     }
 }
 
-function delete($tb, $pk){
+function delete($tb, $pk, $name_pk = null){
     global $db;
-    $stmt = $db->prepare("DELETE FROM $tb WHERE id = :id");
-    $stmt->bindValue(':id', $pk);
+    $name_pk = ($name_pk) ? $name_pk : "id";
+    $stmt = $db->prepare("DELETE FROM $tb WHERE $name_pk = :item");
+    $stmt->bindValue(':item', $pk);
     $stmt->execute();
     return $stmt->rowCount();
 
@@ -230,7 +231,9 @@ function T_FLUSH_database()
         $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
-            T_flush($table['Tables_in_clinic']);
+            if ($table['Tables_in_clinic'] != "sessions") {
+                T_flush($table['Tables_in_clinic']);
+            }
         }
 
         $db->commit();

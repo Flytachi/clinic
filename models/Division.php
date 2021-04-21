@@ -6,7 +6,7 @@ class DivisionModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $PERSONAL;
+        global $db, $PERSONAL, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -25,15 +25,11 @@ class DivisionModel extends Model
 
             <div class="form-group">
                 <label>Выбирите Роль:</label>
-                <select data-placeholder="Выбрать роль" name="level" class="form-control form-control-select2" required>
+                <select data-placeholder="Выбрать роль" name="level" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
-                    <?php
-                    foreach ($PERSONAL as $key => $value) {
-                        ?>
+                    <?php foreach ($PERSONAL as $key => $value): ?>
                         <option value="<?= $key ?>"<?= ($post['level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -69,6 +65,9 @@ class DivisionModel extends Model
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function clean()
