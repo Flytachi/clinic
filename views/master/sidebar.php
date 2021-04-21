@@ -17,7 +17,7 @@
 			<div class="collapse" id="user-nav">
 				<ul class="nav nav-sidebar">
 					<li class="nav-item">
-						<a href="<?= logout() ?>" class="nav-link">
+						<a href="<?= $session->logout_link() ?>" class="nav-link">
 							<i class="icon-switch2"></i>
 							<span>Logout</span>
 						</a>

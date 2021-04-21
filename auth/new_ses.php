@@ -11,6 +11,7 @@ session_set_save_handler( 'sess_open',
 require_once '../tools/functions/connection.php';
 // -----------------------------------------------------------------------
 
+ini_set('session.gc_maxlifetime', 10);
 // Эти функции оставим пустыми...
 function sess_open($sess_path, $sess_name)
 {
@@ -34,10 +35,10 @@ function sess_read($sess_id)
     {
         $sql = "UPDATE sessions1 SET date_touched=\"$current_time\" WHERE session_id = \"$sess_id\"";
         
-        $result = $db->query($sql)->fetch();
+        $resul = $db->query($sql)->fetch();
         // Как мы помним только из этого обработчика
         // Мы возвращаем данные, а не логическое значение:
-        return html_entity_decode($result['sess_data']);
+        return html_entity_decode(htmlentities($result['sess_data'],ENT_QUOTES));
     }
     else
     {
@@ -58,24 +59,24 @@ function sess_write($sess_id, $data)
     $sql = "UPDATE sessions1 SET date_touched=\"$current_time\", sess_data=\"$data\" WHERE session_id = \"$sess_id\"";
     $result = $db->query($sql)->fetch();
     return true;
-}
- 
-// Уничтожаем данные:
-function sess_destroy($sess_id)
-{
+  }
+  
+  // Уничтожаем данные:
+  function sess_destroy($sess_id)
+  {
     global $db;
     $sql = "DELETE FROM sessions1 WHERE session_id = \"$sess_id\"";
     $result = $db->query($sql)->fetch();
     return true;
-}
- 
-// Описываем действия сборщика мусора:
-function sess_gb($sess_maxlifetime)
-{
+  }
+  
+  // Описываем действия сборщика мусора:
+  function sess_gb($sess_maxlifetime)
+  {
     global $db;
-    $current_time = date('Y-m-d H:i:s');
-
-    $sql = "DELETE FROM sessions1 WHERE date_touched + $sess_maxlifetime < $current_time";
+    $current_time = date('Y-m-d H:m:s') ;
+    
+    $sql = "DELETE FROM sessions1 WHERE 1";
     $result = $db->query($sql)->fetch();
     
     return true;
@@ -100,4 +101,6 @@ else
 }
  
 echo '<h1> increment = '.$_SESSION['increment'].'</h1>';
+
+session_destroy();
 ?>

@@ -28,7 +28,7 @@
 
         <ul class="navbar-nav ml-md-auto">
             <li class="nav-item">
-                <a href="<?= logout() ?>" class="navbar-nav-link">
+                <a href="<?= $session->logout_link() ?>" class="navbar-nav-link">
                     <i class="icon-switch2"></i>
                     <span class="d-md-none ml-2">Logout</span>
                 </a>

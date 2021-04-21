@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'functions/connection.php';
 
 // Settings mod
@@ -46,7 +45,6 @@ if ($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) {
 
 require_once 'constant.php';
 require_once 'functions/session.php';
-require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'functions/base.php';
 require_once 'functions/model.php';
@@ -496,4 +494,5 @@ function pagination_page($count, $elem, $count_button = 2)
     echo "</ul>";
 }
 
+$session = new Session;
 ?>

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth('master');
+$session->is_auth('master');
 
 if ($_GET['tb_name']) {
     Mixin\T_flush($_GET['tb_name']);

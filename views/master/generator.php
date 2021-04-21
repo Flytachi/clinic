@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth('master');
+$session->is_auth('master');
 
 header('Access-Control-Allow-Origin: *');
 header('Content-type: application/json');
