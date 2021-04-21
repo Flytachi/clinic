@@ -231,7 +231,9 @@ function T_FLUSH_database()
         $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
-            T_flush($table['Tables_in_clinic']);
+            if ($table['Tables_in_clinic'] != "sessions") {
+                T_flush($table['Tables_in_clinic']);
+            }
         }
 
         $db->commit();

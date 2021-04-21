@@ -120,7 +120,8 @@ class Model
         ?>
         <script type="text/javascript">
             $( document ).ready(function() {
-                Select2Selects.init();
+                FormLayouts.init();
+                // Select2Selects.init();
             });
         </script>
         <?php

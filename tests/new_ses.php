@@ -1,4 +1,16 @@
 <?php
+
+/* DB
+
+CREATE TABLE `sessions1` (
+ `session_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+ `date_touched` datetime NOT NULL,
+ `sess_data` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+ PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+*/
+
 ini_set('display_errors', 1);
 //Устанавливаем обработчики событиям сессии:
 session_set_save_handler( 'sess_open',

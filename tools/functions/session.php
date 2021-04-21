@@ -6,10 +6,8 @@ class Session
     public $index_url = "../index".EXT; //../index.php
     public $logout_url = DIR."/auth/logout".EXT;
 
-    private $life_session = 15; // minute
+    private $life_session = 20; // minute
     private $table = "sessions";
-    protected $session_id;
-    protected $session_login;
 
     function __construct()
     {
@@ -20,6 +18,11 @@ class Session
     {
         $this->session_id = $_SESSION['session_id'];
         $this->session_login = $_SESSION['session_login'];
+        $this->master_status = $_SESSION['master_status'];
+        $this->session_get_full_name = $_SESSION['session_get_full_name'];
+        $this->session_level = $_SESSION['session_level'];
+        $this->session_division = $_SESSION['session_division'];
+
         if ($_SESSION['browser']) {
             $this->browser = $_SESSION['browser'];
         }else{
@@ -41,6 +44,9 @@ class Session
             if ( ((EXT) ? $this->login_url : $this->login_url.".php") == $_SERVER['PHP_SELF']) {
                 $this->login_success();
             }
+            // присвоение и создание в базе сессии
+            $this->session_check();
+            $this->set_data($_SESSION['session_id']);
         }else {
             if ( ((EXT) ? $this->login_url : $this->login_url.".php") != $_SERVER['PHP_SELF']) {
                 $this->login();
@@ -52,23 +58,17 @@ class Session
         // проверка прав
         if ($_SESSION['session_id'] != "master") {
             if ($arr){
-                $perk =level();
                 if (is_array($arr)){
-                    if(!in_array($perk, $arr)){
+                    if(!in_array($this->data->user_level, $arr)){
                         Mixin\error('423');
                     }
                 }else{
-                    if(intval($arr) != $perk){
+                    if(intval($arr) != $this->data->user_level){
                         Mixin\error('423');
                     }
                 }
             }
         }
-        // присвоение и создание в базе сессии
-        if ($_SESSION['session_id']) {
-            $this->session_check();
-        }
-        // dd($_SESSION);
     }
 
     private function auth(string $login = null, string $password = null)
@@ -78,15 +78,13 @@ class Session
         $password = sha1($password);
 
         if ($username == "master" and $_POST['password'] == $this->gen_password()) {
-            $_SESSION['session_id'] = "master";
-            $_SESSION['session_login'] = "master";
+            $this->set_data("master");
             $this->login_success();
         }
 
         $stmt = $db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
         if($stmt){
-            $_SESSION['session_id'] = $stmt->id;
-            $_SESSION['session_login'] = $username;
+            $this->set_data($stmt->id);
             $slot = $db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
             if ($slot) {
                 $_SESSION['session_slot'] = Mixin\clean($slot);
@@ -175,6 +173,40 @@ class Session
         Mixin\delete($this->table, session_id(), 'session_id');
         session_destroy();
         header("location: $this->login_url");
+    }
+
+    public function set_data($pk) {
+        global $db;
+        if ($pk != "master") {
+            $this->data = $db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+            $_SESSION['session_id'] = $pk;
+            $_SESSION['session_login'] = $this->data->username;
+            $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
+            $_SESSION['session_level'] = $this->data->user_level;
+	        $_SESSION['session_division'] = $this->data->division_id;
+        }else {
+            $_SESSION['session_id'] = "master";
+            $_SESSION['session_login'] = "master";
+            $_SESSION['session_level'] = "master";
+	        $_SESSION['session_division'] = "master";
+        }
+        
+    }
+
+    public function get_data() {
+        return $this->data;
+    }
+
+    public function get_full_name() {
+        return $this->session_get_full_name;
+    }
+
+    public function get_level() {
+        return $this->data->user_level;
+    }
+    
+    public function get_division() {
+        return $this->data->division_id;
     }
 
 }

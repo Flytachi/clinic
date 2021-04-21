@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth('master');
+$session->is_auth('');
 $header = "Главная";
 ?>
 <!DOCTYPE html>
