@@ -660,6 +660,28 @@ class VisitModel extends Model
 
                 $db->commit();
                 $this->success($success);
+            }else {
+                $db->beginTransaction();
+                
+                // Удаляем визит
+                $object = Mixin\delete($this->table, $pk);
+                if (!intval($object)) {
+                    $this->error($object, 1);
+                    $db->rollBack();
+                }
+                Mixin\delete('visit_price', $pk, 'visit_id');
+
+                // Обновляем статус
+                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
+                if(!$status){
+                    Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    $success = 2;
+                }else {
+                    $success = 1;
+                }
+
+                $db->commit();
+                $this->success($success);
             }
 
         }else {
