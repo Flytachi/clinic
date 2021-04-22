@@ -1,5 +1,5 @@
 setting.ini
 tools/PHPExcel
-dump/*
-storage/*
+dump
+storage
 node_modules
