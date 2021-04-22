@@ -6,11 +6,12 @@ class Session
     public $index_url = "../index".EXT; //../index.php
     public $logout_url = DIR."/auth/logout".EXT;
 
-    private $life_session = 20; // minute
+    public $life_session = 20; // minute
     private $table = "sessions";
 
-    function __construct()
+    function __construct($time = null)
     {
+        if ($time >= 1) $this->life_session = $time;
         session_start();
     }
 

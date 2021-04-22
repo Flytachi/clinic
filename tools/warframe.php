@@ -49,7 +49,7 @@ require_once 'functions/tag.php';
 require_once 'functions/base.php';
 require_once 'functions/model.php';
 
-$session = new Session;
+$session = new Session($ini['GLOBAL_SETTING']['SESSION_LIFE']);
 
 // Подключение Моделей
 foreach (get_dir_contents($_SERVER['DOCUMENT_ROOT']."/models/") as $filename) {

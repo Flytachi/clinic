@@ -63,13 +63,13 @@ class __Make
         DRIVER = mysql
         CHARSET = utf8
         TIME_ZONE = Asia/Samarkand
-        
-        # Скрыть расширения Файлов
-        # Так же надо настроить сервер
+        SESSION_LIFE = 
+
         HIDE_EXTENSION = false
-        DEBUG = false
-        ROOT_MOD = true
-        
+        ROOT_MOD = false
+        DEBUG = true
+
+
         [DATABASE]
         HOST = localhost
         NAME = 
