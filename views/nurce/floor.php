@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth();
+$session->is_auth();
 $pk_floor = $_GET['type'];
 ?>
 <div class="card border-1 border-info">

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(5);
+$session->is_auth(5);
 $header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>

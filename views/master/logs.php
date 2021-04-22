@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth('master');
+$session->is_auth('master');
 $header = "Логи";
 ?>
 <!DOCTYPE html>
@@ -41,6 +41,7 @@ $header = "Логи";
 
 				<?php parad("_SERVER ",$_SERVER); ?>
 				<?php parad("Modules ",module()); ?>
+				<?php parad("_session ",$_SESSION); ?>
 				<?php parad("_SESSION ",$_SESSION); ?>
 
 			</div>

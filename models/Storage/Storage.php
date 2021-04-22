@@ -40,7 +40,7 @@ class Storage extends Model
 
     public function form($pk = null)
     {
-        global $CATEGORY;
+        global $CATEGORY, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -98,15 +98,11 @@ class Storage extends Model
 
                 <div class="col-md-3">
                     <label>Категория:</label>
-                    <select data-placeholder="Выбрать этаж" name="category" class="form-control form-control-select2" required>
+                    <select data-placeholder="Выбрать этаж" name="category" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php
-                        foreach ($CATEGORY as $key => $value) {
-                            ?>
+                        <?php foreach ($CATEGORY as $key => $value): ?>
                             <option value="<?= $key ?>" <?= ($post['category'] == $key) ? 'selected': '' ?>><?= $value ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -138,6 +134,9 @@ class Storage extends Model
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function clean()

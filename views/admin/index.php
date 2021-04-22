@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "Персонал";
 ?>
 <!DOCTYPE html>
@@ -8,12 +8,10 @@ $header = "Персонал";
 <?php include layout('head') ?>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 
 <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -39,9 +37,9 @@ $header = "Персонал";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-primary">
+				<div class="<?= $classes['card'] ?>">
 
-				    <div class="card-header text-dark header-elements-inline alpha-primary">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h5 class="card-title">Добавить Пользователя</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">
@@ -56,9 +54,9 @@ $header = "Персонал";
 
 				</div>
 
-				<div class="card border-1 border-primary">
+				<div class="<?= $classes['card'] ?>">
 
-				    <div class="card-header text-dark header-elements-inline alpha-primary">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h5 class="card-title">Список Пользователей</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">

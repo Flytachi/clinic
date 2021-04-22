@@ -75,7 +75,8 @@ class VisitFailure extends Model
             ob_start();
             $form->delete($this->post['id']);
             ob_clean();
-            Mixin\update('beds', array('user_id' => null), $visit['bed_id']);
+
+            Mixin\delete('visit_analyze', $this->post['id'], 'visit_id');
             $this->success($this->post['id']);
         }else {
             $this->post = Mixin\clean_form($this->post);

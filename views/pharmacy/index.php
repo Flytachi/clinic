@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(4);
+$session->is_auth(4);
 $header = "Препараты";
 ?>
 <!DOCTYPE html>

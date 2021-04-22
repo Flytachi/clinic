@@ -172,13 +172,11 @@ class PatientForm extends Model
             </div>
 
         </form>
-        <?php if($pk): ?>
-            <script type="text/javascript">
-                $( document ).ready(function() {
-                    Select2Selects.init();
-                });
-            </script>
-        <?php endif; ?>
+        <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
+        ?>
         <script type="text/javascript">
             $(function(){
                 $("#region").chained("#province");

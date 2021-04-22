@@ -6,7 +6,7 @@ class ServicePreparatModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -23,7 +23,7 @@ class ServicePreparatModel extends Model
 
             <div class="form-group">
                 <label>Услуга:</label>
-                <select data-placeholder="Выбрать услугу" name="service_id" class="form-control form-control-select2" required>
+                <select data-placeholder="Выбрать услугу" name="service_id" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($db->query("SELECT * from service WHERE type = 3") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
@@ -36,7 +36,7 @@ class ServicePreparatModel extends Model
                 <div class="col-md-10">
                     <div class="form-group">
                         <label>Препарат:</label>
-                        <select data-placeholder="Выбрать услугу" name="preparat_id" class="form-control form-control-select2" required>
+                        <select data-placeholder="Выбрать услугу" name="preparat_id" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT * from storage") as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?php if($row['id'] == $post['preparat_id']){echo'selected';} ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</option>
@@ -60,6 +60,9 @@ class ServicePreparatModel extends Model
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function success()

@@ -6,13 +6,12 @@ class VisitAnalyzeModel extends Model
 
     public function table_form($pk = null)
     {
-        global $db;
+        global $db, $session;
         if($pk){
             $post = $this->post;
         }else{
             $post = array();
         }
-        $pat = $db->query("SELECT gender FROM users WHERE id = {$_GET['id']}")->fetch();
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -56,11 +55,16 @@ class VisitAnalyzeModel extends Model
                                             <th class="text-center" style="width:10%">Отклонение</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <?php foreach ($db->query("SELECT vs.id, vs.service_id, sc.name FROM visit vs LEFT JOIN service sc ON (sc.id=vs.service_id) WHERE vs.completed IS NULL AND vs.laboratory IS NOT NULL AND vs.status = 2 AND vs.user_id = {$_GET['id']} AND vs.division_id = {$tab['id']} ORDER BY vs.add_date ASC") as $row_parent): ?>
-                                            <?php $norm = "scl.name, scl.code, scl.standart"; $s = 1; ?>
+                                    <?php foreach ($db->query("SELECT vs.id, vs.service_id, sc.name FROM visit vs LEFT JOIN service sc ON (sc.id=vs.service_id) WHERE vs.completed IS NULL AND vs.laboratory IS NOT NULL AND vs.status = 2 AND vs.user_id = {$_GET['id']} AND vs.division_id = {$tab['id']} ORDER BY vs.add_date ASC") as $row_parent): ?>
+                                        <?php $norm = "scl.name, scl.code, scl.standart"; $s = 1; ?>
+                                        <tbody id="PatientFailure_tr_<?= $row_parent['id'] ?>">
                                             <tr>
-                                                <th colspan="9" class="text-center"><?= $row_parent['name'] ?></th>
+                                                <th colspan="6" class="text-center"><?= $row_parent['name'] ?></th>
+                                                <th class="text-right">
+                                                    <div class="list-icons">
+                                                        <button onclick="$('#vis_id').val(<?= $row_parent['id'] ?>); $('#vis_title').text('<?= get_full_name($_GET['id']) ?>'); $('#renouncement').attr('data-userid', '<?= $_GET['id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $session->session_id ?>');" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+                                                    </div>
+                                                </th>
                                             </tr>
                                             <?php foreach ($db->query("SELECT vl.id, vl.result, vl.deviation, scl.id 'analyze_id', $norm, sc.name 'ser_name' FROM service_analyze scl LEFT JOIN service sc ON(scl.service_id=sc.id) LEFT JOIN visit_analyze vl ON(vl.user_id={$_GET['id']} AND vl.analyze_id=scl.id AND vl.visit_id ={$row_parent['id']}) WHERE scl.service_id = {$row_parent['service_id']}") as $row): ?>
                                                 <tr id="TR_<?= $i ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
@@ -86,8 +90,8 @@ class VisitAnalyzeModel extends Model
                                                     </td>
                                                 </tr>
                                             <?php $i++; endforeach; ?>
-                                        <?php endforeach; ?>
-                                    </tbody>
+                                        </tbody>
+                                    <?php endforeach; ?>
                                 </table>
                             </div>
 

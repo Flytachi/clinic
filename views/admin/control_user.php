@@ -42,9 +42,9 @@ $header = "Визиты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -61,7 +61,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select name="user_id" class="form-control myselect">
+									<select name="user_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите пациента</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
@@ -112,9 +112,9 @@ $header = "Визиты";
 						}
 					}
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Users</h6>
 							<div class="header-elements">
 								<div class="list-icons">

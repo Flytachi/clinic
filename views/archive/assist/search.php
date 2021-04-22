@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-is_auth();
+$session->is_auth();
 
 if(empty($_GET['search'])){
     $sql = "SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date

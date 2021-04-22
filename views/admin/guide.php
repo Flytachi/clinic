@@ -39,9 +39,9 @@ $header = "Услуги";
 			<div class="content">
 
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить врача оператора</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
@@ -56,9 +56,9 @@ $header = "Услуги";
 
 	        	</div>
 
-        		<div class="card">
+        		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header header-elements-inline">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Врачей Операторов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">

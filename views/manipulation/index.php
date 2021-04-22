@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(13);
+$session->is_auth(13);
 $header = "Приём пациетов";
 ?>
 <!DOCTYPE html>

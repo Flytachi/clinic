@@ -45,4 +45,11 @@ $methods = array(
     8 => "Ингаляционный",
     9 => "Поверхностное натирание",
 );
+
+$classes = array(
+    "card" => "card border-1 border-primary",
+    "card-header" => "card-header text-dark header-elements-inline alpha-primary",
+    "form-select" => "form-control form-control-select2",
+    "form-select_price" => "form-control myselect",
+)
 ?>

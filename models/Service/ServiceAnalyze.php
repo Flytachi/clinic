@@ -6,7 +6,7 @@ class ServiceAnalyzeModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -23,7 +23,7 @@ class ServiceAnalyzeModel extends Model
 
             <div class="form-group">
                 <label>Услуга:</label>
-                <select data-placeholder="Выбрать услугу" name="service_id" class="form-control form-control-select2" required>
+                <select data-placeholder="Выбрать услугу" name="service_id" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($db->query("SELECT * from service WHERE user_level = 6") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
@@ -69,6 +69,9 @@ class ServiceAnalyzeModel extends Model
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function success()

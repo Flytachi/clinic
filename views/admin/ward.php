@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "Палаты";
 ?>
 <!DOCTYPE html>
@@ -38,9 +38,9 @@ $header = "Палаты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить Палату</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
@@ -55,9 +55,9 @@ $header = "Палаты";
 
 	        	</div>
 
-        		<div class="card">
+        		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header header-elements-inline">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Палат</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">

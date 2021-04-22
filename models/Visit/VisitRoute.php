@@ -1056,9 +1056,12 @@ class VisitRoute extends Model
     {
         global $db;
         if($this->clean()){
+            $db->beginTransaction();
+
             $object = Mixin\insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
+                $db->rollBack();
             }
             $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
             $post['visit_id'] = $object;
@@ -1070,7 +1073,10 @@ class VisitRoute extends Model
             $object = Mixin\insert('visit_price', $post);
             if (intval($object)){
                 $this->error($object);
+                $db->rollBack();
             }
+            
+            $db->commit();
             $this->success();
         }
     }
@@ -1078,7 +1084,8 @@ class VisitRoute extends Model
     public function save_package()
     {
         global $db;
-        // $this->mod('test');
+        $db->beginTransaction();
+
         foreach ($this->post['service'] as $key => $value) {
 
             $post_big['direction'] = $this->post['direction'];
@@ -1106,6 +1113,7 @@ class VisitRoute extends Model
                 $object = Mixin\insert($this->table, $post_big);
                 if (!intval($object)){
                     $this->error($object);
+                    $db->rollBack();
                 }
 
                 if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
@@ -1119,17 +1127,22 @@ class VisitRoute extends Model
                     $object = Mixin\insert('visit_price', $post);
                     if (!intval($object)){
                         $this->error($object);
+                        $db->rollBack();
                     }
                 }
             }
             unset($post_big);
         }
+
+        $db->commit();
         $this->success();
     }
 
     public function save_rows()
     {
         global $db;
+        $db->beginTransaction();
+
         if ($this->post['accept_date'] and $this->post['division_grant']) {
             $post_big['accept_date'] = date('Y-m-d H:i:s');
             $post_big['division_id'] = $this->post['division_grant'];
@@ -1163,6 +1176,7 @@ class VisitRoute extends Model
                 $object = Mixin\insert($this->table, $post_big);
                 if (!intval($object)){
                     $this->error($object);
+                    $db->rollBack();
                 }
 
                 $service = $db->query("SELECT price, name FROM service WHERE id = {$post_big['service_id']}")->fetch();
@@ -1175,10 +1189,13 @@ class VisitRoute extends Model
                 $object = Mixin\insert('visit_price', $post);
                 if (!intval($object)){
                     $this->error($object);
+                    $db->rollBack();
                 }
             }
             unset($post_big);
         }
+
+        $db->commit();
         $this->success();
     }
 

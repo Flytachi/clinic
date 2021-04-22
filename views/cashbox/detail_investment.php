@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth([3, 32]);
+$session->is_auth([3, 32]);
 $header = "Инвестиции ". addZero($_GET['pk']);
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-is_auth();
+$session->is_auth();
 
 $ser = $_GET['search']; $i; $cost = 0;
 ?>

@@ -5,6 +5,9 @@
     <li class="nav-item">
         <a href="<?= viv('reports/laboratory/content_2') ?>" class="nav-link <?= viv_link('reports/laboratory/content_2') ?> legitRipple">Визиты</a>
     </li>
+    <li class="nav-item">
+        <a href="<?= viv('reports/laboratory/content_3') ?>" class="nav-link <?= viv_link('reports/laboratory/content_3') ?> legitRipple">Кол-во</a>
+    </li>
 </ul>
 
 

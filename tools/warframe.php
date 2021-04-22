@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'functions/connection.php';
 
 // Settings mod
@@ -46,10 +45,11 @@ if ($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) {
 
 require_once 'constant.php';
 require_once 'functions/session.php';
-require_once 'functions/auth.php';
 require_once 'functions/tag.php';
 require_once 'functions/base.php';
 require_once 'functions/model.php';
+
+$session = new Session($db, $ini['GLOBAL_SETTING']['SESSION_LIFE']);
 
 // Подключение Моделей
 foreach (get_dir_contents($_SERVER['DOCUMENT_ROOT']."/models/") as $filename) {
@@ -61,17 +61,13 @@ require_once 'module.php';
 // END Module
 
 function get_full_name($id = null) {
-    global $db;
+    global $db, $session;
     if($id){
         $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
+        return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
     }else{
-        if ($_SESSION['session_id'] == "master") {
-            return "Master";
-        }
-        $id = $_SESSION['session_id'];
-        $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
+        return $session->get_full_name();
     }
-    return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
 }
 
 function zeTTa_data()
@@ -82,32 +78,16 @@ function zeTTa_data()
     return $stmt;
 }
 
-function get_name($id = null) {
-    global $db;
-    if($id){
-        $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
-    }else{
-        if ($_SESSION['session_id'] == "master") {
-            return "Master";
-        }
-        $id = $_SESSION['session_id'];
-        $stmt = $db->query("SELECT first_name, last_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
-    }
-    return ucwords($stmt->last_name." ".$stmt->first_name);
-}
-
 function level($id = null) {
     /*
     level()
     */
-    global $db;
-    if ($_SESSION['session_id'] == "master") {
-        return "master";
+    global $db, $session;
+    if(!$id){
+        $stmt = $session->get_level();
+    }else {
+        $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     }
-    if(empty($id)){
-        $id = $_SESSION['session_id'];
-    }
-    $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
     return intval($stmt);
 }
 
@@ -115,30 +95,23 @@ function level_name($id = null) {
     /*
     level_name(1)
     */
-    global $db, $PERSONAL;
-    if(empty($id)){
-        if ($_SESSION['session_id'] == "master") {
-            return "";
-        }
-        $id = $_SESSION['session_id'];
-    }
-    $stmt = $db->query("SELECT user_level from users where id = $id")->fetchColumn();
-    return $PERSONAL[$stmt];
+    global $PERSONAL;
+    return $PERSONAL[level($id)];
 }
 
 function permission($arr){
     /*
     permission(1) or permission([1,2, ..])
     */
-    $perk =level();
+    global $session;
     if (is_array($arr)){
-        if(in_array($perk, $arr)){
+        if(in_array($session->get_level(), $arr)){
             return true;
         }else{
             return false;
         }
     }else{
-        if(intval($arr) == $perk){
+        if(intval($arr) == $session->get_level()){
             return true;
         }else{
             return false;
@@ -162,11 +135,6 @@ function nodateformat($var=""){
 function showTitle() //Функция title
 {
     return "MedLine";
-}
-
-function form($name) //Функция title
-{
-    return $name();
 }
 
 /* Добавляет нули к числам, чьи значаения меньше пятизначных*/
@@ -193,35 +161,28 @@ function addZero($number){
 }
 
 function division($id = null) {
-    global $db, $PERSONAL;
-    if(empty($id)){
-        if ($_SESSION['session_id'] == "master") {
-            return "";
+    global $db, $session;
+
+    if (!$id) {
+        return $session->get_division();
+    } else {
+        $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+        try{
+            $stmt = $db->query("SELECT id from division where id = $id")->fetchColumn();
         }
-        $id = $_SESSION['session_id'];
+        catch (PDOException $ex) {
+            $stmt = null;
+        }
+        return $stmt;
     }
-    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
-    try{
-        $stmt = $db->query("SELECT id from division where id = $id")->fetchColumn();
-    }
-    catch (PDOException $ex) {
-        $stmt = null;
-    }
-    return $stmt;
+    
 }
 
 
 function division_name($id = null) {
-    global $db, $PERSONAL;
-    if(empty($id)){
-        if ($_SESSION['session_id'] == "master") {
-            return "";
-        }
-        $id = $_SESSION['session_id'];
-    }
-    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    global $db;
     try{
-        $stmt = $db->query("SELECT name from division where id = $id")->fetchColumn();
+        $stmt = $db->query("SELECT name FROM division WHERE id =".division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
@@ -230,16 +191,9 @@ function division_name($id = null) {
 }
 
 function division_title($id = null) {
-    global $db, $PERSONAL;
-    if(empty($id)){
-        if ($_SESSION['session_id'] == "master") {
-            return "";
-        }
-        $id = $_SESSION['session_id'];
-    }
-    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    global $db;
     try{
-        $stmt = $db->query("SELECT title from division where id = $id")->fetchColumn();
+        $stmt = $db->query("SELECT title FROM division WHERE id =".division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
@@ -248,13 +202,9 @@ function division_title($id = null) {
 }
 
 function division_assist($id = null) {
-    global $db, $PERSONAL;
-    if(empty($id)){
-        $id = $_SESSION['session_id'];
-    }
-    $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+    global $db;
     try{
-        $stmt = $db->query("SELECT assist from division where id = $id")->fetchColumn();
+        $stmt = $db->query("SELECT assist FROM division WHERE id =".division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
@@ -495,5 +445,4 @@ function pagination_page($count, $elem, $count_button = 2)
 
     echo "</ul>";
 }
-
 ?>

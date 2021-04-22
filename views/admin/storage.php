@@ -39,9 +39,9 @@ $header = "Аптека";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-primary">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-primary">
+					<div class="<?= $classes['card-header'] ?>">
 						<h5 class="card-title">Добавить Препарат</h5>
 					</div>
 
@@ -79,9 +79,9 @@ $header = "Аптека";
 
 				</div>
 
-				<div class="card border-1 border-primary">
+				<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header text-dark header-elements-inline alpha-primary">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Препаратов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
@@ -107,7 +107,7 @@ $header = "Аптека";
 										<th class="text-right">Бронь</th>
                                         <th class="text-right">Кол-во</th>
                                         <th class="text-right">Цена ед.</th>
-										<th style="width: 100px">Действия</th>
+										<th class="text-right" style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
@@ -143,7 +143,7 @@ $header = "Аптека";
 											<td class="text-right"><?= $row['reservation'] ?></td>
 											<td class="text-right"><?= $row['qty'] ?></td>
 											<td class="text-right"><?= number_format($row['price'], 1) ?></td>
-											<td>
+											<td class="text-right">
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'Storage') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<a href="<?= del_url($row['id'], 'Storage') ?>" onclick="return confirm('Вы уверены что хотите удалить препарат?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
