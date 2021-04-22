@@ -2,7 +2,7 @@
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 is_module('module_laboratory');
-$header = "Отчёт лаборатории по визитам";
+$header = "Отчёт лаборатории по кол-ву";
 ?>
 <!DOCTYPE html>
 <html lang="en">

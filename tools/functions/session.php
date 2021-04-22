@@ -2,15 +2,17 @@
 
 class Session
 {
+    static $db;
     public $login_url = DIR."/auth/login".EXT;
     public $index_url = "../index".EXT; //../index.php
     public $logout_url = DIR."/auth/logout".EXT;
 
-    public $life_session = 20; // minute
     private $table = "sessions";
+    public $life_session = 20; // minute
 
-    function __construct($time = null)
+    function __construct($database, $time = null)
     {
+        $this->db = $database;
         if ($time >= 1) $this->life_session = $time;
         session_start();
     }
@@ -23,7 +25,8 @@ class Session
         $this->session_get_full_name = $_SESSION['session_get_full_name'];
         $this->session_level = $_SESSION['session_level'];
         $this->session_division = $_SESSION['session_division'];
-
+        $this->session_slot = $_SESSION['session_slot'];
+        
         if ($_SESSION['browser']) {
             $this->browser = $_SESSION['browser'];
         }else{
@@ -33,9 +36,6 @@ class Session
             elseif (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false) $_SESSION['browser'] = "Internet Explorer";
             elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Safari") !== false) $_SESSION['browser'] = "Safari";
             else $_SESSION['browser'] = "Неизвестный";
-        }
-        if ($_SESSION['slot']) {
-            $this->slot = $_SESSION['slot'];
         }
     }
 
@@ -74,7 +74,6 @@ class Session
 
     private function auth(string $login = null, string $password = null)
     {
-        global $db;
         $username = Mixin\clean($login);
         $password = sha1($password);
 
@@ -83,10 +82,10 @@ class Session
             $this->login_success();
         }
 
-        $stmt = $db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
+        $stmt = $this->db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
         if($stmt){
             $this->set_data($stmt->id);
-            $slot = $db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
+            $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
             if ($slot) {
                 $_SESSION['session_slot'] = Mixin\clean($slot);
             }
@@ -98,10 +97,9 @@ class Session
 
     private function session_check()
     {
-        global $db;
         $this->session_old_delete();
         $sid = session_id();
-        $object = $db->query("SELECT * FROM $this->table WHERE session_id = \"$sid\"")->fetch();
+        $object = $this->db->query("SELECT * FROM $this->table WHERE session_id = \"$sid\"")->fetch();
         if ($object) {
             $this->init();
             $this->session_create_or_update();  
@@ -112,14 +110,12 @@ class Session
 
     private function session_old_delete()
     {
-        global $db;
-        $stmt = $db->prepare("DELETE FROM $this->table WHERE last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
+        $stmt = $this->db->prepare("DELETE FROM $this->table WHERE last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
         $stmt->execute();
     }
 
     private function session_create_or_update()
     {
-        global $db;
         $date = date("Y-m-d H:i:s");
         $new_ses = array(
             'session_id' => session_id(), 
@@ -170,16 +166,14 @@ class Session
 
     public function destroy()
     {
-        global $db;
         Mixin\delete($this->table, session_id(), 'session_id');
         session_destroy();
         header("location: $this->login_url");
     }
 
     public function set_data($pk) {
-        global $db;
         if ($pk != "master") {
-            $this->data = $db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+            $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
             $_SESSION['session_id'] = $pk;
             $_SESSION['session_login'] = $this->data->username;
             $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
@@ -192,6 +186,11 @@ class Session
 	        $_SESSION['session_division'] = "master";
         }
         
+    }
+
+    public function get_accounts()
+    {
+        return $this->db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"$this->session_slot\" ")->fetchAll();
     }
 
     public function get_data() {

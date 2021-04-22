@@ -17,8 +17,8 @@
 
             <div class="collapse" id="user-nav">
                 <ul class="nav nav-sidebar">
-
-                    <?php foreach ($db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"{$_SESSION['slot']}\" ") as $acc): ?>
+                    
+                    <?php foreach ($session->get_accounts() as $acc): ?>
                         <li class="nav-item">
                             <a href="<?= DIR."/auth/recheck".EXT ?>?slot=<?= $acc['id'] ?>" class="nav-link">
                                 <i class="icon-user"></i>
