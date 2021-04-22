@@ -1,5 +1,5 @@
 <?php
-require_once 'model.php';
+require_once 'make.php';
 
 /**
  * CMD
@@ -37,17 +37,8 @@ class __Make
 
             try {
 
-                if ($this->name) {
-                    $Class_construct = "__".ucfirst($this->argument);
-                    $cmd = new $Class_construct($this->name);
-                    if ($cmd->create()) {
-                        echo "\033[32m". " Модель успешно создана.\n";
-                    }else {
-                        echo "\033[31m"." Ошибка при создании модели.\n";
-                    }
-                }else {
-                    echo "\033[33m"." Введите название модели.\n";
-                }
+                $Class_construct = "__".ucfirst($this->argument);
+                new $Class_construct($this->name);
     
             } catch (\Error $e) {
                 echo "\033[31m"." Не такого аргумента.\n";
@@ -169,10 +160,13 @@ class __Install
 class __Db
 {
     private $argument;
-    private $file_name = "database";
-    private $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
-    private $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
+    private String $path = "tools/Data/database"; 
+    private String $path_seed = "tools/Data/ci"; 
+    private String $format = "json"; 
+    private String $file_name = "database";
+    private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
+    private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    private Array $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
 
     function __construct($value = null, $name = null)
     {
@@ -203,6 +197,9 @@ class __Db
                 $this->clean();
             }elseif($this->argument == "delete") {
                 $this->delete();
+            }elseif($this->argument == "seed") {
+                $this->seed_table = ($this->file_name == "database") ? null : $this->file_name;
+                $this->seed();
             }else{
                 echo "\033[31m"." Нет такого аргумента.\n";
             }
@@ -245,7 +242,8 @@ class __Db
         require_once dirname(__DIR__, 1).'/functions/connection.php';
         require_once dirname(__DIR__, 1).'/functions/mixin.php';
 
-        $file = file_get_contents(dirname(__DIR__, 1)."/DB/$this->file_name.json");
+        $file = file_get_contents(dirname(__DIR__, 2)."/$this->path/$this->file_name.$this->format");
+        
         $data = json_decode($file, true);
         $_initialize = Mixin\T_INITIALIZE_database($data);
         if ($_initialize == 200) {
@@ -318,11 +316,42 @@ class __Db
 
     public function create_file($code = "")
     {
-        $path = "tools/DB/$this->file_name.json";
-        $fp = fopen($path, "w");
-        fwrite($fp, $code);
+        $file = fopen("$this->path/$this->file_name.$this->format", "w");
+        fwrite($file, $code);
         echo "\033[32m"." Генерация прошла успешно!\n";
-        return fclose($fp);
+        return fclose($file);
+    }
+
+    public function seed()
+    {
+        global $db; 
+        require_once dirname(__DIR__, 1).'/functions/connection.php';
+        require_once dirname(__DIR__, 1).'/functions/tag.php';
+        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+
+        if (!$this->seed_table) {
+
+            foreach (glob(dirname(__DIR__, 2)."/$this->path_seed/*.$this->format") as $file_name) {
+                $table = pathinfo($file_name)['filename'];
+                $data = json_decode(file_get_contents($file_name), true);
+    
+                foreach ($data as $row) {
+                    Mixin\insert($table, $row);
+                }
+            }
+
+        }else{
+
+            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_seed/$this->seed_table.$this->format"), true);
+    
+            foreach ($data as $row) {
+                Mixin\insert($this->seed_table, $row);
+            }
+
+        }
+
+        echo "\033[32m"." Данные успешно внесены.\n";
+        return 1;
     }
 
     public function help()
