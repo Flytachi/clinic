@@ -41,6 +41,7 @@ class Session
 
     public function is_auth($arr = null)
     {
+        // dd($_SERVER);
         if ($_SESSION['session_id']) {
             if ( ((EXT) ? $this->login_url : $this->login_url.".php") == $_SERVER['PHP_SELF']) {
                 $this->login_success();

@@ -1,4 +1,4 @@
-<div class="navbar navbar-expand-md navbar-dark bg-info navbar-static"> <!-- fixed-top -->
+<div class="navbar navbar-expand-md navbar-dark bg-info navbar-static "> <!-- fixed-top -->
 
     <!-- <a href="index.php" class="d-inline-block">
         <img width="50" height="50" src="<?= stack("assets/images/logo.png") ?>" alt="">
@@ -32,7 +32,7 @@
             <li class="nav-item">
                 <a href="<?= $session->logout_link() ?>" class="navbar-nav-link">
                     <i class="icon-switch2"></i>
-                    <span class="d-md-none ml-2">Logout</span>
+                    <span class="d-md-none ml-2">Выход</span>
                 </a>
             </li>
         </ul>

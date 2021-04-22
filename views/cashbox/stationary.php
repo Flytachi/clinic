@@ -67,9 +67,7 @@ $header = "Рабочий стол";
                                             </tr>
                                         </thead>
                                         <tbody id="search_display">
-                                            <?php
-                                            foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.priced_date IS NULL AND vs.service_id = 1") as $row) {
-                                                ?>
+                                            <?php $i=0; foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.priced_date IS NULL AND vs.service_id = 1") as $row): ?>
                                                 <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
                                                     <td><?= addZero($row['id']) ?></td>
                                                     <td class="text-center">
@@ -78,9 +76,10 @@ $header = "Рабочий стол";
                                                         </a>
                                                     </td>
                                                 </tr>
-                                                <?php
-                                            }
-                                            ?>
+											<?php $i++; endforeach; ?>
+											<tr class="table-secondary">
+												<th colspan="2" class="text-right">Всего: <?= $i ?></th>
+											</tr>
                                         </tbody>
                                     </table>
                                 </div>
