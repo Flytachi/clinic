@@ -615,7 +615,7 @@ class VisitModel extends Model
                 if ($object_sel->service_id == 1) {
                     // Удаляем все визиты внутри гланого визита
 
-                    foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
+                    foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.user_id = $object_sel->user_id AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
                         $object = Mixin\delete($this->table, $value['id']);
                         if (!intval($object)) {
                             $this->error($object, 1);
