@@ -120,6 +120,9 @@ class __Install
 {
     private $argument;
     private $name;
+    private $git_links = array(
+        "https://github.com/PHPOffice/PHPExcel.git" => "tools/PHPExcel",
+    );
 
     function __construct($value = null, $name = null)
     {
@@ -145,7 +148,9 @@ class __Install
             if ($this->argument == "npm") {
                 echo exec("npm install");
             }elseif($this->argument == "git") {
-                echo exec("git clone https://github.com/PHPOffice/PHPExcel.git tools/PHPExcel");
+                foreach ($this->git_links as $link => $path) {
+                    echo exec("git clone $link $path");
+                }
             }
 
         } catch (\Error $e) {
@@ -164,12 +169,15 @@ class __Install
 class __Db
 {
     private $argument;
-    private $name;
+    private $file_name = "database";
+    private $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
+    private $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    private $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
 
     function __construct($value = null, $name = null)
     {
         $this->argument = $value;
-        $this->name = $name;
+        if ($name) $this->file_name = $name;
         $this->handle();
     }
 
@@ -236,8 +244,8 @@ class __Db
         global $db; 
         require_once dirname(__DIR__, 1).'/functions/connection.php';
         require_once dirname(__DIR__, 1).'/functions/mixin.php';
-        
-        $file = file_get_contents(dirname(__DIR__, 1).'/DB/database.json');
+
+        $file = file_get_contents(dirname(__DIR__, 1)."/DB/$this->file_name.json");
         $data = json_decode($file, true);
         $_initialize = Mixin\T_INITIALIZE_database($data);
         if ($_initialize == 200) {
@@ -251,15 +259,11 @@ class __Db
         global $db;
         require_once dirname(__DIR__, 1).'/functions/connection.php';
 
-        $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
-        $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-
-        $MUL = array('beds' => 'bed' ,'wards' => 'floor');
         $json = array();
 
         foreach ($db->query("SHOW TABlES") as $table) {
 
-            $sql = $DB_HEADER." `{$table['Tables_in_clinic']}` (";
+            $sql = $this->DB_HEADER." `{$table['Tables_in_clinic']}` (";
             $column = "";
             $keys = "";
 
@@ -291,7 +295,8 @@ class __Db
                         break;
 
                     case "MUL":
-                        $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
+                        // $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
+                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_clinic']]} USING BTREE";
                         $keys.=",";
                         break;
                 }
@@ -302,7 +307,7 @@ class __Db
             $column_keys = substr($column.$keys,0,-1);
 
             $sql .= $column_keys.")";
-            $sql .= $DB_FOOTER.";";
+            $sql .= $this->DB_FOOTER.";";
             $json[] = $sql;
             unset($column);
             unset($keys);
@@ -313,8 +318,8 @@ class __Db
 
     public function create_file($code = "")
     {
-        $file_name = "tools/DB/database.json";
-        $fp = fopen($file_name, "w");
+        $path = "tools/DB/$this->file_name.json";
+        $fp = fopen($path, "w");
         fwrite($fp, $code);
         echo "\033[32m"." Генерация прошла успешно!\n";
         return fclose($fp);
