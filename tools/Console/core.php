@@ -30,6 +30,11 @@ class Core
 
     private function resolution()
     {
+        if ($this->arguments[1] === "serve") {
+            echo "\033[32m"." Сокет сервер успешно запущен.\n";
+            system('php7 socket.php');
+            return 1;
+        }
 
         try {
             if ($Class = stristr($this->arguments[1], ":", true)) {
