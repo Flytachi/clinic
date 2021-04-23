@@ -10,7 +10,7 @@ class VisitSaleModel extends Model
         $post = $db->query("SELECT * FROM visit_sale WHERE visit_id = $pk")->fetch();
         ?>
         <script src="<?= stack("vendors/js/custom.js") ?>"></script>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="Subi()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $post['id'] ?>">
             <input type="hidden" name="visit_id" value="<?= $pk ?>">
@@ -130,6 +130,30 @@ class VisitSaleModel extends Model
                 service_price.value = Math.round( (service_price_original.value - proc) *100)/100 ;
             });
 
+            function Subi() {
+                event.preventDefault();
+                $.ajax({
+                    type: $(event.target).attr("method"),
+                    url: $(event.target).attr("action"),
+                    data: $(event.target).serializeArray(),
+                    success: function (result) {
+                        if (result == 1) {
+                            new Noty({
+                                text: 'Успешно!',
+                                type: 'success'
+                            }).show();
+                        }else {
+                            new Noty({
+                                text: result,
+                                type: 'error'
+                            }).show();
+                        }
+                        $('#modal_sale').modal('hide');
+                        Check('get_mod.php?pk='+$('#user_st_id').val() ,$('#user_st_id').val());
+                    },
+                });
+            }
+
         </script>
         <?php
     }
@@ -143,7 +167,7 @@ class VisitSaleModel extends Model
 
     public function success()
     {
-        echo "Успешно";
+        echo 1;
     }
 
     public function error($message)

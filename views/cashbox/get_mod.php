@@ -5,13 +5,16 @@ if ($_GET['pk']) {
     $pk = $_GET['pk'];
 
     if($_GET['mod'] == "st"){
+        $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
+        $pk_visit = $ps['id'];
+        $completed = $ps['completed'];
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
                 <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
-
+                        <a href="<?= viv('card/content_1')."?pk=$pk_visit" ?>" class="btn btn-outline-info btn-sm">Перейти к визиту</a>
                     </div>
                 </div>
             </div>
@@ -23,10 +26,6 @@ if ($_GET['pk']) {
                 </legend>
 
                 <?php
-                $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
-                $pk_visit = $ps['id'];
-                $completed = $ps['completed'];
-
                 // Скрипт подсчёта средств -----
                 $sql = "SELECT
                             vs.id,
@@ -78,7 +77,7 @@ if ($_GET['pk']) {
                         </tr>
                         <tr class="table-secondary">
                             <td>Скидка</td>
-                            <td class="text-right"><?= number_format(($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed'])) ?></td>
+                            <td class="text-right"><?= number_format( ($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed']) ) ?></td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Разница</td>
