@@ -112,7 +112,8 @@ class __Install
     private $argument;
     private $name;
     private $git_links = array(
-        "https://github.com/PHPOffice/PHPExcel.git" => "tools/PHPExcel",
+        "https://github.com/PHPOffice/PHPExcel.git" => "libs/PHPExcel",
+        "https://github.com/senaranya/HL7.git" => "libs/HL7",
     );
 
     function __construct($value = null, $name = null)
@@ -213,8 +214,8 @@ class __Db
     public function delete()
     {
         global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
         
         $_delete = Mixin\T_DELETE_database();
         if ($_delete == 200) {
@@ -226,8 +227,8 @@ class __Db
     public function clean()
     {
         global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
         
         $_clean = Mixin\T_FLUSH_database();
         if ($_clean == 200) {
@@ -239,8 +240,8 @@ class __Db
     public function migrate()
     {
         global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
 
         $file = file_get_contents(dirname(__DIR__, 2)."/$this->path/$this->file_name.$this->format");
         
@@ -255,7 +256,7 @@ class __Db
     public function generate()
     {
         global $db;
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/connection.php';
 
         $json = array();
 
@@ -325,9 +326,9 @@ class __Db
     public function seed()
     {
         global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/tag.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/tag.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
 
         if (!$this->seed_table) {
 

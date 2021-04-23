@@ -26,7 +26,7 @@ class __Seed
     public function generate()
     {
         global $db;
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/connection.php';
         foreach ($db->query("SELECT * FROM $this->name") as $value) {
             $this->json[] = $value;
         }
