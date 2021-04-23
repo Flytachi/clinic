@@ -40,8 +40,8 @@ if ($_GET['pk']) {
                             @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)), 0) 'cost_service',
                             @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)), 0) 'cost_item_2',
                             @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)), 0) 'cost_beds',
-                            IFNULL(vss.sale_bed, 0) 'sale_bed',
-                            IFNULL(vss.sale_service, 0) 'sale_service'
+                            IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
+                            IFNULL(vss.sale_service_unit, 0) 'sale_service'
                             -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
                             -- vs.add_date
                         FROM users us
@@ -59,8 +59,8 @@ if ($_GET['pk']) {
                         $price['cost_service'] += $pri_ze['price'];
                     }
                 }
-                $price['amount_bed'] = ($price['cost_bed'] + $price['cost_beds']) - (($price['cost_bed'] + $price['cost_beds']) * ($price['sale_bed'] / 100));
-                $price['amount_service'] = $price['cost_service'] - ($price['cost_service'] * ($price['sale_service'] / 100));
+                $price['amount_bed'] = ($price['cost_bed'] + $price['cost_beds']) - $price['sale_bed'];
+                $price['amount_service'] = $price['cost_service'] - $price['sale_service'];
                 // dd($price);
                 // Скрипт -----
 
