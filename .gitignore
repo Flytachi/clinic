@@ -3,4 +3,5 @@ libs/*
 !libs/*.php
 node_modules
 storage
+tests
 setting.ini
