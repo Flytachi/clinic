@@ -31,6 +31,12 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
+
+				dd(ini_get("session.gc_maxlifetime"));
+				dd(ini_get("session.cookie_lifetime"));
+				dd(ini_get("session.gc_probability"));
+				dd(ini_get("session.gc_divisor"));
+				dd(ini_get("zend.enable_gc"));
 				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
 				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
 				// 	// dd($value);
@@ -41,7 +47,7 @@ $header = "Логи";
 
 				<?php parad("_SERVER ",$_SERVER); ?>
 				<?php parad("Modules ",module()); ?>
-				<?php parad("_session ",$_SESSION); ?>
+				<?php parad("_session ",$session); ?>
 				<?php parad("_SESSION ",$_SESSION); ?>
 
 			</div>
@@ -52,6 +58,5 @@ $header = "Логи";
 
 	</div>
 	<!-- /page content -->
-
 </body>
 </html>

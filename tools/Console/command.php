@@ -54,6 +54,9 @@ class __Make
         DRIVER = mysql
         CHARSET = utf8
         TIME_ZONE = Asia/Samarkand
+
+        GC_MAXLIFETIME = 36000
+        COOKIE_LIFETIME = 0
         SESSION_LIFE = 
 
         HIDE_EXTENSION = false

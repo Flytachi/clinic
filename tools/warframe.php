@@ -2,6 +2,10 @@
 require_once 'functions/connection.php';
 
 // Settings mod
+ini_set('session.gc_maxlifetime', ($ini['GLOBAL_SETTING']['GC_MAXLIFETIME']) ? $ini['GLOBAL_SETTING']['GC_MAXLIFETIME'] : 3600);
+ini_set('session.cookie_lifetime', ($ini['GLOBAL_SETTING']['COOKIE_LIFETIME']) ? $ini['GLOBAL_SETTING']['COOKIE_LIFETIME'] : 0);
+// gc_disable();
+
 
 if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
