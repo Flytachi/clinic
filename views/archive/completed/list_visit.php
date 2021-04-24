@@ -196,22 +196,27 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php $sql = "SELECT
-														vs.id, vs.route_id,
-														vs.parent_id, vs.grant_id,
-														vs.direction, vs.add_date,
-														vs.status, vs.completed,
-														sc.name, vs.laboratory,
-														vs.service_id
-														FROM visit vs
-															LEFT JOIN service sc ON(vs.service_id=sc.id)
-														WHERE
-															vs.user_id = {$_GET['id']} AND (vs.status != 5 OR vs.status IS NULL) AND
-															(
-																vs.direction IS NULL OR
-																(vs.direction IS NOT NULL AND vs.service_id = 1)
-															)
-														AND vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY vs.add_date DESC"; ?>
+									<?php 
+									$prefix = "";
+									if (!permission(6)) {
+										$prefix = "(
+											vs.direction IS NULL OR
+											(vs.direction IS NOT NULL AND vs.service_id = 1)
+										)
+										AND";
+									}
+									$sql = "SELECT
+												vs.id, vs.route_id,
+												vs.parent_id, vs.grant_id,
+												vs.direction, vs.add_date,
+												vs.status, vs.completed,
+												sc.name, vs.laboratory,
+												vs.service_id
+												FROM visit vs
+													LEFT JOIN service sc ON(vs.service_id=sc.id)
+												WHERE
+													vs.user_id = {$_GET['id']} AND (vs.status != 5 OR vs.status IS NULL) AND 
+													$prefix vs.parent_id = {$_SESSION['session_id']} AND vs.completed IS NOT NULL ORDER BY vs.add_date DESC"; ?>
 									<?php $i=1;foreach ($db->query($sql) as $row): ?>
 										<tr>
                                             <td><?= $i++ ?></td>

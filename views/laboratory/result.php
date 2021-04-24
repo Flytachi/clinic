@@ -8,6 +8,7 @@ is_module('module_laboratory');
     <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
 
+
 <div id="modal_result_show_content">
 
     <?php VisitAnalyzeModel::table_form(); ?>

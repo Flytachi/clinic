@@ -131,16 +131,10 @@ function permission($arr){
 
 }
 
-function dateformat($var = ""){
-    $var = strtotime($var) ;
-    $var = date('Y-m-d', $var);
-    return $var;
-}
-
-function nodateformat($var = ""){
-    $var = strtotime($var) ;
-    $var = date('d-m-Y', $var);
-    return $var ;
+function date_f($item = null, $type = 0){
+    $item = strtotime($item) ;
+    $format = ($type) ? 'd.m.Y H:i' : 'd.m.Y';
+    return date($format, $item);
 }
 
 /* Добавляет нули к числам, чьи значаения меньше пятизначных*/
