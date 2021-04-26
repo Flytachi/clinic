@@ -2,8 +2,8 @@
 require_once 'functions/connection.php';
 
 // Settings mod
-ini_set('session.gc_maxlifetime', ($ini['GLOBAL_SETTING']['GC_MAXLIFETIME']) ? $ini['GLOBAL_SETTING']['GC_MAXLIFETIME'] : 3600);
-ini_set('session.cookie_lifetime', ($ini['GLOBAL_SETTING']['COOKIE_LIFETIME']) ? $ini['GLOBAL_SETTING']['COOKIE_LIFETIME'] : 0);
+ini_set('session.gc_maxlifetime', ($ini['GLOBAL_SETTING']['SESSION_LIFE']) ? $ini['GLOBAL_SETTING']['SESSION_LIFE'] * 60 : 1800);
+// ini_set('session.cookie_lifetime', ($ini['GLOBAL_SETTING']['COOKIE_LIFETIME']) ? $ini['GLOBAL_SETTING']['COOKIE_LIFETIME'] : 0);
 // gc_disable();
 
 
