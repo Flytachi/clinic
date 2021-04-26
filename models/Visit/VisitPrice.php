@@ -319,8 +319,8 @@ class VisitPriceModel extends Model
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
                     }else {
-                        if (!in_array($temp, [-1,0,1])) {
-                            $this->error("Ошибка в price cash => transfer $temp");
+                        if ($this->err_temp($temp)) {
+                            $this->error("Ошибка в price cash => transfer");
                         }
                     }
                 }
@@ -339,8 +339,8 @@ class VisitPriceModel extends Model
                     $this->post['price_transfer'] -= $temp;
                     $post['price_transfer'] = $temp;
                 }else {
-                    if (!in_array($temp, [-1,0,1])) {
-                        // $this->error("Ошибка в price card => transfer");
+                    if ($this->err_temp($temp)) {
+                        $this->error("Ошибка в price card => transfer");
                     }
                 }
             }
@@ -438,6 +438,14 @@ class VisitPriceModel extends Model
             }
         }
         Mixin\update('users', array('status' => null), $this->user_pk);
+    }
+
+    public function err_temp(Int $temp = 0)
+    {
+        if (in_array($temp, range(-1,1))) {
+            return false;
+        }
+        return true;
     }
 
     public function save()
