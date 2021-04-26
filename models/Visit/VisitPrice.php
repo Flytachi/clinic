@@ -442,7 +442,13 @@ class VisitPriceModel extends Model
 
     public function err_temp(Int $temp = 0)
     {
-        if (in_array($temp, range(-1,1))) {
+        if (isset($this->bed_cost)) {
+            $range = range(-100,100);
+        } else {
+            $range = range(-1,1);
+        }
+        
+        if (in_array($temp, $range)) {
             return false;
         }
         return true;
