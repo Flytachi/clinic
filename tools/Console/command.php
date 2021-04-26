@@ -116,7 +116,7 @@ class __Install
     private $name;
     private $git_links = array(
         "https://github.com/PHPOffice/PHPExcel.git" => "libs/PHPExcel",
-        "https://github.com/senaranya/HL7.git" => "libs/HL7",
+        "https://github.com/t0k4rt/phpqrcode.git" => "libs/QRcode",
     );
 
     function __construct($value = null, $name = null)
