@@ -8,6 +8,9 @@
     <li class="nav-item">
         <a href="<?= viv('reports/doctor/content_3') ?>" class="nav-link <?= viv_link('reports/doctor/content_3') ?> legitRipple">Направленно</a>
     </li>
+    <li class="nav-item">
+        <a href="<?= viv('reports/doctor/content_4') ?>" class="nav-link <?= viv_link('reports/doctor/content_4') ?> legitRipple">Направленно 2</a>
+    </li>
 </ul>
 
 
