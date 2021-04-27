@@ -46,7 +46,6 @@ $header = "Пациент";
 								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-								
 							<?php else: ?>
 								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
