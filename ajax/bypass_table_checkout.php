@@ -74,7 +74,7 @@ if ($_POST['type']) {
 
         <div class="col-md-6">
             <label>Метод:</label>
-            <select data-placeholder="Выбрать метод" name="method" class="form-control myselect" required>
+            <select data-placeholder="Выбрать метод" name="method" class="<?= $classes['form-select'] ?>" required>
                 <option></option>
                 <?php foreach ($methods as $key => $value): ?>
                     <option value="<?= $key ?>"><?= $value ?></option>
@@ -112,7 +112,7 @@ if ($_POST['type']) {
 
         });
         BootstrapMultiselect.init();
-        Select2Selects.init();
+        FormLayouts.init();
     </script>
     <?php
 }
