@@ -54,7 +54,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" required>
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
@@ -93,7 +93,10 @@ class VisitModel extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Отправить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -199,7 +202,10 @@ class VisitModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -327,7 +333,10 @@ class VisitModel extends Model
             </div> -->
 
             <div class="text-right">
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Отправить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -407,7 +416,10 @@ class VisitModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -473,6 +485,7 @@ class VisitModel extends Model
     public function save_rows()
     {
         global $db;
+        $db->beginTransaction();
         foreach ($this->post['service'] as $key => $value) {
 
             $post_big['direction'] = $this->post['direction'];
@@ -500,6 +513,7 @@ class VisitModel extends Model
                 $object = Mixin\insert($this->table, $post_big);
                 if (!intval($object)){
                     $this->error($object);
+                    $db->rollBack();
                 }
 
                 if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
@@ -513,6 +527,7 @@ class VisitModel extends Model
                     $object = Mixin\insert('visit_price', $post);
                     if (!intval($object)){
                         $this->error($object);
+                        $db->rollBack();
                     }
                 }
             }
@@ -522,13 +537,18 @@ class VisitModel extends Model
         $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
         if (!intval($object1)){
             $this->error($object1);
+            $db->rollBack();
         }
+        $db->commit();
         $this->success();
     }
 
     public function clean()
     {
         global $db;
+        if (!$this->post['direction'] and !$this->post['service']) {
+            $this->error("Не назначены услуги!");
+        }
         if ($this->post['bed_stat']) {
             $this->bed_edit();
         }

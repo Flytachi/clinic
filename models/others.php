@@ -69,7 +69,10 @@ class InvestmentModel extends Model
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" class="btn btn-outline-info btn-sm">Печать</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Оплатить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

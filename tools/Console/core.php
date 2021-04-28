@@ -32,7 +32,7 @@ class Core
     {
         if ($this->arguments[1] === "serve") {
             echo "\033[32m"." Сокет сервер успешно запущен.\n";
-            system('php7 socket.php');
+            system('php socket.php');
             return 1;
         }
 

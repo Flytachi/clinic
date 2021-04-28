@@ -4,7 +4,7 @@ class BypassDateModel extends Model
 {
     public $table = 'bypass_date';
 
-    public function table_form_doc($pk = null)
+    static function table_form_doc($pk = null)
     {
         global $db, $grant;
         $this_date = new \DateTime();
@@ -202,7 +202,7 @@ class BypassDateModel extends Model
         <?php
     }
 
-    public function table_form_nurce($pk = null)
+    static function table_form_nurce($pk = null)
     {
         global $db;
         $this_date = new \DateTime();
