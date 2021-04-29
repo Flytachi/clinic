@@ -31,7 +31,6 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
-
 				dd(ini_get("session.gc_maxlifetime"));
 				dd(ini_get("session.cookie_lifetime"));
 				dd(ini_get("session.gc_probability"));
@@ -44,7 +43,7 @@ $header = "Логи";
 				// 	// dd($report);
 				// }
 				?>
-
+				<?php parad("_COOKIE ",$_COOKIE); ?>
 				<?php parad("_SERVER ",$_SERVER); ?>
 				<?php parad("Modules ",module()); ?>
 				<?php parad("_session ",$session); ?>
