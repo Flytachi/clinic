@@ -69,23 +69,23 @@ class BypassDateModel extends Model
                                     ?>
                                     <td>
                                         <?php if ($status_lite): ?>
-                                            <?php if ($post['status']): ?>
+                                            <?php if ($post and $post['status']): ?>
                                                 <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                             <?php else: ?>
                                                 <i style="font-size:1.5rem;" class="icon-circle"></i>
                                             <?php endif; ?>
                                         <?php else: ?>
-                                            <?php if ($post['completed']): ?>
+                                            <?php if ($post and $post['completed']): ?>
                                                 <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                             <?php else: ?>
                                                 <?php if ($grant): ?>
-                                                    <?php if ($post['status']): ?>
+                                                    <?php if ($post and $post['status']): ?>
                                                         <i style="font-size:1.5rem;" class="text-success icon-checkmark-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['time'] ?>" data-val=""></i>
                                                     <?php else: ?>
                                                         <i style="font-size:1.5rem;" class="text-success icon-circle" onclick="SwetDate(this)" data-id="<?= $post['id'] ?>" data-date="<?= $date->format('Y-m-d') ?>" data-time="<?= $value['time'] ?>" data-val="1"></i>
                                                     <?php endif; ?>
                                                 <?php else: ?>
-                                                    <?php if ($post['status']): ?>
+                                                    <?php if ($post and $post['status']): ?>
                                                         <i style="font-size:1.5rem;" class="icon-checkmark-circle"></i>
                                                     <?php else: ?>
                                                         <i style="font-size:1.5rem;" class="icon-circle"></i>
@@ -95,7 +95,7 @@ class BypassDateModel extends Model
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center">
-                                        <?php if ($post['completed']): ?>
+                                        <?php if ($post and $post['completed']): ?>
                                             <i style="font-size:1.5rem;" class="icon-checkmark-circle tolltip" data-head="<?= get_full_name($post['parent_id']) ?>" data-content="<?= $post['comment'] ?>"></i>
                                         <?php else: ?>
                                             <i style="font-size:1.5rem;" class="icon-circle"></i>
@@ -103,6 +103,7 @@ class BypassDateModel extends Model
                                     </td>
                                 </tr>
                                 <?php
+                                unset($post);
                                 $row_stat= False;
                             }
                         }
