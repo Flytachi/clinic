@@ -188,6 +188,7 @@ class VisitModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="proc" value="1">
 
             <div class="form-group row">
                 <div class="col-md-6">
@@ -210,6 +211,9 @@ class VisitModel extends Model
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function form_sta($pk = null)
@@ -546,12 +550,13 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
-        if (!$this->post['direction'] and !$this->post['service']) {
-            $this->error("Не назначены услуги!");
-        }
         if ($this->post['bed_stat']) {
             $this->bed_edit();
         }
+        if (!$this->post['proc'] and !$this->post['bed_stat'] and !$this->post['direction'] and !$this->post['service']) {
+            $this->error("Не назначены услуги!");
+        }
+        unset($this->post['proc']);
         if (is_array($this->post['service'])) {
             $this->save_rows();
         }
