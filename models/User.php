@@ -4,7 +4,7 @@ class UserModel extends Model
 {
     public $table = 'users';
 
-    public function form($pk = null)
+    public function form($pk = null) 
     {
         global $db, $PERSONAL, $classes;
         if($pk){
@@ -12,10 +12,10 @@ class UserModel extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
-            if($_SESSION['message_post']){
+            if( isset($_SESSION['message_post']) ){
                 $post = $_SESSION['message_post'];
                 unset($_SESSION['message_post']);
             }

@@ -67,7 +67,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										if ($patient->completed) {
+										if ( isset($patient->completed) ) {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.route_id = $patient->grant_id AND vs.laboratory IS NULL AND vs.diagnostic IS NULL AND vs.physio IS NULL

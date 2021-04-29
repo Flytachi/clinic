@@ -33,7 +33,7 @@ $header = "Панель управления";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php if ($_POST['INITIALIZE']): ?>
+				<?php if ( isset($_POST['INITIALIZE']) ): ?>
 					<?php
 					$file = file_get_contents($_FILES['file_database']['tmp_name']);
 					$data = json_decode($file, true);
@@ -52,7 +52,7 @@ $header = "Панель управления";
 					    </div>
                     <?php endif; ?>
 
-				<?php elseif ($_POST['GET_START']): ?>
+				<?php elseif ( isset($_POST['GET_START']) ): ?>
 
                     <?php
                     $flush = Mixin\T_FLUSH_database();
@@ -158,7 +158,7 @@ $header = "Панель управления";
 				    <div class="card-body">
 
                         <?php
-                        if($_SESSION['message']){
+                        if( isset($_SESSION['message']) ){
                             echo $_SESSION['message'];
                             unset($_SESSION['message']);
                         }
@@ -210,7 +210,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= ($company['module_laboratory']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= (isset($company['module_laboratory']) and $company['module_laboratory']) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -220,7 +220,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= ($company['module_diagnostic']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= (isset($company['module_diagnostic']) and $company['module_diagnostic']) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -230,7 +230,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= (isset($company['module_zetta_pacs']) and $company['module_zetta_pacs']) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

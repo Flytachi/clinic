@@ -45,7 +45,7 @@ $header = "Рабочий стол";
 					</div>
 
 					<div class="card-body">
-						<?php VisitModel::form_sta(); ?>
+						<?php (new VisitModel)->form_sta(); ?>
 					</div>
 
 				</div>

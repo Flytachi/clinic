@@ -9,7 +9,7 @@ class VisitModel extends Model
     public function form_out($pk = null)
     {
         global $db;
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -175,7 +175,7 @@ class VisitModel extends Model
     public function form_gudes($pk = null)
     {
         global $db;
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -218,7 +218,7 @@ class VisitModel extends Model
     public function form_sta($pk = null)
     {
         global $db, $FLOOR;
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
