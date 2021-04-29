@@ -19,7 +19,7 @@ class PatientForm extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_level" value="15">
             <?php if (!$pk): ?>
@@ -94,7 +94,7 @@ class PatientForm extends Model
                                         <select data-placeholder="Выбрать регион" name="region" id="region" class="<?= $classes['form-select'] ?>">
                                             <option></option>
                                             <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
-                                                <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($post['region'] == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+                                                <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($this->value($post, 'region') == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>

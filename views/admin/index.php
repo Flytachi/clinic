@@ -49,7 +49,7 @@ $header = "Персонал";
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php UserModel::form(); ?>
+				        <?php (new UserModel)->form(); ?>
 				    </div>
 
 				</div>
@@ -80,15 +80,13 @@ $header = "Персонал";
 				                    </tr>
 				                </thead>
 				                <tbody>
-				                    <?php
-				                    $i = 1;
-				                    foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row) {
-				                        ?>
+				                    <?php $i=1; foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row): ?>
 				                        <tr>
 				                            <td><?= $i++ ?></td>
 				                            <td><?= $row['username'] ?></td>
 				                            <td><?= get_full_name($row['id']); ?></td>
-				                            <td><?php
+				                            <td>
+												<?php
 				                                echo $PERSONAL[$row['user_level']];
 				                                if(division_name($row['id'])){
 				                                    echo " (".division_name($row['id']).")";
@@ -99,19 +97,13 @@ $header = "Персонал";
 				                            <td>
 				                                <div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php
-													if ($row['user_level'] !=1) {
-														?>
+													<?php if ($row['user_level'] !=1): ?>
 														<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-														<?php
-													}
-													?>
+													<?php endif; ?>
 				                                </div>
 				                            </td>
 				                        </tr>
-				                        <?php
-				                    }
-				                    ?>
+									<?php endforeach; ?>
 				                </tbody>
 				            </table>
 				        </div>
