@@ -51,10 +51,11 @@ function insert_or_update($tb, $post, $name_pk = null)
         $pk = $post[$lb];
         unset($post[$lb]);
         $where = "$lb = $pk";
-        if ($name_pk and !intval($pk)) {
+        
+        if ($name_pk and !is_int($pk)) {
             $where = "$lb = \"$pk\"";
         }
-
+        
         // select
         if ($db->query("SELECT $lb FROM $tb WHERE ".$where)->fetchColumn()) {
             // update
