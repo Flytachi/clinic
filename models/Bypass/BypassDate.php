@@ -60,12 +60,12 @@ class BypassDateModel extends Model
                                         <?= $time = date('H:i', strtotime($value['time'])) ?>
                                     </td>
                                     <?php 
-                                    $status_lite = false;
-                                    // if ($add_date == $dat) {
-                                    //     $status_lite = false;
-                                    // }else {
-                                    //     $status_lite = ($dat." ".$time < $this_date->format('Y-m-d H:i')) ? true : false;
-                                    // }
+                                    $status_lite = true;
+                                    if ($add_date == $dat) {
+                                        $status_lite = false;
+                                    }else {
+                                        $status_lite = ($dat." ".$time < $this_date->format('Y-m-d H:i')) ? true : false;
+                                    }
                                     ?>
                                     <td>
                                         <?php if ($status_lite): ?>
