@@ -2,7 +2,7 @@
 
 class Session
 {
-    static $db;
+    public $db;
     public $login_url = DIR."/auth/login".EXT;
     public $index_url = "../index".EXT; //../index.php
     public $logout_url = DIR."/auth/logout".EXT;
@@ -25,7 +25,7 @@ class Session
         $this->session_get_full_name = $_SESSION['session_get_full_name'];
         $this->session_level = $_SESSION['session_level'];
         $this->session_division = $_SESSION['session_division'];
-        $this->session_slot = $_SESSION['session_slot'];
+        if($_SESSION['session_slot']) $this->session_slot = $_SESSION['session_slot'];
         
         if ($_SESSION['browser']) {
             $this->browser = $_SESSION['browser'];
