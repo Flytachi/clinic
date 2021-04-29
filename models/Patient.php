@@ -152,12 +152,15 @@ class PatientForm extends Model
                                 </div>
 
                                 <!-- <div class="form-group">
-                                    <label class="d-block font-weight-semibold">Статус</label>
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" name="resident" id="custom_checkbox_stacked_unchecked">
-                                        <label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Резидент</label>
-                                    </div>
+                                   
+                                    <label class="form-check-label">
+                                        Резидент
+                                        <input type="checkbox" class="swit" name="is_alien">
+                                    </label>
+                                
                                 </div> -->
+
+                                
 
                             </fieldset>
                         </div>
@@ -180,6 +183,7 @@ class PatientForm extends Model
             $this->jquery_init();
         }
         ?>
+        <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <script type="text/javascript">
             $(function(){
                 $("#region").chained("#province");
@@ -257,6 +261,16 @@ class PatientForm extends Model
         	}
         </script>
         <?php
+    }
+
+    public function clean()
+    {
+        if ($this->post['is_alien']) {
+            $this->post['is_alien'] = true;
+        }
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()
