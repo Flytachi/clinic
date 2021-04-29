@@ -31,6 +31,7 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
+				dd(ini_get_all("session"));
 				dd(ini_get("session.gc_maxlifetime"));
 				dd(ini_get("session.cookie_lifetime"));
 				dd(ini_get("session.gc_probability"));
