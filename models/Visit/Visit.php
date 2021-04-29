@@ -549,9 +549,9 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
-        // if (!$this->post['direction'] and !$this->post['service']) {
-        //     $this->error("Не назначены услуги!");
-        // }
+        if (is_array($this->post['division_id']) and !$this->post['direction'] and !$this->post['service']) {
+            $this->error("Не назначены услуги!");
+        }
         if ($this->post['bed_stat']) {
             $this->bed_edit();
         }

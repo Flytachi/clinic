@@ -55,10 +55,10 @@ class __Make
         CHARSET = utf8
         TIME_ZONE = Asia/Samarkand
 
-        SESSION_GC_PROBABILITY = 
-        SESSION_GC_DIVISOR = 
-        SESSION_LIFE = 
-        COOKIE_LIFETIME = 0
+        SESSION_GC_PROBABILITY = 0
+        SESSION_GC_DIVISOR = 100
+        SESSION_LIFE = 20
+        SESSION_COOKIE_LIFETIME = 20
 
         HIDE_EXTENSION = false
         ROOT_MOD = false
