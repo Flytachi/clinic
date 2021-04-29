@@ -6,7 +6,7 @@ class PatientForm extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $classes;
         if($pk){
             $post = $this->post;
         }else{
@@ -79,7 +79,7 @@ class PatientForm extends Model
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Выбирите область:</label>
-                                        <select data-placeholder="Выбрать область" id="province" class="form-control myselect">
+                                        <select data-placeholder="Выбрать область" id="province" class="<?= $classes['form-select'] ?>">
                                             <option></option>
                                             <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
                                                 <option value="<?= $province['id'] ?>"><?= $province['name'] ?></option>
@@ -91,7 +91,7 @@ class PatientForm extends Model
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Выбирите регион:</label>
-                                        <select data-placeholder="Выбрать регион" name="region" id="region" class="form-control myselect">
+                                        <select data-placeholder="Выбрать регион" name="region" id="region" class="<?= $classes['form-select'] ?>">
                                             <option></option>
                                             <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
                                                 <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($post['region'] == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>

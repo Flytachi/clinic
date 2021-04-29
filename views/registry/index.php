@@ -41,7 +41,7 @@ $header = "Рабочий стол";
 	                	</div>
 					</div>
 
-					<div class="card-body" id="form_up">1
+					<div class="card-body" id="form_up">
 						<?php (new PatientForm)->form(); ?>
 					</div>
 
