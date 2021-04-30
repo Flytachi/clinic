@@ -507,7 +507,7 @@ if (!isset($_GET['type'])) {
         <div class="modal-dialog">
             <div class="modal-content border-3 border-info">
 
-                <?= OperationStatsModel::form() ?>
+                <?= (new OperationStatsModel)->form() ?>
 
             </div>
         </div>
@@ -517,7 +517,7 @@ if (!isset($_GET['type'])) {
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
-                <?php OperationInspectionModel::form() ?>
+                <?php (new OperationInspectionModel)->form() ?>
 
             </div>
         </div>
@@ -529,7 +529,7 @@ if (!isset($_GET['type'])) {
 
                 <div id="form_card_member">
 
-                    <?= OperationMemberModel::form() ?>
+                    <?= (new OperationMemberModel)->form() ?>
 
                 </div>
 
@@ -538,6 +538,7 @@ if (!isset($_GET['type'])) {
     </div>
 
     <div id="modal_add_service" class="modal fade" tabindex="-1">
+    
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -546,7 +547,7 @@ if (!isset($_GET['type'])) {
                 </div>
 
                 <div class="modal-body">
-                    <?php OperationServiceModel::form() ?>
+                    <?php (new OperationServiceModel)->form() ?>
                 </div>
 
             </div>
@@ -559,7 +560,7 @@ if (!isset($_GET['type'])) {
 
                 <div id="form_card_preparat">
 
-                    <?php OperationPreparatModel::form() ?>
+                    <?php (new OperationPreparatModel)->form() ?>
 
                 </div>
 
@@ -573,7 +574,7 @@ if (!isset($_GET['type'])) {
 
                 <div id="form_card_consumables">
 
-                    <?php OperationConsumablesModel::form() ?>
+                    <?php (new OperationConsumablesModel)->form() ?>
 
                 </div>
 
@@ -585,7 +586,7 @@ if (!isset($_GET['type'])) {
         <div class="modal-dialog modal-md">
             <div class="modal-content border-3 border-info">
 
-                <?php OperationModel::form_finish() ?>
+                <?php (new OperationModel)->form_finish() ?>
 
             </div>
         </div>

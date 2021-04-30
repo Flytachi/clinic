@@ -64,6 +64,7 @@
 	<script>
 		let id = <?= $_SESSION['session_id'] ?>;
 		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		$.fn.modal.Constructor.prototype._enforceFocus = function() {};
 	</script>
 	<script src="<?= stack("vendors/js/socket.js") ?>"></script>
 

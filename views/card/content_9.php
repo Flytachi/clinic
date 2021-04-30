@@ -117,7 +117,7 @@ $header = "Пациент";
 					</div>
 
 					<div class="modal-body">
-						<?= OperationModel::form() ?>
+						<?= (new OperationModel)->form() ?>
 					</div>
 
 				</div>
@@ -132,7 +132,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">×</button>
 					</div>
 
-					<?php OperationModel::form_oper_update() ?>
+					<?php (new OperationModel)->form_oper_update() ?>
 
 				</div>
 			</div>

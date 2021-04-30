@@ -6,13 +6,13 @@ class StorageOrdersModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $classes;
         if($pk){
             $post = $this->post;
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -46,10 +46,10 @@ class StorageOrdersModel extends Model
 
                     <div class="col-md-10">
                         <label>Расходные материалы:</label>
-                        <select data-placeholder="Выберите материал" name="preparat_id" class="form-control select-price" required <?= ($pk) ? "disabled" : "data-fouc" ?>>
+                        <select data-placeholder="Выберите материал" name="preparat_id" class="<?= $classes['form-select_price'] ?>" required <?= ($pk) ? "disabled" : '' ?>>
                             <option></option>
                             <?php foreach ($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['preparat_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ( isset($post['preparat_id']) and $post['preparat_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -64,11 +64,17 @@ class StorageOrdersModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Отправить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function clean()

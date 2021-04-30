@@ -53,7 +53,7 @@ $header = "Склад";
 						<?php
 						$count_preparat = $db->query("SELECT SUM(qty) FROM storage_home")->fetchColumn();
 						$count_date = $db->query("SELECT COUNT(*) FROM storage_home WHERE DATEDIFF(die_date, CURRENT_DATE()) <= 10")->fetchColumn();
-						if($_SESSION['message']){
+						if( isset($_SESSION['message']) ){
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
@@ -143,7 +143,7 @@ $header = "Склад";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php StorageHomeModel::form_refund(); ?>
+				<?php (new StorageHomeModel)->form_refund(); ?>
 				
 			</div>
 		</div>

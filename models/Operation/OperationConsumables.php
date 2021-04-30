@@ -35,12 +35,12 @@ class OperationConsumablesModel extends Model
 
                     <div class="col-md-10">
                         <label>Наименование:</label>
-                        <input type="text" placeholder="Введите наименование" name="item_name" value="<?= $post['item_name'] ?>" class="form-control" required>
+                        <input type="text" placeholder="Введите наименование" name="item_name" value="<?= (isset($post['item_name'])) ? $post['item_name'] : '' ?>" class="form-control" required>
                     </div>
 
                     <div class="col-md-2">
                         <label>Сумма:</label>
-                        <input type="number" name="item_cost" step="0.1" value="<?= ($post['item_cost']) ? $post['item_cost'] : "0" ?>" class="form-control" required>
+                        <input type="number" name="item_cost" step="0.1" value="<?= (isset($post['item_cost'])) ? $post['item_cost'] : "0" ?>" class="form-control" required>
                     </div>
 
                 </div>
@@ -48,7 +48,10 @@ class OperationConsumablesModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

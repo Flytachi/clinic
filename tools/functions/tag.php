@@ -106,7 +106,7 @@ function del_url($id = null, $model = null){
     return DIR."/hook/delete".EXT."?id=$id&model=$model";
 }
 
-function up_url($id, $model, $form=null){
+function up_url($id = null, $model, $form=null){
     if ($form) {
         $result = DIR."/hook/get".EXT."?id=$id&model=$model&form=$form";
     }else {

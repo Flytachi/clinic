@@ -31,17 +31,13 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
-				dd(ini_get("session.gc_maxlifetime"));
-				dd(ini_get("session.cookie_lifetime"));
-				dd(ini_get("session.gc_probability"));
-				dd(ini_get("session.gc_divisor"));
-				dd(ini_get("zend.enable_gc"));
 				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
 				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
 				// 	// dd($value);
 				// 	Mixin\update('visit', array('report' => $report), $value['id']);
 				// 	// dd($report);
 				// }
+				dd($_SERVER['HTTP_USER_AGENT']);
 				?>
 				<?php parad("_COOKIE ",$_COOKIE); ?>
 				<?php parad("_SERVER ",$_SERVER); ?>

@@ -44,7 +44,7 @@ $header = "Заказы";
 					<div class="card-body">
 
                         <div id="form_card">
-                            <?php StorageOrdersModel::form() ?>
+                            <?php (new StorageOrdersModel)->form() ?>
                         </div>
 
 						<div class="table-responsive card">
