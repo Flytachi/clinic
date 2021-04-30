@@ -209,8 +209,7 @@ class VisitPriceModel extends Model
 
             function Proter(pk) {
                 event.preventDefault();
-
-                $('#<?= __CLASS__ ?>_form').submit();
+                // $('#<?= __CLASS__ ?>_form').submit();
 
                 if (Math.round($('#prot_item').val()) != 0) {
 

@@ -65,7 +65,7 @@ class __Model
     {
         ob_start(null);
         ?>
-class <?= ucfirst($this->model_name) ?>Model extends Model
+class <?= ucfirst($this->model_name) ?> extends Model
 {
     public $table = '<?= lcfirst($this->model_name) ?>';
 
@@ -77,7 +77,7 @@ class <?= ucfirst($this->model_name) ?>Model extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }

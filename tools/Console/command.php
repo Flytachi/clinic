@@ -57,8 +57,8 @@ class __Make
 
         SESSION_GC_PROBABILITY = 0
         SESSION_GC_DIVISOR = 100
-        SESSION_LIFE = 20
-        SESSION_COOKIE_LIFETIME = 20
+        SESSION_LIFE = 
+        SESSION_COOKIE_LIFETIME = 
 
         HIDE_EXTENSION = false
         ROOT_MOD = false
@@ -200,6 +200,7 @@ class __Db
             }elseif($this->argument == "migrate") {
                 $this->migrate();
             }elseif($this->argument == "clean") {
+                $this->clean_table = ($this->file_name == "database") ? null : $this->file_name;
                 $this->clean();
             }elseif($this->argument == "delete") {
                 $this->delete();
@@ -234,12 +235,18 @@ class __Db
         global $db; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
-        
-        $_clean = Mixin\T_FLUSH_database();
-        if ($_clean == 200) {
-            echo "\033[32m"." База данных успешно очищена.\n";
+        if (!$this->clean_table) {
+            $_clean = Mixin\T_FLUSH_database();
+            if ($_clean == 200) {
+                echo "\033[32m"." База данных успешно очищена.\n";
+                return 1;
+            }
+        }else {
+            $_clean = Mixin\T_flush($this->clean_table);
+            echo "\033[32m"." База данных '$this->clean_table' успешно очищена.\n";
             return 1;
         }
+       
     }
 
     public function migrate()
