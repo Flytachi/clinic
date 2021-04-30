@@ -168,7 +168,7 @@ class VisitPriceModel extends Model
 
     public function form_button($pk = null)
     {
-        global $pk, $pk_visit, $completed, $price, $price_cost;
+        global $pk_visit, $completed, $price, $price_cost;
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -210,7 +210,7 @@ class VisitPriceModel extends Model
             function Proter(pk) {
                 event.preventDefault();
 
-                // $('#<?= __CLASS__ ?>_form').submit();
+                $('#<?= __CLASS__ ?>_form').submit();
 
                 if (Math.round($('#prot_item').val()) != 0) {
 
@@ -258,11 +258,15 @@ class VisitPriceModel extends Model
     public function clean()
     {
         global $db;
+        $this->post['price_cash'] = (isset($this->post['price_cash'])) ? $this->post['price_cash'] : 0;
+        $this->post['price_card'] = (isset($this->post['price_card'])) ? $this->post['price_card'] : 0;
+        $this->post['price_transfer'] = (isset($this->post['price_transfer'])) ? $this->post['price_transfer'] : 0;
         $this->user_pk = $this->post['user_id'];
         unset($this->post['user_id']);
         if (isset($this->post['bed_cost'])) {
             $this->bed_cost = $this->post['bed_cost'];
             unset($this->post['bed_cost']);
+            $this->status = null;
             return True;
         } else {
             $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
@@ -270,16 +274,16 @@ class VisitPriceModel extends Model
                 $tot['total_price'] = $tot['total_price'] - ($tot['total_price'] * ($this->post['sale'] / 100));
             }
             $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
-        }
-        if ($result < 0) {
-            $this->error("Есть остаток ".$result);
-        }elseif ($result > 0) {
-            $this->error("Недостаточно средств! ". $result);
-        }else {
-            $this->post = Mixin\clean_form($this->post);
-            $this->post = Mixin\to_null($this->post);
-            $this->status = ($this->post['bed_cost']) ? null : 1;
-            return True;
+            if ($result < 0) {
+                $this->error("Есть остаток ".$result);
+            }elseif ($result > 0) {
+                $this->error("Недостаточно средств! ". $result);
+            }else {
+                $this->post = Mixin\clean_form($this->post);
+                $this->post = Mixin\to_null($this->post);
+                $this->status = 1;
+                return True;
+            }
         }
     }
 

@@ -42,7 +42,7 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
                                 <?php if ($value['status']): ?>
                                     <li>
                                         <!-- diet stage -->
-                                        <?php if ($diet_name): ?>
+                                        <?php if (isset($diet_name)): ?>
 
                                             <?php if ($value['completed']): ?>
                                                 <s class="text-success"><?= date('H:i', strtotime($value['time'])) ?> -- принято</s>
@@ -56,7 +56,7 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
                                                 <s class="text-success"><?= date('H:i', strtotime($value['time'])) ?> -- сделано</s>
                                             <?php else: ?>
 
-                                                <?php if ($perk): ?>
+                                                <?php if (isset($perk)): ?>
                                                     <?php
                                                     foreach ($perk as $pr => $qty) {
                                                         $store[$pr] = $db->query("SELECT qty FROM storage_home WHERE preparat_id = $pr")->fetchColumn();
@@ -91,7 +91,7 @@ $sql = "SELECT DISTINCT bs.id FROM bypass bs LEFT JOIN bypass_date bd ON(bd.bypa
                                                         ?>
                                                         <span class="text-muted"><?= date('H:i', strtotime($value['time'])) ?> -- не сделано <span class="text-success">(препарат в наличии)</span></span>
                                                         <?php   
-                                                    }elseif (!$stop) {
+                                                    }elseif (!isset($stop) or !$stop) {
                                                         foreach ($perk as $pr => $qty) {
                                                             $order[$pr] = $db->query("SELECT qty FROM storage_orders WHERE preparat_id = $pr AND date = CURRENT_DATE()")->fetchColumn();
                                                             if ($order[$pr] + $store[$pr] >= $qty) {

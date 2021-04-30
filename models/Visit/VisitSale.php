@@ -12,7 +12,7 @@ class VisitSaleModel extends Model
         <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>" onsubmit="Subi()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= (isset($post['id'])) ? $post['id'] : '' ?>">
             <input type="hidden" name="visit_id" value="<?= $pk ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 

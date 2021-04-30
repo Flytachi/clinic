@@ -7,7 +7,7 @@ foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
 
-if ($_GET['items']) {
+if ( isset($_GET['items']) ) {
     $docs = $db->query("SELECT * FROM users WHERE id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 }else {
     $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
@@ -50,7 +50,7 @@ if ($_GET['items']) {
 
         <div class="text-left">
             <div class="h3">
-                <?php if ($_GET['items']): ?>
+                <?php if ( isset($_GET['items']) ): ?>
                     <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
                     <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
                     <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->dateBith)) ?><br>
@@ -62,7 +62,7 @@ if ($_GET['items']) {
                 <?php endif; ?>
             </div>
 
-            <?php if ($_GET['items']): ?>
+            <?php if ( isset($_GET['items']) ): ?>
 
                 <?php foreach (json_decode($_GET['items']) as $item): ?>
                     <h1 class="text-center"><b><?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?></b></h1>

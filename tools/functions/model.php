@@ -59,6 +59,11 @@ class Model
         */
     }
 
+    public function value(Array $array = [], String $var = null)
+    {
+        return (isset($array[$var])) ? $array[$var] : '';
+    }
+
     public function get(int $pk)
     {
         global $db;

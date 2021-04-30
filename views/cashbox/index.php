@@ -90,7 +90,7 @@ $header = "Рабочий стол";
 
 				        <div id="message_ses">
 				            <?php
-				            if($_SESSION['message']){
+				            if( isset($_SESSION['message']) ){
 				                echo $_SESSION['message'];
 				                unset($_SESSION['message']);
 				            }
@@ -123,7 +123,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php VisitPriceModel::form(); ?>
+				<?php (new VisitPriceModel)->form(); ?>
 
 			</div>
 		</div>

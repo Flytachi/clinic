@@ -51,7 +51,7 @@ $header = "Настройки";
 				    <div class="card-body">
 
 						<?php
-						if($_SESSION['message']){
+						if( isset($_SESSION['message']) ){
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
@@ -68,7 +68,7 @@ $header = "Настройки";
 
 								<div class="form-group row">
 									<div class="col-form-label col-lg-2">
-										<img class="border-1" src="<?= $company['print_header_logotype'] ?>" width="200" height="60">
+										<img class="border-1" src="<?= (isset($company['print_header_logotype'])) ? $company['print_header_logotype'] : '' ?>" width="200" height="60">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Иконка печати:</label>
 									<div class="col-lg-9">
@@ -79,15 +79,15 @@ $header = "Настройки";
 								<div class="form-group row">
 									<label class="col-form-label col-lg-1 font-weight-bold">Заглавие:</label>
 									<div class="col-lg-3">
-										<input type="text" name="print_header_title" value="<?= $company['print_header_title'] ?>" placeholder="Введите заглавие" class="form-control">
+										<input type="text" name="print_header_title" value="<?= (isset($company['print_header_title'])) ? $company['print_header_title'] : '' ?>" placeholder="Введите заглавие" class="form-control">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Адрес:</label>
 									<div class="col-lg-3">
-										<input type="text" name="print_header_address" value="<?= $company['print_header_address'] ?>" placeholder="Введите адрес" class="form-control">
+										<input type="text" name="print_header_address" value="<?= (isset($company['print_header_address'])) ? $company['print_header_address'] : '' ?>" placeholder="Введите адрес" class="form-control">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Телефон:</label>
 									<div class="col-lg-3">
-										<input type="text" name="print_header_phones" value="<?= $company['print_header_phones'] ?>" placeholder="Введите телефон" class="form-control">
+										<input type="text" name="print_header_phones" value="<?= (isset($company['print_header_phones'])) ? $company['print_header_phones'] : '' ?>" placeholder="Введите телефон" class="form-control">
 									</div>
 								</div>
 

@@ -4,7 +4,7 @@ class UserModel extends Model
 {
     public $table = 'users';
 
-    public function form($pk = null)
+    public function form($pk = null) 
     {
         global $db, $PERSONAL, $classes;
         if($pk){
@@ -12,10 +12,10 @@ class UserModel extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
-            if($_SESSION['message_post']){
+            if( isset($_SESSION['message_post']) ){
                 $post = $_SESSION['message_post'];
                 unset($_SESSION['message_post']);
             }
@@ -23,7 +23,7 @@ class UserModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="row">
 
@@ -34,17 +34,17 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $post['last_name'] ?>">
+                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value($post, 'last_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Имя пользователя:</label>
-                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $post['first_name'] ?>">
+                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value($post, 'first_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Отчество пользователя:</label>
-                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?=  $post['father_name'] ?>">
+                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value($post, 'father_name') ?>">
                         </div>
 
                         <div class="form-group">
@@ -52,7 +52,7 @@ class UserModel extends Model
                             <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($PERSONAL as $key => $value): ?>
-                                    <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                    <option value="<?= $key ?>"<?= ($this->value($post, 'user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -62,7 +62,7 @@ class UserModel extends Model
                             <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($db->query('SELECT * FROM division') as $row): ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value($post, 'division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -79,21 +79,21 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Кабинет:</label>
-                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $post['room'] ?>">
+                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value($post, 'room') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $post['share'] ?>">
+                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value($post, 'share') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Логин:</label>
-                                    <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $post['username'] ?>">
+                                    <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $this->value($post, 'username') ?>">
                                 </div>
                             </div>
 
@@ -132,14 +132,14 @@ class UserModel extends Model
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>PACS Логин:</label>
-                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $post['pacs_login'] ?>">
+                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $this->value($post, 'pacs_login') ?>">
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>PACS пароль:</label>
-                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $post['pacs_password'] ?>">
+                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $this->value($post, 'pacs_password') ?>">
                                     </div>
                                 </div>
                             <?php endif; ?>

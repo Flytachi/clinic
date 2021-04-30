@@ -27,7 +27,7 @@
                         </li>
                     <?php endforeach; ?>
 
-                    <?php if ($_SESSION['master_status']): ?>
+                    <?php if ( isset($_SESSION['master_status']) ): ?>
                         <li class="nav-item">
                             <a href="<?= $session->logout_avatar_link() ?>" class="nav-link">
                                 <i class="icon-arrow-down16"></i>

@@ -47,7 +47,7 @@ $session->is_auth();
                         <h5 class="card-title" >Форма входа</h5>
                     </div>
                     <?php
-                        if ($_SESSION['message']) {
+                        if ( isset($_SESSION['message']) ) {
                             ?>
                             <div class="alert alert-danger" role="alert">
                                 <button type='button' class='close' data-dismiss='alert'><span>×</span><span class='sr-only'>Close</span></button>

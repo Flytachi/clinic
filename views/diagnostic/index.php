@@ -2,6 +2,9 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(10);
 is_module('module_diagnostic');
+if (division_assist() == 2) {
+	Mixin\error('423');
+}
 $header = "Приём пациетов";
 ?>
 <!DOCTYPE html>
@@ -92,17 +95,11 @@ $header = "Приём пациетов";
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
                                             <td class="text-center">
-                                                <?php
-                                                if($row['direction']){
-                                                    ?>
+                                                <?php if($row['direction']): ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
-                                                    <?php
-                                                }else{
-                                                    ?>
+												<?php else: ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
-                                                    <?php
-                                                }
-                                                ?>
+												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
                                             	<?php if (!division_assist()): ?>
@@ -153,7 +150,7 @@ $header = "Приём пациетов";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?= VisitFailure::form(); ?>
+				<?= (new VisitFailure)->form(); ?>
 			</div>
 		</div>
 	</div>

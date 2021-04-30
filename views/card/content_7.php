@@ -56,7 +56,7 @@ $header = "Пациент";
 							</a>
 						</legend>
 
-						<?php if ($activity and !$patient->completed): ?>
+						<?php if ($activity and empty($patient->completed)): ?>
 
 							<div class="card">
 								<div class="table-responsive">

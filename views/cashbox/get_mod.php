@@ -4,7 +4,7 @@ $session->is_auth([3, 32]);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
 
-    if($_GET['mod'] == "st"){
+    if( isset($_GET['mod']) and $_GET['mod'] == "st"){
         $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
         $pk_visit = $ps['id'];
         $completed = $ps['completed'];
@@ -62,8 +62,7 @@ if ($_GET['pk']) {
                 $price['amount_service'] = $price['cost_service'] - $price['sale_service'];
                 // dd($price);
                 // Скрипт -----
-
-                $price_cost -= round($price['amount_service'] + $price['amount_bed'] + $price['cost_item_2']);
+                $price_cost = -round($price['amount_service'] + $price['amount_bed'] + $price['cost_item_2']);
                 ?>
                 <table class="table table-hover">
                     <tbody>
@@ -95,7 +94,7 @@ if ($_GET['pk']) {
 
                 <div class="text-right mt-3">
 
-                    <?php VisitPriceModel::form_button() ?>
+                    <?php (new VisitPriceModel)->form_button($pk) ?>
 
                 </div>
 
@@ -104,7 +103,7 @@ if ($_GET['pk']) {
             </div>
         </div>
         <?php
-    }elseif ($_GET['mod'] == "rf"){
+    }elseif ( isset($_GET['mod']) and $_GET['mod'] == "rf"){
         ?>
         <div class="card border-1 border-dark">
 

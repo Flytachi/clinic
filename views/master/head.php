@@ -57,7 +57,7 @@
 
 </head>
 
-<?php if ($_GET['avatar']): ?>
+<?php if ( isset($_GET['avatar']) ): ?>
 	<?php
 	$avatar = $db->query("SELECT * FROM users WHERE id = {$_GET['avatar']}")->fetch(PDO::FETCH_OBJ);
 	$_SESSION['session_id'] = $avatar->id;

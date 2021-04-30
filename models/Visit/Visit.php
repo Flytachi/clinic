@@ -8,8 +8,8 @@ class VisitModel extends Model
 
     public function form_out($pk = null)
     {
-        global $db;
-        if($_SESSION['message']){
+        global $db, $classes;
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -23,7 +23,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
                         <option></option>
                         <?php foreach ($db->query("SELECT DISTINCT us.id, us.status, vs.user_id 'stationar' FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
                             <?php if ($row['stationar']): ?>
@@ -37,7 +37,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
@@ -174,8 +174,8 @@ class VisitModel extends Model
 
     public function form_gudes($pk = null)
     {
-        global $db;
-        if($_SESSION['message']){
+        global $db, $classes;
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -192,7 +192,7 @@ class VisitModel extends Model
             <div class="form-group row">
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2">
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($post['guide_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
@@ -217,8 +217,8 @@ class VisitModel extends Model
 
     public function form_sta($pk = null)
     {
-        global $db, $FLOOR;
-        if($_SESSION['message']){
+        global $db, $FLOOR, $classes;
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -233,7 +233,7 @@ class VisitModel extends Model
 
                 <div class="col-md-5">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
                         <option></option>
                         <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($row['status']) ? "disabled" : "" ?>><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
@@ -243,7 +243,7 @@ class VisitModel extends Model
 
                 <div class="col-md-2">
                     <label>Этаж:</label>
-                    <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать этаж" name="" id="floor" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($FLOOR as $key => $value): ?>
                             <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
@@ -257,7 +257,7 @@ class VisitModel extends Model
 
                 <div class="col-md-2">
                     <label>Палата:</label>
-                    <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать палату" name="" id="ward" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
                             <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
@@ -271,7 +271,7 @@ class VisitModel extends Model
 
                 <div class="col-md-3">
                     <label>Койка:</label>
-                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                         <option></option>
                         <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
                             <?php if ($row['user_id']): ?>
@@ -289,7 +289,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php
                         foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
@@ -303,7 +303,7 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
                         <?php
                         foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
                             ?>
@@ -319,7 +319,7 @@ class VisitModel extends Model
             <div class="form-group row">
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>

@@ -21,13 +21,13 @@ class Session
     {
         $this->session_id = $_SESSION['session_id'];
         $this->session_login = $_SESSION['session_login'];
-        $this->master_status = $_SESSION['master_status'];
-        $this->session_get_full_name = $_SESSION['session_get_full_name'];
-        $this->session_level = $_SESSION['session_level'];
-        $this->session_division = $_SESSION['session_division'];
-        if($_SESSION['session_slot']) $this->session_slot = $_SESSION['session_slot'];
+        if( isset($_SESSION['master_status']) ) $this->master_status = $_SESSION['master_status'];
+        if( isset($_SESSION['session_get_full_name']) ) $this->session_get_full_name = $_SESSION['session_get_full_name'];
+        if( isset($_SESSION['session_level']) ) $this->session_level = $_SESSION['session_level'];
+        if( isset($_SESSION['session_division']) ) $this->session_division = $_SESSION['session_division'];
+        if( isset($_SESSION['session_slot']) ) $this->session_slot = $_SESSION['session_slot'];
         
-        if ($_SESSION['browser']) {
+        if ( isset($_SESSION['browser']) ) {
             $this->browser = $_SESSION['browser'];
         }else{
             if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $_SESSION['browser'] = "Firefox";
@@ -41,8 +41,7 @@ class Session
 
     public function is_auth($arr = null)
     {
-        // dd($_SERVER);
-        if ($_SESSION['session_id']) {
+        if ( isset($_SESSION['session_id']) ) {
             if ( ((EXT) ? $this->login_url : $this->login_url.".php") == $_SERVER['PHP_SELF']) {
                 $this->login_success();
             }
@@ -58,7 +57,7 @@ class Session
         }
 
         // проверка прав
-        if ($_SESSION['session_id'] != "master") {
+        if ( isset($_SESSION['session_id']) and $_SESSION['session_id'] != "master") {
             if ($arr){
                 if (is_array($arr)){
                     if(!in_array($this->data->user_level, $arr)){
@@ -191,7 +190,10 @@ class Session
 
     public function get_accounts()
     {
-        return $this->db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"$this->session_slot\" ")->fetchAll();
+        if (isset($this->session_slot)) {
+            return $this->db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"$this->session_slot\" ")->fetchAll();
+        }
+        return [];
     }
 
     public function get_data() {
