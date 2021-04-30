@@ -123,6 +123,7 @@ class Session
             'self_ip' => $_SERVER['REMOTE_ADDR'], 
             'self_login' => $this->session_login, 
             'self_render' => $_SERVER['PHP_SELF'], 
+            'self_agent' => $_SERVER['HTTP_USER_AGENT'], 
             'last_update' => $date);
         Mixin\insert_or_update($this->table, $new_ses, 'session_id');        
     }

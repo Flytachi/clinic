@@ -6,7 +6,7 @@ class OperationModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -18,7 +18,7 @@ class OperationModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
@@ -42,7 +42,7 @@ class OperationModel extends Model
 
                 <div class="col-md-12">
                     <label>Услуга:</label>
-                    <select data-placeholder="Выберите услугу" name="item_id" id="item_id" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выберите услугу" name="item_id" id="item_id" class="<?= $classes['form-select_price'] ?>" required>
                         <option></option>
                         <?php foreach ($db->query("SELECT * from service WHERE user_level = 5 AND type = 3") as $row): ?>
                             <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?></option>
@@ -53,7 +53,10 @@ class OperationModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -89,7 +92,10 @@ class OperationModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -126,7 +132,10 @@ class OperationModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Завершить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

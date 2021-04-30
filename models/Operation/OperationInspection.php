@@ -40,7 +40,10 @@ class OperationInspectionModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" id="submit"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button type="submit" id="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

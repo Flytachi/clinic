@@ -44,7 +44,7 @@ class OperationPreparatModel extends Model
                                             ) 'qty'
                                             FROM storage st WHERE st.category = 4 AND st.qty != 0 ORDER BY st.name"; ?>
                             <?php foreach ($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['item_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> (в наличии - <?= $row['qty'] ?>)</option>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ( isset($post['item_id']) and $post['item_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> (в наличии - <?= $row['qty'] ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -59,7 +59,10 @@ class OperationPreparatModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

@@ -6,7 +6,7 @@ class OperationMemberModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         if($pk){
             $post = $this->post;
             $operation_id = $post['operation_id'];
@@ -33,7 +33,7 @@ class OperationMemberModel extends Model
 
                 <div class="form-group">
                     <label>Член персонала:</label>
-                    <select placeholder="Введите члена персонала" class="form-control form-control-select2" onchange="$('#member_name').val(this.value)">
+                    <select placeholder="Введите члена персонала" class="<?= $classes['form-select'] ?>" onchange="$('#member_name').val(this.value)">
                         <option>Введите члена персонала</option>
                         <?php foreach ($db->query("SELECT us.id, IFNULL(opm.id, NULL) 'opm_id' FROM users us LEFT JOIN operation_member opm ON(opm.member_name=us.first_name AND opm.operation_id=$operation_id) WHERE us.user_level = 5 AND us.id != {$_SESSION['session_id']}") as $row): ?>
                             <option value="<?= get_full_name($row['id']) ?>"><?= get_full_name($row['id']) ?></option>
@@ -43,25 +43,28 @@ class OperationMemberModel extends Model
 
                 <div class="form-group">
                     <label>Имя специолиста:</label>
-                    <input type="text" class="form-control" name="member_name" id="member_name" placeholder="Введите имя специолиста" required value="<?= $post['member_name'] ?>">
+                    <input type="text" class="form-control" name="member_name" id="member_name" placeholder="Введите имя специолиста" required value="<?= (isset($post['member_name'])) ? $post['member_name'] : '' ?>">
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-md-3">Оператор</label>
                     <div class="col-md-3">
-                        <input type="checkbox" class="swit" name="member_operator" <?= ($post['member_operator']==1) ? "checked" : "" ?>>
+                        <input type="checkbox" class="swit" name="member_operator" <?= (isset($post['member_operator']) and $post['member_operator']==1) ? "checked" : "" ?>>
                     </div>
 
                     <div class="col-md-5">
                         <label>Сумма:</label>
-                        <input type="number" class="form-control" name="price" step="0.1" value="<?= ($post['price']) ? $post['price'] : "0"?>" placeholder="Введите сумму">
+                        <input type="number" class="form-control" name="price" step="0.1" value="<?= (isset($post['price'])) ? $post['price'] : "0"?>" placeholder="Введите сумму">
                     </div>
                 </div>
 
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

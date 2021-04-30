@@ -135,7 +135,7 @@ $header = "Пациент";
 		                    <button type="button" class="close" data-dismiss="modal">×</button>
 		                </div>
 
-	                	<?= StorageHomeForm::form() ?>
+	                	<?= (new StorageHomeForm)->form() ?>
 
 		            </div>
 		        </div>

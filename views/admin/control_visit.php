@@ -62,7 +62,7 @@ $header = "Визиты";
 								<div class="col-md-3">
 									<label>Дата создания:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="add_date" value="<?= $_POST['add_date'] ?>">
+										<input type="text" class="form-control daterange-locale" name="add_date" value="<?= (isset($_POST['add_date'])) ? $_POST['add_date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -74,7 +74,7 @@ $header = "Визиты";
 									<select name="user_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите пациента</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -85,22 +85,22 @@ $header = "Визиты";
 									   <option value="">Выберите отдел</option>
 									   <optgroup label="Врачи">
 				                           <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
-				                               <option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+				                               <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 				                           <?php endforeach; ?>
 				                       </optgroup>
 				                       <optgroup label="Диогностика">
 										   <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-											   <option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+											   <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 										   <?php endforeach; ?>
 				                       </optgroup>
 				                       <optgroup label="Лаборатория">
 				                           <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-				                               <option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+				                               <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 				                           <?php endforeach; ?>
 				                       </optgroup>
 				                       <optgroup label="Остальные">
 				                           <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
-				                               <option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+				                               <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 				                           <?php endforeach; ?>
 				                       </optgroup>
 									</select>
@@ -111,7 +111,7 @@ $header = "Визиты";
 									<select id="service" name="service_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите услугу</option>
 										<?php foreach ($db->query("SELECT * from service WHERE 1") as $row): ?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['service_id']) and $_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -124,8 +124,8 @@ $header = "Визиты";
 									<label>Тип визита:</label>
 									<select class="<?= $classes['form-select'] ?>" name="direction">
 				                        <option value="">Выберите тип визита</option>
-										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
-										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
+										<option value="1" <?= ( isset($_POST['direction']) and $_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
+										<option value="2" <?= ( isset($_POST['direction']) and $_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
 				                    </select>
 								</div>
 
@@ -148,7 +148,7 @@ $header = "Визиты";
 					<?php
 					$_POST['add_date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['add_date'])[0]));
 					$_POST['add_date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['add_date'])[1]));
-					$sql = "SELECT vs.*, sc.name, vp.id 'vp_id', vs.status, vp.item_cost, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) WHERE vs.id IS NOT NULL";
+					$sql = "SELECT vs.*, sc.name, vp.id 'vp_id', vs.status, vp.item_cost, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) WHERE vp.item_type = 1";
 					// Обработка
 					if ($_POST['add_date_start'] and $_POST['add_date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN '".$_POST['add_date_start']."' AND '".$_POST['add_date_end']."')";
@@ -209,7 +209,35 @@ $header = "Визиты";
 													<?php endif; ?>
 												</td>
 												<td class="text-center"><?= ($row['direction']) ? '<span class="badge badge-danger">STA</span>' : '<span class="badge badge-primary">AMB</span>' ?></td>
-												<td class="text-center"><?= $row['status'] ?></td>
+												<td class="text-center">
+
+													<?php if ($row['direction'] and $row['service_id'] != 1): ?>
+														<?php if ($row['completed']): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
+														<?php else: ?>
+															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Не завершена</span>
+														<?php endif; ?>
+														<?php if ($row['status'] == 0): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+														<?php elseif ($row['status'] == 1): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+														<?php elseif ($row['status'] == 2): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+														<?php else: ?>
+															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+														<?php endif; ?>
+													<?php else: ?>	
+														<?php if ($row['status'] == 0): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+														<?php elseif ($row['status'] == 1): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+														<?php elseif ($row['status'] == 2): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+														<?php else: ?>
+															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+														<?php endif; ?>
+													<?php endif; ?>
+												</td>
 												<td class="text-right">
 													<div class="list-icons">
 														<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" href="" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
