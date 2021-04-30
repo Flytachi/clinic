@@ -4,7 +4,7 @@ $session->is_auth();
 $form = new $_POST['model'];
 unset($_POST['model']);
 
-if (!$_POST['id']) {
+if (empty($_POST['id'])) {
     $form->set_post($_POST);
     $form->save();
 }else{

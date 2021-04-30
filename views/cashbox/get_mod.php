@@ -94,7 +94,7 @@ if ($_GET['pk']) {
 
                 <div class="text-right mt-3">
 
-                    <?php VisitPriceModel::form_button() ?>
+                    <?php (new VisitPriceModel)->form_button($pk) ?>
 
                 </div>
 

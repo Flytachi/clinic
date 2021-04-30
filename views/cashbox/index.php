@@ -123,7 +123,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php VisitPriceModel::form(); ?>
+				<?php (new VisitPriceModel)->form(); ?>
 
 			</div>
 		</div>

@@ -45,7 +45,7 @@ $i = 0; $cost = 0;
                 <?php endif; ?>
                 <?php if (!$_GET['head']): ?>
                     <td>
-                        <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="form-control select" required>
+                        <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>" required>
                             <?php if ($row['user_level'] == 6): ?>
                                 <?php foreach ($db->query("SELECT id from users WHERE user_level = 6") as $par): ?>
                                     <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
@@ -72,6 +72,9 @@ $i = 0; $cost = 0;
         <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
     </tr>
     <script type="text/javascript">
+        $( document ).ready(function() {
+            FormLayouts.init();
+        });
 
         function tot_sum(the, price) {
             var total = $('#total_price');

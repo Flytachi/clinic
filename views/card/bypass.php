@@ -56,12 +56,12 @@ if ($grant_id == $_SESSION['session_id']) {
     </div>
     <!-- /circle empty -->
 
-    <?php if ($activity or true): ?>
+    <?php if (true): ?>
         <?php if (permission(5) or $bypass['diet_id']): ?>
             <?php $grant = (permission(7) and $bypass['diet_id']) ? true : $grant; ?>
-            <?php BypassDateModel::table_form_doc() ?>
+            <?php (new BypassDateModel)->table_form_doc() ?>
         <?php elseif (permission(7)): ?>
-            <?php BypassDateModel::table_form_nurce() ?>
+            <?php (new BypassDateModel)->table_form_nurce() ?>
         <?php endif; ?>
     <?php else: ?>
         <div class="alert bg-danger alert-styled-left alert-dismissible">

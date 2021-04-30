@@ -119,7 +119,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php InvestmentModel::form(); ?>
+				<?php (new InvestmentModel)->form(); ?>
 
 			</div>
 		</div>

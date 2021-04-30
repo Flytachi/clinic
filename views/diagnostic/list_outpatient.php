@@ -2,6 +2,9 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(10);
 is_module('module_diagnostic');
+if (division_assist() == 1) {
+	Mixin\error('423');
+}
 $header = "Амбулаторные пациенты";
 ?>
 <!DOCTYPE html>
