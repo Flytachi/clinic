@@ -25,7 +25,7 @@ if ($_POST['type']) {
     <?php endforeach; ?>
     
     <script type="text/javascript">
-        Select2Selects.init();
+        FormLayouts.init();
     </script>
     <?php
 } else {

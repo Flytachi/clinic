@@ -23,7 +23,7 @@ class BypassModel extends Model
 
                 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
                     <li class="nav-item">
-                        <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
+                        <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active show" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
                     </li>
                     <li class="nav-item">
                         <a onclick="Tab_Diet_Preparat(this, 1)" href="#" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>

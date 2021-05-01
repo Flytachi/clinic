@@ -365,7 +365,7 @@ class BypassDateModel extends Model
     {
         global $db, $patient;
         // $this->dd();
-        if ($this->post['products']) {
+        if ( isset($this->post['products']) ) {
             $user_pk = $this->post['user_id'];
             if (isset($this->post['completed']) and $this->post['completed']) {
                 // Медсестра
@@ -456,12 +456,12 @@ class BypassDateModel extends Model
             }
             unset($this->post['user_id']);
             unset($this->post['products']);
-            if (isset($this->post['visit_id'])) {
+            if ( isset($this->post['visit_id'] )) {
                 unset($this->post['visit_id']);
             }
         }else {
             unset($this->post['user_id']);
-            if ($this->post['visit_id']) {
+            if ( isset($this->post['visit_id']) ) {
                 unset($this->post['visit_id']);
             }
         }

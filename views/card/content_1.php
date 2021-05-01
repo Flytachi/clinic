@@ -96,11 +96,11 @@ $header = "Пациент";
 									</thead>
 									<tbody>
 										<?php foreach ($db->query($table_sql) as $row): ?>
-											<tr class="<?= ($row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
+											<tr class="<?= ( isset($row['service_id']) and $row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
 												<td class="text-right">
 													<?php if ($row['report_title']): ?>
-														<?php if ($row['service_id'] == 1): ?>
+														<?php if ( isset($row['service_id']) and $row['service_id'] == 1): ?>
 															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
@@ -109,7 +109,7 @@ $header = "Пациент";
 															<?php endif; ?>
 														<?php endif; ?>
 													<?php else: ?>
-														<?php if ($row['service_id'] == 1): ?>
+														<?php if ( isset($row['service_id']) and $row['service_id'] == 1): ?>
 															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
@@ -181,7 +181,7 @@ $header = "Пациент";
 
 					<div class="modal-body">
 
-						<?php VisitRoute::form_sta_doc() ?>
+						<?php (new VisitRoute)->form_sta_doc() ?>
 
 					</div>
 				</div>
@@ -196,7 +196,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<?php VisitInspectionModel::form() ?>
+					<?php (new VisitInspectionModel)->form() ?>
 
 				</div>
 			</div>
@@ -210,7 +210,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<?php VisitRoute::form_package() ?>
+					<?php (new VisitRoute)->form_package() ?>
 
 				</div>
 			</div>
