@@ -70,17 +70,17 @@ $header = "Отчёт аптеки по расходам";
 								<div class="col-md-3">
 									<label class="d-block font-weight-semibold">Тип расхода</label>
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="type_1" <?= (!$_POST or $_POST['type_1']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="type_1" <?= (empty($_POST) or isset($_POST['type_1'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Внешний</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="type_2" <?= (!$_POST or $_POST['type_2']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="type_2" <?= (empty($_POST) or isset($_POST['type_2'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Операционный</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked2" name="type_3" <?= (!$_POST or $_POST['type_3']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked2" name="type_3" <?= (empty($_POST) or isset($_POST['type_3'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_checked2">Внутренний</label>
 									</div>
 								</div>
@@ -110,24 +110,24 @@ $header = "Отчёт аптеки по расходам";
 					if ($_POST['parent_id']) {
 						$sql .= " AND parent_id = {$_POST['parent_id']}";
 					}
-					if (!$_POST['type_1'] or !$_POST['type_2'] or !$_POST['type_3']) {
-						if ($_POST['type_1']) {
-							if (!$_POST['type_2'] and !$_POST['type_3']) {
+					if (empty($_POST['type_1']) or empty($_POST['type_2']) or empty($_POST['type_3'])) {
+						if (isset($_POST['type_1'])) {
+							if (empty($_POST['type_2']) and empty($_POST['type_3'])) {
 								$sql .= " AND operation_id IS NULL AND parent_id IS NULL";
-							}elseif ($_POST['type_2']) {
+							}elseif (isset($_POST['type_2'])) {
 								$sql .= " AND parent_id IS NULL";
-							}elseif ($_POST['type_3']) {
+							}elseif (isset($_POST['type_3'])) {
 								$sql .= " AND operation_id IS NULL";
 							}
 						}
-						elseif ($_POST['type_2']) {
-							if ($_POST['type_3']) {
+						elseif (isset($_POST['type_2'])) {
+							if (isset($_POST['type_3'])) {
 								$sql .= " AND (operation_id IS NOT NULL OR parent_id IS NOT NULL)";
 							}else {
 								$sql .= " AND operation_id IS NOT NULL";
 							}
 						}
-						elseif ($_POST['type_3']) {
+						elseif (isset($_POST['type_3'])) {
 							$sql .= " AND parent_id IS NOT NULL";
 						}
 					}
