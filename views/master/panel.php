@@ -55,12 +55,12 @@ $header = "Панель управления";
 				<?php elseif ( isset($_POST['GET_START']) ): ?>
 
                     <?php
-                    $flush = Mixin\T_FLUSH_database();
-					$_province = province_temp();
-					$_region = region_temp();
-                    $_division = division_temp();
-                    $_user = users_temp();
-                    $_service = service_temp();
+                    // $flush = Mixin\T_FLUSH_database();
+					// $_province = province_temp();
+					// $_region = region_temp();
+                    // $_division = division_temp();
+                    // $_user = users_temp();
+                    // $_service = service_temp();
                     ?>
 
                     <?php if ($flush == 200): ?>
@@ -197,7 +197,7 @@ $header = "Панель управления";
 
 								<?php
 								try {
-									$comp = $db->query("SELECT * FROM company")->fetchAll();
+									$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
 									foreach ($comp as $value) {
 									    $company[$value['const_label']] = $value['const_value'];
 									}
