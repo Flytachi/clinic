@@ -8,7 +8,7 @@ class InvestmentModel extends Model
     {
         global $db;
         ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="Subi()">
+        <form method="post" action="<?= add_url() ?>" onsubmit="Subi_investment()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" id="user_st_id">
@@ -85,7 +85,7 @@ class InvestmentModel extends Model
                 // }
             });
 
-            function Subi() {
+            function Subi_investment() {
                 event.preventDefault();
                 $.ajax({
                     type: $(event.target).attr("method"),
