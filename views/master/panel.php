@@ -226,6 +226,26 @@ $header = "Панель управления";
 													</td>
 												</tr>
 												<tr>
+													<th>Pharmacy</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company['module_pharmacy']) and $company['module_pharmacy']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Bypass</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_bypass" <?= (isset($company['module_bypass']) and $company['module_bypass']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>ZeTTa PACS</th>
 													<td class="text-right">
 														<div class="list-icons">

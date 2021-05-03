@@ -94,30 +94,32 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                             <?php endforeach; ?>
                         <?php endforeach; ?>
 
-                        <tr class="table-warning">
-                            <td colspan="5" class="text-center"><b>Иследование лаборатории</b></td>
-                        </tr>
-                        <?php $i=1; foreach ($db->query("SELECT DISTINCT vp.item_id, vp.item_cost, vp.item_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' FROM visit vs LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) WHERE vs.laboratory IS NOT NULL AND vs.user_id = $docs->id AND vs.priced_date IS NOT NULL AND vs.accept_date BETWEEN \"$docs->add_date\" AND \"$docs->completed\"") as $row): ?>
-                            <tr>
-                                <td><?= $i++ ?></td>
-                                <td><?= $row['item_name'] ?></td>
-                                <td class="text-center">
-                                    <?= $count = $db->query("SELECT vp.item_id FROM visit vs LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) WHERE vs.laboratory IS NOT NULL AND vs.user_id = $docs->id AND vs.accept_date BETWEEN \"$docs->add_date\" AND \"$docs->completed\" AND vp.item_id = {$row['item_id']}")->rowCount() ?>
-                                </td>
-                                <td class="text-right">
-                                    <?php
-                                    echo number_format($row['item_cost'], 1);
-                                    $total_cost += $count * $row['item_cost'];
-                                    ?>
-                                </td>
-                                <td class="text-right">
-                                    <?php
-                                    echo number_format($count * $row['price'], 1);
-                                    $total += $count * $row['price'];
-                                    ?>
-                                </td>
+                        <?php if(module('module_laboratory')): ?>
+                            <tr class="table-warning">
+                                <td colspan="5" class="text-center"><b>Иследование лаборатории</b></td>
                             </tr>
-                        <?php endforeach; ?>
+                            <?php $i=1; foreach ($db->query("SELECT DISTINCT vp.item_id, vp.item_cost, vp.item_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' FROM visit vs LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) WHERE vs.laboratory IS NOT NULL AND vs.user_id = $docs->id AND vs.priced_date IS NOT NULL AND vs.accept_date BETWEEN \"$docs->add_date\" AND \"$docs->completed\"") as $row): ?>
+                                <tr>
+                                    <td><?= $i++ ?></td>
+                                    <td><?= $row['item_name'] ?></td>
+                                    <td class="text-center">
+                                        <?= $count = $db->query("SELECT vp.item_id FROM visit vs LEFT JOIN visit_price vp ON(vs.id=vp.visit_id) WHERE vs.laboratory IS NOT NULL AND vs.user_id = $docs->id AND vs.accept_date BETWEEN \"$docs->add_date\" AND \"$docs->completed\" AND vp.item_id = {$row['item_id']}")->rowCount() ?>
+                                    </td>
+                                    <td class="text-right">
+                                        <?php
+                                        echo number_format($row['item_cost'], 1);
+                                        $total_cost += $count * $row['item_cost'];
+                                        ?>
+                                    </td>
+                                    <td class="text-right">
+                                        <?php
+                                        echo number_format($count * $row['price'], 1);
+                                        $total += $count * $row['price'];
+                                        ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
 
                         <tr class="table-warning">
                             <td colspan="4" class="text-center"><b>Физиотерапия/Процедуры</b></td>
@@ -144,33 +146,35 @@ $docs = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                             </tr>
                         <?php endforeach; ?>
 
-                        <tr class="table-warning">
-                            <td colspan="5" class="text-center"><b>Препараты</b></td>
-                        </tr>
-                        <?php $i=1; foreach ($db->query("SELECT id FROM visit WHERE physio IS NULL AND manipulation IS NULL AND laboratory IS NULL AND user_id = $docs->id AND priced_date IS NOT NULL AND accept_date BETWEEN \"$docs->add_date\" AND \"$docs->completed\"") as $value): ?>
-                            
-                            <?php foreach ($db->query("SELECT DISTINCT item_id FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (2,3,4)") as $rot): ?>
-                                <?php $row = $db->query("SELECT item_cost, item_name, COUNT(item_id) 'qty', (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (2,3,4) AND item_id = {$rot['item_id']}")->fetch(); ?>
-                                <tr>
-                                    <td><?= $i++ ?></td>
-                                    <td><?= $row['item_name'] ?></td>
-                                    <td class="text-center"><?= $row['qty'] ?></td>
-                                    <td class="text-right">
-                                        <?php
-                                        echo number_format($row['item_cost'], 1);
-                                        $total_cost += $row['item_cost'] * $row['qty'];
-                                        ?>
-                                    </td>
-                                    <td class="text-right">
-                                        <?php
-                                        echo number_format($row['price'] * $row['qty'], 1);
-                                        $total += $row['price'] * $row['qty'];
-                                        ?>
-                                    </td>
-                                </tr>
+                        <?php if(module('module_pharmacy')): ?>
+                            <tr class="table-warning">
+                                <td colspan="5" class="text-center"><b>Препараты</b></td>
+                            </tr>
+                            <?php $i=1; foreach ($db->query("SELECT id FROM visit WHERE physio IS NULL AND manipulation IS NULL AND laboratory IS NULL AND user_id = $docs->id AND priced_date IS NOT NULL AND accept_date BETWEEN \"$docs->add_date\" AND \"$docs->completed\"") as $value): ?>
+                                
+                                <?php foreach ($db->query("SELECT DISTINCT item_id FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (2,3,4)") as $rot): ?>
+                                    <?php $row = $db->query("SELECT item_cost, item_name, COUNT(item_id) 'qty', (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (2,3,4) AND item_id = {$rot['item_id']}")->fetch(); ?>
+                                    <tr>
+                                        <td><?= $i++ ?></td>
+                                        <td><?= $row['item_name'] ?></td>
+                                        <td class="text-center"><?= $row['qty'] ?></td>
+                                        <td class="text-right">
+                                            <?php
+                                            echo number_format($row['item_cost'], 1);
+                                            $total_cost += $row['item_cost'] * $row['qty'];
+                                            ?>
+                                        </td>
+                                        <td class="text-right">
+                                            <?php
+                                            echo number_format($row['price'] * $row['qty'], 1);
+                                            $total += $row['price'] * $row['qty'];
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                
                             <?php endforeach; ?>
-                            
-                        <?php endforeach; ?>
+                        <?php endif; ?>
 
                     </tbody>
                     <tfooter>

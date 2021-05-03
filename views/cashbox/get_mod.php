@@ -78,10 +78,12 @@ if ($_GET['pk']) {
                             <td>Скидка</td>
                             <td class="text-right"><?= number_format( ($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed']) ) ?></td>
                         </tr>
-                        <tr class="table-secondary">
-                            <td>Сумма к оплате(лекарства)</td>
-                            <td class="text-right text-danger"><?= number_format(round($price['cost_item_2'])) ?></td>
-                        </tr>
+                        <?php if(module('module_pharmacy')): ?>
+                            <tr class="table-secondary">
+                                <td>Сумма к оплате(лекарства)</td>
+                                <td class="text-right text-danger"><?= number_format(round($price['cost_item_2'])) ?></td>
+                            </tr>
+                        <?php endif; ?>
                         <tr class="table-secondary">
                             <td>Разница</td>
                             <?php if (($price['balance'] + $price_cost) > 0): ?>

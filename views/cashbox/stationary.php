@@ -125,19 +125,21 @@ $header = "Рабочий стол";
 		</div>
 	</div>
 
-	<div id="modal_default" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header bg-info">
-					<h6 class="modal-title">Оплата Препаратов</h6>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
+	<?php if(module('module_pharmacy')): ?>
+		<div id="modal_default" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Оплата Препаратов</h6>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+					<?php (new VisitPriceModel)->form_pharm(); ?>
+
 				</div>
-
-				<?php (new VisitPriceModel)->form_pharm(); ?>
-
 			</div>
 		</div>
-	</div>
+	<?php endif; ?>
 
 	<div id="modal_sale" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
