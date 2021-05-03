@@ -149,7 +149,7 @@ $header = "Панель управления";
 
                 <?php endif; ?>
 
-                <div class="card">
+                <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Control Panel</h5>

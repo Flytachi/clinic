@@ -30,7 +30,7 @@ $header = "База данных";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card">
+                <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">База данных</h5>

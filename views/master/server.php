@@ -30,10 +30,14 @@ $header = "Контроль базы данных";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card">
+                <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Дамп базы данных</h5>
+
+						<div class="header-elements">
+							<a href="<?= viv('master/cap').'?is_create=1' ?>" class="btn btn-sm btn-outline-secondary">Create Dump</a>
+						</div>
 				    </div>
 
 				    <div class="card-body">
@@ -64,9 +68,9 @@ $header = "Контроль базы данных";
                                             <td><?= $i++ ?></td>
                                             <td><?= pathinfo($value, PATHINFO_FILENAME); ?></td>
                                             <td>
-                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
+                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
                                                 <a href="/dump/<?= $value ?>" class="list-icons-up text-dark" download><i class="icon-download"></i></a>
-												<a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
+												<a onclick="Conf('<?= viv('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>', 1)" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
 											</td>
                                         </tr>
                                     <?php endforeach; ?>
