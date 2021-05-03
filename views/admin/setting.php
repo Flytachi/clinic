@@ -55,7 +55,7 @@ $header = "Настройки";
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
-						$comp = $db->query("SELECT * FROM company")->fetchAll();
+						$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
 						foreach ($comp as $value) {
 							$company[$value['const_label']] = $value['const_value'];
 						}
