@@ -170,7 +170,7 @@ class VisitPriceModel extends Model
     {
         global $db;
         ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="Subi()">
+        <form method="post" action="<?= add_url() ?>" onsubmit="Subi_pharm()">
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -254,7 +254,7 @@ class VisitPriceModel extends Model
                 }
             }
 
-            function Subi() {
+            function Subi_pharm() {
                 event.preventDefault();
                 $.ajax({
                     type: $(event.target).attr("method"),
