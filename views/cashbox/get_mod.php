@@ -36,9 +36,9 @@ if ($_GET['pk']) {
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
                             @cost_bed := @bed_hours * (bdt.price / 24) 'cost_bed',
-                            @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)), 0) 'cost_service',
-                            @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)), 0) 'cost_item_2',
-                            @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)), 0) 'cost_beds',
+                            @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5) AND price_date IS NULL), 0) 'cost_service',
+                            @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                            @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
                             IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
                             IFNULL(vss.sale_service_unit, 0) 'sale_service'
                             -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
@@ -62,7 +62,7 @@ if ($_GET['pk']) {
                 $price['amount_service'] = $price['cost_service'] - $price['sale_service'];
                 // dd($price);
                 // Скрипт -----
-                $price_cost = -round($price['amount_service'] + $price['amount_bed'] + $price['cost_item_2']);
+                $price_cost = -round($price['amount_service'] + $price['amount_bed']);
                 ?>
                 <table class="table table-hover">
                     <tbody>
@@ -77,6 +77,10 @@ if ($_GET['pk']) {
                         <tr class="table-secondary">
                             <td>Скидка</td>
                             <td class="text-right"><?= number_format( ($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed']) ) ?></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Сумма к оплате(лекарства)</td>
+                            <td class="text-right text-danger"><?= number_format(round($price['cost_item_2'])) ?></td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Разница</td>

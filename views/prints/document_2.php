@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 is_module('module_laboratory');
 
-$comp = $db->query("SELECT * FROM company")->fetchAll();
+$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
 foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }

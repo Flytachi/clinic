@@ -94,7 +94,7 @@ $header = "Пациент";
 														?>
 													</td>
 													<td><?= $row['description'] ?></td>
-													<td><?= $methods[$row['method']] ?></td>
+													<td><?= ( isset($row['method']) ) ? $methods[$row['method']] : '' ?></td>
 													<td class="text-center">
 														<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
 															<?php if ($time['status']): ?>
@@ -151,7 +151,7 @@ $header = "Пациент";
 					
 					</div>
 
-					<?php BypassModel::form() ?>
+					<?php (new BypassModel)->form() ?>
 
 				</div>
 			</div>

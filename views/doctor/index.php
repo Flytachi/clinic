@@ -136,7 +136,7 @@ $header = "Приём пациетов";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?= VisitFailure::form(); ?>
+				<?= (new VisitFailure)->form(); ?>
 			</div>
 		</div>
 	</div>

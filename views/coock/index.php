@@ -29,25 +29,27 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
-					<li class="nav-item"><a href="#basic-justified-tab1" class="nav-link legitRipple active show" data-toggle="tab">1 Этаж</a></li>
-					<li class="nav-item"><a href="#basic-justified-tab2" class="nav-link legitRipple" data-toggle="tab">2 Этаж</a></li>
-					<li class="nav-item"><a href="#basic-justified-tab3" class="nav-link legitRipple" data-toggle="tab">3 Этаж</a></li>
-				</ul>
+				<div class="row">
 
-				<div class="tab-content">
+					<?php foreach ($DIET_TIME as $time): ?>
+						<div class="col-md-4">
+							<div class="<?= $classes['card'] ?>">
 
-					<div class="tab-pane fade active show" id="basic-justified-tab1">
-						<?php include 'tabs/floor_1.php' ?>
-					</div>
+								<div class="<?= $classes['card-header'] ?>">
+									<h5 class="card-title"><?= $time ?></h5>
+									<div class="header-elements">
+										<button type="button" class="btn bg-blue btn-icon legitRipple"><i class="icon-cog2"></i></button>
+										<button type="button" class="btn bg-success btn-icon ml-2 legitRipple"><i class="icon-task"></i></button>
+									</div>
+								</div>
 
-					<div class="tab-pane fade" id="basic-justified-tab2">
-						<?php include 'tabs/floor_2.php' ?>
-					</div>
+								<div class="card-body">
+									
+								</div>
 
-					<div class="tab-pane fade" id="basic-justified-tab3">
-						<?php include 'tabs/floor_3.php' ?>
-					</div>
+							</div>
+						</div>
+					<?php endforeach; ?>
 
 				</div>
 
