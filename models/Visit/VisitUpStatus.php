@@ -18,7 +18,7 @@ class VisitUpStatus extends Model
         $this->post['id'] = $pk;
         $this->post['status'] = 2;
         $this->post['accept_date'] = date('Y-m-d H:i:s');
-        $this->url = "card/content_1.php?id=".$_GET['user_id'];
+        $this->dd();
         $this->update();
     }
 
