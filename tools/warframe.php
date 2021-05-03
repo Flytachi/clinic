@@ -7,7 +7,7 @@ ini_set("session.gc_divisor", ($ini['GLOBAL_SETTING']['SESSION_GC_DIVISOR']) ? $
 ini_set('session.gc_maxlifetime', ($ini['GLOBAL_SETTING']['SESSION_LIFE']) ? $ini['GLOBAL_SETTING']['SESSION_LIFE'] * 60 : 1800);
 ini_set('session.cookie_lifetime', ($ini['GLOBAL_SETTING']['SESSION_COOKIE_LIFETIME']) ? $ini['GLOBAL_SETTING']['SESSION_COOKIE_LIFETIME'] * 60 : 0);
 
-if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
+if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));
 
     if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) {
@@ -24,7 +24,7 @@ if (!$ini['GLOBAL_SETTING']['ROOT_MOD']) {
 
 // Settings debugger
 
-if ($ini['GLOBAL_SETTING']['DEBUG']) {
+if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) {
     ini_set('error_reporting', E_ALL);
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -35,7 +35,7 @@ if ($ini['GLOBAL_SETTING']['DEBUG']) {
 
 // File extension
 
-if ($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) {
+if ( isset($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) and $ini['GLOBAL_SETTING']['HIDE_EXTENSION'] ) {
 
     define('EXT', "");
 
@@ -54,6 +54,23 @@ require_once dirname(__FILE__).'/functions/base.php';
 require_once dirname(__FILE__).'/functions/model.php';
 require_once dirname(__DIR__).'/libs/lib.php';
 
+// Engineering works
+
+if ( isset($ini['GLOBAL_SETTING']['ENGINEERING_WORKS']) and $ini['GLOBAL_SETTING']['ENGINEERING_WORKS'] ) {
+
+    if ( empty($work_url) ) {
+        Mixin\error("engineering_work");
+    }
+
+}else{
+
+    if ( isset($work_url) ) {
+        index();
+    }
+
+}
+
+// END Engineering works
 
 $session = new Session($db, $ini['GLOBAL_SETTING']['SESSION_LIFE']);
 

@@ -60,6 +60,7 @@ class __Make
         SESSION_LIFE = 
         SESSION_COOKIE_LIFETIME = 
 
+        ENGINEERING_WORKS = false
         HIDE_EXTENSION = false
         ROOT_MOD = false
         DEBUG = false
