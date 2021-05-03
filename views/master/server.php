@@ -36,7 +36,7 @@ $header = "Контроль базы данных";
 				        <h5 class="card-title">Дамп базы данных</h5>
 
 						<div class="header-elements">
-							<a href="<?= viv('master/cap').'?is_create=1' ?>" class="btn btn-sm btn-outline-secondary">Create Dump</a>
+							<a href="<?= viv('master/cap').'?is_create=1' ?>" class="btn btn-sm border-1 text-dark">Create Dump</a>
 						</div>
 				    </div>
 

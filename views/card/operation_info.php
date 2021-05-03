@@ -476,10 +476,12 @@ if (!isset($_GET['type'])) {
                         <td>Стоимость услуг анестезиолога</td>
                         <td class="text-right text-success"><?= number_format($total_service_price, 1) ?></td>
                     </tr>
-                    <tr class="table-secondary">
-                        <td>Стоимость препаратов</td>
-                        <td class="text-right text-success"><?= number_format($total_preparats_price, 1) ?></td>
-                    </tr>
+                    <?php if(module('module_pharmacy')): ?>    
+                        <tr class="table-secondary">
+                            <td>Стоимость препаратов</td>
+                            <td class="text-right text-success"><?= number_format($total_preparats_price, 1) ?></td>
+                        </tr>
+                    <?php endif; ?>
                     <tr class="table-secondary">
                         <td>Стоимость расходов</td>
                         <td class="text-right text-success"><?= number_format($total_other_price, 1) ?></td>
