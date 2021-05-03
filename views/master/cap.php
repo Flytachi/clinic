@@ -1,9 +1,19 @@
 <?php
 require_once '../../tools/warframe.php';
+require_once '../../tools/Console/command.php';
 $session->is_auth('master');
 
-if ($_GET['is_delete']) {
-    unlink("../../dump/".$_GET['file']);
+if ($_GET['is_create']) {
+    new __Dump("create");
+    $_SESSION['message'] = '
+    <div class="alert alert-primary" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+        Дамп успешно сохранён!
+    </div>
+    ';
+    render();
+}elseif ($_GET['is_delete']) {
+    new __Dump("delete", $_GET['file']);
     $_SESSION['message'] = '
     <div class="alert alert-primary" role="alert">
         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
@@ -12,8 +22,8 @@ if ($_GET['is_delete']) {
     ';
     render();
 }elseif ($_GET['file']) {
-    exec("mysqldump -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} > ../../dump/original_base_".date("Y-m-d_H-i-s").".sql");
-    exec("mysql -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} < ../../dump/".$_GET['file']);
+    new __Dump("create", "merge_in_".date("Y-m-d_H-i-s"));
+    new __Dump("migrate", $_GET['file']);
     $_SESSION['message'] = '
     <div class="alert alert-primary" role="alert">
         <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
