@@ -7,11 +7,6 @@ class BypassModel extends Model
     public function form($pk = null)
     {
         global $db, $patient, $methods, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">

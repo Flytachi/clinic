@@ -37,11 +37,6 @@ class ServiceModel extends Model
     public function form($pk = null)
     {
         global $db, $PERSONAL, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -49,7 +44,7 @@ class ServiceModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group row">
 
@@ -58,7 +53,7 @@ class ServiceModel extends Model
                     <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($PERSONAL as $key => $value): ?>
-                            <option value="<?= $key ?>"<?= ($this->value($post, 'user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -68,7 +63,7 @@ class ServiceModel extends Model
                     <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required >
                         <option></option>
                         <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value($post, 'division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -76,9 +71,9 @@ class ServiceModel extends Model
                 <div class="col-3">
                     <label>Тип:</label>
                     <select name="type" class="<?= $classes['form-select'] ?>" required>
-                        <option value="1" <?= ($this->value($post, 'type') == 1) ? 'selected': '' ?>>Обычная</option>
-                        <option value="2" <?= ($this->value($post, 'type') == 2) ? 'selected': '' ?>>Консультация</option>
-                        <option value="3" <?= ($this->value($post, 'type') == 3) ? 'selected': '' ?>>Операционная</option>
+                        <option value="1" <?= ($this->value('type') == 1) ? 'selected': '' ?>>Обычная</option>
+                        <option value="2" <?= ($this->value('type') == 2) ? 'selected': '' ?>>Консультация</option>
+                        <option value="3" <?= ($this->value('type') == 3) ? 'selected': '' ?>>Операционная</option>
                     </select>
                 </div>
 
@@ -88,17 +83,17 @@ class ServiceModel extends Model
 
                 <div class="col-md-6">
                     <label>Название:</label>
-                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $this->value($post, 'name') ?>">
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $this->value('name') ?>">
                 </div>
 
                 <div class="col-md-3">
                     <label>Код:</label>
-                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value($post, 'code') ?>">
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value('code') ?>">
                 </div>
 
                 <div class="col-md-3">
                     <label>Цена:</label>
-                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $this->value($post, 'price') ?>">
+                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $this->value('price') ?>">
                 </div>
 
             </div>
