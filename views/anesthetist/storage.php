@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(11);
+is_module('module_pharmacy');
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>

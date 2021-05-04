@@ -42,9 +42,11 @@
     <?php endif; ?>
     <?php if ($patient->direction): ?>
         <?php if (!$activity or !permission([11])): ?>
-            <li class="nav-item">
-                <a href="<?= viv('card/content_7').$agr ?>" class="nav-link <?= viv_link('card/content_7') ?> legitRipple" style="white-space:nowrap;"><i class="icon-magazine mr-1"></i>Лист назначений</a>
-            </li>
+            <?php if(module('module_bypass')): ?>
+                <li class="nav-item">
+                    <a href="<?= viv('card/content_7').$agr ?>" class="nav-link <?= viv_link('card/content_7') ?> legitRipple" style="white-space:nowrap;"><i class="icon-magazine mr-1"></i>Лист назначений</a>
+                </li>
+            <?php endif; ?>
         <?php endif; ?>
         <li class="nav-item">
             <a href="<?= viv('card/content_8').$agr ?>" class="nav-link <?= viv_link('card/content_8') ?> legitRipple" style="white-space:nowrap;"><i class="icon-clipboard2 mr-1"></i>Состояние</a>
@@ -59,11 +61,13 @@
         </li>
     <?php endif; ?>
     <?php if (!$activity or permission([7])): ?>
-        <li class="nav-item">
-            <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-puzzle3 mr-1"></i>Расходные материалы</a>
-        </li>
+        <?php if(module('module_pharmacy')): ?>
+            <li class="nav-item">
+                <a href="<?= viv('card/content_11').$agr ?>" class="nav-link <?= viv_link('card/content_11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-puzzle3 mr-1"></i>Расходные материалы</a>
+            </li>
+        <?php endif; ?>
     <?php endif; ?>
-    <?php if (!$activity): ?>
+    <?php if (!$activity and $patient->priced_date): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content_12').$agr ?>" class="nav-link <?= viv_link('card/content_12') ?> legitRipple" style="white-space:nowrap;"><i class="icon-calculator3 mr-1"></i>Расходы</a>
         </li>

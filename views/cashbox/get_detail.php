@@ -13,14 +13,18 @@ if ($_GET['pk']) {
                 @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
                 bdt.name 'bed_type',
                 bdt.price 'bed_price',
-                @bed_hours * (bdt.price / 24) 'cost_bed',
-                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)) 'cost_service',
-                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)) 'cost_item_2',
-                (SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)) 'cost_beds'
+                @cost_bed := @bed_hours * (bdt.price / 24) 'cost_bed',
+                @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5) AND price_date IS NULL), 0) 'cost_service',
+                @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
+                IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
+                IFNULL(vss.sale_service_unit, 0) 'sale_service'
+                -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
                 -- vs.add_date
             FROM users us
                 LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
+                LEFT JOIN visit_sale vss ON(vss.visit_id = vs.id)
                 LEFT JOIN beds bd ON(bd.id = vs.bed_id)
                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
             WHERE us.id = $pk";
@@ -32,7 +36,7 @@ if ($_GET['pk']) {
             $price['cost_service'] += $pri_ze['price'];
         }
     }
-    // prit($price);
+    // dd($price);
     // Скрипт -----
     ?>
 
@@ -93,20 +97,22 @@ if ($_GET['pk']) {
                     <?php endforeach; ?>
                 <?php endforeach; ?>
 
-                <tr class="table-secondary">
-                    <td>Препараты/Расходные материалы</td>
-                    <td>Количество</td>
-                    <td>Цена ед.</td>
-                    <td class="text-right"><?= number_format($price['cost_item_2']) ?></td>
-                </tr>
-                <?php foreach ($db->query("SELECT DISTINCT vp.item_name, vp.item_cost, (SELECT COUNT(*) FROM visit_price WHERE visit_id = {$price['id']} AND item_type IN (2,3,4) AND item_id=vp.item_id) 'count' FROM visit_price vp WHERE vp.visit_id = {$price['id']} AND vp.item_type IN (2,3,4)") as $row): ?>
-                    <tr>
-                        <td><?= $row['item_name'] ?></td>
-                        <td><?= $row['count'] ?></td>
-                        <td><?= number_format($row['item_cost']) ?></td>
-                        <td class="text-right"><?= number_format($row['count'] * $row['item_cost']) ?></td>
+                <?php if(module('module_pharmacy')): ?>
+                    <tr class="table-secondary">
+                        <td>Препараты/Расходные материалы</td>
+                        <td>Количество</td>
+                        <td>Цена ед.</td>
+                        <td class="text-right"><?= number_format($price['cost_item_2']) ?></td>
                     </tr>
-                <?php endforeach; ?>
+                    <?php foreach ($db->query("SELECT DISTINCT vp.item_name, vp.item_cost, (SELECT COUNT(*) FROM visit_price WHERE visit_id = {$price['id']} AND item_type IN (2,3,4) AND item_id=vp.item_id) 'count' FROM visit_price vp WHERE vp.visit_id = {$price['id']} AND vp.item_type IN (2,3,4)") as $row): ?>
+                        <tr>
+                            <td><?= $row['item_name'] ?></td>
+                            <td><?= $row['count'] ?></td>
+                            <td><?= number_format($row['item_cost']) ?></td>
+                            <td class="text-right"><?= number_format($row['count'] * $row['item_cost']) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
 
                 <tr class="table-primary">
                     <td colspan="3" class="text-right">Итого:</td>

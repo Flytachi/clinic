@@ -39,6 +39,11 @@ function render($url=null){
     exit;
 }
 
+function index(){
+    header("location:".DIR."/index".EXT);
+    exit;
+}
+
 function layout($url){
     return $_SERVER['DOCUMENT_ROOT'].DIR."/views/layout/$url.php";
 }

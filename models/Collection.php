@@ -136,7 +136,7 @@ class Collection extends Model
                         </table>
                     </div>
 
-                    <div class="col-6">
+                    <div class="<?= (module('module_pharmacy')) ? 'col-md-6' : 'col-md-12' ?>">
                         <table class="table table-hover">
                             <tbody>
                                 <tr class="table-secondary">
@@ -155,24 +155,26 @@ class Collection extends Model
                         </table>
                     </div>
 
-                    <div class="col-6">
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr class="table-secondary">
-                                    <td>Наличные (аптека)</td>
-                                    <td class="text-right <?= ($pharm['price_cash'] > 0) ? 'text-success' : '' ?>"><?= number_format($pharm['price_cash']) ?></td>
-                                </tr>
-                                <tr class="table-secondary">
-                                    <td>Пластик (аптека)</td>
-                                    <td class="text-right <?= ($pharm['price_card'] > 0) ? 'text-success' : '' ?>"><?= number_format($pharm['price_card']) ?></td>
-                                </tr>
-                                <tr class="table-secondary">
-                                    <td>Перечисление (аптека)</td>
-                                    <td class="text-right <?= ($pharm['price_transfer'] > 0) ? 'text-success' : '' ?>"><?= number_format($pharm['price_transfer']) ?></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <?php if(module('module_pharmacy')): ?>
+                        <div class="col-md-6">
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr class="table-secondary">
+                                        <td>Наличные (аптека)</td>
+                                        <td class="text-right <?= ($pharm['price_cash'] > 0) ? 'text-success' : '' ?>"><?= number_format($pharm['price_cash']) ?></td>
+                                    </tr>
+                                    <tr class="table-secondary">
+                                        <td>Пластик (аптека)</td>
+                                        <td class="text-right <?= ($pharm['price_card'] > 0) ? 'text-success' : '' ?>"><?= number_format($pharm['price_card']) ?></td>
+                                    </tr>
+                                    <tr class="table-secondary">
+                                        <td>Перечисление (аптека)</td>
+                                        <td class="text-right <?= ($pharm['price_transfer'] > 0) ? 'text-success' : '' ?>"><?= number_format($pharm['price_transfer']) ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
 
                 </div>
 

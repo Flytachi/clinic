@@ -69,23 +69,49 @@
 
                         <?php if($row['is_parent']): ?>
                     
-                            <li class="nav-item nav-item-submenu <?= viv_link(json_decode($row['is_active']), 'nav-item-expanded nav-item-open') ?>">
-                                <a href="#" class="nav-link legitRipple"><i class="<?= $row['icon'] ?>"></i> <span><?= $row['name'] ?></span></a>
+                            <?php if($row['module']): ?>
+                                <?php if(module($row['module'])): ?>
 
-                                <ul class="nav nav-group-sub" data-submenu-title="<?= $row['name'] ?>">
+                                    <li class="nav-item nav-item-submenu <?= viv_link(json_decode($row['is_active']), 'nav-item-expanded nav-item-open') ?>">
+                                        <a href="#" class="nav-link legitRipple"><i class="<?= $row['icon'] ?>"></i> <span><?= $row['name'] ?></span></a>
 
-                                    <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id = {$row['id']} ORDER BY sort ASC") as $subrow): ?>
-                                        <?php if($subrow['module']): ?>
-                                            <?php if(module($subrow['module'])): ?>
+                                        <ul class="nav nav-group-sub" data-submenu-title="<?= $row['name'] ?>">
+
+                                            <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id = {$row['id']} ORDER BY sort ASC") as $subrow): ?>
+                                                <?php if($subrow['module']): ?>
+                                                    <?php if(module($subrow['module'])): ?>
+                                                        <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+
+                                        </ul>
+                                    </li>
+                                    
+                                <?php endif; ?>
+                            <?php else: ?>
+
+                                <li class="nav-item nav-item-submenu <?= viv_link(json_decode($row['is_active']), 'nav-item-expanded nav-item-open') ?>">
+                                    <a href="#" class="nav-link legitRipple"><i class="<?= $row['icon'] ?>"></i> <span><?= $row['name'] ?></span></a>
+
+                                    <ul class="nav nav-group-sub" data-submenu-title="<?= $row['name'] ?>">
+
+                                        <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id = {$row['id']} ORDER BY sort ASC") as $subrow): ?>
+                                            <?php if($subrow['module']): ?>
+                                                <?php if(module($subrow['module'])): ?>
+                                                    <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
+                                                <?php endif; ?>
+                                            <?php else: ?>
                                                 <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
                                             <?php endif; ?>
-                                        <?php else: ?>
-                                            <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
+                                        <?php endforeach; ?>
 
-                                </ul>
-                            </li>
+                                    </ul>
+                                </li>
+
+                            <?php endif; ?>
                             
                         <?php else: ?>
 
