@@ -7,11 +7,8 @@ $header = "Пациент";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
-
 <script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js") ?>"></script>
+<!-- <script src="<?= stack("vendors/js/custom.js") ?>"></script> -->
 
 <body>
 	<!-- Main navbar -->

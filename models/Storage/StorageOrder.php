@@ -7,11 +7,6 @@ class StorageOrdersModel extends Model
     public function form($pk = null)
     {
         global $db, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -49,14 +44,14 @@ class StorageOrdersModel extends Model
                         <select data-placeholder="Выберите материал" name="preparat_id" class="<?= $classes['form-select_price'] ?>" required <?= ($pk) ? "disabled" : '' ?>>
                             <option></option>
                             <?php foreach ($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ( isset($post['preparat_id']) and $post['preparat_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($this->value('preparat_id') == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="col-md-2">
                         <label>Количество:</label>
-                        <input type="number" name="qty" value="<?= $post['qty'] ?>" class="form-control">
+                        <input type="number" name="qty" value="<?= $this->value('qty') ?>" class="form-control">
                     </div>
 
                 </div>

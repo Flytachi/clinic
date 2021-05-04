@@ -34,7 +34,7 @@ class BypassModel extends Model
                         <?php if(module('module_pharmacy')): ?>
                             <div class="col-md-9">
                                 <label>Препараты:</label>
-                                <select id="select_preparat" class="form-control my_multiselect" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
+                                <select id="select_preparat" class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
                                     <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
                                         ( 
                                             st.qty -

@@ -7,7 +7,7 @@ if ($_POST['type']) {
     <div class="form-group row">
         <div class="col-md-12">
             <label>Диеты:</label>
-            <select data-placeholder="Выбрать диету" name="diet_id" class="form-control myselect">
+            <select data-placeholder="Выбрать диету" name="diet_id" class="<?= $classes['form-select'] ?>">
                 <option></option>
                 <?php foreach ($db->query("SELECT * FROM diet") as $row): ?>
                     <option value="<?= $row['id'] ?>" ><?= $row['name'] ?></option>
@@ -39,7 +39,7 @@ if ($_POST['type']) {
         <?php if(module('module_pharmacy')): ?>
             <div class="col-md-9">
                 <label>Препараты:</label>
-                <select id="select_preparat" class="form-control my_multiselect" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
+                <select id="select_preparat" class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
                     <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
                         ( 
                             st.qty -

@@ -156,9 +156,9 @@ $header = "Пациент";
 
 						<?php
 						if ($patient->direction) {
-							VisitRoute::form_sta_diagnostic();
+							(new VisitRoute)->form_sta_diagnostic();
 						} else {
-							VisitRoute::form_out_diagnostic();
+							(new VisitRoute)->form_out_diagnostic();
 						}
 						?>
 

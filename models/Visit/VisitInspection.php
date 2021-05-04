@@ -6,7 +6,7 @@ class VisitInspectionModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $patient;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -28,7 +28,10 @@ class VisitInspectionModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm" id="submit_insp">Сохранить</button>
+                <button type="submit" id="submit_insp" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

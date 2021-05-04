@@ -6,7 +6,6 @@ class InvestmentModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
         ?>
         <form method="post" action="<?= add_url() ?>" onsubmit="Subi_investment()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">

@@ -152,9 +152,9 @@ $header = "Пациент";
 
 						<?php
 						if ($patient->direction) {
-							VisitRoute::form_sta_physio_manipulation();
+							(new VisitRoute)->form_sta_physio_manipulation();
 						} else {
-							VisitRoute::form_out_physio_manipulation();
+							(new VisitRoute)->form_out_physio_manipulation();
 						}
 						?>
 

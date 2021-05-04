@@ -8,7 +8,6 @@ class VisitPriceModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
         ?>
         <form method="post" action="<?= add_url() ?>" onsubmit="Submit_alert()">
 
@@ -168,7 +167,6 @@ class VisitPriceModel extends Model
 
     public function form_pharm($pk = null)
     {
-        global $db;
         ?>
         <form method="post" action="<?= add_url() ?>" onsubmit="Subi_pharm()">
 

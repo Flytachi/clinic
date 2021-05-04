@@ -6,19 +6,19 @@ class StorageHomeModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $pk;
+        global $db, $classes;
         ?>
         <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
-            <div class="card border-1 border-info">
+            <div class="<?= $classes['card'] ?>">
 
-                <div class="card-header text-dark header-elements-inline alpha-info">
+                <div class="<?= $classes['card-header'] ?>">
                     <h5 class="card-title">Список лекарств пациента</h5>
                     <div class="header-elements">
                         <div class="list-icons">
-                            <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
+                            <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($db->query("SELECT * from users WHERE user_level = 7") as $row): ?>
                                     <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
@@ -181,16 +181,16 @@ class StorageHomeModel extends Model
 
     public function form_order($pk = null)
     {
-        global $db, $pk;
+        global $db, $classes;
         ?>
         <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="parent_id" value="<?= $pk ?>">
 
-            <div class="card border-1 border-info">
+            <div class="<?= $classes['card'] ?>">
 
-                <div class="card-header text-dark header-elements-inline alpha-info">
+                <div class="<?= $classes['card-header'] ?>">
                     <h5 class="card-title">Список препаратов</h5>
                     <div class="header-elements">
                         <div class="list-icons">
