@@ -363,111 +363,132 @@ class BypassDateModel extends Model
 
     public function clean()
     {
-        global $db, $patient;
-        // $this->dd();
-        if ( isset($this->post['products']) ) {
-            $user_pk = $this->post['user_id'];
-            if (isset($this->post['completed']) and $this->post['completed']) {
-                // Медсестра
-                $db->beginTransaction();
-                foreach ($this->post['products'] as $value){
-                    $qty = $db->query("SELECT qty FROM bypass_preparat WHERE bypass_id = {$this->post['bypass_id']} AND preparat_id = $value")->fetchColumn();
-                    $post = $db->query("SELECT id, preparat_id 'item_id', price 'item_cost', name 'item_name', qty, qty_sold, category 'item_type' FROM storage_home WHERE preparat_id = $value")->fetch();
-                    if(!$post){
-                        $this->error("Не осталось препарата ".$value);
-                        $this->stop();
-                    }
-                    $post['visit_id'] = $this->post['visit_id'];
-                    $post['user_id'] = $user_pk;
-                    if ($post['qty'] <= $qty) {
-                        $object = Mixin\delete('storage_home', $post['id']);
-                    }else {
-                        $object = Mixin\update('storage_home', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $post['id']);
-                    }
-                    if (!intval($object)) {
-                        $this->error('storage_preparat'.$object);
-                    }
-                    unset($post['qty_sold']);
-                    unset($post['qty']);
-                    unset($post['id']);
-                    for ($i=0; $i < $qty; $i++) {
-                        $object1 = Mixin\insert('visit_price', $post);
-                        if (!intval($object1)) {
-                            $this->error('visit_price'.$object1);
-                            $this->stop();
-                        }
-                    }
-                }
-                $db->commit();
-            }else {
-                // Доктор
-                if ($this->post['status']) {
-
+        if ( isset($this->post['pks']) ) {
+            $this->save_row();
+        }else {
+            global $db, $patient;
+            if ( isset($this->post['products']) ) {
+                $user_pk = $this->post['user_id'];
+                if (isset($this->post['completed']) and $this->post['completed']) {
+                    // Медсестра
                     $db->beginTransaction();
                     foreach ($this->post['products'] as $value){
                         $qty = $db->query("SELECT qty FROM bypass_preparat WHERE bypass_id = {$this->post['bypass_id']} AND preparat_id = $value")->fetchColumn();
-                        $store = $db->query("SELECT qty FROM storage WHERE id = $value")->fetchColumn();
-                        $orders = $db->query("SELECT SUM(qty) FROM storage_orders WHERE preparat_id =$value")->fetchColumn();
-                        if(!$store or ($store-$orders) < $qty){
-                            $this->error("Не осталось препарата ".$store);
+                        $post = $db->query("SELECT id, preparat_id 'item_id', price 'item_cost', name 'item_name', qty, qty_sold, category 'item_type' FROM storage_home WHERE preparat_id = $value")->fetch();
+                        if(!$post){
+                            $this->error("Не осталось препарата ".$value);
                             $this->stop();
                         }
-                        $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
-                        if ($post) {
-                            $post_pk = $post['id'];
-                            unset($post['id']);
-                            $post['qty'] += $qty;
-                            $post['date'] = $this->post['date'];
-                            $object = Mixin\update('storage_orders', $post, $post_pk);
+                        $post['visit_id'] = $this->post['visit_id'];
+                        $post['user_id'] = $user_pk;
+                        if ($post['qty'] <= $qty) {
+                            $object = Mixin\delete('storage_home', $post['id']);
                         }else {
-                            $post = array(
-                                'user_id' => $this->post['user_id'],
-                                'parent_id' => $_SESSION['session_id'],
-                                'preparat_id' => $value,
-                                'qty' => $qty,
-                                'date' => $this->post['date']
-                            );
-                            $object = Mixin\insert('storage_orders', $post);
+                            $object = Mixin\update('storage_home', array('qty' => $post['qty']-$qty, 'qty_sold' => $post['qty_sold']+$qty), $post['id']);
                         }
                         if (!intval($object)) {
-                            $this->error('storage_orders: '.$object);
+                            $this->error('storage_preparat'.$object);
+                        }
+                        unset($post['qty_sold']);
+                        unset($post['qty']);
+                        unset($post['id']);
+                        for ($i=0; $i < $qty; $i++) {
+                            $object1 = Mixin\insert('visit_price', $post);
+                            if (!intval($object1)) {
+                                $this->error('visit_price'.$object1);
+                                $this->stop();
+                            }
                         }
                     }
                     $db->commit();
-
-                } else {
-
-                    $db->beginTransaction();
-                    foreach ($this->post['products'] as $value){
-                        $qty = $db->query("SELECT qty FROM bypass_preparat WHERE bypass_id = {$this->post['bypass_id']} AND preparat_id = $value")->fetchColumn();
-                        $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
-                        if ($post['qty'] > $qty) {
-                            $post_pk = $post['id'];
-                            unset($post['id']);
-                            $post['qty'] -= $qty;
-                            $object = Mixin\update('storage_orders', $post, $post_pk);
-                        }else {
-                            $object = Mixin\delete('storage_orders', $post['id']);
+                }else {
+                    // Доктор
+                    if ($this->post['status']) {
+    
+                        $db->beginTransaction();
+                        foreach ($this->post['products'] as $value){
+                            $qty = $db->query("SELECT qty FROM bypass_preparat WHERE bypass_id = {$this->post['bypass_id']} AND preparat_id = $value")->fetchColumn();
+                            $store = $db->query("SELECT qty FROM storage WHERE id = $value")->fetchColumn();
+                            $orders = $db->query("SELECT SUM(qty) FROM storage_orders WHERE preparat_id =$value")->fetchColumn();
+                            if(!$store or ($store-$orders) < $qty){
+                                $this->error("Не осталось препарата ".$store);
+                                $this->stop();
+                            }
+                            $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
+                            if ($post) {
+                                $post_pk = $post['id'];
+                                unset($post['id']);
+                                $post['qty'] += $qty;
+                                $post['date'] = $this->post['date'];
+                                $object = Mixin\update('storage_orders', $post, $post_pk);
+                            }else {
+                                $post = array(
+                                    'user_id' => $this->post['user_id'],
+                                    'parent_id' => $_SESSION['session_id'],
+                                    'preparat_id' => $value,
+                                    'qty' => $qty,
+                                    'date' => $this->post['date']
+                                );
+                                $object = Mixin\insert('storage_orders', $post);
+                            }
+                            if (!intval($object)) {
+                                $this->error('storage_orders: '.$object);
+                            }
                         }
+                        $db->commit();
+    
+                    } else {
+    
+                        $db->beginTransaction();
+                        foreach ($this->post['products'] as $value){
+                            $qty = $db->query("SELECT qty FROM bypass_preparat WHERE bypass_id = {$this->post['bypass_id']} AND preparat_id = $value")->fetchColumn();
+                            $post = $db->query("SELECT * FROM storage_orders WHERE user_id = {$this->post['user_id']} AND parent_id = {$_SESSION['session_id']} AND preparat_id = $value AND date = '".$this->post['date']."'")->fetch();
+                            if ($post['qty'] > $qty) {
+                                $post_pk = $post['id'];
+                                unset($post['id']);
+                                $post['qty'] -= $qty;
+                                $object = Mixin\update('storage_orders', $post, $post_pk);
+                            }else {
+                                $object = Mixin\delete('storage_orders', $post['id']);
+                            }
+                        }
+                        $db->commit();
+    
                     }
-                    $db->commit();
-
+                    $this->post['status_date'] = date("Y-m-d H:i:s");
+                }
+                unset($this->post['user_id']);
+                unset($this->post['products']);
+                if ( isset($this->post['visit_id'] )) {
+                    unset($this->post['visit_id']);
+                }
+            }else {
+                unset($this->post['user_id']);
+                if ( isset($this->post['visit_id']) ) {
+                    unset($this->post['visit_id']);
                 }
             }
-            unset($this->post['user_id']);
-            unset($this->post['products']);
-            if ( isset($this->post['visit_id'] )) {
-                unset($this->post['visit_id']);
-            }
-        }else {
-            unset($this->post['user_id']);
-            if ( isset($this->post['visit_id']) ) {
-                unset($this->post['visit_id']);
+            if ( isset($this->post['status']) ) $this->post['status_date'] = date("Y-m-d H:i:s");
+            if ( isset($this->post['completed']) ) $this->post['completed_date'] = date("Y-m-d H:i:s");
+            $this->post = Mixin\clean_form($this->post);
+            $this->post = Mixin\to_null($this->post);
+            return True;
+        }
+    }
+
+    public function save_row()
+    {
+        global $session, $db;
+
+        $db->beginTransaction();
+        foreach (json_decode($this->post['pks']) as $pk) {
+            $object = Mixin\update($this->table, array('parent_id' => $session->session_id, 'completed' => true, 'completed_date' => date("Y-m-d H:i:s")), $pk);
+            if (!intval($object)){
+                $this->error($object);
             }
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        return True;
+        $db->commit();
+        $this->success();
     }
 
     public function save()
@@ -494,6 +515,7 @@ class BypassDateModel extends Model
     public function error($message)
     {
         echo $message;
+        exit;
     }
 }
 

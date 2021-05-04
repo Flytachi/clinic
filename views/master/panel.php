@@ -246,6 +246,16 @@ $header = "Панель управления";
 													</td>
 												</tr>
 												<tr>
+													<th>Diet</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diet" <?= (isset($company['module_diet']) and $company['module_diet']) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>ZeTTa PACS</th>
 													<td class="text-right">
 														<div class="list-icons">

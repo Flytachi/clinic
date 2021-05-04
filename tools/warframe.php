@@ -148,7 +148,7 @@ function permission($arr){
 
 }
 
-function date_f($item = null, $type = 0){
+function date_f($item = null, $type = null){
     $item = strtotime($item) ;
     $format = ($type) ? 'd.m.Y H:i' : 'd.m.Y';
     return date($format, $item);

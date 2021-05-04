@@ -103,7 +103,7 @@ $header = "Настройки";
 
 					<div class="card-body">
 
-						<form action="<?= viv('admin/admin_model') ?>" method="post" enctype="multipart/form-data">
+						<form action="<?= viv('admin/admin_model') ?>" method="post">
 
 							<fieldset class="mb-3">
 
@@ -122,6 +122,42 @@ $header = "Настройки";
 
 				    </div>
 
+					
+					<?php if(module('module_diet')): ?>
+						<div class="card-body">
+
+							<form action="<?= viv('admin/admin_model') ?>" method="post">
+
+								<button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить время</button>
+								<fieldset class="mb-3">
+
+									<legend><b>Время для диеты:</b></legend>
+									<div class="form-group row" id="time_div">
+										<?php if( isset($company['const_diet_time']) ): ?>
+											<?php foreach (json_decode($company['const_diet_time']) as $time_key => $value): ?>
+												<div class="col-md-3" id="time_input_<?= $time_key ?>">
+													<div class="form-group-feedback form-group-feedback-right">
+														<input type="time" name="const_diet_time[<?= $time_key ?>]" class="form-control" value="<?= $value ?>" required>
+														<div class="form-control-feedback text-danger">
+															<i class="icon-minus-circle2" onclick="$('#time_input_<?= $time_key ?>').remove();"></i>
+														</div>
+													</div>
+												</div>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</div>
+
+								</fieldset>
+
+								<div class="text-right">
+									<button type="submit" class="btn">Send</button>
+								</div>
+
+							</form>
+
+						</div>
+					<?php endif; ?>
+
 				</div>
 
 			</div>
@@ -132,6 +168,23 @@ $header = "Настройки";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+		let i = Number("<?= (isset($time_key)) ? $time_key + 1 : 0 ?>");
+		function AddinputTime(time = null) {
+			$('#time_div').append(`
+				<div class="col-md-3" id="time_input_${i}">
+					<div class="form-group-feedback form-group-feedback-right">
+						<input type="time" name="const_diet_time[${i}]" class="form-control" value="${time}" required>
+						<div class="form-control-feedback text-danger">
+							<i class="icon-minus-circle2" onclick="$('#time_input_${i}').remove();"></i>
+						</div>
+					</div>
+				</div>
+			`);
+			i++;
+		}
+	</script>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>
