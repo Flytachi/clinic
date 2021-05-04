@@ -7,37 +7,35 @@ class WardModel extends Model
     public function form($pk = null)
     {
         global $FLOOR, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label>Выбирите этаж:</label>
                 <select data-placeholder="Выбрать этаж" name="floor" id="floor" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($FLOOR as $key => $value): ?>
-                        <option value="<?= $key ?>"<?= ($post['floor']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                        <option value="<?= $key ?>"<?= ($this->value('floor')  == $key) ? 'selected': '' ?>><?= $value ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="form-group">
                <label>Палата:</label>
-               <input type="text" class="form-control" name="ward" placeholder="Введите кабинет" required value="<?= $post['ward'] ?>">
+               <input type="text" class="form-control" name="ward" placeholder="Введите кабинет" required value="<?= $this->value('ward') ?>">
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -78,26 +76,23 @@ class BedModel extends Model
     {
         global $db, $FLOOR, $classes;
         if($pk){
-            $post = $this->post;
-            $post['floor'] = $db->query("SELECT * FROM wards WHERE id = ". $post['ward_id'])->fetch()['floor'];
-        }else{
-            $post = array();
+            $this->post['floor'] = $db->query("SELECT * FROM wards WHERE id = ". $this->post['ward_id'])->fetch()['floor'];
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label>Выбирите этаж:</label>
                 <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($FLOOR as $key => $value): ?>
-                        <option value="<?= $key ?>" <?= ($post['floor'] == $key) ? 'selected': '' ?>><?= $value ?></option>
+                        <option value="<?= $key ?>" <?= ($this->value('floor') == $key) ? 'selected': '' ?>><?= $value ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -107,14 +102,14 @@ class BedModel extends Model
                 <select data-placeholder="Выбрать палату" name="ward_id" id="ward_id" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach($db->query("SELECT * from wards") as $row): ?>
-                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?php if($row['id'] == $post['ward_id']){echo'selected';} ?>><?= $row['ward'] ?> палата</option>
+                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ($this->value('ward_id') == $row['id']) ? 'selected': '' ?>><?= $row['ward'] ?> палата</option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="form-group">
                 <label>Койка:</label>
-                <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $post['bed']?>">
+                <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $this->value('bed') ?>">
             </div>
 
             <div class="form-group">
@@ -122,13 +117,16 @@ class BedModel extends Model
                 <select data-placeholder="Выбрать тип" name="types" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach($db->query('SELECT * from bed_type') as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['types']){echo'selected';} ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?= ($this->value('types') == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -149,7 +147,7 @@ class BedModel extends Model
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         if($object){
             $this->set_post($object);
-            if ($_GET['type']) {
+            if ( isset($_GET['type']) ) {
                 $object['user_id'] = null;
                 $this->set_post($object);
                 return $this->update();
@@ -191,33 +189,30 @@ class BedTypeModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label>Название:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $this->value('name') ?>">
             </div>
 
             <div class="form-group">
                 <label>Цена:</label>
-                <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
+                <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $this->value('price') ?>">
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

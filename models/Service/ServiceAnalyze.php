@@ -7,12 +7,7 @@ class ServiceAnalyzeModel extends Model
     public function form($pk = null)
     {
         global $db, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -26,7 +21,7 @@ class ServiceAnalyzeModel extends Model
                 <select data-placeholder="Выбрать услугу" name="service_id" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($db->query("SELECT * from service WHERE user_level = 6") as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?= ($this->value('service_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -37,11 +32,11 @@ class ServiceAnalyzeModel extends Model
                     <div class="row">
                         <div class="col-md-8">
                             <label>Норматив:</label>
-                            <textarea class="form-control" name="standart" rows="3" cols="2" placeholder="Норматив"><?= $post['standart']?></textarea>
+                            <textarea class="form-control" name="standart" rows="3" cols="2" placeholder="Норматив"><?= $this->value('standart') ?></textarea>
                         </div>
                         <div class="col-md-4">
                             <label>Ед:</label>
-                            <textarea class="form-control" name="unit" rows="3" cols="2" placeholder="Единица"><?= $post['unit']?></textarea>
+                            <textarea class="form-control" name="unit" rows="3" cols="2" placeholder="Единица"><?= $this->value('unit') ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -50,13 +45,13 @@ class ServiceAnalyzeModel extends Model
                     <div class="form-group row">
                         <div class="col-md-12">
                             <label>Название:</label>
-                            <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                            <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $this->value('name') ?>">
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-12">
                             <label>Код:</label>
-                            <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
+                            <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value('code') ?>">
                         </div>
                     </div>
                 </div>
@@ -64,7 +59,10 @@ class ServiceAnalyzeModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

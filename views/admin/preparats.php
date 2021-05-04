@@ -46,7 +46,7 @@ $header = "Препараты к услугам";
 		          	</div>
 
                     <div class="card-body" id="form_card">
-                      	<?php ServicePreparatModel::form(); ?>
+                      	<?php (new ServicePreparatModel)->form(); ?>
                   	</div>
 
 	        	</div>

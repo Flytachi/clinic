@@ -39,21 +39,21 @@ $header = "Мой пакеты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить пакет</h5>
 		          	</div>
 
                     <div class="card-body" id="form_card">
-                      	<?php PackageModel::form(); ?>
+                      	<?php (new PackageModel)->form(); ?>
                   	</div>
 
 	        	</div>
 
-                <div class="card">
+                <div class="<?= $classes['card'] ?>">
 
-					<div class="card-header header-elements-inline">
+					<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список пакетов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">

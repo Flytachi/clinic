@@ -76,10 +76,7 @@ $header = "Меню";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    $i=1;
-                                    foreach($db->query("SELECT * from diet") as $row) {
-                                        ?>
+                                    <?php $i=1; foreach($db->query("SELECT * from diet") as $row): ?>
                                         <tr>
                                             <td><?= $i++ ?></td>
                                             <td><?= $row['name'] ?></td>
@@ -91,9 +88,7 @@ $header = "Меню";
                                                 </div>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>

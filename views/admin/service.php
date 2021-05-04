@@ -109,9 +109,7 @@ $header = "Услуги";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php
-	                              	foreach($db->query('SELECT * from service WHERE type != 101') as $row) {
-	                                  	?>
+	                              	<?php foreach($db->query('SELECT * from service WHERE type != 101') as $row): ?>
                                   		<tr>
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
@@ -138,9 +136,7 @@ $header = "Услуги";
 				                                </div>
 	                                      	</td>
                               			</tr>
-	                                  	<?php
-	                              	}
-	                              	?>
+									<?php endforeach; ?>
 	                          	</tbody>
 	                      	</table>
 	                  	</div>
