@@ -49,7 +49,7 @@ $header = "Мульти-аккаунт";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php MultiAccountsModel::form(); ?>
+		    			<?php (new MultiAccountsModel)->form(); ?>
 		          	</div>
 
 	        	</div>

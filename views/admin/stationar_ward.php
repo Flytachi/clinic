@@ -50,7 +50,7 @@ $header = "Палаты";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php WardModel::form(); ?>
+		    			<?php (new WardModel)->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -78,9 +78,7 @@ $header = "Палаты";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php
-	                              	foreach($db->query('SELECT * from wards') as $row) {
-	                                  	?>
+	                              	<?php foreach($db->query('SELECT * from wards') as $row): ?>
                                   		<tr>
 											<td><?= $row['id'] ?></td>
 											<td><?= $row['floor'] ?> этаж</td>
@@ -92,9 +90,7 @@ $header = "Палаты";
 				                                </div>
 	                                      	</td>
                               			</tr>
-	                                  	<?php
-	                              	}
-	                              	?>
+									<?php endforeach; ?>
 	                          	</tbody>
 	                      	</table>
 	                  	</div>

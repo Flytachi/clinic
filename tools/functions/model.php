@@ -59,9 +59,9 @@ class Model
         */
     }
 
-    public function value(Array $array = [], String $var = null)
+    public function value(String $var = null)
     {
-        return (isset($array[$var])) ? $array[$var] : '';
+        return (isset($this->post[$var])) ? $this->post[$var] : '';
     }
 
     public function get(int $pk)

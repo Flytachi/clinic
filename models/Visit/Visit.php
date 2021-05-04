@@ -179,11 +179,6 @@ class VisitModel extends Model
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -195,7 +190,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($post['guide_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= ($this->value('guide_id') == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

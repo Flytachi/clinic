@@ -6,20 +6,17 @@ class PackageModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $classes;
         if($pk){
-            $post = $this->post;
-            $post['items'] = json_decode($post['items']);
-            foreach ($post['items'] as $key => $value) {
+            $this->post['items'] = json_decode($this->post['items']);
+            foreach ($this->post['items'] as $key => $value) {
                 $service_pk[] = $key;
                 if (!isset($division) or ($division and !in_array($value->division_id, $division))) {
                     $division[] = $value->division_id;
                 }
             }
-        }else{
-            $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -31,34 +28,34 @@ class PackageModel extends Model
 
             <div class="form-group">
                 <label>Название пакета:</label>
-                <input type="text" name="name" value="<?= $post['name'] ?>" class="form-control" placeholder="Введите название пакета" required>
+                <input type="text" name="name" value="<?= $this->value('name') ?>" class="form-control" placeholder="Введите название пакета" required>
             </div>
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" <?= (!$post) ? "data-fouc" : "" ?>>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect2'] ?>" onchange="table_change(this)">
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <?php if(module('module_diagnostic')): ?>
                         <optgroup label="Диогностика">
                             <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                     <?php endif; ?>
                     <?php if(module('module_laboratory')): ?>
                         <optgroup label="Лаборатория">
                             <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                     <?php endif; ?>
                     <optgroup label="Остальные">
                         <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                 </select>
@@ -74,7 +71,10 @@ class PackageModel extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -97,10 +97,14 @@ class PackageModel extends Model
                         </thead>
                         <tbody id="table_form">
 
-                            <?php if ($post['items']): ?>
+                            <?php if ( isset($this->post['items']) ): ?>
+                                <?php
+                                $_GET['cols'] = 0;
+                                $_GET['head'] = null;
+                                ?>
 
                                 <script type="text/javascript">var service = {};</script>
-                                <?php foreach ($post['items'] as $key => $value): ?>
+                                <?php foreach ($this->post['items'] as $key => $value): ?>
                                     <script type="text/javascript">service["<?= $key ?>"] = "<?= $value->count ?>";</script>
                                 <?php endforeach; ?>
 
@@ -114,7 +118,7 @@ class PackageModel extends Model
                                                 <?php
                                                 if (in_array($row['id'], $service_pk)) {
                                                     $result = "checked";
-                                                    $cost += ($row['price'] * ((array) $post['items'])[$row['id']]->count);
+                                                    $cost += ($row['price'] * ((array) $this->post['items'])[$row['id']]->count);
                                                 }else {
                                                     $result = "";
                                                 }
@@ -158,7 +162,7 @@ class PackageModel extends Model
                                                 </td>
                                             <?php endif; ?>
                                             <td style="width:70px;">
-                                                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="counts" name="count[<?= $i ?>]" value="<?= ((array) $post['items'])[$row['id']]->count ?>" min="1" max="1000000">
+                                                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="counts" name="count[<?= $i ?>]" value="<?= ((array) $this->post['items'])[$row['id']]->count ?>" min="1" max="1000000">
                                             </td>
                                             <td class="text-right text-success"><?= number_format($row['price']) ?></td>
 
@@ -170,6 +174,38 @@ class PackageModel extends Model
                                     <th class="text-right" colspan="<?= 6-$_GET['cols'] ?>">Итого:</th>
                                     <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
                                 </tr>
+
+                                <script type="text/javascript">
+                                    $( document ).ready(function() {
+                                        FormLayouts.init();
+                                        BootstrapMultiselect.init();
+                                    });
+
+                                    function tot_sum(the, price) {
+                                        var total = $('#total_price');
+                                        var cost = total.text().replace(/,/g,'');
+                                        if (the.checked) {
+                                            service[the.value] = $("#count_input_"+the.value).val();
+                                            total.text( number_format(Number(cost) + (Number(price) * service[the.value]), '.', ',') );
+                                        }else {
+                                            total.text( number_format(Number(cost) - (Number(price) * service[the.value]), '.', ',') );
+                                            delete service[the.value];
+                                        }
+                                        console.log(service);
+                                    }
+
+                                    $(".counts").keyup(function() {
+                                        var total = $('#total_price');
+                                        var cost = total.text().replace(/,/g,'');
+
+                                        if (typeof service[this.dataset.id] !== "undefined") {
+                                            total.text( number_format(Number(cost) + (this.dataset.price * (this.value - service[this.dataset.id])), '.', ',') );
+                                            service[this.dataset.id] = this.value;
+                                        }
+                                        console.log(service);
+                                    });
+
+                                </script>
 
                             <?php endif; ?>
 

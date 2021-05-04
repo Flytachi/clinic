@@ -49,55 +49,9 @@ $header = "Койки";
                         </div>
                     </div>
 
-                    <div class="card-body">
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-                                <legend class="font-weight-semibold"> Добавить койку</legend>
-								<div id="form_card">
-								   <?php BedModel::form(); ?>
-							   	</div>
-                            </div>
-
-                            <div class="col-md-6">
-                            <legend class="font-weight-semibold"> Добавить тип коек</legend>
-								<div id="form_card2">
-								   <?php BedTypeModel::form(); ?>
-							   	</div>
-
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr class="">
-                                            <th>Вид</th>
-                                            <th>Цена</th>
-                                            <th style="width: 100px">Действия</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        foreach($db->query('SELECT * from bed_type') as $row) {
-                                            ?>
-                                            <tr>
-                                                <td><?= $row['name'] ?></td>
-                                                <td><?= $row['price'] ?></td>
-                                                <td>
-													<div class="list-icons">
-														<a onclick="Update2('<?= up_url($row['id'], 'BedTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-														<a href="<?= del_url($row['id'], 'BedTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить тип койки?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-													</div>
-                                                </td>
-                                            </tr>
-                                            <?php
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-
-                    </div>
+                    <div class="card-body" id="form_card">
+		    			<?php (new BedModel)->form(); ?>
+		          	</div>
 
                 </div>
 
@@ -126,9 +80,7 @@ $header = "Койки";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    foreach($db->query('SELECT bd.id, wd.floor, wd.ward, bd.bed, bd.types from beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id)') as $row) {
-                                        ?>
+                                    <?php foreach($db->query('SELECT bd.id, wd.floor, wd.ward, bd.bed, bd.types from beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id)') as $row): ?>
                                         <tr>
                                             <td><?= $row['floor'] ?> этаж</td>
                                             <td><?= $row['ward'] ?> палата</td>
@@ -147,9 +99,7 @@ $header = "Койки";
 				                                </div>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -178,16 +128,6 @@ $header = "Койки";
 				url: events,
 				success: function (result) {
 					$('#form_card').html(result);
-				},
-			});
-		};
-		function Update2(events) {
-			events
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (result) {
-					$('#form_card2').html(result);
 				},
 			});
 		};

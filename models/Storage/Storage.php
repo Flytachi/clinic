@@ -44,11 +44,6 @@ class Storage extends Model
     public function form($pk = null)
     {
         global $CATEGORY, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -56,24 +51,24 @@ class Storage extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
             <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group">
                <label>Препарат:</label>
-               <input type="text" class="form-control" name="name" placeholder="Введите название препарата" required value="<?= $this->value($post, 'name') ?>">
+               <input type="text" class="form-control" name="name" placeholder="Введите название препарата" required value="<?= $this->value('name') ?>">
             </div>
 
             <div class="form-group row">
 
                 <div class="col-md-3">
                     <label>Код:</label>
-                    <input type="text" class="form-control" name="code" placeholder="Введите код" required value="<?= $this->value($post, 'code') ?>">
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value('code') ?>">
                 </div>
 
                 <div class="col-md-9">
                     <label>Поставщик:</label>
-                    <input type="text" class="form-control" name="supplier" placeholder="Введите поставщик" required value="<?= $this->value($post, 'supplier') ?>">
+                    <input type="text" class="form-control" name="supplier" placeholder="Введите поставщик" required value="<?= $this->value('supplier') ?>">
                 </div>
 
             </div>
@@ -82,17 +77,17 @@ class Storage extends Model
 
                 <div class="col-md-4">
                     <label>Кол-во:</label>
-                    <input type="text" class="form-control" name="qty" placeholder="Введите колличество" required value="<?= $this->value($post, 'qty') ?>">
+                    <input type="text" class="form-control" name="qty" placeholder="Введите колличество" required value="<?= $this->value('qty') ?>">
                 </div>
 
                 <div class="col-md-4">
                     <label>Цена прихода:</label>
-                    <input type="text" class="form-control" name="cost" placeholder="Введите цену" required value="<?= $this->value($post, 'cost') ?>">
+                    <input type="text" class="form-control" name="cost" placeholder="Введите цену" required value="<?= $this->value('cost') ?>">
                 </div>
 
                 <div class="col-md-4">
                     <label>Цена расхода:</label>
-                    <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $this->value($post, 'price') ?>">
+                    <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $this->value('price') ?>">
                 </div>
 
             </div>
@@ -104,31 +99,31 @@ class Storage extends Model
                     <select data-placeholder="Выбрать этаж" name="category" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($CATEGORY as $key => $value): ?>
-                            <option value="<?= $key ?>" <?= ($this->value($post, 'category') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <option value="<?= $key ?>" <?= ($this->value('category') == $key) ? 'selected': '' ?>><?= $value ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-3">
                     <label>Дата прихода:</label>
-                    <input type="date" class="form-control" name="add_date" placeholder="Введите дату" required value="<?= $this->value($post, 'add_date') ?>">
+                    <input type="date" class="form-control" name="add_date" placeholder="Введите дату" required value="<?= $this->value('add_date') ?>">
                 </div>
 
                 <div class="col-md-3">
                     <label>Срок годности:</label>
-                    <input type="date" class="form-control" name="die_date" placeholder="Введите дату" required value="<?= $this->value($post, 'die_date') ?>">
+                    <input type="date" class="form-control" name="die_date" placeholder="Введите дату" required value="<?= $this->value('die_date') ?>">
                 </div>
 
                 <div class="col-md-3">
                     <label>Штрих код:</label>
-                    <input type="text" class="form-control" name="shtrih" placeholder="Введите код" required value="<?= $this->value($post, 'shtrih') ?>">
+                    <input type="text" class="form-control" name="shtrih" placeholder="Введите код" value="<?= $this->value('shtrih') ?>">
                 </div>
 
             </div>
 
             <div class="form-group">
                <label>Счёт фактура:</label>
-               <input type="text" class="form-control" name="faktura" placeholder="Введите счёт" required value="<?= $this->value($post, 'faktura') ?>">
+               <input type="text" class="form-control" name="faktura" placeholder="Введите счёт" required value="<?= $this->value('faktura') ?>">
             </div>
 
             <div class="text-right">

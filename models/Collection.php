@@ -7,11 +7,6 @@ class Collection extends Model
     public function form($pk = null)
     {
         global $db, $session;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);

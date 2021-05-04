@@ -7,11 +7,6 @@ class UserModel extends Model
     public function form($pk = null) 
     {
         global $db, $PERSONAL, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -34,17 +29,17 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value($post, 'last_name') ?>">
+                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Имя пользователя:</label>
-                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value($post, 'first_name') ?>">
+                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Отчество пользователя:</label>
-                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value($post, 'father_name') ?>">
+                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
                         </div>
 
                         <div class="form-group">
@@ -52,7 +47,7 @@ class UserModel extends Model
                             <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($PERSONAL as $key => $value): ?>
-                                    <option value="<?= $key ?>"<?= ($this->value($post, 'user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                    <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -62,7 +57,7 @@ class UserModel extends Model
                             <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($db->query('SELECT * FROM division') as $row): ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value($post, 'division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -79,21 +74,21 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Кабинет:</label>
-                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value($post, 'room') ?>">
+                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value('room') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value($post, 'share') ?>">
+                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value('share') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Логин:</label>
-                                    <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $this->value($post, 'username') ?>">
+                                    <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $this->value('username') ?>">
                                 </div>
                             </div>
 
@@ -132,19 +127,18 @@ class UserModel extends Model
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>PACS Логин:</label>
-                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $this->value($post, 'pacs_login') ?>">
+                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $this->value('pacs_login') ?>">
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>PACS пароль:</label>
-                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $this->value($post, 'pacs_password') ?>">
+                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $this->value('pacs_password') ?>">
                                     </div>
                                 </div>
                             <?php endif; ?>
                         </div>
-
 
                     </fieldset>
                 </div>
@@ -152,7 +146,6 @@ class UserModel extends Model
             </div>
 
             <div class="text-right">
-                <!-- <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                     <span class="ladda-label">Сохранить</span>
                     <span class="ladda-spinner"></span>

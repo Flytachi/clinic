@@ -49,7 +49,7 @@ $header = "Анализы";
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php ServiceAnalyzeModel::form(); ?>
+                      	<?php (new ServiceAnalyzeModel)->form(); ?>
                   	</div>
 
             	</div>

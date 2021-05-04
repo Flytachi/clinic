@@ -7,11 +7,6 @@ class DivisionModel extends Model
     public function form($pk = null)
     {
         global $db, $PERSONAL, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -28,33 +23,33 @@ class DivisionModel extends Model
                 <select data-placeholder="Выбрать роль" name="level" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($PERSONAL as $key => $value): ?>
-                        <option value="<?= $key ?>"<?= ($this->value($post, 'level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                        <option value="<?= $key ?>"<?= ($this->value('level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="form-group">
                 <label>Название отдела:</label>
-                <input type="text" class="form-control" name="title" placeholder="Введите название отдела" required value="<?= $this->value($post, 'title') ?>">
+                <input type="text" class="form-control" name="title" placeholder="Введите название отдела" required value="<?= $this->value('title') ?>">
             </div>
 
             <div class="form-group">
                 <label>Название специолиста:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $this->value($post, 'name') ?>">
+                <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $this->value('name') ?>">
             </div>
 
             <?php if(module('module_diagnostic')): ?>
                 <div class="form-group row">
                     <label class="col-form-label col-md-1">Ассистент</label>
                     <div class="col-md-3">
-                        <input type="checkbox" class="swit" name="assist" <?= ($this->value($post, 'assist') == 1) ? "checked" : "" ?>>
+                        <input type="checkbox" class="swit" name="assist" <?= ($this->value('assist') == 1) ? "checked" : "" ?>>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-md-1">Радиолог</label>
                     <div class="col-md-3">
-                        <input type="checkbox" class="swit" name="assist" <?= ($this->value($post, 'assist') == 2) ? "checked" : "" ?>>
+                        <input type="checkbox" class="swit" name="assist" <?= ($this->value('assist') == 2) ? "checked" : "" ?>>
                     </div>
                 </div>
             <?php endif; ?>

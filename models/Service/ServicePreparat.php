@@ -7,12 +7,7 @@ class ServicePreparatModel extends Model
     public function form($pk = null)
     {
         global $db, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -26,7 +21,7 @@ class ServicePreparatModel extends Model
                 <select data-placeholder="Выбрать услугу" name="service_id" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($db->query("SELECT * from service WHERE type = 3") as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?php if($row['id'] == $post['service_id']){echo'selected';} ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?= ($this->value('service_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -39,7 +34,7 @@ class ServicePreparatModel extends Model
                         <select data-placeholder="Выбрать услугу" name="preparat_id" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT * from storage") as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?php if($row['id'] == $post['preparat_id']){echo'selected';} ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</option>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($this->value('preparat_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -48,14 +43,17 @@ class ServicePreparatModel extends Model
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Кол-во:</label>
-                        <input type="number" class="form-control" name="qty" placeholder="Введите кол-во" value="<?= $post['qty']?>">
+                        <input type="number" class="form-control" name="qty" placeholder="Введите кол-во" value="<?= $this->value('qty') ?>">
                     </div>
                 </div>
 
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
