@@ -51,7 +51,7 @@ $header = "Класификация персонала";
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php DivisionModel::form(); ?>
+                      	<?php (new DivisionModel)->form(); ?>
                   	</div>
 
             	</div>

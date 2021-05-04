@@ -46,7 +46,7 @@ $header = "Услуги";
 
 		          	<div class="card-body">
 
-						<?php if ($_POST['flush']): ?>
+						<?php if ( isset($_POST['flush']) ): ?>
 
 							<?php
 							Mixin\T_flush('service');
@@ -69,9 +69,9 @@ $header = "Услуги";
 
 						<div class="row">
 
-							<div class="col-md-9" id="form_card"><?php ServiceModel::form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php (new ServiceModel)->form(); ?></div>
 
-							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
+							<div class="col-md-3"><?php (new ServiceModel)->form_template(); ?></div>
 
 						</div>
 

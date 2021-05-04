@@ -38,8 +38,8 @@ $header = "Препараты";
 							<div class="list-icons">
 								<div class="header-elements">
 									<div class="list-icons">
-										<a href="<?= viv("pharmacy/add_product") ?>" class="list-icons-item text-success">
-											<i class="icon-plus22"></i>Добавить
+										<a href="<?= viv("pharmacy/storage") ?>" class="list-icons-item text-success">
+											<i class="icon-plus22"></i>Склад
 										</a>
 									</div>
 								</div>

@@ -152,7 +152,11 @@ class UserModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <!-- <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button> -->
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
             <script type="text/javascript">

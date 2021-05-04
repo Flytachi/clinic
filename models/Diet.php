@@ -12,7 +12,7 @@ class DietModel extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -23,16 +23,19 @@ class DietModel extends Model
 
             <div class="form-group">
                 <label>Названия</label>
-                <input type="text" name="name" value="<?= $post['name'] ?>" class="form-control" placeholder="Введите название" required>
+                <input type="text" name="name" value="<?= $this->value($post, 'name') ?>" class="form-control" placeholder="Введите название" required>
             </div>
 
             <div class="form-group">
                 <label>Цена</label>
-                <input type="number" name="price" value="<?= $post['price'] ?>" class="form-control" placeholder="Введите стоимость" required>
+                <input type="number" name="price" value="<?= $this->value($post, 'price') ?>" class="form-control" placeholder="Введите стоимость" required>
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
         </form>
         <?php
