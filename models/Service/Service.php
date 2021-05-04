@@ -24,7 +24,10 @@ class ServiceModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Внести</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -39,7 +42,7 @@ class ServiceModel extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -55,7 +58,7 @@ class ServiceModel extends Model
                     <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($PERSONAL as $key => $value): ?>
-                            <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <option value="<?= $key ?>"<?= ($this->value($post, 'user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -65,7 +68,7 @@ class ServiceModel extends Model
                     <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required >
                         <option></option>
                         <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value($post, 'division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -73,9 +76,9 @@ class ServiceModel extends Model
                 <div class="col-3">
                     <label>Тип:</label>
                     <select name="type" class="<?= $classes['form-select'] ?>" required>
-                        <option value="1" <?= ($post['type']==1) ? 'selected': '' ?>>Обычная</option>
-                        <option value="2" <?= ($post['type']==2) ? 'selected': '' ?>>Консультация</option>
-                        <option value="3" <?= ($post['type']==3) ? 'selected': '' ?>>Операционная</option>
+                        <option value="1" <?= ($this->value($post, 'type') == 1) ? 'selected': '' ?>>Обычная</option>
+                        <option value="2" <?= ($this->value($post, 'type') == 2) ? 'selected': '' ?>>Консультация</option>
+                        <option value="3" <?= ($this->value($post, 'type') == 3) ? 'selected': '' ?>>Операционная</option>
                     </select>
                 </div>
 
@@ -85,23 +88,26 @@ class ServiceModel extends Model
 
                 <div class="col-md-6">
                     <label>Название:</label>
-                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $post['name']?>">
+                    <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $this->value($post, 'name') ?>">
                 </div>
 
                 <div class="col-md-3">
                     <label>Код:</label>
-                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $post['code']?>">
+                    <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value($post, 'code') ?>">
                 </div>
 
                 <div class="col-md-3">
                     <label>Цена:</label>
-                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $post['price']?>">
+                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $this->value($post, 'price') ?>">
                 </div>
 
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-primary">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

@@ -12,7 +12,7 @@ class DivisionModel extends Model
         }else{
             $post = array();
         }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -28,39 +28,42 @@ class DivisionModel extends Model
                 <select data-placeholder="Выбрать роль" name="level" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
                     <?php foreach ($PERSONAL as $key => $value): ?>
-                        <option value="<?= $key ?>"<?= ($post['level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                        <option value="<?= $key ?>"<?= ($this->value($post, 'level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="form-group">
                 <label>Название отдела:</label>
-                <input type="text" class="form-control" name="title" placeholder="Введите название отдела" required value="<?= $post['title']?>">
+                <input type="text" class="form-control" name="title" placeholder="Введите название отдела" required value="<?= $this->value($post, 'title') ?>">
             </div>
 
             <div class="form-group">
                 <label>Название специолиста:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $post['name']?>">
+                <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $this->value($post, 'name') ?>">
             </div>
 
             <?php if(module('module_diagnostic')): ?>
                 <div class="form-group row">
                     <label class="col-form-label col-md-1">Ассистент</label>
                     <div class="col-md-3">
-                        <input type="checkbox" class="swit" name="assist" <?= ($post['assist']==1) ? "checked" : "" ?>>
+                        <input type="checkbox" class="swit" name="assist" <?= ($this->value($post, 'assist') == 1) ? "checked" : "" ?>>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-form-label col-md-1">Радиолог</label>
                     <div class="col-md-3">
-                        <input type="checkbox" class="swit" name="assist" <?= ($post['assist']==2) ? "checked" : "" ?>>
+                        <input type="checkbox" class="swit" name="assist" <?= ($this->value($post, 'assist') == 2) ? "checked" : "" ?>>
                     </div>
                 </div>
             <?php endif; ?>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

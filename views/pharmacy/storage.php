@@ -1,20 +1,12 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(4);
 is_module('module_pharmacy');
-$header = "Аптека";
+$header = "Добавить препарат";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -28,9 +20,7 @@ $header = "Аптека";
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
-
 		<div class="content-wrapper">
 
 			<!-- Page header -->
@@ -43,36 +33,16 @@ $header = "Аптека";
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h5 class="card-title">Добавить Препарат</h5>
+						<h6 class="card-title">Добавить препарат</h6>
 					</div>
 
 					<div class="card-body">
 
-						<?php if ( isset($_POST['flush']) ): ?>
-
-							<?php
-							$__storage = Mixin\T_flush('storage');
-							?>
-
-							<?php if (!$__storage): ?>
-								<div class="alert alert-primary" role="alert">
-									<button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-									Препараты успешно очищены!
-								</div>
-							<?php else: ?>
-								<div class="alert bg-danger alert-styled-left alert-dismissible">
-									<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-									<span class="font-weight-semibold"><?= $task ?></span>
-								</div>
-							<?php endif; ?>
-
-						<?php endif; ?>
-
 						<div class="row">
 
-							<div class="col-md-9" id="form_card"><?php (new Storage)->form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php (new Storage)->form() ?></div>
 
-							<div class="col-md-3"><?php (new Storage)->form_template(); ?></div>
+							<div class="col-md-3"><?php (new Storage)->form_template() ?></div>
 
 						</div>
 
@@ -86,11 +56,7 @@ $header = "Аптека";
 	                  	<h5 class="card-title">Список Препаратов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
-							  <a href="<?= download_url('Storage', 'Препараты') ?>" class="btn">Шаблон</a>
-								<form action="" method="post">
-									<input style="display:none;" id="btn_flush" type="submit" value="FLUSH" name="flush"></input>
-								</form>
-								<a class="btn text-danger" onclick="Conf()">FLUSH</a>
+							  <a href="<?= download_url('Storage', 'Препараты', true) ?>" class="btn">Лист поступления</a>
 	                      	</div>
 	                  	</div>
 	              	</div>
@@ -160,6 +126,8 @@ $header = "Аптека";
           		</div>
 
 			</div>
+
+			</div>
             <!-- /content area -->
 
 		</div>
@@ -169,32 +137,6 @@ $header = "Аптека";
 	<!-- /page content -->
 
 	<script type="text/javascript">
-		function Conf() {
-			swal({
-                position: 'top',
-                title: 'Вы уверены что хотите очистить список препаратов?',
-                type: 'info',
-                showCancelButton: true,
-                confirmButtonText: "Уверен"
-            }).then(function(ivi) {
-				if (ivi.value) {
-					swal({
-		                position: 'top',
-		                title: 'Внимание!',
-		                text: 'Вернуть данные назад будет невозможно!',
-		                type: 'warning',
-		                showCancelButton: true,
-		                confirmButtonText: "Да"
-		            }).then(function(ivi) {
-						if (ivi.value) {
-							$('#btn_flush').click();
-						}
-		            });
-				}
-
-            });
-		}
-
 		function Update(events) {
 			events
 			$.ajax({
@@ -210,6 +152,5 @@ $header = "Аптека";
     <!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->
-
 </body>
 </html>

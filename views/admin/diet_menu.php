@@ -1,7 +1,8 @@
 <?php 
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
-$header = "";
+is_module('module_diet');
+$header = "Меню";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +48,7 @@ $header = "";
                         </div>
                     </div>
                     <div class="card-body" id="form_card">
-                        <?php DietModel::form(); ?>
+                        <?php (new DietModel)->form(); ?>
                     </div>
 
                 </div>
