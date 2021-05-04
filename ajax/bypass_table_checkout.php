@@ -18,14 +18,18 @@ if ($_POST['type']) {
     
     <legend><b>Время принятия:</b></legend>
     <div class="form-group row" id="time_div"></div>
-    <?php foreach ($DIET_TIME as $time): ?>
-        <script type="text/javascript">
-            AddinputTime("<?= $time ?>");
-        </script>
-    <?php endforeach; ?>
+
+    <?php if( $diet_time = json_decode($db->query("SELECT const_value FROM company_constants WHERE const_label LIKE 'const_diet_time'")->fetchColumn()) ): ?>
+        <?php foreach ($diet_time as $time): ?>
+            <script type="text/javascript">
+                AddinputTime("<?= $time ?>");
+            </script>
+        <?php endforeach; ?>
+    <?php endif; ?>
     
     <script type="text/javascript">
         FormLayouts.init();
+        document.querySelector('#bypass_button_AddinputTime').disabled = true;
     </script>
     <?php
 } else {
@@ -115,6 +119,8 @@ if ($_POST['type']) {
         });
         BootstrapMultiselect.init();
         FormLayouts.init();
+
+        document.querySelector('#bypass_button_AddinputTime').disabled = false;
     </script>
     <?php
 }

@@ -21,15 +21,17 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
-                <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-                    <li class="nav-item">
-                        <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active show" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
-                    </li>
-                    <li class="nav-item">
-                        <a onclick="Tab_Diet_Preparat(this, 1)" href="#" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>
-                    </li>
-                </ul>
-
+                <?php if(module('module_diet')): ?>
+					<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                        <li class="nav-item">
+                            <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active show" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a onclick="Tab_Diet_Preparat(this, 1)" href="#" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>
+                        </li>
+                    </ul>
+                <?php endif; ?>
+                
                 <div id="div_live">
 
                     <div class="form-group row">
@@ -107,7 +109,7 @@ class BypassModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить время</button>
+                <button onclick="AddinputTime()" id="bypass_button_AddinputTime" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить время</button>
                 <button class="btn btn-outline-info btn-sm legitRipple" type="submit">Сохранить</button>
             </div>
 
