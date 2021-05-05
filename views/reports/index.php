@@ -49,11 +49,6 @@ $header = "Отчёты";
 }
 </style>
 
-<!-- Theme JS files -->
-<script src="<?= stack("global_assets/js/demo_pages/widgets_stats.js") ?>"></script>
-<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
-<!-- /theme JS files -->
-
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -72,8 +67,6 @@ $header = "Отчёты";
 			<!-- Page header -->
 			<?php include layout('header') ?>
 			<!-- /page header -->
-
-			<script src="<?= stack("global_assets/js/demo_pages/dashboard.js") ?>"></script>
 
 			<!-- Content area -->
 			<div class="content">
