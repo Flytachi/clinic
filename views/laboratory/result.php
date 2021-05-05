@@ -11,6 +11,6 @@ is_module('module_laboratory');
 
 <div id="modal_result_show_content">
 
-    <?php VisitAnalyzeModel::table_form(); ?>
+    <?php (new VisitAnalyzeModel)->table_form(); ?>
 
 </div>

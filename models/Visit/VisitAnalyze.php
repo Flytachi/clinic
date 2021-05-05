@@ -6,7 +6,7 @@ class VisitAnalyzeModel extends Model
 
     public function table_form($pk = null)
     {
-        global $db, $session;
+        global $db, $session, $classes;
         $user = $db->query("SELECT id, gender, dateBith FROM users WHERE user_level = 15 AND id = {$_GET['id']}")->fetch();
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
@@ -71,7 +71,7 @@ class VisitAnalyzeModel extends Model
                             <div class="table-responsive">
                                 <table class="table table-hover table-sm table-bordered">
                                     <thead>
-                                        <tr class="bg-info">
+                                        <tr class="<?= $classes['table-thead'] ?>">
                                             <th style="width:3%">№</th>
                                             <th>Название услуги</th>
                                             <th>Код</th>

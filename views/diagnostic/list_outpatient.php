@@ -11,7 +11,6 @@ $header = "Амбулаторные пациенты";
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/content_cards_header.js") ?>"></script>
 
 <body>
@@ -37,9 +36,9 @@ $header = "Амбулаторные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
 							<form action="#">
@@ -62,7 +61,7 @@ $header = "Амбулаторные пациенты";
 						<div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>

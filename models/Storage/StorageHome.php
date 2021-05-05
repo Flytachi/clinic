@@ -32,8 +32,8 @@ class StorageHomeModel extends Model
 
                     <div class="table-responsive card">
                         <table class="table table-hover table-sm">
-                            <thead>
-                                <tr class="bg-blue">
+                            <thead class="<?= $classes['table-thead'] ?>">
+                                <tr>
                                     <th style="width: 70px">№</th>
                                     <th style="width: 10%">Дата</th>
                                     <th style="width: 40%">Препарат</th>
@@ -203,8 +203,8 @@ class StorageHomeModel extends Model
 
                     <div class="table-responsive card">
                         <table class="table table-hover table-sm">
-                            <thead>
-                                <tr class="bg-blue">
+                            <thead class="<?= $classes['table-thead'] ?>">
+                                <tr>
                                     <th style="width: 70px">№</th>
                                     <th style="width: 50%">Препарат</th>
                                     <th class="text-center">На складе</th>

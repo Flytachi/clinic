@@ -30,9 +30,9 @@ $header = "Шаблоны";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить шаблон</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
@@ -47,9 +47,9 @@ $header = "Шаблоны";
 
 	        	</div>
 
-        		<div class="card">
+        		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header header-elements-inline">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Шаблонов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
@@ -62,7 +62,7 @@ $header = "Шаблоны";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:50px">№</th>
 										<th style="width:60%">Название</th>
 										<th style="width:20%">Дата создания</th>

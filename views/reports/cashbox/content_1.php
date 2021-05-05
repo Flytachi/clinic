@@ -140,7 +140,7 @@ $header = "Отчёт кассы";
 
 							<table class="table table-hover datatable-basic table-sm" id="table">
 								<thead>
-									<tr class="bg-info">
+									<tr class="<?= $classes['table-thead'] ?>">
 										<th style="width: 100px">№</th>
 										<th style="width: 11%">Дата</th>
 										<th>Кассир</th>

@@ -31,9 +31,9 @@ $header = "Текущие стационарные пациенты";
 
                 <?php include 'tabs.php' ?>
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Текущие стационарные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -47,7 +47,7 @@ $header = "Текущие стационарные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>

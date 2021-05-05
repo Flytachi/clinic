@@ -17,7 +17,7 @@ $total_opetrator_price = $total_service_price = $total_preparats_price = $total_
 $activity = $_GET['activity'];
 
 if (!isset($_GET['type'])) {
-    $color = "info";
+    $color = "primary";
 }else {
     if ($_GET['type'] == 1) {
         $color = "success";

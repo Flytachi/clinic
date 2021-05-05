@@ -152,7 +152,7 @@ $header = "Отчёт аптеки по расходам";
 							<div class="table-responsive card">
 								<table class="table table-hover table-sm" id="table">
 									<thead>
-										<tr class="bg-info">
+										<tr class="<?= $classes['table-thead'] ?>">
 											<th>Тип расхода</th>
 											<th>Получатель</th>
 											<th>Препарат</th>

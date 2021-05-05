@@ -69,7 +69,7 @@ $header = "Анализы";
                         <div class="table-responsive">
                             <table class="table table-hover datatable-basic">
                                 <thead>
-                                    <tr class="bg-blue">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:7%">№</th>
                                         <th>Код</th>
                                         <th>Название</th>

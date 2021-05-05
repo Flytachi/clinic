@@ -70,7 +70,7 @@ $header = "Персонал";
 				        <div class="table-responsive">
 				            <table class="table table-hover">
 				                <thead>
-				                    <tr class="bg-blue">
+				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th>#</th>
 				                        <th>Логин</th>
 				                        <th>ФИО</th>

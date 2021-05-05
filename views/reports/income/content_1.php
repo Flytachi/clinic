@@ -91,7 +91,7 @@ $header = "Доход";
 							<div class="table-responsive">
 	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
-	                                    <tr class="bg-info">
+	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th class="text-center">Тип</th>
 											<th class="text-right">Наличные</th>
 											<th class="text-right">Пластик</th>

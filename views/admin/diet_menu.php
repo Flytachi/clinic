@@ -68,7 +68,7 @@ $header = "Меню";
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
-                                    <tr class="bg-blue">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:50px">№</th>
                                         <th style="width:50%">ФИО</th>
                                         <th>Сумма</th>

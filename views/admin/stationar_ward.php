@@ -70,7 +70,7 @@ $header = "Палаты";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
 										<th style="width:8%">Id</th>
 										<th>Этаж</th>
 										<th>Палата</th>
