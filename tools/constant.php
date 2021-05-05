@@ -46,5 +46,6 @@ $classes = array(
     "form-select" => "form-control form-control-select2",
     "form-select_price" => "form-control myselect",
     "form-multiselect" => "form-control multiselect-full-featured",
+    "form-daterange" => "form-control daterange-locale",
 )
 ?>

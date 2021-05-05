@@ -8,7 +8,6 @@ $header = "Отчёт кассы";
 <?php include layout('head') ?>
 
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
@@ -41,9 +40,9 @@ $header = "Отчёт кассы";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title" >Фильтр</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -61,7 +60,7 @@ $header = "Отчёт кассы";
 								<div class="col-md-3">
 									<label>Дата визита:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= ($_POST['date']) ? $_POST['date'] : "" ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : "" ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -70,9 +69,9 @@ $header = "Отчёт кассы";
 
 								<div class="col-md-3">
 									<label>Кассир:</label>
-									<select class="form-control multiselect-full-featured" data-placeholder="Выбрать кассира" name="priser_id[]" multiple="multiple" data-fouc>
+									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать кассира" name="priser_id[]" multiple="multiple" required>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level IN (3, 32)") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $_POST['priser_id'])) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['priser_id']) and in_array($row['id'], $_POST['priser_id'])) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -90,9 +89,9 @@ $header = "Отчёт кассы";
 				</div>
 
 				<?php if ($_POST): ?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Отчёт</h6>
 							<div class="header-elements">
 								<div class="list-icons">

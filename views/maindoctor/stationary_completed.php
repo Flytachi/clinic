@@ -57,11 +57,11 @@ $header = "Завершёные стационарные пациенты";
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach ($db->query("SELECT * FROM visit vs WHERE vs.service_id = 1 AND vs.bed_id IS NOT NULL AND vs.completed IS NOT NULL ORDER BY vs.completed DESC") as $row): ?>
+									<?php foreach ($db->query("SELECT vs.*, us.dateBith FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.service_id = 1 AND vs.bed_id IS NOT NULL AND vs.completed IS NOT NULL ORDER BY vs.completed DESC") as $row): ?>
 										<tr>
 											<td><?= addZero($row['user_id']) ?></td>
 											<td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date_f($row['dateBith']) ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>

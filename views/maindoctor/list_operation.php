@@ -68,7 +68,7 @@ $header = "Операционные пациенты";
 													?>
 												</div>
 											</td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date_f($row['dateBith']) ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
