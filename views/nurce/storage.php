@@ -7,12 +7,12 @@ $header = "Склад";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+<!-- <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 
 <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script> -->
 
 <body>
 	<!-- Main navbar -->
@@ -115,7 +115,8 @@ $header = "Склад";
                                             <td class="text-right"><?= number_format($row['price'],1) ?></td>
                                             <td class="text-right"><?= number_format(($row['price'] * $row['qty']), 1) ?></td>
 											<td class="text-right">
-												<a href="#" type="button" onclick="Refund(<?= $row['id'] ?>, '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date('d.m.Y', strtotime($row['die_date'])) ?>)', <?= $row['qty'] ?>)"><i class="icon-reply"></i></a>
+												<!-- <a href="#" type="button" onclick="Refund(<?= $row['id'] ?>, '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date('d.m.Y', strtotime($row['die_date'])) ?>)', <?= $row['qty'] ?>)"><i class="icon-reply"></i></a> -->
+												<a href="#" type="button" onclick="Refund(this)" data-id="<?= $row['id'] ?>" data-name="<?= Mixin\clean($row['name']) ?> | <?= Mixin\clean($row['supplier']) ?> (годен до <?= date_f($row['die_date']) ?>)" data-qty="<?= $row['qty'] ?>"><i class="icon-reply"></i></a>
 											</td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -150,13 +151,12 @@ $header = "Склад";
 		</div>
 	</div>
 
-	<?php //del_url($row['id'], 'StorageHomeModel') ?>
 	<script type="text/javascript">
 
-		function Refund(params, name, qty) {
-			document.querySelector('#input_id').value = params;
-			document.querySelector('#input_name').value = name;
-			document.querySelector('#input_qty').max = qty;
+		function Refund(params) {
+			document.querySelector('#input_id').value = params.dataset.id;
+			document.querySelector('#input_name').value = params.dataset.name;
+			document.querySelector('#input_qty').max = params.dataset.qty;
 			$('#modal_refund').modal("show");
 		}
 
