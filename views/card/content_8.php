@@ -67,7 +67,7 @@ $header = "Пациент";
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-clipboard2 mr-2"></i>Состояние
 							<?php if ($activity and permission(7)): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+								<a class="float-right text-primary" data-toggle="modal" data-target="#modal_add">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -147,7 +147,7 @@ $header = "Пациент";
 							<button type="button" class="close" data-dismiss="modal">×</button>
 						</div>
 
-						<?= VisitStatsModel::form() ?>
+						<?= (new VisitStatsModel)->form() ?>
 
 					</div>
 				</div>

@@ -7,11 +7,6 @@ class VisitAnalyzeModel extends Model
     public function table_form($pk = null)
     {
         global $db, $session;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         $user = $db->query("SELECT id, gender, dateBith FROM users WHERE user_level = 15 AND id = {$_GET['id']}")->fetch();
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">

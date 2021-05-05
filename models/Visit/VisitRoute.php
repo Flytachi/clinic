@@ -6,7 +6,7 @@ class VisitRoute extends Model
 
     public function form_out($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -16,7 +16,7 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
                     <?php foreach ($db->query("SELECT * from division WHERE level in (5) AND id !=". division()) as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                     <?php endforeach; ?>
@@ -112,7 +112,7 @@ class VisitRoute extends Model
 
     public function form_sta($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -124,7 +124,7 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
                     <?php foreach ($db->query("SELECT * from division WHERE level in (5) AND id !=". division()) as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                     <?php endforeach; ?>
@@ -218,7 +218,7 @@ class VisitRoute extends Model
 
     public function form_out_labaratory($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -228,7 +228,7 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Лаборатория</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
                     <?php foreach ($db->query("SELECT * from division WHERE level in (6)") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                     <?php endforeach; ?>
@@ -324,7 +324,7 @@ class VisitRoute extends Model
 
     public function form_sta_labaratory($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -336,7 +336,7 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Лаборатория</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
                     <?php foreach ($db->query("SELECT * from division WHERE level in (6)") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                     <?php endforeach; ?>
@@ -431,7 +431,7 @@ class VisitRoute extends Model
 
     public function form_out_diagnostic($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -441,14 +441,10 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
-                    <?php
-                    foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
-                        ?>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
+                    <?php foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -542,7 +538,7 @@ class VisitRoute extends Model
 
     public function form_sta_diagnostic($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -554,14 +550,10 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
-                    <?php
-                    foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row) {
-                        ?>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
+                    <?php foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -653,7 +645,7 @@ class VisitRoute extends Model
 
     public function form_out_physio_manipulation($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -663,14 +655,10 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
-                    <?php
-                    foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row) {
-                        ?>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
+                    <?php foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -764,7 +752,7 @@ class VisitRoute extends Model
 
     public function form_sta_physio_manipulation($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -776,14 +764,10 @@ class VisitRoute extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
-                    <?php
-                    foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row) {
-                        ?>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
+                    <?php foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php
-                    }
-                    ?>
+                    <?php endforeach; ?>
                 </select>
             </div>
 
@@ -875,7 +859,7 @@ class VisitRoute extends Model
 
     public function form_sta_doc($pk = null)
     {
-        global $db, $patient;
+        global $patient;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -976,7 +960,7 @@ class VisitRoute extends Model
 
     public function form_package($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -995,7 +979,7 @@ class VisitRoute extends Model
 
                     <div class="col-md-12">
                         <label>Пакеты:</label>
-                        <select data-placeholder="Выбрать пакет" class="form-control form-control-select2" required onchange="Change_Package_list(this)">
+                        <select data-placeholder="Выбрать пакет" class="<?= $classes['form-select'] ?>" required onchange="Change_Package_list(this)">
                             <option></option>
                             <?php foreach ($db->query("SELECT * FROM package WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>

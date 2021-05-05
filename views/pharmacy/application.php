@@ -34,7 +34,7 @@ $header = "Заявки";
 			<div class="content">
 
 				<?php
-				if($_SESSION['message']){
+				if( isset($_SESSION['message']) ){
 					echo $_SESSION['message'];
 					unset($_SESSION['message']);
 				}
@@ -43,21 +43,17 @@ $header = "Заявки";
                 <form method="post" action="<?= add_url() ?>">
                     <input type="hidden" name="model" value="StorageHomeModel">
 
-                    <div class="card border-1 border-info">
+                    <div class="<?= $classes['card'] ?>">
 
-                        <div class="card-header text-dark header-elements-inline alpha-info">
+                        <div class="<?= $classes['card-header'] ?>">
                             <h5 class="card-title">Список Заявок</h5>
                             <div class="header-elements">
                                 <div class="list-icons">
-                                    <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="form-control form-control-select2" required>
+                                    <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="<?= $classes['form-select'] ?>" required>
                                         <option></option>
-                                        <?php
-                                        foreach($db->query("SELECT * from users WHERE user_level = 7") as $row) {
-                                            ?>
+                                        <?php foreach($db->query("SELECT * from users WHERE user_level = 7") as $row): ?>
                                             <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
-                                            <?php
-                                        }
-                                        ?>
+										<?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>

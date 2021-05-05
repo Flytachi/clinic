@@ -369,7 +369,7 @@ if (!$patient) {
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
 
-                                <?php VisitModel::form_beds(); ?>
+                                <?php (new VisitModel)->form_beds(); ?>
 
                             </div>
                         </div>

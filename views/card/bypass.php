@@ -8,7 +8,6 @@ if ($grant_id == $_SESSION['session_id']) {
     $grant = true;
 }
 ?>
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <div class="modal-header bg-info">
     <h5 class="modal-title">Назначение <?= get_full_name($bypass['user_id']) ?></h5>

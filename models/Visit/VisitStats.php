@@ -6,12 +6,7 @@ class VisitStatsModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
+        global $patient;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -83,7 +78,10 @@ class VisitStatsModel extends Model
 
             <div class="modal-footer">
                 <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

@@ -54,7 +54,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" required>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)" required>
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
@@ -354,7 +354,7 @@ class VisitModel extends Model
 
     public function form_beds($pk = null)
     {
-        global $db, $FLOOR, $patient;
+        global $db, $FLOOR, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -366,7 +366,7 @@ class VisitModel extends Model
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label">Этаж:</label>
                     <div class="col-lg-9">
-                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
                             <?php foreach ($FLOOR as $key => $value): ?>
                                 <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
@@ -382,7 +382,7 @@ class VisitModel extends Model
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label">Палата:</label>
                     <div class="col-lg-9">
-                        <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                        <select data-placeholder="Выбрать палату" name="" id="ward" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
                                 <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
@@ -398,7 +398,7 @@ class VisitModel extends Model
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label">Койка:</label>
                     <div class="col-lg-9">
-                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="form-control select-price" required data-fouc>
+                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)") as $row): ?>
                                 <?php if ($row['user_id']): ?>
