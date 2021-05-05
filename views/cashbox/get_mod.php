@@ -72,7 +72,7 @@ if ($_GET['pk']) {
                         </tr>
                         <tr class="table-secondary">
                             <td>Сумма к оплате</td>
-                            <td class="text-right text-danger"><?= number_format(round($price['cost_service'] + $price['cost_bed'] + $price['cost_beds'] + $price['cost_item_2'])) ?></td>
+                            <td class="text-right text-danger"><?= number_format(round($price['cost_service'] + $price['cost_bed'] + $price['cost_beds'])) ?></td> <!--  + $price['cost_item_2'] -->
                         </tr>
                         <tr class="table-secondary">
                             <td>Скидка</td>
