@@ -31,9 +31,9 @@ $header = "Отчёт аптеки по расходам";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -51,7 +51,7 @@ $header = "Отчёт аптеки по расходам";
 								<div class="col-md-3">
 									<label>Дата:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -60,10 +60,10 @@ $header = "Отчёт аптеки по расходам";
 
 								<div class="col-md-3">
 									<label>Специалист:</label>
-									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
+									<select id="parent_id" name="parent_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите специалиста</option>
 										<?php foreach($db->query("SELECT * from users WHERE user_level IN(7)") as $row):?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['parent_id']) and $_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -108,7 +108,7 @@ $header = "Отчёт аптеки по расходам";
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					if ($_POST['parent_id']) {
+					if ( isset($_POST['parent_id']) and $_POST['parent_id']) {
 						$sql .= " AND parent_id = {$_POST['parent_id']}";
 					}
 					if (empty($_POST['type_1']) or empty($_POST['type_2']) or empty($_POST['type_3'])) {
@@ -136,9 +136,9 @@ $header = "Отчёт аптеки по расходам";
 					$total_qty = $total_amount_cash = $total_amount_card = $total_amount_transfer = $total_amount = 0;
 					?>
 
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Расходы</h6>
 							<div class="header-elements">
 								<div class="list-icons">
