@@ -30,8 +30,8 @@ $header = "История платежей";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
-					 <div class="card-header header-elements-inline">
+				<div class="<?= $classes['card'] ?>">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h5 class="card-title">История платежей</h5>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -42,19 +42,15 @@ $header = "История платежей";
 					<div class="card-body">
 						<div class="table-responsive">
                             <table class="table table-hover datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
 										<th class="text-center" colspan="5">ФИО</th>
-
-
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-									foreach($db->query("SELECT DISTINCT vs.user_id FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id)") as $row) {
-                                        ?>
+                                    <?php foreach($db->query("SELECT DISTINCT vs.user_id FROM visit_price vsp LEFT JOIN visit vs ON(vs.id=vsp.visit_id)") as $row): ?>
                                         <tr>
                                             <td><?= addZero($row['user_id']) ?></td>
                                             <td></td>
@@ -62,14 +58,11 @@ $header = "История платежей";
                                             <td class="text-center"><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
                                             <td></td>
                                             <td></td>
-
                                             <td class="text-center">
 												<a href="<?= viv('cashbox/detail_payment') ?>?pk=<?= $row['user_id'] ?>" class="btn btn-outline-info btn-sm legitRipple">Детально</a>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>

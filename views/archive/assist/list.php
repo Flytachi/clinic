@@ -30,9 +30,9 @@ $header = "Завершёный пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Завершёный пациенты</h6>
 						<div class="header-elements">
 							<form action="#" class="mr-2">
@@ -54,7 +54,7 @@ $header = "Завершёный пациенты";
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>

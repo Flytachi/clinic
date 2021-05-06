@@ -33,7 +33,7 @@ class PackageModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect2'] ?>" onchange="table_change(this)">
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>

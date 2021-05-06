@@ -41,9 +41,9 @@ if (!$patient) {
 }
 // prit($patient);
 ?>
-<div class="card border-1 border-info">
+<div class="<?= $classes['card'] ?>">
 
-    <div class="card-header text-dark header-elements-inline alpha-info">
+    <div class="<?= $classes['card-header'] ?>">
         <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
         <div class="header-elements">
             <div class="list-icons">

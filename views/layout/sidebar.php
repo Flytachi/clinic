@@ -1,4 +1,4 @@
-<div class="sidebar sidebar-light sidebar-main sidebar-expand-md">
+<div class="<?= $classes['sidebar'] ?>">
     <!-- Sidebar content -->
     <div class="sidebar-content">
 

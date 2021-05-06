@@ -120,8 +120,8 @@ if ($_GET['pk']) {
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                            <tr class="bg-blue">
+                        <thead class="<?= $classes['table-thead'] ?>">
+                            <tr>
                                 <th class="text-left">Дата и время</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>
@@ -174,8 +174,8 @@ if ($_GET['pk']) {
 
                 <div class="table-responsive card">
                     <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-blue">
+                        <thead class="<?= $classes['table-thead'] ?>">
+                            <tr>
                                 <th class="text-left">Дата и время</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>

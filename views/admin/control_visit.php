@@ -62,7 +62,7 @@ $header = "Визиты";
 								<div class="col-md-3">
 									<label>Дата создания:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="add_date" value="<?= (isset($_POST['add_date'])) ? $_POST['add_date'] : '' ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="add_date" value="<?= (isset($_POST['add_date'])) ? $_POST['add_date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -153,16 +153,16 @@ $header = "Визиты";
 					if ($_POST['add_date_start'] and $_POST['add_date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN '".$_POST['add_date_start']."' AND '".$_POST['add_date_end']."')";
 					}
-					if ($_POST['user_id']) {
+					if ( isset($_POST['user_id']) and $_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
 					}
-					if ($_POST['division_id']) {
+					if ( isset($_POST['division_id']) and $_POST['division_id']) {
 						$sql .= " AND vs.division_id = {$_POST['division_id']}";
 					}
-					if ($_POST['service_id']) {
+					if ( isset($_POST['service_id']) and $_POST['service_id']) {
 						$sql .= " AND vs.service_id = {$_POST['service_id']}";
 					}
-					if ($_POST['direction']) {
+					if ( isset($_POST['direction']) and $_POST['direction']) {
 						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
 					}
 					?>
@@ -182,7 +182,7 @@ $header = "Визиты";
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered" id="table">
 									<thead>
-										<tr class="bg-info">
+										<tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 7%">Visit_id</th>
 											<th>User</th>
 											<th>Route</th>

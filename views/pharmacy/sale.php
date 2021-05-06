@@ -66,8 +66,8 @@ $header = "Продажа";
 
                                 <div class="table-responsive card">
         							<table class="table table-hover table-sm">
-                                        <thead>
-                                            <tr class="bg-info">
+                                        <thead class="<?= $classes['table-thead'] ?>">
+                                            <tr>
                                                 <th style="width:45%">Препарат</th>
                                                 <th>Срок годности</th>
                                                 <th class="text-right">Кол-во</th>

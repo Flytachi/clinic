@@ -71,7 +71,7 @@ $header = "Койки";
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
-                                    <tr class="">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>Вид</th>
                                         <th>Цена</th>
                                         <th style="width: 100px">Действия</th>

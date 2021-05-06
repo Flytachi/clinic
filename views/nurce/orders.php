@@ -36,9 +36,9 @@ $header = "Заказы";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h5 class="card-title">Заказы</h5>
 					</div>
 
@@ -50,8 +50,8 @@ $header = "Заказы";
 
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>Препарат</th>
 										<th>Дата заказа</th>
                                         <th>Кол-во</th>

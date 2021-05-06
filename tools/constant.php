@@ -41,8 +41,14 @@ $methods = array(
 );
 
 $classes = array(
-    "card" => "card border-1 border-primary",
-    "card-header" => "card-header text-dark header-elements-inline alpha-primary",
+    "navbar" => "navbar navbar-expand-md navbar-dark bg-indigo navbar-static", //fixed-top
+    "sidebar" => "sidebar sidebar-light sidebar-main sidebar-expand-md",
+    "header" => "page-header page-header-light",
+    "footer" => "navbar navbar-expand-lg navbar-light",
+
+    "card" => "card border-1 border-dark",
+    "card-header" => "card-header text-dark header-elements-inline alpha-dark",
+    "table-thead" => "bg-dark",
     "form-select" => "form-control form-control-select2",
     "form-select_price" => "form-control myselect",
     "form-multiselect" => "form-control multiselect-full-featured",

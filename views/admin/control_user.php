@@ -100,7 +100,7 @@ $header = "Визиты";
 				<?php if ($_POST): ?>
 					<?php
 					$sql = "SELECT * FROM users us WHERE us.user_level = 15";
-					if ($_POST['user_id']) {
+					if ( isset($_POST['user_id']) and $_POST['user_id']) {
 						$sql .= " AND us.id = {$_POST['user_id']}";
 					}
 					if (!$_POST['status_true'] or !$_POST['status_false']) {
@@ -128,7 +128,7 @@ $header = "Визиты";
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered" id="table">
 									<thead>
-										<tr class="bg-info">
+										<tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 7%">ID</th>
 											<th>ФИО</th>
 											<th>Регистратор</th>

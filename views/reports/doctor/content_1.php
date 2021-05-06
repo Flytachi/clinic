@@ -198,7 +198,7 @@ $header = "Отчёт врачей по услугам";
 							<div class="table-responsive">
 	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
-	                                    <tr class="bg-info">
+	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
 											<th style="width: 11%">Дата проведения</th>
 				                            <th>Отдел</th>

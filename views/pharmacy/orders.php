@@ -54,8 +54,8 @@ $header = "Заказы";
 
 						<div class="table-responsive card">
 				            <table class="table table-hover table-sm">
-				                <thead>
-				                    <tr class="bg-blue">
+				                <thead class="<?= $classes['table-thead'] ?>">
+				                    <tr>
                                         <th>№</th>
                                         <th>ФИО</th>
 				                        <th>Роль</th>

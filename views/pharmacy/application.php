@@ -63,8 +63,8 @@ $header = "Заявки";
 
                             <div class="table-responsive card">
                                 <table class="table table-hover table-sm">
-                                    <thead>
-                                        <tr class="bg-blue">
+                                    <thead class="<?= $classes['table-thead'] ?>">
+                                        <tr>
 											<th>Дата</th>
 											<th>Информация</th>
                                             <th style="width: 20%">Препарат</th>

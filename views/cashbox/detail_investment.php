@@ -29,9 +29,9 @@ $header = "Инвестиции ". addZero($_GET['pk']);
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -44,8 +44,8 @@ $header = "Инвестиции ". addZero($_GET['pk']);
 
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>№</th>
                                         <th>Дата платежа</th>
                                         <th>Сумма</th>

@@ -128,8 +128,8 @@ $header = "Препараты";
 
 						<div class="table-responsive">
 							<table class="table table-hover table-sm datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th style="width:35%">Препарат</th>
                                         <th>Поставщик</th>
                                         <th>Код</th>

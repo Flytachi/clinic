@@ -29,9 +29,9 @@ $header = "Список пациентов";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Список пациентов</h6>
 						<div class="header-elements">
 							<form action="#">
@@ -45,12 +45,12 @@ $header = "Список пациентов";
 						</div>
 					</div>
 
-					<div class="card-body" style="">
+					<div class="card-body">
 
 						<div class="table-responsive">
 							<table class="table table-hover table-sm table-bordered">
-								<thead>
-									<tr class="bg-info">
+								<thead class="<?= $classes['table-thead'] ?>">
+									<tr>
 										<th>ID</th>
 										<th>ФИО</th>
 										<th>Дата рождение</th>

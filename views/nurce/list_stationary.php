@@ -37,9 +37,9 @@ $header = "Рабочий стол";
 
 				<div id="tab_div">
 
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-					    <div class="card-header text-dark header-elements-inline alpha-info">
+					    <div class="<?= $classes['card-header'] ?>">
 					        <h6 class="card-title">2 Этаж</h6>
 					        <div class="header-elements">
 					            <div class="list-icons">
@@ -52,7 +52,7 @@ $header = "Рабочий стол";
 
 					        <div class="table-responsive">
 					            <table class="table table-hover table-sm">
-					                <thead class="bg-info">
+					                <thead class="<?= $classes['table-thead'] ?>">
 					                    <tr>
 					                        <th>ID</th>
 					                        <th>ФИО</th>
