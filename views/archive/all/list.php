@@ -49,7 +49,7 @@ $header = "Все пациенты";
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
@@ -63,17 +63,16 @@ $header = "Все пациенты";
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody id="search_display">
-                                    <?php
-									$i = 1;
-									$count_elem = 20;
-				                	$count = ceil(intval($db->query("SELECT COUNT(DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date) FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15")->fetchColumn()) / $count_elem);
-				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
-				                	$offset = intval($_GET['of']) * $count_elem;
-
-									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 ORDER BY us.id DESC LIMIT $count_elem OFFSET $offset") as $row) {
-                                        ?>
-                                        <tr>
+                                <tbody>
+									<?php
+									$table = new Table($db, "users us");
+									$table->set_data("id, dateBith, numberPhone, add_date");
+									$table->where("user_level = 15");
+									$table->order_by("id DESC");
+									$table->set_limit(20);
+									?>
+									<?php foreach ($table->get_table() as $row): ?>
+										<tr>
                                             <td><?= addZero($row['id']) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
                                             <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
@@ -83,15 +82,13 @@ $header = "Все пациенты";
 												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach;?>
                                 </tbody>
                             </table>
-
+							
                         </div>
 
-						<?php pagination_page($count, $count_elem, 2); ?>
+						<?php $table->get_panel(); ?>
 
 					</div>
 

@@ -45,8 +45,8 @@ $header = "Список пациентов";
 						</div>
 					</div>
 
-					<div class="card-body">
-
+					<div class="card-body" id="search_display">
+						
 						<div class="table-responsive">
 							<table class="table table-hover table-sm table-bordered">
 								<thead class="<?= $classes['table-thead'] ?>">
@@ -62,19 +62,14 @@ $header = "Список пациентов";
 										<th class="text-center">Действия</th>
 									</tr>
 								</thead>
-								<tbody id="search_display">
+								<tbody>
 									<?php
-									$i = 1;
-									$count_elem = 20;
-
-				                	$count = ceil(intval($db->query("SELECT COUNT(*) FROM users WHERE user_level = 15 ")->fetch()['COUNT(*)']) / $count_elem);
-
-				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
-
-				                	$offset = intval($_GET['of']) * $count_elem ;
-
-									foreach($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY add_date DESC LIMIT $count_elem OFFSET $offset ") as $row) {
-										?>
+									$table = new Table($db, "users");
+									$table->where("user_level = 15");
+									$table->order_by("add_date DESC");
+									$table->set_limit(20);
+									?>
+									<?php foreach ($table->get_table() as $row): ?>
 										<tr>
 											<td><?= addZero($row['id']) ?></td>
 											<td>
@@ -143,15 +138,12 @@ $header = "Список пациентов";
                                                 </div>
 											</td>
 										</tr>
-										<?php
-									}
-									?>
+									<?php endforeach;?>
 								</tbody>
 							</table>
-
-							<?php pagination_page($count, $count_elem, 2); ?>
-
 						</div>
+
+						<?php $table->get_panel(); ?>
 
 					</div>
 
