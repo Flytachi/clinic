@@ -160,7 +160,7 @@ $header = "Отчёты";
                     <?php endif; ?>
                     <!-- end -->
 
-                    <?php if(module('module_diagnostic')): ?>
+                    <?php if(module('module_diet')): ?>
                         <!-- Кухня -->
                         <?php if (permission([9])): ?>
                             <a href="<?= viv('reports/coock/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Кухня</a>
