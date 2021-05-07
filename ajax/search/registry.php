@@ -4,10 +4,10 @@ $session->is_auth([2, 32]);
 
 $tb = new Table($db, "users");
 $search = $tb->get_serch();
-$tb->where_or_serch(array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))"));
-$tb->order_by("add_date DESC");
-$tb->set_self(viv('registry/list_patient'));
-$tb->set_limit(20);
+$where_search = array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+
+$tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
+$tb->set_self(viv('registry/list_patient'));  
 ?>
 <div class="table-responsive">
     <table class="table table-hover table-sm table-bordered">

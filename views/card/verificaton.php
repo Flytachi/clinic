@@ -11,7 +11,8 @@ if ($_GET['main']) {
     } else if($_GET['stage'] == 3) {
         $sql = "SELECT
                     (
-                        SELECT COUNT(bpd.id) FROM bypass bp LEFT JOIN bypass_date bpd ON(bpd.bypass_id=bp.id AND bpd.status IS NOT NULL AND bpd.completed IS NULL AND bpd.date >= CURRENT_DATE()) WHERE bp.user_id = {$_GET['id']} AND bp.visit_id = vs.id AND bp.diet_id IS NULL
+                        -- SELECT COUNT(bpd.id) FROM bypass bp LEFT JOIN bypass_date bpd ON(bpd.bypass_id=bp.id AND bpd.status IS NOT NULL AND bpd.completed IS NULL AND bpd.date >= CURRENT_DATE()) WHERE bp.user_id = {$_GET['id']} AND bp.visit_id = vs.id AND bp.diet_id IS NULL
+                        SELECT COUNT(bpd.id) FROM bypass bp LEFT JOIN bypass_date bpd ON(bpd.bypass_id=bp.id AND bpd.status IS NOT NULL AND bpd.completed IS NULL AND bpd.date >= CURRENT_DATE()) WHERE bp.user_id = {$_GET['id']} AND bp.visit_id = vs.id
                     ) 'result'
                 FROM visit vs WHERE vs.user_id = {$_GET['id']} AND vs.grant_id = {$_SESSION['session_id']} AND vs.completed IS NULL AND vs.service_id = 1";
         echo $db->query($sql)->fetchColumn();

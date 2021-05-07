@@ -4,8 +4,12 @@ $session->is_auth(1);
 $header = "Персонал";
 
 $tb = new Table($db, "users");
-$tb->where("NOT user_level = 15");
-$tb->set_limit(20);
+$search = $tb->get_serch();
+
+$search = $tb->get_serch();
+$where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+
+$tb->where_or_serch($where_search)->set_limit(15);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,13 +67,18 @@ $tb->set_limit(20);
 				    <div class="<?= $classes['card-header'] ?>">
 				        <h5 class="card-title">Список Пользователей</h5>
 				        <div class="header-elements">
-				            <div class="list-icons">
-				                <a class="list-icons-item" data-action="collapse"></a>
-				            </div>
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите логин или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 				        </div>
 				    </div>
 
-				    <div class="card-body">
+				    <div class="card-body" id="search_display">
 
 				        <div class="table-responsive">
 				            <table class="table table-hover">
@@ -132,6 +141,7 @@ $tb->set_limit(20);
     <!-- /footer -->
 
 	<script type="text/javascript">
+
 		function Update(events) {
 			events
 			$.ajax({
@@ -142,6 +152,22 @@ $tb->set_limit(20);
 				},
 			});
 		};
+
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('admin/search_users') ?>",
+				data: {
+					table_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
+
 	</script>
 
 </body>

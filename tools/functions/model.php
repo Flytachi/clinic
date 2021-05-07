@@ -3,26 +3,46 @@ require_once 'mixin.php';
 
 class Model
 {
+    /**
+     * 
+     * Model + PDO
+     * 
+     * 
+     * @version 7.3
+     */
+
     protected $post;
     protected $table = '';
 
     public function set_post($post)
     {
+        /**
+         * Устанавливаем данные о записи!
+         */
         $this->post = $post;
     }
 
     public function get_post()
     {
+        /**
+         * Данные о записи!
+         */
         return $this->post;
     }
 
     public function clear_post()
     {
+        /**
+         * Очищаем данные о записи в классе!
+         */
         unset($this->post);
     }
 
     public function set_table($table)
     {
+        /**
+         * Устанавливаем таблицу!
+         */
         $this->table = $table;
     }
 
@@ -35,22 +55,17 @@ class Model
     {
         /* Пример:
 
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label for="exampleInputEmail1">Name</label>
-                <input type="text" class="form-control" id="exampleInputEmail1" name="name" value="<?= $post['name'] ?>" placeholder="">
+                <input type="text" class="form-control" id="exampleInputEmail1" name="name" value="<?= $this->value('name') ?>" placeholder="">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">Color</label>
-                <input type="text" class="form-control" id="exampleInputPassword1" name="color" value="<?= $post['color']?>" placeholder="">
+                <input type="text" class="form-control" id="exampleInputPassword1" name="color" value="<?= $this->value('color') ?>" placeholder="">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -59,13 +74,16 @@ class Model
         */
     }
 
-    public function value(String $var = null)
+    protected function value(String $var = null)
     {
         return (isset($this->post[$var])) ? $this->post[$var] : '';
     }
 
     public function get(int $pk)
     {
+        /**
+         * Данные о записи!
+         */
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         // dd($object);
@@ -75,6 +93,10 @@ class Model
 
     public function get_or_404(int $pk)
     {
+        /**
+         * Данные о записи!
+         * если не найдёт запись то выдаст 404 
+         */
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         if($object){
@@ -89,6 +111,9 @@ class Model
 
     public function save()
     {
+        /**
+         * Операция создания записи в базе!
+         */
         if($this->clean()){
             $object = Mixin\insert($this->table, $this->post);
             if (!intval($object)){
@@ -101,6 +126,9 @@ class Model
 
     public function update()
     {
+        /**
+         * Операция обновления записи в базе!
+         */
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
@@ -113,15 +141,22 @@ class Model
         }
     }
 
-    public function clean()
+    protected function clean()
     {
+        /**
+         * Очистка данных от скриптов! 
+         * Можно настроить параметры валидации!
+         */
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
     }
 
-    public function jquery_init()
+    protected function jquery_init()
     {
+        /**
+         * Инициализация jquery
+         */
         ?>
         <script type="text/javascript">
             $( document ).ready(function() {
@@ -134,6 +169,9 @@ class Model
 
     public function delete(int $pk)
     {
+        /**
+         * Удаление объекта
+         */
         $object = Mixin\delete($this->table, $pk);
         if ($object) {
             $this->success();
@@ -144,38 +182,37 @@ class Model
 
     }
 
-    public function stop()
+    protected function stop()
     {
+        /**
+         * Остановка операции!
+         */
         exit;
     }
 
-    public function mod($mod=null)
+    protected function dd()
     {
-        switch ($mod) {
-            case "test":
-                dd($this);
-                break;
-
-            default:
-                echo "Не назначен мод";
-                break;
-        }
-        exit;
-    }
-
-    public function dd()
-    {
+        /**
+         * Мод для тестов!
+         */
         dd($this);
         exit;
     }
 
-    public function success()
+    protected function success()
     {
+        /**
+         * Действие в случае успеха операции!
+         */
         echo 1;
     }
 
-    public function error($message)
+    protected function error($message)
     {
+        /**
+         * Действие в случае ошибки операции!
+         * Возвращает ошибку!
+         */
         echo $message;
     }
 
