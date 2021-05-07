@@ -1,6 +1,7 @@
 <?php
 require_once '../../../tools/warframe.php';
 $session->is_auth();
+is_module('module_diet');
 $header = "Отчёт кассы";
 ?>
 <!DOCTYPE html>
