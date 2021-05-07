@@ -7,8 +7,7 @@ $tb->set_data("id, dateBith, numberPhone, add_date");
 $tb->set_self(viv('archive/all/list'));
 $ser = $tb->get_serch();
 $tb->where_or_serch(array("user_level = 15", "user_level = 15 AND (id LIKE '%$ser%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$ser%'))"));
-$tb->order_by("id DESC");
-$tb->set_limit(20);
+$tb->order_by("id DESC")->set_limit(20);
 ?>
 <div class="table-responsive card">
     <table class="table table-hover table-sm">

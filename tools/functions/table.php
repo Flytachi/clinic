@@ -53,7 +53,7 @@ class Table
      * 
      * -----------------------------------------------------------------------
      * 
-     * @version 3.9
+     * @version 4.1
      */
 
     // database handle
@@ -85,6 +85,7 @@ class Table
         $this->limit = $limit;
         $this->generate_sql();
         $this->total_pages = ceil($this->db->query($this->sql)->rowCount() / $this->limit);
+        return $this;
     }
 
     public function set_data(String $data = null)
@@ -93,6 +94,7 @@ class Table
             Установка столбцов которые хотим вытащить, по умолчаню все!
         */
         $this->data = $data;
+        return $this;
     }
 
     public function set_self($uri)
@@ -102,7 +104,7 @@ class Table
             Используется в скрипте поиска.
         */
         $this->php_self = $uri;
-        return 1;
+        return $this;
     }
 
     public function additions(String $additions = null)
@@ -112,6 +114,7 @@ class Table
             До WHERE!
         */
         $this->additions = $additions;
+        return $this;
     }
 
     public function where($where = null)
@@ -120,6 +123,7 @@ class Table
             Установка зависимостей!
         */
         $this->where = $where;
+        return $this;
     }
 
     public function where_or_serch(Array $array = null)
@@ -129,7 +133,7 @@ class Table
         } else {
             $this->where = $array[0];
         }
-        
+        return $this;
     }
 
     public function order_by($order_by = null)
@@ -138,6 +142,7 @@ class Table
             Установка порядка сортировки!
         */
         $this->order_by = $order_by;
+        return $this;
     }
 
     private function generate_sql()
@@ -147,7 +152,6 @@ class Table
         if($this->where) $this->sql .= " WHERE ".$this->where;
         if($this->order_by) $this->sql .= " ORDER BY ".$this->order_by;
         $this->search = (isset($_GET['table_search']) and $_GET['table_search']) ? $this->search_get_name.$_GET['table_search'] : "";
-        return 1;
     }
     
     private function create_panel($page)
