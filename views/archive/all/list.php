@@ -2,6 +2,13 @@
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Все пациенты";
+
+$tb = new Table($db, "users");
+$tb->set_data("id, dateBith, numberPhone, add_date");
+$search = $tb->get_serch();
+$tb->where_or_serch(array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))"));
+$tb->order_by("id DESC");
+$tb->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +44,7 @@ $header = "Все пациенты";
 						<div class="header-elements">
 							<form action="#" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -64,22 +71,15 @@ $header = "Все пациенты";
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php
-									$table = new Table($db, "users us");
-									$table->set_data("id, dateBith, numberPhone, add_date");
-									$table->where("user_level = 15");
-									$table->order_by("id DESC");
-									$table->set_limit(20);
-									?>
-									<?php foreach ($table->get_table() as $row): ?>
+									<?php foreach ($tb->get_table() as $row): ?>
 										<tr>
-                                            <td><?= addZero($row['id']) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-                                            <td><?= $row['numberPhone'] ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                                            <td><?= addZero($row->id) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row->id) ?></div></td>
+                                            <td><?= date_f($row->dateBith) ?></td>
+                                            <td><?= $row->numberPhone ?></td>
+                                            <td><?= date_f($row->add_date, 1) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
 									<?php endforeach;?>
@@ -88,7 +88,7 @@ $header = "Все пациенты";
 							
                         </div>
 
-						<?php $table->get_panel(); ?>
+						<?php $tb->get_panel(); ?>
 
 					</div>
 
@@ -106,14 +106,16 @@ $header = "Все пациенты";
 
 	<script type="text/javascript">
 		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "search.php",
+				url: "<?= viv('archive/all/search') ?>",
 				data: {
-					search: $("#search_input").val(),
+					table_search: input.value,
 				},
 				success: function (result) {
-					$('#search_display').html(result);
+					display.innerHTML = result;
 				},
 			});
 		});
