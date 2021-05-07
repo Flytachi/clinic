@@ -70,6 +70,11 @@ class Session
                 }
             }
         }
+
+        if ( in_array($_SESSION['session_id'], ["master"]) or $_SERVER['PHP_SELF'] == viv('admin/index').".php" ) {
+            $this->db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+        }
+
     }
 
     private function auth(string $login = null, string $password = null)

@@ -101,10 +101,20 @@ function get_full_name($id = null) {
 
 function zeTTa_data()
 {
-    global $db;
-    $id = $_SESSION['session_id'];
-    $stmt = $db->query("SELECT pacs_login, pacs_password from users where id = $id")->fetch(PDO::FETCH_OBJ);
-    return $stmt;
+    global $db, $session;
+    $company = new stdClass();
+    $data = new stdClass();
+    $stmt = $db->query("SELECT pacs_login, pacs_password from users where id = $session->session_id")->fetch(PDO::FETCH_OBJ);
+    $comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'const_zetta_pacs_%'")->fetchAll(PDO::FETCH_OBJ);
+    foreach ($comp as $value) {
+        $company->{$value->const_label} = $value->const_value;
+    }
+    $data->IP = $company->const_zetta_pacs_IP;
+    $data->LID = $stmt->pacs_login;
+    $data->LPW = $stmt->pacs_password;
+    $data->LICD = $company->const_zetta_pacs_LICD;
+    $data->VTYPE = $company->const_zetta_pacs_VTYPE;
+    return $data;
 }
 
 function level($id = null) {

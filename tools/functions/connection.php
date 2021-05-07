@@ -10,6 +10,7 @@ try {
     $db = new PDO($DNS, $ini['DATABASE']['USER'], $ini['DATABASE']['PASS']);
     $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    // $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
     $db->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
 } catch (\PDOException $e) {
     die(include "error_db_connect.php");
