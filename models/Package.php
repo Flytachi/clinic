@@ -225,7 +225,7 @@ class PackageModel extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "<?= ajax('service_table_search') ?>",
+                    url: "<?= ajax('service_table') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),

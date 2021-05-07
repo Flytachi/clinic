@@ -2,6 +2,13 @@
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Все пациенты";
+
+$tb = new Table($db, "users");
+$tb->set_data("id, dateBith, numberPhone, add_date");
+$search = $tb->get_serch();
+$tb->where_or_serch(array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))"));
+$tb->order_by("id DESC");
+$tb->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +44,7 @@ $header = "Все пациенты";
 						<div class="header-elements">
 							<form action="#" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -49,7 +56,7 @@ $header = "Все пациенты";
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
@@ -63,35 +70,25 @@ $header = "Все пациенты";
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
-                                <tbody id="search_display">
-                                    <?php
-									$i = 1;
-									$count_elem = 20;
-				                	$count = ceil(intval($db->query("SELECT COUNT(DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date) FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15")->fetchColumn()) / $count_elem);
-				                	$_GET['of'] = isset($_GET['of']) ? $_GET['of'] : 0;
-				                	$offset = intval($_GET['of']) * $count_elem;
-
-									foreach($db->query("SELECT DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 ORDER BY us.id DESC LIMIT $count_elem OFFSET $offset") as $row) {
-                                        ?>
-                                        <tr>
-                                            <td><?= addZero($row['id']) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-                                            <td><?= $row['numberPhone'] ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                                <tbody>
+									<?php foreach ($tb->get_table() as $row): ?>
+										<tr>
+                                            <td><?= addZero($row->id) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row->id) ?></div></td>
+                                            <td><?= date_f($row->dateBith) ?></td>
+                                            <td><?= $row->numberPhone ?></td>
+                                            <td><?= date_f($row->add_date, 1) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row['id'] ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach;?>
                                 </tbody>
                             </table>
-
+							
                         </div>
 
-						<?php pagination_page($count, $count_elem, 2); ?>
+						<?php $tb->get_panel(); ?>
 
 					</div>
 
@@ -109,14 +106,16 @@ $header = "Все пациенты";
 
 	<script type="text/javascript">
 		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "search.php",
+				url: "<?= viv('archive/all/search') ?>",
 				data: {
-					search: $("#search_input").val(),
+					table_search: input.value,
 				},
 				success: function (result) {
-					$('#search_display').html(result);
+					display.innerHTML = result;
 				},
 			});
 		});

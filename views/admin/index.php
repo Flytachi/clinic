@@ -2,6 +2,10 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Персонал";
+
+$tb = new Table($db, "users");
+$tb->where("NOT user_level = 15");
+$tb->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,25 +84,25 @@ $header = "Персонал";
 				                    </tr>
 				                </thead>
 				                <tbody>
-				                    <?php $i=1; foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row): ?>
-				                        <tr>
-				                            <td><?= $i++ ?></td>
-				                            <td><?= $row['username'] ?></td>
-				                            <td><?= get_full_name($row['id']); ?></td>
+									<?php foreach ($tb->get_table(1) as $row): ?>
+										<tr>
+				                            <td><?= $row->count ?></td>
+				                            <td><?= $row->username ?></td>
+				                            <td><?= get_full_name($row->id); ?></td>
 				                            <td>
 												<?php
-				                                echo $PERSONAL[$row['user_level']];
-				                                if(division_name($row['id'])){
-				                                    echo " (".division_name($row['id']).")";
+				                                echo $PERSONAL[$row->user_level];
+				                                if(division_name($row->id)){
+				                                    echo " (".division_name($row->id).")";
 				                                }
 				                                ?>
 				                            </td>
-											<td><?= $row['room'] ?></td>
+											<td><?= $row->room ?></td>
 				                            <td>
 				                                <div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php if ($row['user_level'] !=1): ?>
-														<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<?php if ($row->user_level !=1): ?>
+														<a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
 				                                </div>
 				                            </td>
@@ -107,6 +111,8 @@ $header = "Персонал";
 				                </tbody>
 				            </table>
 				        </div>
+
+						<?php $tb->get_panel(); ?>
 
 				    </div>
 
