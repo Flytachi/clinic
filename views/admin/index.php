@@ -30,7 +30,7 @@ $tb->where_or_serch($where_search)->set_limit(15);
 	<div class="page-content">
 
 		<!-- Main sidebar -->
-		<?php include layout('sidebar_obj') ?>
+		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
 
