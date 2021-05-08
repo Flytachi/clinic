@@ -6,12 +6,6 @@ class TemplateModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -26,7 +20,7 @@ class TemplateModel extends Model
 
                 <div class="col-md-8 offset-md-2 mb-3">
                     <label class="col-form-label">Название шаблона:</label>
-                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $post['name'] ?>">
+                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $this->value('name') ?>">
                 </div>
 
                 <div class="col-md-12">
@@ -35,7 +29,7 @@ class TemplateModel extends Model
                         <div class="document-editor2__toolbar"></div>
                         <div class="document-editor2__editable-container">
                             <div class="document-editor2__editable">
-                                <?= $post['description'] ?>
+                                <?= $this->value('description') ?>
                             </div>
                         </div>
                     </div>

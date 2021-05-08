@@ -30,9 +30,9 @@ $header = "Амбулаторные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 					</div>
 
@@ -40,8 +40,8 @@ $header = "Амбулаторные пациенты";
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата назначения</th>

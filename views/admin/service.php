@@ -98,7 +98,7 @@ $header = "Услуги";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
 										<th style="width:10%">Код</th>
 										<th style="width:40%">Название</th>
 										<th>Роль</th>

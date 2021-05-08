@@ -26,26 +26,7 @@ $sql = "SELECT
     <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
 
     <body>
-
-        <div class="row">
-
-            <div class="col-6">
-                <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
-            </div>
-
-            <div class="col-6 text-right h3">
-                <b>
-                    <?= $company['print_header_title'] ?><br>
-                    <?= $company['print_header_address'] ?><br>
-                    <?= $company['print_header_phones'] ?>
-                </b>
-            </div>
-
-        </div>
-
-        <div class="my_hr-1"></div>
-        <div class="my_hr-2"></div>
-
+    
         <h1 class="text-center"><b><?= date_f($_GET['date']." ".$_GET['time'], 1) ?></b></h1>
 
             <div class="table-responsive card">

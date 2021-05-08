@@ -6,7 +6,7 @@ class BypassDateModel extends Model
 
     public function table_form_doc($pk = null)
     {
-        global $db, $grant;
+        global $db, $grant, $classes;
         $this_date = new \DateTime();
         $bypass = $db->query("SELECT user_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
@@ -23,8 +23,8 @@ class BypassDateModel extends Model
 
             <div class="table-responsive">
                 <table class="table table-xs table-bordered">
-                    <thead>
-                        <tr class="bg-info">
+                    <thead class="<?= $classes['table-thead'] ?>">
+                        <tr>
                             <th style="width: 50px">№</th>
                             <th style="width: 50%">Дата</th>
                             <th style="width: 30%">Время</th>
@@ -205,7 +205,7 @@ class BypassDateModel extends Model
 
     public function table_form_nurce($pk = null)
     {
-        global $db;
+        global $db, $classes;
         $this_date = new \DateTime();
         $bypass = $db->query("SELECT user_id, visit_id, add_date FROM bypass WHERE id = {$_GET['pk']}")->fetch();
         $add_date = date('Y-m-d', strtotime($bypass['add_date']));
@@ -218,8 +218,8 @@ class BypassDateModel extends Model
 
             <div class="table-responsive">
                 <table class="table table-xs table-bordered">
-                    <thead>
-                        <tr class="bg-info">
+                    <thead class="<?= $classes['table-thead'] ?>">
+                        <tr>
                             <th style="width: 50px">№</th>
                             <th style="width: 50%">Дата</th>
                             <th style="width: 30%">Время</th>

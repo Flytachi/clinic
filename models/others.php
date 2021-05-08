@@ -248,34 +248,28 @@ class GuideModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="form-group">
                 <label>ФИО:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $this->value('name') ?>">
             </div>
 
             <div class="form-group">
                 <label>Сумма:</label>
-                <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $post['price']?>">
+                <input type="number" class="form-control" name="price" placeholder="Введите плата" required value="<?= $this->value('price') ?>">
             </div>
 
             <div class="form-group">
                 <label>Доля:</label>
-                <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $post['share'] ?>">
+                <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" required value="<?= $this->value('share') ?>">
             </div>
 
             <div class="text-right">
@@ -288,25 +282,19 @@ class GuideModel extends Model
 
     public function form_regy($pk = null)
     {
-        global $db;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
             <input type="hidden" name="share" value="0">
 
             <div class="form-group">
                 <label>ФИО:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $post['name']?>">
+                <input type="text" class="form-control" name="name" placeholder="Введите ФИО" required value="<?= $this->value('name') ?>">
             </div>
 
             <div class="text-right">

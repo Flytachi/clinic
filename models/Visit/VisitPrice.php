@@ -395,7 +395,7 @@ class VisitPriceModel extends Model
 
         }elseif (module('module_pharmacy') and isset($this->post['pharm_cost'])) {
 
-            $result = round($this->post['pharm_cost'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']));
+            $result = round(round($this->post['pharm_cost']) - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']));
             if ($result < 0) {
                 echo "Есть остаток ".$result;
                 exit;
@@ -609,7 +609,7 @@ class VisitPriceModel extends Model
     public function err_temp(Int $temp = 0)
     {
         if (isset($this->bed_cost)) {
-            $range = range(-100,100);
+            $range = range(-500,500);
         } else {
             $range = range(-1,1);
         }

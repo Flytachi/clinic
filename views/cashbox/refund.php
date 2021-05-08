@@ -39,7 +39,7 @@ $header = "Рабочий стол";
 				<div class="row">
 
 				    <div class="col-md-5">
-				        <div class="card border-1 border-info">
+				        <div class="<?= $classes['card'] ?>">
 
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Возврат</h5>

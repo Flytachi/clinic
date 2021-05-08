@@ -7,7 +7,7 @@ if ($_GET['type']) {
     <div class="table-responsive card">
         <table class="table table-hover table-sm">
             <thead>
-                <tr class="bg-info">
+                <tr class="<?= $classes['table-thead'] ?>">
                     <th style="width:50px;">№</th>
                     <th>ID</th>
                     <th>ФИО</th>
@@ -30,7 +30,7 @@ if ($_GET['type']) {
     <div class="table-responsive card">
         <table class="table table-hover table-sm">
             <thead>
-                <tr class="bg-info">
+                <tr class="<?= $classes['table-thead'] ?>">
                     <th style="width:50px;">№</th>
                     <th>ID</th>
                     <th>ФИО</th>

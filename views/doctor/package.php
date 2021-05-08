@@ -6,15 +6,6 @@ $header = "Мой пакеты";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
-
 
 <body>
 	<!-- Main navbar -->
@@ -66,7 +57,7 @@ $header = "Мой пакеты";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:50px">№</th>
 										<th style="width:60%">Название</th>
 										<th style="width:20%">Дата создания</th>

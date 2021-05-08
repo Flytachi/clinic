@@ -99,7 +99,7 @@ $header = "Аптека";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
 									  	<th style="width:35%">Препарат</th>
                                         <th>Поставщик</th>
                                         <th>Код</th>

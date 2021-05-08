@@ -197,9 +197,10 @@ $header = "Панель управления";
 
 								<?php
 								try {
-									$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
+									$company = new stdClass();
+									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
 									foreach ($comp as $value) {
-									    $company[$value['const_label']] = $value['const_value'];
+										$company->{$value->const_label} = $value->const_value;
 									}
 									?>
 									<div class="table-responsive">
@@ -210,7 +211,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= (isset($company['module_laboratory']) and $company['module_laboratory']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= (isset($company->module_laboratory) and $company->module_laboratory) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -220,7 +221,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= (isset($company['module_diagnostic']) and $company['module_diagnostic']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= (isset($company->module_diagnostic) and $company->module_diagnostic) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -230,7 +231,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company['module_pharmacy']) and $company['module_pharmacy']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_pharmacy) and $company->module_pharmacy) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -240,7 +241,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_bypass" <?= (isset($company['module_bypass']) and $company['module_bypass']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_bypass" <?= (isset($company->module_bypass) and $company->module_bypass) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -250,7 +251,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diet" <?= (isset($company['module_diet']) and $company['module_diet']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diet" <?= (isset($company->module_diet) and $company->module_diet) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -260,7 +261,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= (isset($company['module_zetta_pacs']) and $company['module_zetta_pacs']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= (isset($company->module_zetta_pacs) and $company->module_zetta_pacs) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

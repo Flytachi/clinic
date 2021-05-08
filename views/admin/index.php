@@ -2,6 +2,14 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Персонал";
+
+$tb = new Table($db, "users");
+$search = $tb->get_serch();
+
+$search = $tb->get_serch();
+$where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+
+$tb->where_or_serch($where_search)->set_limit(15);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,18 +67,23 @@ $header = "Персонал";
 				    <div class="<?= $classes['card-header'] ?>">
 				        <h5 class="card-title">Список Пользователей</h5>
 				        <div class="header-elements">
-				            <div class="list-icons">
-				                <a class="list-icons-item" data-action="collapse"></a>
-				            </div>
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите логин или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 				        </div>
 				    </div>
 
-				    <div class="card-body">
+				    <div class="card-body" id="search_display">
 
 				        <div class="table-responsive">
 				            <table class="table table-hover">
 				                <thead>
-				                    <tr class="bg-blue">
+				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th>#</th>
 				                        <th>Логин</th>
 				                        <th>ФИО</th>
@@ -80,25 +93,25 @@ $header = "Персонал";
 				                    </tr>
 				                </thead>
 				                <tbody>
-				                    <?php $i=1; foreach($db->query('SELECT * from users WHERE not user_level = 15') as $row): ?>
-				                        <tr>
-				                            <td><?= $i++ ?></td>
-				                            <td><?= $row['username'] ?></td>
-				                            <td><?= get_full_name($row['id']); ?></td>
+									<?php foreach ($tb->get_table(1) as $row): ?>
+										<tr>
+				                            <td><?= $row->count ?></td>
+				                            <td><?= $row->username ?></td>
+				                            <td><?= get_full_name($row->id); ?></td>
 				                            <td>
 												<?php
-				                                echo $PERSONAL[$row['user_level']];
-				                                if(division_name($row['id'])){
-				                                    echo " (".division_name($row['id']).")";
+				                                echo $PERSONAL[$row->user_level];
+				                                if(division_name($row->id)){
+				                                    echo " (".division_name($row->id).")";
 				                                }
 				                                ?>
 				                            </td>
-											<td><?= $row['room'] ?></td>
+											<td><?= $row->room ?></td>
 				                            <td>
 				                                <div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php if ($row['user_level'] !=1): ?>
-														<a href="<?= del_url($row['id'], 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<?php if ($row->user_level !=1): ?>
+														<a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
 				                                </div>
 				                            </td>
@@ -107,6 +120,8 @@ $header = "Персонал";
 				                </tbody>
 				            </table>
 				        </div>
+
+						<?php $tb->get_panel(); ?>
 
 				    </div>
 
@@ -126,6 +141,7 @@ $header = "Персонал";
     <!-- /footer -->
 
 	<script type="text/javascript">
+
 		function Update(events) {
 			events
 			$.ajax({
@@ -136,6 +152,22 @@ $header = "Персонал";
 				},
 			});
 		};
+
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('admin/search_users') ?>",
+				data: {
+					table_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
+
 	</script>
 
 </body>

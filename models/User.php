@@ -56,7 +56,7 @@ class UserModel extends Model
                             <label>Отдел:</label>
                             <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php foreach ($db->query('SELECT * FROM division') as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
                                     <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>

@@ -162,7 +162,7 @@ $header = "Общий отчёт по врачам";
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered" id="table">
 									<thead>
-										<tr class="bg-info">
+										<tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
 											<th style="width: 11%">Дата завершения</th>
 	                                        <th>Специалист</th>

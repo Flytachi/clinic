@@ -29,9 +29,9 @@ $header = "Журнал";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h5 class="card-title">Журнал</h5>
 					</div>
 
@@ -47,7 +47,7 @@ $header = "Журнал";
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>№</th>
                                         <th>ID</th>
                                         <th>Дата</th>

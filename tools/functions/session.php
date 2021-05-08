@@ -70,6 +70,7 @@ class Session
                 }
             }
         }
+
     }
 
     private function auth(string $login = null, string $password = null)

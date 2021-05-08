@@ -30,9 +30,9 @@ $header = "Инвестиции";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-					 <div class="card-header header-elements-inline">
+					 <div class="<?= $classes['card-header'] ?>">
                         <h5 class="card-title">Инвестиции</h5>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -44,8 +44,8 @@ $header = "Инвестиции";
 					<div class="card-body">
 						<div class="table-responsive">
                             <table class="table table-hover datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
 										<th class="text-center" colspan="5">ФИО</th>
                                         <th class="text-center" style="width:210px">Действия</th>

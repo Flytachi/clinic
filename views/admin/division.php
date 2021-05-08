@@ -71,7 +71,7 @@ $header = "Класификация персонала";
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
-                                    <tr class="bg-blue">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:7%">Id</th>
                                         <th>Роль</th>
                                         <th>Отдел</th>

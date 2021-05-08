@@ -31,8 +31,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-                <div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+                <div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -53,8 +53,8 @@ $header = "Пациент";
 
 						   	<div class="table-responsive">
 							   	<table class="table table-hover table-sm table-bordered">
- 								  	<thead>
- 									  	<tr class="bg-info">
+ 								  	<thead class="<?= $classes['table-thead'] ?>">
+ 									  	<tr>
  										  	<th style="width: 40px !important;">№</th>
  										  	<th>Препарат</th>
                                           	<th style="width: 200px;">Цена ед.</th>
