@@ -57,9 +57,15 @@ $i = 0; $cost = 0;
             <?php if (empty($_GET['head'])): ?>
                 <td>
                     <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>" required>
-                        <?php foreach ($db->query("SELECT id from users WHERE division_id = $row->division_id") as $parent): ?>
-                            <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
-                        <?php endforeach; ?>
+                        <?php if ($row->user_level == 6): ?>
+                            <?php foreach ($db->query("SELECT id from users WHERE user_level = 6") as $parent): ?>
+                                <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($db->query("SELECT id from users WHERE division_id = $row->division_id") as $parent): ?>
+                                <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </select>
                 </td>
             <?php endif; ?>
