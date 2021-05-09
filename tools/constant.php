@@ -53,5 +53,7 @@ $classes = array(
     "form-select_price" => "form-control myselect",
     "form-multiselect" => "form-control multiselect-full-featured",
     "form-daterange" => "form-control daterange-locale",
+
+    "btn_detail" => "btn btn-outline-primary btn-sm legitRipple",
 )
 ?>

@@ -32,25 +32,35 @@ class Table
      * 
      * 
      * 
+     * Скрипт на Php + Html:
+     * 
+     * -----------------------------------------------------------------------
+    
+        <form action="#">
+            <input type="text" value="<?= $search ?>" id="search_input">
+        </form>
+      
+     * -----------------------------------------------------------------------
+     * 
      * Скрипт на Js + Ajax:
      * 
      * -----------------------------------------------------------------------
-     * 
-     *  $("#search_input").keyup(function() {
-     *      var input = document.querySelector('#search_input');
-     *      var display = document.querySelector('#search_display');
-     *      $.ajax({
-     * 	    	type: "GET",
-     * 	        url: "search.php",
-     * 		    data: {
-     * 			    table_search: input.value,
-     * 		    },
-     * 	        success: function (result) {
-     * 			    display.innerHTML = result;
-     * 			},
-     * 		});
-     *  });
-     * 
+    
+        $("#search_input").keyup(function() {
+            var input = document.querySelector('#search_input');
+            var display = document.querySelector('#search_display');
+            $.ajax({
+                type: "GET",
+                url: "search.php",
+                data: {
+                    table_search: input.value,
+                },
+                success: function (result) {
+                    display.innerHTML = result;
+                },
+            });
+        });
+      
      * -----------------------------------------------------------------------
      * 
      * @version 4.1

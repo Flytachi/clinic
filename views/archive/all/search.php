@@ -30,7 +30,7 @@ $tb->order_by("id DESC")->set_limit(20);
                     <td><?= $row->numberPhone ?></td>
                     <td><?= date_f($row->add_date, 1) ?></td>
                     <td class="text-center">
-                        <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+                        <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="<?= $classes['btn_detail'] ?>">Визиты</button>
                     </td>
                 </tr>
             <?php endforeach;?>

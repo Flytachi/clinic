@@ -258,12 +258,12 @@ class VisitReport extends Model
                 Mixin\error('404');
             }
         }
-    }
+    }              
 
     public function update()
     {
         global $db;
-        $end = ($this->post['end']) ? true : false;
+        $end = (isset($this->post['end'])) ? true : false;
         unset($this->post['end']);
         if($this->clean()){
             $db->beginTransaction();
@@ -272,11 +272,11 @@ class VisitReport extends Model
             if ($end) {
                 $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
                 if ($row['assist_id']) {
-                    if (!$db->query("SELECT * FROM visit WHERE id != $pk AND user_id = {$row['user_id']} AND completed IS NULL")->rowCount()) {
+                    if (0 == $db->query("SELECT * FROM visit WHERE id != $pk AND user_id = {$row['user_id']} AND completed IS NULL")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
-                    if ($row['grant_id'] == $row['parent_id'] and !$db->query("SELECT * FROM visit WHERE id != $pk AND user_id={$row['user_id']} AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
+                    if (0 == $db->query("SELECT * FROM visit WHERE id != $pk AND user_id={$row['user_id']} AND completed IS NULL")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }
@@ -295,6 +295,7 @@ class VisitReport extends Model
                 }
             }
         }
+        
         $db->commit();
         $this->success();
     }
@@ -308,7 +309,7 @@ class VisitReport extends Model
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if ($report) {
+        if ( isset($report) ) {
             $this->post['report'] = $report;
         }
         return True;
