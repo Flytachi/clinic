@@ -49,7 +49,7 @@ class DivisionModel extends Model
                 <div class="form-group row">
                     <label class="col-form-label col-md-1">Радиолог</label>
                     <div class="col-md-3">
-                        <input type="checkbox" class="swit" name="assist" <?= ($this->value('assist') == 2) ? "checked" : "" ?>>
+                        <input type="checkbox" class="swit" name="assist_2" <?= ($this->value('assist') == 2) ? "checked" : "" ?>>
                     </div>
                 </div>
             <?php endif; ?>
@@ -70,8 +70,11 @@ class DivisionModel extends Model
 
     public function clean()
     {
-        if ($this->post['assist']) {
-            $this->post['assist'] = True;
+        if ($this->post['assist_2']) {
+            $this->post['assist'] = 2;
+            unset($this->post['assist_2']);
+        }elseif ($this->post['assist']) {
+            $this->post['assist'] = 1;
         }else {
             $this->post['assist'] = False;
         }

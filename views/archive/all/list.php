@@ -41,7 +41,7 @@ $tb->order_by("id DESC")->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Все пациенты</h6>
 						<div class="header-elements">
-							<form action="#" class="mr-2">
+							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
 									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
@@ -75,7 +75,7 @@ $tb->order_by("id DESC")->set_limit(20);
                                             <td><?= $row->numberPhone ?></td>
                                             <td><?= date_f($row->add_date, 1) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="<?= $classes['btn_detail'] ?>">Визиты</button>
                                             </td>
                                         </tr>
 									<?php endforeach;?>
