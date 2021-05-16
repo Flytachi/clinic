@@ -286,26 +286,18 @@ class VisitModel extends Model
                     <label>Отдел:</label>
                     <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
-                            ?>
+                        <?php foreach($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-6">
                     <label>Специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
-                            ?>
+                        <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
