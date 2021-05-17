@@ -114,7 +114,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php VisitRefundModel::form(); ?>
+				<?php (new VisitRefundModel)->form(); ?>
 
 			</div>
 		</div>
