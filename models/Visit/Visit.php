@@ -286,26 +286,18 @@ class VisitModel extends Model
                     <label>Отдел:</label>
                     <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
-                            ?>
+                        <?php foreach($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-6">
                     <label>Специалиста:</label>
                     <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
-                            ?>
+                        <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -622,8 +614,8 @@ class VisitModel extends Model
     public function delete(int $pk)
     {
         global $db;
-        if (!$_GET['type']) {
-
+        if (empty($_GET['type'])) {
+            
             // Нахождение id визита
             $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
 
@@ -667,9 +659,11 @@ class VisitModel extends Model
                     Mixin\delete('visit_price', $pk, 'visit_id');
     
                     // Обновляем статус
-                    $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
-                    if(!$status){
-                        Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
+                    if($status <= 1){
+                        if ($status == 0) {
+                            Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                        }
                         $success = 2;
                     }else {
                         $success = 1;
@@ -690,14 +684,15 @@ class VisitModel extends Model
                 Mixin\delete('visit_price', $pk, 'visit_id');
 
                 // Обновляем статус
-                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
-                if(!$status){
-                    Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
+                if($status <= 1){
+                    if ($status == 0) {
+                        Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    }
                     $success = 2;
                 }else {
                     $success = 1;
                 }
-
                 $db->commit();
                 $this->success($success);
             }
