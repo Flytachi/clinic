@@ -154,6 +154,7 @@ $header = "Рабочий стол";
 						type: "GET",
 						url: events,
 						success: function (data) {
+							// console.log(data);
 							if (data == 1) {
 								$('#'+tr).css("background-color", "red");
 								$('#'+tr).css("color", "white");
