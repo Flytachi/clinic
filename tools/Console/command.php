@@ -71,6 +71,10 @@ class __Make
         NAME = 
         USER = 
         PASS = 
+
+        [SOCKET]
+        PORT = 8080
+        HOST = 
         EOF;
     }
 
@@ -91,7 +95,7 @@ class __Make
     {
         $result = exec("mkdir storage && chmod 777 storage && echo 1");
         if ($result) {
-            echo "\033[33m"." Директория storage создана.\n";
+            echo "\033[32m"." Директория storage создана.\n";
         }
         return 1;
     }
@@ -100,7 +104,7 @@ class __Make
     {
         $result = exec("mkdir dump && chmod 777 dump && echo 1");
         if ($result) {
-            echo "\033[33m"." Директория dump создана.\n";
+            echo "\033[32m"." Директория dump создана.\n";
         }
         return 1;
     }
@@ -472,6 +476,20 @@ class __Dump
     public function help()
     {
         echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+class __Serve
+{
+
+    function __construct($value = null, $name = null)
+    {
+        global $ini;
+        echo "\033[32m"." Сокет сервер успешно запущен.\n";
+        
+        require 'socket.php';
+
     }
 
 }

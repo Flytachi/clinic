@@ -5,8 +5,6 @@ $header = "Персонал";
 
 $tb = new Table($db, "users");
 $search = $tb->get_serch();
-
-$search = $tb->get_serch();
 $where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
 $tb->where_or_serch($where_search)->set_limit(15);
@@ -109,8 +107,30 @@ $tb->where_or_serch($where_search)->set_limit(15);
 											<td><?= $row->room ?></td>
 				                            <td>
 				                                <div class="list-icons">
+
+													<?php if ($row->user_level != 1): ?>
+														<div class="dropdown">                      
+															<?php if ($row->is_active): ?>
+																<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
+															<?php else: ?>
+																<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
+															<?php endif; ?>
+
+															<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
+																<a onclick="Change(<?= $row->id ?>, 1)" class="dropdown-item">
+																	<span class="badge badge-mark mr-2 border-success"></span>
+																	Active
+																</a>
+																<a onclick="Change(<?= $row->id ?>, 0)" class="dropdown-item">
+																	<span class="badge badge-mark mr-2 border-secondary"></span>
+																	Pasive
+																</a>
+															</div>
+														</div>
+													<?php endif; ?>
+
 													<a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php if ($row->user_level !=1): ?>
+													<?php if ($row->user_level != 1): ?>
 														<a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
 				                                </div>
@@ -141,6 +161,29 @@ $tb->where_or_serch($where_search)->set_limit(15);
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		function Change(id, stat = null) {
+            event.preventDefault();
+            $.ajax({
+				type: "GET",
+				url: "<?= ajax('admin_index') ?>",
+				data: { id:id, is_active: stat },
+				success: function (data) {
+                    if (data) {
+						var badge = document.getElementById(`status_change_${id}`);
+						if (data == 1) {
+							badge.className = "badge bg-success dropdown-toggle";
+							badge.innerHTML = "Active";
+							badge.onclick = `Change(${id}, 1)`;
+						}else if (data == 0) {
+							badge.className = "badge bg-secondary dropdown-toggle";
+							badge.innerHTML = "Pasive";
+							badge.onclick = `Change(${id}, 0)`;
+						}
+                    }
+				},
+			});
+        }
 
 		function Update(events) {
 			events

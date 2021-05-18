@@ -70,6 +70,7 @@ class Session
                 }
             }
         }
+
     }
 
     private function auth(string $login = null, string $password = null)
@@ -82,7 +83,7 @@ class Session
             $this->login_success();
         }
 
-        $stmt = $this->db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
+        $stmt = $this->db->query("SELECT id FROM users WHERE username = '$username' AND password = '$password' AND is_active IS NOT NULL")->fetch(PDO::FETCH_OBJ);
         if($stmt){
             $this->set_data($stmt->id);
             $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();

@@ -48,7 +48,7 @@ $header = "Пациент";
 								</a>
 								<?php if (module('module_zetta_pacs')): ?>
 									<?php $zeT = zeTTa_data(); ?>
-									<a href="zetta://URL=http://192.168.10.14&LID=<?= $zeT->pacs_login ?>&LPW=<?= $zeT->pacs_password ?>&LICD=0492&PID=<?= $patient->id ?>&VTYPE=W" class="float-right text-violet mr-2">
+									<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
 										ZeTTa-PACS
 									</a>
 								<?php endif; ?>

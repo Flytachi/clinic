@@ -5,8 +5,8 @@ $session->is_auth();
 $tb = new Table($db, "users");
 $tb->set_data("id, dateBith, numberPhone, add_date");
 $tb->set_self(viv('archive/all/list'));
-$ser = $tb->get_serch();
-$tb->where_or_serch(array("user_level = 15", "user_level = 15 AND (id LIKE '%$ser%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$ser%'))"));
+$search = $tb->get_serch();
+$tb->where_or_serch(array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))"));
 $tb->order_by("id DESC")->set_limit(20);
 ?>
 <div class="table-responsive card">
@@ -30,7 +30,7 @@ $tb->order_by("id DESC")->set_limit(20);
                     <td><?= $row->numberPhone ?></td>
                     <td><?= date_f($row->add_date, 1) ?></td>
                     <td class="text-center">
-                        <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Визиты</button>
+                        <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="<?= $classes['btn_detail'] ?>">Визиты</button>
                     </td>
                 </tr>
             <?php endforeach;?>

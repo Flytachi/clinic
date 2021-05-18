@@ -38,6 +38,28 @@ $tb->set_self(viv('admin/index'));
                     <td><?= $row->room ?></td>
                     <td>
                         <div class="list-icons">
+
+                            <?php if ($row->user_level != 1): ?>
+                                <div class="dropdown">                      
+                                    <?php if ($row->is_active): ?>
+                                        <a href="#" id="status_change_<?= $row->id ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
+                                    <?php else: ?>
+                                        <a href="#" id="status_change_<?= $row->id ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
+                                    <?php endif; ?>
+
+                                    <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
+                                        <a onclick="Change(<?= $row->id ?>, 1)" class="dropdown-item">
+                                            <span class="badge badge-mark mr-2 border-success"></span>
+                                            Active
+                                        </a>
+                                        <a onclick="Change(<?= $row->id ?>, 0)" class="dropdown-item">
+                                            <span class="badge badge-mark mr-2 border-secondary"></span>
+                                            Pasive
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
                             <a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                             <?php if ($row->user_level !=1): ?>
                                 <a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
