@@ -29,6 +29,11 @@ function dd($value) {
     echo "</pre>";
 }
 
+function api( $url, $param ){
+    if ($url) {
+        return DIR."/api/$url".EXT."?url=$param";
+    }
+}
 
 function global_render( $url=null){
     if ($url) {
