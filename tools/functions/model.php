@@ -13,6 +13,8 @@ class Model
 
     protected $post;
     protected $table = '';
+    protected $file_directory = "/storage/";
+    protected $file_format = null;
 
     public function set_post($post)
     {
@@ -141,12 +143,78 @@ class Model
         }
     }
 
+    public function file_download()
+    {
+        /**
+         * Загрузка и сохранение файла
+         * Можно настроить параметры валидации!
+         */
+        global $db;
+        if ( isset($_FILES) ) {
+
+            foreach ($_FILES as $key => $file) {
+
+                if ( $file['name'] ) {
+                    // Upload File
+                    if ($file['error'] === UPLOAD_ERR_OK) {
+                        $fileTmpPath = $file['tmp_name'];
+                        $fileName = $file['name'];
+                        $fileSize = $file['size'];
+                        $fileType = $file['type'];
+                
+                        $fileNameCmps = explode(".", $fileName);
+                        $fileExtension = strtolower(end($fileNameCmps));
+                        $newFileName = 'file_' . sha1(time() . $fileName) . '.' . $fileExtension;
+                
+                        // File format
+                        if (empty($this->file_format) or isset($this->file_format) and (is_array($this->file_format) and in_array($fileExtension, $this->file_format) or $this->file_format == $fileExtension) ) {
+                            $uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR.$this->file_directory;
+                            $dest_path = $uploadFileDir . $newFileName;
+                
+                            // Check update
+                            if( isset($this->post['id']) ){
+                                // Delete old file
+                                $this->file_clean($key);
+                            }
+                            
+                            if(move_uploaded_file($fileTmpPath, $dest_path)){
+                                // File is successfully uploaded.
+                                $this->post[$key] = "/storage/".$newFileName;
+                                
+                            }else{
+                                $this->error("Error writing to database or saving file!");
+                            }
+                
+                        }else {
+                            $this->error("Error unsupported file format!");
+                        }
+
+                    }else {
+                        $this->error("Error loading to temporary folder!");
+                    }   
+                }
+
+            }
+
+        }
+    }
+
+    public function file_clean(String $row_name)
+    {
+        global $db;
+        $select = $db->query("SELECT $row_name FROM $this->table WHERE id = {$this->post['id']}")->fetchColumn();
+        if ($select) {
+            unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
+        }
+    }
+
     protected function clean()
     {
         /**
          * Очистка данных от скриптов! 
          * Можно настроить параметры валидации!
          */
+        $this->file_download();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
