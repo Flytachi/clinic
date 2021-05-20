@@ -12,7 +12,7 @@ if ( isset($_GET['items']) ) {
 }else {
     $docs = $db->query("SELECT ds.is_document, vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN division ds ON(ds.id = sc.division_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
     if ($docs->is_document) {
-        global_render($docs->is_document, '?id='.$_GET['id']);
+        global_render($docs->is_document.'?id='.$_GET['id']);
     }
 }
 ?>

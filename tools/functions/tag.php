@@ -30,9 +30,9 @@ function dd($value) {
 }
 
 
-function global_render( $url=null, $param = null ){
+function global_render( $url=null){
     if ($url) {
-        header("location:".DIR."$url".EXT.$param);
+        header("location:".DIR."$url");
     }else {
         header("location:".$_SERVER['HTTP_REFERER']);
     }
