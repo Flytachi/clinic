@@ -1,5 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
+require_once '../../tools/Console/command.php';
 $session->is_auth('master');
 $header = "Панель управления";
 ?>
@@ -54,33 +55,35 @@ $header = "Панель управления";
 
 				<?php elseif ( isset($_POST['GET_START']) ): ?>
 
-                    <?php
-                    // $flush = Mixin\T_FLUSH_database();
-					// $_province = province_temp();
-					// $_region = region_temp();
-                    // $_division = division_temp();
-                    // $_user = users_temp();
-                    // $_service = service_temp();
-                    ?>
+					<div style="display:none;">
+						<?php
+							$flush = new __Db("clean");
+							$_sidebar = new __Db("seed", "sidebar");
+							$_province = new __Db("seed", "province");
+							$_region = new __Db("seed", "region");
+							$_user = new __Db("seed", "users");
+							$_service = new __Db("seed", "service");
+						?>
+					</div>
 
-                    <?php if ($flush == 200): ?>
+                    <?php if ($flush): ?>
                         <div class="alert alert-primary" role="alert">
                             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
                             Новая база данных готова к использованию!
                             <ul>
 
-								<?php if ($_division == 200): ?>
-                                    <li>Очищены/Созданы отделы</li>
+								<?php if ($_sidebar): ?>
+                                    <li>Очищен/Создан Сайдбар</li>
                                 <?php else: ?>
-                                    <li class="text-danger">Ошибка создания отделов</li>
-									<?php if ($_division): ?>
+                                    <li class="text-danger">Ошибка при создании сайдбара</li>
+									<?php if ($_sidebar): ?>
 										<ol class="text-danger">
-	                                        <li><?= $_division ?></li>
+	                                        <li><?= $_sidebar ?></li>
 	                                    </ol>
 									<?php endif; ?>
                                 <?php endif; ?>
 
-								<?php if ($_province == 200): ?>
+								<?php if ($_province): ?>
                                     <li>Очищен/Создан список областей</li>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка при создании списока областей</li>
@@ -91,7 +94,7 @@ $header = "Панель управления";
 									<?php endif; ?>
                                 <?php endif; ?>
 
-								<?php if ($_region == 200): ?>
+								<?php if ($_region): ?>
                                     <li>Очищен/Создан список регионов</li>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка при создании списока регионов</li>
@@ -107,7 +110,7 @@ $header = "Панель управления";
                                 <li>Очищены визиты</li>
 
                                 <li>Очищены услуги</li>
-                                <?php if ($_service == 200): ?>
+                                <?php if ($_service): ?>
                                     <li>Создана услуга</li>
                                     <ol>
                                         <li>Стационарный Осмотр</li>
@@ -122,7 +125,7 @@ $header = "Панель управления";
                                 <?php endif; ?>
 
                                 <li>Очищены пользователи</li>
-                                <?php if ($_user == 200): ?>
+                                <?php if ($_user): ?>
                                     <li>Создан администратор</li>
                                     <ol>
                                         <li>login: admin</li>
