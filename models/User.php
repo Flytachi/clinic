@@ -44,10 +44,12 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Выбирите роль:</label>
-                            <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
+                            <select data-placeholder="Выбрать роль" onchange="TableChange(this)" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($PERSONAL as $key => $value): ?>
-                                    <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                    <?php if(!in_array($key, [1])): ?>
+                                        <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -122,23 +124,9 @@ class UserModel extends Model
                                 </div>
                             <?php endif; ?>
 
-                            <?php if (module('module_zetta_pacs')): ?>
-                                <legend><b>ZeTTa PACS</b></legend>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>PACS Логин:</label>
-                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $this->value('pacs_login') ?>">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>PACS пароль:</label>
-                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $this->value('pacs_password') ?>">
-                                    </div>
-                                </div>
-                            <?php endif; ?>
                         </div>
+
+                        <div class="row" id="change_table_div"></div>
 
                     </fieldset>
                 </div>
@@ -158,6 +146,37 @@ class UserModel extends Model
                 });
             </script>
         </form>
+
+        <script>
+            function TableChange(the) {
+                if (the.value == 5) {
+                    var div = `
+                    <?php if (module('module_zetta_pacs')): ?>
+                        <legend><b>ZeTTa PACS</b></legend>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>PACS Логин:</label>
+                                <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $this->value('pacs_login') ?>">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>PACS пароль:</label>
+                                <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $this->value('pacs_password') ?>">
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    `;
+                    
+                }else{
+                    var div = ``;
+                }
+
+                document.querySelector('#change_table_div').innerHTML = div;
+                Swit.init();
+            }
+        </script>
         <?php
         if ($pk) {
             $this->jquery_init();

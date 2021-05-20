@@ -30,6 +30,15 @@ function dd($value) {
 }
 
 
+function global_render( $url=null){
+    if ($url) {
+        header("location:".DIR."$url");
+    }else {
+        header("location:".$_SERVER['HTTP_REFERER']);
+    }
+    exit;
+}
+
 function render($url=null){
     if ($url) {
         header("location:".DIR."/views/$url".EXT);
