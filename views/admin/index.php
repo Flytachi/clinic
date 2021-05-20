@@ -5,8 +5,6 @@ $header = "Персонал";
 
 $tb = new Table($db, "users");
 $search = $tb->get_serch();
-
-$search = $tb->get_serch();
 $where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
 $tb->where_or_serch($where_search)->set_limit(15);

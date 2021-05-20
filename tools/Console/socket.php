@@ -1,12 +1,14 @@
 <?php
 
-require 'static/vendor/autoload.php';
-require_once 'tools/functions/connection.php';
+require dirname(__DIR__, 2).'/static/vendor/autoload.php';
+require_once dirname(__DIR__).'/functions/connection.php';
+
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
+
 
 class Chat implements MessageComponentInterface {
     protected $clients;
@@ -37,40 +39,40 @@ class Chat implements MessageComponentInterface {
             $type = $mas->{'type'};
 
             if($type == "messages"){
-				$id_push = $mas->{"id"};
-				$id_pull = $mas->{"id_cli"};
-				$message = $mas->{"message"};
-				$type = $mas->{'type'};
-				$type_message = $mas->{'type_message'};
+                $id_push = $mas->{"id"};
+                $id_pull = $mas->{"id_cli"};
+                $message = $mas->{"message"};
+                $type = $mas->{'type'};
+                $type_message = $mas->{'type_message'};
             }else{
-				$type = $mas->{'type'};
+                $type = $mas->{'type'};
             }
         }
 
         global $db;
 
         if($type == "messages"){
-          $hour = date('H');
+        $hour = date('H');
 
-          $minute = date('i');
+        $minute = date('i');
 
-          $year = date('Y');
+        $year = date('Y');
 
-          $month = date('m');
+        $month = date('m');
 
-          $day = date('d');
+        $day = date('d');
 
-          $date = $year .".". $month .".". $day;
+        $date = $year .".". $month .".". $day;
 
-          $time = $hour .":". $minute;
+        $time = $hour .":". $minute;
 
-		  $sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
+        $sql = "INSERT INTO `chat` (`id`, `type_message`, `id_push`, `id_pull`, `message`, `date`, `time`) VALUES (NULL, '$type_message', '$id_push', '$id_pull', '$message', '$date', '$time')";
 
-          echo $sql;
+        echo $sql;
 
-          $db->query($sql);
+        $db->query($sql);
         }else{
-          echo $type;
+        echo $type;
         }
 
     }
@@ -89,14 +91,14 @@ class Chat implements MessageComponentInterface {
     }
 }
 
-
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
             new Chat()
         )
     ),
-    8080
+    $ini['SOCKET']['PORT']
 );
 
 $server->run();
+?>

@@ -29,6 +29,20 @@ function dd($value) {
     echo "</pre>";
 }
 
+function api( $url, $param ){
+    if ($url) {
+        return DIR."/api/$url".EXT."?url=$param";
+    }
+}
+
+function global_render( $url=null){
+    if ($url) {
+        header("location:".DIR."$url");
+    }else {
+        header("location:".$_SERVER['HTTP_REFERER']);
+    }
+    exit;
+}
 
 function render($url=null){
     if ($url) {

@@ -73,7 +73,7 @@ if ( isset($ini['GLOBAL_SETTING']['ENGINEERING_WORKS']) and $ini['GLOBAL_SETTING
 
 // END Engineering works
 
-$session = new Session($db, $ini['GLOBAL_SETTING']['SESSION_LIFE']);
+$session = new Session($db, $ini['GLOBAL_SETTING']['SESSION_LIFE']); // 5
 
 // Подключение Моделей
 foreach (get_dir_contents($_SERVER['DOCUMENT_ROOT']."/models/") as $filename) {
