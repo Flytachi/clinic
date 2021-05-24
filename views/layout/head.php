@@ -62,16 +62,72 @@
 	<!-- JS chained -->
 	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
 
-	<script>
+	<script src="<?= stack("vendors/js/sessions.js") ?>"></script>
+
+	<script type="text/javascript">
+
+		// Select
+		$.fn.modal.Constructor.prototype._enforceFocus = function() {};
+
+		// Sessions
+		var sessionActive = Boolean("<?= ( isset($sessionActive) ) ? 'true' : 'false' ?>");
+		var warningTimeout = Number("<?= $ini['GLOBAL_SETTING']['SESSION_TIMEOUT'] ?>") * 60000; 
+		var timoutNow = (Number("<?= $ini['GLOBAL_SETTING']['SESSION_LIFE'] ?>") * 60000) - warningTimeout - 60000;
+		var logout_url = "<?= $session->logout_link() ?>";
+		var timeout_mark = "<?= $session->timeout_mark_link() ?>";
+		var warningTimerID,timeoutTimerID;
+
+		// console.log(warningTimeout / 60000);
+		// console.log(timoutNow / 60000);
+
+		// Socket
 		let id = <?= $_SESSION['session_id'] ?>;
 		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
-		$.fn.modal.Constructor.prototype._enforceFocus = function() {};
+
 	</script>
+
 	<script src="<?= stack("vendors/js/socket.js") ?>"></script>
 
 	<!-- JS CKEditor -->
 	<script src="<?= node("@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor.js") ?>"></script>
 </head>
-<!-- <audio id="audio">
-    <source src="<?= stack("/audio/music") ?>" type="audio/mpeg">
-</audio> -->
+
+
+<?php if( empty($session->master_status) ): ?>
+	<!-- Timeout modal -->
+	<div id="modal_timeout_auto_logout" class="modal fade" tabindex="-1" style="z-index:9999 !important;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-success">
+					<h5 class="modal-title">Confirm login password</h5>
+				</div>
+
+				<form method="post" action="<?= $session->confirm_password_link() ?>" onsubmit="TimeoutAutoLogout(this)">
+				
+					<div class="modal-body">
+						<h5 class="font-weight-semibold">Подтвердите пароль от <b class="text-primary"><?= $session->session_login ?></b>: </h5>
+
+						<div class="form-group">
+							<input type="password" class="form-control" name="password" placeholder="Введите пароль">
+						</div>
+						<em>
+							У вас есть 3 попытки ввести код!<br>
+							Осталось: <span id="sessionErrorCounts"></span><br>
+						</em>
+						<hr>
+
+					</div>
+
+					<div class="modal-footer">
+						<a href="<?= $session->logout_link() ?>" type="button" class="btn btn-sm btn-outline-danger">Выйти</a>
+						<button type="submit" class="btn btn-sm btn-outline-success" name="button_submit">Подтвердить</button>
+					</div>
+
+				</form>
+
+			</div>
+		</div>
+	</div>
+<!-- /Timeout modal -->
+<?php endif; ?>
+
