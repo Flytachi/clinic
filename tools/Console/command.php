@@ -57,6 +57,7 @@ class __Make
 
         SESSION_GC_PROBABILITY = 0
         SESSION_GC_DIVISOR = 100
+        SESSION_TIMEOUT = 
         SESSION_LIFE = 
         SESSION_COOKIE_LIFETIME = 
 
