@@ -206,13 +206,13 @@ function T_flush($table)
 
 function T_DELETE_database()
 {
-    global $db;
+    global $db, $ini;
 
     try {
         $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
-            $db->exec("DROP TABLE {$table['Tables_in_clinic']}");
+            $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
 
         $db->commit();
@@ -226,14 +226,14 @@ function T_DELETE_database()
 
 function T_FLUSH_database()
 {
-    global $db;
+    global $db, $ini;
 
     try {
         $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
-            if ($table['Tables_in_clinic'] != "sessions") {
-                T_flush($table['Tables_in_clinic']);
+            if ($table['Tables_in_'.$ini['DATABASE']['NAME']] != "sessions") {
+                T_flush($table['Tables_in_'.$ini['DATABASE']['NAME']]);
             }
         }
 
