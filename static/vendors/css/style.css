@@ -1,4 +1,9 @@
 
+
+/* .modal-open>*:not(#modal_timeout_auto_logout) {
+    filter: blur(15px);
+} */
+
 .siya {
     animation: pulsate 3.5s linear infinite;
     text-align: center;

@@ -35,9 +35,9 @@ function api( $url, $param ){
     }
 }
 
-function global_render( $url=null){
+function global_render( $url=null ){
     if ($url) {
-        header("location:".DIR."$url");
+        header("location:".DIR."$url".EXT);
     }else {
         header("location:".$_SERVER['HTTP_REFERER']);
     }

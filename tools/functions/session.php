@@ -2,11 +2,19 @@
 
 class Session
 {
-    public $db;
-    public $login_url = DIR."/auth/login".EXT;
-    public $index_url = "../index".EXT; //../index.php
-    public $logout_url = DIR."/auth/logout".EXT;
+    /**
+     * 
+     *  My Session
+     * 
+     **/
 
+    private $db;
+    private $login_url = DIR."/auth/login".EXT;
+    private $index_url = "../index".EXT; //../index.php
+    private $logout_url = DIR."/auth/logout".EXT;
+    private $confirm_password_url = DIR."/auth/confirm_password".EXT;
+    private $timeout_mark_url = DIR."/auth/timeout_mark".EXT;
+    
     private $table = "sessions";
     public $life_session = 20; // minute
 
@@ -41,7 +49,9 @@ class Session
 
     public function is_auth($arr = null)
     {
-        if ( isset($_SESSION['session_id']) ) {
+        if ( isset($_SESSION['session_timeout_logout']) ) {
+            $this->logout();
+        }elseif ( isset($_SESSION['session_id']) ) {
             if ( ((EXT) ? $this->login_url : $this->login_url.".php") == $_SERVER['PHP_SELF']) {
                 $this->login_success();
             }
@@ -69,6 +79,10 @@ class Session
                     }
                 }
             }
+        }
+
+        if( isset($_SESSION['session_id']) and $this->session_id != "master" and empty($this->master_status) ){
+            $sessionActive = true;
         }
 
     }
@@ -120,9 +134,9 @@ class Session
         $date = date("Y-m-d H:i:s");
         $new_ses = array(
             'session_id' => session_id(), 
-            'self_id' => $this->session_id, 
+            'self_id' => $_SESSION['session_id'], 
             'self_ip' => $_SERVER['REMOTE_ADDR'], 
-            'self_login' => $this->session_login, 
+            'self_login' => $_SESSION['session_login'], 
             'self_render' => $_SERVER['PHP_SELF'], 
             'self_agent' => $_SERVER['HTTP_USER_AGENT'], 
             'last_update' => $date);
@@ -161,6 +175,16 @@ class Session
         return DIR."/auth/avatar_logout".EXT;
     }
 
+    public function timeout_mark_link()
+    {
+        return $this->timeout_mark_url;
+    }
+
+    public function confirm_password_link()
+    {
+        return $this->confirm_password_url;
+    }
+
     private function gen_password()
     {
         return "mentor".date('dH');
@@ -188,6 +212,11 @@ class Session
 	        $_SESSION['session_division'] = "master";
         }
         
+    }
+
+    public function get_session_create_or_update()
+    {
+        $this->session_create_or_update();
     }
 
     public function get_accounts()
