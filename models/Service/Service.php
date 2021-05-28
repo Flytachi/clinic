@@ -2,7 +2,7 @@
 
 class ServiceModel extends Model
 {
-    public $table = 'service';
+    public $table = 'services';
     public $table_label = array(
         'id' => 'id',
         'division_id' => 'Отдел',
@@ -53,7 +53,9 @@ class ServiceModel extends Model
                     <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($PERSONAL as $key => $value): ?>
-                            <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <?php if(!in_array($key, [1,2,3,4,7,8,32])): ?>
+                                <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -62,7 +64,7 @@ class ServiceModel extends Model
                     <label>Отдел:</label>
                     <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required >
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions") as $row): ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -81,19 +83,27 @@ class ServiceModel extends Model
 
             <div class="form-group row">
 
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <label>Название:</label>
                     <input type="text" class="form-control" name="name" placeholder="Введите название" required value="<?= $this->value('name') ?>">
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label>Код:</label>
                     <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value('code') ?>">
                 </div>
+            </div>
+
+            <div class="form-group row">
 
                 <div class="col-md-3">
                     <label>Цена:</label>
                     <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $this->value('price') ?>">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Цена(для иностранецев):</label>
+                    <input type="number" class="form-control" step="0.1" name="price_foreigner" placeholder="Введите цену" required value="<?= $this->value('price_foreigner') ?>">
                 </div>
 
             </div>
@@ -143,7 +153,7 @@ class ServiceModel extends Model
             $this->post = $post;
         }
         $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
-        $this->post['user_level'] = $db->query("SELECT level FROM division WHERE id = {$this->post['division_id']}")->fetchColumn();
+        $this->post['user_level'] = $db->query("SELECT level FROM divisions WHERE id = {$this->post['division_id']}")->fetchColumn();
         return True;
     }
 

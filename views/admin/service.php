@@ -49,8 +49,8 @@ $header = "Услуги";
 						<?php if ( isset($_POST['flush']) ): ?>
 
 							<?php
-							Mixin\T_flush('service');
-							$task = Mixin\insert('service', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
+							Mixin\T_flush('services');
+							$task = Mixin\insert('services', array('id' => 1, 'user_level' => 1, 'name' => "Стационарный Осмотр", 'type' => 101));
 							?>
 
 							<?php if (intval($task) == 1): ?>
@@ -109,12 +109,12 @@ $header = "Услуги";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php foreach($db->query('SELECT * from service WHERE type != 101') as $row): ?>
+	                              	<?php foreach($db->query('SELECT * from services WHERE type != 101') as $row): ?>
                                   		<tr>
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
 	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
-	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT title FROM division WHERE id ={$row['division_id']}")->fetchColumn() : "" ?></td>
+	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT title FROM divisions WHERE id ={$row['division_id']}")->fetchColumn() : "" ?></td>
 											<td>
 												<?php switch ($row['type']) {
 													case 1:

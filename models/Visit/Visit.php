@@ -2,9 +2,11 @@
 
 class VisitModel extends Model
 {
-    public $table = 'visit';
-    public $table1 = 'users';
+    public $table = 'visits';
     public $table2 = 'beds';
+    public $_user = 'users';
+    public $_service = 'visit_services';
+    public $_beds = 'visit_beds';
 
     public function form_out($pk = null)
     {
@@ -16,7 +18,6 @@ class VisitModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="0">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group row">
@@ -25,12 +26,8 @@ class VisitModel extends Model
                     <label>Пациент:</label>
                     <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
                         <option></option>
-                        <?php foreach ($db->query("SELECT DISTINCT us.id, us.status, vs.user_id 'stationar' FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
-                            <?php if ($row['stationar']): ?>
-                                <option value="<?= $row['id'] ?>" disabled><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(стационар лечится)---" : "---(стационар оплачивается)---" ?></option>
-                            <?php else: ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                            <?php endif; ?>
+                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -56,26 +53,26 @@ class VisitModel extends Model
                 <label>Отделы</label>
                 <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)" required>
                     <optgroup label="Врачи">
-                        <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
+                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <?php if(module('module_diagnostic')): ?>
                         <optgroup label="Диогностика">
-                            <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                            <?php foreach ($db->query("SELECT * from divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                     <?php endif; ?>
                     <?php if(module('module_laboratory')): ?>
                         <optgroup label="Лаборатория">
-                            <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
+                            <?php foreach ($db->query("SELECT * from divisions WHERE level = 6") as $row): ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                     <?php endif; ?>
                     <optgroup label="Остальные">
-                        <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
+                        <?php foreach ($db->query("SELECT * from divisions WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
@@ -268,7 +265,7 @@ class VisitModel extends Model
                     <label>Койка:</label>
                     <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                         <option></option>
-                        <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
+                        <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_types bdt ON(bd.types=bdt.id)') as $row): ?>
                             <?php if ($row['user_id']): ?>
                                 <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
                             <?php else: ?>
@@ -286,7 +283,7 @@ class VisitModel extends Model
                     <label>Отдел:</label>
                     <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach($db->query("SELECT * from division WHERE level = 5") as $row): ?>
+                        <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -429,130 +426,140 @@ class VisitModel extends Model
 
     }
 
+    public function create_or_update_visit()
+    {
+        global $db;
+        $post = array(
+            'grant_id' => ($this->post['direction']) ? $this->post['parent_id'] : $this->post['grant_id'],
+            'user_id' => $this->post['user_id'],
+            'direction' => $this->post['direction'],
+            'complaint' => $this->post['complaint'],
+        );
+        $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
+        if (!intval($object)) {
+            $this->error($object);
+            $db->rollBack();
+        }else{
+            $this->visit_pk = $object;
+        }
+    }
+
+    public function add_visit_service($key = null, $value)
+    {
+        global $db;
+        $data = $db->query("SELECT * FROM services WHERE id = $value")->fetch();
+        $post['division_id'] = ($this->post['direction']) ? $this->post['division_id'] : $this->post['division_id'][$key];
+
+        $post['visit_id'] = $this->visit_pk;
+        $post['user_id'] = $this->post['user_id'];
+        $post['parent_id'] = ($this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
+        $post['route_id'] = $_SESSION['session_id'];
+        $post['guide_id'] = $this->post['guide_id'];
+        $post['level'] = $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn();
+        $post['status'] = ($this->post['direction']) ? 2 : 1;
+        $post['service_id'] = $data['id'];
+        $post['service_name'] = $data['name'];
+        
+        $count = ($this->post['direction']) ? 1 : $this->post['count'][$key];
+        for ($i=0; $i < $count; $i++) {
+            $post = Mixin\clean_form($post);
+            $post = Mixin\to_null($post);
+            $object = Mixin\insert($this->_service, $post);
+            if (!intval($object)){
+                $this->error($object);
+                $db->rollBack();
+            }
+
+            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
+                $post_price['visit_id'] = $this->visit_pk;
+                $post_price['visit_service_id'] = $object;
+                $post_price['user_id'] = $this->post['user_id'];
+                $post_price['item_type'] = 1;
+                $post_price['item_id'] = $data['id'];
+                $post_price['item_cost'] = $data['price'];
+                $post_price['item_name'] = $data['name'];
+                $object = Mixin\insert('visit_price', $post_price);
+                if (!intval($object)){
+                    $this->error($object);
+                    $db->rollBack();
+                }
+            }
+        }
+        unset($post);
+    }
+
+    public function add_visit_bed()
+    {
+        global $db;
+        $bed_data = $db->query("SELECT wd.floor, wd.ward, bd.bed, bdt.name FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN bed_types bdt ON(bdt.id=bd.types) WHERE bd.id = {$this->post['bed']}")->fetch();
+
+        $post = array(
+            'visit_id' => $this->visit_pk,
+            'user_id' => $this->post['user_id'],
+            'bed_id' => $this->post['bed'],
+            'location' => "{$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка",
+            'type' => $bed_data['name'],
+        );
+        $object = Mixin\insert($this->_beds, $post);
+        if (!intval($object)) {
+            $this->error($object);
+            $db->rollBack();
+        }
+
+        $object2 = Mixin\update($this->table2, array('user_id' => $this->post['user_id']), $this->post['bed']);
+        if (!intval($object2)){
+            $this->error($object2);
+            $db->rollBack();
+        }
+    }
+
     public function save()
     {
         global $db;
         if($this->clean()){
 
-            if ($this->post['direction']) {
-                $object1 = Mixin\update($this->table2, array('user_id' => $this->post['user_id']), $this->post['bed']);
-                if (!intval($object1)){
-                    $this->error($object1);
+            $db->beginTransaction();
+
+            $this->create_or_update_visit();
+            if (is_array($this->post['service'])) {
+                
+                foreach ($this->post['service'] as $key => $value) {
+                    
+                    $this->add_visit_service($key, $value);
+
                 }
-                $this->post['bed_id'] = $this->post['bed'];
-                unset($this->post['bed']);
-                $this->post['service_id'] = 1;
+
+            }else{
+                
+                $this->add_visit_service(null, 1);
+                $this->add_visit_bed();
+                // $this->dd();
+                
             }
-            $this->post['grant_id'] = $this->post['parent_id'];
-            $object = Mixin\insert($this->table, $this->post);
-            if (!intval($object)){
-                $this->error($object);
-            }
-            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
-                $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
-                $post['visit_id'] = $object;
-                $post['user_id'] = $this->post['user_id'];
-                $post['item_type'] = 1;
-                $post['item_id'] = $this->post['service_id'];
-                $post['item_cost'] = $service['price'];
-                $post['item_name'] = $service['name'];
-                $object = Mixin\insert('visit_price', $post);
-                if (!intval($object)){
-                    $this->error($object);
-                }
-            }
+
             // Обновление статуса у пациента
-            $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
-            if (intval($object1)){
-                $this->success();
-            }else {
+            $object1 = Mixin\update($this->_user, array('status' => True), $this->post['user_id']);
+            if (!intval($object1)){
                 $this->error($object1);
+                $db->rollBack();
             }
+            $db->commit();
+            $this->success();
 
         }
-    }
-
-    public function save_rows()
-    {
-        global $db;
-        $db->beginTransaction();
-        foreach ($this->post['service'] as $key => $value) {
-
-            $post_big['direction'] = $this->post['direction'];
-            $post_big['route_id'] = $this->post['route_id'];
-            $post_big['user_id'] = $this->post['user_id'];
-            $post_big['guide_id'] = $this->post['guide_id'];
-            $post_big['complaint'] = $this->post['complaint'];
-            $post_big['service_id'] = $value;
-            $post_big['division_id'] = $this->post['division_id'][$key];
-            $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
-            if ($level_divis == 12) {
-                $post_big['physio'] = True;
-            }elseif ($level_divis == 13) {
-                $post_big['manipulation'] = True;
-            }elseif ($level_divis == 10) {
-                $post_big['diagnostic'] = True;
-            }elseif ($level_divis == 6) {
-                $post_big['laboratory'] = True;
-            }
-            $post_big['parent_id'] = $this->post['parent_id'][$key];
-            $post_big['grant_id'] = $post_big['parent_id'];
-            for ($i=0; $i < $this->post['count'][$key]; $i++) {
-                $post_big = Mixin\clean_form($post_big);
-                $post_big = Mixin\to_null($post_big);
-                $object = Mixin\insert($this->table, $post_big);
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
-                }
-
-                if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
-                    $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
-                    $post['visit_id'] = $object;
-                    $post['user_id'] = $this->post['user_id'];
-                    $post['item_type'] = 1;
-                    $post['item_id'] = $value;
-                    $post['item_cost'] = $service['price'];
-                    $post['item_name'] = $service['name'];
-                    $object = Mixin\insert('visit_price', $post);
-                    if (!intval($object)){
-                        $this->error($object);
-                        $db->rollBack();
-                    }
-                }
-            }
-            unset($post_big);
-        }
-        // Обновление статуса у пациента
-        $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
-        if (!intval($object1)){
-            $this->error($object1);
-            $db->rollBack();
-        }
-        $db->commit();
-        $this->success();
     }
 
     public function clean()
     {
         global $db;
-        if (is_array($this->post['division_id']) and !$this->post['direction'] and !$this->post['service']) {
+        
+        if (is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
-        if ($this->post['bed_stat']) {
-            $this->bed_edit();
-        }
-        if (is_array($this->post['service'])) {
-            $this->save_rows();
-        }
-        if ($this->post['division_id']) {
-            $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
-            if ($stat) {
-                $this->post['laboratory'] = True;
-            }
-        }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        // if ($this->post['bed_stat']) {
+        //     $this->bed_edit();
+        // }
+        // $object = Mixin\insert($this->table, $post_big);
         return True;
     }
 
@@ -644,7 +651,7 @@ class VisitModel extends Model
                     // Освобождаем койку
                     Mixin\update($this->table2, array('user_id' => null), $object_sel->bed_id);
                     // Обновляем статус
-                    Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
     
                     $success = 2;
     
@@ -662,7 +669,7 @@ class VisitModel extends Model
                     $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
                     if($status <= 1){
                         if ($status == 0) {
-                            Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                            Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
                         }
                         $success = 2;
                     }else {
@@ -687,7 +694,7 @@ class VisitModel extends Model
                 $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
                 if($status <= 1){
                     if ($status == 0) {
-                        Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                        Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
                     }
                     $success = 2;
                 }else {

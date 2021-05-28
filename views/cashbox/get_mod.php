@@ -159,11 +159,12 @@ if ($_GET['pk']) {
         </script>
         <?php
     }else {
+        $data = $db->query("SELECT * FROM visits WHERE id = $pk AND completed IS NULL")->fetch();
         ?>
         <div class="card border-1 border-dark">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($data['user_id']) ?> - <em><?= get_full_name($data['user_id']) ?></em></b></h5>
             </div>
 
             <div class="card-body">
@@ -184,13 +185,13 @@ if ($_GET['pk']) {
                         </thead>
                         <tbody>
                             <?php
-                            // foreach($db->query("SELECT vs.id, vs.parent_id, vs.add_date, sc.name, sc.price FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL") as $row) {
-                            foreach($db->query("SELECT vs.id, vs.parent_id, vs.add_date, vp.item_name, vp.item_cost FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.user_id = $pk AND vs.priced_date IS NULL") as $row) {
+                            // dd($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1")->fetchAll());
+                            foreach($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1") as $row) {
                                 ?>
                                     <tr id="tr_VisitModel_<?= $row['id'] ?>">
                                         <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
                                         <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-                                        <td><?= $row['item_name'] ?></td>
+                                        <td><?= $row['service_name'] ?></td>
                                         <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
                                         <th class="text-center">
                                             <div class="list-icons">

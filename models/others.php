@@ -116,7 +116,7 @@ class BedModel extends Model
                 <label>Тип:</label>
                 <select data-placeholder="Выбрать тип" name="types" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
-                    <?php foreach($db->query('SELECT * from bed_type') as $row): ?>
+                    <?php foreach($db->query('SELECT * from bed_types') as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($this->value('types') == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -185,7 +185,7 @@ class BedModel extends Model
 
 class BedTypeModel extends Model
 {
-    public $table = 'bed_type';
+    public $table = 'bed_typess';
 
     public function form($pk = null)
     {

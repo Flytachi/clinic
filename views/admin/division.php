@@ -72,7 +72,7 @@ $header = "Класификация персонала";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($db->query('SELECT * from division') as $row): ?>
+                                    <?php foreach($db->query('SELECT * from divisions') as $row): ?>
                                         <tr>
                                             <td><?= $row['id'] ?></td>
                                             <td><?= $PERSONAL[$row['level']] ?></td>

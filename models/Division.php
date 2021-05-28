@@ -2,7 +2,7 @@
 
 class DivisionModel extends Model
 {
-    public $table = 'division';
+    public $table = 'divisions';
     public $file_format = array('php');
 
     public function form($pk = null)

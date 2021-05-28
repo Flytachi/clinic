@@ -78,7 +78,7 @@ $header = "Койки";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($db->query('SELECT * from bed_type') as $row): ?>
+                                    <?php foreach($db->query('SELECT * from bed_types') as $row): ?>
                                         <tr>
                                             <td><?= $row['name'] ?></td>
                                             <td><?= $row['price'] ?></td>

@@ -87,7 +87,7 @@ $header = "Койки";
                                             <td><?= $row['bed'] ?> койка</td>
                                             <td>
                                                 <?php
-                                                    $stmt = $db->query("SELECT * from bed_type where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);
+                                                    $stmt = $db->query("SELECT * from bed_types where id = ".$row['types'])->fetch(PDO::FETCH_OBJ);
                                                     echo $stmt->name;
                                                 ?>
                                             </td>

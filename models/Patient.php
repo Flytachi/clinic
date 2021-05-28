@@ -3,14 +3,12 @@
 class PatientForm extends Model
 {
     public $table = 'users';
+    public $table1 = 'province';
+    public $table2 = 'region';
 
     public function form($pk = null)
     {
         global $db, $classes;
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -67,17 +65,17 @@ class PatientForm extends Model
                                         <span class="input-group-prepend">
                                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
                                         </span>
-                                        <input type="date" name="dateBith" id="birth_date" class="form-control daterange-single" value="<?= $this->value('dateBith') ?>" required>
+                                        <input type="date" name="birth_date" id="birth_date" class="form-control daterange-single" value="<?= $this->value('birth_date') ?>" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Выбирите область:</label>
-                                        <select data-placeholder="Выбрать область" id="province" class="<?= $classes['form-select'] ?>">
+                                        <select data-placeholder="Выбрать область" id="province" name="province_id" class="<?= $classes['form-select'] ?>">
                                             <option></option>
                                             <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
-                                                <option value="<?= $province['id'] ?>"><?= $province['name'] ?></option>
+                                                <option value="<?= $province['id'] ?>" <?= ($this->value('province_id') == $province['id']) ? "selected" : "" ?>><?= $province['name'] ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -86,10 +84,10 @@ class PatientForm extends Model
                                 <div class="form-group">
                                     <div class="form-group">
                                         <label>Выбирите регион:</label>
-                                        <select data-placeholder="Выбрать регион" name="region" id="region" class="<?= $classes['form-select'] ?>">
+                                        <select data-placeholder="Выбрать регион" name="region_id" id="region" class="<?= $classes['form-select'] ?>">
                                             <option></option>
                                             <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
-                                                <option value="<?= $row['name'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($this->value('region') == $row['name']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+                                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($this->value('region_id') == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -103,29 +101,29 @@ class PatientForm extends Model
                                 <div class="form-group row">
                                     <div class="col-md-6">
                                         <label>Адрес проживание:</label>
-                                        <input type="text" name="residenceAddress" class="form-control" placeholder="Введите адрес" value="<?= $this->value('residenceAddress') ?>">
+                                        <input type="text" name="address_residence" class="form-control" placeholder="Введите адрес" value="<?= $this->value('address_residence') ?>">
                                     </div>
                                     <div class="col-md-6">
                                         <label>Адрес по прописке:</label>
-                                        <input type="text" name="registrationAddress" class="form-control" placeholder="Введите адрес" value="<?= $this->value('registrationAddress') ?>">
+                                        <input type="text" name="address_registration" class="form-control" placeholder="Введите адрес" value="<?= $this->value('address_registration') ?>">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-md-12">
                                         <label>Телефон номер:</label>
-                                        <input type="text" name="numberPhone" class="form-control" value="<?= ($this->value('numberPhone')) ? $this->value('numberPhone') : '+998' ?>" required>
+                                        <input type="text" name="phone_number" class="form-control" value="<?= ($this->value('phone_number')) ? $this->value('phone_number') : '+998' ?>" required>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Место работы:</label>
-                                    <input type="text" name="placeWork" placeholder="Введите место работы" class="form-control" value="<?= $this->value('placeWork') ?>">
+                                    <input type="text" name="work_place" placeholder="Введите место работы" class="form-control" value="<?= $this->value('work_place') ?>">
                                 </div>
 
                                 <div class="form-group">
                                     <label>Должность:</label>
-                                    <input type="text" name="position" placeholder="Введите должность" class="form-control" value="<?= $this->value('position') ?>">
+                                    <input type="text" name="work_position" placeholder="Введите должность" class="form-control" value="<?= $this->value('work_position') ?>">
                                 </div>
 
                                 <div class="form-group">
@@ -146,14 +144,14 @@ class PatientForm extends Model
                                     </div>
                                 </div>
 
-                                <!-- <div class="form-group">
+                                <div class="form-group">
                                    
                                     <label class="form-check-label">
-                                        Резидент
-                                        <input type="checkbox" class="swit" name="is_alien">
+                                        Иностранец
+                                        <input type="checkbox" class="swit" name="is_foreigner" <?= ($this->value('is_foreigner')) ? "checked" : "" ?>>
                                     </label>
                                 
-                                </div> -->
+                                </div>
 
                                 
 
@@ -174,9 +172,7 @@ class PatientForm extends Model
 
         </form>
         <?php
-        if ($pk) {
-            $this->jquery_init();
-        }
+        $this->jquery_init();
         ?>
         <script src="<?= stack("vendors/js/custom.js") ?>"></script>
         <script type="text/javascript">
@@ -260,12 +256,34 @@ class PatientForm extends Model
 
     public function clean()
     {
-        if ($this->post['is_alien']) {
-            $this->post['is_alien'] = true;
+        global $db;
+        if ( isset($this->post['is_foreigner']) ) {
+            $this->post['is_foreigner'] = true;
+        }else{
+            $this->post['is_foreigner'] = false;
+        }
+        //
+        if ( isset($this->post['province_id']) ) {
+            $this->post['province'] = $db->query("SELECT name FROM $this->table1 WHERE id = {$this->post['province_id']}")->fetchColumn();
+        }
+        if ( isset($this->post['region_id']) ) {
+            $this->post['region'] = $db->query("SELECT name FROM $this->table2 WHERE id = {$this->post['region_id']}")->fetchColumn();
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function jquery_init()
+    {
+        ?>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                FormLayouts.init();
+                Swit.init();
+            });
+        </script>
+        <?php
     }
 
     public function success()

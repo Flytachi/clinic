@@ -56,7 +56,7 @@ $header = "Рабочий стол";
 					<span class="text-muted d-block">Информация о койках</span>
 				</div>
 
-				<?php $bed_type = $db->query("SELECT id, name FROM bed_type")->fetchAll(); ?>
+				<?php $bed_type = $db->query("SELECT id, name FROM bed_types")->fetchAll(); ?>
 
 				<div class="row">
 

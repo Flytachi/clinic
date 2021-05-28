@@ -41,7 +41,7 @@ function insert($tb, $post)
     }
 }
 
-function insert_or_update($tb, $post, $name_pk = null)
+function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
 {
     global $db;
     $lb = ($name_pk) ? $name_pk : "id";
@@ -55,9 +55,13 @@ function insert_or_update($tb, $post, $name_pk = null)
         if ($name_pk and !is_int($pk)) {
             $where = "$lb = \"$pk\"";
         }
+
+        if ($defwhere) {
+            $defwhere = "AND $defwhere";
+        }
         
         // select
-        if ($db->query("SELECT $lb FROM $tb WHERE ".$where)->fetchColumn()) {
+        if ($db->query("SELECT $lb FROM $tb WHERE $where $defwhere")->fetchColumn()) {
             // update
             foreach (array_keys($post) as $key) {
                 if (isset($col)) {
