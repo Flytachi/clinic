@@ -65,18 +65,18 @@ class __Model
     {
         ob_start(null);
         ?>
-class <?= ucfirst($this->model_name) ?> extends Model
+class <?= ucfirst($this->model_name) ?>Model extends Model
 {
     public $table = '<?= lcfirst($this->model_name) ?>';
 
     public function form($pk = null)
     {
-        global $db;
         ?>
         <form method="post" action="<-?= add_url() ?>">
-            <input type="hidden" name="model" value="< ?= __CLASS__ ?>">
+            <input type="hidden" name="model" value="<-?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<-?= $pk ?>">
         </form>
-        < ?php
+        <-?php
     }
 
     public function clean()

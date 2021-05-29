@@ -192,6 +192,38 @@ $header = "Панель управления";
 
 		                        </form>
 
+								<?php
+								try {
+									$config = new stdClass();
+									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'config_%'")->fetchAll(PDO::FETCH_OBJ);
+									foreach ($comp as $value) {
+										$config->{$value->const_label} = $value->const_value;
+									}
+									?>
+									<div class="table-responsive">
+										<table class="table table-sm table-bordered">
+											<tbody>
+
+												<tr>
+													<th>Wards by division</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="config_wards_by_division" <?= (isset($config->config_wards_by_division) and $config->config_wards_by_division) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												
+											</tbody>
+										</table>
+									</div>
+									<?php
+								} catch (\Exception $e) {
+									echo "Не установлена база данных";
+								}
+								?>
+
                             </div>
 
 							<div class="col-md-6">

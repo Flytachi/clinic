@@ -12,13 +12,6 @@ $tb->where_or_serch($where_search)->set_limit(15);
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>

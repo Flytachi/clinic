@@ -223,7 +223,7 @@ class VisitModel extends Model
 
             <div class="form-group row">
 
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <label>Пациент:</label>
                     <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
                         <option></option>
@@ -233,6 +233,92 @@ class VisitModel extends Model
                     </select>
                 </div>
 
+                <div class="col-md-6">
+                    <label>Направитель:</label>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Отдел:</label>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                        <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label>Специалиста:</label>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
+                        <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
+                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <legend><b>Расположение</b></legend>
+
+            <div class="form-group row">
+
+                <div class="col-3">
+                    <label>Выбирите здание:</label>
+                    <select data-placeholder="Выбрать здание" id="building_id" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * FROM buildings") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-3">
+                    <label>Выбирите этаж:</label>
+                    <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * FROM buildings") as $row): ?>
+                            <?php for ($i=1; $i <= $row['floors']; $i++): ?>
+                                <option value="<?= $i ?>" data-chained="<?= $row['id'] ?>"><?= $i ?> этаж</option>
+                            <?php endfor; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-3">
+                    <label>Выбирите палату:</label>
+                    <select data-placeholder="Выбрать палату" id="ward_id" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Койка:</label>
+                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT bd.*, bdt.price FROM beds bd LEFT JOIN bed_types bdt ON(bd.type_id=bdt.id)") as $row): ?>
+                            <?php if ($row['user_id']): ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
+                            <?php else: ?>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-name="<?= $row['types'] ?>"><?= $row['bed'] ?> койка</option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- <div class="form-group row">
+                
                 <div class="col-md-2">
                     <label>Этаж:</label>
                     <select data-placeholder="Выбрать этаж" name="" id="floor" class="<?= $classes['form-select'] ?>" required>
@@ -275,42 +361,7 @@ class VisitModel extends Model
                     </select>
                 </div>
 
-            </div>
-
-            <div class="form-group row">
-
-                <div class="col-md-6">
-                    <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
-                        <option></option>
-                        <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6">
-                    <label>Специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                        <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
-                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-            </div>
-
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
-                        <option></option>
-                        <?php foreach ($db->query("SELECT * from guides") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
+            </div> -->
 
             <!-- <div class="form-group row">
                 <div class="col-md-12">
@@ -329,10 +380,42 @@ class VisitModel extends Model
         </form>
         <script type="text/javascript">
             $(function(){
-                $("#ward").chained("#floor");
-                $("#bed").chained("#ward");
+                // $("#ward").chained("#floor");
+                $("#bed").chained("#ward_id");
+                $("#floor").chained("#building_id");
                 $("#parent_id").chained("#division_id");
             });
+
+            $('#building_id').change(function(){
+                if(document.querySelector("#floor").value){
+                    document.querySelector("#floor").value = "";
+                }
+            });
+
+            $('#floor').change(function(){
+                var params = this;
+                if (params.selectedOptions[0].value) {
+                    $.ajax({
+                        type: "GET",
+                        url: "<?= ajax('options_wards') ?>",
+                        data: {
+                            building_id: params.selectedOptions[0].dataset.chained,
+                            floor: params.selectedOptions[0].value,
+                        },
+                        success: function (result) {
+                            if (result.trim() == "<option></option>") {
+                                document.querySelector("#ward_id").disabled = true;
+                            } else {
+                                document.querySelector("#ward_id").disabled = false;
+                                document.querySelector("#ward_id").innerHTML = result;
+                            }
+                        },
+                    });
+                }else{
+                    document.querySelector("#ward_id").disabled = true;
+                }
+            });
+
             function submitAlert() {
                 let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val(), message: "У вас новый стационарный пациент!" });
                 conn.send(obj);
