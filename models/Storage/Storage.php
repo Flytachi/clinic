@@ -143,7 +143,7 @@ class Storage extends Model
     public function clean()
     {
         if($_FILES['template']){
-            // prit('temlate');
+            // dd('temlate');
             $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
             $this->save_excel();
         }

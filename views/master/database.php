@@ -57,9 +57,9 @@ $header = "База данных";
 				                <tbody>
                                     <?php foreach ($db->query("show tables") as $row): ?>
                                         <tr>
-                                            <td><?= $row['Tables_in_clinic'] ?></td>
+                                            <td><?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?></td>
                                             <td>
-                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_clinic']}")->fetchColumn() ?>
+                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_'.$ini['DATABASE']['NAME']]}")->fetchColumn() ?>
                                                 <?php if ($rec == 0): ?>
                                                     <span class="text-success"><?= $rec ?></span>
                                                 <?php elseif ($rec <= 10000000000): ?>
@@ -70,7 +70,7 @@ $header = "База данных";
                                             </td>
                                             <td>
 												<?php if ($rec != 0): ?>
-													<a onclick="Conf('<?= viv('master/flush') ?>', '<?= $row['Tables_in_clinic'] ?>')" class="list-icons-up text-danger">flush</a>
+													<a onclick="Conf('<?= viv('master/flush') ?>', '<?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?>')" class="list-icons-up text-danger">flush</a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
