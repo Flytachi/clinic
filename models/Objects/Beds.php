@@ -95,7 +95,7 @@ class BedsModel extends Model
                 if (params.selectedOptions[0].value) {
                     $.ajax({
                         type: "GET",
-                        url: "<?= ajax('options_wards') ?>",
+                        url: "<?= ajax('admin/options_wards') ?>",
                         data: {
                             building_id: params.selectedOptions[0].dataset.chained,
                             floor: params.selectedOptions[0].value,

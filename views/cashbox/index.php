@@ -65,10 +65,7 @@ $header = "Рабочий стол";
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-											
-				                            <?php
-				                            foreach($db->query("SELECT DISTINCT vss.visit_id, vs.user_id FROM visits vs LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) WHERE vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1") as $row) {
-				                            ?>
+				                            <?php foreach($db->query("SELECT DISTINCT vss.visit_id, vs.user_id FROM visits vs LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) WHERE vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1") as $row): ?>
 				                                <tr onclick="Check('get_mod.php?pk=<?= $row['visit_id'] ?>')">
 				                                    <td><?= addZero($row['user_id']) ?></td>
 				                                    <td class="text-center">
@@ -77,9 +74,7 @@ $header = "Рабочий стол";
 				                                        </a>
 				                                    </td>
 				                                </tr>
-				                            <?php
-				                            }
-				                            ?>
+				                            <?php endforeach; ?>
 				                        </tbody>
 				                    </table>
 				                </div>
@@ -195,7 +190,7 @@ $header = "Рабочий стол";
 		$("#search_input").keyup(function() {
 			$.ajax({
 				type: "GET",
-				url: "search.php",
+				url: "<?= ajax('cashbox/search') ?>",
 				data: {
 					tab: 1,
                     search: $("#search_input").val(),

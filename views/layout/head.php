@@ -71,7 +71,7 @@
 
 		// Sessions
 		var sessionActive = Boolean("<?= ( isset($sessionActive) ) ? 'true' : 'false' ?>");
-		var warningTimeout = Number("<?= $ini['GLOBAL_SETTING']['SESSION_TIMEOUT'] ?>") * 60000; 
+		var warningTimeout = Number("<?= ( isset($ini['GLOBAL_SETTING']['SESSION_TIMEOUT']) ) ? $ini['GLOBAL_SETTING']['SESSION_TIMEOUT'] : 1 ?>") * 60000; 
 		var timoutNow = (Number("<?= $ini['GLOBAL_SETTING']['SESSION_LIFE'] ?>") * 60000) - warningTimeout - 60000;
 		var logout_url = "<?= $session->logout_link() ?>";
 		var timeout_mark = "<?= $session->timeout_mark_link() ?>";

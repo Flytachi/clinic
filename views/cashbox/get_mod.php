@@ -184,25 +184,19 @@ if ($_GET['pk']) {
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            // dd($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1")->fetchAll());
-                            foreach($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1") as $row) {
-                                ?>
-                                    <tr id="tr_VisitModel_<?= $row['id'] ?>">
-                                        <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
-                                        <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-                                        <td><?= $row['service_name'] ?></td>
-                                        <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
-                                        <th class="text-center">
-                                            <div class="list-icons">
-                                                <button onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', 'tr_VisitModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                <?php
-                            }
-                            ?>
-
+                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1") as $row): ?>
+                                <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
+                                    <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
+                                    <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                                    <td><?= $row['service_name'] ?></td>
+                                    <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
+                                    <th class="text-center">
+                                        <div class="list-icons">
+                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitServicesModel') ?>', 'tr_VisitServicesModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
+                                        </div>
+                                    </th>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

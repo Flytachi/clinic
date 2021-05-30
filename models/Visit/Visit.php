@@ -7,6 +7,7 @@ class VisitModel extends Model
     public $_user = 'users';
     public $_service = 'visit_services';
     public $_beds = 'visit_beds';
+    public $_prices = 'visit_prices';
 
     public function form_out($pk = null)
     {
@@ -276,8 +277,12 @@ class VisitModel extends Model
                     <label>Выбирите здание:</label>
                     <select data-placeholder="Выбрать здание" id="building_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM buildings") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php foreach ($db->query("SELECT DISTINCT bg.id, bg.name FROM wards w LEFT JOIN buildings bg ON(bg.id=w.building_id)") as $row): ?>
+                            <?php
+                            $result = [];
+                            foreach ($db->query("SELECT division_id FROM wards WHERE building_id = {$row['id']}") as $value) if(!in_array($value['division_id'], $result)) $result[] = $value['division_id'];
+                            ?>
+                            <option value="<?= $row['id'] ?>" data-divisions="<?= json_encode($result) ?>"><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -286,9 +291,13 @@ class VisitModel extends Model
                     <label>Выбирите этаж:</label>
                     <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM buildings") as $row): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT bg.id, bg.floors FROM wards w LEFT JOIN buildings bg ON(bg.id=w.building_id)") as $row): ?>
                             <?php for ($i=1; $i <= $row['floors']; $i++): ?>
-                                <option value="<?= $i ?>" data-chained="<?= $row['id'] ?>"><?= $i ?> этаж</option>
+                                <?php
+                                $result = [];
+                                foreach ($db->query("SELECT division_id FROM wards WHERE building_id = {$row['id']} AND floor = $i") as $value) if(!in_array($value['division_id'], $result)) $result[] = $value['division_id'];
+                                ?>
+                                <option value="<?= $i ?>" data-chained="<?= $row['id'] ?>" data-divisions="<?= json_encode($result) ?>" data-ward_qty="<?= $db->query("SELECT * FROM wards WHERE building_id = {$row['id']} AND floor = $i")->rowCount() ?>"><?= $i ?> этаж</option>
                             <?php endfor; ?>
                         <?php endforeach; ?>
                     </select>
@@ -317,59 +326,6 @@ class VisitModel extends Model
 
             </div>
 
-            <!-- <div class="form-group row">
-                
-                <div class="col-md-2">
-                    <label>Этаж:</label>
-                    <select data-placeholder="Выбрать этаж" name="" id="floor" class="<?= $classes['form-select'] ?>" required>
-                        <option></option>
-                        <?php foreach ($FLOOR as $key => $value): ?>
-                            <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
-                                <option value="<?= $key ?>"><?= $value ?></option>
-                            <?php else: ?>
-                                <option value="<?= $key ?>" disabled><?= $value ?></option>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label>Палата:</label>
-                    <select data-placeholder="Выбрать палату" name="" id="ward" class="<?= $classes['form-select'] ?>" required>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
-                            <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>"><?= $row['ward'] ?> палата</option>
-                            <?php else: ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" disabled><?= $row['ward'] ?> палата</option>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label>Койка:</label>
-                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
-                        <option></option>
-                        <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_types bdt ON(bd.types=bdt.id)') as $row): ?>
-                            <?php if ($row['user_id']): ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
-                            <?php else: ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>"><?= $row['bed'] ?> койка</option>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-            </div> -->
-
-            <!-- <div class="form-group row">
-                <div class="col-md-12">
-                    <label>Жалоба:</label>
-                    <textarea class="form-control" name="complaint" rows="2" cols="2" placeholder="Жалоба"></textarea>
-                </div>
-            </div> -->
-
             <div class="text-right">
                 <button type="submit" onclick="submitAlert()" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                     <span class="ladda-label">Отправить</span>
@@ -378,6 +334,62 @@ class VisitModel extends Model
             </div>
 
         </form>
+        <?php if(config('wards_by_division')): ?>
+            <script type="text/javascript">
+
+                $('#division_id').change(function(){
+                    var building_id = document.querySelector("#building_id");
+                    var floor = document.querySelector("#floor");
+                    var ward_id = document.querySelector("#ward_id");
+                    var divis = document.querySelector("#division_id").value;
+
+                    // buildings
+                    var i = 1;
+                    Array.prototype.slice.call(building_id.options).forEach(function(item) {
+
+                        if(item.dataset.divisions){
+                            var data = JSON.parse(item.dataset.divisions);
+
+                            if(data.includes( Number(divis) )){
+                                if(i == 1){
+                                    $(building_id).val(item.value).change();
+                                    i++;
+                                }
+                                item.disabled = false;
+                            }else{
+                                item.disabled = true;
+                            }
+                            delete data;
+                        }
+                        
+                    });
+
+                    // floor
+                    var i = 1;
+                    Array.prototype.slice.call(floor.options).forEach(function(item) {
+
+                        if(item.dataset.divisions){
+                            var data = JSON.parse(item.dataset.divisions);
+                            
+                            if(data.includes( Number(divis) ) && item.dataset.ward_qty > 0){
+                                if(i == 1){
+                                    $(floor).val(item.value).change();
+                                    i++;
+                                }
+                                item.disabled = false;
+                            }else{
+                                item.disabled = true;
+                            }
+                            delete data;
+                        }
+
+                    });
+
+                    FormLayouts.init();
+
+                });
+            </script>
+        <?php endif; ?>
         <script type="text/javascript">
             $(function(){
                 // $("#ward").chained("#floor");
@@ -400,9 +412,11 @@ class VisitModel extends Model
                         url: "<?= ajax('options_wards') ?>",
                         data: {
                             building_id: params.selectedOptions[0].dataset.chained,
+                            division_id: document.querySelector("#division_id").value,
                             floor: params.selectedOptions[0].value,
                         },
                         success: function (result) {
+                            console.log(result);
                             if (result.trim() == "<option></option>") {
                                 document.querySelector("#ward_id").disabled = true;
                             } else {
@@ -561,7 +575,7 @@ class VisitModel extends Model
                 $post_price['item_id'] = $data['id'];
                 $post_price['item_cost'] = $data['price'];
                 $post_price['item_name'] = $data['name'];
-                $object = Mixin\insert('visit_price', $post_price);
+                $object = Mixin\insert($this->_prices, $post_price);
                 if (!intval($object)){
                     $this->error($object);
                     $db->rollBack();
@@ -649,150 +663,175 @@ class VisitModel extends Model
     public function bed_edit()
     {
         global $db;
-        unset($this->post['bed_stat']);
-        $visit = $db->query("SELECT * FROM visit WHERE id = {$this->post['id']}")->fetch();
-        $this->bed_price($visit);
-        $this->change_beds($visit);
-        $this->update();
+        // unset($this->post['bed_stat']);
+        // $visit = $db->query("SELECT * FROM visit WHERE id = {$this->post['id']}")->fetch();
+        // $this->bed_price($visit);
+        // $this->change_beds($visit);
+        // $this->update();
     }
 
     public function change_beds($visit)
     {
         global $db;
-        $bed_old = $db->query("SELECT * FROM beds WHERE id = {$visit['bed_id']}")->fetch();
-        $bed_new = $db->query("SELECT * FROM beds WHERE id = {$this->post['bed_id']}")->fetch();
-        $bed_old['user_id'] = null;
-        $bed_new['user_id'] = $visit['user_id'];
-        $object = Mixin\insert_or_update('beds', $bed_old);
-        if (!intval($object)) {
-            $this->error($object);
-        }
-        $object = Mixin\insert_or_update('beds', $bed_new);
-        if (!intval($object)) {
-            $this->error($object);
-        }
+        // $bed_old = $db->query("SELECT * FROM beds WHERE id = {$visit['bed_id']}")->fetch();
+        // $bed_new = $db->query("SELECT * FROM beds WHERE id = {$this->post['bed_id']}")->fetch();
+        // $bed_old['user_id'] = null;
+        // $bed_new['user_id'] = $visit['user_id'];
+        // $object = Mixin\insert_or_update('beds', $bed_old);
+        // if (!intval($object)) {
+        //     $this->error($object);
+        // }
+        // $object = Mixin\insert_or_update('beds', $bed_new);
+        // if (!intval($object)) {
+        //     $this->error($object);
+        // }
     }
 
     public function bed_price($visit)
     {
         global $db;
-        $sql = "SELECT wd.floor,
-                    wd.ward, bd.bed,
-                    ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) 'bed_cost'
-                FROM visit vs
-                    LEFT JOIN beds bd ON(bd.id=vs.bed_id)
-                    LEFT JOIN wards wd ON(wd.id=bd.ward_id)
-                    LEFT JOIN bed_type bdt ON(bdt.id=bd.types)
-                    LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
-                WHERE vs.id = {$visit['id']} ORDER BY vp.add_date DESC";
-        $bed = $db->query($sql)->fetch();
-        if ($bed['bed_cost'] > 0) {
-            $post['visit_id'] = $visit['id'];
-            $post['user_id'] = $visit['user_id'];
-            $post['status'] = 0;
-            $post['item_type'] = 101;
-            $post['item_id'] = $visit['bed_id'];
-            $post['item_cost'] = $bed['bed_cost'];
-            $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
-            $object = Mixin\insert('visit_price', $post);
-            if (!intval($object)) {
-                $this->error($object);
-            }
-        }
+        // $sql = "SELECT wd.floor,
+        //             wd.ward, bd.bed,
+        //             ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_TIMESTAMP(), IFNULL(vp.add_date, vs.add_date)), '%H')) * (bdt.price / 24) 'bed_cost'
+        //         FROM visit vs
+        //             LEFT JOIN beds bd ON(bd.id=vs.bed_id)
+        //             LEFT JOIN wards wd ON(wd.id=bd.ward_id)
+        //             LEFT JOIN bed_type bdt ON(bdt.id=bd.types)
+        //             LEFT JOIN visit_price vp ON(vp.visit_id=vs.id AND vp.item_type = 101)
+        //         WHERE vs.id = {$visit['id']} ORDER BY vp.add_date DESC";
+        // $bed = $db->query($sql)->fetch();
+        // if ($bed['bed_cost'] > 0) {
+        //     $post['visit_id'] = $visit['id'];
+        //     $post['user_id'] = $visit['user_id'];
+        //     $post['status'] = 0;
+        //     $post['item_type'] = 101;
+        //     $post['item_id'] = $visit['bed_id'];
+        //     $post['item_cost'] = $bed['bed_cost'];
+        //     $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
+        //     $object = Mixin\insert('visit_price', $post);
+        //     if (!intval($object)) {
+        //         $this->error($object);
+        //     }
+        // }
     }
 
     public function delete(int $pk)
     {
-        global $db;
-        if (empty($_GET['type'])) {
+    //     global $db;
+    //     if (empty($_GET['type'])) {
             
-            // Нахождение id визита
-            $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+    //         // Нахождение id визита
+    //         $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
 
-            if ($object_sel->direction) {
-                $db->beginTransaction();
+    //         if ($object_sel->direction) {
+    //             $db->beginTransaction();
 
-                if ($object_sel->service_id == 1) {
-                    // Удаляем все визиты внутри гланого визита
+    //             if ($object_sel->service_id == 1) {
+    //                 // Удаляем все визиты внутри гланого визита
 
-                    foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.user_id = $object_sel->user_id AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
-                        $object = Mixin\delete($this->table, $value['id']);
-                        if (!intval($object)) {
-                            $this->error($object, 1);
-                            $db->rollBack();
-                        }
-                        Mixin\delete('visit_price', $value['id'], 'visit_id');
-                    }
+    //                 foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.user_id = $object_sel->user_id AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
+    //                     $object = Mixin\delete($this->table, $value['id']);
+    //                     if (!intval($object)) {
+    //                         $this->error($object, 1);
+    //                         $db->rollBack();
+    //                     }
+    //                     Mixin\delete('visit_price', $value['id'], 'visit_id');
+    //                 }
     
-                    // Удаляем главный визит
-                    $object = Mixin\delete($this->table, $pk);
-                    if (!intval($object)) {
-                        $this->error($object, 1);
-                        $db->rollBack();
-                    }
-                    Mixin\delete('visit_price', $pk, 'visit_id');
-                    // Освобождаем койку
-                    Mixin\update($this->table2, array('user_id' => null), $object_sel->bed_id);
-                    // Обновляем статус
-                    Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
+    //                 // Удаляем главный визит
+    //                 $object = Mixin\delete($this->table, $pk);
+    //                 if (!intval($object)) {
+    //                     $this->error($object, 1);
+    //                     $db->rollBack();
+    //                 }
+    //                 Mixin\delete('visit_price', $pk, 'visit_id');
+    //                 // Освобождаем койку
+    //                 Mixin\update($this->table2, array('user_id' => null), $object_sel->bed_id);
+    //                 // Обновляем статус
+    //                 Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
     
-                    $success = 2;
+    //                 $success = 2;
     
-                }else{
+    //             }else{
     
-                    // Удаляем визит
-                    $object = Mixin\delete($this->table, $pk);
-                    if (!intval($object)) {
-                        $this->error($object, 1);
-                        $db->rollBack();
-                    }
-                    Mixin\delete('visit_price', $pk, 'visit_id');
+    //                 // Удаляем визит
+    //                 $object = Mixin\delete($this->table, $pk);
+    //                 if (!intval($object)) {
+    //                     $this->error($object, 1);
+    //                     $db->rollBack();
+    //                 }
+    //                 Mixin\delete('visit_price', $pk, 'visit_id');
     
-                    // Обновляем статус
-                    $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
-                    if($status <= 1){
-                        if ($status == 0) {
-                            Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
-                        }
-                        $success = 2;
-                    }else {
-                        $success = 1;
-                    }
-                }
+    //                 // Обновляем статус
+    //                 $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
+    //                 if($status <= 1){
+    //                     if ($status == 0) {
+    //                         Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
+    //                     }
+    //                     $success = 2;
+    //                 }else {
+    //                     $success = 1;
+    //                 }
+    //             }
 
-                $db->commit();
-                $this->success($success);
-            }else {
-                $db->beginTransaction();
+    //             $db->commit();
+    //             $this->success($success);
+    //         }else {
+    //             $db->beginTransaction();
                 
-                // Удаляем визит
-                $object = Mixin\delete($this->table, $pk);
-                if (!intval($object)) {
-                    $this->error($object, 1);
-                    $db->rollBack();
-                }
-                Mixin\delete('visit_price', $pk, 'visit_id');
+    //             // Удаляем визит
+    //             $object = Mixin\delete($this->table, $pk);
+    //             if (!intval($object)) {
+    //                 $this->error($object, 1);
+    //                 $db->rollBack();
+    //             }
+    //             Mixin\delete('visit_price', $pk, 'visit_id');
 
-                // Обновляем статус
-                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
-                if($status <= 1){
-                    if ($status == 0) {
-                        Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
-                    }
-                    $success = 2;
-                }else {
-                    $success = 1;
-                }
-                $db->commit();
-                $this->success($success);
+    //             // Обновляем статус
+    //             $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
+    //             if($status <= 1){
+    //                 if ($status == 0) {
+    //                     Mixin\update($this->_user, array('status' => null), $object_sel->user_id);
+    //                 }
+    //                 $success = 2;
+    //             }else {
+    //                 $success = 1;
+    //             }
+    //             $db->commit();
+    //             $this->success($success);
+    //         }
+
+    //     }else {
+    //         $object = Mixin\update($this->table, array('status' => 5), $pk);
+    //         $this->success(1);
+    //     }
+
+    }
+
+    public function is_delete(int $pk)
+    {
+        global $db;
+        $user = $db->query("SELECT user_id FROM $this->table WHERE id = $pk")->fetchColumn();
+        $data = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk")->rowCount();
+
+        if ($data == 0) {
+
+            $object = Mixin\delete($this->table, $pk);
+            if(!intval($object)){
+                return $object;
             }
+            $this->status_update($user);
+            return null;
 
-        }else {
-            $object = Mixin\update($this->table, array('status' => 5), $pk);
-            $this->success(1);
+        } else {
+            return $data;
         }
-
         
+    }
+
+    public function status_update($user)
+    {
+        return (new UserModel())->update_status($user);
     }
 
     public function success($stat=null)
