@@ -110,51 +110,75 @@ if ($_GET['pk']) {
         </div>
         <?php
     }elseif ( isset($_GET['mod']) and $_GET['mod'] == "rf"){
+        $data = $db->query("SELECT * FROM visits WHERE id = $pk AND completed IS NULL")->fetch();
         ?>
         <div class="card border-1 border-dark">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($data['user_id']) ?> - <em><?= get_full_name($data['user_id']) ?></em></b></h5>
             </div>
 
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
+
+                <legend class="font-weight-semibold text-uppercase font-size-sm">
+                    <i class="icon-bag mr-2"></i>Услуги
+                </legend>
+
+                <div class="table-responsive card">
+                    <table class="table table-hover table-sm">
                         <thead class="<?= $classes['table-thead'] ?>">
                             <tr>
                                 <th class="text-left">Дата и время</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>
-                                <th class="text-center" style="width: 150px">Действия</th>
+                                <th class="text-center" style="width: 150px">Отменить</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            foreach($db->query("SELECT vs.id, vs.add_date, vp.item_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) WHERE vs.user_id = $pk AND vs.status = 5") as $row) {
-                                ?>
-                                    <tr id="tr_VisitModel_<?= $row['id'] ?>">
-                                        <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
-                                        <td><?= $row['item_name'] ?></td>
-                                        <td class="text-right total_cost"><?= $row['price'] ?></td>
-                                        <td>
-                                            <button onclick="Get_Mod(<?= $pk ?>, <?= $row['id'] ?>, <?= $row['price'] ?>)" type="button" class="btn btn-outline-primary btn-sm legitRipple" data-toggle="modal" data-target="#modal_default">Вернуть</button>
-                                        </td>
-                                    </tr>
-                                <?php
-                            }
-                            ?>
-
+                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost, vp.price_date FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 5") as $row): ?>
+                                <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
+                                    <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
+                                    <td><?= date_f($row['add_date'], 1) ?></td>
+                                    <td><?= $row['service_name'] ?></td>
+                                    <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
+                                    <td><?= date_f($row['price_date'], 1) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+
+                <div class="text-left">
+                    <strong>Итого: </strong><strong id="total_title"></strong>
+                </div>
+                <div class="text-right">
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                </div>
+
             </div>
 
         </div>
         <script type="text/javascript">
-            function Get_Mod(pk, vs, price) {
-                $('#total_price').val(price);
-                $('#user_id').val(pk);
-                $('#visit_id').val(vs);
+            function Get_Mod(pk) {
+                var array_services = [];
+
+                Array.prototype.slice.call(document.querySelectorAll('.prices_class')).forEach(function(item) {
+                    array_services.push(item.value);
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= up_url(null, 'VisitPriceModel') ?>",
+                    data: {
+                        visit_pk: pk,
+                        refund: 1,
+                        service_pks: array_services,
+                    },
+                    success: function (result) {
+                        $("#div_modal_price").html(result);
+                        Swit.init();
+                    },
+                });
             }
         </script>
         <?php
@@ -188,7 +212,7 @@ if ($_GET['pk']) {
                                 <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
                                     <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
-                                    <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+                                    <td><?= date($row['add_date'], 1) ?></td>
                                     <td><?= $row['service_name'] ?></td>
                                     <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
                                     <th class="text-center">

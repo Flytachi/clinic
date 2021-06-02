@@ -2,6 +2,16 @@
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "Рабочий стол";
+
+$tb = new Table($db, "visits vs");
+$search = $tb->get_serch();
+$tb->set_data("DISTINCT vss.visit_id, vs.user_id")->additions("LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) LEFT JOIN users us ON(us.id=vs.user_id)");
+
+$where_search = array(
+	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1", 
+	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->where_or_serch($where_search);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +61,7 @@ $header = "Рабочий стол";
 								</div>
 							</div>
 
-				            <div class="card-body">
+				            <div class="card-body" id="search_display">
 
 				                <div class="table-responsive">
 				                    <table class="table table-hover">
@@ -62,20 +72,20 @@ $header = "Рабочий стол";
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-				                            <?php foreach($db->query("SELECT DISTINCT vss.visit_id, vs.user_id FROM visits vs LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) WHERE vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1 ") as $row): ?>
-				                                <tr onclick="Check('get_mod.php?pk=<?= $row['visit_id'] ?>')">
-				                                    <td><?= addZero($row['user_id']) ?></td>
+				                            <?php foreach($tb->get_table() as $row): ?>
+				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')">
+				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
-				                                        <a>
-				                                            <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
-				                                        </a>
+				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 				                                    </td>
 				                                </tr>
 				                            <?php endforeach; ?>
 				                        </tbody>
 				                    </table>
 				                </div>
+
 				            </div>
+
 				        </div>
 				    </div>
 
@@ -129,10 +139,20 @@ $header = "Рабочий стол";
 
 	<script type="text/javascript">
 
-		if (sessionStorage['message']) {
-			$('#message_ses').html(sessionStorage['message']);
-			sessionStorage['message'] = '';
-		}
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/cashbox-index') ?>",
+				data: {
+					table_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
 
 		function Delete(events, tr) {
 			swal({
@@ -156,8 +176,8 @@ $header = "Рабочий стол";
 									sumTo($('.total_cost'));
 								});
 							}else{
-								sessionStorage['message'] = data;
-								location.reload();
+								$('#message_ses').html(data);
+								$('#check_div').html("");
 							}
 						},
 					});
@@ -184,19 +204,6 @@ $header = "Рабочий стол";
 			});
 		};
 
-		$("#search_input").keyup(function() {
-			$.ajax({
-				type: "GET",
-				url: "<?= ajax('cashbox/search') ?>",
-				data: {
-					tab: 1,
-                    search: $("#search_input").val(),
-                },
-				success: function (result) {
-					$('#search_display').html(result);
-				},
-			});
-		});
 
 		function Downsum(input) {
 			input.className = "form-control";

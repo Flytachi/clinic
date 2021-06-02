@@ -2,15 +2,22 @@
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "Рабочий стол";
+
+$tb = new Table($db, "visits vs");
+$search = $tb->get_serch();
+$tb->set_data("DISTINCT vss.visit_id, vs.user_id")->additions("LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) LEFT JOIN users us ON(us.id=vs.user_id)");
+
+$where_search = array(
+	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 5", 
+	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 5 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->where_or_serch($where_search);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
-
-<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
+<script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -43,9 +50,17 @@ $header = "Рабочий стол";
 
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Возврат</h5>
+								<div class="header-elements">
+									<div class="form-group-feedback form-group-feedback-right">
+										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
+										<div class="form-control-feedback text-success">
+											<i class="icon-search4 font-size-base text-muted"></i>
+										</div>
+									</div>
+								</div>
 							</div>
 
-				            <div class="card-body">
+							<div class="card-body" id="search_display">
 
 				                <div class="table-responsive">
 				                    <table class="table table-hover">
@@ -56,20 +71,20 @@ $header = "Рабочий стол";
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-											<?php foreach($db->query("SELECT DISTINCT vss.visit_id, vs.user_id FROM visits vs LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) WHERE vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 5") as $row): ?>
-				                                <tr onclick="Check('get_mod.php?pk=<?= $row['visit_id'] ?>')">
-				                                    <td><?= addZero($row['user_id']) ?></td>
+				                            <?php foreach($tb->get_table() as $row): ?>
+				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')">
+				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
-				                                        <a>
-				                                            <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
-				                                        </a>
+				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 				                                    </td>
 				                                </tr>
 				                            <?php endforeach; ?>
 				                        </tbody>
 				                    </table>
 				                </div>
+
 				            </div>
+
 				        </div>
 				    </div>
 
@@ -106,11 +121,12 @@ $header = "Рабочий стол";
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header bg-info">
-					<h6 class="modal-title">Оплата</h6>
+					<h6 class="modal-title">Возврат</h6>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php (new VisitRefundModel)->form(); ?>
+				<!-- VisitRefundModel -->
+				<div id="div_modal_price"></div>
 
 			</div>
 		</div>
@@ -122,6 +138,21 @@ $header = "Рабочий стол";
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/cashbox-refund') ?>",
+				data: {
+					table_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
 
 		function sumTo(arr) {
 			var total = 0;
@@ -143,20 +174,23 @@ $header = "Рабочий стол";
 		};
 
 		function Downsum(input) {
-			input.attr("class", 'form-control');
-			input.val("");
-			var inp_s = $('.input_chek');
-			inp_s.val($('#total_price').val()/inp_s.length);
+			input.className = "form-control";
+			input.value = "";
+			var input_selectors = document.querySelectorAll(".input_chek");
+
+			for (let item of input_selectors) {
+				item.value = (document.querySelector("#total_price").value).replace(/,/g,'') / input_selectors.length;
+			}
 		}
 
 		function Upsum(input) {
-			input.attr("class", 'form-control input_chek');
-			var inp_s = $('.input_chek');
+			input.className = "form-control input_chek";
+			var input_selectors = document.querySelectorAll(".input_chek");
 			var vas = 0;
-			for (let key of inp_s) {
+			for (let key of input_selectors) {
 				vas += Number(key.value);
 			}
-			input.val($('#total_price').val()-vas);
+			input.value = (document.querySelector("#total_price").value).replace(/,/g,'') - vas;
 		}
 	</script>
 

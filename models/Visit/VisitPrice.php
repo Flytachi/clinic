@@ -10,7 +10,11 @@ class VisitPriceModel extends Model
     public function form($pk = null)
     {
         global $db;
-        $amount = $db->query("SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
+        if ( isset($_GET['refund']) and $_GET['refund'] ) {
+            $amount = $db->query("SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
+        }else{
+            $amount = $db->query("SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
+        }
         ?>
         <form method="post" action="<?= add_url() ?>" onsubmit="Submit_alert()">
 
@@ -18,6 +22,9 @@ class VisitPriceModel extends Model
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
                 <input type="hidden" name="visit_id" value="<?= $_GET['visit_pk'] ?>">
+                <?php if( isset($_GET['refund']) and $_GET['refund'] ): ?>
+                    <input type="hidden" name="is_refund" value="<?= $_GET['refund'] ?>">
+                <?php endif; ?>
 
                 <?php foreach ($_GET['service_pks'] as $value): ?>
                     <input type="hidden" name="visit_services[]" value="<?= $value ?>">
@@ -30,15 +37,17 @@ class VisitPriceModel extends Model
                         <input type="text" class="form-control" id="total_price" value="<?= number_format($amount, 1) ?>" disabled>
                         <input type="hidden" id="total_price_original" value="<?= $amount ?>">
                     </div>
-                    <div class="col-md-3">
-                        <label class="col-form-label">Скидка:</label>
-                        <div class="form-group-feedback form-group-feedback-right">
-                            <input type="number" class="form-control" step="0.1" name="sale" id="sale_input" placeholder="">
-                            <div class="form-control-feedback text-success">
-                                <span style="font-size: 20px;">%</span>
+                    <?php if( empty($_GET['refund']) ): ?>
+                        <div class="col-md-3">
+                            <label class="col-form-label">Скидка:</label>
+                            <div class="form-group-feedback form-group-feedback-right">
+                                <input type="number" class="form-control" step="0.1" name="sale" id="sale_input" placeholder="">
+                                <div class="form-control-feedback text-success">
+                                    <span style="font-size: 20px;">%</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
 
                 </div>
 
@@ -106,6 +115,8 @@ class VisitPriceModel extends Model
                     data: $(event.target).serializeArray(),
                     success: function (result) {
                         var result = JSON.parse(result);
+
+                        console.log(result);
                         
                         if (result.status == "success") {
 
@@ -140,11 +151,17 @@ class VisitPriceModel extends Model
                                 setTimeout(function() {we.close()}, 100);
                             }
 
+                            setTimeout( function() {
+                                location.reload();
+                            }, 1000)
+
+                        }else{
+                            new Noty({
+                                text: result.message,
+                                type: 'error'
+                            }).show();
                         }
-                        sessionStorage['message'] = result.message;
-                        setTimeout( function() {
-                            location.reload();
-                        }, 1000)
+
                     },
                 });
             }

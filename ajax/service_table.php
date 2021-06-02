@@ -7,13 +7,20 @@ $i = 0; $cost = 0;
 ?>
 
 <?php if( isset($_GET['divisions']) ): ?>
-    <?php $divisions = implode(',', $_GET['divisions']) ?>
+    <?php 
+    $divisions = implode(',', $_GET['divisions']);
+    if ( isset($_GET['is_foreigner']) and $_GET['is_foreigner']) {
+        $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
+    } else {
+        $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price";
+    } 
+    ?>
 
     <?php if ( isset($_GET['search']) ): ?>
         <?php $ser = $_GET['search']; ?>
-        <?php $sql = "SELECT dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
+        <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
     <?php else: ?>
-        <?php $sql = "SELECT dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']})"; ?>
+        <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']})"; ?>
     <?php endif; ?>
 
     <?php foreach ($db->query($sql) as $row): ?>

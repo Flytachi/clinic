@@ -25,10 +25,10 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
+                    <select data-placeholder="Выбрать пациента" name="user_id" id="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
                         <option></option>
                         <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
+                            <option value="<?= $row['id'] ?>" data-is_foreigner="<?= $row['is_foreigner'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -52,7 +52,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)" required>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
@@ -135,6 +135,7 @@ class VisitModel extends Model
                     url: "<?= ajax('service_table') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
+                        is_foreigner: document.querySelector("#user_id").selectedOptions[0].dataset.is_foreigner,
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1,2",
@@ -147,13 +148,14 @@ class VisitModel extends Model
                 });
             });
 
-            function table_change(the) {
+            function TableChangeServices(params) {
 
                 $.ajax({
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
                     data: {
-                        divisions: $(the).val(),
+                        divisions: $(params).val(),
+                        is_foreigner: document.querySelector("#user_id").selectedOptions[0].dataset.is_foreigner,
                         selected: service,
                         types: "1,2",
                         cols: 0
@@ -527,10 +529,10 @@ class VisitModel extends Model
     {
         global $db;
         $post = array(
-            'grant_id' => ($this->post['direction']) ? $this->post['parent_id'] : $this->post['grant_id'],
-            'user_id' => $this->post['user_id'],
-            'direction' => $this->post['direction'],
-            'complaint' => $this->post['complaint'],
+            'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
+            'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
+            'direction' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['direction'] : null,
+            'complaint' => ( isset($this->post['complaint']) ) ? $this->post['complaint'] : null,
         );
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
@@ -538,6 +540,7 @@ class VisitModel extends Model
             $db->rollBack();
         }else{
             $this->visit_pk = $object;
+            $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
         }
     }
 
@@ -573,7 +576,7 @@ class VisitModel extends Model
                 $post_price['user_id'] = $this->post['user_id'];
                 $post_price['item_type'] = 1;
                 $post_price['item_id'] = $data['id'];
-                $post_price['item_cost'] = $data['price'];
+                $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                 $post_price['item_name'] = $data['name'];
                 $object = Mixin\insert($this->_prices, $post_price);
                 if (!intval($object)){
@@ -619,11 +622,11 @@ class VisitModel extends Model
 
             $this->create_or_update_visit();
             if (is_array($this->post['service'])) {
-                
+
                 foreach ($this->post['service'] as $key => $value) {
                     
                     $this->add_visit_service($key, $value);
-
+                    
                 }
 
             }else{
