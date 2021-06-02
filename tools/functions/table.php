@@ -9,7 +9,6 @@ class Table
      * Краткая инструкция:
      * 
      * $tb = new Table($db, "table");    --->  Вызов и указание таблицы
-     * $tb->set_limit(10)                --->  Получае массив с данными
      * 
      * 
      * $tb->where("id = 1");             --->  SQL WHERE

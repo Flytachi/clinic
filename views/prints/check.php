@@ -95,7 +95,7 @@ foreach ($comp as $value) {
                 <p class="h4">
                     <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?></br>
-                    <b>Дата рождения</b>:<?= date('d.m.Y', strtotime($db->query("SELECT dateBith FROM users WHERE id = ". $_GET['id'] ."")->fetch()['dateBith'])) ?>
+                    <b>Дата рождения</b>: <?= date_f($db->query("SELECT birth_date FROM users WHERE id = {$_GET['id']}")->fetchColumn()) ?>
                 </p>
             </div>
 
@@ -114,7 +114,7 @@ foreach ($comp as $value) {
                     <?php $total_price = 0; ?>
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
-                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
+                        <?php $row = $db->query("SELECT item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_prices WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
                         <tr class="service" style="font-size:150%;">
         					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>

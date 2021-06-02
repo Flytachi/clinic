@@ -2,6 +2,15 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(5);
 $header = "Приём пациетов";
+
+$tb = new Table($db, "visit_services vs");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");
+$search = $tb->get_serch();
+$search_array = array(
+	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id == $session->session_division) )", 
+	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id == $session->session_division) )"
+);
+$tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -58,6 +67,9 @@ $header = "Приём пациетов";
                                 </thead>
                                 <tbody>
                                     <?php
+									dd($tb->get_table());                  
+
+
 									$sql = "SELECT DISTINCT vs.id 'visit_id', us.id,
 												vs.user_id, vs.parent_id, vs.add_date,
 												vs.route_id, vs.service_id, vs.direction,

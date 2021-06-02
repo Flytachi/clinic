@@ -187,6 +187,7 @@ if ($_GET['pk']) {
                             <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1") as $row): ?>
                                 <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
                                     <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
+                                    <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
                                     <td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
                                     <td><?= $row['service_name'] ?></td>
                                     <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
@@ -213,9 +214,24 @@ if ($_GET['pk']) {
         </div>
         <script type="text/javascript">
             function Get_Mod(pk) {
-                $('#total_price').val($('#total_title').text());
-                $('#total_price_original').val($('#total_title').text());
-                $('#user_amb_id').val(pk);
+                var array_services = [];
+
+                Array.prototype.slice.call(document.querySelectorAll('.prices_class')).forEach(function(item) {
+                    array_services.push(item.value);
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= up_url(null, 'VisitPriceModel') ?>",
+                    data: {
+                        visit_pk: pk,
+                        service_pks: array_services,
+                    },
+                    success: function (result) {
+                        $("#div_modal_price").html(result);
+                        Swit.init();
+                    },
+                });
             }
         </script>
         <?php

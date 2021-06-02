@@ -3,10 +3,12 @@ namespace Mixin;
 
 
 function clean($value = "") {
-    $value = trim($value);
-    $value = stripslashes($value);
-    $value = strip_tags($value);
-    $value = htmlspecialchars($value);
+    if (!is_array($value)) {
+        $value = trim($value);
+        $value = stripslashes($value);
+        $value = strip_tags($value);
+        $value = htmlspecialchars($value);
+    }
     return $value;
 }
 
@@ -44,6 +46,10 @@ function insert($tb, $post)
 function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
 {
     global $db;
+
+    $table_an_exception = array(
+        "sessions"
+    );
     $lb = ($name_pk) ? $name_pk : "id";
 
     if (isset($post[$lb])) {
@@ -59,9 +65,15 @@ function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
         if ($defwhere) {
             $defwhere = "AND $defwhere";
         }
+
+        if (!in_array($tb, $table_an_exception)) {
+            $pc = $db->query("SELECT id FROM $tb WHERE $where $defwhere")->fetchColumn();
+        }else{
+            $pc = $db->query("SELECT $lb FROM $tb WHERE $where $defwhere")->fetchColumn();
+        }
         
         // select
-        if ($db->query("SELECT $lb FROM $tb WHERE $where $defwhere")->fetchColumn()) {
+        if ($pc) {
             // update
             foreach (array_keys($post) as $key) {
                 if (isset($col)) {
@@ -84,7 +96,7 @@ function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
             }
             try{
                 $stm = $db->prepare($sql)->execute($post);
-                return $stm;
+                return $pc;
             }
             catch (\PDOException $ex) {
                 return $ex->getMessage();

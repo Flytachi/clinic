@@ -7,10 +7,11 @@ $header = "Рабочий стол";
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
+<script src="<?= stack("vendors/js/custom.js") ?>"></script>
+<!-- <script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
 
-<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
+<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script> -->
 
 <body>
 	<!-- Main navbar -->
@@ -119,7 +120,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php (new VisitPriceModel)->form(); ?>
+				<div id="div_modal_price"></div>
 
 			</div>
 		</div>
@@ -202,20 +203,23 @@ $header = "Рабочий стол";
 		});
 
 		function Downsum(input) {
-			input.attr("class", 'form-control');
-			input.val("");
-			var inp_s = $('.input_chek');
-			inp_s.val($('#total_price').val()/inp_s.length);
+			input.className = "form-control";
+			input.value = "";
+			var input_selectors = document.querySelectorAll(".input_chek");
+
+			for (let item of input_selectors) {
+				item.value = (document.querySelector("#total_price").value).replace(/,/g,'') / input_selectors.length;
+			}
 		}
 
 		function Upsum(input) {
-			input.attr("class", 'form-control input_chek');
-			var inp_s = $('.input_chek');
+			input.className = "form-control input_chek";
+			var input_selectors = document.querySelectorAll(".input_chek");
 			var vas = 0;
-			for (let key of inp_s) {
+			for (let key of input_selectors) {
 				vas += Number(key.value);
 			}
-			input.val($('#total_price').val()-vas);
+			input.value = (document.querySelector("#total_price").value).replace(/,/g,'') - vas;
 		}
 	</script>
 
