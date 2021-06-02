@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$tb = new Table($db, "visit_price vsp");
+$tb = new Table($db, "visit_prices vsp");
 $tb->set_data('DISTINCT vsp.user_id');
 $search = $tb->get_serch();
 $search_array = array(

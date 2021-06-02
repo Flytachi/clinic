@@ -56,20 +56,16 @@ $header = "Рабочий стол";
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-				                            <?php
-				                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NULL AND status = 5 AND add_date") as $row) {
-				                            ?>
-				                                <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>')">
-				                                    <td><?= addZero($row['id']) ?></td>
+											<?php foreach($db->query("SELECT DISTINCT vss.visit_id, vs.user_id FROM visits vs LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) WHERE vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 5") as $row): ?>
+				                                <tr onclick="Check('get_mod.php?pk=<?= $row['visit_id'] ?>')">
+				                                    <td><?= addZero($row['user_id']) ?></td>
 				                                    <td class="text-center">
 				                                        <a>
-				                                            <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+				                                            <div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div>
 				                                        </a>
 				                                    </td>
 				                                </tr>
-				                            <?php
-				                            }
-				                            ?>
+				                            <?php endforeach; ?>
 				                        </tbody>
 				                    </table>
 				                </div>

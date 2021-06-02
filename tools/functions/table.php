@@ -287,9 +287,12 @@ class Table
             Получение массива с данными!
         */
         $this->generate_sql();
-        $page =  (int)(isset($_GET['table_page'])) ? $_GET['table_page'] : $page = 1;
-        $offset = $this->limit * ($page - 1);
-        $this->sql .= " LIMIT $this->limit OFFSET $offset";
+        
+        if ($this->limit) {
+            $page =  (int)(isset($_GET['table_page'])) ? $_GET['table_page'] : $page = 1;
+            $offset = $this->limit * ($page - 1);
+            $this->sql .= " LIMIT $this->limit OFFSET $offset";
+        }
         $get = $this->db->query($this->sql)->fetchAll(PDO::FETCH_OBJ);
         if ($count_status) {
             $off_count = $offset + 1;
@@ -305,37 +308,39 @@ class Table
         /*
             Получение панели пагинации!
         */
-        if ($this->total_pages <= 1) {
-            return 0;
+        if ($this->limit) {
+            if ($this->total_pages <= 1) {
+                return 0;
+            }
+            $page = (int)(isset($_GET['table_page'])) ? $_GET['table_page'] : $page = 1;
+    
+            if ($page > $this->total_pages) {
+                $page = $this->total_pages;
+            } elseif ($page < 1) {
+                $page = 1;
+            }
+    
+            // echo "<div class=\"card card-body border-top-1 border-top-pink text-center\">";
+            // echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center mt-3\" >";
+            echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center justify-content-center mt-3\" >";
+            echo $this->create_panel($page);
+            echo "  </ul>";
+            // echo "</div>";
+            /*
+            <div class="card card-body border-top-1 border-top-pink text-center">
+    
+                <ul class="pagination pagination-flat pagination-rounded align-self-center">
+                    <li class="page-item"><a href="#" class="page-link">&larr; &nbsp; Prev</a></li>
+                    <li class="page-item active"><a href="#" class="page-link">1</a></li>
+                    <li class="page-item"><a href="#" class="page-link">2</a></li>
+                    <li class="page-item disabled"><a href="#" class="page-link">3</a></li>
+                    <li class="page-item"><a href="#" class="page-link">4</a></li>
+                    <li class="page-item"><a href="#" class="page-link">Next &nbsp; &rarr;</a></li>
+                </ul>
+    
+            </div>
+            */
         }
-        $page = (int)(isset($_GET['table_page'])) ? $_GET['table_page'] : $page = 1;
-
-        if ($page > $this->total_pages) {
-            $page = $this->total_pages;
-        } elseif ($page < 1) {
-            $page = 1;
-        }
-
-        // echo "<div class=\"card card-body border-top-1 border-top-pink text-center\">";
-        // echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center mt-3\" >";
-        echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center justify-content-center mt-3\" >";
-        echo $this->create_panel($page);
-        echo "  </ul>";
-        // echo "</div>";
-        /*
-        <div class="card card-body border-top-1 border-top-pink text-center">
-
-            <ul class="pagination pagination-flat pagination-rounded align-self-center">
-                <li class="page-item"><a href="#" class="page-link">&larr; &nbsp; Prev</a></li>
-                <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                <li class="page-item"><a href="#" class="page-link">2</a></li>
-                <li class="page-item disabled"><a href="#" class="page-link">3</a></li>
-                <li class="page-item"><a href="#" class="page-link">4</a></li>
-                <li class="page-item"><a href="#" class="page-link">Next &nbsp; &rarr;</a></li>
-            </ul>
-
-        </div>
-        */
     }
 
     private function gen_self()
@@ -358,6 +363,15 @@ class Table
         */
         $this->search = (isset($_GET['table_search']) and $_GET['table_search']) ? $this->search_get_name.$_GET['table_search'] : "";
         return str_replace($this->search_get_name, "", $this->search);        
+    }
+
+    public function get_sql()
+    {
+        /*
+            Получение массива с данными!
+        */
+        $this->generate_sql();
+        return $this->sql;
     }
 
 }

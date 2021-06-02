@@ -98,7 +98,7 @@ $tb->additions('LEFT JOIN users us ON(us.id=vsp.user_id)')->where_or_serch($sear
 			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('search/payment') ?>",
+				url: "<?= ajax('search/cashbox-list_payment') ?>",
 				data: {
 					table_search: input.value,
 				},

@@ -102,7 +102,7 @@ $tb->additions('LEFT JOIN users us ON(us.id=iv.user_id)')->where_or_serch($searc
 			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('search/investment') ?>",
+				url: "<?= ajax('search/cashbox-list_investment') ?>",
 				data: {
 					table_search: input.value,           
 				},

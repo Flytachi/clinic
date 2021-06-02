@@ -142,7 +142,7 @@ $tb->additions('LEFT JOIN users us ON(us.id=vs.user_id)')->where_or_serch($searc
 			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('search/journal') ?>",
+				url: "<?= ajax('search/archive-journal') ?>",
 				data: {
 					table_search: input.value,
 				},

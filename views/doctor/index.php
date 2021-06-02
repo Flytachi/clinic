@@ -4,11 +4,11 @@ $session->is_auth(5);
 $header = "Приём пациетов";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id == $session->session_division) )", 
-	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id == $session->session_division) )"
+	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
+	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 ?>
@@ -43,16 +43,21 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Пациенты на приём</h6>
 						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive">
-							<table class="table table-hover table-sm datatable-basic">
+							<table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
@@ -66,62 +71,51 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-									dd($tb->get_table());                  
-
-
-									$sql = "SELECT DISTINCT vs.id 'visit_id', us.id,
-												vs.user_id, vs.parent_id, vs.add_date,
-												vs.route_id, vs.service_id, vs.direction,
-												us.dateBith
-											FROM users us
-												LEFT JOIN visit vs ON(us.id=vs.user_id)
-											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.parent_id = {$_SESSION['session_id']}
-											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
-                                    foreach($db->query($sql) as $row) {
-                                        ?>
-                                        <tr id="PatientFailure_tr_<?= $row['visit_id'] ?>">
-                                            <td><?= addZero($row['id']) ?></td>
+									<?php foreach($tb->get_table() as $row): ?>
+										<tr id="PatientFailure_tr_<?= $row->id ?>">
+                                            <td><?= addZero($row->user_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 												<div class="text-muted">
 													<?php
-													if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													}
+													// if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
+													// 	echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
+													// }
 													?>
 												</div>
 											</td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-                                            <td><?= $db->query("SELECT name FROM service WHERE id = {$row['service_id']}")->fetch()['name'] ?></td>
+											<td><?= date_f($row->birth_date) ?></td>
+											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+                                            <td><?= $row->service_name ?></td>
 											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												<?= level_name($row->route_id) ." ". division_name($row->route_id) ?>
+												<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
 											</td>
                                             <td class="text-center">
-												<?php if($row['direction']): ?>
+												<?php if($row->direction): ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 												<?php else: ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
-												<a href="<?= up_url($row['visit_id'], 'VisitUpStatus') ?>&user_id=<?= $row['id'] ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row['user_id'] ?>" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>"
-													<?php if (!$row['direction']): ?>
+												<!-- <a href="<?= up_url($row->id, 'VisitUpStatus') ?>&user_id=<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row->user_id ?>" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
+													<?php if (!$row->direction): ?>
 														onclick="sendPatient(this)"
 													<?php endif; ?>
 													>Принять</a>
-
-                                                <button onclick="$('#vis_id').val(<?= $row['visit_id'] ?>); $('#vis_title').text('<?= get_full_name($row['id']) ?>'); $('#renouncement').attr('data-userid', '<?= $row['user_id'] ?>'); $('#renouncement').attr('data-parentid', '<?= $row['parent_id'] ?>');" data-toggle="modal" data-target="#modal_failure" type="button" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+												-->
+												<?php if($session->session_id == $row->parent_id): ?>
+                                                	<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+												<?php endif; ?>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
+
+						<?php $tb->get_panel(); ?>
 
 					</div>
 
@@ -136,21 +130,54 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 	</div>
 	<!-- /page content -->
 
-    <!-- Failure modal -->
-	<div id="modal_failure" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content border-1 border-danger">
+	<script type="text/javascript">
 
-				<div class="modal-header bg-danger">
-					<h5 class="modal-title">Отказ приёма: <span id="vis_title"></h5>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
+		function FailureVisitService(url) {
+			
+			$.ajax({
+				type: "GET",
+				url: url,
+				success: function (result) {
+					var data = JSON.parse(result);
 
-				<?= (new VisitFailure)->form(); ?>
-			</div>
-		</div>
-	</div>
-	<!-- /failure modal -->
+					if (data.status == "success") {
+						new Noty({
+							text: 'Процедура отказа прошла успешно!',
+							type: 'success'
+						}).show();
+						
+						$(`#PatientFailure_tr_${data.pk}`).css("background-color", "rgb(244, 67, 54)");
+                        $(`#PatientFailure_tr_${data.pk}`).css("color", "white");
+                        $(`#PatientFailure_tr_${data.pk}`).fadeOut(900, function() {
+							$(this).remove();
+                        });
+						
+					}else{
+
+						new Noty({
+							text: data.message,
+							type: 'error'
+						}).show();
+
+					}
+ 				},
+			});
+		}
+
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/doctor-index') ?>",
+				data: {
+					table_search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
+
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

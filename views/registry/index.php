@@ -123,6 +123,8 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
 														<?php elseif ($stm_dr['status'] == 3): ?>
 															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+														<?php elseif ($stm_dr['status'] == 5): ?>
+															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Возврат</span>
 														<?php else: ?>
 															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
 														<?php endif; ?>
@@ -202,7 +204,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 		$("#search_input").keyup(function() {
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('search/registry') ?>",
+				url: "<?= ajax('search/registry-index') ?>",
 				data: {
 					table_search: $("#search_input").val(),
 				},

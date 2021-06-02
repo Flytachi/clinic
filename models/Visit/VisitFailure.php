@@ -2,7 +2,7 @@
 
 class VisitFailure extends Model
 {
-    public $table = 'visit';
+    public $table = 'visit_services';
 
     public function form($pk = null)
     {
@@ -53,42 +53,76 @@ class VisitFailure extends Model
         <?php
     }
 
-    public function update()
+    // public function update()
+    // {
+    //     if($this->clean()){
+    //         $pk = $this->post['id'];
+    //         unset($this->post['id']);
+    //         $object = Mixin\update($this->table, $this->post, $pk);
+    //         if (!intval($object)){
+    //             $this->error($object);
+    //         }
+    //         $this->success($pk);
+    //     }
+    // }
+
+    // public function clean()
+    // {
+    //     global $db;
+    //     $visit = $db->query("SELECT direction, bed_id FROM visit WHERE id = {$this->post['id']}")->fetch();
+    //     if ($visit['direction']) {
+    //         $form = new VisitModel;
+    //         ob_start();
+    //         $form->delete($this->post['id']);
+    //         ob_clean();
+
+    //         Mixin\delete('visit_analyze', $this->post['id'], 'visit_id');
+    //         $this->success($this->post['id']);
+    //     }else {
+    //         $this->post = Mixin\clean_form($this->post);
+    //         $this->post = Mixin\to_null($this->post);
+    //         return True;
+    //     }
+
+    // }
+
+    public function delete(int $pk)
     {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
+        global $db;
+        $data = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+
+        if ($_SESSION['session_id'] == $data['parent_id']) {
+            
+            $object = Mixin\update($this->table, array('status' => 5), $pk);
             if (!intval($object)){
                 $this->error($object);
             }
+            
             $this->success($pk);
-        }
-    }
 
-    public function clean()
-    {
-        global $db;
-        $visit = $db->query("SELECT direction, bed_id FROM visit WHERE id = {$this->post['id']}")->fetch();
-        if ($visit['direction']) {
-            $form = new VisitModel;
-            ob_start();
-            $form->delete($this->post['id']);
-            ob_clean();
-
-            Mixin\delete('visit_analyze', $this->post['id'], 'visit_id');
-            $this->success($this->post['id']);
         }else {
-            $this->post = Mixin\clean_form($this->post);
-            $this->post = Mixin\to_null($this->post);
-            return True;
+            $this->error("У вас нет прав на отказ!");
+            return 1;
         }
 
     }
 
     public function success($pk = null)
     {
-        echo "#PatientFailure_tr_$pk";
+        echo json_encode(array(
+            'status' => 'success', 
+            'pk' => $pk
+        ));
+        exit;
+    }
+
+    public function error($message)
+    {
+        echo json_encode(array(
+            'status' => 'error', 
+            'message' => $message
+        ));
+        exit;
     }
 
 }

@@ -141,7 +141,7 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('search/payment-detail') ?>",
+				url: "<?= ajax('search/cashbox-detail_payment') ?>",
 				data: {
 					table_search: input.value,
 					pk: "<?= $_GET['pk'] ?>",
