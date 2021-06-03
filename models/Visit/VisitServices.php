@@ -16,7 +16,7 @@ class VisitServicesModel extends Model
     public function delete(int $pk)
     {
         global $db;
-        $data = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        $this->visit_pk = $db->query("SELECT visit_id FROM $this->table WHERE id = $pk")->fetchColumn();
 
         $db->beginTransaction();
         // Visit prices 
@@ -32,36 +32,41 @@ class VisitServicesModel extends Model
             $db->rollBack();
         }
 
-        $result = $this->status_update($data);
+        $this->status_update();
         
         $db->commit();
-        $this->success($result);
+        $this->success($db->query("SELECT * FROM $this->table WHERE visit_id = $this->visit_pk AND status = 1")->rowCount());
 
     }
 
-    public function status_update(array $data)
+    public function status_update()
     {
-        return (new VisitModel())->is_delete($data['visit_id']);
+        return (new VisitModel())->is_delete($this->visit_pk);
     }
 
     public function success($stat = null)
     {
-        if ($stat) {
-            echo 1;
-        }else{
-            echo '<div class="alert alert-info" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                Успешно
-            </div>';
-        }
+        $mess = 'Успешно';
+        echo json_encode(array(
+            'status' => 'success',
+            'count' => $stat,
+            'visit_pk' => $this->visit_pk,
+            'message' => $mess,
+        ));
+        exit;
     }
 
     public function error($message)
     {
-        echo '<div class="alert bg-danger alert-styled-left alert-dismissible">
+        $mess = '<div class="alert bg-danger alert-styled-left alert-dismissible">
             <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>';
+        echo json_encode(array(
+            'status' => 'error',
+            'message' => $mess,
+        ));
+        exit;
     }
 }
         

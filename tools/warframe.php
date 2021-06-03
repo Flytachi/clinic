@@ -196,7 +196,7 @@ function division($id = null) {
     } else {
         $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
         try{
-            $stmt = $db->query("SELECT id from division where id = $id")->fetchColumn();
+            $stmt = $db->query("SELECT id from divisions where id = $id")->fetchColumn();
         }
         catch (PDOException $ex) {
             $stmt = null;
@@ -209,7 +209,7 @@ function division($id = null) {
 function division_name($id = null) {
     global $db;
     try{
-        $stmt = $db->query("SELECT name FROM division WHERE id =".division($id))->fetchColumn();
+        $stmt = $db->query("SELECT name FROM divisions WHERE id =".division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
@@ -220,7 +220,7 @@ function division_name($id = null) {
 function division_title($id = null) {
     global $db;
     try{
-        $stmt = $db->query("SELECT title FROM division WHERE id =".division($id))->fetchColumn();
+        $stmt = $db->query("SELECT title FROM divisions WHERE id =".division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
@@ -231,7 +231,7 @@ function division_title($id = null) {
 function division_assist($id = null) {
     global $db;
     try{
-        $stmt = $db->query("SELECT assist FROM division WHERE id =".division($id))->fetchColumn();
+        $stmt = $db->query("SELECT assist FROM divisions WHERE id =".division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;

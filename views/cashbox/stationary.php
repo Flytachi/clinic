@@ -35,7 +35,7 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-                <?php include 'tabs.php' ?>
+                <?php include 'tabs_1.php' ?>
 
 				<!-- Highlighted tabs -->
                 <div class="row">

@@ -811,6 +811,27 @@ class VisitModel extends Model
 
     }
 
+    public function is_update(int $pk)
+    {
+        global $db;
+        $user = $db->query("SELECT user_id FROM $this->table WHERE id = $pk")->fetchColumn();
+        $data = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk AND status NOT IN(6,7)")->rowCount();
+
+        if ($data == 0) {
+
+            $object = Mixin\update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
+            if(!intval($object)){
+                return $object;
+            }
+            $this->status_update($user);
+            return null;
+
+        } else {
+            return $data;
+        }
+        
+    }
+
     public function is_delete(int $pk)
     {
         global $db;

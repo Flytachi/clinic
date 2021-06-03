@@ -88,10 +88,10 @@ class VisitFailure extends Model
 
     public function delete(int $pk)
     {
-        global $db;
+        global $db, $session;
         $data = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
 
-        if ($_SESSION['session_id'] == $data['parent_id']) {
+        if ($session->session_id == $data['parent_id'] or permission([32, 2])) {
             
             $object = Mixin\update($this->table, array('status' => 5), $pk);
             if (!intval($object)){

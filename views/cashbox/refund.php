@@ -42,6 +42,7 @@ $tb->where_or_serch($where_search);
 			<!-- Content area -->
 			<div class="content">
 
+				<?php include 'tabs_2.php' ?>
 				<!-- Highlighted tabs -->
 				<div class="row">
 

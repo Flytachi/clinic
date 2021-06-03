@@ -73,8 +73,8 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 										<th>Телефон</th>
 										<th>Регион</th>
 										<th>Дата регистрации</th>
-										<th>Тип визита</th>
-										<th>Статус</th>
+										<th class="text-center">Статус</th>
+										<th class="text-center">Тип визита</th>
 										<th class="text-center">Действия</th>
 									</tr>
 								</thead>
@@ -96,8 +96,27 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 											<td><?= $row->phone_number ?></td>
 											<td><?= $row->region ?></td>
 											<td><?= date_f($row->add_date, 1) ?></td>
-											<?php if ($stm_dr = $db->query("SELECT vs.direction, vss.status FROM visits vs LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) WHERE vs.user_id = $row->id AND vs.completed IS NULL ORDER BY vss.add_date ASC")->fetch()): ?>
-												<?php if ($stm_dr['direction']): ?>
+											<td class="text-center">
+												<?php if ($row->status): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+												<?php else: ?>
+													<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
+												<?php endif; ?>
+											</td>
+											<td class="text-center">	
+												<?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE user_id = $row->id AND completed IS NULL")->fetch() ?>
+												<?php if ( isset($stm_dr['id']) ): ?>
+													<?php if ($stm_dr['direction']): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
+													<?php else: ?>
+														<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+													<?php endif; ?>
+												<?php else: ?>
+													<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Нет данных</span>
+												<?php endif; ?>
+											</td>
+											
+												<!-- <?php if ($stm_dr['direction']): ?>
 													<td>
 														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 													</td>
@@ -129,19 +148,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
 														<?php endif; ?>
 													</td>
-												<?php endif; ?>
-											<?php else: ?>
-												<td>
-													<?php if ($row->status): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Status error</span>
-													<?php else: ?>
-														<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
-													<?php endif; ?>
-												</td>
-												<td>
-													<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Не активный</span>
-												</td>
-											<?php endif; ?>
+												<?php endif; ?> -->
 											<td class="text-center">
 												<button type="button" class="<?= $classes['btn_detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">

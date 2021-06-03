@@ -114,9 +114,9 @@ class VisitPriceModel extends Model
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
+                        console.log(result);
                         var result = JSON.parse(result);
 
-                        console.log(result);
                         
                         if (result.status == "success") {
 
@@ -419,8 +419,15 @@ class VisitPriceModel extends Model
             $this->dd();
         }else{
             # Ambulator
-            $amount = $db->query("SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")")->fetchColumn();
-            if ($this->post['sale'] > 0) $amount = $amount - ($amount * ($this->post['sale'] / 100));
+
+            // Refund or Price
+            if ( isset($this->post['is_refund']) and $this->post['is_refund'] ) {
+                $sql = "SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")";
+            } else {
+                $sql = "SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")";
+            }
+            $amount = $db->query($sql)->fetchColumn();
+            if ( isset($this->post['sale']) and $this->post['sale'] > 0) $amount = $amount - ($amount * ($this->post['sale'] / 100));
             $result = $amount - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
             if ($result < 0) {
                 $this->error("Есть остаток ".$result);
@@ -485,7 +492,7 @@ class VisitPriceModel extends Model
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
             'sale' => (isset($this->post['sale'])) ? $this->post['sale'] : null,
-            'price_date' => date("Y-m-d H:i"),
+            'price_date' => date("Y-m-d H:i:s"),
             'status' => ($this->visit['direction']) ? null : 1
         );
 
@@ -564,6 +571,7 @@ class VisitPriceModel extends Model
         if (!intval($object)){
             $this->error($object);
         }
+        $this->visit_prices_items[] = $row['id'];
 
         // Update visit_services 
         $object = Mixin\update($this->_services, array('status' => ($this->visit['direction']) ? 1 : 2), $row['visit_service_id']);
@@ -578,15 +586,123 @@ class VisitPriceModel extends Model
         // }
     }
 
+    public function refund($row)
+    {
+        global $db;
+        $post = array(
+            'visit_id' => $row['visit_id'],
+            'visit_service_id' => $row['visit_service_id'],
+            'user_id' => $row['user_id'],
+            'pricer_id' => $this->post['pricer_id'],
+            'status' => 1,
+            'item_type' => $row['item_type'],
+            'item_id' => $row['item_id'],
+            'item_cost' => $row['item_cost'],
+            'item_name' => $row['item_name'],
+            'price_date' => date("Y-m-d H:i:s"),
+        );
+
+        // Begin script 'PRICE'
+        if ($this->post['price_cash'])
+        {
+            if ($this->post['price_cash'] >= $row['item_cost']) {
+                $this->post['price_cash'] -= $row['item_cost'];
+                $post['price_cash'] = $row['item_cost'];
+            }else {
+                $post['price_cash'] = $this->post['price_cash'];
+                $this->post['price_cash'] = 0;
+                $temp = round($row['item_cost'] - $post['price_cash']);
+                if ($this->post['price_card'] >= $temp) {
+                    $this->post['price_card'] -= $temp;
+                    $post['price_card'] = $temp;
+                }else {
+                    $post['price_card'] = $this->post['price_card'];
+                    $this->post['price_card'] = 0;
+                    $temp = round($temp - $post['price_card']);
+                    if ($this->post['price_transfer'] >= $temp) {
+                        $this->post['price_transfer'] -= $temp;
+                        $post['price_transfer'] = $temp;
+                    }else {
+                        if ($this->err_temp($temp)) {
+                            $this->error("Ошибка в price cash => transfer");
+                        }
+                    }
+                }
+            }
+        }
+        elseif ($this->post['price_card'])
+        {
+            if ($this->post['price_card'] >= $row['item_cost']) {
+                $this->post['price_card'] -= $row['item_cost'];
+                $post['price_card'] = $row['item_cost'];
+            }else {
+                $post['price_card'] = $this->post['price_card'];
+                $this->post['price_card'] = 0;
+                $temp = round($row['item_cost'] - $post['price_card']);
+                if ($this->post['price_transfer'] >= $temp) {
+                    $this->post['price_transfer'] -= $temp;
+                    $post['price_transfer'] = $temp;
+                }else {
+                    if ($this->err_temp($temp)) {
+                        $this->error("Ошибка в price card => transfer");
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ($this->post['price_transfer'] >= $row['item_cost']) {
+                $this->post['price_transfer'] -= $row['item_cost'];
+                $post['price_transfer'] = $row['item_cost'];
+            }else {
+                $this->error("Ошибка в price transfer => transfer");
+            }
+        }
+        // End
+
+        // Price visit_price
+        if(isset($post['price_cash'])) $post['price_cash'] = -$post['price_cash'];
+        if(isset($post['price_card'])) $post['price_card'] = -$post['price_card'];
+        if(isset($post['price_transfer'])) $post['price_transfer'] = -$post['price_transfer'];
+
+        $object = Mixin\insert($this->table, $post);
+        if (!intval($object)){
+            $this->error($object);
+        }
+        $this->visit_prices_items[] = $object;
+
+        // Update visit_services 
+        $object = Mixin\update($this->_services, array('status' => 6, 'completed' => date("Y-m-d H:i:s")), $row['visit_service_id']);
+        if (!intval($object)){
+            $this->error($object);
+        }
+        // if (empty($this->pharm_cost)) {
+        //     $object = Mixin\update($this->table1, array('status' => $this->status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
+        //     if (!intval($object)){
+        //         $this->error($object);
+        //     }
+        // }
+    }
+
     public function ambulator_price()
     {
         global $db;
-        foreach ($db->query("SELECT id, visit_service_id, item_cost, item_name FROM $this->table WHERE price_date IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC") as $row) {
-            if ($this->post['sale'] > 0) {
+        // Refund or Price
+        if ( isset($this->post['is_refund']) and $this->post['is_refund'] ) {
+            $sql = "SELECT *, (price_cash + price_card + price_transfer) 'item_cost' FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
+            $action = "refund";
+        } else {
+            $sql = "SELECT id, visit_service_id, item_cost, item_name FROM $this->table WHERE price_date IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
+            $action = "price";
+        }
+
+        foreach ($db->query($sql) as $row) {
+            if ( isset($this->post['sale']) and $this->post['sale'] > 0) {
                 $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->post['sale'] / 100));
             }
-            $this->price($row);
+            $this->{$action}($row);
         }
+        (new VisitModel())->is_update($this->visit['id']);
     }
 
     public function stationar_price()
@@ -715,7 +831,7 @@ class VisitPriceModel extends Model
             echo json_encode(array(
                 'status' => "success" ,
                 'message' => $value,
-                'val' => viv('prints/check')."?id=".$this->visit['user_id']."&items=".json_encode($this->post['visit_services'])
+                'val' => viv('prints/check')."?id=".$this->visit['user_id']."&items=".json_encode($this->visit_prices_items)
             ));
         }
     }

@@ -42,7 +42,7 @@ $tb->where_or_serch($where_search);
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include 'tabs.php' ?>
+				<?php include 'tabs_1.php' ?>
 				<!-- Highlighted tabs -->
 				<div class="row">
 
@@ -73,7 +73,7 @@ $tb->where_or_serch($where_search);
 				                        </thead>
 				                        <tbody id="search_display">
 				                            <?php foreach($tb->get_table() as $row): ?>
-				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')">
+				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')" id="VisitIDPrice_<?= $row->visit_id ?>">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
 				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
@@ -166,18 +166,38 @@ $tb->where_or_serch($where_search);
 					$.ajax({
 						type: "GET",
 						url: events,
-						success: function (data) {
-							// console.log(data);
-							if (data == 1) {
-								$('#'+tr).css("background-color", "red");
-								$('#'+tr).css("color", "white");
-								$('#'+tr).fadeOut('slow', function() {
-								 	$(this).remove();
-									sumTo($('.total_cost'));
-								});
-							}else{
-								$('#message_ses').html(data);
-								$('#check_div').html("");
+						success: function (result) {
+							var data = JSON.parse(result);
+							console.log(data);
+
+							if (data.status == "success") {
+								if (data.count == 0) {
+									$('#check_div').html("");
+									$('#VisitIDPrice_'+data.visit_pk).css("background-color", "red");
+									$('#VisitIDPrice_'+data.visit_pk).css("color", "white");
+									$('#VisitIDPrice_'+data.visit_pk).fadeOut('slow', function() {
+										$(this).remove();
+									});
+								}else{
+									$('#'+tr).css("background-color", "red");
+									$('#'+tr).css("color", "white");
+									$('#'+tr).fadeOut('slow', function() {
+										$(this).remove();
+										sumTo($('.total_cost'));
+									});
+								}
+								new Noty({
+									text: data.message,
+									type: 'success'
+								}).show();
+								
+							}else {
+
+								new Noty({
+									text: data.message,
+									type: 'error'
+								}).show();
+								
 							}
 						},
 					});

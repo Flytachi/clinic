@@ -128,14 +128,14 @@ if ($_GET['pk']) {
                     <table class="table table-hover table-sm">
                         <thead class="<?= $classes['table-thead'] ?>">
                             <tr>
-                                <th class="text-left">Дата и время</th>
+                                <th class="text-left">Дата назначения</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>
-                                <th class="text-center" style="width: 150px">Отменить</th>
+                                <th class="text-center" style="width: 150px">Дата оплаты</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost, vp.price_date FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 5") as $row): ?>
+                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'item_cost', vp.price_date FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 5") as $row): ?>
                                 <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
                                     <td><?= date_f($row['add_date'], 1) ?></td>
@@ -152,7 +152,7 @@ if ($_GET['pk']) {
                     <strong>Итого: </strong><strong id="total_title"></strong>
                 </div>
                 <div class="text-right">
-                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-sm btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
                 </div>
 
             </div>
@@ -201,10 +201,10 @@ if ($_GET['pk']) {
                     <table class="table table-hover table-sm">
                         <thead class="<?= $classes['table-thead'] ?>">
                             <tr>
-                                <th class="text-left">Дата и время</th>
+                                <th class="text-left">Дата назначения</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>
-                                <th class="text-center" style="width: 150px">Отменить</th>
+                                <th class="text-center" style="width: 150px">Действия</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -230,7 +230,7 @@ if ($_GET['pk']) {
                     <strong>Итого: </strong><strong id="total_title"></strong>
                 </div>
                 <div class="text-right">
-                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-sm btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
                 </div>
 
             </div>
