@@ -105,7 +105,7 @@ require_once 'callback.php';
 														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
 															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn_viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
 															<?php if ($activity): ?>
 																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 															<?php endif; ?>

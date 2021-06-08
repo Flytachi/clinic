@@ -55,5 +55,6 @@ $classes = array(
     "form-daterange" => "form-control daterange-locale",
 
     "btn_detail" => "btn btn-outline-primary btn-sm legitRipple",
+    "btn_viewing" => "btn btn-outline-primary btn-sm legitRipple",
 )
 ?>
