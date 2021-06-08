@@ -2,26 +2,31 @@
 
 class VisitRoute extends Model
 {
-    public $table = 'visit';
+    public $table = 'visit_services';
+    public $table2 = 'beds';
+    public $_user = 'users';
+    public $_visits = 'visits';
+    public $_beds = 'visit_beds';
+    public $_prices = 'visit_prices';
 
     public function form_out($pk = null)
     {
-        global $db, $patient, $classes;
+        global $db, $patient, $classes, $session;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
             <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
-                    <?php foreach ($db->query("SELECT * from division WHERE level in (5) AND id !=". division()) as $row): ?>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                    <?php foreach ($db->query("SELECT * from divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
                         <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
+
 
             <div class="form-group-feedback form-group-feedback-right row">
 
@@ -34,7 +39,7 @@ class VisitRoute extends Model
                 <div class="col-md-1">
                     <div class="text-right">
                         <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-label">Отправить</span>
                             <span class="ladda-spinner"></span>
                         </button>
                     </div>
@@ -67,7 +72,7 @@ class VisitRoute extends Model
         </form>
         <script type="text/javascript">
 
-            let service = {};
+            var service = {};
 
             $("#search_input").keyup(function() {
                 $.ajax({
@@ -75,31 +80,33 @@ class VisitRoute extends Model
                     url: "<?= ajax('service_table') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1,2",
                         cols: 1
                     },
                     success: function (result) {
-                        let service = {};
+                        var service = {};
                         $('#table_form').html(result);
                     },
                 });
             });
 
-            function table_change(the) {
+            function TableChangeServices(params) {
 
                 $.ajax({
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
                     data: {
-                        divisions: $(the).val(),
+                        divisions: $(params).val(),
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
                         selected: service,
                         types: "1,2",
                         cols: 1
                     },
                     success: function (result) {
-                        let service = {};
+                        var service = {};
                         $('#table_form').html(result);
                     },
                 });
@@ -1022,17 +1029,20 @@ class VisitRoute extends Model
 
     public function clean()
     {
-        if($this->post['package']){
-            $this->save_package();
+        if (is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
+            $this->error("Не назначены услуги!");
         }
-        if (is_array($this->post['service'])) {
-            $this->save_rows();
-        }
-        if ($this->post['accept_date']) {
-            $this->post['accept_date'] = date('Y-m-d H:i:s');
-        }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        // if($this->post['package']){
+        //     $this->save_package();
+        // }
+        // if (is_array($this->post['service'])) {
+        //     $this->save_rows();
+        // }
+        // if ($this->post['accept_date']) {
+        //     $this->post['accept_date'] = date('Y-m-d H:i:s');
+        // }
+        // $this->post = Mixin\clean_form($this->post);
+        // $this->post = Mixin\to_null($this->post);
         return True;
     }
 
@@ -1042,27 +1052,83 @@ class VisitRoute extends Model
         if($this->clean()){
             $db->beginTransaction();
 
-            $object = Mixin\insert($this->table, $this->post);
+            $this->create_or_update_visit();
+            if (is_array($this->post['service'])) {
+
+                foreach ($this->post['service'] as $key => $value) {
+                    
+                    $this->add_visit_service($key, $value);
+                    
+                }
+
+            }
+
+            $db->commit();
+            $this->success();
+        }
+    }
+
+    public function create_or_update_visit()
+    {
+        global $db;
+        $post = array(
+            'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
+            'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
+            'direction' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['direction'] : null,
+            'complaint' => ( isset($this->post['complaint']) ) ? $this->post['complaint'] : null,
+        );
+        $object = Mixin\insert_or_update($this->_visits, $post, 'user_id', "completed IS NULL");
+        if (!intval($object)) {
+            $this->error($object);
+            $db->rollBack();
+        }else{
+            $this->visit_pk = $object;
+            $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+        }
+    }
+
+    public function add_visit_service($key = null, $value)
+    {
+        global $db;
+        $data = $db->query("SELECT * FROM services WHERE id = $value")->fetch();
+        $post['division_id'] = ($this->post['direction']) ? $this->post['division_id'] : $this->post['division_id'][$key];
+
+        $post['visit_id'] = $this->visit_pk;
+        $post['user_id'] = $this->post['user_id'];
+        $post['parent_id'] = ($this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
+        $post['route_id'] = $_SESSION['session_id'];
+        $post['guide_id'] = $this->post['guide_id'];
+        $post['level'] = $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn();
+        $post['status'] = ($this->post['direction']) ? 2 : 1;
+        $post['service_id'] = $data['id'];
+        $post['service_name'] = $data['name'];
+        
+        $count = ($this->post['direction']) ? 1 : $this->post['count'][$key];
+        for ($i=0; $i < $count; $i++) {
+            $post = Mixin\clean_form($post);
+            $post = Mixin\to_null($post);
+            $object = Mixin\insert($this->table, $post);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
             }
-            $service = $db->query("SELECT price, name FROM service WHERE id = {$this->post['service_id']}")->fetch();
-            $post['visit_id'] = $object;
-            $post['user_id'] = $this->post['user_id'];
-            $post['item_type'] = 1;
-            $post['item_id'] = $this->post['service_id'];
-            $post['item_cost'] = $service['price'];
-            $post['item_name'] = $service['name'];
-            $object = Mixin\insert('visit_price', $post);
-            if (intval($object)){
-                $this->error($object);
-                $db->rollBack();
+
+            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
+                $post_price['visit_id'] = $this->visit_pk;
+                $post_price['visit_service_id'] = $object;
+                $post_price['user_id'] = $this->post['user_id'];
+                $post_price['item_type'] = 1;
+                $post_price['item_id'] = $data['id'];
+                $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
+                $post_price['item_name'] = $data['name'];
+                $object = Mixin\insert($this->_prices, $post_price);
+                if (!intval($object)){
+                    $this->error($object);
+                    $db->rollBack();
+                }
             }
-            
-            $db->commit();
-            $this->success();
         }
+        unset($post);
     }
 
     public function save_package()

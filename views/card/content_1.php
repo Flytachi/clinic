@@ -1,7 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
-$header = "Пациент";
+require_once 'callback.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -66,7 +64,7 @@ $header = "Пациент";
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-repo-forked mr-2"></i><?= $title ?>
-							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
+							<?php if ($activity and $patient->direction and $patient->grant_id == $session->session_id): ?>
 								<a class="float-right text-info" data-toggle="modal" data-target="#modal_add_inspection">
 									<i class="icon-plus22 mr-1"></i>Осмотр
 								</a>
@@ -95,29 +93,34 @@ $header = "Пациент";
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($db->query($table_sql) as $row): ?>
-											<tr class="<?= ( isset($row['service_id']) and $row['service_id'] == 1) ? "table-warning" :$table_tr ?>">
-												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row['name'] ?></td>
-												<td class="text-right">
-													<?php if ($row['report_title']): ?>
-														<?php if ( isset($row['service_id']) and $row['service_id'] == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
+										<?php
+										$tb = new Table($db, "visit_services");
+										$tb->set_data("id, service_id, service_name, service_title")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id AND status = 3")->order_by('id ASC');
+										?>
+										<?php foreach ($tb->get_table() as $row): ?>
+											<tr class="<?= ( isset($row->service_id) and $row->service_id == 1) ? "table-warning" :$table_tr ?>">
+												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row->service_name ?></td>
+												<td class="text-right" id="VisitService_tr_<?= $row->id ?>" data-is_new="<?= ($row->service_title) ? '' : 1 ?>">
+													<?php if ($row->service_title): ?>
+														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
+															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 															<?php if ($activity): ?>
-																<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
+																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 															<?php endif; ?>
 														<?php endif; ?>
 													<?php else: ?>
-														<?php if ( isset($row['service_id']) and $row['service_id'] == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
+														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
+															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<button onclick="Update('<?= up_url($row['id'], 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+															<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 														<?php endif; ?>
 													<?php endif; ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
+										
 
 										<?php if ($patient->direction): ?>
 											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
@@ -154,8 +157,6 @@ $header = "Пациент";
 		<div id="modal_report_add" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 				<div class="modal-content border-3 border-info" id="form_card">
-
-					<?php // VisitReport::form(); ?>
 
 				</div>
 			</div>

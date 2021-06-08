@@ -8,9 +8,30 @@ class VisitServicesModel extends Model
 
     public function clean()
     {
+        if ( isset($this->post['service_report']) ) {
+            $report = $this->post['service_report'];
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
+        if ( isset($report) ) {
+            $this->post['service_report'] = $report;
+        }
         return True;
+    }
+
+    public function update()
+    {
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+                exit;
+            }
+            $this->pk = $pk;
+            $this->success();
+        }
     }
 
     public function delete(int $pk)
@@ -50,7 +71,8 @@ class VisitServicesModel extends Model
         echo json_encode(array(
             'status' => 'success',
             'count' => $stat,
-            'visit_pk' => $this->visit_pk,
+            'visit_pk' => ( isset($this->visit_pk) ) ? $this->visit_pk : null,
+            'pk' => ( isset($this->pk) ) ? $this->pk : null,
             'message' => $mess,
         ));
         exit;
@@ -58,10 +80,12 @@ class VisitServicesModel extends Model
 
     public function error($message)
     {
-        $mess = '<div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>';
+        // $mess = '<div class="alert bg-danger alert-styled-left alert-dismissible">
+        //     <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+        //     <span class="font-weight-semibold"> '.$message.'</span>
+        // </div>';
+
+        $mess = $message;
         echo json_encode(array(
             'status' => 'error',
             'message' => $mess,

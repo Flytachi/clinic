@@ -48,7 +48,8 @@ function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
     global $db;
 
     $table_an_exception = array(
-        "sessions"
+        "sessions",
+        "company_constants",
     );
     $lb = ($name_pk) ? $name_pk : "id";
 

@@ -214,6 +214,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												<tr>
+													<th>Document Autosave</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="config_document_autosave" <?= (isset($config->config_document_autosave) and $config->config_document_autosave) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 												
 											</tbody>
 										</table>
@@ -336,6 +346,7 @@ $header = "Панель управления";
 				url: "<?= ajax('master_controller') ?>",
 				data: Object.assign({}, { module: input.name }, $(input).serializeArray()),
 				success: function (data) {
+					console.log(data);
 					if (data == 1) {
 						new Noty({
 							text: "Успешно",

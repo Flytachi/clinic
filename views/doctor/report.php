@@ -10,10 +10,10 @@ $session->is_auth();
 
 <div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
-$pack = $db->query("SELECT report_title, report, service_id FROM visit WHERE id = {$_GET['pk']}")->fetch();
+$pack = $db->query("SELECT service_title, service_report, service_id FROM visit_services WHERE id = {$_GET['pk']}")->fetch();
 ?>
-    <h3 class="text-center"><?= $pack['report_title'] ?></h3>
-    <?= $pack['report'] ?>
+    <h3 class="text-center"><?= $pack['service_title'] ?></h3>
+    <?= $pack['service_report'] ?>
 </div>
 
 <div class="modal-footer">

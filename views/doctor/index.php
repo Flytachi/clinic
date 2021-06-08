@@ -72,7 +72,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                 </thead>
                                 <tbody>
 									<?php foreach($tb->get_table() as $row): ?>
-										<tr id="PatientFailure_tr_<?= $row->id ?>">
+										<tr id="VisitService_tr_<?= $row->id ?>">
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
@@ -103,8 +103,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 													<?php if (!$row->direction): ?>
 														onclick="sendPatient(this)"
 													<?php endif; ?>
-													>Принять</a>
-												-->
+													>Принять</a> -->
+
+												<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 												<?php if($session->session_id == $row->parent_id): ?>
                                                 	<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 												<?php endif; ?>
@@ -132,6 +133,44 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 
 	<script type="text/javascript">
 
+		function VisitUpStatus(id) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "VisitServicesModel",
+					id: id,
+					status: 3,
+					parent_id: "<?= $session->session_id ?>",
+					accept_date: date_format(new Date()),
+				},
+				success: function (result) {
+					var data = JSON.parse(result);
+
+					if (data.status == "success") {
+						new Noty({
+							text: 'Процедура приёма прошла успешно!',
+							type: 'success'
+						}).show();
+						
+						$(`#VisitService_tr_${data.pk}`).css("background-color", "rgb(0, 255, 0)");
+                        $(`#VisitService_tr_${data.pk}`).css("color", "black");
+                        $(`#VisitService_tr_${data.pk}`).fadeOut(900, function() {
+							$(this).remove();
+                        });
+						
+					}else{
+
+						new Noty({
+							text: data.message,
+							type: 'error'
+						}).show();
+
+					}
+ 				},
+			});
+		}
+
 		function FailureVisitService(url) {
 			
 			$.ajax({
@@ -146,9 +185,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 							type: 'success'
 						}).show();
 						
-						$(`#PatientFailure_tr_${data.pk}`).css("background-color", "rgb(244, 67, 54)");
-                        $(`#PatientFailure_tr_${data.pk}`).css("color", "white");
-                        $(`#PatientFailure_tr_${data.pk}`).fadeOut(900, function() {
+						$(`#VisitService_tr_${data.pk}`).css("background-color", "rgb(244, 67, 54)");
+                        $(`#VisitService_tr_${data.pk}`).css("color", "white");
+                        $(`#VisitService_tr_${data.pk}`).fadeOut(900, function() {
 							$(this).remove();
                         });
 						

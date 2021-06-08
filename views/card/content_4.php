@@ -1,7 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
-$header = "Пациент";
+require_once 'callback.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

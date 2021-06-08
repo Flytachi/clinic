@@ -1,3 +1,46 @@
+<?php
+if ( isset($_GET['pk']) ) {
+    $agr = "?pk=".$_GET['pk'];
+    $activity = False;
+    $sql = "SELECT
+                us.id, vs.id 'visit_id', vs.grant_id,
+                us.dateBith, us.numberPhone, us.gender,
+                us.region, us.residenceAddress, vs.priced_date,
+                us.registrationAddress, vs.add_date, vs.accept_date,
+                vs.direction, vs.add_date, vs.discharge_date,
+                vs.complaint, vs.status, vp.item_name, vs.completed
+            FROM users us
+                LEFT JOIN visit vs ON (vs.user_id = us.id)
+                LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
+            WHERE vs.id = {$_GET['pk']} ORDER BY add_date ASC";
+} else if ( isset($_GET['id']) ){
+    $agr = "?id=".$_GET['id'];
+    $activity = True;
+    $sql = "SELECT
+                us.id, vs.id 'visit_id', vs.grant_id,
+                us.dateBith, us.numberPhone, us.gender,
+                us.region, us.residenceAddress,
+                us.registrationAddress, vs.accept_date,
+                vs.direction, vs.add_date, vs.discharge_date,
+                wd.floor, wd.ward, bd.bed, vs.complaint,
+                vs.status, vs.priced_date
+            FROM users us
+                LEFT JOIN visit vs ON (vs.user_id = us.id AND vs.completed IS NULL)
+                LEFT JOIN beds bd ON (bd.user_id=vs.user_id)
+                LEFT JOIN wards wd ON(wd.id=bd.ward_id)
+            WHERE us.id = {$_GET['id']} ORDER BY add_date ASC";
+}
+
+$patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+if (!$patient) {
+    ?>
+    <script type="text/javascript">
+        location = "<?= DIR ?>/error/404<?= EXT ?>";
+    </script>
+    <?php
+}
+// prit($patient);
+?>
 <div class="<?= $classes['card'] ?>">
 
     <div class="<?= $classes['card-header'] ?>">
@@ -27,36 +70,53 @@
 
                         <div class="form-group row">
 
-                            <label class="col-md-4"><b>Статус:</b></label>
+                            <label class="col-md-4"><b>Статус визита:</b></label>
                             <div class="col-md-8 text-right">
 
-                                <?php if ( isset($row->status) and $row->status ): ?>
-                                    <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-                                <?php else: ?>
-                                    <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
-                                <?php endif; ?>
-
+                                <?php
+                                switch ($patient->status):
+                                    case 1:
+                                        ?>
+                                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
+                                        <?php
+                                        break;
+                                    case 2:
+                                        ?>
+                                        <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+                                        <?php
+                                        break;
+                                    default:
+                                        ?>
+                                        <?php if ($patient->priced_date): ?>
+                                            <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+                                        <?php else: ?>
+                                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+                                        <?php endif; ?>
+                                        <?php
+                                        break;
+                                endswitch;
+                                ?>
                             </div>
 
 
                             <label class="col-md-4"><b>Дата рождение:</b></label>
     						<div class="col-md-8 text-right">
-    							<?= date('d.m.Y', strtotime($patient->birth_date)) ?>
+    							<?= date('d.m.Y', strtotime($patient->dateBith)) ?>
     						</div>
 
                             <label class="col-md-4"><b>Адрес проживания:</b></label>
     						<div class="col-md-8 text-right">
-    							<?= $patient->region ?> <?= $patient->address_residence ?>
+    							<?= $patient->region ?> <?= $patient->residenceAddress ?>
     						</div>
 
                             <label class="col-md-4"><b>Адрес прописки:</b></label>
 				            <div class="col-md-8 text-right">
-                               <?= $patient->region ?> <?= $patient->address_registration ?>
+                               <?= $patient->region ?> <?= $patient->registrationAddress ?>
     						</div>
 
-                            <label class="col-md-4"><b>Дата назначения визита:</b></label>
+                            <label class="col-md-4"><b>Дата визита:</b></label>
     						<div class="col-md-8 text-right">
-    							<?= date('d.m.Y  H:i', strtotime($patient->add_date)) ?>
+    							<?= date('d.m.Y  H:i', strtotime($patient->accept_date)) ?>
     						</div>
 
                         </div>
@@ -81,7 +141,7 @@
 
                             <label class="col-md-3"><b>Телефон:</b></label>
     						<div class="col-md-9 text-right">
-    							<?= $patient->phone_number ?>
+    							<?= $patient->numberPhone ?>
     						</div>
 
                             <label class="col-md-3"><b>Пол:</b></label>
