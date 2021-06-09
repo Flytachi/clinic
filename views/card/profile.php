@@ -284,14 +284,14 @@
                         <div class="text-right">
                             <?php
                             if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
-                                $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-user_id="'.$patient->id.'"';
+                                $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-pk="'.$patient->visit_id.'"';
                                 $button_inner = "Выписать";
                             }else {
-                                $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-user_id="'.$patient->id.'"';
+                                $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-pk="'.$patient->visit_id.'"';
                                 $button_inner = "Завершить";
                             }
                             ?>
-                            <button data-href="<?= up_url($patient->id, 'VisitFinish') ?>" id="sweet_visit_finish" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                            <button id="sweet_visit_finish" data-href="<?= up_url($patient->visit_id, 'VisitFinish') ?>" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
                                 <i class="icon-paste2"></i> <?= $button_inner ?>
                             </button>
                         </div>

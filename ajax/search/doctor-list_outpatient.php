@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.service_name, vs.route_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id",
@@ -31,8 +31,8 @@ $tb->set_self(viv('doctor/list_outpatient'));
                     <td><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td>
-                        <?php foreach($db->query("SELECT service_name FROM visit_services WHERE visit_id = $row->id AND status = 3 and parent_id = $session->session_id") as $serv): ?>
-                            <?= $serv['service_name'] ?><br>
+                        <?php foreach($db->query("SELECT service_name, service_title FROM visit_services WHERE visit_id = $row->id AND status = 3 and parent_id = $session->session_id") as $serv): ?>
+                            <span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span><br>
                         <?php endforeach; ?>
                     </td>
                     <td>
@@ -42,13 +42,13 @@ $tb->set_self(viv('doctor/list_outpatient'));
                     <td class="text-center">
                         <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-                            <a href="<?= viv('card/content_1') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Осмотр Врача</a>
-                            <a href="<?= viv('card/content_3') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
+                            <a href="<?= viv('card/content_1') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-repo-forked"></i>Осмотр Врача</a>
+                            <a href="<?= viv('card/content_3') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-add"></i>Добавить визит</a>
                             <?php if(module('module_laboratory')): ?>
-                                <a href="<?= viv('card/content_5') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+                                <a href="<?= viv('card/content_5') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
                             <?php endif; ?>
                             <?php if(module('module_diagnostic')): ?>
-                                <a href="<?= viv('card/content_6') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
+                                <a href="<?= viv('card/content_6') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
                             <?php endif; ?>
                         </div>
                     </td>

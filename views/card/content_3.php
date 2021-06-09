@@ -53,7 +53,7 @@ require_once 'callback.php';
 									<thead class="<?= $classes['table-thead'] ?>">
 										<tr>
 											<th>№</th>
-				                            <th>Специалист</th>
+				                            <th>Отдел/Специалист</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
 				                            <th>Мед услуга</th>
@@ -64,14 +64,18 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND route_id = $session->session_id")->order_by('add_date DESC');
+										$tb->set_data("id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND route_id = $session->session_id")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
 												<td>
-													<?= level_name($row->parent_id) ." ". division_name($row->parent_id) ?>
-													<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php if($row->parent_id): ?>
+														<?= division_title($row->parent_id) ?>
+														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php else: ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+													<?php endif; ?>
 												</td>
 												<td><?= ($row->accept_date) ? date_f($row->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
@@ -99,10 +103,12 @@ require_once 'callback.php';
 														<?php if ( in_array($row->status, [3,5,7]) ): ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
 														<?php endif; ?>
+														<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<a <?= ($row->completed) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-														<?php if ($patient->direction and !$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
+														
+														<?php /*if ($patient->direction and !$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
 															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
-														<?php endif; ?>
+														<?php endif;*/ ?>
 													</div>
 												</td>
 											</tr>
@@ -171,20 +177,36 @@ require_once 'callback.php';
 			});
 		};
 
-		function Delete(url, tr) {
-            event.preventDefault();
-            $.ajax({
+		function Delete(events, tr) {
+			$.ajax({
 				type: "GET",
-				url: url,
-				success: function (data) {
-                    $(tr).css("background-color", "rgb(244, 67, 54)");
-                    $(tr).css("color", "white");
-                    $(tr).fadeOut(900, function() {
-                        $(tr).remove();
-                    });
+				url: events,
+				success: function (result) {
+					var data = JSON.parse(result);
+
+					if (data.status == "success") {
+
+						$(tr).css("background-color", "red");
+						$(tr).css("color", "white");
+						$(tr).fadeOut('slow', function() {
+							$(this).remove();
+						});
+						new Noty({
+							text: data.message,
+							type: 'success'
+						}).show();
+						
+					}else {
+
+						new Noty({
+							text: data.message,
+							type: 'error'
+						}).show();
+						
+					}
 				},
 			});
-        };
+		};
 	</script>
 
     <!-- Footer -->

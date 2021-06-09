@@ -98,7 +98,7 @@ require_once 'callback.php';
 										$tb->set_data("id, service_id, service_name, service_title")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id AND status = 3")->order_by('id ASC');
 										?>
 										<?php foreach ($tb->get_table() as $row): ?>
-											<tr class="<?= ( isset($row->service_id) and $row->service_id == 1) ? "table-warning" :$table_tr ?>">
+											<tr id="TR_<?= $row->id ?>" class="list_services <?= ( isset($row->service_id) and $row->service_id == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row->service_name ?></td>
 												<td class="text-right" id="VisitService_tr_<?= $row->id ?>" data-is_new="<?= ($row->service_title) ? '' : 1 ?>">
 													<?php if ($row->service_title): ?>
@@ -117,6 +117,8 @@ require_once 'callback.php';
 															<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 														<?php endif; ?>
 													<?php endif; ?>
+
+													<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отмена</button>
 												</td>
 											</tr>
 										<?php endforeach; ?>
@@ -197,7 +199,7 @@ require_once 'callback.php';
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<?php (new VisitInspectionModel)->form() ?>
+					<?php //(new VisitInspectionModel)->form() ?>
 
 				</div>
 			</div>
@@ -250,6 +252,44 @@ require_once 'callback.php';
 					},
 				});
 			};
+
+			function FailureVisitService(url) {
+			
+				$.ajax({
+					type: "GET",
+					url: url,
+					success: function (result) {
+						var data = JSON.parse(result);
+
+						if (data.status == "success") {
+							var list = document.querySelectorAll(".list_services");
+				
+							if (list.length == 1) {
+								location = "<?= viv('doctor/index') ?>";
+							}else{
+								new Noty({
+									text: 'Процедура отказа прошла успешно!',
+									type: 'success'
+								}).show();
+								
+								$(`#TR_${data.pk}`).css("background-color", "rgb(244, 67, 54)");
+								$(`#TR_${data.pk}`).css("color", "white");
+								$(`#TR_${data.pk}`).fadeOut(900, function() {
+									$(this).remove();
+								});
+							}
+							
+						}else{
+
+							new Noty({
+								text: data.message,
+								type: 'error'
+							}).show();
+
+						}
+					},
+				});
+			}
 
 		</script>
 	<?php endif; ?>

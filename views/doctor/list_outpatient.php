@@ -4,7 +4,7 @@ $session->is_auth(5);
 $header = "Амбулаторные пациенты";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.service_name, vs.route_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id",

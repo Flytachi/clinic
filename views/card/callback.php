@@ -31,7 +31,7 @@ if ( isset($_GET['pk']) ) {
             WHERE v.id = {$_GET['pk']}";
 
     $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-    if (!$patient) {
+    if (!$patient or ($activity and $patient->completed) ) {
         Mixin\error('404');
     }
 } else {

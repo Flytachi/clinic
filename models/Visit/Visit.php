@@ -837,6 +837,7 @@ class VisitModel extends Model
         global $db;
         $user = $db->query("SELECT user_id FROM $this->table WHERE id = $pk")->fetchColumn();
         $data = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk")->rowCount();
+        $data_update = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk AND status IN(1,2,3,5)")->rowCount();
 
         if ($data == 0) {
 
@@ -848,6 +849,14 @@ class VisitModel extends Model
             return null;
 
         } else {
+
+            if ($data_update == 0) {
+                $object = Mixin\update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
+                if(!intval($object)){
+                    return $object;
+                }
+                $this->status_update($user);
+            }
             return $data;
         }
         
