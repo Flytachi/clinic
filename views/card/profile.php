@@ -30,10 +30,16 @@
                             <label class="col-md-4"><b>Статус:</b></label>
                             <div class="col-md-8 text-right">
 
-                                <?php if ( isset($row->status) and $row->status ): ?>
-                                    <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+                                <?php if ( $patient->direction ): ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Стационарный</span>
                                 <?php else: ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+                                <?php endif; ?>
+
+                                <?php if ( $patient->completed ): ?>
                                     <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
+                                <?php else: ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
                                 <?php endif; ?>
 
                             </div>
@@ -41,7 +47,7 @@
 
                             <label class="col-md-4"><b>Дата рождение:</b></label>
     						<div class="col-md-8 text-right">
-    							<?= date('d.m.Y', strtotime($patient->birth_date)) ?>
+    							<?= date_f($patient->birth_date) ?>
     						</div>
 
                             <label class="col-md-4"><b>Адрес проживания:</b></label>
@@ -67,6 +73,17 @@
 
                         <div class="form-group row">
 
+                        <label class="col-md-4"><b>Статус пациента:</b></label>
+                            <div class="col-md-8 text-right">
+
+                                <?php if ( $patient->status ): ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
+                                <?php else: ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
+                                <?php endif; ?>
+
+                            </div>
+
     						<label class="col-md-3"><b>ID:</b></label>
     						<div class="col-md-9 text-right">
     							<?= addZero($patient->id) ?>
@@ -89,6 +106,13 @@
     							<?= ($patient->gender) ? "Мужской": "Женский" ?>
     						</div>
 
+                            <?php if ($patient->completed): ?>
+                                <label class="col-md-4"><b>Дата завершения визита:</b></label>
+                                <div class="col-md-8 text-right">
+                                    <?= date('d.m.Y  H:i', strtotime($patient->completed)) ?>
+                                </div>
+                            <?php endif; ?>
+                            
     					</div>
 
                     </div>

@@ -3,6 +3,9 @@ require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Пациент ".addZero($_GET['id']);
 $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+if (!$patient) {
+	Mixin\error('404');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,12 +75,12 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 										   <label class="col-md-4"><b>Адрес проживание:</b></label>
 										   <div class="col-md-8 text-right">
-											   <?= $patient->region ?> <?= $patient->residenceAddress ?>
+											   <?= $patient->region ?> <?= $patient->address_residence ?>
 										   </div>
 
 										   <label class="col-md-4"><b>Адрес прописки:</b></label>
 										   <div class="col-md-8 text-right">
-											   <?= $patient->region ?> <?= $patient->registrationAddress ?>
+											   <?= $patient->region ?> <?= $patient->address_registration ?>
 										   </div>
 
 									   </div>
@@ -95,12 +98,12 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
 										   <label class="col-md-3"><b>Телефон:</b></label>
 										   <div class="col-md-9 text-right">
-											   <?= $patient->numberPhone ?>
+											   <?= $patient->phone_number ?>
 										   </div>
 
 										   <label class="col-md-4"><b>Дата рождение:</b></label>
 										   <div class="col-md-8 text-right">
-											   <?= date('d.m.Y', strtotime($patient->dateBith)) ?>
+											   <?= date_f($patient->birth_date) ?>
 										   </div>
 
 										   <label class="col-md-3"><b>Пол:</b></label>
@@ -195,18 +198,55 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
                                 <thead>
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>№</th>
-										<th style="width: 16%">Специолист</th>
+										<th style="width: 16%">№ Визита</th>
+			                            <th>Жалоба</th>
 										<th style="width: 11%">Дата визита</th>
 										<th style="width: 11%">Дата завершения</th>
-			                            <th>Мед услуга</th>
-										<th style="width: 16%">Напрвитель</th>
 										<th>Тип визита</th>
 										<th>Статус</th>
                                         <th class="text-right" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+
+									<?php
+									$tb = new Table($db, "visits");
+									$search = $tb->get_serch();
+									$search_array = array(
+										"user_id = $patient->id", 
+										"user_id = $patient->id"
+									);
+									$tb->where_or_serch($search_array)->order_by('add_date DESC')->set_limit(20);
+									?>
+									<?php foreach($tb->get_table(1) as $row): ?>
+										<tr>
+                                            <td><?= $row->count ?></td>
+                                            <td><?= $row->id ?></td>
+                                            <td><?= $row->complaint ?></td>
+                                            <td><?= date_f($row->add_date, 1) ?></td>
+                                            <td><?= date_f($row->completed, 1) ?></td>
+											<td>
+												<?php if ($row->direction): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Стационарный</span>
+												<?php else: ?>
+													<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+												<?php endif; ?>
+											</td>
+											<td>
+												<?php if ($row->completed): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершён</span>
+												<?php else: ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Не завершён</span>
+												<?php endif; ?>
+											</td>
+											<td class="text-right">
+												<a href="<?= viv('card/content_4') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn_detail'] ?>">Просмотр</a>
+											</td>
+                                        </tr>
+									<?php endforeach; ?>
+
                                     <?php
+									/*
                                     $i = 1;
 									$sql = "SELECT
 												vs.id, vs.route_id,
@@ -283,7 +323,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											</td>
                                         </tr>
                                         <?php
-                                    }
+                                    }*/
                                     ?>
                                 </tbody>
                             </table>

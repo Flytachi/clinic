@@ -1,5 +1,10 @@
 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-    <?php if (!$activity or !permission([11])): ?>
+    <?php if ( !$patient->direction and !$activity ): ?>
+        <li class="nav-item">
+            <a href="<?= viv('card/content_4').$agr ?>" class="nav-link <?= viv_link('card/content_4') ?> legitRipple" style="white-space:nowrap;"><i class="icon-vcard mr-1"></i>Мои заключения</a>
+        </li>
+    <?php endif; ?>
+    <?php if ( $activity ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content_1').$agr ?>" class="nav-link <?= viv_link('card/content_1') ?> legitRipple" style="white-space:nowrap;">
                 <i class="icon-repo-forked mr-1"></i>
@@ -23,11 +28,6 @@
     <?php if (!$activity or !permission([11])): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content_3').$agr ?>" class="nav-link <?= viv_link('card/content_3') ?> legitRipple" style="white-space:nowrap;"><i class="icon-add mr-1"></i>Назначенные визиты</a>
-        </li>
-    <?php endif; ?>
-    <?php if (!$activity or permission([5])): ?>
-        <li class="nav-item">
-            <a href="<?= viv('card/content_4').$agr ?>" class="nav-link <?= viv_link('card/content_4') ?> legitRipple" style="white-space:nowrap;"><i class="icon-vcard mr-1"></i>Мои заключения</a>
         </li>
     <?php endif; ?>
     <?php if(module('module_laboratory')): ?>

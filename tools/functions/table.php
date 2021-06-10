@@ -295,7 +295,7 @@ class Table
         }
         $get = $this->db->query($this->sql)->fetchAll(PDO::FETCH_OBJ);
         if ($count_status) {
-            $off_count = ($this->limit) ? $offset : 0 + 1;
+            $off_count = (($this->limit) ? $offset : 0) + 1;
             foreach ($get as $key => $value) {
                 $get[$key]->{'count'} = $off_count++;
             }

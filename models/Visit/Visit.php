@@ -531,9 +531,11 @@ class VisitModel extends Model
         $post = array(
             'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
             'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
-            'direction' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['direction'] : null,
+            'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
             'complaint' => ( isset($this->post['complaint']) ) ? $this->post['complaint'] : null,
         );
+        dd($post);
+        $this->dd();
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
             $this->error($object);
@@ -624,9 +626,7 @@ class VisitModel extends Model
             if (is_array($this->post['service'])) {
 
                 foreach ($this->post['service'] as $key => $value) {
-                    
                     $this->add_visit_service($key, $value);
-                    
                 }
 
             }else{

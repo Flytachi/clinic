@@ -40,24 +40,10 @@ require_once 'callback.php';
 						if ($patient->direction) {
 							$title = "Обход";
 							$table_label = "Мед Услуга / Дата и время осмотра";
-							if ($activity) {
-								$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
-							} else {
-								if ($patient->completed) {
-									$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
-													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\")";
-								} else {
-									$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed, vs.service_id FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id)
-													WHERE vs.user_id = $patient->id AND vs.parent_id = $patient->grant_id AND vs.accept_date IS NOT NULL AND service_id != 1 AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"CURRENT_TIMESTAMP()\")";
-								}
-
-							}
-
 							$table_tr = "table-info";
 						} else {
 							$title = "Осмотр";
 							$table_label = "Мед Услуга";
-							$table_sql = "SELECT vs.id, vs.report_title, sc.name, vs.completed FROM visit vs LEFT JOIN service sc ON (vs.service_id = sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
 							$table_tr = "";
 						}
 						?>
@@ -114,11 +100,15 @@ require_once 'callback.php';
 														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
 															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+															<?php if ( $activity ): ?>
+																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
+															<?php endif; ?>
 														<?php endif; ?>
 													<?php endif; ?>
-
-													<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отмена</button>
+													
+													<?php if ( $activity ): ?>
+														<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отмена</button>
+													<?php endif; ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
@@ -130,7 +120,7 @@ require_once 'callback.php';
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 													<td><?= get_full_name($row['parent_id']) ?></td>
 													<td class="text-right">
-														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="<?= $classes['btn_detail'] ?> legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 													</td>
 												</tr>
 											<?php endforeach; ?>
@@ -305,7 +295,6 @@ require_once 'callback.php';
 				},
 			});
 		};
-
 	</script>
 
     <!-- Footer -->

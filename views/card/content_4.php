@@ -49,34 +49,51 @@ require_once 'callback.php';
 				                        <tr>
 				                            <th>№</th>
 				                            <th>Мед услуга</th>
-				                            <th>Тип визита</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
+											<th>Статус</th>
 				                            <th class="text-center">Действия</th>
 				                        </tr>
 				                    </thead>
 				                    <tbody>
 										<?php
-										$i = 1;
-										foreach ($db->query("SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, vs.laboratory, sc.name FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id) WHERE vs.user_id = $patient->id AND vs.parent_id = {$_SESSION['session_id']} AND completed IS NOT NULL ORDER BY id DESC") as $row) {
+										$tb = new Table($db, "visit_services");
+										$tb->set_data("id, service_name, accept_date, completed, status")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id")->order_by('add_date DESC');
 										?>
+										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr>
-												<td><?= $i++ ?></td>
-												<td><?= $row['name'] ?></td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+												<td><?= $row->count ?></td>
+												<td><?= $row->service_name ?></td>
+												<td><?= ($row->accept_date) ? date_f($row->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td>
+													<?php if ($row->status == 1): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+													<?php elseif ($row->status == 2): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+													<?php elseif ($row->status == 3): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+													<?php elseif ($row->status == 5): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Возврат</span>
+													<?php elseif ($row->status == 6): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Отменённый</span>
+													<?php elseif ($row->status == 7): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершён</span>
+													<?php else: ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Неизвестный</span>
+													<?php endif; ?>
+												</td>
+												<td class="text-right">
+													<button type="button" class="<?= $classes['btn_viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<?php if ( in_array($row->status, [3,5,7]) ): ?>
+															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+														<?php endif; ?>
+														<a <?= ($row->completed) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													</div>
 												</td>
 											</tr>
-										<?php
-										}
-									 	?>
+										<?php endforeach; ?>
 				                    </tbody>
 				                </table>
 				            </div>
@@ -109,9 +126,9 @@ require_once 'callback.php';
 			$.ajax({
 				type: "GET",
 				url: events,
-				success: function (data) {
+				success: function (result) {
 					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
+					$('#report_show').html(result);
 				},
 			});
 		};

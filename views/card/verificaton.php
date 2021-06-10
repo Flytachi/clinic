@@ -32,6 +32,8 @@ if ($_GET['main']) {
 
     if ($_GET['stage'] == 1) {
         $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND route_id = $session->session_id AND completed IS NULL";
+        // echo 0;
+        // exit;
     } else if($_GET['stage'] == 2) {
         $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_title IS NOT NULL";
     } else if($_GET['stage'] == 3) {

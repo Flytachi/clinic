@@ -55,97 +55,67 @@ require_once 'callback.php';
 									<thead class="<?= $classes['table-thead'] ?>">
 										<tr>
 											<th>№</th>
-											<th style="width: 16%">Специолист</th>
-											<th style="width: 11%">Дата визита</th>
-											<th style="width: 11%">Дата завершения</th>
-											<th>Мед услуга</th>
-											<th style="width: 16%">Напрвитель</th>
-											<th>Тип визита</th>
+				                            <th>Отдел/Специалист</th>
+											<th>Дата визита</th>
+											<th>Дата завершения</th>
+				                            <th>Мед услуга</th>
+											<th>Напрвитель</th>
 											<th>Статус</th>
-											<th class="text-right" style="width:210px">Действия</th>
+											<th class="text-right">Действия</th>
 										</tr>
 									</thead>
 									<tbody>
 										<?php
-										$i = 1;
-										$sql = "SELECT
-													vs.id, vs.route_id,
-													vs.parent_id, vs.grant_id,
-													vs.direction, vs.add_date,
-													vs.status, vs.completed,
-													sc.name, vs.laboratory,
-													vs.service_id
-												FROM visit vs
-													LEFT JOIN service sc ON(vs.service_id=sc.id)
-												WHERE
-													vs.user_id = $patient->id AND 
-													vs.id != $patient->visit_id AND 
-													(vs.status != 5 OR vs.status IS NULL) AND
-													(
-														vs.direction IS NULL OR
-														(vs.direction IS NOT NULL AND vs.service_id = 1)
-													)
-												ORDER BY vs.add_date DESC";
-										foreach($db->query($sql) as $row) {
-											?>
-											<?php if ($row['laboratory']): ?>
-												<tr onclick="Change_lab(this, <?= $row['id'] ?>)" data-stat="0">
-											<?php else: ?>
-												<tr>
-											<?php endif; ?>
-												<td><?= $i++ ?></td>
+										$tb = new Table($db, "visit_services");
+										$tb->set_data("id, route_id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND route_id != $session->session_id AND parent_id != $session->session_id")->order_by('add_date DESC');
+										?>
+										<?php foreach ($tb->get_table(1) as $row): ?>
+											<tr id="TR_<?= $row->id ?>">
+												<td><?= $row->count ?></td>
 												<td>
-													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
-													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
-												</td>
-												<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['name'] ?></td>
-												<td>
-													<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-													<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
-												</td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td>
-													<?php if ($row['completed']): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
+													<?php if($row->parent_id): ?>
+														<?= division_title($row->parent_id) ?>
+														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
 													<?php else: ?>
-														<?php if ($row['status'] == 0): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-														<?php elseif ($row['status'] == 1): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-														<?php elseif ($row['status'] == 2): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-														<?php else: ?>
-															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-														<?php endif; ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+													<?php endif; ?>
+												</td>
+												<td><?= ($row->accept_date) ? date_f($row->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= $row->service_name ?></td>
+												<td>
+													<?= division_title($row->route_id) ?>
+													<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
+												</td>
+												<td>
+													<?php if ($row->status == 1): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+													<?php elseif ($row->status == 2): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+													<?php elseif ($row->status == 3): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+													<?php elseif ($row->status == 5): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Возврат</span>
+													<?php elseif ($row->status == 6): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Отменённый</span>
+													<?php elseif ($row->status == 7): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершён</span>
+													<?php else: ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Неизвестный</span>
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
-													<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<?php if (module('module_laboratory') and $row['laboratory']): ?>
-															<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
-															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-														<?php else: ?>
-															<?php if ($row['direction'] and $row['service_id'] == 1): ?>
-																<a href="<?= viv('card/content_1') ?>?pk=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
-																<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
-																<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_4').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer"></i>Акт сверки</a>
-															<?php else: ?>
-																<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
-																<?php if (permission([2,32]) and (level($row['route_id']) == 2 or level($row['route_id']) == 32)): ?>
-																	<a onclick="Update('<?= up_url($row['id'], 'VisitModel') ?>')" class="dropdown-item"><i class="icon-users"></i> Направитель</a>
-																<?php endif; ?>
-																<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-															<?php endif; ?>
+													<button type="button" class="<?= $classes['btn_viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+														<?php if ( in_array($row->status, [3,5,7]) ): ?>
+															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+															<a <?= ($row->completed) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													</div>
 												</td>
 											</tr>
-											<?php
-										}
-										?>
+										<?php endforeach; ?>
+										
 									</tbody>
 								</table>
 							</div>
