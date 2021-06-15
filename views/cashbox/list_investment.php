@@ -46,7 +46,7 @@ $tb->additions('LEFT JOIN users us ON(us.id=iv.user_id)')->where_or_serch($searc
                         <div class="header-elements">
                             <form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -72,7 +72,7 @@ $tb->additions('LEFT JOIN users us ON(us.id=iv.user_id)')->where_or_serch($searc
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
                                             <td class="text-right">
-                                                <a href="<?= viv('cashbox/detail_investment') ?>?pk=<?= $row->user_id ?>" class="<?= $classes['btn_detail'] ?>">Детально</a>
+                                                <a href="<?= viv('cashbox/detail_investment') ?>?pk=<?= $row->user_id ?>" class="<?= $classes['btn-viewing'] ?>">Детально</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

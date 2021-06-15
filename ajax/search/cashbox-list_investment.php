@@ -27,7 +27,7 @@ $tb->set_self(viv('cashbox/list_investment'));
                     <td><?= addZero($row->user_id) ?></td>
                     <td class="text-center"><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
                     <td class="text-center">
-                        <a href="<?= viv('cashbox/detail_investment') ?>?pk=<?= $row->user_id ?>" class="<?= $classes['btn_detail'] ?>">Детально</a>
+                        <a href="<?= viv('cashbox/detail_investment') ?>?pk=<?= $row->user_id ?>" class="<?= $classes['btn-viewing'] ?>">Детально</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

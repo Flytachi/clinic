@@ -44,7 +44,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 						<div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -150,7 +150,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 													</td>
 												<?php endif; ?> -->
 											<td class="text-center">
-												<button type="button" class="<?= $classes['btn_detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+												<button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
 													<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
@@ -179,8 +179,8 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 
 	<div id="modal_update" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-full">
-			<div class="modal-content border-3 border-info">
-				<div class="modal-header bg-info">
+			<div class="<?= $classes['modal-global_content'] ?>">
+				<div class="<?= $classes['modal-global_header'] ?>">
 					<h5 class="modal-title">Добавить/Редактировать пациента <span id="vis_title"></h5>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>

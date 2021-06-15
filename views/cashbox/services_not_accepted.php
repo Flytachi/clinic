@@ -49,7 +49,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                         <h5 class="card-title">Не принятые услуги</h5>
                         <div class="header-elements">
                             <div class="form-group-feedback form-group-feedback-right">
-                                <input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
+                                <input type="search" class="<?= $classes['input-search'] ?>" id="search_input" placeholder="Введите ID или имя">
                                 <div class="form-control-feedback text-success">
                                     <i class="icon-search4 font-size-base text-muted"></i>
                                 </div>

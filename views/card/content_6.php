@@ -45,10 +45,24 @@ is_module('module_diagnostic');
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 								<?php if (module('module_zetta_pacs')): ?>
-									<?php $zeT = zeTTa_data(); ?>
-									<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
-										ZeTTa-PACS
-									</a>
+									<?php 
+									$zeT = zeTTa_data();
+									$message_z = "";
+									foreach ($zeT as $key => $value) {
+										if (!$value) {
+											$message_z .= "Данных о $key нет!<br>";
+										}
+									}
+									?>
+									<?php if ($message_z == ""): ?>
+										<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
+											ZeTTa-PACS
+										</a>
+									<?php else: ?>
+										<a onclick="swal('<?= $message_z ?>')" class="float-right text-violet mr-2">
+											ZeTTa-PACS
+										</a>
+									<?php endif; ?>
 								<?php endif; ?>
 							<?php endif; ?>
 						</legend>
@@ -105,7 +119,7 @@ is_module('module_diagnostic');
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<button type="button" class="<?= $classes['btn_viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<?php if( $activity and $row->status == 1 ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
@@ -144,8 +158,8 @@ is_module('module_diagnostic');
 	<?php if ($activity): ?>
 		<div id="modal_route" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
+				<div class="<?= $classes['modal-global_content'] ?>">
+					<div class="<?= $classes['modal-global_header'] ?>">
 						<h6 class="modal-title">Назначить визит</h6>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
@@ -168,7 +182,7 @@ is_module('module_diagnostic');
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg" id="modal_class_show">
-			<div class="modal-content border-3 border-info" id="report_show">
+			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
 
 			</div>
 		</div>

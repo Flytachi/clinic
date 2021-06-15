@@ -98,7 +98,7 @@ require_once 'callback.php';
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<button type="button" class="<?= $classes['btn_viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<?php if( $activity and $row->status == 1 ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
@@ -137,8 +137,8 @@ require_once 'callback.php';
 	<?php if ($activity): ?>
 		<div id="modal_route" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
+				<div class="<?= $classes['modal-global_content'] ?>">
+					<div class="<?= $classes['modal-global_header'] ?>">
 						<h6 class="modal-title">Назначить визит</h6>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
@@ -161,7 +161,7 @@ require_once 'callback.php';
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg" id="modal_class_show">
-			<div class="modal-content border-3 border-info" id="report_show">
+			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
 
 			</div>
 		</div>

@@ -108,11 +108,11 @@ function zeTTa_data()
     foreach ($comp as $value) {
         $company->{$value->const_label} = $value->const_value;
     }
-    $data->IP = $company->const_zetta_pacs_IP;
+    $data->IP = ( isset($company->const_zetta_pacs_IP) ) ? $company->const_zetta_pacs_IP : '';
     $data->LID = $stmt->pacs_login;
     $data->LPW = $stmt->pacs_password;
-    $data->LICD = $company->const_zetta_pacs_LICD;
-    $data->VTYPE = $company->const_zetta_pacs_VTYPE;
+    $data->LICD = ( isset($company->const_zetta_pacs_LICD) ) ? $company->const_zetta_pacs_LICD : '';
+    $data->VTYPE = ( isset($company->const_zetta_pacs_VTYPE) ) ? $company->const_zetta_pacs_VTYPE : '';
     return $data;
 }
 

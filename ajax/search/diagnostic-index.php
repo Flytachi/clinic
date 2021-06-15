@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, v.complaint")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
@@ -55,13 +55,20 @@ $tb->set_self(viv('diagnostic/index'));
 						<?php endif; ?>
 					</td>
 					<td class="text-center">
-						<!-- <a href="<?= up_url($row->id, 'VisitUpStatus') ?>&user_id=<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row->user_id ?>" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
-							<?php if (!$row->direction): ?>
-								onclick="sendPatient(this)"
-							<?php endif; ?>
-							>Принять</a> -->
+						<?php if (!division_assist()): ?>
+							<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+						<?php else: ?>
+							<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
+								<?php if (!$row->direction): ?>
+									onclick="sendPatient(this)"
+								<?php endif; ?>
+								>Принять</button>
+							<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
+						<?php endif; ?>
 
-						<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+						<?php if ($row->complaint): ?>
+							<button onclick="swal('<?= $row->complaint ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
+						<?php endif; ?>
 						<?php if($session->session_id == $row->parent_id): ?>
 							<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 						<?php endif; ?>

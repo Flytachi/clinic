@@ -152,7 +152,7 @@ if ($_GET['pk']) {
                     <strong>Итого: </strong><strong id="total_title"></strong>
                 </div>
                 <div class="text-right">
-                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-sm btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
                 </div>
 
             </div>
@@ -230,7 +230,7 @@ if ($_GET['pk']) {
                     <strong>Итого: </strong><strong id="total_title"></strong>
                 </div>
                 <div class="text-right">
-                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="btn btn-sm btn-outline-primary legitRipple" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
                 </div>
 
             </div>

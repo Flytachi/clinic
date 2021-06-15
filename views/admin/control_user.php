@@ -104,7 +104,7 @@ $header = "Визиты";
 						$sql, 
 						$sql." AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))"
 					);
-					$tb->where_or_serch($where_search)->set_limit(20);
+					$tb->where_or_serch($where_search);
 					?>
 					<div class="<?= $classes['card'] ?>">
 
@@ -117,7 +117,7 @@ $header = "Визиты";
 							</div>
 						</div>
 
-						<div class="card-body">
+						<div class="card-body" >
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered" id="table">
@@ -205,6 +205,7 @@ $header = "Визиты";
 	<!-- /page content -->
 
     <script type="text/javascript">
+
         function Change(id, stat = null) {
             event.preventDefault();
             $.ajax({

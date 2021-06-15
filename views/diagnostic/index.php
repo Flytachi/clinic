@@ -8,7 +8,7 @@ if (division_assist() == 2) {
 $header = "Приём пациетов";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, v.complaint")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
@@ -49,7 +49,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 						<div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -103,13 +103,20 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
-												<!-- <a href="<?= up_url($row->id, 'VisitUpStatus') ?>&user_id=<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row->user_id ?>" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
-													<?php if (!$row->direction): ?>
-														onclick="sendPatient(this)"
-													<?php endif; ?>
-													>Принять</a> -->
+												<?php if (!division_assist()): ?>
+													<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+                                            	<?php else: ?>
+                                            		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
+														<?php if (!$row->direction): ?>
+															onclick="sendPatient(this)"
+														<?php endif; ?>
+                                            			>Принять</button>
+													<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
+                                            	<?php endif; ?>
 
-												<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+												<?php if ($row->complaint): ?>
+													<button onclick="swal('<?= $row->complaint ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
+												<?php endif; ?>
 												<?php if($session->session_id == $row->parent_id): ?>
                                                 	<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 												<?php endif; ?>
@@ -135,19 +142,35 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 	</div>
 	<!-- /page content -->
 
+	<?php if(division_assist()): ?>
+		<script type="text/javascript">
+			const data_ajax = {
+				model: "VisitServicesModel",
+				status: 3,
+				assist_id: "<?= $session->session_id ?>",
+				parent_id: null,
+				accept_date: date_format(new Date()),
+			};
+		</script>
+	<?php else: ?>
+		<script type="text/javascript">
+			const data_ajax = {
+				model: "VisitServicesModel",
+				status: 3,
+				parent_id: "<?= $session->session_id ?>",
+				accept_date: date_format(new Date()),
+			};
+		</script>
+	<?php endif; ?>
+
 	<script type="text/javascript">
 
 		function VisitUpStatus(id) {
+			data_ajax.id = id;
 			$.ajax({
 				type: "POST",
 				url: "<?= add_url() ?>",
-				data: {
-					model: "VisitServicesModel",
-					id: id,
-					status: 3,
-					parent_id: "<?= $session->session_id ?>",
-					accept_date: date_format(new Date()),
-				},
+				data: data_ajax,
 				success: function (result) {
 					var data = JSON.parse(result);
 

@@ -52,7 +52,7 @@ class DivisionModel extends Model
 
         </form>
 
-        <script>
+        <script type="text/javascript">
             function TableChange(the) {
                 if (the.value == 10) {
                     var div = `

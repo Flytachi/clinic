@@ -53,7 +53,7 @@ $tb->where_or_serch($where_search);
 								<h5 class="card-title">Приём платежей</h5>
 								<div class="header-elements">
 									<div class="form-group-feedback form-group-feedback-right">
-										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
+										<input type="search" class="<?= $classes['input-search'] ?>" id="search_input" placeholder="Введите ID или имя">
 										<div class="form-control-feedback text-success">
 											<i class="icon-search4 font-size-base text-muted"></i>
 										</div>
@@ -120,8 +120,8 @@ $tb->where_or_serch($where_search);
 	<!-- Basic modal -->
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header bg-info">
+			<div class="<?= $classes['modal-global_content'] ?>">
+				<div class="<?= $classes['modal-global_header'] ?>">
 					<h6 class="modal-title">Оплата</h6>
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>

@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 ?>
-<div class="modal-header bg-info">
+<div class="<?= $classes['modal-global_header'] ?>">
     <h5 class="modal-title">История пациента подробно</h5>
     <button type="button" class="close" data-dismiss="modal">×</button>
 </div>
@@ -22,5 +22,5 @@ $pack = $db->query("SELECT service_title, service_report, service_id FROM visit_
     <?php else: ?>
         <button onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
     <?php endif; ?>
-    <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
 </div>

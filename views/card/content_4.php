@@ -84,7 +84,7 @@ require_once 'callback.php';
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<button type="button" class="<?= $classes['btn_viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<?php if ( in_array($row->status, [3,5,7]) ): ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
@@ -115,7 +115,7 @@ require_once 'callback.php';
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="report_show">
+			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
 
 			</div>
 		</div>

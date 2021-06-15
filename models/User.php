@@ -185,7 +185,6 @@ class UserModel extends Model
                 }
 
                 document.querySelector('#change_table_div').innerHTML = div;
-                Swit.init();
             }
         </script>
         <?php

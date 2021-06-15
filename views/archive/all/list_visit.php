@@ -240,7 +240,7 @@ if (!$patient) {
 												<?php endif; ?>
 											</td>
 											<td class="text-right">
-												<a href="<?= viv('card/content_4') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn_detail'] ?>">Просмотр</a>
+												<a href="<?= viv('card/content_4') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 											</td>
                                         </tr>
 									<?php endforeach; ?>

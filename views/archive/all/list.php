@@ -43,7 +43,7 @@ $tb->order_by("id DESC")->set_limit(20);
 						<div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -75,7 +75,7 @@ $tb->order_by("id DESC")->set_limit(20);
                                             <td><?= $row->numberPhone ?></td>
                                             <td><?= date_f($row->add_date, 1) ?></td>
                                             <td class="text-center">
-												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="<?= $classes['btn_detail'] ?>">Визиты</button>
+												<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Визиты</button>
                                             </td>
                                         </tr>
 									<?php endforeach;?>

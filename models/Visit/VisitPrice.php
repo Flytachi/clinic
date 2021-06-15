@@ -9,7 +9,7 @@ class VisitPriceModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
+        global $db, $classes;
         if ( isset($_GET['refund']) and $_GET['refund'] ) {
             $amount = $db->query("SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
         }else{
@@ -96,7 +96,7 @@ class VisitPriceModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
+                <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                     <span class="ladda-label">Оплатить</span>
                     <span class="ladda-spinner"></span>

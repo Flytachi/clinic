@@ -48,12 +48,12 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
-								<button onclick="printS(this)" type="button" class="btn btn-outline-info btn-sm legitRipple">Чек</button>
-								<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
+								<button onclick="printS(this)" type="button" class="<?= $classes['btn-table'] ?>">Чек</button>
+								<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="<?= $classes['btn-table'] ?>">Excel</button>
 							</div>
 							<form action="" class="mr-2 ml-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>

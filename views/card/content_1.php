@@ -91,7 +91,7 @@ require_once 'callback.php';
 														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
 															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn_viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
+															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
 															<?php if ($activity): ?>
 																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 															<?php endif; ?>
@@ -120,7 +120,7 @@ require_once 'callback.php';
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 													<td><?= get_full_name($row['parent_id']) ?></td>
 													<td class="text-right">
-														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="<?= $classes['btn_detail'] ?> legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
+														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row['id'] ?>')" type="button" class="<?= $classes['btn-detail'] ?> legitRipple"><i class="icon-eye mr-2"></i> Просмотр</button>
 													</td>
 												</tr>
 											<?php endforeach; ?>
@@ -148,7 +148,7 @@ require_once 'callback.php';
 	<?php if ($activity): ?>
 		<div id="modal_report_add" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
-				<div class="modal-content border-3 border-info" id="form_card">
+				<div class="<?= $classes['modal-global_content'] ?>" id="form_card">
 
 				</div>
 			</div>
@@ -156,7 +156,7 @@ require_once 'callback.php';
 
 		<div id="modal_report_finish" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
-				<div class="modal-content border-3 border-info" id="form_card_finish">
+				<div class="<?= $classes['modal-global_content'] ?>" id="form_card_finish">
 
 					<?php // VisitReport::form_finish(); ?>
 
@@ -166,15 +166,15 @@ require_once 'callback.php';
 
 		<div id="modal_add_service" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
+				<div class="<?= $classes['modal-global_content'] ?>">
+					<div class="<?= $classes['modal-global_header'] ?>">
 						<h6 class="modal-title">Назначить услугу</h6>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
 					<div class="modal-body">
 
-						<?php (new VisitRoute)->form_sta_doc() ?>
+						<?php // (new VisitRoute)->form_sta_doc() ?>
 
 					</div>
 				</div>
@@ -183,8 +183,8 @@ require_once 'callback.php';
 
 		<div id="modal_add_inspection" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
+				<div class="<?= $classes['modal-global_content'] ?>">
+					<div class="<?= $classes['modal-global_header'] ?>">
 						<h6 class="modal-title">Осмотр</h6>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
@@ -197,8 +197,8 @@ require_once 'callback.php';
 
 		<div id="modal_package" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
+				<div class="<?= $classes['modal-global_content'] ?>">
+					<div class="<?= $classes['modal-global_header'] ?>">
 						<h6 class="modal-title">Назначить пакет</h6>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
@@ -212,7 +212,7 @@ require_once 'callback.php';
 
 	<div id="modal_report_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="report_show">
+			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
 
 			</div>
 		</div>

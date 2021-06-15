@@ -6,11 +6,11 @@ class VisitReport extends Model
 
     public function form($pk = null)
     {
-        global $db, $classes;
+        global $db, $classes, $session;
         ?>
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
 
-            <div class="modal-header bg-info">
+            <div class="<?= $classes['modal-global_header'] ?>">
                 <h5 class="modal-title">Заключение</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
@@ -62,127 +62,6 @@ class VisitReport extends Model
                     </div>
 
                     <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"><?= ($this->value('service_report')) ? $this->value('service_report') : '' ?></textarea>
-
-                    <script type="text/javascript">
-                        DecoupledEditor
-                            .create( document.querySelector( '.document-editor__editable' ))
-                            .then( editor => {
-                                const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
-
-                                toolbarContainer.appendChild( editor.ui.view.toolbar.element );
-                                window.editor = editor;
-                                editor.model.document.on( 'change:data', ( evt, data ) => {
-                                    SaveData(data, editor.getData());
-                                } );
-
-                            } )
-                            .catch( err => {
-                                console.error( err );
-                            } 
-                        );
-
-                    </script>
-                    <?php if(config('document_autosave')): ?>
-                        <script type="text/javascript">
-
-                            $("#service_title").keyup(function() {
-                                const Indicator = document.querySelector( '#service_title_indicator' );
-
-                                Indicator.classList.add( 'text-muted' );
-                                Indicator.innerHTML = "!";
-                                $.ajax({
-                                    type: "POST",
-                                    url: "<?= add_url() ?>",
-                                    data: {
-                                        model: "VisitServicesModel",
-                                        id: "<?= $pk ?>",
-                                        service_title: this.value,
-                                    },
-                                    success: function (result) {
-                                        var data = JSON.parse(result);
-                                        
-                                        if (data.status == "success") {
-
-                                            try {
-                                                var tr = document.querySelector( `#VisitService_tr_${data.pk}` );
-                                            
-                                                Indicator.classList.remove( 'text-muted' );
-                                                Indicator.classList.add( 'text-success' );
-                                                Indicator.innerHTML = "&#10004";
-
-                                                if (tr.dataset.is_new) {
-                                                    tr.innerHTML = '<button onclick="location.reload();" type="button" class="btn btn-outline-primary btn-sm legitRipple">Обновите страницу</button>';
-                                                }
-                                            } catch (error) {
-                                                
-                                            }
-                                            
-
-                                        }else{
-
-                                            Indicator.classList.remove( 'text-muted' );
-                                            Indicator.classList.add( 'text-danger' );
-                                            Indicator.innerHTML = "&#10006;";
-
-                                        }
-                                    },
-                                });
-                            });
-
-                            function SaveData(data, params) {
-                                const Textarea = document.querySelector('#document-editor__area');
-                                const Div = document.querySelector( '#document-editor__footer' );
-                                const Indicator = document.querySelector( '#document-editor__footer-status' );
-
-                                Textarea.value = params;
-
-                                Indicator.classList.add( 'text-muted' );
-                                Indicator.innerHTML = "Loading...";
-
-                                $.ajax({
-                                    type: "POST",
-                                    url: "<?= add_url() ?>",
-                                    data: {
-                                        model: "VisitServicesModel",
-                                        id: "<?= $pk ?>",
-                                        service_report: params,
-                                    },
-                                    success: function (result) {
-                                        var data = JSON.parse(result);
-
-                                        if (data.status == "success") {
-                                            
-                                            Indicator.classList.remove( 'text-muted' );
-                                            Indicator.classList.add( 'text-success' );
-                                            Indicator.innerHTML = "&#10004 Saved!";
-
-                                            if (document.querySelector(`<?= (permission(10)) ? '#service_title' : '#VisitService_tr_${data.pk}' ?>`).dataset.is_new) {
-                                                $("#service_title").keyup();
-                                            }
-                                            
-                                        }else{
-
-                                            Indicator.classList.remove( 'text-muted' );
-                                            Indicator.classList.add( 'text-danger' );
-                                            Indicator.innerHTML = "&#10006; Error!";
-
-                                        }
-                                    },
-                                });
-                            }
-
-                        </script>
-                    <?php else: ?>
-                        <script type="text/javascript">
-
-                            function SaveData(data, params) {
-                                const Textarea = document.querySelector('#document-editor__area');
-
-                                Textarea.value = params;
-                            }
-
-                        </script>
-                    <?php endif; ?>
 
                 </div>
 
@@ -238,7 +117,9 @@ class VisitReport extends Model
             </div>
 
         </form>
-        <script>
+
+        <script type="text/javascript">
+
             function ChangePack(params) {
 
                 $.ajax({
@@ -253,7 +134,130 @@ class VisitReport extends Model
                 });
 
             }
+
+            DecoupledEditor
+                .create( document.querySelector( '.document-editor__editable' ))
+                .then( editor => {
+                    const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+
+                    toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+                    window.editor = editor;
+                    editor.model.document.on( 'change:data', ( evt, data ) => {
+                        SaveData(data, editor.getData());
+                    } );
+
+                } )
+                .catch( err => {
+                    console.error( err );
+                } 
+            );
+
         </script>
+        <?php if(config('document_autosave')): ?>
+            <script type="text/javascript">
+
+                $("#service_title").keyup(function() {
+                    const Indicator = document.querySelector( '#service_title_indicator' );
+
+                    Indicator.classList.add( 'text-muted' );
+                    Indicator.innerHTML = "!";
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= add_url() ?>",
+                        data: {
+                            model: "VisitServicesModel",
+                            id: "<?= $pk ?>",
+                            service_title: this.value,
+                        },
+                        success: function (result) {
+                            var data = JSON.parse(result);
+                            
+                            if (data.status == "success") {
+
+                                try {
+                                    var tr = document.querySelector( `#VisitService_tr_${data.pk}` );
+                                
+                                    Indicator.classList.remove( 'text-muted' );
+                                    Indicator.classList.add( 'text-success' );
+                                    Indicator.innerHTML = "&#10004";
+
+                                    if (tr.dataset.is_new) {
+                                        tr.innerHTML = '<button onclick="location.reload();" type="button" class="btn btn-outline-primary btn-sm legitRipple">Обновите страницу</button>';
+                                    }
+                                } catch (error) {
+                                    
+                                }
+                                
+
+                            }else{
+
+                                Indicator.classList.remove( 'text-muted' );
+                                Indicator.classList.add( 'text-danger' );
+                                Indicator.innerHTML = "&#10006;";
+
+                            }
+                        },
+                    });
+                });
+
+                function SaveData(data, params) {
+                    const Textarea = document.querySelector('#document-editor__area');
+                    const Div = document.querySelector( '#document-editor__footer' );
+                    const Indicator = document.querySelector( '#document-editor__footer-status' );
+
+                    var data_ajax = {
+                        model: "VisitServicesModel",
+                        id: "<?= $pk ?>",
+                        service_report: params,
+                    };                    
+                    if ("<?= division_assist() == 2 ?>" && document.querySelector(`#service_title`).dataset.is_new) {
+                        data_ajax.parent_id = "<?= $session->session_id ?>";
+                    }
+
+                    Textarea.value = params;
+                    Indicator.classList.add( 'text-muted' );
+                    Indicator.innerHTML = "Loading...";
+
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= add_url() ?>",
+                        data: data_ajax,
+                        success: function (result) {
+                            var data = JSON.parse(result);
+
+                            if (data.status == "success") {
+                                
+                                Indicator.classList.remove( 'text-muted' );
+                                Indicator.classList.add( 'text-success' );
+                                Indicator.innerHTML = "&#10004 Saved!";
+
+                                if (document.querySelector(`<?= (permission(10)) ? '#service_title' : '#VisitService_tr_${data.pk}' ?>`).dataset.is_new) {
+                                    $("#service_title").keyup();
+                                }
+                                
+                            }else{
+
+                                Indicator.classList.remove( 'text-muted' );
+                                Indicator.classList.add( 'text-danger' );
+                                Indicator.innerHTML = "&#10006; Error!";
+
+                            }
+                        },
+                    });
+                }
+
+            </script>
+        <?php else: ?>
+            <script type="text/javascript">
+
+                function SaveData(data, params) {
+                    const Textarea = document.querySelector('#document-editor__area');
+
+                    Textarea.value = params;
+                }
+
+            </script>
+        <?php endif; ?>
         <?php
         if ($pk) {
             $this->jquery_init();

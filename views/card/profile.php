@@ -271,8 +271,8 @@
             <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
                 <div id="modal_discharge_date" class="modal fade" tabindex="-1">
                     <div class="modal-dialog modal-md">
-                        <div class="modal-content">
-                            <div class="modal-header bg-info">
+                        <div class="<?= $classes['modal-global_content'] ?>">
+                            <div class="<?= $classes['modal-global_header'] ?>">
                                 <h6 class="modal-title">Назначить дату выписки</h6>
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
@@ -327,8 +327,8 @@
 
                     <div id="modal_edit_bed" class="modal fade" tabindex="-1">
                         <div class="modal-dialog modal-md">
-                            <div class="modal-content">
-                                <div class="modal-header bg-info">
+                            <div class="<?= $classes['modal-global_content'] ?>">
+                                <div class="<?= $classes['modal-global_header'] ?>">
                                     <h6 class="modal-title">Переместить на другую койку</h6>
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
@@ -364,7 +364,7 @@
 
                 <div id="modal_report_kwin" class="modal fade" tabindex="-1">
             		<div class="modal-dialog modal-lg">
-            			<div class="modal-content border-3 border-info" id="report_show_kwin">
+            			<div class="<?= $classes['modal-global_content'] ?>" id="report_show_kwin">
 
             			</div>
             		</div>
