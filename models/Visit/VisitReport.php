@@ -32,7 +32,7 @@ class VisitReport extends Model
                 <h1>
                     <div class="col-md-8 offset-md-2">
                         <div class="form-group-feedback form-group-feedback-right">
-                            <input type="text" style="font-size: 1.3rem;" id="service_title" name="service_title" value="<?= ($this->value('service_title')) ? $this->value('service_title') : $this->value('service_name') ?>" class="form-control" placeholder="Названия отчета">
+                            <input type="text" style="font-size: 1.3rem;" id="service_title" name="service_title" value="<?= ($this->value('service_title')) ? $this->value('service_title') : $this->value('service_name') ?>" class="form-control" placeholder="Названия отчета" data-is_new="<?= ($this->value('service_title')) ? '' : 1 ?>">
                             <div class="form-control-feedback">
                                 <span style="font-size: 1.3rem;" id="service_title_indicator"></span>
                             </div>
@@ -61,7 +61,7 @@ class VisitReport extends Model
                         <?php endif; ?>
                     </div>
 
-                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"></textarea>
+                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"><?= ($this->value('service_report')) ? $this->value('service_report') : '' ?></textarea>
 
                     <script type="text/javascript">
                         DecoupledEditor
@@ -102,15 +102,21 @@ class VisitReport extends Model
                                         var data = JSON.parse(result);
                                         
                                         if (data.status == "success") {
-                                            var tr = document.querySelector( `#VisitService_tr_${data.pk}` );
-                                            
-                                            Indicator.classList.remove( 'text-muted' );
-                                            Indicator.classList.add( 'text-success' );
-                                            Indicator.innerHTML = "&#10004";
 
-                                            if (tr.dataset.is_new) {
-                                                tr.innerHTML = '<button onclick="location.reload();" type="button" class="btn btn-outline-primary btn-sm legitRipple">Обновите страницу</button>';
+                                            try {
+                                                var tr = document.querySelector( `#VisitService_tr_${data.pk}` );
+                                            
+                                                Indicator.classList.remove( 'text-muted' );
+                                                Indicator.classList.add( 'text-success' );
+                                                Indicator.innerHTML = "&#10004";
+
+                                                if (tr.dataset.is_new) {
+                                                    tr.innerHTML = '<button onclick="location.reload();" type="button" class="btn btn-outline-primary btn-sm legitRipple">Обновите страницу</button>';
+                                                }
+                                            } catch (error) {
+                                                
                                             }
+                                            
 
                                         }else{
 
@@ -150,7 +156,7 @@ class VisitReport extends Model
                                             Indicator.classList.add( 'text-success' );
                                             Indicator.innerHTML = "&#10004 Saved!";
 
-                                            if (document.querySelector(`#VisitService_tr_${data.pk}`).dataset.is_new) {
+                                            if (document.querySelector(`<?= (permission(10)) ? '#service_title' : '#VisitService_tr_${data.pk}' ?>`).dataset.is_new) {
                                                 $("#service_title").keyup();
                                             }
                                             
@@ -187,13 +193,13 @@ class VisitReport extends Model
                     <?php if (division_assist() == 2): ?>
                         <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
                     <?php endif; ?>
-                    <input style="display:none;" id="btn_end_submit" type="submit" value="Завершить" name="end" id="end"></input>
+                    <input style="display:none;" id="btn_end_submit" type="submit" value="Завершить" name="end"></input>
                     <button class="btn btn-outline-danger btn-sm" type="button" onclick="Verification()">Завершить</button>
                     <script type="text/javascript">
                         function Verification() {
                             event.preventDefault();
 
-                            if ($('#editor').html() == `<p><br data-cke-filler="true"></p>`) {
+                            if ( !document.querySelector("#document-editor__area").value ) {
                                 swal({
                                     position: 'top',
                                     title: 'Невозможно завершить!',
@@ -220,7 +226,7 @@ class VisitReport extends Model
                     </script>
                 <?php endif; ?>
                 <?php if (permission([12, 13])): ?>
-                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end" id="end"></input>
+                    <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php else: ?>
                     <?php if(!config('document_autosave')): ?>
                         <button type="submit" id="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
@@ -247,17 +253,7 @@ class VisitReport extends Model
                 });
 
             }
-            document.getElementById( 'submit' ).onclick = () => {
-                textarea.value = editor.getData();
-            }
         </script>
-        <?php if (permission([10,12,13])): ?>
-            <script type="text/javascript">
-                document.getElementById( 'end' ).onclick = () => {
-                    textarea.value = editor.getData();
-                }
-            </script>
-        <?php endif; ?>
         <?php
         if ($pk) {
             $this->jquery_init();
@@ -380,26 +376,12 @@ class VisitReport extends Model
             $pk = $this->post['id']; unset($this->post['id']);
             $object = Mixin\update($this->table, $this->post, $pk);
             if ($end) {
-                $this->dd();
-                // $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
-                // if ($row['assist_id']) {
-                //     if (0 == $db->query("SELECT * FROM visit WHERE id != $pk AND user_id = {$row['user_id']} AND completed IS NULL")->rowCount()) {
-                //         Mixin\update('users', array('status' => null), $row['user_id']);
-                //     }
-                // }else {
-                //     if (0 == $db->query("SELECT * FROM visit WHERE id != $pk AND user_id={$row['user_id']} AND completed IS NULL")->rowCount()) {
-                //         Mixin\update('users', array('status' => null), $row['user_id']);
-                //     }
-                // }
-                // $this->clear_post();
-                // $this->set_post(array(
-                //     'status' => ($row['direction']) ? 0 : null,
-                //     'completed' => date('Y-m-d H:i:s')
-                // ));
-                // $object = Mixin\update($this->table, $this->post, $pk);
-                // if (!intval($object)){
-                //     $this->error($object);
-                // }
+
+                $VisitFinish = new VisitFinish();
+                $VisitFinish->set_post(array('status' => 7, 'completed' => date('Y-m-d H:i:s')));
+                $VisitFinish->update_service($pk);
+                $VisitFinish->status_update($db->query("SELECT visit_id FROM $this->table WHERE id = $pk")->fetchColumn());
+
             }else {
                 if (!intval($object)){
                     $this->error($object);

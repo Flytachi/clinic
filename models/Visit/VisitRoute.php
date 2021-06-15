@@ -223,6 +223,221 @@ class VisitRoute extends Model
         <?php
     }
 
+    public function form_out_diagnostic($pk = null)
+    {
+        global $db, $patient, $classes, $session;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                    <?php foreach ($db->query("SELECT * from divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </form>
+        <script type="text/javascript">
+
+            var service = {};
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function TableChangeServices(params) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(params).val(),
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+
+        </script>
+        <?php
+    }
+
+    public function form_sta_diagnostic($pk = null)
+    {
+        global $db, $patient, $classes;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="direction" value="1">
+            <input type="hidden" name="status" value="1">
+            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
+                    <?php foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>                    
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </form>
+        <script type="text/javascript">
+            let service = {};
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function table_change(the) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(the).val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        let service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+        </script>
+        <?php
+    }
+
     public function form_out_labaratory($pk = null)
     {
         global $db, $patient, $classes;
@@ -423,220 +638,6 @@ class VisitRoute extends Model
                         divisions: $(the).val(),
                         selected: service,
                         types: "1,2",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        let service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-
-            }
-        </script>
-        <?php
-    }
-
-    public function form_out_diagnostic($pk = null)
-    {
-        global $db, $patient, $classes;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-
-            <div class="form-group">
-                <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
-                    <?php foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-group-feedback form-group-feedback-right row">
-
-                <div class="col-md-10">
-                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="form-group">
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <!-- <th>Тип</th> -->
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
-
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-        </form>
-        <script type="text/javascript">
-
-            let service = {};
-
-            $("#search_input").keyup(function() {
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $("#division_selector").val(),
-                        search: $("#search_input").val(),
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        let service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-            });
-
-            function table_change(the) {
-
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $(the).val(),
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        let service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-
-            }
-
-        </script>
-        <?php
-    }
-
-    public function form_sta_diagnostic($pk = null)
-    {
-        global $db, $patient, $classes;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="direction" value="1">
-            <input type="hidden" name="status" value="1">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-
-            <div class="form-group">
-                <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
-                    <?php foreach($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-group-feedback form-group-feedback-right row">
-
-                <div class="col-md-10">
-                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>                    
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="form-group">
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <!-- <th>Тип</th> -->
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
-
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-        </form>
-        <script type="text/javascript">
-            let service = {};
-
-            $("#search_input").keyup(function() {
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $("#division_selector").val(),
-                        search: $("#search_input").val(),
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        let service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-            });
-
-            function table_change(the) {
-
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $(the).val(),
-                        selected: service,
-                        types: "1",
                         cols: 1
                     },
                     success: function (result) {

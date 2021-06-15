@@ -64,7 +64,7 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND route_id = $session->session_id")->order_by('add_date DESC');
+										$tb->set_data("id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 5 AND route_id = $session->session_id")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
@@ -100,7 +100,7 @@ require_once 'callback.php';
 												<td class="text-right">
 													<button type="button" class="<?= $classes['btn_viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<?php if( $activity ): ?>
+														<?php if( $activity and $row->status == 1 ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 														<?php if ( in_array($row->status, [3,5,7]) ): ?>

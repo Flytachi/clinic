@@ -6,12 +6,19 @@ if (division_assist() == 1) {
 	Mixin\error('423');
 }
 $header = "Амбулаторные пациенты";
+
+$tb = new Table($db, "visit_services vs");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.accept_date, vs.route_id, v.complaint")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$search = $tb->get_serch();
+$search_array = array(
+	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id",
+	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-
-<script src="<?= stack("global_assets/js/demo_pages/content_cards_header.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -41,25 +48,21 @@ $header = "Амбулаторные пациенты";
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
-							<form action="#">
-								<div class="wmin-sm-200">
-									<select class="form-control form-control-multiselect" multiple="multiple" data-fouc>
-										<option value="cheese">Cheese</option>
-										<option value="tomatoes">Tomatoes</option>
-										<option value="mozarella">Mozzarella</option>
-										<option value="mushrooms">Mushrooms</option>
-										<option value="pepperoni">Pepperoni</option>
-										<option value="onions">Onions</option>
-									</select>
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
 								</div>
 							</form>
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm datatable-basic">
+                            <table class="table table-hover table-sm">
                                 <thead>
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
@@ -68,60 +71,40 @@ $header = "Амбулаторные пациенты";
 										<th>Дата снятия</th>
                                         <th>Мед услуга</th>
                                         <th>Направитель</th>
-                                        <th class="text-center" style="width:300px">Действия</th>
+                                        <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-									if (division_assist() == 2) {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint, vs.parent_id, vs.assist_id,
-												us.dateBith, vs.accept_date
-												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.assist_id IS NOT NULL ORDER BY vs.accept_date ASC";
-									} else {
-										$sql = "SELECT DISTINCT us.id, vs.id 'visit_id', vs.route_id, sc.name, vs.complaint,
-												us.dateBith, vs.accept_date
-												FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-												WHERE vs.completed IS NULL AND vs.status = 2 AND vs.direction IS NULL AND vs.parent_id = {$_SESSION['session_id']} ORDER BY vs.accept_date ASC";
-									}
-                                    foreach($db->query($sql) as $row) {
-										if (division_assist() == 2) {
-											if ($row['parent_id'] == $row['assist_id']) {
-												$tr = "";
-											}elseif ($row['parent_id'] == $_SESSION['session_id']) {
-												$tr = "table-success";
-											}else {
-												$tr = "table-danger";
-											}
-										}else {
-											$tr = "";
-										}
-                                        ?>
-                                        <tr class="<?= $tr ?>">
-                                            <td><?= addZero($row['id']) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div></td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-											<td><?= date('d.m.Y H:i', strtotime($row['accept_date'])) ?></td>
-                                            <td><?= $row['name']; ?></td>
+									<?php foreach($tb->get_table() as $row): ?>
+										<tr>
+                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
+											<td><?= date_f($row->birth_date) ?></td>
+											<td><?= date_f($row->accept_date, 1) ?></td>
+                                            <td>
+												<?php foreach($db->query("SELECT service_name, service_title FROM visit_services WHERE id = $row->id AND status = 3 and parent_id = $session->session_id") as $serv): ?>
+													<span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span><br>
+												<?php endforeach; ?>
+											</td>
 											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												<?= level_name($row->route_id) ." ". division_name($row->route_id) ?>
+												<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
 											</td>
                                             <td class="text-center">
-												<?php if ($row['complaint']): ?>
-													<button onclick="swal('<?= $row['complaint'] ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
+												<?php if ($row->complaint): ?>
+													<button onclick="swal('<?= $row->complaint ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
 												<?php endif; ?>
-												<?php if ($tr != "table-danger"): ?>
-													<button onclick="ResultShow('<?= up_url($row['visit_id'], 'VisitReport') ?>&user_id=<?= $row['id'] ?>', '<?= $row['name'] ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
-												<?php endif; ?>
+												<?php //if ($tr != "table-danger"): ?>
+													<button onclick="ResultShow('<?= up_url($row->id, 'VisitReport') ?>')" class="btn btn-outline-primary btn-sm"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
+												<?php //endif; ?>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
+
+						<?php $tb->get_panel(); ?>
 
 					</div>
 
@@ -134,24 +117,33 @@ $header = "Амбулаторные пациенты";
 		</div>
 		<!-- /main content -->
 
+		<div id="modal_result_show" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
+				<div class="modal-content border-3 border-info" id="modal_result_show_content">
+
+				</div>
+			</div>
+		</div>
+
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_result_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
-			<div class="modal-content border-3 border-info" id="modal_result_show_content">
-
-			</div>
-		</div>
-	</div>
-
-	<!-- Footer -->
-	<?php include layout('footer') ?>
-	<!-- /footer -->
-
 	<script type="text/javascript">
 
-		function ResultShow(events, title) {
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/diagnostic-list_outpatient') ?>",
+				data: {
+					table_search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
+
+		function ResultShow(events) {
 
 			$.ajax({
 				type: "GET",
@@ -159,11 +151,15 @@ $header = "Амбулаторные пациенты";
 				success: function (result) {
 					$('#modal_result_show').modal('show');
 					$('#modal_result_show_content').html(result);
-					$('#report_title').val(title);
 				},
 			});
+
 		};
 
 	</script>
+
+	<!-- Footer -->
+    <?php include layout('footer') ?>
+    <!-- /footer -->
 </body>
 </html>

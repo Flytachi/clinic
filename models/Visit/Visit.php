@@ -534,8 +534,6 @@ class VisitModel extends Model
             'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
             'complaint' => ( isset($this->post['complaint']) ) ? $this->post['complaint'] : null,
         );
-        dd($post);
-        $this->dd();
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
             $this->error($object);
