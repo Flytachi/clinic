@@ -1,0 +1,61 @@
+<?php
+require_once '../../tools/warframe.php';
+$session->is_auth(1);
+
+$tb = new Table($db, "services sc");
+$tb->set_data("sc.*, ds.title")->additions("LEFT JOIN divisions ds ON(ds.id=sc.division_id)");
+$search = $tb->get_serch();
+$where_search = array("sc.type != 101", "sc.type != 101 AND ( sc.code LIKE '%$search%' OR LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') )");
+
+$tb->where_or_serch($where_search)->order_by("user_level, division_id, code, name ASC")->set_limit(15);
+$tb->set_self(viv('admin/service'));  
+?>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr class="<?= $classes['table-thead'] ?>">
+                <th style="width:7%">№</th>
+                <th>Роль</th>
+                <th>Отдел</th>
+                <th style="width:10%">Код</th>
+                <th style="width:40%">Название</th>
+                <th>Тип</th>
+                <th>Цена</th>
+                <th style="width: 100px">Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($tb->get_table(1) as $row): ?>
+                <tr>
+                    <td><?= $row->count ?></td>
+                    <td><?= $PERSONAL[$row->user_level] ?></td>
+                    <td><?= $row->title ?></td>
+                    <td><?= $row->code ?></td>
+                    <td><?= $row->name ?></td>
+                    <td>
+                        <?php switch ($row->type) {
+                            case 1:
+                                echo "Обычная";
+                                break;
+                            case 2:
+                                echo "Консультация";
+                                break;
+                            case 3:
+                                echo "Операционная";
+                                break;
+                        } ?>
+                    </td>
+                    <td><?= $row->price ?></td>
+                    <td>
+                        <div class="list-icons">
+                            <a onclick="Update('<?= up_url($row->id, 'ServiceModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+                            <a href="<?= del_url($row->id, 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить услугу?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php $tb->get_panel(); ?>

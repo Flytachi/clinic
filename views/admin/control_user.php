@@ -29,9 +29,9 @@ $header = "Визиты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="<?= $classes['card'] ?>">
+				<div class="<?= $classes['card-filter'] ?>">
 
-                    <div class="<?= $classes['card-header'] ?>">
+                    <div class="<?= $classes['card-filter_header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -72,7 +72,7 @@ $header = "Визиты";
 							</div>
 
 							<div class="text-right">
-								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
+								<button type="submit" class="<?= $classes['card-filter_btn'] ?>"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
 
 
@@ -112,7 +112,7 @@ $header = "Визиты";
 							<h6 class="card-title">Users</h6>
 							<div class="header-elements">
 								<div class="list-icons">
-									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="<?= $classes['btn-table'] ?>">Excel</button>
 								</div>
 							</div>
 						</div>

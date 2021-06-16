@@ -2,18 +2,17 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Услуги";
+
+$tb = new Table($db, "services sc");
+$tb->set_data("sc.*, ds.title")->additions("LEFT JOIN divisions ds ON(ds.id=sc.division_id)");
+$search = $tb->get_serch();
+$where_search = array("sc.type != 101", "sc.type != 101 AND ( sc.code LIKE '%$search%' OR LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') )");
+
+$tb->where_or_serch($where_search)->order_by("user_level, division_id, code, name ASC")->set_limit(15);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -91,32 +90,43 @@ $header = "Услуги";
 								</form>
 								<a class="btn text-danger" onclick="Conf()">FLUSH</a>
 	                      	</div>
+							<form action="" class="mr-2 ml-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск...">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 	                  	</div>
 	              	</div>
 
-              		<div class="card-body">
+              		<div class="card-body" id="search_display">
+
                   		<div class="table-responsive">
-	                      	<table class="table table-hover datatable-basic">
+	                      	<table class="table table-hover">
 	                          	<thead>
 	                              	<tr class="<?= $classes['table-thead'] ?>">
-										<th style="width:10%">Код</th>
-										<th style="width:40%">Название</th>
+										<th style="width:7%">№</th>
 										<th>Роль</th>
 										<th>Отдел</th>
+										<th style="width:10%">Код</th>
+										<th style="width:40%">Название</th>
 										<th>Тип</th>
 										<th>Цена</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php foreach($db->query('SELECT * from services WHERE type != 101') as $row): ?>
+	                              	<?php foreach($tb->get_table(1) as $row): ?>
                                   		<tr>
-											<td><?= $row['code'] ?></td>
-											<td><?= $row['name'] ?></td>
-	                                      	<td><?= $PERSONAL[$row['user_level']] ?></td>
-	                                      	<td><?= ($row['division_id']) ? $db->query("SELECT title FROM divisions WHERE id ={$row['division_id']}")->fetchColumn() : "" ?></td>
+											<td><?= $row->count ?></td>
+	                                      	<td><?= $PERSONAL[$row->user_level] ?></td>
+	                                      	<td><?= $row->title ?></td>
+											<td><?= $row->code ?></td>
+											<td><?= $row->name ?></td>
 											<td>
-												<?php switch ($row['type']) {
+												<?php switch ($row->type) {
 													case 1:
 														echo "Обычная";
 														break;
@@ -128,11 +138,11 @@ $header = "Услуги";
 														break;
 												} ?>
 											</td>
-											<td><?= $row['price'] ?></td>
+											<td><?= $row->price ?></td>
 	                                      	<td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row['id'], 'ServiceModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить услугу?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'ServiceModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row->id, 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить услугу?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
                               			</tr>
@@ -140,6 +150,9 @@ $header = "Услуги";
 	                          	</tbody>
 	                      	</table>
 	                  	</div>
+
+						<?php $tb->get_panel(); ?>
+						
 	              	</div>
 
           		</div>
@@ -158,6 +171,22 @@ $header = "Услуги";
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('admin/search_service') ?>",
+				data: {
+					table_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
+
 		function Conf() {
 			swal({
                 position: 'top',

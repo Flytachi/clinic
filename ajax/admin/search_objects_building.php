@@ -26,7 +26,7 @@ $tb->set_self(viv('admin/objects_building'));
                     <td>
                         <div class="list-icons">
                             <a onclick="Update('<?= up_url($row->id, 'BuildingsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                            <a href="<?= del_url($row->id, 'BuildingsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить палату?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <a href="<?= del_url($row->id, 'BuildingsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить объект?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                         </div>
                     </td>
                 </tr>

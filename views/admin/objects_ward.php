@@ -8,7 +8,7 @@ $search = $tb->get_serch();
 $tb->set_data("w.id, bg.name, ds.title, w.floor, w.ward")->additions("LEFT JOIN buildings bg ON(bg.id=w.building_id) LEFT JOIN divisions ds ON(ds.id=w.division_id)");
 $where_search = array(null, "LOWER(bg.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') OR LOWER(w.ward) LIKE LOWER('%$search%')");
 
-$tb->where_or_serch($where_search)->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->set_limit(15);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,7 +61,7 @@ $tb->where_or_serch($where_search)->set_limit(15);
 						<div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите логин или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск...">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -78,11 +78,11 @@ $tb->where_or_serch($where_search)->set_limit(15);
 	                              	<tr class="<?= $classes['table-thead'] ?>">
 										<th style="width:8%">№</th>
 										<th>Объект</th>
+										<th>Этаж</th>
+										<th>Палата</th>
 										<?php if(config('wards_by_division')): ?>
 											<th>Отдел</th>
                 						<?php endif; ?>
-										<th>Этаж</th>
-										<th>Палата</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
@@ -91,11 +91,11 @@ $tb->where_or_serch($where_search)->set_limit(15);
 										<tr>
 				                            <td><?= $row->count ?></td>
 				                            <td><?= $row->name ?></td>
+				                            <td><?= $row->floor ?> этаж</td>
+				                            <td><?= $row->ward ?></td>
 											<?php if(config('wards_by_division')): ?>
 				                            	<td><?= $row->title ?></td>
 											<?php endif; ?>
-				                            <td><?= $row->floor ?> этаж</td>
-				                            <td><?= $row->ward ?></td>
 				                            <td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row->id, 'WardsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>

@@ -60,7 +60,7 @@ $tb->where_or_serch($where_search)->set_limit(15);
                         <div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите логин или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск...">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>
@@ -88,7 +88,7 @@ $tb->where_or_serch($where_search)->set_limit(15);
 				                            <td>
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row->id, 'BuildingsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'BuildingsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить палату?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a href="<?= del_url($row->id, 'BuildingsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить объект?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
 				                        </tr>
