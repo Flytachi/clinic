@@ -177,7 +177,7 @@ class __Db
     private String $file_name = "database";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
     private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private Array $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
+    private Array $MUL = array('beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,'wards' => '`building_id` (`building_id`,`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
 
     function __construct($value = null, $name = null)
     {
@@ -224,7 +224,7 @@ class __Db
 
     public function delete()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
         
@@ -237,7 +237,7 @@ class __Db
 
     public function clean()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
         if (!$this->clean_table) {
@@ -256,7 +256,7 @@ class __Db
 
     public function migrate()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
 
