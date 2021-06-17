@@ -8,7 +8,7 @@ class Model
      * Model + PDO
      * 
      * 
-     * @version 7.3
+     * @version 8.1
      */
 
     protected $post;

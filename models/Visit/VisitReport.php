@@ -344,30 +344,34 @@ class VisitReport extends Model
     public function get_or_404($pk)
     {
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
-        // if(division_assist() == 2){
-        //     if ($object['parent_id'] = $object['assist_id'] or $object['parent_id'] == $_SESSION['session_id']) {
-        //         if($object){
-        //             $this->set_post($object);
-        //             return $this->form($object['id']);
-        //         }else{
-        //             Mixin\error('404');
-        //         }
-        //     }else {
-        //         Mixin\error('404');
-        //     }
-        // }else {
-            if($object){
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk AND status = 3")->fetch();
+
+        if($object){
+            
+            if (division_assist() == 2) {
+                // Diagnostic
+                if (is_null($object['parent_id']) or $object['parent_id'] == $_SESSION['session_id']) {
+                    $this->set_post($object);
+                    return $this->form($object['id']);
+                }else {
+                    Mixin\error('report_permissions_false');
+                }
+
+            } else {
+                // Others
                 $this->set_post($object);
                 if ($object['service_id'] == 1) {
                     return $this->form_finish($object['id']);
                 }else {
                     return $this->form($object['id']);
                 }
-            }else{
-                Mixin\error('404');
+
             }
-        // }
+
+        }else{
+            Mixin\error('report_permissions_false');
+        }
+
     }              
 
     public function update()

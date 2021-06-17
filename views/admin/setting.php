@@ -6,14 +6,6 @@ $header = "Настройки";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -90,16 +82,6 @@ $header = "Настройки";
 									<div class="col-lg-3">
 										<input type="text" name="print_header_phones" value="<?= ( isset($company->print_header_phones) ) ? $company->print_header_phones : '' ?>" placeholder="Введите телефон" class="form-control">
 									</div>
-								</div>
-
-							</fieldset>
-
-							<fieldset class="mb-3">
-								<legend class="text-uppercase font-size-sm font-weight-bold">Процент</legend>
-
-								<div class="form-group">
-									<label>Резидент (процент):</label>
-									<input type="number" name="const_foreigner_sale" value="<?= ( isset($company->const_foreigner_sale) ) ? $company->const_foreigner_sale : '' ?>" placeholder="Введите процент" class="form-control">
 								</div>
 
 							</fieldset>

@@ -6,6 +6,7 @@ class Session
      * 
      *  My Session
      * 
+     *  @version 5.2
      **/
 
     private $db;
@@ -195,6 +196,7 @@ class Session
         Mixin\delete($this->table, session_id(), 'session_id');
         session_destroy();
         header("location: $this->login_url");
+        exit;
     }
 
     public function set_data($pk) {
