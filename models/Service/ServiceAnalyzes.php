@@ -1,8 +1,8 @@
 <?php
 
-class ServiceAnalyzeModel extends Model
+class ServiceAnalyzesModel extends Model
 {
-    public $table = 'service_analyze';
+    public $table = 'service_analyzes';
 
     public function form($pk = null)
     {
@@ -20,7 +20,7 @@ class ServiceAnalyzeModel extends Model
                 <label>Услуга:</label>
                 <select data-placeholder="Выбрать услугу" name="service_id" class="<?= $classes['form-select'] ?>" required>
                     <option></option>
-                    <?php foreach ($db->query("SELECT * from service WHERE user_level = 6") as $row): ?>
+                    <?php foreach ($db->query("SELECT * from services WHERE user_level = 6") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($this->value('service_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>

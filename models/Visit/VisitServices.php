@@ -24,10 +24,20 @@ class VisitServicesModel extends Model
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if (!intval($object)){
-                $this->error($object);
-                exit;
+            if (is_array($pk)) {
+                foreach ($pk as $pkis) {
+                    $object = Mixin\update($this->table, $this->post, $pkis);
+                    if (!intval($object)){
+                        $this->error($object);
+                        exit;
+                    }
+                }
+            } else {
+                $object = Mixin\update($this->table, $this->post, $pk);
+                if (!intval($object)){
+                    $this->error($object);
+                    exit;
+                }
             }
             $this->pk = $pk;
             $this->success();

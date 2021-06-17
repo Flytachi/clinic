@@ -6,8 +6,8 @@ $tb = new Table($db, "visit_services vs");
 $tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id",
-	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id",
+	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
 $tb->set_self(viv('doctor/list_outpatient'));

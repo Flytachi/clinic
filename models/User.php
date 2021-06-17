@@ -179,12 +179,16 @@ class UserModel extends Model
                         </div>
                     <?php endif; ?>
                     `;
-                    
-                }else{
-                    var div = ``;
+                    document.querySelector('#change_table_div').innerHTML = div;
                 }
-
-                document.querySelector('#change_table_div').innerHTML = div;
+                if (the.value == 6) {
+                    document.querySelector('#division_id').required = false;
+                }else{
+                    if (!document.querySelector('#division_id').required) {
+                        document.querySelector('#division_id').required = true;
+                    }
+                    document.querySelector('#change_table_div').innerHTML = ``;
+                }
             }
         </script>
         <?php

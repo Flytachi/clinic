@@ -3,6 +3,15 @@ require_once '../../tools/warframe.php';
 $session->is_auth(6);
 is_module('module_laboratory');
 $header = "Приём пациетов";
+
+$tb = new Table($db, "visit_services vs");
+$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.direction, v.add_date")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$search = $tb->get_serch();
+$search_array = array(
+	"vs.status = 2 AND vs.level = 6",
+	"vs.status = 3 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->where_or_serch($search_array)->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,67 +53,57 @@ $header = "Приём пациетов";
 					<div class="card-body">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm datatable-basic">
-                                <thead>
-                                    <tr class="<?= $classes['table-thead'] ?>">
+                            <table class="table table-hover table-sm">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>
                                         <th>Дата назначения</th>
-                                        <th>Мед услуга</th>
+                                        <th>Услуги</th>
                                         <th>Направитель</th>
                                         <th>Тип визита</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-									$sql = "SELECT DISTINCT us.id, vs.parent_id,
-												vs.route_id, vs.direction, vs.add_date,
-												us.dateBith
-											FROM users us
-												LEFT JOIN visit vs ON(us.id=vs.user_id)
-											WHERE vs.completed IS NULL AND vs.status = 1 AND vs.laboratory IS NOT NULL
-											ORDER BY IFNULL(vs.priced_date, vs.add_date) ASC";
-                                    foreach($db->query($sql) as $row) {
-                                        ?>
-                                        <tr id="PatientFailure_tr_<?= $row['id'] ?>">
-                                            <td><?= addZero($row['id']) ?></td>
+									<?php foreach($tb->get_table() as $row): ?>
+										<tr id="VisitService_tr_<?= $row->id ?>">
+                                            <td><?= addZero($row->user_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 												<div class="text-muted">
 													<?php
-													if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													}
+													// if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
+													// 	echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
+													// }
 													?>
 												</div>
 											</td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
-											<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+											<td><?= date_f($row->birth_date) ?></td>
+											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach ($db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$row['id']} AND vs.accept_date IS NULL AND vs.completed IS NULL AND vs.laboratory IS NOT NULL") as $serve): ?>
-													<?= $serve['name'] ?><br>
+												<?php foreach($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $row->id AND status = 2 and route_id = $row->route_id") as $serv): ?>
+													<?php $services[] = $serv['id'] ?>
+													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>
 											</td>
 											<td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												<?= level_name($row->route_id) ." ". division_name($row->route_id) ?>
+												<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
 											</td>
                                             <td class="text-center">
-												<?php if($row['direction']): ?>
+												<?php if($row->direction): ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 												<?php else: ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
-												<a href="<?= up_url($row['id'], 'LaboratoryUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row['user_id'] ?>" data-parentid="<?= $row['parent_id'] ?>" onclick="sendPatient(this)">Принять</a>
+												<button onclick="VisitUpStatus(<?= $row->id ?>, <?= json_encode($services) ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php unset($services); endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -121,6 +120,47 @@ $header = "Приём пациетов";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+
+		function VisitUpStatus(tr, items) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "VisitServicesModel",
+					id: items,
+					status: 3,
+					accept_date: date_format(new Date()),
+				},
+				success: function (result) {
+					var data = JSON.parse(result);
+
+					if (data.status == "success") {
+						new Noty({
+							text: 'Процедура приёма прошла успешно!',
+							type: 'success'
+						}).show();
+						
+						$(`#VisitService_tr_${tr}`).css("background-color", "rgb(0, 255, 0)");
+                        $(`#VisitService_tr_${tr}`).css("color", "black");
+                        $(`#VisitService_tr_${tr}`).fadeOut(900, function() {
+							$(this).remove();
+                        });
+						
+					}else{
+
+						new Noty({
+							text: data.message,
+							type: 'error'
+						}).show();
+
+					}
+ 				},
+			});
+		}
+
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

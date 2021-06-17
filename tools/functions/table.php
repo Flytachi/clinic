@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 4.9
+     * @version 5.8
      */
 
     // database handle
@@ -77,7 +77,8 @@ class Table
     private $php_self;
     private $search;
     
-    public $search_get_name = "&table_search=";
+    public $search_get_name = "table_search=";
+    public $params = "?";
     public $table;
     
 
@@ -172,7 +173,7 @@ class Table
         if ($this->total_pages > 5) {
             if ($page > 1) {
                 $prev_page = $page -1;
-                $this->firstBack = "<li class=\"page-item\"><a href=\"$self_uri?table_page=$prev_page$this->search\" class=\"page-link\">&larr; &nbsp; Prev</a></li>";
+                $this->firstBack = "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=$prev_page$this->search\" class=\"page-link\">&larr; &nbsp; Prev</a></li>";
             }
         }
 
@@ -182,99 +183,100 @@ class Table
             if ($this->total_pages == 5) {
 
                 if ($page == 1) {
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
                 }else if($page == 2) {
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
                 }
                 
             }elseif ($this->total_pages == 4) {
 
                 if ($page == 1) {
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
                 }else if($page == 2) {
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
                 }
                 
             }else {
-                $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
-                if ($this->total_pages > 4) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
+                $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                if ($this->total_pages > 4) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
             }
         
         }else {
-            $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=1$this->search\" class=\"page-link\">1</a></li>";
-            if ($this->total_pages > 3) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=2$this->search\" class=\"page-link\">2</a></li>";
+            $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=1$this->search\" class=\"page-link\">1</a></li>";
+            if ($this->total_pages > 3) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=2$this->search\" class=\"page-link\">2</a></li>";
         }
 
         // center
         if ($this->total_pages == 5) {
 
             $status = ($page == 3) ? "active" : ""; 
-            $this->self .= "<li class=\"page-item $status\"><a href=\"$self_uri?table_page=3$this->search\" class=\"page-link\">3</a></li>";
+            $this->self .= "<li class=\"page-item $status\"><a href=\"$self_uri\t$this->params\ttable_page=3$this->search\" class=\"page-link\">3</a></li>";
        
         }elseif ($this->total_pages > 4) {
 
             if ($page <= floor($this->total_pages / 2)) {
-                $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".floor(($this->total_pages+$page)/2)."$this->search\" class=\"page-link\">...</a></li>";
+                $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".floor(($this->total_pages+$page)/2)."$this->search\" class=\"page-link\">...</a></li>";
             }else {
-                $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".floor(($page)/2)."$this->search\" class=\"page-link\">...</a></li>";
+                $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".floor(($page)/2)."$this->search\" class=\"page-link\">...</a></li>";
             }
 
         }elseif($this->total_pages == 3) {
 
             $status = ($page == 2) ? "active" : ""; 
-            $this->self .= "<li class=\"page-item $status\"><a href=\"$self_uri?table_page=2$this->search\" class=\"page-link\">2</a></li>";
+            $this->self .= "<li class=\"page-item $status\"><a href=\"$self_uri\t$this->params\ttable_page=2$this->search\" class=\"page-link\">2</a></li>";
         
         }
+        
 
         // right
         if ($page > floor($this->total_pages / 2)) {
 
-            if ($this->total_pages > 5) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
+            if ($this->total_pages > 5) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
             
             if ($this->total_pages == 5) {
 
                 if ($page == 4) {
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
                 }else if($page == 5) {
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
                 }else {
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+2)."$this->search\" class=\"page-link\">".($page+2)."</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+2)."$this->search\" class=\"page-link\">".($page+2)."</a></li>";
                 }
                 
             }elseif ($this->total_pages == 4) {
 
                 if ($page == 3) {
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page+1)."$this->search\" class=\"page-link\">".($page+1)."</a></li>";
                 }else if($page == 4) {
-                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                    $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($page-1)."$this->search\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
                 }
                 
             }elseif ($this->total_pages == 3) {
                 $status = ($page == 3) ? "active" : ""; 
-                $this->self .= "<li class=\"page-item $status\"><a href=\"$self_uri?table_page=3$this->search\" class=\"page-link\">3</a></li>";
+                $this->self .= "<li class=\"page-item $status\"><a href=\"$self_uri\t$this->params\ttable_page=3$this->search\" class=\"page-link\">3</a></li>";
             }else {
-                $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri?table_page=$page$this->search\" class=\"page-link\">$page</a></li>";
+                $this->self .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->params\ttable_page=$page$this->search\" class=\"page-link\">$page</a></li>";
             }
 
         }else {
-            if ($this->total_pages > 3) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=".($this->total_pages-1)."$this->search\" class=\"page-link\">".($this->total_pages-1)."</a></li>";
-            $this->self .= "<li class=\"page-item\"><a href=\"$self_uri?table_page=$this->total_pages$this->search\" class=\"page-link\">$this->total_pages</a></li>";
+            if ($this->total_pages > 3) $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=".($this->total_pages-1)."$this->search\" class=\"page-link\">".($this->total_pages-1)."</a></li>";
+            $this->self .= "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=$this->total_pages$this->search\" class=\"page-link\">$this->total_pages</a></li>";
         }
         
         // next
         if ($this->total_pages > 5) {
             if ($page < $this->total_pages) {
                 $next_page = $page + 1;
-                $this->nextLast =  "<li class=\"page-item\"><a href=\"$self_uri?table_page=$next_page$this->search\" class=\"page-link\">Next &nbsp; &rarr;</a></li>";
+                $this->nextLast =  "<li class=\"page-item\"><a href=\"$self_uri\t$this->params\ttable_page=$next_page$this->search\" class=\"page-link\">Next &nbsp; &rarr;</a></li>";
             }
         }
 
@@ -319,7 +321,15 @@ class Table
             } elseif ($page < 1) {
                 $page = 1;
             }
-    
+
+            if ($_GET) {
+                foreach ($_GET as $key => $value) {
+                    if ($key != "table_page") {
+                        $this->params .= "$key=$value&";
+                    }
+                }
+            }
+
             // echo "<div class=\"card card-body border-top-1 border-top-pink text-center\">";
             // echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center mt-3\" >";
             echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center justify-content-center mt-3\" >";

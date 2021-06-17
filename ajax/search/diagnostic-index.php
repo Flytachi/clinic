@@ -6,8 +6,8 @@ $tb = new Table($db, "visit_services vs");
 $tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, v.complaint")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
-	"vs.status = 2 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
+	"vs.status = 2 AND vs.level = 10 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
+	"vs.status = 2 AND vs.level = 10 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 $tb->set_self(viv('diagnostic/index'));  
