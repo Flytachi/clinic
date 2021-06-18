@@ -7,7 +7,7 @@ $tb = new Table($db, "visit_prices");
 $search = $tb->get_serch();
 $search_array = array(
 	"user_id = {$_GET['pk']} AND price_date IS NOT NULL", 
-	"user_id = {$_GET['pk']} AND price_date IS NOT NULL"
+	"user_id = {$_GET['pk']} AND price_date IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 ?>
@@ -53,7 +53,7 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 							</div>
 							<form action="" class="mr-2 ml-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите услугу или медикомент">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>

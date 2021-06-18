@@ -44,9 +44,14 @@ $tb->where_or_serch($search_array)->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Пациенты на приём</h6>
 						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
-							</div>
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
 						</div>
 					</div>
 

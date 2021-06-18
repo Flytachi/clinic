@@ -315,7 +315,7 @@
                                 $button_inner = "Завершить";
                             }
                             ?>
-                            <button id="sweet_visit_finish" data-href="<?= up_url($patient->visit_id, 'VisitFinish') ?>" <?= $button_tip ?> class="btn btn-outline-danger btn-sm">
+                            <button id="sweet_visit_finish" data-href="<?= up_url($patient->visit_id, 'VisitFinish') ?>" <?= $button_tip ?> class="<?= $classes['btn-completed'] ?>">
                                 <i class="icon-paste2"></i> <?= $button_inner ?>
                             </button>
                         </div>

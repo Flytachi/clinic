@@ -7,9 +7,10 @@ $header = "Амбулаторные пациенты";
 $tb = new Table($db, "visit_services vs");
 $tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.add_date")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
+$is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $search_array = array(
-	"vs.status = 3 AND vs.level = 6",
-	"vs.status = 3 AND vs.level = 6 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 3 AND vs.level = 6 $is_division",
+	"vs.status = 3 AND vs.level = 6 $is_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
 ?>
@@ -17,7 +18,6 @@ $tb->where_or_serch($search_array)->set_limit(20);
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack("global_assets/js/demo_pages/content_cards_header.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
 <script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
@@ -48,21 +48,24 @@ $tb->where_or_serch($search_array)->set_limit(20);
 
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
+						<div class="header-elements">
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
 
-					<div class="card-body">
-
-						<?php
-			            if( isset($_SESSION['message']) ){
-			                echo $_SESSION['message'];
-			                unset($_SESSION['message']);
-			            }
-			            ?>
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive">
-                            <table class="table table-hover table-sm datatable-basic">
-                                <thead>
-                                    <tr class="<?= $classes['table-thead'] ?>">
+                            <table class="table table-hover table-sm">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>
@@ -78,18 +81,11 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
-												<div class="text-muted">
-													<?php
-													// if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-													// 	echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													// }
-													?>
-												</div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $row->id AND status = 3 and route_id = $row->route_id") as $serv): ?>
+												<?php foreach($db->query("SELECT vs.id, vs.service_name FROM visit_services vs WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.route_id = $row->route_id $is_division") as $serv): ?>
 													<?php $services[] = $serv['id'] ?>
 													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>
@@ -101,7 +97,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                             <td class="text-center">
                                                 <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-                                                    <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzesModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
+                                                    <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzesModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Добавить результ</a>
 													<a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row->id ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
                                                 </div>
                                             </td>
@@ -110,6 +106,8 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                 </tbody>
                             </table>
                         </div>
+
+						<?php $tb->get_panel(); ?>
 
 					</div>
 
@@ -137,6 +135,19 @@ $tb->where_or_serch($search_array)->set_limit(20);
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/laboratory-list_outpatient') ?>",
+				data: {
+					table_search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
 
 		function ResultShow(events) {
 			$.ajax({

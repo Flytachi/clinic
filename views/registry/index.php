@@ -44,7 +44,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 						<div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>

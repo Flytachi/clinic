@@ -92,7 +92,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 	                      	</div>
 							<form action="" class="mr-2 ml-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск...">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите код, отдел или название услуги">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>

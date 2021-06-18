@@ -81,8 +81,10 @@ class VisitAnalyzesModel extends Model
 
                     <div class="col-4">
                         <div class="text-right" style="margin-bottom:10px;">
-                            <button type="button" onclick="SubmitCheckAll(<?= json_encode($this->items) ?>)" class="btn btn-outline-danger btn-sm">Завершить все</button>
-                            <button type="button" onclick="FinishService()" class="btn btn-outline-info btn-sm">Сохранить все</button>
+                            <?php if(config('laboratory_end_all_button')): ?>
+                                <button type="button" onclick="SubmitCheckAll(<?= json_encode($this->items) ?>)" class="<?= $classes['btn-completed'] ?>">Завершить все</button>
+                            <?php endif; ?>
+                            <button type="button" id="btn_save" onclick="FinishService()" class="btn btn-outline-info btn-sm legitRipple">Сохранить</button>
                             <button type="submit" id="btn_submit" style="display:none;"></button>
                         </div>
                     </div>
@@ -125,8 +127,12 @@ class VisitAnalyzesModel extends Model
                                                 <th colspan="5" class="text-center"><?= $service_row['service_name'] ?></th>
                                                 <th class="text-right">
                                                     <div class="list-icons">
-                                                        <a href="#" onclick="SubmitCheckService(<?= $service_row['id'] ?>, '<?= $service_row['service_name'] ?>')" type="button" class="text-success legitRipple">Завершить</a>
-                                                        <a href="#" onclick="FailureVisitService('<?= del_url($service_row['id'], 'VisitFailure') ?>')" type="button" class="text-danger legitRipple">Отказ</a>
+                                                        <?php if(config('laboratory_end_service_button')): ?>
+                                                            <a href="#" onclick="SubmitCheckService(<?= $service_row['id'] ?>, '<?= $service_row['service_name'] ?>')" type="button" class="text-success legitRipple">Завершить</a>
+                                                        <?php endif; ?>
+                                                        <?php if(config('laboratory_failure_service_button')): ?>
+                                                            <a href="#" onclick="FailureVisitService('<?= del_url($service_row['id'], 'VisitFailure') ?>')" type="button" class="text-danger legitRipple">Отказ</a>
+                                                        <?php endif; ?>
                                                     </div>
                                                 </th>
                                             </tr>
@@ -164,7 +170,7 @@ class VisitAnalyzesModel extends Model
 
 
                             <div class="text-right" style="margin-top:10px;">
-                                <button type="button" onclick="SubmitCheckDivision(<?= $key ?>, '<?= $title ?>', <?= json_encode($submit_division_items) ?>)" class="btn btn-outline-danger btn-sm">Завершить</button>
+                                <button type="button" onclick="SubmitCheckDivision(<?= $key ?>, '<?= $title ?>', <?= json_encode($submit_division_items) ?>)" class="<?= $classes['btn-completed'] ?>">Завершить</button>
                             </div>
 
     					</div>
@@ -177,7 +183,7 @@ class VisitAnalyzesModel extends Model
 
         </form>
         <script type="text/javascript">
-            let deletes_pks;
+            var deletes_pks;
             Swit.init();
 
             function SubmitSave(params) {
@@ -197,6 +203,7 @@ class VisitAnalyzesModel extends Model
                                     text: "Анализы успешно сохранены!",
                                     type: 'success'
                                 }).show();
+                                document.querySelector("#btn_save").disabled = false;
                             }
                             // finish for service
                             if (data.action == "finish for service") { 
@@ -392,6 +399,7 @@ class VisitAnalyzesModel extends Model
             }
 
             function FinishService(params = null, action = null, deletes = null) {
+                document.querySelector("#btn_save").disabled = true;
                 var display_finish = document.querySelector("#inputs_finish"); 
                 deletes_pks = deletes;
                 display_finish.innerHTML = "";

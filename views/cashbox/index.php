@@ -52,12 +52,14 @@ $tb->where_or_serch($where_search);
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Приём платежей</h5>
 								<div class="header-elements">
-									<div class="form-group-feedback form-group-feedback-right">
-										<input type="search" class="<?= $classes['input-search'] ?>" id="search_input" placeholder="Введите ID или имя">
-										<div class="form-control-feedback text-success">
-											<i class="icon-search4 font-size-base text-muted"></i>
+									<form action="" class="mr-2">
+										<div class="form-group-feedback form-group-feedback-right">
+											<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+											<div class="form-control-feedback">
+												<i class="icon-search4 font-size-base text-muted"></i>
+											</div>
 										</div>
-									</div>
+									</form>
 								</div>
 							</div>
 

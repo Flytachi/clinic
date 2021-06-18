@@ -60,7 +60,7 @@ $tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->
                         <div class="header-elements">
 							<form action="" class="mr-2">
 								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск...">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите название объекта или палату">
 									<div class="form-control-feedback">
 										<i class="icon-search4 font-size-base text-muted"></i>
 									</div>

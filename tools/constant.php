@@ -84,6 +84,7 @@ $classes = array(
     "form-daterange" => "form-control daterange-locale",
     
     // Buttons
+    "btn-completed" => "btn btn-outline bg-purple text-purple border-purple btn-sm legitRipple",
     "btn-price" => "btn btn-outline-danger btn-sm legitRipple",
     "btn-detail" => "btn btn-outline-danger btn-sm legitRipple",
     "btn-viewing" => "btn btn-outline-danger btn-sm legitRipple",

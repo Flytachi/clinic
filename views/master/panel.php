@@ -160,37 +160,98 @@ $header = "Панель управления";
 
 				    <div class="card-body">
 
-                        <?php
-                        if( isset($_SESSION['message']) ){
-                            echo $_SESSION['message'];
-                            unset($_SESSION['message']);
-                        }
-                        ?>
-
                         <div class="form-group row">
+
+							<div class="col-md-6">
+
+								<legend>The Settings Modules</legend>
+
+								<?php
+								try {
+									$company = new stdClass();
+									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
+									foreach ($comp as $value) {
+										$company->{$value->const_label} = $value->const_value;
+									}
+									?>
+									<div class="table-responsive">
+										<table class="table table-sm table-bordered">
+											<tbody>
+												<tr>
+													<th>Laboratory</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= (isset($company->module_laboratory) and $company->module_laboratory) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Diagnostic</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= (isset($company->module_diagnostic) and $company->module_diagnostic) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Pharmacy</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_pharmacy) and $company->module_pharmacy) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Bypass</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_bypass" <?= (isset($company->module_bypass) and $company->module_bypass) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Diet</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_diet" <?= (isset($company->module_diet) and $company->module_diet) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>ZeTTa PACS</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= (isset($company->module_zetta_pacs) and $company->module_zetta_pacs) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<?php
+								} catch (\Exception $e) {
+									echo "Не установлена база данных";
+								}
+								?>
+
+							</div>
 
 
                             <div class="col-md-6">
 
-								<form action="" method="post" enctype="multipart/form-data">
-									<legend>The main</legend>
-		                            <input style="display:none;" id="btn_INITIALIZE" type="submit" value="INITIALIZE" name="INITIALIZE"></input>
-		                            <input style="display:none;" id="btn_GET_START" type="submit" value="GET_START" name="GET_START"></input>
-
-									<div class="form-group row">
-
-						                <div class="col-md-7">
-						                   	<input type="file" class="form-control" name="file_database" onchange="Chemp(this)" accept="application/json">
-						                </div>
-
-						                <div class="col-md-5" style="margin-top: 10px;">
-						                    <button type="button" class="btn btn-primary btn-sm" onclick="Conf('#btn_INITIALIZE')" id="btn_ini" disabled>Initialize the database</button>
-											<button type="button" class="btn btn-danger btn-sm" onclick="Conf('#btn_GET_START')">GET START</button>
-						                </div>
-
-						            </div>
-
-		                        </form>
+								<legend>The Settings Configurations</legend>
 
 								<?php
 								try {
@@ -209,7 +270,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="config_wards_by_division" <?= (isset($config->config_wards_by_division) and $config->config_wards_by_division) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_wards_by_division" <?= (isset($config->config_wards_by_division) and $config->config_wards_by_division) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -219,7 +280,39 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="config_document_autosave" <?= (isset($config->config_document_autosave) and $config->config_document_autosave) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_document_autosave" <?= (isset($config->config_document_autosave) and $config->config_document_autosave) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+
+												<!-- Laboratory -->
+												<tr>
+													<th>Laboratory End All Button</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_laboratory_end_all_button" <?= (isset($config->config_laboratory_end_all_button) and $config->config_laboratory_end_all_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Laboratory End Service Button</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_laboratory_end_service_button" <?= (isset($config->config_laboratory_end_service_button) and $config->config_laboratory_end_service_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Laboratory Failure Service Button</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_laboratory_failure_service_button" <?= (isset($config->config_laboratory_failure_service_button) and $config->config_laboratory_failure_service_button) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -235,93 +328,6 @@ $header = "Панель управления";
 								?>
 
                             </div>
-
-							<div class="col-md-6">
-
-								<legend>The settings</legend>
-
-								<?php
-								try {
-									$company = new stdClass();
-									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
-									foreach ($comp as $value) {
-										$company->{$value->const_label} = $value->const_value;
-									}
-									?>
-									<div class="table-responsive">
-										<table class="table table-sm table-bordered">
-											<tbody>
-												<tr>
-													<th>Laboratory</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= (isset($company->module_laboratory) and $company->module_laboratory) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<th>Diagnostic</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= (isset($company->module_diagnostic) and $company->module_diagnostic) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<th>Pharmacy</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_pharmacy) and $company->module_pharmacy) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<th>Bypass</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_bypass" <?= (isset($company->module_bypass) and $company->module_bypass) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<th>Diet</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diet" <?= (isset($company->module_diet) and $company->module_diet) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<th>ZeTTa PACS</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= (isset($company->module_zetta_pacs) and $company->module_zetta_pacs) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
-									<?php
-								} catch (\Exception $e) {
-									echo "Не установлена база данных";
-								}
-								// dd(module());
-								?>
-
-							</div>
 
                         </div>
 
@@ -340,7 +346,7 @@ $header = "Панель управления";
 	<!-- /page content -->
 
     <script type="text/javascript">
-		function Const_ZP(input) {
+		function ConstChange(input) {
 			$.ajax({
 				type: "POST",
 				url: "<?= ajax('master_controller') ?>",
@@ -354,40 +360,6 @@ $header = "Панель управления";
 						}).show();
 					}
 				},
-			});
-		}
-
-		function Chemp(input) {
-			if (input.value.match(/\.?[^.]+$/)[0] == ".json") {
-				$('#btn_ini').attr("disabled", false);
-			}else {
-				$('#btn_ini').attr("disabled", true);
-			}
-		}
-
-		function Conf(btn) {
-			swal({
-				position: 'top',
-				title: 'Внимание!',
-				type: 'info',
-				showCancelButton: true,
-				confirmButtonText: "Уверен"
-			}).then(function(ivi) {
-				if (ivi.value) {
-					swal({
-						position: 'top',
-						title: 'Внимание!',
-						text: 'Вернуть данные назад будет невозможно!',
-						type: 'warning',
-						showCancelButton: true,
-						confirmButtonText: "Да"
-					}).then(function(ivi) {
-						if (ivi.value) {
-							$(btn).click();
-						}
-					});
-				}
-
 			});
 		}
 	</script>
