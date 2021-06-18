@@ -53,7 +53,8 @@ function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
     );
     $lb = ($name_pk) ? $name_pk : "id";
 
-    if (isset($post[$lb])) {
+
+    if (isset($post[$lb]) and $post[$lb]) {
         // connect
         $pk = $post[$lb];
         unset($post[$lb]);

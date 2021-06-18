@@ -2,6 +2,8 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 is_module('module_laboratory');
+
+dd($_GET);
 ?>
 <div class="modal-header bg-info">
     <h5 class="modal-title">Анализы: <?= get_full_name($_GET['id']) ?> </h5>

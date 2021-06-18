@@ -273,16 +273,16 @@ class VisitAnalyzeModel extends Model
     public function save()
     {
         global $db;
-        $this->end = ($this->post['end']) ? true : false; unset($this->post['end']);
-        $this->user_pk = $this->post['user_id']; unset($this->post['user_id']);
-        $this->division_pk = $this->post['division_end']; unset($this->post['division_end']);
-        $this->service_pk = $this->post['service_end']; unset($this->post['service_end']);
+        // $this->end = ($this->post['end']) ? true : false; unset($this->post['end']);
+        // $this->user_pk = $this->post['user_id']; unset($this->post['user_id']);
+        // $this->division_pk = $this->post['division_end']; unset($this->post['division_end']);
+        // $this->service_pk = $this->post['service_end']; unset($this->post['service_end']);
         $db->beginTransaction();
 
         $this->analize_save();
         $this->finish();
 
-        $db->commit();
+        // $db->commit();
         $this->success();
     }
 
