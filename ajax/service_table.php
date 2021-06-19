@@ -56,7 +56,7 @@ $i = 0; $cost = 0;
 
             <?php if (empty($_GET['head'])): ?>
                 <td>
-                    <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>" required>
+                    <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>">
                         <?php if ($row->user_level == 6): ?>
                             <?php foreach ($db->query("SELECT id from users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
                                 <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>

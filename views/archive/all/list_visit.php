@@ -200,8 +200,6 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 										<th style="width: 11%">Дата завершения</th>
 			                            <th>Мед услуга</th>
 										<th style="width: 16%">Напрвитель</th>
-										<th>Тип визита</th>
-										<th>Статус</th>
                                         <th class="text-right" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
@@ -244,41 +242,10 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
 											</td>
-											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-											<td>
-												<?php if ($row['completed']): ?>
-													<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-												<?php else: ?>
-													<?php if ($row['status'] == 0): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-													<?php elseif ($row['status'] == 1): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-													<?php elseif ($row['status'] == 2): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-													<?php else: ?>
-														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-													<?php endif; ?>
-												<?php endif; ?>
-											</td>
                                             <td class="text-right">
 												<button type="button" class="<?= $classes['btn_detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<?php if (module('module_laboratory') and $row['laboratory']): ?>
-														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
-														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-													<?php else: ?>
-														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
-															<a href="<?= viv('card/content_1') ?>?pk=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
-															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
-															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_4').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer"></i>Акт сверки</a>
-														<?php else: ?>
-															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
-															<?php if (permission([2,32]) and (level($row['route_id']) == 2 or level($row['route_id']) == 32)): ?>
-																<a onclick="Update('<?= up_url($row['id'], 'VisitModel') ?>')" class="dropdown-item"><i class="icon-users"></i> Направитель</a>
-															<?php endif; ?>
-															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_1').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-														<?php endif; ?>
-													<?php endif; ?>
+													<a onclick="Update('<?= up_url($row['id'], 'VisitModel') ?>')" class="dropdown-item"><i class="icon-users"></i> Направитель</a>
                                                 </div>
 											</td>
                                         </tr>
