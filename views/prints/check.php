@@ -2,10 +2,6 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
-foreach ($comp as $value) {
-    $company[$value['const_label']] = $value['const_value'];
-}
 ?>
 <style>
     #invoice-POS{
@@ -13,7 +9,7 @@ foreach ($comp as $value) {
         /*padding:2mm;*/
         margin: 0 auto;
         margin-left: -5px;
-        width: 50mm;
+        width: 75mm;
         background: #FFF;
     }
     ::selection {background: #f31544; color: #FFF;}
@@ -81,10 +77,6 @@ foreach ($comp as $value) {
 <body onload="window.print();" style="color: black; font-size: 140%;">
 
     <div id="invoice-POS" >
-
-        <center>
-            <img src="<?= $company['print_header_logotype'] ?>" alt="альтернативный текст" height="100" width="140">
-        </center>
 
         <div id="mid">
 

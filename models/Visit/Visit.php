@@ -14,7 +14,7 @@ class VisitModel extends Model
             unset($_SESSION['message']);
         }
         ?>
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= add_url() ?>" onsubmit="VisitSubmit()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="direction" value="0">
             <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
@@ -26,11 +26,7 @@ class VisitModel extends Model
                     <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
                         <option></option>
                         <?php foreach ($db->query("SELECT DISTINCT us.id, us.status, vs.user_id 'stationar' FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
-                            <?php if ($row['stationar']): ?>
-                                <option value="<?= $row['id'] ?>" disabled><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(стационар лечится)---" : "---(стационар оплачивается)---" ?></option>
-                            <?php else: ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                            <?php endif; ?>
+                            <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -128,6 +124,37 @@ class VisitModel extends Model
         </form>
 
         <script type="text/javascript">
+
+            function VisitSubmit() {
+                event.preventDefault();
+                $.ajax({
+                    type: $(event.target).attr("method"),
+                    url: $(event.target).attr("action"),
+                    data: $(event.target).serializeArray(),
+                    success: function (result) {
+                        var data = JSON.parse(result);
+                        if (data.status == "success") {
+                            $(event).trigger('reset');
+                            new Noty({
+                                text: 'Успешно!',
+                                type: 'success'
+                            }).show();
+
+                            // Печать:
+                            Print(`<?= viv('prints/document') ?>?id=${data.id}`);
+                            setTimeout( function() {
+                                    location.reload();
+                                }, 1000)
+
+                        }else {
+                            new Noty({
+                                text: data.message,
+                                type: 'error'
+                            }).show();
+                        }
+                    },
+                });
+            }
 
             var service = {};
 
@@ -536,6 +563,7 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
+        $this->user_pk = $this->post['user_id'];
         if (is_array($this->post['division_id']) and !$this->post['direction'] and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
@@ -546,7 +574,7 @@ class VisitModel extends Model
             $this->save_rows();
         }
         if ($this->post['division_id']) {
-            $stat = $db->query("SELECT * FROM division WHERE id={$this->post['division_id']} AND level=6")->fetch();
+            $stat = $db->query("SELECT * FROM division WHERE id IN (".implode(",", array_unique($this->post['division_id'])).") AND level=6")->fetch();
             if ($stat) {
                 $this->post['laboratory'] = True;
             }
@@ -707,42 +735,21 @@ class VisitModel extends Model
 
     public function success($stat=null)
     {
-        if ($stat == 2) {
-            echo '<div class="alert alert-info" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                Успешно
-            </div>';
-        }elseif ($stat == 1) {
-            echo 1;
-        }else {
-            $_SESSION['message'] = '
-            <div class="alert alert-info" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                Успешно
-            </div>
-            ';
-            render();
-        }
+        echo json_encode(array(
+            'status' => "success", 
+            'id' => $this->user_pk,
+        ));
+        exit;
     }
 
     public function error($message, $stat=null)
     {
-        if ($stat) {
-            echo '
-            <div class="alert bg-danger alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold"> '.$message.'</span>
-            </div>
-            ';
-        } else {
-            $_SESSION['message'] = '
-            <div class="alert bg-danger alert-styled-left alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                <span class="font-weight-semibold"> '.$message.'</span>
-            </div>
-            ';
-            render();
-        }
+        echo "$message";
+        echo json_encode(array(
+            'status' => "error", 
+            'message' => $message,
+        ));
+        exit;
     }
 }
 

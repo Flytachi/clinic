@@ -101,39 +101,23 @@ class VisitPriceModel extends Model
                         var result = JSON.parse(result);
                         if (result.status == "success") {
 
-                            var parent_id = document.querySelectorAll('.parent_class');
-
-                            let par_id;
-
-                            parent_id.forEach(function(events) {
-                                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-
-                                par_id = $(events).val()
-
-                                conn.send(obj);
-                            });
-                                let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
-
-                                conn.send(obj1);
-
-
-                                // Печать:
-                                if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
-                                    $.ajax({
-                                        type: "GET",
-                                        url: result.val,
-                                        success: function (data) {
-                                            let ww = window.open();
-                                            ww.document.write(data);
-                                            ww.focus();
-                                            ww.print();
-                                            ww.close();
-                                        },
-                                    });
-                    			}else {
-                                    let we = window.open(result.val,'mywindow');
-                                    setTimeout(function() {we.close()}, 100);
-                    			}
+                            // Печать:
+                            if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
+                                $.ajax({
+                                    type: "GET",
+                                    url: result.val,
+                                    success: function (data) {
+                                        let ww = window.open();
+                                        ww.document.write(data);
+                                        ww.focus();
+                                        ww.print();
+                                        ww.close();
+                                    },
+                                });
+                            }else {
+                                let we = window.open(result.val,'mywindow');
+                                setTimeout(function() {we.close()}, 100);
+                            }
 
                         }
                         sessionStorage['message'] = result.message;
