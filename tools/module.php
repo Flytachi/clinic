@@ -23,19 +23,4 @@ function is_module($value = null){
     }
 }
 
-if (!module('module_pharmacy')) {
-    unset($PERSONAL[4]);
-}
-
-if (!module('module_laboratory')) {
-    unset($PERSONAL[6]);
-}
-
-if (!module('module_diet')) {
-    unset($PERSONAL[9]);
-}
-
-if (!module('module_diagnostic')) {
-    unset($PERSONAL[10]);
-}
 ?>

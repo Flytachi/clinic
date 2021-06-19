@@ -177,7 +177,7 @@ class __Db
     private String $file_name = "database";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
     private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private Array $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
+    private Array $MUL = array('beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,'wards' => '`building_id` (`building_id`,`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
 
     function __construct($value = null, $name = null)
     {
@@ -224,7 +224,7 @@ class __Db
 
     public function delete()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
         
@@ -237,7 +237,7 @@ class __Db
 
     public function clean()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
         if (!$this->clean_table) {
@@ -256,7 +256,7 @@ class __Db
 
     public function migrate()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
 
@@ -272,18 +272,18 @@ class __Db
 
     public function generate()
     {
-        global $db;
+        global $db, $ini;
         require_once dirname(__DIR__).'/functions/connection.php';
 
         $json = array();
 
         foreach ($db->query("SHOW TABlES") as $table) {
 
-            $sql = $this->DB_HEADER." `{$table['Tables_in_clinic']}` (";
+            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
             $column = "";
             $keys = "";
 
-            foreach ($db->query("DESCRIBE {$table['Tables_in_clinic']}") as $col) {
+            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
                 $column .= "`{$col['Field']}` {$col['Type']}";
 
                 if ($col['Null'] == "YES") {
@@ -312,7 +312,7 @@ class __Db
 
                     case "MUL":
                         // $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
-                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_clinic']]} USING BTREE";
+                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
                         $keys.=",";
                         break;
                 }
