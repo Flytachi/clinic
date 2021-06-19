@@ -38,8 +38,6 @@ class PatientForm extends Model
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-sm btn-large btn-block" onclick="SearchData(this, 'Подождите...')">Получить данные</button>
-
                 </div>
 
                 <div class="col-md-12">
@@ -183,77 +181,6 @@ class PatientForm extends Model
             $(function(){
                 $("#region").chained("#province");
             });
-
-            function SearchData(btn, btn_new) {
-        		var l_pin = document.getElementById('label_pin_fl_input');
-        		var l_serial = document.getElementById('label_passport_serial_input');
-
-
-        		var pin = document.getElementById('pin_fl_input');
-        		var serial = document.getElementById('passport_serial_input');
-        		var btn_old = btn.innerHTML;
-
-        		if (pin.value && serial.value) {
-
-        			btn.innerHTML = btn_new;
-        			btn.disabled = true;
-
-        			$.ajax({
-        				type: "POST",
-        				url: "<?= ajax("MVD_api") ?>",
-        				data: {
-        					pin_fl: pin.value,
-        					seria: serial.value
-        				},
-        				success: function (response) {
-
-        					try {
-        						var data = JSON.parse(JSON.parse(response));
-        						if (data.Status == 1) {
-
-        							var result = data.Data;
-        							$('#last_name').val(result.surname_latin.FirstUpperWords());
-                                    $('#first_name').val(result.name_latin.FirstUpperWords());
-        							$('#father_name').val(result.patronym_latin.FirstUpperWords());
-        							$('#birth_date').val(result.birth_date);
-
-        							if (result.sex == 1) {
-        								$('#gender_1').prop('checked', true);
-        							}else {
-        								$('#gender_0').prop('checked', true);
-        							}
-
-        							l_pin.className = "text-success";
-        							l_serial.className = "text-success";
-        							pin.className = "form-control border-success";
-        							serial.className = "form-control border-success";
-        						}else{
-        							l_pin.className = "text-danger";
-        							l_serial.className = "text-danger";
-        							pin.className = "form-control border-danger";
-        							serial.className = "form-control border-danger";
-
-        						}
-        						console.log(data);
-        					}catch (e) {
-
-        						l_pin.className = "text-danger";
-        						l_serial.className = "text-danger";
-        						pin.className = "form-control border-danger";
-        						serial.className = "form-control border-danger";
-        						// инструкции для обработки ошибок
-        						console.log("Ошибка"); // передать объект исключения обработчику ошибок
-
-        					}finally {
-        						btn.innerHTML = btn_old;
-        						btn.disabled = false;
-        					}
-
-        				},
-        			});
-
-        		}
-        	}
         </script>
         <?php
     }
