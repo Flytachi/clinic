@@ -10,80 +10,52 @@ foreach ($comp as $value) {
 <style>
     #invoice-POS{
         box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
-        /*padding:2mm;*/
+        padding:2mm;
         margin: 0 auto;
-        margin-left: -5px;
         width: 50mm;
         background: #FFF;
     }
-    ::selection {background: #f31544; color: #FFF;}
-    ::moz-selection {background: #f31544; color: #FFF;}
-    h1{
-      font-size: 1.5em;
-      color: #222;
-    }
-    h2{font-size: .7em;}
-    h3{
-      font-size: 1.0em;
-      font-weight: 300;
-      line-height: 2em;
-    }
-    p{
-      font-size: .7em;
-      line-height: 1.2em;
-    }
 
-    #top, #mid,#bot{ /* Targets all id with 'col-' */
-        border-bottom: 1px solid #EEE;
-    }
+    ::selection { background: #f31544; color: #FFF; }
+    ::moz-selection { background: #f31544; color: #FFF; }
+    h1{ font-size: 1.5em; color: #222; }
+    h2{ font-size: .7em; }
+    h3{ font-size: 1.0em; font-weight: 300; line-height: 2em; }
+    p{ font-size: .7em; line-height: 1.2em; }
+    
+    #top, #mid, #bot{ border-bottom: 1px solid #EEE; }
+    #top{ min-height: 100px; }
+    #mid{ min-height: 80px; }
+    #bot{ min-height: 50px; }
 
-    #top{min-height: 100px;}
-    #mid{min-height: 80px;}
-    #bot{ min-height: 50px;}
-    .clientlogo{
-        float: left;
-        height: 60px;
-        width: 60px;
-        background: url(http://michaeltruong.ca/images/client.jpg) no-repeat;
-        background-size: 60px 60px;
-        border-radius: 50px;
-    }
+    .tabletitle{ background: #9e9e9e; }
+    .service{ border-bottom: 1px solid #EEE; }
+    .item{ width: 24mm; }
+    .itemtext{ font-size: .5em; }
+    #legalcopy{ margin-top: 5mm; }
+
     .info{
-      display: block;
-      /* float:left; */
-      margin-left: 0;
+        display: block;
+        /* float:left; */
+        margin-left: 0;
     }
-    .title{
-      float: right;
-    }
-    .title p{text-align: right;}
     table{
-      width: 100%;
-      border-collapse: collapse;
+        width: 50mm;
+        border-collapse: collapse;
     }
     /* td{
-      padding: 5px 0 5px 15px;
-      border: 1px solid #EEE
+        padding: 5px 0 5px 15px;
+        border: 1px solid #EEE
     } */
-    .tabletitle{
-      background: #9e9e9e;
-    }
-    .service{border-bottom: 1px solid #EEE;}
-    .item{width: 24mm;}
-    .itemtext{font-size: .5em;}
-
-    #legalcopy{
-      margin-top: 5mm;
-    }
 
 </style>
 
-<body onload="window.print();" style="color: black; font-size: 140%;">
+<body onload="//window.print();" style="color: black; font-size: 140%;">
 
     <div id="invoice-POS">
 
         <center>
-            <img src="<?= $company['print_header_logotype'] ?>" alt="Логотип" height="100" width="140">
+            <img src="<?= $company['print_header_logotype'] ?>" alt="Логотип" height="90" width="180">
         </center>
 
         <div id="mid">
@@ -116,7 +88,7 @@ foreach ($comp as $value) {
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
                         <?php $row = $db->query("SELECT id, item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_prices WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
                         <tr class="service" style="font-size:150%;">
-        					<td class="tableitem"><p class="itemtext"><?= $row['id'] ?> <?= $row['item_name'] ?></p></td>
+        					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>
         					<td class="tableitem">
                                 <p class="itemtext">
