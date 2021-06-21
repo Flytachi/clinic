@@ -4,7 +4,7 @@ $session->is_auth();
 is_module('module_laboratory');
 ?>
 
-<div class="modal-header bg-info">
+<div class="<?= $classes['modal-global_header'] ?>">
     <h5 class="modal-title">Анализы: </h5>
     <button type="button" class="close" data-dismiss="modal">&times;</button>
 </div>
@@ -13,10 +13,8 @@ is_module('module_laboratory');
 
     <div class="table-responsive">
         <table class="table table-hover">
-            <thead>
-                <tr class="<?= $classes['table-thead'] ?>">
-                    <th style="width:3%">№</th>
-                    <th>Название услуги</th>
+            <thead class="<?= $classes['table-thead'] ?>">
+                <tr>
                     <th>Анализ</th>
                     <th class="text-right" style="width:12%">Норма</th>
                     <th class="text-right" style="width:7%">Ед</th>
@@ -24,26 +22,36 @@ is_module('module_laboratory');
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $i = 1;
-                $norm = "scl.name, scl.code, scl.standart";
-                foreach ($db->query("SELECT vl.id, vl.result, vl.deviation, scl.service_id 'ser_id', $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['pk']}") as $row) {
-                    ?>
-                    <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
-                        <td><?= $i++ ?></td>
-                        <td><?= $db->query("SELECT name FROM service WHERE id={$row['ser_id']}")->fetch()['name'] ?></td>
-                        <td><?= $row['name'] ?></td>
-                        <td class="text-right">
-                            <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
-                        </td>
-                        <td class="text-right">
-                            <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
-                        </td>
-                        <td class="text-right"><?= $row['result'] ?></td>
+
+                <?php if(isset($_GET['visit_pk'])): ?>
+                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = {$_GET['visit_pk']} AND level = 6 AND status = 7") as $parent): ?>
+                        <tr class="table-primary text-center">
+                            <th colspan="5"><b><?= $parent['service_name'] ?></b></th>
+                        </tr>
+                        <?php foreach ($db->query("SELECT va.deviation, va.analyze_name, va.result, sa.standart, sa.unit FROM visit_analyzes va LEFT JOIN service_analyzes sa ON(va.service_analyze_id=sa.id) WHERE va.visit_id = {$_GET['visit_pk']} AND va.visit_service_id = {$parent['id']}") as $row): ?>
+                            <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
+                                <td><?= $row['analyze_name'] ?></td>
+                                <td class="text-right"><?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?></td>
+                                <td class="text-right"><?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?></td>
+                                <td class="text-right"><?= $row['result'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <?php $data = $db->query("SELECT visit_id, service_name FROM visit_services WHERE id = {$_GET['pk']} AND level = 6 AND status = 7")->fetch(); ?>
+                    <tr class="table-primary text-center">
+                        <th colspan="5"><b><?= $data['service_name'] ?></b></th>
                     </tr>
-                    <?php
-                }
-                ?>
+                    <?php foreach ($db->query("SELECT va.deviation, va.analyze_name, va.result, sa.standart, sa.unit FROM visit_analyzes va LEFT JOIN service_analyzes sa ON(va.service_analyze_id=sa.id) WHERE va.visit_id = {$data['visit_id']} AND va.visit_service_id = {$_GET['pk']}") as $row): ?>
+                        <tr class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
+                            <td><?= $row['analyze_name'] ?></td>
+                            <td class="text-right"><?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?></td>
+                            <td class="text-right"><?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?></td>
+                            <td class="text-right"><?= $row['result'] ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                
             </tbody>
         </table>
     </div>
@@ -51,5 +59,5 @@ is_module('module_laboratory');
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
 </div>

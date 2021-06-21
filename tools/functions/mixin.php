@@ -168,33 +168,6 @@ function update($tb, $post, $pk)
     }
 }
 
-function updatePro($tb, $post, $pk)
-{
-    global $db;
-    foreach (array_keys($post) as $key) {
-        if (isset($col)) {
-            $col .= ", ".$key."=:".$key;
-        }else{
-            $col = $key."=:".$key;
-        }
-    }
-    foreach ($pk as $key => $value) {
-        if (isset($filter)) {
-            $filter .= ", ".$key."=".$value;
-        }else{
-            $filter = $key."=".$value;
-        }
-    }
-    $sql = "UPDATE $tb SET $col WHERE $filter";
-    try{
-        $stm = $db->prepare($sql)->execute($post);
-        return $stm;
-    }
-    catch (\PDOException $ex) {
-        return $ex->getMessage();
-    }
-}
-
 function delete($tb, $pk, $name_pk = null){
     global $db;
     $name_pk = ($name_pk) ? $name_pk : "id";

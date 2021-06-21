@@ -399,7 +399,9 @@ class VisitAnalyzesModel extends Model
             }
 
             function FinishService(params = null, action = null, deletes = null) {
-                document.querySelector("#btn_save").disabled = true;
+                if (action == null) {
+                    document.querySelector("#btn_save").disabled = true;
+                }
                 var display_finish = document.querySelector("#inputs_finish"); 
                 deletes_pks = deletes;
                 display_finish.innerHTML = "";
@@ -446,6 +448,33 @@ class VisitAnalyzesModel extends Model
         }
     }
 
+    public function finish()
+    {
+        global $db;
+        if ( isset($this->post['finish_service']) ) {
+            
+            if ( is_array($this->post['finish_service']) ) {
+               
+                $VisitFinish = new VisitFinish();
+                $VisitFinish->set_post(array('status' => 7, 'completed' => date('Y-m-d H:i:s')));
+                foreach ($this->post['finish_service'] as $key) {
+                    $VisitFinish->update_service($key);
+                }
+                $VisitFinish->status_update($db->query("SELECT visit_id FROM $this->_visit_service WHERE id = $key")->fetchColumn());
+
+            } else {
+                
+                $VisitFinish = new VisitFinish();
+                $VisitFinish->set_post(array('status' => 7, 'completed' => date('Y-m-d H:i:s')));
+                $VisitFinish->update_service($this->post['finish_service']);
+                $VisitFinish->status_update($db->query("SELECT visit_id FROM $this->_visit_service WHERE id = {$this->post['finish_service']}")->fetchColumn());
+
+            }
+            
+
+        }
+    }
+
     public function clean()
     {
         global $db;
@@ -457,7 +486,7 @@ class VisitAnalyzesModel extends Model
         $db->beginTransaction();
         
         $this->analize_save();
-        // $this->finish();
+        $this->finish();
         
         $db->commit();
         $this->success();
