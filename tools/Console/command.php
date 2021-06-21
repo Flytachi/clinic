@@ -94,10 +94,23 @@ class __Make
 
     public function create_storage()
     {
-        $result = exec("mkdir storage && chmod 777 storage && echo 1");
-        if ($result) {
-            echo "\033[32m"." Директория storage создана.\n";
+        // $result = exec("mkdir storage && mkdir storage/documents && chmod -R 777 storage && echo 1");
+        if (exec("mkdir storage && echo 1")) {
+            echo "\033[32m"." => Директория storage создана.\n";
         }
+        if (exec("mkdir storage/documents && echo 1")) {
+            echo "\033[32m"." => Директория storage/documents создана.\n";
+        }
+        if (exec("mkdir storage/avatars && echo 1")) {
+            echo "\033[32m"." => Директория storage/avatars создана.\n";
+        }
+        if (exec("mkdir storage/images && echo 1")) {
+            echo "\033[32m"." => Директория storage/images создана.\n";
+        }
+        if (exec("chmod -R 777 storage && echo 1")) {
+            echo "\033[32m"." Права на запись установлены.\n";
+        }
+        
         return 1;
     }
 

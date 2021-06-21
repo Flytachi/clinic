@@ -55,11 +55,27 @@ class UserModel extends Model
                                 <label>Выбирите роль:</label>
                                 <select data-placeholder="Выбрать роль" onchange="TableChange(this)" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                                     <option></option>
-                                    <?php foreach ($PERSONAL as $key => $value): ?>
-                                        <?php if(!in_array($key, [1])): ?>
-                                            <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
+                                    <optgroup label="Обслуживание">
+                                        <?php foreach ($PERSONAL as $key => $value): ?>
+                                            <?php if(in_array($key, [2,3,4,7,9,32])): ?>
+                                                <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                    <optgroup label="Специолисты">
+                                        <?php foreach ($PERSONAL as $key => $value): ?>
+                                            <?php if(in_array($key, [5,6,10,11,12,13])): ?>
+                                                <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                    <optgroup label="Аминистрация">
+                                        <?php foreach ($PERSONAL as $key => $value): ?>
+                                            <?php if(in_array($key, [8])): ?>
+                                                <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </optgroup>
                                 </select>
                             </div>
 

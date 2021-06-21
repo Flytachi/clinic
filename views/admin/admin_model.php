@@ -30,14 +30,14 @@ if ( isset($_FILES['print_header_logotype']) and $_FILES['print_header_logotype'
         $allowedfileExtensions = array('jpg', 'png');
 
         if (in_array($fileExtension, $allowedfileExtensions)) {
-            $uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR."/storage/";
+            $uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR."/storage/images/";
             $dest_path = $uploadFileDir . $newFileName;
 
             $select = $db->query("SELECT const_value FROM company_constants WHERE const_label = 'print_header_logotype'")->fetchColumn();
             if ($select) {
                 unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
             }
-            $logo = Mixin\insert_or_update("company_constants", array('const_label' => "print_header_logotype", 'const_value' => "/storage/".$newFileName), "const_label");
+            $logo = Mixin\insert_or_update("company_constants", array('const_label' => "print_header_logotype", 'const_value' => "/storage/images/".$newFileName), "const_label");
             if(intval($logo) >= 0 and move_uploaded_file($fileTmpPath, $dest_path)){
                 $_SESSION['message'] = '
                 <div class="alert alert-primary" role="alert">
