@@ -86,7 +86,7 @@ class VisitModel extends Model
             <div class="form-group-feedback form-group-feedback-right row">
 
                 <div class="col-md-11">
-                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
                     <div class="form-control-feedback">
                         <i class="icon-search4 font-size-base text-muted"></i>
                     </div>
