@@ -11,7 +11,7 @@ class VisitModel extends Model
 
     public function form_out($pk = null)
     {
-        global $db, $classes;
+        global $db, $classes, $PERSONAL;
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -73,8 +73,10 @@ class VisitModel extends Model
                         </optgroup>
                     <?php endif; ?>
                     <optgroup label="Остальные">
-                        <?php foreach ($db->query("SELECT * from divisions WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php foreach ($PERSONAL as $key => $value): ?>
+                            <?php if(in_array($key, [12,13])): ?>
+                                <option value="other_<?= $key ?>"><?= $value ?></option>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </optgroup>
                 </select>
@@ -555,7 +557,7 @@ class VisitModel extends Model
         $post['parent_id'] = ($this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
-        $post['level'] = $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn();
+        $post['level'] = ($this->post['division_id']) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
         $post['status'] = ($this->post['direction']) ? 2 : 1;
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];

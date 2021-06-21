@@ -4,7 +4,7 @@ $session->is_auth([3, 32]);
 $header = "Не принятые услуги";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id, vs.level")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2", 
@@ -89,10 +89,19 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 											</td>
                                             <td>
                                                 <?php if($row->parent_id): ?>
-                                                    <?= division_title($row->parent_id) ?>
-                                                    <div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php if(in_array($row->level, [12,13])): ?>
+														<?= $PERSONAL[$row->level] ?>
+														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php else: ?>
+                                                    	<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+                                                    	<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php endif; ?>
                                                 <?php else: ?>
-                                                    <?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+													<?php if(in_array($row->level, [12,13])): ?>
+														<?= $PERSONAL[$row->level] ?>
+													<?php else: ?>
+                                                    	<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+													<?php endif; ?>
                                                 <?php endif; ?>
 											</td>
                                             <td class="text-center">

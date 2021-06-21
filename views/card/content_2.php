@@ -74,7 +74,7 @@ require_once 'callback.php';
 												<td><?= $row->count ?></td>
 												<td>
 													<?php if($row->parent_id): ?>
-														<?= division_title($row->parent_id) ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
 														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
 													<?php else: ?>
 														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>

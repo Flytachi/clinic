@@ -124,7 +124,7 @@ class VisitAnalyzesModel extends Model
                                         <?php $submit_division_items[] = $service_row['id']; ?>
                                         <tbody id="VisitService_tr_<?= $service_row['id'] ?>">
                                             <tr>
-                                                <th colspan="5" class="text-center"><?= $service_row['service_name'] ?></th>
+                                                <th colspan="5" class="text-center"><b><?= $service_row['service_name'] ?></b></th>
                                                 <th class="text-right">
                                                     <div class="list-icons">
                                                         <?php if(config('laboratory_end_service_button')): ?>
@@ -203,7 +203,7 @@ class VisitAnalyzesModel extends Model
                                     text: "Анализы успешно сохранены!",
                                     type: 'success'
                                 }).show();
-                                document.querySelector("#btn_save").disabled = false;
+                                // document.querySelector("#btn_save").disabled = false;
                             }
                             // finish for service
                             if (data.action == "finish for service") { 

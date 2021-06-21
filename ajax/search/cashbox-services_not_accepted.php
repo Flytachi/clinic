@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id, vs.level")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2", 

@@ -67,7 +67,7 @@
             </li>
         <?php endif; ?>
     <?php endif; ?>
-    <?php if (!$activity and $patient->priced_date): ?>
+    <?php if (!$activity and $patient->direction): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content_12').$agr ?>" class="nav-link <?= viv_link('card/content_12') ?> legitRipple" style="white-space:nowrap;"><i class="icon-calculator3 mr-1"></i>Расходы</a>
         </li>

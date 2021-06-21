@@ -7,83 +7,173 @@ $i = 0; $cost = 0;
 ?>
 
 <?php if( isset($_GET['divisions']) ): ?>
-    <?php 
-    $divisions = implode(',', $_GET['divisions']);
-    if ( isset($_GET['is_foreigner']) and $_GET['is_foreigner']) {
-        $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
-    } else {
-        $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price";
-    } 
+    <?php
+    // Others
+    foreach ($_GET['divisions'] as $key => $value) {
+        if (strpos($value, 'other_') !== false) {
+            $others[] = str_replace('other_', "", $value);
+            unset($_GET['divisions'][$key]);
+        }
+    }
     ?>
 
-    <?php if ( isset($_GET['search']) ): ?>
-        <?php $ser = $_GET['search']; ?>
-        <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
-    <?php else: ?>
-        <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']})"; ?>
+    <?php if ( $_GET['divisions'] ): ?>
+
+        <?php
+        $divisions = implode(',', $_GET['divisions']);
+        if ( isset($_GET['is_foreigner']) and $_GET['is_foreigner']) {
+            $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
+        } else {
+            $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price";
+        } 
+        ?>
+
+        <?php if ( isset($_GET['search']) ): ?>
+            <?php $ser = $_GET['search']; ?>
+            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
+        <?php else: ?>
+            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']})"; ?>
+        <?php endif; ?>
+
+        <?php foreach ($db->query($sql) as $row): ?>
+            <?php $i++; ?>
+            <tr>
+
+                <td>
+                    <?php
+                    $result = "";
+                    if ( isset($_GET['selected']) and in_array($row->id, array_keys($_GET['selected']))) {
+                        $result = "checked";
+                        $cost += ($row->price * $_GET['selected'][$row->id]);
+                    }
+                    ?>
+                    <input type="checkbox" name="service[<?= $i ?>]" value="<?= $row->id ?>" class="form-input-styled" onchange="tot_sum(this, <?= $row->price ?>)" <?= $result ?>>
+                    <input type="hidden" name="division_id[<?= $i ?>]" value="<?= $row->division_id ?>">
+                </td>
+
+                <?php if ($_GET['cols'] < 2): ?>
+                    <td><?= $row->title ?></td>
+                <?php endif; ?>
+
+                <td><?= $row->name ?></td>
+
+                <?php if ($_GET['cols'] < 1): ?>
+                    <td>
+                        <?php switch ($row->type) {
+                            case 1:
+                                echo "Обычная";
+                                break;
+                            case 2:
+                                echo "Консультация";
+                                break;
+                            case 3:
+                                echo "Операционная";
+                                break;
+                        } ?>
+                    </td>
+                <?php endif; ?>
+
+                <?php if (empty($_GET['head'])): ?>
+                    <td>
+                        <select name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>">
+                            <option value="">Выберан весь отдел</option>
+                            <?php if ($row->user_level == 6): ?>
+                                <?php foreach ($db->query("SELECT id from users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
+                                    <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <?php foreach ($db->query("SELECT id from users WHERE division_id = $row->division_id AND is_active IS NOT NULL") as $parent): ?>
+                                    <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </td>
+                <?php endif; ?>
+                <td style="width:70px;">
+                    <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
+                </td>
+                <td class="text-right text-success"><?= number_format($row->price) ?></td>
+
+            </tr>
+        <?php endforeach; ?>
+       
     <?php endif; ?>
+    
+    <?php if ( $others ): ?>
 
-    <?php foreach ($db->query($sql) as $row): ?>
-        <?php $i++; ?>
-        <tr>
+        <?php
+        $levels = implode(',', $others);
+        if ( isset($_GET['is_foreigner']) and $_GET['is_foreigner']) {
+            $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
+        } else {
+            $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price";
+        } 
+        ?>
 
-            <td>
-                <?php
-                $result = "";
-                if ( isset($_GET['selected']) and in_array($row->id, array_keys($_GET['selected']))) {
-                    $result = "checked";
-                    $cost += ($row->price * $_GET['selected'][$row->id]);
-                }
-                ?>
-                <input type="checkbox" name="service[<?= $i ?>]" value="<?= $row->id ?>" class="form-input-styled" onchange="tot_sum(this, <?= $row->price ?>)" <?= $result ?>>
-                <input type="hidden" name="division_id[<?= $i ?>]" value="<?= $row->division_id ?>">
-            </td>
+        <?php if ( isset($_GET['search']) ): ?>
+            <?php $ser = $_GET['search']; ?>
+            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.user_level IN($levels) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
+        <?php else: ?>
+            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.user_level IN($levels) AND sc.type IN ({$_GET['types']})"; ?>
+        <?php endif; ?>
 
-            <?php if ($_GET['cols'] < 2): ?>
-                <td><?= $row->title ?></td>
-            <?php endif; ?>
+        <?php foreach ($db->query($sql) as $row): ?>
+            <?php $i++; ?>
+            <tr>
 
-            <td><?= $row->name ?></td>
-
-            <?php if ($_GET['cols'] < 1): ?>
                 <td>
-                    <?php switch ($row->type) {
-                        case 1:
-                            echo "Обычная";
-                            break;
-                        case 2:
-                            echo "Консультация";
-                            break;
-                        case 3:
-                            echo "Операционная";
-                            break;
-                    } ?>
+                    <?php
+                    $result = "";
+                    if ( isset($_GET['selected']) and in_array($row->id, array_keys($_GET['selected']))) {
+                        $result = "checked";
+                        $cost += ($row->price * $_GET['selected'][$row->id]);
+                    }
+                    ?>
+                    <input type="checkbox" name="service[<?= $i ?>]" value="<?= $row->id ?>" class="form-input-styled" onchange="tot_sum(this, <?= $row->price ?>)" <?= $result ?>>
+                    <input type="hidden" name="level[<?= $i ?>]" value="<?= $row->user_level ?>">
                 </td>
-            <?php endif; ?>
 
-            <?php if (empty($_GET['head'])): ?>
-                <td>
-                    <select name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>">
-                        <option value="">Выберан весь отдел</option>
-                        <?php if ($row->user_level == 6): ?>
-                            <?php foreach ($db->query("SELECT id from users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
+                <?php if ($_GET['cols'] < 2): ?>
+                    <td><?= $PERSONAL[$row->user_level] ?></td>
+                <?php endif; ?>
+
+                <td><?= $row->name ?></td>
+
+                <?php if ($_GET['cols'] < 1): ?>
+                    <td>
+                        <?php switch ($row->type) {
+                            case 1:
+                                echo "Обычная";
+                                break;
+                            case 2:
+                                echo "Консультация";
+                                break;
+                            case 3:
+                                echo "Операционная";
+                                break;
+                        } ?>
+                    </td>
+                <?php endif; ?>
+
+                <?php if (empty($_GET['head'])): ?>
+                    <td>
+                        <select name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>">
+                            <option value="">Выберан весь отдел</option>
+                            <?php foreach ($db->query("SELECT id from users WHERE user_level = $row->user_level AND is_active IS NOT NULL") as $parent): ?>
                                 <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
                             <?php endforeach; ?>
-                        <?php else: ?>
-                            <?php foreach ($db->query("SELECT id from users WHERE division_id = $row->division_id AND is_active IS NOT NULL") as $parent): ?>
-                                <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
+                        </select>
+                    </td>
+                <?php endif; ?>
+                <td style="width:70px;">
+                    <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
                 </td>
-            <?php endif; ?>
-            <td style="width:70px;">
-                <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
-            </td>
-            <td class="text-right text-success"><?= number_format($row->price) ?></td>
+                <td class="text-right text-success"><?= number_format($row->price) ?></td>
 
-        </tr>
-    <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+
+    <?php endif; ?>
 
     <tr class="table-secondary">
         <th class="text-right" colspan="<?= 6-$_GET['cols'] ?>">Итого:</th>

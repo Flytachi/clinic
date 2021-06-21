@@ -85,7 +85,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT vs.id, vs.service_name FROM visit_services vs WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.route_id = $row->route_id $is_division") as $serv): ?>
+												<?php foreach($db->query("SELECT vs.id, vs.service_name FROM visit_services vs WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.level = 6 AND vs.route_id = $row->route_id $is_division") as $serv): ?>
 													<?php $services[] = $serv['id'] ?>
 													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>

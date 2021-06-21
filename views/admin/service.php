@@ -84,11 +84,11 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 	                  	<h5 class="card-title">Список Услуг</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
-							  	<a href="<?= download_url('ServiceModel', 'Услуги') ?>" class="btn">Шаблон</a>
 								<form action="" method="post">
 									<input style="display:none;" id="btn_flush" type="submit" value="FLUSH" name="flush"></input>
 								</form>
 								<a class="btn text-danger" onclick="Conf()">FLUSH</a>
+							  	<a href="<?= download_url('ServiceModel', 'Услуги') ?>" class="btn">Шаблон</a>
 	                      	</div>
 							<form action="" class="mr-2 ml-2">
 								<div class="form-group-feedback form-group-feedback-right">
