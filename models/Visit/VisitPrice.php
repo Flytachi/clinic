@@ -114,7 +114,6 @@ class VisitPriceModel extends Model
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
-                        console.log(result);
                         var result = JSON.parse(result);
 
                         
@@ -134,23 +133,7 @@ class VisitPriceModel extends Model
                             // conn.send(obj1);
 
                             // Печать:
-                            if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
-                                $.ajax({
-                                    type: "GET",
-                                    url: result.val,
-                                    success: function (data) {
-                                        let ww = window.open();
-                                        ww.document.write(data);
-                                        ww.focus();
-                                        ww.print();
-                                        ww.close();
-                                    },
-                                });
-                            }else {
-                                let we = window.open(result.val,'mywindow');
-                                setTimeout(function() {we.close()}, 100);
-                            }
-
+                            Print(result.val);
                             setTimeout( function() {
                                 location.reload();
                             }, 1000)
@@ -831,7 +814,7 @@ class VisitPriceModel extends Model
             echo json_encode(array(
                 'status' => "success" ,
                 'message' => $value,
-                'val' => viv('prints/check')."?id=".$this->visit['user_id']."&items=".json_encode($this->visit_prices_items)
+                'val' => prints('check')."?id=".$this->visit['user_id']."&items=".json_encode($this->visit_prices_items)
             ));
         }
     }

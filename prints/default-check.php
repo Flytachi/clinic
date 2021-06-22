@@ -50,7 +50,7 @@ foreach ($comp as $value) {
 
 </style>
 
-<body onload="//window.print();" style="color: black; font-size: 140%;">
+<body style="color: black; font-size: 140%;">
 
     <div id="invoice-POS">
 

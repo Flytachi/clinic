@@ -20,7 +20,7 @@ $pack = $db->query("SELECT service_title, service_report, service_id FROM visit_
     <?php if ($pack['service_id'] == 1): ?>
         <button onclick="Print('<?= viv('prints/document_3') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
     <?php else: ?>
-        <button onclick="Print('<?= viv('prints/document_1') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
+        <button onclick="Print('<?= prints('document-1') ?>?id=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
     <?php endif; ?>
     <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
 </div>

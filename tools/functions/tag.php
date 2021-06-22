@@ -99,6 +99,10 @@ function viv_link($url, $class = ""){
     }
 }
 
+function prints($url=null){
+    return DIR."/prints/default-$url".EXT;
+}
+
 function img($url){
     return DIR."/views/$url";
 }
