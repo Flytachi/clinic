@@ -285,18 +285,18 @@ class __Db
 
     public function generate()
     {
-        global $db;
+        global $db, $ini;
         require_once dirname(__DIR__).'/functions/connection.php';
 
         $json = array();
 
         foreach ($db->query("SHOW TABlES") as $table) {
 
-            $sql = $this->DB_HEADER." `{$table['Tables_in_clinic']}` (";
+            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
             $column = "";
             $keys = "";
 
-            foreach ($db->query("DESCRIBE {$table['Tables_in_clinic']}") as $col) {
+            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
                 $column .= "`{$col['Field']}` {$col['Type']}";
 
                 if ($col['Null'] == "YES") {
@@ -325,7 +325,7 @@ class __Db
 
                     case "MUL":
                         // $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
-                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_clinic']]} USING BTREE";
+                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
                         $keys.=",";
                         break;
                 }

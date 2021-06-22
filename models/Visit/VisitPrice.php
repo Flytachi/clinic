@@ -109,13 +109,13 @@ class VisitPriceModel extends Model
 
             function Submit_alert() {
                 event.preventDefault();
+                event.submitter.disabled = true;
                 $.ajax({
                     type: $(event.target).attr("method"),
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
                         var result = JSON.parse(result);
-
                         
                         if (result.status == "success") {
 
@@ -143,6 +143,7 @@ class VisitPriceModel extends Model
                                 text: result.message,
                                 type: 'error'
                             }).show();
+                            event.submitter.disabled = false;
                         }
 
                     },

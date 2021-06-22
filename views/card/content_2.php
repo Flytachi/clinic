@@ -39,15 +39,8 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-clipboard6 mr-2"></i>Другие визиты
-							<?php if(module('module_laboratory')): ?>
-								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
-    						<?php endif; ?>
 						</legend>
-
-						<!-- <div class="alert bg-warning alert-styled-left alert-dismissible">
-							<span class="font-weight-semibold">Технические работы</span>
-						</div> -->
-
+						
 						<div class="card">
 
 							<div class="table-responsive">

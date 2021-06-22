@@ -1,0 +1,30 @@
+.preloader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: #ffffff; /* rgb(215, 237, 250) */
+    z-index: 1001;
+}
+
+.preloader__image {
+    position: relative;
+    top: 40%;
+    left: 45%;
+    width: 300px;
+    height: 300px;
+    margin-top: -32px;
+    margin-left: -32px;
+    background: url('loader.gif') no-repeat 50% 50%; /*расположение (url) изображения gif и др. параметры*/
+}
+
+.loaded_hiding .preloader {
+    transition: 0.3s opacity;
+    opacity: 0;
+}
+
+.loaded .preloader {
+    display: none;
+}

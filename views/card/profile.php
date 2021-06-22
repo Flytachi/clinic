@@ -355,7 +355,7 @@
                 <?php endif; ?>
 
             <?php else: ?>
-
+                <!--
                 <div class="col-md-12">
                     <div class="text-right">
                         <button onclick="Check_kwin('<?= viv('doctor/report') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-danger btn-sm">Выписка</button>
@@ -382,7 +382,7 @@
             			});
             		};
             	</script>
-
+                -->
             <?php endif; ?>
 
         </div>
