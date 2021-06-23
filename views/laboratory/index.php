@@ -55,7 +55,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm">
@@ -113,6 +113,8 @@ $tb->where_or_serch($search_array)->set_limit(20);
                             </table>
                         </div>
 
+						<?php $tb->get_panel(); ?>
+
 					</div>
 
 				</div>
@@ -127,6 +129,19 @@ $tb->where_or_serch($search_array)->set_limit(20);
 	<!-- /page content -->
 
 	<script type="text/javascript">
+
+		$("#search_input").keyup(function() {
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/laboratory-index') ?>",
+				data: {
+					table_search: $("#search_input").val(),
+				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
 
 		function VisitUpStatus(tr, items) {
 			$.ajax({

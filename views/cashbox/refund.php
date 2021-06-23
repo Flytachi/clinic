@@ -128,7 +128,6 @@ $tb->where_or_serch($where_search);
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<!-- VisitRefundModel -->
 				<div id="div_modal_price"></div>
 
 			</div>

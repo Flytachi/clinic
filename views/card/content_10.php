@@ -1,7 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
-$header = "Пациент";
+require_once 'callback.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +39,7 @@ $header = "Пациент";
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-googleplus5 mr-2"></i>Физиотерапия/Процедурная
-							<?php if ($activity and !$patient->direction or $patient->direction and permission(5)): ?>
+							<?php if ( ($activity and !$patient->direction) or ($patient->direction and permission(5)) ): ?>
 								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
@@ -55,17 +53,56 @@ $header = "Пациент";
 									<thead class="<?= $classes['table-thead'] ?>">
 										<tr>
 											<th>№</th>
-				                            <th>Специалист</th>
+				                            <th>Мед услуга</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
-				                            <th>Мед услуга</th>
-											<th>Тип визита</th>
 											<th>Статус</th>
-											<th class="text-center">Действия</th>
+											<th class="text-right">Действия</th>
 										</tr>
 									</thead>
 									<tbody>
 										<?php
+										$tb = new Table($db, "visit_services");
+										$tb->set_data("id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 12")->order_by('add_date DESC');
+										?>
+										<?php foreach ($tb->get_table(1) as $row): ?>
+											<tr id="TR_<?= $row->id ?>">
+												<td><?= $row->count ?></td>
+												<td><?= $row->service_name ?></td>
+												<td><?= ($row->accept_date) ? date_f($row->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td>
+													<?php if ($row->status == 1): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+													<?php elseif ($row->status == 2): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+													<?php elseif ($row->status == 3): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+													<?php elseif ($row->status == 5): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Возврат</span>
+													<?php elseif ($row->status == 6): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Отменённый</span>
+													<?php elseif ($row->status == 7): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершён</span>
+													<?php else: ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Неизвестный</span>
+													<?php endif; ?>
+												</td>
+												<td class="text-right">
+													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+														<?php if( $activity and $row->status == 1 ): ?>
+															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
+														<?php endif; ?>
+														
+														<?php /*if ($patient->direction and !$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
+															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
+														<?php endif;*/ ?>
+													</div>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+										<?php /*
 										$i = 1;
 										if ( isset($patient->completed) ) {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation, vs.route_id
@@ -118,7 +155,7 @@ $header = "Пациент";
 												</td>
 											</tr>
 										<?php
-										}
+										}*/
 									 	?>
 									</tbody>
 								</table>
@@ -152,9 +189,9 @@ $header = "Пациент";
 
 						<?php
 						if ($patient->direction) {
-							(new VisitRoute)->form_sta_physio_manipulation();
+							// (new VisitRoute)->form_sta_physio();
 						} else {
-							(new VisitRoute)->form_out_physio_manipulation();
+							(new VisitRoute)->form_out_physio();
 						}
 						?>
 
@@ -164,26 +201,8 @@ $header = "Пациент";
 		</div>
 	<?php endif; ?>
 
-
-	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg" id="modal_class_show">
-			<div class="modal-content border-3 border-info" id="report_show">
-
-			</div>
-		</div>
-	</div>
-
 	<script type="text/javascript">
-		function Check(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (data) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
-				},
-			});
-		};
+
         function Delete(url, tr) {
             event.preventDefault();
             $.ajax({
@@ -198,6 +217,7 @@ $header = "Пациент";
 				},
 			});
         };
+
 	</script>
 
     <!-- Footer -->

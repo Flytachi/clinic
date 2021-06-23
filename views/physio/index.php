@@ -43,9 +43,19 @@ $tb->where_or_serch($search_array)->set_limit(20);
 
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
+						<div class="header-elements">
+							<form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm">
@@ -69,20 +79,20 @@ $tb->where_or_serch($search_array)->set_limit(20);
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $row->id AND status = 2 AND route_id = $row->route_id AND level = 12") as $serv): ?>
-													<?php $services[] = $serv['id'] ?>
+												<?php foreach($db->query("SELECT DISTINCT service_name FROM visit_services WHERE visit_id = $row->id AND level = 12") as $serv): ?>
 													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>
 											</td>
                                             <td class="text-center">
-												<button onclick="VisitUpStatus(<?= $row->id ?>, <?= json_encode($services) ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
-												<button onclick="MListVisit(<?= $row['id'] ?>, 1)" class="btn btn-outline-primary btn-sm">Детально</button>
+												<button onclick="MListVisit('<?= up_url($row->id, 'VisitPhysioModel') ?>')" class="<?= $classes['btn-viewing'] ?>">Детально</button>
                                             </td>
                                         </tr>
-									<?php unset($services); endforeach; ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
+
+						<?php $tb->get_panel(); ?>
 
 					</div>
 
@@ -100,7 +110,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 
 	<div id="modal_result_show" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="modal_result_show_content">
+			<div class="<?= $classes['modal-global_content'] ?>" id="modal_result_show_content">
 
 			</div>
 		</div>
@@ -112,46 +122,33 @@ $tb->where_or_serch($search_array)->set_limit(20);
 
 	<script type="text/javascript">
 
-		function ListVisit(events, type){
+		$("#search_input").keyup(function() {
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('physio_table_visit') ?>",
+				url: "<?= ajax('search/physio-index') ?>",
 				data: {
-					user_id: events,
-					type: type,
+					table_search: $("#search_input").val(),
 				},
+				success: function (result) {
+					$('#search_display').html(result);
+				},
+			});
+		});
+
+		function ListVisit(url){
+			$.ajax({
+				type: "GET",
+				url: url,
 				success: function (result) {
 					$('#modal_result_show_content').html(result);
 				},
 			});
 		}
 
-		function MListVisit(events, type) {
+		function MListVisit(events) {
 			$('#modal_result_show').modal('show');
-			ListVisit(events, type);
+			ListVisit(events);
 		};
-
-		function Complt(url, ev) {
-            event.preventDefault();
-            $.ajax({
-				type: "GET",
-				url: url,
-				success: function (data) {
-                    ListVisit(ev);
-				},
-			});
-        };
-
-		function Delete(url, ev) {
-            event.preventDefault();
-            $.ajax({
-				type: "GET",
-				url: url,
-				success: function (data) {
-                    ListVisit(ev, 1);
-				},
-			});
-        };
 
 	</script>
 </body>

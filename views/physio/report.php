@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 ?>
-<div class="modal-header bg-info">
+<div class="<?= $classes['modal-global_header'] ?>">
     <h5 class="modal-title">Примечание</h5>
     <button type="button" class="close" data-dismiss="modal">×</button>
 </div>
@@ -19,5 +19,5 @@ $pack = $db->query("SELECT report_title, report FROM visit WHERE id= {$_GET['pk'
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-info btn-sm legitRipple" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
 </div>

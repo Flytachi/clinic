@@ -109,7 +109,7 @@ is_module('module_laboratory');
 														<?php if( $activity and $row->status == 1 ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
-														<?php if ( in_array($row->status, [3,5,7]) ): ?>
+														<?php if ( in_array($row->status, [3,7]) ): ?>
 															<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
 															<a <?= ($row->completed) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>

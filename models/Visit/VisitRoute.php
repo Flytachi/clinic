@@ -334,6 +334,110 @@ class VisitRoute extends Model
         <?php 
     }
 
+    public function form_out_physio($pk = null)
+    {
+        global $db, $patient, $classes, $session;
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
+            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="form-group">
+                <button type="button" class="btn btn-sm btn-block legitRipple" onclick="TableChangeServices(this)">Показать Услуги</button>    
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-10">
+                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>                    
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <!-- <th>Тип</th> -->
+                                <th>Доктор</th>
+                                <th style="width: 100px">Кол-во</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </form>
+        <script type="text/javascript">
+
+            var service = {};
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: ['other_12'],
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function TableChangeServices(params) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: ['other_12'],
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+
+        </script>
+        <?php
+    }
+
     public function form_sta($pk = null)
     {
         global $db, $patient, $classes;
@@ -650,113 +754,6 @@ class VisitRoute extends Model
                 });
 
             }
-        </script>
-        <?php
-    }
-
-    public function form_out_physio_manipulation($pk = null)
-    {
-        global $db, $patient, $classes;
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-
-            <div class="form-group">
-                <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
-                    <?php foreach($db->query("SELECT * from division WHERE level IN (12, 13)") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-group-feedback form-group-feedback-right row">
-
-                <div class="col-md-10">
-                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>                
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="form-group">
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <!-- <th>Тип</th> -->
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
-
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-        </form>
-        <script type="text/javascript">
-
-            let service = {};
-
-            $("#search_input").keyup(function() {
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $("#division_selector").val(),
-                        search: $("#search_input").val(),
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        let service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-            });
-
-            function table_change(the) {
-
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $(the).val(),
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        let service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-
-            }
-
         </script>
         <?php
     }
@@ -1102,7 +1099,7 @@ class VisitRoute extends Model
         $post['parent_id'] = ($this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
-        $post['level'] = $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn();
+        $post['level'] = ($this->post['division_id']) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
         $post['status'] = ($this->post['direction']) ? 2 : 1;
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];

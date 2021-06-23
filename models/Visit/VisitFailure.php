@@ -91,9 +91,9 @@ class VisitFailure extends Model
         global $db, $session;
         $data = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
 
-        if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or permission([2, 32]) ) {
+        if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or ( ($data['level'] == 12 and permission(12)) ) or permission([2, 32]) ) {
             
-            $object = Mixin\update($this->table, array('status' => 5), $pk);
+            $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
             if (!intval($object)){
                 $this->error($object);
             }

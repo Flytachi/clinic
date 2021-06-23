@@ -12,6 +12,9 @@ class VisitPriceModel extends Model
         global $db, $classes;
         if ( isset($_GET['refund']) and $_GET['refund'] ) {
             $amount = $db->query("SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
+            $price_cash = $db->query("SELECT SUM(price_cash) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
+            $price_card = $db->query("SELECT SUM(price_card) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
+            $price_transfer = $db->query("SELECT SUM(price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
         }else{
             $amount = $db->query("SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
         }
@@ -55,7 +58,7 @@ class VisitPriceModel extends Model
                     <label class="col-form-label col-md-3">Наличный</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="<?= ( isset($price_cash) ) ? number_format($price_cash) : 'расчет' ?>" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_1" onchange="Checkert(this)">
@@ -69,7 +72,7 @@ class VisitPriceModel extends Model
                     <label class="col-form-label col-md-3">Пластиковый</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="<?= ( isset($price_card) ) ? number_format($price_card) : 'расчет' ?>" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_2" onchange="Checkert(this)">
@@ -83,7 +86,7 @@ class VisitPriceModel extends Model
                     <label class="col-form-label col-md-3">Перечисление</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="<?= ( isset($price_transfer) ) ? number_format($price_transfer) : 'расчет' ?>" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_3" onchange="Checkert(this)">
@@ -108,8 +111,9 @@ class VisitPriceModel extends Model
         <script type="text/javascript">
 
             function Submit_alert() {
+                var btn = event.submitter;
                 event.preventDefault();
-                event.submitter.disabled = true;
+                btn.disabled = true;
                 $.ajax({
                     type: $(event.target).attr("method"),
                     url: $(event.target).attr("action"),
@@ -143,7 +147,8 @@ class VisitPriceModel extends Model
                                 text: result.message,
                                 type: 'error'
                             }).show();
-                            event.submitter.disabled = false;
+                            btn.disabled = false;
+                            
                         }
 
                     },
