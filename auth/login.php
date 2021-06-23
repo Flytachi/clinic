@@ -5,34 +5,34 @@ $session->is_auth();
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Авторизация</title>
-  <link href="<?= stack("assets/css/style.css") ?>" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link href="<?= stack("assets/css/style.css") ?>" rel="stylesheet">
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-  <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("assets/my_css/login.css") ?>" rel="stylesheet" type="text/css">
-  <!-- /global stylesheets -->
+    <link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+    <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
+    <link href="<?= stack("assets/my_css/login.css") ?>" rel="stylesheet" type="text/css">
+    <!-- /global stylesheets -->
 
-  <!-- Core JS files -->
-  <script src="<?= stack("global_assets/js/main/jquery.min.js") ?>"></script>
-  <script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
-  <script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
-  <script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
-  <!-- /core JS files -->
+    <!-- Core JS files -->
+    <script src="<?= stack("global_assets/js/main/jquery.min.js") ?>"></script>
+    <script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
+    <script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
+    <script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
+    <!-- /core JS files -->
 
-  <!-- Theme JS files -->
-
-  <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-  <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-  <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-  <script src="<?= stack("assets/js/app.js") ?>"></script>
+    <!-- Theme JS files -->
+    <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+    <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+    <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
+    <script src="<?= stack("assets/js/app.js") ?>"></script>
 </head>
 <body>
 

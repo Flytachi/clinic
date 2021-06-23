@@ -103,9 +103,9 @@ function prints($url=null){
     return DIR."/prints/default-$url".EXT;
 }
 
-function img($url){
-    return DIR."/views/$url";
-}
+// function img($url){
+//     return DIR."/static/$url";
+// }
 
 function stack($url){
     return DIR."/static/$url";
