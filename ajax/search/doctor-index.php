@@ -61,7 +61,7 @@ $tb->set_self(viv('doctor/index'));
 							<?php endif; ?>
 							>Принять</a> -->
 
-						<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+						<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 						<?php if($session->session_id == $row->parent_id): ?>
 							<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 						<?php endif; ?>

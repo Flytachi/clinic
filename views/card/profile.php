@@ -15,7 +15,7 @@
 
             <div class="col-md-3">
                 <div class="card-img-actions">
-                    <img class="card-img-top img-fluid" src="<?= stack("vendors/image/user3.jpg")?>" alt="">
+                    <img class="card-img-top img-fluid" src="<?= stack("assets/images/background_card.jpg")?>" alt="">
                 </div>
             </div>
 

@@ -174,7 +174,7 @@ class PatientForm extends Model
         <?php
         $this->jquery_init();
         ?>
-        <script src="<?= stack("vendors/js/custom.js") ?>"></script>
+        <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <script type="text/javascript">
             $(function(){
                 $("#region").chained("#province");

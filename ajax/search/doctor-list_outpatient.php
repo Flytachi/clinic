@@ -31,7 +31,7 @@ $tb->set_self(viv('doctor/list_outpatient'));
                     <td><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td>
-                        <?php foreach($db->query("SELECT service_name, service_title FROM visit_services WHERE visit_id = $row->id AND status = 3 and parent_id = $session->session_id") as $serv): ?>
+                        <?php foreach($db->query("SELECT service_name, service_title FROM visit_services WHERE visit_id = $row->id AND status = 3 AND parent_id = $session->session_id AND level = 5") as $serv): ?>
                             <span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span><br>
                         <?php endforeach; ?>
                     </td>

@@ -63,7 +63,7 @@ $tb->set_self(viv('diagnostic/index'));
 									onclick="sendPatient(this)"
 								<?php endif; ?>
 								>Принять</button>
-							<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
+							<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
 						<?php endif; ?>
 
 						<?php if ($row->complaint): ?>

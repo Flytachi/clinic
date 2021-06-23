@@ -9,7 +9,7 @@ $tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.directio
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND vs.level = 6",
-	"vs.status = 3 AND vs.level = 6 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 2 AND vs.level = 6 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
 ?>
@@ -88,7 +88,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $row->id AND status = 2 and route_id = $row->route_id") as $serv): ?>
+												<?php foreach($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $row->id AND status = 2 AND route_id = $row->route_id AND level = 6") as $serv): ?>
 													<?php $services[] = $serv['id'] ?>
 													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>

@@ -17,7 +17,7 @@ $tb->where_or_serch($where_search);
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
