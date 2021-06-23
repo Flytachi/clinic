@@ -13,16 +13,20 @@
 	<link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("vendors/css/style.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("vendors/css/ckeditor.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/my_css/style.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/my_css/ckeditor.css") ?>" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
+
+	<!-- Loader -->
+	<?php include layout('load') ?>
+	<!-- /Loader -->
 
 	<!-- Core JS files -->
 	<script src="<?= stack("global_assets/js/main/jquery.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/main/bootstrap.bundle.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/loaders/blockui.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/ui/ripple.min.js") ?>"></script>
-	<script src="<?= stack("vendors/js/box.js") ?>"></script>
+	<script src="<?= stack("assets/js/box.js") ?>"></script>
 	<!-- /core JS files -->
 
 	<script src="<?= stack("global_assets/js/plugins/notifications/jgrowl.min.js") ?>"></script>
@@ -60,9 +64,9 @@
 	<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script>
 
 	<!-- JS chained -->
-	<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
+	<script src="<?= stack("assets/js/jquery.chained.js") ?>"></script>
 
-	<script src="<?= stack("vendors/js/sessions.js") ?>"></script>
+	<script src="<?= stack("assets/js/sessions.js") ?>"></script>
 
 	<script type="text/javascript">
 
@@ -86,7 +90,7 @@
 
 	</script>
 
-	<script src="<?= stack("vendors/js/socket.js") ?>"></script>
+	<script src="<?= stack("assets/js/socket.js") ?>"></script>
 
 	<!-- JS CKEditor -->
 	<script src="<?= node("@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor.js") ?>"></script>

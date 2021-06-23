@@ -1,5 +1,13 @@
 
 
+
+.sidebar-myuser-material-body{
+    background: url('../images/background_sidebar_default.gif') no-repeat center center;
+}
+
+.sidebar-master-material-body{
+    background: url('../images/background_sidebar_master.gif') no-repeat center center;
+}
 /* .modal-open>*:not(#modal_timeout_auto_logout) {
     filter: blur(15px);
 } */

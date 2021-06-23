@@ -4,7 +4,7 @@
 
         <!-- User menu -->
         <div class="sidebar-user-material">
-            <div class="sidebar-user-material-body">
+            <div class="<?= ($session->master_status) ? "sidebar-master-material-body" : "sidebar-myuser-material-body";  ?>">
                 <div class="card-body text-center">
                     <h4 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h4>
                     <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ." ". division_name() ?></span>

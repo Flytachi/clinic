@@ -17,7 +17,7 @@ $session->is_auth();
   <link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
   <link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
   <link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
-  <link href="<?= stack("vendors/css/login.css") ?>" rel="stylesheet" type="text/css">
+  <link href="<?= stack("assets/my_css/login.css") ?>" rel="stylesheet" type="text/css">
   <!-- /global stylesheets -->
 
   <!-- Core JS files -->
@@ -40,38 +40,36 @@ $session->is_auth();
 
 		<div class="row">
 
-			<div class="col-md-3 local_card" style="width: 100px;">
+            <div class="col"></div>
+
+			<div class="col-xl-3 col-lg-5 col-md-10 local_card">
 
 				<div class="card backcard">
 					<div class="card-header header-elements-inline" style="text-align: center;">
                         <h5 class="card-title" >Форма входа</h5>
                     </div>
-                    <?php
-                        if ( isset($_SESSION['message']) ) {
-                            ?>
+                    
+					<div class="card-body">
+                        <?php if ( isset($_SESSION['message']) ): ?>
                             <div class="alert alert-danger" role="alert">
                                 <button type='button' class='close' data-dismiss='alert'><span>×</span><span class='sr-only'>Close</span></button>
                                 <?= $_SESSION['message'] ?>
                             </div>
-                            <?php
-                        }
-                        unset($_SESSION['message']);
-                    ?>
-					<div class="card-body">
+                        <?php unset($_SESSION['message']); endif; ?>
 						<form action="" method="post">
 
 							<div class="form-group">
 								<label>Логин:</label>
-								<input type="text" class="form-control" name="username" placeholder="Введите логин">
+								<input type="text" class="form-control border-primary text-white" name="username" placeholder="Введите логин">
 							</div>
 
 							<div class="form-group">
 								<label>Пароль:</label>
-								<input type="password" class="form-control" name="password" placeholder="Введите пароль">
+								<input type="password" class="form-control border-primary text-white" name="password" placeholder="Введите пароль">
 							</div>
 
 							<div class="text-right">
-							    <button type="submit" class="btn btn-primary legitRipple">Войти<i class="icon-paperplane ml-2"></i></button>
+							    <button type="submit" class="btn btn-outline bg-white text-white border-white btn-sm legitRipple">Войти<i class="icon-circle-right2 ml-2"></i></button>
                             </div>
 
 						</form>

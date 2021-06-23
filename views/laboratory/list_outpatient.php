@@ -19,7 +19,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 <?php include layout('head') ?>
 
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->

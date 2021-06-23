@@ -4,7 +4,7 @@
 
         <!-- User menu -->
         <div class="sidebar-user-material">
-			<div class="sidebar-user-material-body">
+			<div class="sidebar-master-material-body">
 				<div class="card-body text-center">
 					<h4 class="mb-0 text-white text-shadow-dark siya">Master</h4>
 				</div>
