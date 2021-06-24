@@ -158,13 +158,13 @@ class Model
                     // Upload File
                     if ($file['error'] === UPLOAD_ERR_OK) {
                         $fileTmpPath = $file['tmp_name'];
-                        $fileName = $file['name'];
-                        $fileSize = $file['size'];
-                        $fileType = $file['type'];
+                        $this->file['name'] = $file['name'];
+                        $this->file['size'] = $file['size'];
+                        $this->file['type'] = $file['type'];
                 
-                        $fileNameCmps = explode(".", $fileName);
+                        $fileNameCmps = explode(".", $this->file['name']);
                         $fileExtension = strtolower(end($fileNameCmps));
-                        $newFileName = 'file_' . sha1(time() . $fileName) . '.' . $fileExtension;
+                        $newFileName = sha1(time() . $this->file['name']) . '.' . $fileExtension;
                 
                         // File format
                         if (empty($this->file_format) or isset($this->file_format) and (is_array($this->file_format) and in_array($fileExtension, $this->file_format) or $this->file_format == $fileExtension) ) {
@@ -179,7 +179,7 @@ class Model
                             
                             if(move_uploaded_file($fileTmpPath, $dest_path)){
                                 // File is successfully uploaded.
-                                $this->post[$key] = "/storage/".$newFileName;
+                                $this->post[$key] = $this->file_directory.$newFileName;
                                 
                             }else{
                                 $this->error("Error writing to database or saving file!");
@@ -202,9 +202,11 @@ class Model
     public function file_clean(String $row_name)
     {
         global $db;
-        $select = $db->query("SELECT $row_name FROM $this->table WHERE id = {$this->post['id']}")->fetchColumn();
-        if ($select) {
-            unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
+        if ($this->post['id']) {
+            $select = $db->query("SELECT $row_name FROM $this->table WHERE id = {$this->post['id']}")->fetchColumn();
+            if ($select) {
+                unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
+            }
         }
     }
 
