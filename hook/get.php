@@ -8,6 +8,7 @@ if ($_GET['id']) {
 }else{
     $form = new $_GET['model'];
     unset($_GET['model']);
-    $form->form();
+    $form->{$_GET['form']}();
+    unset($_GET['form']);
 }
 ?>

@@ -9,68 +9,82 @@ class VisitRoute extends Model
     public $_beds = 'visit_beds';
     public $_prices = 'visit_prices';
 
-    public function form_out($pk = null)
+    public function form($pk = null)
     {
-        global $db, $patient, $classes, $session;
+        global $db, $classes, $session;
+        $patient = json_decode($_GET['patient']);
         ?>
         <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group">
-                <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                    <?php foreach ($db->query("SELECT * from divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Назначить визит</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
+            <div class="modal-body">
 
-            <div class="form-group-feedback form-group-feedback-right row">
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-                <div class="col-md-10">
-                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Отправить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>
-                    </div>
+                <div class="form-group">
+                    <label>Отделы</label>
+                    <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
-            </div>
 
-            <div class="form-group">
+                <div class="form-group-feedback form-group-feedback-right row">
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
+                    <div class="col-md-10">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 font-size-base text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Отправить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>
+                        </div>
+                    </div>
 
-                        </tbody>
-                    </table>
+                </div>
+
+                <div class="form-group">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-dark">
+                                    <th>#</th>
+                                    <th>Отдел</th>
+                                    <th>Услуга</th>
+                                    <th>Доктор</th>
+                                    <th style="width: 100px">Кол-во</th>
+                                    <th class="text-right">Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_form">
+
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
 
             </div>
 
         </form>
         <script type="text/javascript">
+
+            BootstrapMultiselect.init();
+            FormLayouts.init();
 
             var service = {};
 
@@ -117,68 +131,82 @@ class VisitRoute extends Model
         <?php
     }
 
-    public function form_out_diagnostic($pk = null)
+    public function form_diagnostic($pk = null)
     {
-        global $db, $patient, $classes, $session;
+        global $db, $classes, $session;
+        $patient = json_decode($_GET['patient']);
         ?>
         <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group">
-                <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                    <?php foreach ($db->query("SELECT * from divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Назначить визит</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right row">
+            <div class="modal-body">
 
-                <div class="col-md-10">
-                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>
-                    </div>
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+                <div class="form-group">
+                    <label>Отделы</label>
+                    <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
-            </div>
+                <div class="form-group-feedback form-group-feedback-right row">
 
-            <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 font-size-base text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <!-- <th>Тип</th> -->
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
+                </div>
 
-                        </tbody>
-                    </table>
+                <div class="form-group">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-dark">
+                                    <th>#</th>
+                                    <th>Отдел</th>
+                                    <th>Услуга</th>
+                                    <!-- <th>Тип</th> -->
+                                    <th>Доктор</th>
+                                    <th style="width: 100px">Кол-во</th>
+                                    <th class="text-right">Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_form">
+
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
 
             </div>
 
         </form>
         <script type="text/javascript">
+
+            BootstrapMultiselect.init();
+            FormLayouts.init();
 
             var service = {};
 
@@ -225,69 +253,83 @@ class VisitRoute extends Model
         <?php
     }
 
-    public function form_out_labaratory($pk = null)
+    public function form_labaratory($pk = null)
     {
-        global $db, $patient, $classes, $session;
+        global $db, $classes, $session;
+        $patient = json_decode($_GET['patient']);
         ?>
         <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group">
-                <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                    <?php foreach ($db->query("SELECT * from divisions WHERE level = 6") as $row): ?>
-                        <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Назначить анализ</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
-            <div class="form-group-feedback form-group-feedback-right row">
+            <div class="modal-body">
 
-                <div class="col-md-10">
-                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+                <div class="form-group">
+                    <label>Отделы</label>
+                    <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 6") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>                    
+
+                <div class="form-group-feedback form-group-feedback-right row">
+
+                    <div class="col-md-10">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 font-size-base text-muted"></i>
+                        </div>
                     </div>
+                    <div class="col-md-1">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>                    
+                        </div>
+                    </div>
+
                 </div>
 
-            </div>
+                <div class="form-group">
 
-            <div class="form-group">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-dark">
+                                    <th>#</th>
+                                    <th>Отдел</th>
+                                    <th>Услуга</th>
+                                    <!-- <th>Тип</th> -->
+                                    <th>Доктор</th>
+                                    <th style="width: 100px">Кол-во</th>
+                                    <th class="text-right">Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_form">
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <!-- <th>Тип</th> -->
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
+                            </tbody>
+                        </table>
+                    </div>
 
-                        </tbody>
-                    </table>
                 </div>
 
             </div>
 
         </form>
         <script type="text/javascript">
+
+            BootstrapMultiselect.init();
+            FormLayouts.init();
 
             var service = {};
 
@@ -334,64 +376,78 @@ class VisitRoute extends Model
         <?php 
     }
 
-    public function form_out_physio($pk = null)
+    public function form_physio($pk = null)
     {
-        global $db, $patient, $classes, $session;
+        global $db, $classes, $session;
+        $patient = json_decode($_GET['patient']);
         ?>
         <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group">
-                <button type="button" class="btn btn-sm btn-block legitRipple" onclick="TableChangeServices(this)">Показать Услуги</button>    
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Назначить визит</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
+            
+            <div class="modal-body">
+            
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-            <div class="form-group-feedback form-group-feedback-right row">
-
-                <div class="col-md-10">
-                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
-                    <div class="form-control-feedback">
-                        <i class="icon-search4 font-size-base text-muted"></i>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                            <span class="ladda-label">Сохранить</span>
-                            <span class="ladda-spinner"></span>
-                        </button>                    
-                    </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-sm btn-block legitRipple" onclick="TableChangeServices(this)">Показать Услуги</button>    
                 </div>
 
-            </div>
+                <div class="form-group-feedback form-group-feedback-right row">
 
-            <div class="form-group">
+                    <div class="col-md-10">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 font-size-base text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>                    
+                        </div>
+                    </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-dark">
-                                <th>#</th>
-                                <th>Отдел</th>
-                                <th>Услуга</th>
-                                <!-- <th>Тип</th> -->
-                                <th>Доктор</th>
-                                <th style="width: 100px">Кол-во</th>
-                                <th class="text-right">Цена</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table_form">
+                </div>
 
-                        </tbody>
-                    </table>
+                <div class="form-group">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-dark">
+                                    <th>#</th>
+                                    <th>Отдел</th>
+                                    <th>Услуга</th>
+                                    <!-- <th>Тип</th> -->
+                                    <th>Доктор</th>
+                                    <th style="width: 100px">Кол-во</th>
+                                    <th class="text-right">Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_form">
+
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
 
             </div>
 
         </form>
         <script type="text/javascript">
+
+            BootstrapMultiselect.init();
+            FormLayouts.init();
 
             var service = {};
 

@@ -112,12 +112,10 @@ require_once 'callback.php';
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
-
-	<div id="modal_report_show" class="modal fade" tabindex="-1">
+	
+	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
-
-			</div>
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
@@ -127,8 +125,8 @@ require_once 'callback.php';
 				type: "GET",
 				url: events,
 				success: function (result) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(result);
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
 		};

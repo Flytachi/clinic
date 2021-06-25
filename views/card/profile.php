@@ -44,6 +44,10 @@
 
                             </div>
 
+                            <label class="col-md-6"><b>№ истории болезни:</b></label>
+                            <div class="col-md-6 text-right">
+                                <?= addZero($patient->visit_id) ?>
+                            </div>  
 
                             <label class="col-md-4"><b>Дата рождение:</b></label>
     						<div class="col-md-8 text-right">
@@ -88,13 +92,6 @@
     						<div class="col-md-9 text-right">
     							<?= addZero($patient->id) ?>
     						</div>
-
-                            <?php if ($patient->direction): ?>
-                                <label class="col-md-6"><b>№ истории болезни:</b></label>
-                                <div class="col-md-6 text-right">
-                                    <?= addZero($patient->visit_id) ?>
-                                </div>
-                            <?php endif; ?>
 
                             <label class="col-md-3"><b>Телефон:</b></label>
     						<div class="col-md-9 text-right">

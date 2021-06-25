@@ -15,8 +15,11 @@ $data = $db->query("SELECT * FROM visit_documents WHERE id={$_GET['pk']}")->fetc
     <div class="row">
     
         <div class="col-8">
+            <?php if($data['location']): ?>
+                <a href="<?= $data['location'] ?>" class="btn btn-dark btn-sm btn-block legitRipple mb-1" download="document"><i class="icon-download"></i> Скачать файл</a>
+            <?php endif; ?>
             <object id="ScannerFile" type="<?= $data['file_format'] ?>" data="<?= $data['location'] ?>" style="width: 100%;min-height: 70vh;">
-                <p>The DOC can not display </p>
+                <p>Нет файла или его формат не поддерживается для отображения.</p>
             </object>
         </div>
         <div class="col-4">

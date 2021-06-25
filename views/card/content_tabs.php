@@ -57,7 +57,7 @@
     <?php endif; ?>
     <?php if (!$activity or !permission([11])): ?>
         <li class="nav-item">
-            <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= viv_link('card/content_10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-googleplus5 mr-1"></i>Физиотерапия/Процедурная</a>
+            <a href="<?= viv('card/content_10').$agr ?>" class="nav-link <?= viv_link('card/content_10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-googleplus5 mr-1"></i>Физиотерапия</a>
         </li>
     <?php endif; ?>
     <?php if (!$activity or permission([7])): ?>

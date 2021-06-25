@@ -8,7 +8,7 @@ class Model
      * Model + PDO
      * 
      * 
-     * @version 8.1
+     * @version 8.7
      */
 
     protected $post;
@@ -163,16 +163,16 @@ class Model
                         $this->file['type'] = $file['type'];
                 
                         $fileNameCmps = explode(".", $this->file['name']);
-                        $fileExtension = strtolower(end($fileNameCmps));
-                        $newFileName = sha1(time() . $this->file['name']) . '.' . $fileExtension;
+                        $this->file['extension'] = strtolower(end($fileNameCmps));
+                        $newFileName = sha1(time() . $this->file['name']) . '.' . $this->file['extension'];
                 
                         // File format
-                        if (empty($this->file_format) or isset($this->file_format) and (is_array($this->file_format) and in_array($fileExtension, $this->file_format) or $this->file_format == $fileExtension) ) {
+                        if (empty($this->file_format) or isset($this->file_format) and (is_array($this->file_format) and in_array($this->file['extension'], $this->file_format) or $this->file_format == $this->file['extension']) ) {
                             $uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR.$this->file_directory;
                             $dest_path = $uploadFileDir . $newFileName;
                 
                             // Check update
-                            if( isset($this->post['id']) ){
+                            if( isset($this->post['id']) and $this->post['id'] ){
                                 // Delete old file
                                 $this->file_clean($key);
                             }
@@ -182,15 +182,15 @@ class Model
                                 $this->post[$key] = $this->file_directory.$newFileName;
                                 
                             }else{
-                                $this->error("Error writing to database or saving file!");
+                                $this->error("Ошибка записи в базу данных или сохранения файла!");
                             }
                 
                         }else {
-                            $this->error("Error unsupported file format!");
+                            $this->error("Формат фыйла не поддерживается!");
                         }
 
                     }else {
-                        $this->error("Error loading to temporary folder!");
+                        $this->error("Ошибка загрузки во временную папку!");
                     }   
                 }
 
@@ -199,14 +199,13 @@ class Model
         }
     }
 
-    public function file_clean(String $row_name)
+    public function file_clean(String $row_name, $pk = null)
     {
         global $db;
-        if ($this->post['id']) {
-            $select = $db->query("SELECT $row_name FROM $this->table WHERE id = {$this->post['id']}")->fetchColumn();
-            if ($select) {
-                unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
-            }
+        if (!$pk) $pk = $this->post['id'];
+        $select = $db->query("SELECT $row_name FROM $this->table WHERE id = {$pk}")->fetchColumn();
+        if ($select) {
+            unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
         }
     }
 

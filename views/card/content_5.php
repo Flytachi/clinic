@@ -41,7 +41,7 @@ is_module('module_laboratory');
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-fire2 mr-2"></i>Анализы
 							<?php if ($activity and permission(5)): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
+								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_labaratory") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php else: ?>
@@ -139,48 +139,32 @@ is_module('module_laboratory');
 	</div>
 	<!-- /page content -->
 
-	<?php if ($activity): ?>
-		<div id="modal_route" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="<?= $classes['modal-global_content'] ?>">
-					<div class="<?= $classes['modal-global_header'] ?>">
-						<h6 class="modal-title">Назначить анализ</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-
-						<?php
-						if ($patient->direction) {
-							(new VisitRoute)->form_sta_labaratory();
-						} else {
-							(new VisitRoute)->form_out_labaratory();
-						}
-						?>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
-
-
-	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg" id="modal_class_show">
-			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
-
-			</div>
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
 	<script type="text/javascript">
+
+		function Route(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
+
 		function AnalizeCheck(visit) {
 			$.ajax({
 				type: "GET",
 				url: "<?= viv('laboratory/report') ?>?visit_pk="+visit,
 				success: function (data) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
+					$('#modal_default').modal('show');
+					$('#form_card').html(data);
 				},
 			});
 		}
@@ -190,8 +174,8 @@ is_module('module_laboratory');
 				type: "GET",
 				url: events,
 				success: function (data) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
+					$('#modal_default').modal('show');
+					$('#form_card').html(data);
 				},
 			});
 		};

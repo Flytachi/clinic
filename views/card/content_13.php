@@ -40,7 +40,7 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-files-empty mr-2"></i>Документы
 							<?php if ($activity and !$patient->direction or ($patient->direction and $patient->grant_id == $_SESSION['session_id'])): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
+								<a onclick='Update(`<?= up_url(null, "VisitDocumentsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -54,6 +54,7 @@ require_once 'callback.php';
 										<tr>
 											<th>№</th>
 											<th>Файл</th>
+											<th>Формат</th>
 											<th>Метка</th>
 											<th>Автор</th>
 											<th>Дата загрузки</th>
@@ -68,7 +69,35 @@ require_once 'callback.php';
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
-												<td></td>
+												<td class="text-primary">
+													<?php if( $row->location ): ?>
+														<?php if($row->file_extension == "pdf"): ?>
+															<i class="icon-2x icon-file-pdf"></i>
+														<?php elseif( in_array($row->file_extension, [ "doc", "docx" ])): ?>
+															<i class="icon-2x icon-file-word"></i>
+														<?php elseif( in_array($row->file_extension, [ "csv", "xlsx" ]) ): ?>
+															<i class="icon-2x icon-file-excel"></i>
+														<?php elseif( in_array($row->file_extension, [ "mp4" ]) ): ?>
+															<i class="icon-2x icon-file-video"></i>
+														<?php elseif( in_array($row->file_extension, [ "jpg", "png" ]) ): ?>
+															<i class="icon-2x icon-file-picture"></i>
+														<?php elseif( in_array($row->file_extension, [ "txt" ]) ): ?>
+															<i class="icon-2x icon-file-text2"></i>
+														<?php else: ?>
+															<i class="icon-2x icon-file-empty"></i>
+														<?php endif; ?>
+														<span class="ml-1"><?= bytes($row->file_size, 'MB') ?></span>
+													<?php else: ?>
+														<span class="text-muted">Нет данных</span>
+													<?php endif; ?>
+												</td>
+												<td>
+													<?php if( $row->file_extension ): ?>
+														<?= $row->file_extension ?>
+													<?php else: ?>
+														<span class="text-muted">Нет данных</span>
+													<?php endif; ?>
+												</td>
 												<td><?= $row->mark ?></td>
 												<td><?= get_full_name($row->parent_id) ?></td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
@@ -76,12 +105,10 @@ require_once 'callback.php';
 													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 													<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<a onclick="Check('<?= ajax('document_view') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-														<!-- <?php if( $activity and $row->status == 1 ): ?>
-															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
+														<?php if( $activity and $session->session_id == $row->parent_id ): ?>
+															<a onclick='Update(`<?= up_url($row->id, "VisitDocumentsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="dropdown-item"><i class="icon-pencil7"></i>Редактировать</a>
+															<a href="<?= del_url($row->id, 'VisitDocumentsModel') ?>" class="dropdown-item"><i class="icon-x"></i>Удалить</a>
 														<?php endif; ?>
-														<?php if ( in_array($row->status, [3,5,7]) ): ?>
-															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
-														<?php endif; ?> -->
 													</div>
 												</td>
 											</tr>
@@ -105,75 +132,37 @@ require_once 'callback.php';
 	</div>
 	<!-- /page content -->
 
-	<?php if ($activity): ?>
-		<div id="modal_route" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="<?= $classes['modal-global_content'] ?>">
-					<div class="<?= $classes['modal-global_header'] ?>">
-						<h6 class="modal-title">Назначить визит</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-
-						<?php (new VisitDocumentsModel)->form(); ?>
-
-					</div>
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
-
-	<div id="modal_report_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg" id="modal_class_show">
-			<div class="<?= $classes['modal-global_content'] ?>" id="report_show">
-
-			</div>
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
 	<script type="text/javascript">
+
+		function Update(events) {
+			events
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
+
 		function Check(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (data) {
-					$('#modal_report_show').modal('show');
-					$('#report_show').html(data);
+					$('#modal_default').modal('show');
+					$('#form_card').html(data);
 				},
 			});
 		};
 
-		function Delete(events, tr) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (result) {
-					var data = JSON.parse(result);
-
-					if (data.status == "success") {
-
-						$(tr).css("background-color", "red");
-						$(tr).css("color", "white");
-						$(tr).fadeOut('slow', function() {
-							$(this).remove();
-						});
-						new Noty({
-							text: data.message,
-							type: 'success'
-						}).show();
-						
-					}else {
-
-						new Noty({
-							text: data.message,
-							type: 'error'
-						}).show();
-						
-					}
-				},
-			});
-		};
 	</script>
 
     <!-- Footer -->

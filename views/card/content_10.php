@@ -38,9 +38,9 @@ require_once 'callback.php';
 						<?php include "content_tabs.php"; ?>
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
-							<i class="icon-googleplus5 mr-2"></i>Физиотерапия/Процедурная
+							<i class="icon-googleplus5 mr-2"></i>Физиотерапия
 							<?php if ( ($activity and !$patient->direction) or ($patient->direction and permission(5)) ): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
+								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_physio") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -176,32 +176,24 @@ require_once 'callback.php';
 	</div>
 	<!-- /page content -->
 
-	<?php if ($activity): ?>
-		<div id="modal_route" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
-						<h6 class="modal-title">Назначить физиотерапию/процедуру</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-
-						<?php
-						if ($patient->direction) {
-							// (new VisitRoute)->form_sta_physio();
-						} else {
-							(new VisitRoute)->form_out_physio();
-						}
-						?>
-
-					</div>
-				</div>
-			</div>
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
-	<?php endif; ?>
+	</div>
 
 	<script type="text/javascript">
+
+		function Route(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
 
         function Delete(url, tr) {
             event.preventDefault();
