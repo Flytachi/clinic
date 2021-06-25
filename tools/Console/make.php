@@ -1,5 +1,62 @@
 <?php
 
+// CREATE USER 'timaa'@'%' IDENTIFIED VIA mysql_native_password USING '456';
+// GRANT USAGE ON *.* TO 'tima'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+// CREATE DATABASE IF NOT EXISTS `tima`;GRANT ALL PRIVILEGES ON `tima`.* TO 'tima'@'%';
+
+class __Base
+{
+    protected String $db_driver = "mysql";
+    protected String $db_host = "localhost";
+    protected String $db_charset = "utf8";
+    protected String $db_user = "root";
+
+    protected String $create_db_name = "clinic";
+    protected String $create_db_user = "clinic";
+
+
+    function __construct(string $db_password = null)
+    {
+        global $argv;
+        if ( isset($argv[2]) and isset($argv[3]) ) {
+            $this->db_password = $argv[2];
+            $this->create_db_password = $argv[3];
+            $this->create();
+        }else{
+            $this->handle();
+        }
+    }
+
+    public function handle()
+    {
+        echo "\033[33m"." Требуется 2 аргумента.\n";
+        echo "\033[33m"." 1 => Пароль от root пользователя.\n";
+        echo "\033[33m"." 2 => Пароль для нового пользователя.\n";
+    }
+
+    public function create()
+    {
+        $DNS = "$this->db_driver:host=$this->db_host;charset=$this->db_charset";
+        // Site Constants
+        try {
+            $rootDB = new PDO($DNS, $this->db_user, $this->db_password);
+            $rootDB->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $rootDB->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $rootDB->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+
+            $rootDB->beginTransaction();
+            $rootDB->exec("CREATE USER '$this->create_db_user'@'%' IDENTIFIED BY '$this->create_db_password';");
+            $rootDB->exec("GRANT USAGE ON *.* TO '$this->create_db_user'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;");
+            $rootDB->exec("CREATE DATABASE IF NOT EXISTS `$this->create_db_name`;GRANT ALL PRIVILEGES ON `$this->create_db_name`.* TO '$this->create_db_user'@'%';");
+            $rootDB->commit();
+            echo "\033[32m"." Пользователь и база данных успешно созданы.\n";
+
+        } catch (\PDOException $e) {
+            die($e);
+        }
+    }
+}
+
 class __Seed
 {
     protected String $name;
