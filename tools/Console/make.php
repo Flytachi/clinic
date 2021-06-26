@@ -11,16 +11,10 @@ class __Base
     protected String $db_charset = "utf8";
     protected String $db_user = "root";
 
-    protected String $create_db_name = "clinic";
-    protected String $create_db_user = "clinic";
-
-
     function __construct(string $db_password = null)
     {
-        global $argv;
-        if ( isset($argv[2]) and isset($argv[3]) ) {
-            $this->db_password = $argv[2];
-            $this->create_db_password = $argv[3];
+        if ( isset($db_password) ) {
+            $this->db_password = $db_password;
             $this->create();
         }else{
             $this->handle();
@@ -36,7 +30,12 @@ class __Base
 
     public function create()
     {
+        $ini = parse_ini_file(dirname(__DIR__, 2)."/setting.ini", true);
+        $this->create_db_name = $ini['DATABASE']['NAME'];
+        $this->create_db_user = $ini['DATABASE']['USER'];
+        $this->create_db_password = $ini['DATABASE']['PASS'];
         $DNS = "$this->db_driver:host=$this->db_host;charset=$this->db_charset";
+        
         // Site Constants
         try {
             $rootDB = new PDO($DNS, $this->db_user, $this->db_password);
