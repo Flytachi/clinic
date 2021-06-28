@@ -49,11 +49,6 @@ $header = "Отчёты";
 }
 </style>
 
-<!-- Theme JS files -->
-<script src="<?= stack("global_assets/js/demo_pages/widgets_stats.js") ?>"></script>
-<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
-<!-- /theme JS files -->
-
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -73,20 +68,20 @@ $header = "Отчёты";
 			<?php include layout('header') ?>
 			<!-- /page header -->
 
-			<script src="<?= stack("global_assets/js/demo_pages/dashboard.js") ?>"></script>
-
 			<!-- Content area -->
 			<div class="content">
 
                 <article class="fade-out-siblings">
-
-                    <!-- Аптека -->
-                    <?php if (permission([4, 8])): ?>
-                        <a href="<?= viv('reports/pharmacy/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Аптека</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Аптека</button>
+                    
+                    <?php if(module('module_pharmacy')): ?>
+                        <!-- Аптека -->
+                        <?php if (permission([4, 8])): ?>
+                            <a href="<?= viv('reports/pharmacy/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Аптека</a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-danger" style="font-size:1rem;">Аптека</button>
+                        <?php endif; ?>
+                        <!-- end -->
                     <?php endif; ?>
-                    <!-- end -->
 
                     <!-- Общий отчет -->
                     <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
@@ -164,6 +159,16 @@ $header = "Отчёты";
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Процедурная</button>
                     <?php endif; ?>
                     <!-- end -->
+
+                    <?php if(module('module_diet')): ?>
+                        <!-- Кухня -->
+                        <?php if (permission([9])): ?>
+                            <a href="<?= viv('reports/coock/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Кухня</a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-danger" style="font-size:1rem;">Кухня</button>
+                        <?php endif; ?>
+                        <!-- end -->
+                    <?php endif; ?>
 
                     <!-- Доход -->
                     <?php if (permission(8)): ?>

@@ -17,7 +17,7 @@ $total_opetrator_price = $total_service_price = $total_preparats_price = $total_
 $activity = $_GET['activity'];
 
 if (!isset($_GET['type'])) {
-    $color = "info";
+    $color = "primary";
 }else {
     if ($_GET['type'] == 1) {
         $color = "success";
@@ -301,92 +301,94 @@ if (!isset($_GET['type'])) {
 
     </div>
 
-    <!-- Preparat -->
-    <div class="col-md-7">
+    <?php if(module('module_pharmacy')): ?>    
+        <!-- Preparat -->
+        <div class="col-md-7">
 
-        <legend class="font-weight-semibold text-uppercase font-size-sm">
-    		<i class="icon-aid-kit mr-2"></i>Препараты
-            <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
-                <a class="float-right text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_preparat">
-        			<i class="icon-plus22"></i>Добавить
-        		</a>
-            <?php endif; ?>
-    	</legend>
+            <legend class="font-weight-semibold text-uppercase font-size-sm">
+                <i class="icon-aid-kit mr-2"></i>Препараты
+                <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
+                    <a class="float-right text-<?= $color ?> mr-1" data-toggle="modal" data-target="#modal_add_preparat">
+                        <i class="icon-plus22"></i>Добавить
+                    </a>
+                <?php endif; ?>
+            </legend>
 
-        <div class="card border-1 border-<?= $color ?>">
+            <div class="card border-1 border-<?= $color ?>">
 
-            <div class="table-responsive">
-                <table class="table table-hover table-sm">
-                    <thead>
-                        <tr class="bg-<?= $color ?>">
-                            <th style="width:70%">Препарат</th>
-                            <th class="text-center">Количество</th>
-                            <th class="text-right">Цена</th>
-                            <th class="text-right">Сумма</th>
-                            <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
-                                <th class="text-right" style="width:50px">Действия</th>
-                            <?php endif; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if ($patient->direction): ?>
-                            <?php foreach ($db->query("SELECT opp.id, opp.item_name, opp.item_cost, opp.item_qty FROM operation_preparat opp WHERE opp.operation_id = $patient->pk ORDER BY opp.item_name ASC") as $row): ?>
-                                <tr>
-                                    <td><?= $row['item_name'] ?></td>
-                                    <td class="text-center"><?= $row['item_qty'] ?></td>
-                                    <td class="text-right text-success"><?= number_format($row['item_cost'], 1);?> </td>
-                                    <td class="text-right text-success">
-                                        <?php
-                                        $total_preparats_price += $row['item_qty'] * $row['item_cost'];
-                                        echo number_format($row['item_qty'] * $row['item_cost'], 1);
-                                        ?>
-                                    </td>
-                                    <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
-                                        <td class="text-right">
-                                            <div class="list-icons">
-                                                <button onclick="UpdateOperations('<?= up_url($row['id'], 'OperationPreparatModel') ?>', 'preparat')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
-                                                <button onclick="Delete('<?= del_url($row['id'], 'OperationPreparatModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
-                                            </div>
-                                        </td>
-                                    <?php endif; ?>
-                                </tr>
-                            <?php endforeach; ?>
-                            <?php /* foreach ($db->query("SELECT scp.id, scp.qty, st.price, st.name, st.supplier, st.die_date from service_preparat scp LEFT JOIN storage st ON(st.id=scp.preparat_id) WHERE scp.service_id = $patient->item_id ORDER BY st.name ASC") as $row): ?>
-                                <tr>
-                                    <td><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</td>
-                                    <td class="text-center"><?= $row['qty'] ?></td>
-                                    <td class="text-right text-success"><?= number_format($row['price'], 1);?> </td>
-                                    <td class="text-right text-success">
-                                        <?php
-                                        $total_preparats_price += $row['qty'] * $row['price'];
-                                        echo number_format($row['qty'] * $row['price'], 1);
-                                        ?>
-                                    </td>
-                                    <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
-                                        <td class="text-right">
-                                            <div class="list-icons">
-                                                <button class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
-                                                <button class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
-                                            </div>
-                                        </td>
-                                    <?php endif; ?>
-                                </tr>
-                            <?php endforeach; */ ?>
-                            <tr class="table-secondary">
-                                <th colspan="3" class="text-right">Итого:</th>
-                                <th class="text-right"><?= number_format($total_preparats_price, 1) ?></th>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-<?= $color ?>">
+                                <th style="width:70%">Препарат</th>
+                                <th class="text-center">Количество</th>
+                                <th class="text-right">Цена</th>
+                                <th class="text-right">Сумма</th>
                                 <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
-                                    <th></th>
+                                    <th class="text-right" style="width:50px">Действия</th>
                                 <?php endif; ?>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php if ($patient->direction): ?>
+                                <?php foreach ($db->query("SELECT opp.id, opp.item_name, opp.item_cost, opp.item_qty FROM operation_preparat opp WHERE opp.operation_id = $patient->pk ORDER BY opp.item_name ASC") as $row): ?>
+                                    <tr>
+                                        <td><?= $row['item_name'] ?></td>
+                                        <td class="text-center"><?= $row['item_qty'] ?></td>
+                                        <td class="text-right text-success"><?= number_format($row['item_cost'], 1);?> </td>
+                                        <td class="text-right text-success">
+                                            <?php
+                                            $total_preparats_price += $row['item_qty'] * $row['item_cost'];
+                                            echo number_format($row['item_qty'] * $row['item_cost'], 1);
+                                            ?>
+                                        </td>
+                                        <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
+                                            <td class="text-right">
+                                                <div class="list-icons">
+                                                    <button onclick="UpdateOperations('<?= up_url($row['id'], 'OperationPreparatModel') ?>', 'preparat')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
+                                                    <button onclick="Delete('<?= del_url($row['id'], 'OperationPreparatModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        <?php endif; ?>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php /* foreach ($db->query("SELECT scp.id, scp.qty, st.price, st.name, st.supplier, st.die_date from service_preparat scp LEFT JOIN storage st ON(st.id=scp.preparat_id) WHERE scp.service_id = $patient->item_id ORDER BY st.name ASC") as $row): ?>
+                                    <tr>
+                                        <td><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>)</td>
+                                        <td class="text-center"><?= $row['qty'] ?></td>
+                                        <td class="text-right text-success"><?= number_format($row['price'], 1);?> </td>
+                                        <td class="text-right text-success">
+                                            <?php
+                                            $total_preparats_price += $row['qty'] * $row['price'];
+                                            echo number_format($row['qty'] * $row['price'], 1);
+                                            ?>
+                                        </td>
+                                        <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
+                                            <td class="text-right">
+                                                <div class="list-icons">
+                                                    <button class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
+                                                    <button class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
+                                                </div>
+                                            </td>
+                                        <?php endif; ?>
+                                    </tr>
+                                <?php endforeach; */ ?>
+                                <tr class="table-secondary">
+                                    <th colspan="3" class="text-right">Итого:</th>
+                                    <th class="text-right"><?= number_format($total_preparats_price, 1) ?></th>
+                                    <?php if ($activity and $patient->direction and !$patient->completed and ($patient->grant_id == $_SESSION['session_id'] or permission(7))): ?>
+                                        <th></th>
+                                    <?php endif; ?>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
         </div>
-
-    </div>
+    <?php endif; ?>
 
     <!-- Сonsumables -->
     <div class="col-md-5">
@@ -474,10 +476,12 @@ if (!isset($_GET['type'])) {
                         <td>Стоимость услуг анестезиолога</td>
                         <td class="text-right text-success"><?= number_format($total_service_price, 1) ?></td>
                     </tr>
-                    <tr class="table-secondary">
-                        <td>Стоимость препаратов</td>
-                        <td class="text-right text-success"><?= number_format($total_preparats_price, 1) ?></td>
-                    </tr>
+                    <?php if(module('module_pharmacy')): ?>    
+                        <tr class="table-secondary">
+                            <td>Стоимость препаратов</td>
+                            <td class="text-right text-success"><?= number_format($total_preparats_price, 1) ?></td>
+                        </tr>
+                    <?php endif; ?>
                     <tr class="table-secondary">
                         <td>Стоимость расходов</td>
                         <td class="text-right text-success"><?= number_format($total_other_price, 1) ?></td>
@@ -507,7 +511,7 @@ if (!isset($_GET['type'])) {
         <div class="modal-dialog">
             <div class="modal-content border-3 border-info">
 
-                <?= OperationStatsModel::form() ?>
+                <?= (new OperationStatsModel)->form() ?>
 
             </div>
         </div>
@@ -517,7 +521,7 @@ if (!isset($_GET['type'])) {
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
-                <?php OperationInspectionModel::form() ?>
+                <?php (new OperationInspectionModel)->form() ?>
 
             </div>
         </div>
@@ -529,7 +533,7 @@ if (!isset($_GET['type'])) {
 
                 <div id="form_card_member">
 
-                    <?= OperationMemberModel::form() ?>
+                    <?= (new OperationMemberModel)->form() ?>
 
                 </div>
 
@@ -538,6 +542,7 @@ if (!isset($_GET['type'])) {
     </div>
 
     <div id="modal_add_service" class="modal fade" tabindex="-1">
+    
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-info">
@@ -546,26 +551,28 @@ if (!isset($_GET['type'])) {
                 </div>
 
                 <div class="modal-body">
-                    <?php OperationServiceModel::form() ?>
+                    <?php (new OperationServiceModel)->form() ?>
                 </div>
 
             </div>
         </div>
     </div>
 
-    <div id="modal_add_preparat" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+    <?php if(module('module_pharmacy')): ?>    
+        <div id="modal_add_preparat" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
 
-                <div id="form_card_preparat">
+                    <div id="form_card_preparat">
 
-                    <?php OperationPreparatModel::form() ?>
+                        <?php (new OperationPreparatModel)->form() ?>
+
+                    </div>
 
                 </div>
-
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <div id="modal_add_consumables" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -573,7 +580,7 @@ if (!isset($_GET['type'])) {
 
                 <div id="form_card_consumables">
 
-                    <?php OperationConsumablesModel::form() ?>
+                    <?php (new OperationConsumablesModel)->form() ?>
 
                 </div>
 
@@ -585,7 +592,7 @@ if (!isset($_GET['type'])) {
         <div class="modal-dialog modal-md">
             <div class="modal-content border-3 border-info">
 
-                <?php OperationModel::form_finish() ?>
+                <?php (new OperationModel)->form_finish() ?>
 
             </div>
         </div>

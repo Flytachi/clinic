@@ -1,5 +1,8 @@
-setting.ini
-tools/PHPExcel
 dump
+libs/*
+!libs/*.php
+node_modules
 storage
+tests
+setting.ini
 node_modules

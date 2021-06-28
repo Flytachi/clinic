@@ -4,18 +4,13 @@ class UserModel extends Model
 {
     public $table = 'users';
 
-    public function form($pk = null)
+    public function form($pk = null) 
     {
         global $db, $PERSONAL, $classes;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
-        if($_SESSION['message']){
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
-            if($_SESSION['message_post']){
+            if( isset($_SESSION['message_post']) ){
                 $post = $_SESSION['message_post'];
                 unset($_SESSION['message_post']);
             }
@@ -23,7 +18,7 @@ class UserModel extends Model
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <div class="row">
 
@@ -34,25 +29,27 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $post['last_name'] ?>">
+                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Имя пользователя:</label>
-                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $post['first_name'] ?>">
+                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Отчество пользователя:</label>
-                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?=  $post['father_name'] ?>">
+                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Выбирите роль:</label>
-                            <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
+                            <select data-placeholder="Выбрать роль" onchange="TableChange(this)" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($PERSONAL as $key => $value): ?>
-                                    <option value="<?= $key ?>"<?= ($post['user_level']  == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                    <?php if(!in_array($key, [1])): ?>
+                                        <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -61,8 +58,8 @@ class UserModel extends Model
                             <label>Отдел:</label>
                             <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php foreach ($db->query('SELECT * FROM division') as $row): ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($post['division_id']  == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -79,21 +76,21 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Кабинет:</label>
-                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $post['room'] ?>">
+                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value('room') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $post['share'] ?>">
+                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value('share') ?>">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Логин:</label>
-                                    <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $post['username'] ?>">
+                                    <input type="text" class="form-control" name="username" placeholder="Введите Логин" required value="<?= $this->value('username') ?>">
                                 </div>
                             </div>
 
@@ -127,24 +124,9 @@ class UserModel extends Model
                                 </div>
                             <?php endif; ?>
 
-                            <?php if (module('module_zetta_pacs')): ?>
-                                <legend><b>ZeTTa PACS</b></legend>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>PACS Логин:</label>
-                                        <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $post['pacs_login'] ?>">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>PACS пароль:</label>
-                                        <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $post['pacs_password'] ?>">
-                                    </div>
-                                </div>
-                            <?php endif; ?>
                         </div>
 
+                        <div class="row" id="change_table_div"></div>
 
                     </fieldset>
                 </div>
@@ -152,7 +134,10 @@ class UserModel extends Model
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-primary">Сохранить <i class="icon-paperplane ml-2"></i></button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
             <script type="text/javascript">
@@ -161,6 +146,37 @@ class UserModel extends Model
                 });
             </script>
         </form>
+
+        <script>
+            function TableChange(the) {
+                if (the.value == 5) {
+                    var div = `
+                    <?php if (module('module_zetta_pacs')): ?>
+                        <legend><b>ZeTTa PACS</b></legend>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>PACS Логин:</label>
+                                <input type="text" class="form-control" name="pacs_login" placeholder="Введите логин" value="<?= $this->value('pacs_login') ?>">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>PACS пароль:</label>
+                                <input type="text" class="form-control" name="pacs_password" placeholder="Введите пароль" value="<?= $this->value('pacs_password') ?>">
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    `;
+                    
+                }else{
+                    var div = ``;
+                }
+
+                document.querySelector('#change_table_div').innerHTML = div;
+                Swit.init();
+            }
+        </script>
         <?php
         if ($pk) {
             $this->jquery_init();

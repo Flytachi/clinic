@@ -30,9 +30,9 @@ $header = "Стационарные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Стационарные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -46,7 +46,7 @@ $header = "Стационарные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>
@@ -77,8 +77,12 @@ $header = "Стационарные пациенты";
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
-													<a href="<?= viv('card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
-													<a href="<?= viv('card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
+													<?php if(module('module_laboratory')): ?>
+														<a href="<?= viv('card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+													<?php endif; ?>
+													<?php if(module('module_diagnostic')): ?>
+														<a href="<?= viv('card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
+													<?php endif; ?>
                                                     <a href="<?= viv('card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>
                                           	</td>

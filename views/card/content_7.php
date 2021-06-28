@@ -1,16 +1,14 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth();
+is_module('module_bypass');
 $header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
-
 <script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_checkboxes_radios.js") ?>"></script>
+<!-- <script src="<?= stack("vendors/js/custom.js") ?>"></script> -->
 
 <body>
 	<!-- Main navbar -->
@@ -35,8 +33,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+				<div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -56,13 +54,13 @@ $header = "Пациент";
 							</a>
 						</legend>
 
-						<?php if ($activity and !$patient->completed): ?>
+						<?php if ($activity and empty($patient->completed)): ?>
 
 							<div class="card">
 								<div class="table-responsive">
 									<table class="table table-hover table-sm table-bordered">
-										<thead>
-											<tr class="bg-info">
+										<thead class="<?= $classes['table-thead'] ?>">
+											<tr>
 												<th style="width: 40px !important;">№</th>
 												<th style="width: 45%;">Препарат</th>
 												<th>Описание</th>
@@ -94,7 +92,7 @@ $header = "Пациент";
 														?>
 													</td>
 													<td><?= $row['description'] ?></td>
-													<td><?= $methods[$row['method']] ?></td>
+													<td><?= ( isset($row['method']) ) ? $methods[$row['method']] : '' ?></td>
 													<td class="text-center">
 														<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
 															<?php if ($time['status']): ?>
@@ -151,7 +149,7 @@ $header = "Пациент";
 					
 					</div>
 
-					<?php BypassModel::form() ?>
+					<?php (new BypassModel)->form() ?>
 
 				</div>
 			</div>

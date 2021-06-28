@@ -31,8 +31,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+				<div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -48,7 +48,7 @@ $header = "Пациент";
 								</a>
 								<?php if (module('module_zetta_pacs')): ?>
 									<?php $zeT = zeTTa_data(); ?>
-									<a href="zetta://URL=http://192.168.10.14&LID=<?= $zeT->pacs_login ?>&LPW=<?= $zeT->pacs_password ?>&LICD=0492&PID=<?= $patient->id ?>&VTYPE=W" class="float-right text-violet mr-2">
+									<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
 										ZeTTa-PACS
 									</a>
 								<?php endif; ?>
@@ -59,8 +59,8 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
 											<th>№</th>
 				                            <th>Специалист</th>
 											<th>Дата визита</th>
@@ -74,7 +74,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										if ($patient->completed) {
+										if ( isset($patient->completed) ) {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.diagnostic IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
@@ -156,9 +156,9 @@ $header = "Пациент";
 
 						<?php
 						if ($patient->direction) {
-							VisitRoute::form_sta_diagnostic();
+							(new VisitRoute)->form_sta_diagnostic();
 						} else {
-							VisitRoute::form_out_diagnostic();
+							(new VisitRoute)->form_out_diagnostic();
 						}
 						?>
 

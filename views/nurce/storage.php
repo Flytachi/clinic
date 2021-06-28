@@ -1,17 +1,18 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(7);
+is_module('module_pharmacy');
 $header = "Склад";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+<!-- <script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 
 <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script> -->
 
 <body>
 	<!-- Main navbar -->
@@ -35,9 +36,9 @@ $header = "Склад";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h5 class="card-title">Склад</h5>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -53,7 +54,7 @@ $header = "Склад";
 						<?php
 						$count_preparat = $db->query("SELECT SUM(qty) FROM storage_home")->fetchColumn();
 						$count_date = $db->query("SELECT COUNT(*) FROM storage_home WHERE DATEDIFF(die_date, CURRENT_DATE()) <= 10")->fetchColumn();
-						if($_SESSION['message']){
+						if( isset($_SESSION['message']) ){
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
@@ -83,8 +84,8 @@ $header = "Склад";
 
 						<div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
 										<th>№</th>
                                         <th>Препарат</th>
                                         <th>Ответственный</th>
@@ -114,7 +115,8 @@ $header = "Склад";
                                             <td class="text-right"><?= number_format($row['price'],1) ?></td>
                                             <td class="text-right"><?= number_format(($row['price'] * $row['qty']), 1) ?></td>
 											<td class="text-right">
-												<a href="#" type="button" onclick="Refund(<?= $row['id'] ?>, '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date('d.m.Y', strtotime($row['die_date'])) ?>)', <?= $row['qty'] ?>)"><i class="icon-reply"></i></a>
+												<!-- <a href="#" type="button" onclick="Refund(<?= $row['id'] ?>, '<?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date('d.m.Y', strtotime($row['die_date'])) ?>)', <?= $row['qty'] ?>)"><i class="icon-reply"></i></a> -->
+												<a href="#" type="button" onclick="Refund(this)" data-id="<?= $row['id'] ?>" data-name="<?= Mixin\clean($row['name']) ?> | <?= Mixin\clean($row['supplier']) ?> (годен до <?= date_f($row['die_date']) ?>)" data-qty="<?= $row['qty'] ?>"><i class="icon-reply"></i></a>
 											</td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -143,19 +145,18 @@ $header = "Склад";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php StorageHomeModel::form_refund(); ?>
+				<?php (new StorageHomeModel)->form_refund(); ?>
 				
 			</div>
 		</div>
 	</div>
 
-	<?php //del_url($row['id'], 'StorageHomeModel') ?>
 	<script type="text/javascript">
 
-		function Refund(params, name, qty) {
-			document.querySelector('#input_id').value = params;
-			document.querySelector('#input_name').value = name;
-			document.querySelector('#input_qty').max = qty;
+		function Refund(params) {
+			document.querySelector('#input_id').value = params.dataset.id;
+			document.querySelector('#input_name').value = params.dataset.name;
+			document.querySelector('#input_qty').max = params.dataset.qty;
 			$('#modal_refund').modal("show");
 		}
 

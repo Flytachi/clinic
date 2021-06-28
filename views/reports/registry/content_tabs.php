@@ -6,7 +6,6 @@
 
 
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>

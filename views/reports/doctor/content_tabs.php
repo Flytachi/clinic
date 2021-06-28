@@ -8,11 +8,13 @@
     <li class="nav-item">
         <a href="<?= viv('reports/doctor/content_3') ?>" class="nav-link <?= viv_link('reports/doctor/content_3') ?> legitRipple">Направленно</a>
     </li>
+    <li class="nav-item">
+        <a href="<?= viv('reports/doctor/content_4') ?>" class="nav-link <?= viv_link('reports/doctor/content_4') ?> legitRipple">Направленно 2</a>
+    </li>
 </ul>
 
 
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>

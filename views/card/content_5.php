@@ -31,8 +31,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+				<div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -46,7 +46,6 @@ $header = "Пациент";
 								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_route">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-								
 							<?php else: ?>
 								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
@@ -59,8 +58,8 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
 											<th>№</th>
 				                            <th>Специалист</th>
 											<th>Дата визита</th>
@@ -74,7 +73,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										if ($patient->completed) {
+										if ( isset($patient->completed) ) {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND vs.laboratory IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
@@ -156,9 +155,9 @@ $header = "Пациент";
 
 						<?php
 						if ($patient->direction) {
-							VisitRoute::form_sta_labaratory();
+							(new VisitRoute)->form_sta_labaratory();
 						} else {
-							VisitRoute::form_out_labaratory();
+							(new VisitRoute)->form_out_labaratory();
 						}
 						?>
 

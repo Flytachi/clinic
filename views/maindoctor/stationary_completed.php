@@ -31,9 +31,9 @@ $header = "Завершёные стационарные пациенты";
 
                 <?php include 'tabs.php' ?>
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Завершёные стационарные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -47,7 +47,7 @@ $header = "Завершёные стационарные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>
@@ -57,11 +57,11 @@ $header = "Завершёные стационарные пациенты";
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach ($db->query("SELECT * FROM visit vs WHERE vs.service_id = 1 AND vs.bed_id IS NOT NULL AND vs.completed IS NOT NULL ORDER BY vs.completed DESC") as $row): ?>
+									<?php foreach ($db->query("SELECT vs.*, us.dateBith FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.service_id = 1 AND vs.bed_id IS NOT NULL AND vs.completed IS NOT NULL ORDER BY vs.completed DESC") as $row): ?>
 										<tr>
 											<td><?= addZero($row['user_id']) ?></td>
 											<td><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date_f($row['dateBith']) ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>

@@ -30,9 +30,9 @@ $header = "Рабочий стол";
 
 				<?php include 'tabs.php' ?>
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Регистрация</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -41,8 +41,8 @@ $header = "Рабочий стол";
 	                	</div>
 					</div>
 
-					<div class="card-body" style="" id="form_up">
-						<?php PatientForm::form(); ?>
+					<div class="card-body" id="form_up">
+						<?php (new PatientForm)->form(); ?>
 					</div>
 
 				</div>

@@ -32,8 +32,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+				<div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -67,7 +67,7 @@ $header = "Пациент";
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-clipboard2 mr-2"></i>Состояние
 							<?php if ($activity and permission(7)): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+								<a class="float-right text-primary" data-toggle="modal" data-target="#modal_add">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -77,8 +77,8 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
 											<th>Дата и время</th>
 											<th>Состояние пациента</th>
 											<th>Медсестра ФИО</th>
@@ -147,7 +147,7 @@ $header = "Пациент";
 							<button type="button" class="close" data-dismiss="modal">×</button>
 						</div>
 
-						<?= VisitStatsModel::form() ?>
+						<?= (new VisitStatsModel)->form() ?>
 
 					</div>
 				</div>

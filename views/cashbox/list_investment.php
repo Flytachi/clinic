@@ -2,6 +2,15 @@
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "Инвестиции";
+
+$tb = new Table($db, "investment iv");
+$tb->set_data('DISTINCT iv.user_id');
+$search = $tb->get_serch();
+$search_array = array(
+	"", 
+	"(us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->additions('LEFT JOIN users us ON(us.id=iv.user_id)')->where_or_serch($search_array)->order_by('iv.add_date DESC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,49 +39,49 @@ $header = "Инвестиции";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-					 <div class="card-header header-elements-inline">
+					 <div class="<?= $classes['card-header'] ?>">
                         <h5 class="card-title">Инвестиции</h5>
                         <div class="header-elements">
-                            <div class="list-icons">
-                                <a class="list-icons-item" data-action="collapse"></a>
-                            </div>
+                            <form action="" class="mr-2">
+								<div class="form-group-feedback form-group-feedback-right">
+									<input type="text" class="form-control border-info" value="<?= $search ?>" id="search_input" placeholder="Введите ID или имя">
+									<div class="form-control-feedback">
+										<i class="icon-search4 font-size-base text-muted"></i>
+									</div>
+								</div>
+							</form>
                         </div>
                     </div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
+
 						<div class="table-responsive">
-                            <table class="table table-hover datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                            <table class="table table-hover table-sm">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
-										<th class="text-center" colspan="5">ФИО</th>
-                                        <th class="text-center" style="width:210px">Действия</th>
+										<th>ФИО</th>
+                                        <th class="text-right" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-									foreach($db->query("SELECT DISTINCT user_id FROM investment") as $row) {
-                                        ?>
+                                    <?php foreach($tb->get_table() as $row): ?>
                                         <tr>
-                                            <td><?= addZero($row['user_id']) ?></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td class="text-center"><div class="font-weight-semibold"><?= get_full_name($row['user_id']) ?></div></td>
-                                            <td></td>
-                                            <td></td>
-
-                                            <td class="text-center">
-												<a href="<?= viv('cashbox/detail_investment') ?>?pk=<?= $row['user_id'] ?>" class="btn btn-outline-info btn-sm legitRipple">Детально</a>
+                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
+                                            <td class="text-right">
+                                                <a href="<?= viv('cashbox/detail_investment') ?>?pk=<?= $row->user_id ?>" class="<?= $classes['btn_detail'] ?>">Детально</a>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
+
+                        <?php $tb->get_panel(); ?>
+
 					</div>
 				</div>
 
@@ -87,17 +96,25 @@ $header = "Инвестиции";
 	</div>
 	<!-- /page content -->
 
+    <script type="text/javascript">
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/investment') ?>",
+				data: {
+					table_search: input.value,           
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
+	</script>
+
 	<!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->
-
-    <script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-	<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 </body>
 </html>

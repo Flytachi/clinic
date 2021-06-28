@@ -6,15 +6,6 @@ $header = "Мой пакеты";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
-
 
 <body>
 	<!-- Main navbar -->
@@ -39,21 +30,21 @@ $header = "Мой пакеты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить пакет</h5>
 		          	</div>
 
                     <div class="card-body" id="form_card">
-                      	<?php PackageModel::form(); ?>
+                      	<?php (new PackageModel)->form(); ?>
                   	</div>
 
 	        	</div>
 
-                <div class="card">
+                <div class="<?= $classes['card'] ?>">
 
-					<div class="card-header header-elements-inline">
+					<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список пакетов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
@@ -66,7 +57,7 @@ $header = "Мой пакеты";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:50px">№</th>
 										<th style="width:60%">Название</th>
 										<th style="width:20%">Дата создания</th>

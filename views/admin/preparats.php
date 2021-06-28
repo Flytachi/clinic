@@ -46,7 +46,7 @@ $header = "Препараты к услугам";
 		          	</div>
 
                     <div class="card-body" id="form_card">
-                      	<?php ServicePreparatModel::form(); ?>
+                      	<?php (new ServicePreparatModel)->form(); ?>
                   	</div>
 
 	        	</div>
@@ -88,7 +88,7 @@ $header = "Препараты к услугам";
                       		<div class="table-responsive">
     	                      	<table class="table table-hover datatable-basic">
     	                          	<thead>
-    	                              	<tr class="bg-blue">
+    	                              	<tr class="<?= $classes['table-thead'] ?>">
     										<th style="width:70%">Препарат</th>
     										<th>Кол-во</th>
     										<th class="text-right">Сумма</th>

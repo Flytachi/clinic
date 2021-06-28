@@ -2,11 +2,19 @@
 
 class Session
 {
-    static $db;
-    public $login_url = DIR."/auth/login".EXT;
-    public $index_url = "../index".EXT; //../index.php
-    public $logout_url = DIR."/auth/logout".EXT;
+    /**
+     * 
+     *  My Session
+     * 
+     **/
 
+    private $db;
+    private $login_url = DIR."/auth/login".EXT;
+    private $index_url = "../index".EXT; //../index.php
+    private $logout_url = DIR."/auth/logout".EXT;
+    private $confirm_password_url = DIR."/auth/confirm_password".EXT;
+    private $timeout_mark_url = DIR."/auth/timeout_mark".EXT;
+    
     private $table = "sessions";
     public $life_session = 20; // minute
 
@@ -21,13 +29,13 @@ class Session
     {
         $this->session_id = $_SESSION['session_id'];
         $this->session_login = $_SESSION['session_login'];
-        $this->master_status = $_SESSION['master_status'];
-        $this->session_get_full_name = $_SESSION['session_get_full_name'];
-        $this->session_level = $_SESSION['session_level'];
-        $this->session_division = $_SESSION['session_division'];
-        $this->session_slot = $_SESSION['session_slot'];
+        if( isset($_SESSION['master_status']) ) $this->master_status = $_SESSION['master_status'];
+        if( isset($_SESSION['session_get_full_name']) ) $this->session_get_full_name = $_SESSION['session_get_full_name'];
+        if( isset($_SESSION['session_level']) ) $this->session_level = $_SESSION['session_level'];
+        if( isset($_SESSION['session_division']) ) $this->session_division = $_SESSION['session_division'];
+        if( isset($_SESSION['session_slot']) ) $this->session_slot = $_SESSION['session_slot'];
         
-        if ($_SESSION['browser']) {
+        if ( isset($_SESSION['browser']) ) {
             $this->browser = $_SESSION['browser'];
         }else{
             if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $_SESSION['browser'] = "Firefox";
@@ -41,8 +49,9 @@ class Session
 
     public function is_auth($arr = null)
     {
-        // dd($_SERVER);
-        if ($_SESSION['session_id']) {
+        if ( isset($_SESSION['session_timeout_logout']) ) {
+            $this->logout();
+        }elseif ( isset($_SESSION['session_id']) ) {
             if ( ((EXT) ? $this->login_url : $this->login_url.".php") == $_SERVER['PHP_SELF']) {
                 $this->login_success();
             }
@@ -58,7 +67,7 @@ class Session
         }
 
         // проверка прав
-        if ($_SESSION['session_id'] != "master") {
+        if ( isset($_SESSION['session_id']) and $_SESSION['session_id'] != "master") {
             if ($arr){
                 if (is_array($arr)){
                     if(!in_array($this->data->user_level, $arr)){
@@ -71,6 +80,11 @@ class Session
                 }
             }
         }
+
+        if( isset($_SESSION['session_id']) and $this->session_id != "master" and empty($this->master_status) ){
+            $sessionActive = true;
+        }
+
     }
 
     private function auth(string $login = null, string $password = null)
@@ -83,7 +97,7 @@ class Session
             $this->login_success();
         }
 
-        $stmt = $this->db->query("SELECT id from users where username = '$username' and password = '$password'")->fetch(PDO::FETCH_OBJ);
+        $stmt = $this->db->query("SELECT id FROM users WHERE username = '$username' AND password = '$password' AND is_active IS NOT NULL")->fetch(PDO::FETCH_OBJ);
         if($stmt){
             $this->set_data($stmt->id);
             $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
@@ -120,10 +134,11 @@ class Session
         $date = date("Y-m-d H:i:s");
         $new_ses = array(
             'session_id' => session_id(), 
-            'self_id' => $this->session_id, 
+            'self_id' => $_SESSION['session_id'], 
             'self_ip' => $_SERVER['REMOTE_ADDR'], 
-            'self_login' => $this->session_login, 
+            'self_login' => $_SESSION['session_login'], 
             'self_render' => $_SERVER['PHP_SELF'], 
+            'self_agent' => $_SERVER['HTTP_USER_AGENT'], 
             'last_update' => $date);
         Mixin\insert_or_update($this->table, $new_ses, 'session_id');        
     }
@@ -160,6 +175,16 @@ class Session
         return DIR."/auth/avatar_logout".EXT;
     }
 
+    public function timeout_mark_link()
+    {
+        return $this->timeout_mark_url;
+    }
+
+    public function confirm_password_link()
+    {
+        return $this->confirm_password_url;
+    }
+
     private function gen_password()
     {
         return "mentor".date('dH');
@@ -189,9 +214,17 @@ class Session
         
     }
 
+    public function get_session_create_or_update()
+    {
+        $this->session_create_or_update();
+    }
+
     public function get_accounts()
     {
-        return $this->db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"$this->session_slot\" ")->fetchAll();
+        if (isset($this->session_slot)) {
+            return $this->db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"$this->session_slot\" ")->fetchAll();
+        }
+        return [];
     }
 
     public function get_data() {

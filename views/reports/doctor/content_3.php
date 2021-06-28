@@ -30,9 +30,9 @@ $header = "Отчёт врачей по визитам";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -48,22 +48,18 @@ $header = "Отчёт врачей по визитам";
 
 								<div class="col-md-3">
 				                    <label>Специалиста:</label>
-									<select id="route_id" name="route_id" class="form-control form-control-select2" data-fouc required>
+									<select id="route_id" name="route_id" class="<?= $classes['form-select'] ?>" required>
 										<option value="">Выберите специалиста</option>
-										<?php
-										foreach($db->query('SELECT * from users WHERE user_level IN(5)') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['route_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
-											<?php
-										}
-										?>
+										<?php foreach($db->query('SELECT * from users WHERE user_level IN(5)') as $row): ?>
+											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['route_id']) and $_POST['route_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+										<?php endforeach; ?>
 									</select>
 				                </div>
 
 								<div class="col-md-3">
 									<label>Дата:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -72,10 +68,10 @@ $header = "Отчёт врачей по визитам";
 
 								<div class="col-md-3">
 				                    <label>Тип визита:</label>
-				                    <select class="form-control form-control-select2" name="direction" data-fouc>
+				                    <select class="<?= $classes['form-select'] ?>" name="direction">
 				                        <option value="">Выберите тип визита</option>
-										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
-										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
+										<option value="1" <?= ( isset($_POST['direction']) and $_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
+										<option value="2" <?= ( isset($_POST['direction']) and $_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
 				                    </select>
 				                </div>
 
@@ -104,20 +100,18 @@ $header = "Отчёт врачей по визитам";
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
 					}
-					if ($_POST['route_id']) {
+					if ( isset($_POST['route_id']) and $_POST['route_id']) {
 						$sql .= " AND vs.route_id = {$_POST['route_id']}";
 					}
-					if ($_POST['direction']) {
+					if ( isset($_POST['direction']) and $_POST['direction']) {
 						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
 					}
 					$i=1;
 					$total_qty = 0;
-					$total_am = 0;
-					$total_st = 0;
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Визиты</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -131,10 +125,9 @@ $header = "Отчёт врачей по визитам";
 							<div class="table-responsive">
 	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
-	                                    <tr class="bg-info">
+	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
 											<th>Отдел</th>
-											<th style="width: 20%">Тип визита</th>
 											<th style="width: 10%" class="text-right">Кол-во</th>
 										</tr>
 	                                </thead>
@@ -143,14 +136,8 @@ $header = "Отчёт врачей по визитам";
 											<tr>
 												<td><?= $i++ ?></td>
 												<td><?= $row['title'] ?></td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 												<td class="text-right">
 													<?php
-													if ($row['direction']) {
-														$total_st += $row['qty'];
-													}else {
-														$total_am += $row['qty'];
-													}
 													$total_qty += $row['qty'];
 													echo $row['qty'];
 													?>
@@ -158,8 +145,7 @@ $header = "Отчёт врачей по визитам";
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
-											<th colspan="2">Общее кол-во стационарных: <?= $total_st ?> | Общее кол-во амбулаторных: <?= $total_am ?></th>
-											<th class="text-right">Общее кол-во:</th>
+											<th class="text-right" colspan="2">Общее кол-во:</th>
 											<th class="text-right"><?= $total_qty ?></th>
 										</tr>
 	                                </tbody>

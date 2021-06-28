@@ -30,9 +30,9 @@ $header = "Общий отчёт по колличеству принятых п
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -50,7 +50,7 @@ $header = "Общий отчёт по колличеству принятых п
 								<div class="col-md-6">
 									<label>Дата:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -79,9 +79,9 @@ $header = "Общий отчёт по колличеству принятых п
 						$registrators[] = $arr_users['id'];
 					}
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Услуги</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -99,31 +99,31 @@ $header = "Общий отчёт по колличеству принятых п
                                         <tr>
                                             <th style="width: 25%;" class="table-primary">Амбулаторные пациента</th>
     										<th style="width: 25%;" class="text-center table-primary">
-                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND vs.direction IS NULL AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
+                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND vs.direction IS NULL AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
                                             </th>
 
                                             <th style="width: 25%;" class="table-danger">Стационарные пациента</th>
     										<th style="width: 25%;" class="text-center table-danger">
-                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
+                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
                                             </th>
                                         </tr>
 
                                         <tr>
                                             <td colspan="2" style="width: 85%;">Новые пациенты</td>
                                             <td colspan="2" class="text-center">
-                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND (DATE_FORMAT(us.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
+                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND (DATE_FORMAT(us.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" style="width: 85%;">Постояные пациенты</td>
                                             <td colspan="2" class="text-center">
-                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND (DATE_FORMAT(us.add_date, '%Y-%m-%d') NOT BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
+                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND (DATE_FORMAT(us.add_date, '%Y-%m-%d') NOT BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
                                             </td>
                                         </tr>
                                         <tr class="table-secondary">
                                             <th colspan="2" style="width: 85%;">Все пациенты</th>
     										<th colspan="2" class="text-center">
-                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
+                                                <?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')")->rowCount() ?>
                                             </th>
                                         </tr>
 

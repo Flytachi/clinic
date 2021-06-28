@@ -30,8 +30,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+				<div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -52,8 +52,8 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
 											<th>№</th>
 				                            <th>Специалист</th>
 											<th>Дата визита</th>
@@ -67,7 +67,7 @@ $header = "Пациент";
 									<tbody>
 										<?php
 										$i = 1;
-										if ($patient->completed) {
+										if ( isset($patient->completed) ) {
 											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation, vs.route_id
 															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
 															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
@@ -152,9 +152,9 @@ $header = "Пациент";
 
 						<?php
 						if ($patient->direction) {
-							VisitRoute::form_sta_physio_manipulation();
+							(new VisitRoute)->form_sta_physio_manipulation();
 						} else {
-							VisitRoute::form_out_physio_manipulation();
+							(new VisitRoute)->form_out_physio_manipulation();
 						}
 						?>
 

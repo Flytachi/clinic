@@ -49,250 +49,20 @@ var SweetAlert = function () {
             // Verification
 
             if (this.dataset.btn == "Выписать") {
-
                 // -- Стационар --
-
-                // stage 1
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 1,
-                        stage: 1,
-                    },
-                    success: function (data) {
-                        if (data >= 1) {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 1-1! Невозможно выписать!',
-                                text: 'У пациента есть не завершёные визиты.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-                    },
-
-                });
-
-                // stage 2
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 1,
-                        stage: 2,
-                    },
-                    success: function (data) {
-                        if (data >= 1) {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 1-2! Невозможно выписать!',
-                                text: 'Форма заключения не запонена.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-                    },
-
-                });
-
-                // stage 3
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 1,
-                        stage: 3,
-                    },
-                    success: function (data) {
-                        if (data) {
-                            if (!(data == 0)) {
-                                swal({
-                                    position: 'top',
-                                    title: 'Stage 1-3! Невозможно выписать!',
-                                    text: 'Дата выписки не совпадает с сегоднешней.',
-                                    type: 'error',
-                                    padding: 30
-                                });
-                                return 0;
-                            }
-                        }else {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 1-3! Невозможно выписать!',
-                                text: 'Не назначена дата выписки.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-
-                    },
-                });
-
-                // stage 4
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 1,
-                        stage: 4,
-                    },
-                    success: function (data) {
-                        if (data >= 1) {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 1-4! Невозможно выписать!',
-                                text: 'В листе назначений есть не завершённые процедуры.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-                    },
-
-                });
-
-                // stage 5
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 1,
-                        stage: 5,
-                    },
-                    success: function (data) {
-                        if (data >= 1) {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 1-5! Невозможно выписать!',
-                                text: 'У пациента есть не завершёные операции.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-                    },
-
-                });
-
-                // stage 6
-                // $.ajax({
-                //     type: "GET",
-                //     url: $('#verification_url').val(),
-                //     data: {
-                //         id: this.dataset.user_id,
-                //         main: 1,
-                //         stage: 6,
-                //     },
-                //     success: function (data) {
-                //         if (data >= 1) {
-                //             swal({
-                //                 position: 'top',
-                //                 title: 'Внимание!',
-                //                 html: "Есть не завершённые визиты диагностики!<br>"+question,
-                //                 type: 'warning',
-                //                 showCancelButton: true,
-                //                 confirmButtonText:btn
-                //             }).then(function(ivi) {
-                //                 if (ivi.value) {
-                //                     window.location = url;
-                //                 }
-                //             });
-                //             return 0;
-                //         }
-                //     },
-                // });
-
+                Main_1_stages_1(this, url, question, btn);
                 // ----
-
             } else {
                 // -- Амбулаторные --
-
-                // stage 1
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 0,
-                        stage: 1,
-                    },
-                    success: function (data) {
-                        if (data == 0) {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 0-1! Невозможно завершить!',
-                                text: 'У вас нет ни одного завершающего отчёта.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-                    },
-                });
-
-                // stage 2
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 0,
-                        stage: 2,
-                    },
-                    success: function (data) {
-                        if (data >= 1) {
-                            swal({
-                                position: 'top',
-                                title: 'Stage 0-2! Невозможно завершить!',
-                                text: 'У пациента есть не завершёные визиты.',
-                                type: 'error',
-                                padding: 30
-                            });
-                            return 0;
-                        }
-                    },
-                });
-
-                // stage 3
-                $.ajax({
-                    type: "GET",
-                    url: $('#verification_url').val(),
-                    data: {
-                        id: this.dataset.user_id,
-                        main: 0,
-                        stage: 3,
-                    },
-                    success: function (data) {
-                        if (data >= 1) {
-                            swal({
-                                position: 'top',
-                                title: 'Внимание!',
-                                html: "Есть не завершённые визиты диагностики!<br>"+question,
-                                type: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText:btn
-                            }).then(function(ivi) {
-                                if (ivi.value) {
-                                    window.location = url;
-                                }
-                            });
-                            return 0;
-                        }
-                    },
-                });
-
+                Main_0_stages_1(this, url, question, btn);
                 // ----
             }
 
+        });
+
+        function Stage_success(params, url, question, btn) {
+
+            // finish
             swal({
                 position: 'top',
                 title: 'Вы уверены?',
@@ -305,8 +75,265 @@ var SweetAlert = function () {
                     window.location = url;
                 }
             });
+            
+        }
 
-        });
+        // Stages
+
+        function Main_0_stages_1(params, url, question, btn) {
+
+            // stage 1
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 0,
+                    stage: 1,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: 'top',
+                            title: 'Stage 0-1! Невозможно завершить!',
+                            text: 'У пациента есть не завершёные визиты.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }else{
+                        Main_0_stages_2(params, url, question, btn);
+                    }
+                },
+            });
+
+        }
+
+        function Main_0_stages_2(params, url, question, btn) {
+
+            // stage 2
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 0,
+                    stage: 2,
+                },
+                success: function (data) {
+                    if (data == 0) {
+                        swal({
+                            position: 'top',
+                            title: 'Stage 0-2! Невозможно завершить!',
+                            text: 'У вас нет ни одного завершающего отчёта.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }else{
+                        Main_0_stages_3(params, url, question, btn);
+                    }
+                },
+            });
+
+        }
+
+        function Main_0_stages_3(params, url, question, btn) {
+            
+            // stage 3
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 0,
+                    stage: 3,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: 'top',
+                            title: 'Внимание!',
+                            html: "Есть не завершённые визиты диагностики!<br>"+question,
+                            type: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText:btn
+                        }).then(function(ivi) {
+                            if (ivi.value) {
+                                window.location = url;
+                            }
+                        });
+                        return 0;
+                    }else{
+                        Stage_success(params, url, question, btn);
+                    }
+                },
+            });
+
+        }
+
+        function Main_1_stages_1(params, url, question, btn) {
+
+            // stage 1
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 1,
+                    stage: 1,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: 'top',
+                            title: 'Stage 1-1! Невозможно выписать!',
+                            text: 'У пациента есть не завершёные визиты.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }else{
+                        Main_1_stages_2(params, url, question, btn);
+                    }
+                },
+
+            });
+
+        }
+
+        function Main_1_stages_2(params, url, question, btn) {
+
+            // stage 2
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 1,
+                    stage: 2,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: 'top',
+                            title: 'Stage 1-2! Невозможно выписать!',
+                            text: 'У пациента есть не завершёные операции.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }else{
+                        Main_1_stages_3(params, url, question, btn);
+                    }
+                },
+
+            });
+
+        }
+
+        function Main_1_stages_3(params, url, question, btn) {
+
+            // stage 3
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 1,
+                    stage: 3,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: 'top',
+                            title: 'Stage 1-3! Невозможно выписать!',
+                            text: 'В листе назначений есть не завершённые процедуры.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }else{
+                        Main_1_stages_4(params, url, question, btn);
+                    }
+                },
+
+            });
+
+        }
+
+        function Main_1_stages_4(params, url, question, btn) {
+
+            // stage 4
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 1,
+                    stage: 4,
+                },
+                success: function (data) {
+                    if (data) {
+                        if (data == 0) {
+                            Main_1_stages_5(params, url, question, btn);
+                        } else {
+                            swal({
+                                position: 'top',
+                                title: 'Stage 1-4! Невозможно выписать!',
+                                text: 'Дата выписки не совпадает с сегоднешней.',
+                                type: 'error',
+                                padding: 30
+                            });
+                            return 0;
+                        }
+                    }else{
+                        swal({
+                            position: 'top',
+                            title: 'Stage 1-4! Невозможно выписать!',
+                            text: 'Не назначена дата выписки.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }
+
+                },
+            });
+
+        }
+
+        function Main_1_stages_5(params, url, question, btn) {
+
+            // stage 5
+            $.ajax({
+                type: "GET",
+                url: $('#verification_url').val(),
+                data: {
+                    id: params.dataset.user_id,
+                    main: 1,
+                    stage: 5,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: 'top',
+                            title: 'Stage 1-5! Невозможно выписать!',
+                            text: 'Форма заключения не запонена.',
+                            type: 'error',
+                            padding: 30
+                        });
+                        return 0;
+                    }else{
+                        Stage_success(params, url, question, btn);
+                    }
+                },
+
+            });
+
+        }
+
+        // END stages
 
         $('#sweet_call_nurce').on('click', function(event) {
             event.preventDefault();

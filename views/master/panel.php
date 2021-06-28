@@ -1,5 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
+require_once '../../tools/Console/command.php';
 $session->is_auth('master');
 $header = "Панель управления";
 ?>
@@ -33,7 +34,7 @@ $header = "Панель управления";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php if ($_POST['INITIALIZE']): ?>
+				<?php if ( isset($_POST['INITIALIZE']) ): ?>
 					<?php
 					$file = file_get_contents($_FILES['file_database']['tmp_name']);
 					$data = json_decode($file, true);
@@ -52,35 +53,37 @@ $header = "Панель управления";
 					    </div>
                     <?php endif; ?>
 
-				<?php elseif ($_POST['GET_START']): ?>
+				<?php elseif ( isset($_POST['GET_START']) ): ?>
 
-                    <?php
-                    $flush = Mixin\T_FLUSH_database();
-					$_province = province_temp();
-					$_region = region_temp();
-                    $_division = division_temp();
-                    $_user = users_temp();
-                    $_service = service_temp();
-                    ?>
+					<div style="display:none;">
+						<?php
+							$flush = new __Db("clean");
+							$_sidebar = new __Db("seed", "sidebar");
+							$_province = new __Db("seed", "province");
+							$_region = new __Db("seed", "region");
+							$_user = new __Db("seed", "users");
+							$_service = new __Db("seed", "service");
+						?>
+					</div>
 
-                    <?php if ($flush == 200): ?>
+                    <?php if ($flush): ?>
                         <div class="alert alert-primary" role="alert">
                             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
                             Новая база данных готова к использованию!
                             <ul>
 
-								<?php if ($_division == 200): ?>
-                                    <li>Очищены/Созданы отделы</li>
+								<?php if ($_sidebar): ?>
+                                    <li>Очищен/Создан Сайдбар</li>
                                 <?php else: ?>
-                                    <li class="text-danger">Ошибка создания отделов</li>
-									<?php if ($_division): ?>
+                                    <li class="text-danger">Ошибка при создании сайдбара</li>
+									<?php if ($_sidebar): ?>
 										<ol class="text-danger">
-	                                        <li><?= $_division ?></li>
+	                                        <li><?= $_sidebar ?></li>
 	                                    </ol>
 									<?php endif; ?>
                                 <?php endif; ?>
 
-								<?php if ($_province == 200): ?>
+								<?php if ($_province): ?>
                                     <li>Очищен/Создан список областей</li>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка при создании списока областей</li>
@@ -91,7 +94,7 @@ $header = "Панель управления";
 									<?php endif; ?>
                                 <?php endif; ?>
 
-								<?php if ($_region == 200): ?>
+								<?php if ($_region): ?>
                                     <li>Очищен/Создан список регионов</li>
                                 <?php else: ?>
                                     <li class="text-danger">Ошибка при создании списока регионов</li>
@@ -107,7 +110,7 @@ $header = "Панель управления";
                                 <li>Очищены визиты</li>
 
                                 <li>Очищены услуги</li>
-                                <?php if ($_service == 200): ?>
+                                <?php if ($_service): ?>
                                     <li>Создана услуга</li>
                                     <ol>
                                         <li>Стационарный Осмотр</li>
@@ -122,7 +125,7 @@ $header = "Панель управления";
                                 <?php endif; ?>
 
                                 <li>Очищены пользователи</li>
-                                <?php if ($_user == 200): ?>
+                                <?php if ($_user): ?>
                                     <li>Создан администратор</li>
                                     <ol>
                                         <li>login: admin</li>
@@ -149,7 +152,7 @@ $header = "Панель управления";
 
                 <?php endif; ?>
 
-                <div class="card">
+                <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Control Panel</h5>
@@ -158,7 +161,7 @@ $header = "Панель управления";
 				    <div class="card-body">
 
                         <?php
-                        if($_SESSION['message']){
+                        if( isset($_SESSION['message']) ){
                             echo $_SESSION['message'];
                             unset($_SESSION['message']);
                         }
@@ -197,9 +200,10 @@ $header = "Панель управления";
 
 								<?php
 								try {
-									$comp = $db->query("SELECT * FROM company")->fetchAll();
+									$company = new stdClass();
+									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
 									foreach ($comp as $value) {
-									    $company[$value['const_label']] = $value['const_value'];
+										$company->{$value->const_label} = $value->const_value;
 									}
 									?>
 									<div class="table-responsive">
@@ -210,7 +214,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= ($company['module_laboratory']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_laboratory" <?= (isset($company->module_laboratory) and $company->module_laboratory) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -220,7 +224,37 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= ($company['module_diagnostic']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diagnostic" <?= (isset($company->module_diagnostic) and $company->module_diagnostic) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Pharmacy</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_pharmacy) and $company->module_pharmacy) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Bypass</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_bypass" <?= (isset($company->module_bypass) and $company->module_bypass) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Diet</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_diet" <?= (isset($company->module_diet) and $company->module_diet) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -230,7 +264,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= ($company['module_zetta_pacs']) ? "checked" : "" ?>>
+																<input onclick="Const_ZP(this)" type="checkbox" class="swit bg-danger" name="module_zetta_pacs" <?= (isset($company->module_zetta_pacs) and $company->module_zetta_pacs) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

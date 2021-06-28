@@ -4,6 +4,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title><?= ShowTitle() ?></title>
 
+	<link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
 	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
@@ -28,19 +29,24 @@
 	<script src="<?= stack("global_assets/js/plugins/notifications/sweet_alert.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
 
-	<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
 	<!-- Theme JS files -->
 	<script src="<?= stack("global_assets/js/plugins/ui/moment/moment.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3.min.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/plugins/visualization/d3/d3_tooltip.js") ?>"></script>
+
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/selects/bootstrap_multiselect.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
+
+	<script src="<?= stack("global_assets/js/plugins/buttons/spin.min.js") ?>"></script>
+	<script src="<?= stack("global_assets/js/plugins/buttons/ladda.min.js") ?>"></script>
 	<!-- /theme JS files -->
 
 	<script src="<?= stack("assets/js/app.js") ?>"></script>
 
+	<script src="<?= stack("global_assets/js/demo_pages/components_buttons.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/extra_sweetalert.js") ?>"></script>
 	<script src="<?= stack("global_assets/js/demo_pages/extra_jgrowl_noty.js") ?>"></script>
 
@@ -57,7 +63,7 @@
 
 </head>
 
-<?php if ($_GET['avatar']): ?>
+<?php if ( isset($_GET['avatar']) ): ?>
 	<?php
 	$avatar = $db->query("SELECT * FROM users WHERE id = {$_GET['avatar']}")->fetch(PDO::FETCH_OBJ);
 	$_SESSION['session_id'] = $avatar->id;

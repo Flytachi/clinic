@@ -6,14 +6,15 @@ class StorageSale extends Model
 
     public function form($pk = null)
     {
+        global $classes;
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form" onsubmit="AmountSubmit(this)">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
 
             <div class="table-responsive card">
                 <table class="table table-hover table-sm">
-                    <thead>
-                        <tr class="bg-info">
+                    <thead class="<?= $classes['table-thead'] ?>">
+                        <tr>
                             <th style="width:55%">Препарат</th>
                             <th class="text-right" style="width: 100px">Кол-во</th>
                             <th class="text-right">Цена ед.</th>

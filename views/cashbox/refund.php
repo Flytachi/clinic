@@ -39,7 +39,7 @@ $header = "Рабочий стол";
 				<div class="row">
 
 				    <div class="col-md-5">
-				        <div class="card border-1 border-info">
+				        <div class="<?= $classes['card'] ?>">
 
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Возврат</h5>
@@ -81,7 +81,7 @@ $header = "Рабочий стол";
 
 				        <div id="message_ses">
 				            <?php
-				            if($_SESSION['message']){
+				            if( isset($_SESSION['message']) ){
 				                echo $_SESSION['message'];
 				                unset($_SESSION['message']);
 				            }
@@ -114,7 +114,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php VisitRefundModel::form(); ?>
+				<?php (new VisitRefundModel)->form(); ?>
 
 			</div>
 		</div>

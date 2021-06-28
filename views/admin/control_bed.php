@@ -1,6 +1,6 @@
 <?php 
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "";
 ?>
 
@@ -52,7 +52,7 @@ $header = "";
                                     <select name="floor" id="floor" class="<?= $classes['form-select'] ?>">
                                         <option value="">Выбрать этаж</option>
                                         <?php foreach ($FLOOR as $key => $value): ?>
-                                            <option value="<?= $key ?>" <?= ($_POST['floor'] == $key) ? "selected" : "" ?>><?= $value ?></option>
+                                            <option value="<?= $key ?>" <?= ( isset($_POST['floor']) and $_POST['floor'] == $key) ? "selected" : "" ?>><?= $value ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -62,7 +62,7 @@ $header = "";
                                     <select name="ward" id="ward" class="<?= $classes['form-select'] ?>">
                                         <option value="">Выбрать палату</option>
                                         <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
-                                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ($_POST['ward'] == $row['id']) ? "selected" : "" ?>><?= $row['ward'] ?> палата</option>
+                                            <option value="<?= $row['id'] ?>" data-chained="<?= $row['floor'] ?>" <?= ( isset($_POST['ward']) and $_POST['ward'] == $row['id']) ? "selected" : "" ?>><?= $row['ward'] ?> палата</option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -73,9 +73,9 @@ $header = "";
                                         <option value="">Выбрать койку</option>
                                         <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
                                             <?php if ($row['user_id']): ?>
-                                                <option value="<?= $row['id'] ?>" <?= ($_POST['bed'] == $row['id']) ? "selected" : "" ?> data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>"><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
+                                                <option value="<?= $row['id'] ?>" <?= ( isset($_POST['bed']) and $_POST['bed'] == $row['id']) ? "selected" : "" ?> data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>"><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
                                             <?php else: ?>
-                                                <option value="<?= $row['id'] ?>" <?= ($_POST['bed'] == $row['id']) ? "selected" : "" ?> data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>"><?= $row['bed'] ?> койка</option>
+                                                <option value="<?= $row['id'] ?>" <?= ( isset($_POST['bed']) and $_POST['bed'] == $row['id']) ? "selected" : "" ?> data-chained="<?= $row['ward_id'] ?>" data-price="<?= $row['price'] ?>" data-name="<?= $row['name'] ?>"><?= $row['bed'] ?> койка</option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </select>
@@ -109,7 +109,7 @@ $header = "";
 
                 <div id="message">
                     <?php
-                    if($_SESSION['message']){
+                    if( isset($_SESSION['message']) ){
                         echo $_SESSION['message'];
                         unset($_SESSION['message']);
                     }
@@ -123,13 +123,13 @@ $header = "";
                                 (SELECT COUNT(id) FROM visit WHERE bed_id = bd.id AND add_date IS NOT NULL AND completed IS NULL) 'status'
                             FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN bed_type bdt ON(bdt.id=bd.types) 
                             WHERE bd.add_date IS NOT NULL";
-					if ($_POST['floor']) {
+					if ( isset($_POST['floor']) and $_POST['floor']) {
 						$sql .= " AND wd.floor = {$_POST['floor']}";
 					}
-                    if ($_POST['ward']) {
+                    if ( isset($_POST['ward']) and $_POST['ward']) {
 						$sql .= " AND wd.id = {$_POST['ward']}";
 					}
-                    if ($_POST['bed']) {
+                    if ( isset($_POST['bed']) and $_POST['bed']) {
 						$sql .= " AND bd.id = {$_POST['bed']}";
 					}
 					// if (!$_POST['status_true'] or !$_POST['status_false']) {
@@ -157,7 +157,7 @@ $header = "";
                             <div class="table-responsive">
                                 <table class="table table-hover table-sm table-bordered" id="table">
                                     <thead>
-                                        <tr class="bg-info">
+                                        <tr class="<?= $classes['table-thead'] ?>">
                                             <th>Этаж</th>
                                             <th>Палата</th>
                                             <th>Койка</th>

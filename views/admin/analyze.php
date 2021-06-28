@@ -49,7 +49,7 @@ $header = "Анализы";
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php ServiceAnalyzeModel::form(); ?>
+                      	<?php (new ServiceAnalyzeModel)->form(); ?>
                   	</div>
 
             	</div>
@@ -69,7 +69,7 @@ $header = "Анализы";
                         <div class="table-responsive">
                             <table class="table table-hover datatable-basic">
                                 <thead>
-                                    <tr class="bg-blue">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:7%">№</th>
                                         <th>Код</th>
                                         <th>Название</th>

@@ -1,17 +1,19 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth();
 is_module('module_laboratory');
 
-$comp = $db->query("SELECT * FROM company")->fetchAll();
+$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
 foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
 
-if ($_GET['items']) {
-    $docs = $db->query("SELECT * FROM users WHERE id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+if ( isset($_GET['items']) ) {
+    $docs = $db->query("SELECT us.*, vs.accept_date FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.id = ".json_decode($_GET['items'])[0].") WHERE us.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 }else {
-    $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.completed FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT ds.is_document, vs.user_id, vs.parent_id, vs.service_id, us.dateBith, vs.accept_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN service sc ON(sc.id=vs.service_id) LEFT JOIN division ds ON(ds.id = sc.division_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+    if ($docs->is_document) {
+        global_render($docs->is_document.'?id='.$_GET['id']);
+    }
 }
 ?>
 
@@ -51,22 +53,23 @@ if ($_GET['items']) {
 
         <div class="text-left">
             <div class="h3">
-                <?php if ($_GET['items']): ?>
+                <?php if ( isset($_GET['items']) ): ?>
                     <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
                     <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
                     <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->dateBith)) ?><br>
+                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?><br>
                 <?php else: ?>
                     <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
                     <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
                     <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->dateBith)) ?><br>
-                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->completed)) ?><br>
+                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?><br>
                 <?php endif; ?>
             </div>
 
-            <?php if ($_GET['items']): ?>
+            <?php if ( isset($_GET['items']) ): ?>
 
                 <?php foreach (json_decode($_GET['items']) as $item): ?>
-                    <h1 class="text-center"><b><?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?></b></h1>
+                    <h1 class="text-center"><b><?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?></b> </h1>
 
                     <div class="table-responsive card">
                         <table class="minimalistBlack">

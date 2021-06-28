@@ -29,9 +29,9 @@ $header = "Приём пациетов";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Пациенты на приём</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -45,7 +45,7 @@ $header = "Приём пациетов";
 						<div class="table-responsive">
 							<table class="table table-hover table-sm datatable-basic">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>
@@ -115,8 +115,6 @@ $header = "Приём пациетов";
 
 				</div>
 
-			</td>
-
 			</div>
             <!-- /content area -->
 
@@ -136,7 +134,7 @@ $header = "Приём пациетов";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?= VisitFailure::form(); ?>
+				<?= (new VisitFailure)->form(); ?>
 			</div>
 		</div>
 	</div>

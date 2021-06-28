@@ -1,6 +1,7 @@
 <?php
 require_once '../../../tools/warframe.php';
 $session->is_auth();
+is_module('module_pharmacy');
 $header = "Отчёт аптеки по расходам";
 ?>
 <!DOCTYPE html>
@@ -30,9 +31,9 @@ $header = "Отчёт аптеки по расходам";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -50,7 +51,7 @@ $header = "Отчёт аптеки по расходам";
 								<div class="col-md-3">
 									<label>Дата:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -59,10 +60,10 @@ $header = "Отчёт аптеки по расходам";
 
 								<div class="col-md-3">
 									<label>Специалист:</label>
-									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
+									<select id="parent_id" name="parent_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите специалиста</option>
 										<?php foreach($db->query("SELECT * from users WHERE user_level IN(7)") as $row):?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['parent_id']) and $_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -70,17 +71,17 @@ $header = "Отчёт аптеки по расходам";
 								<div class="col-md-3">
 									<label class="d-block font-weight-semibold">Тип расхода</label>
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="type_1" <?= (!$_POST or $_POST['type_1']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="type_1" <?= (empty($_POST) or isset($_POST['type_1'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Внешний</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="type_2" <?= (!$_POST or $_POST['type_2']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="type_2" <?= (empty($_POST) or isset($_POST['type_2'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Операционный</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked2" name="type_3" <?= (!$_POST or $_POST['type_3']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked2" name="type_3" <?= (empty($_POST) or isset($_POST['type_3'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_checked2">Внутренний</label>
 									</div>
 								</div>
@@ -107,27 +108,27 @@ $header = "Отчёт аптеки по расходам";
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					if ($_POST['parent_id']) {
+					if ( isset($_POST['parent_id']) and $_POST['parent_id']) {
 						$sql .= " AND parent_id = {$_POST['parent_id']}";
 					}
-					if (!$_POST['type_1'] or !$_POST['type_2'] or !$_POST['type_3']) {
-						if ($_POST['type_1']) {
-							if (!$_POST['type_2'] and !$_POST['type_3']) {
+					if (empty($_POST['type_1']) or empty($_POST['type_2']) or empty($_POST['type_3'])) {
+						if (isset($_POST['type_1'])) {
+							if (empty($_POST['type_2']) and empty($_POST['type_3'])) {
 								$sql .= " AND operation_id IS NULL AND parent_id IS NULL";
-							}elseif ($_POST['type_2']) {
+							}elseif (isset($_POST['type_2'])) {
 								$sql .= " AND parent_id IS NULL";
-							}elseif ($_POST['type_3']) {
+							}elseif (isset($_POST['type_3'])) {
 								$sql .= " AND operation_id IS NULL";
 							}
 						}
-						elseif ($_POST['type_2']) {
-							if ($_POST['type_3']) {
+						elseif (isset($_POST['type_2'])) {
+							if (isset($_POST['type_3'])) {
 								$sql .= " AND (operation_id IS NOT NULL OR parent_id IS NOT NULL)";
 							}else {
 								$sql .= " AND operation_id IS NOT NULL";
 							}
 						}
-						elseif ($_POST['type_3']) {
+						elseif (isset($_POST['type_3'])) {
 							$sql .= " AND parent_id IS NOT NULL";
 						}
 					}
@@ -135,9 +136,9 @@ $header = "Отчёт аптеки по расходам";
 					$total_qty = $total_amount_cash = $total_amount_card = $total_amount_transfer = $total_amount = 0;
 					?>
 
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Расходы</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -151,7 +152,7 @@ $header = "Отчёт аптеки по расходам";
 							<div class="table-responsive card">
 								<table class="table table-hover table-sm" id="table">
 									<thead>
-										<tr class="bg-info">
+										<tr class="<?= $classes['table-thead'] ?>">
 											<th>Тип расхода</th>
 											<th>Получатель</th>
 											<th>Препарат</th>

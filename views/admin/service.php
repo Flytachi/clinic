@@ -46,7 +46,7 @@ $header = "Услуги";
 
 		          	<div class="card-body">
 
-						<?php if ($_POST['flush']): ?>
+						<?php if ( isset($_POST['flush']) ): ?>
 
 							<?php
 							Mixin\T_flush('service');
@@ -69,9 +69,9 @@ $header = "Услуги";
 
 						<div class="row">
 
-							<div class="col-md-9" id="form_card"><?php ServiceModel::form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php (new ServiceModel)->form(); ?></div>
 
-							<div class="col-md-3"><?php ServiceModel::form_template(); ?></div>
+							<div class="col-md-3"><?php (new ServiceModel)->form_template(); ?></div>
 
 						</div>
 
@@ -98,7 +98,7 @@ $header = "Услуги";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
 										<th style="width:10%">Код</th>
 										<th style="width:40%">Название</th>
 										<th>Роль</th>
@@ -109,9 +109,7 @@ $header = "Услуги";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php
-	                              	foreach($db->query('SELECT * from service WHERE type != 101') as $row) {
-	                                  	?>
+	                              	<?php foreach($db->query('SELECT * from service WHERE type != 101') as $row): ?>
                                   		<tr>
 											<td><?= $row['code'] ?></td>
 											<td><?= $row['name'] ?></td>
@@ -138,9 +136,7 @@ $header = "Услуги";
 				                                </div>
 	                                      	</td>
                               			</tr>
-	                                  	<?php
-	                              	}
-	                              	?>
+									<?php endforeach; ?>
 	                          	</tbody>
 	                      	</table>
 	                  	</div>

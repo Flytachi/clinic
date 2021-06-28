@@ -8,7 +8,7 @@ $PERSONAL = array(
     6 => "Лаборатория",
     7 => "Медсестра",
     8 => "Главный врач",
-    9 => "Повар",
+    9 => "Кухня",
     10 => "Диагностика",
     11 => "Анестезиолог",
     12 => "Физиотерапевт",
@@ -28,12 +28,6 @@ $CATEGORY = array(
     4 => "Наркотические вещества",
 );
 
-$DIET_TIME = array(
-    1 => "09:00",
-    2 => "14:00",
-    3 => "17:00",
-);
-
 $methods = array(
     1 => "Через рот",
     2 => "Внутримышечный (в/м)",
@@ -47,9 +41,19 @@ $methods = array(
 );
 
 $classes = array(
+    "navbar" => "navbar navbar-expand-md navbar-dark bg-indigo navbar-static", //fixed-top
+    "sidebar" => "sidebar sidebar-light sidebar-main sidebar-expand-md",
+    "header" => "page-header page-header-light",
+    "footer" => "navbar navbar-expand-lg navbar-light",
+
     "card" => "card border-1 border-primary",
     "card-header" => "card-header text-dark header-elements-inline alpha-primary",
+    "table-thead" => "bg-primary",
     "form-select" => "form-control form-control-select2",
     "form-select_price" => "form-control myselect",
+    "form-multiselect" => "form-control multiselect-full-featured",
+    "form-daterange" => "form-control daterange-locale",
+
+    "btn_detail" => "btn btn-outline-primary btn-sm legitRipple",
 )
 ?>

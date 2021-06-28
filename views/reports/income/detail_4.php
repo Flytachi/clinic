@@ -21,7 +21,7 @@ $total_price = 0; $i = 1;
 </div>
 <table class="table table-hover table-sm table-bordered" id="table">
     <thead>
-        <tr class="bg-dark">
+        <tr class="<?= $classes['table-thead'] ?>">
             <th style="width: 50px">№</th>
             <th style="width: 11%">Дата приёма</th>
             <th>Пациент</th>

@@ -39,9 +39,9 @@ $header = "Врачи операторы";
 			<div class="content">
 
 
-				<div class="card">
+				<div class="<?= $classes['card'] ?>">
 
-          			<div class="card-header header-elements-inline">
+          			<div class="<?= $classes['card-header'] ?>">
 		              	<h5 class="card-title">Добавить врача оператора</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
@@ -51,14 +51,14 @@ $header = "Врачи операторы";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php GuideModel::form_regy(); ?>
+		    			<?php (new GuideModel)->form_regy(); ?>
 		          	</div>
 
 	        	</div>
 
-        		<div class="card">
+        		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="card-header header-elements-inline">
+	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Врачей Операторов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
@@ -70,8 +70,8 @@ $header = "Врачи операторы";
               		<div class="card-body">
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
-	                          	<thead>
-	                              	<tr class="bg-blue">
+	                          	<thead class="<?= $classes['table-thead'] ?>">
+	                              	<tr>
                                         <th style="width:50px">№</th>
 										<th style="width:50%">ФИО</th>
 										<th>Сумма</th>

@@ -30,7 +30,6 @@ class Core
 
     private function resolution()
     {
-
         try {
             if ($Class = stristr($this->arguments[1], ":", true)) {
                 $Class_construct = "\__".$Class;

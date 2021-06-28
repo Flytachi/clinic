@@ -1,9 +1,10 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth();
+is_module('module_pharmacy');
 ?>
 
-<?php if ($_GET['search']): ?>
+<?php if ( isset($_GET['search']) ): ?>
     <?php
     $ser = $_GET['search'];
     $sql = "SELECT st.*,

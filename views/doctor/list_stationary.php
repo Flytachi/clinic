@@ -30,9 +30,9 @@ $header = "Стационарные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Стационарные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -46,7 +46,7 @@ $header = "Стационарные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>
@@ -97,7 +97,9 @@ $header = "Стационарные пациенты";
 													<?php if(module('module_diagnostic')): ?>
 														<a href="<?= viv('card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
 													<?php endif; ?>
-                                                    <a href="<?= viv('card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначения</a>
+													<?php if(module('module_bypass')): ?>
+                                                    	<a href="<?= viv('card/content_7') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначения</a>
+            										<?php endif; ?>
                                                     <a href="<?= viv('card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
                                                 </div>
                                               </td>

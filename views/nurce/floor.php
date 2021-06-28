@@ -3,9 +3,9 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $pk_floor = $_GET['type'];
 ?>
-<div class="card border-1 border-info">
+<div class="<?= $classes['card'] ?>">
 
-    <div class="card-header text-dark header-elements-inline alpha-info">
+    <div class="<?= $classes['card-header'] ?>">
         <h6 class="card-title"><?= $pk_floor ?> Этаж</h6>
         <div class="header-elements">
             <div class="list-icons">
@@ -18,7 +18,7 @@ $pk_floor = $_GET['type'];
 
         <div class="table-responsive">
             <table class="table table-hover table-sm">
-                <thead class="bg-info">
+                <thead class="<?= $classes['table-thead'] ?>">
                     <tr>
                         <th>ID</th>
                         <th>ФИО</th>
@@ -50,9 +50,13 @@ $pk_floor = $_GET['type'];
                                 <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
                                     <a href="<?= viv('card/content_1') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-repo-forked"></i>Обход</a>
-                                    <a href="<?= viv('card/content_5') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
-                                    <a href="<?= viv('card/content_7') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначений</a>
-                                    <a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать пробирки</a>
+                                    <?php if(module('module_laboratory')): ?>
+                                        <a href="<?= viv('card/content_5') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+                                        <a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать пробирки</a>
+                                    <?php endif; ?>
+                                    <?php if(module('module_bypass')): ?>
+                                        <a href="<?= viv('card/content_7') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначений</a>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
