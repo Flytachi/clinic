@@ -117,6 +117,150 @@ class __Make
 
 }
 
+class __Key
+{
+    private $argument;
+    private $name;
+    private $setting_name = "setting.ini";
+    private $key_name = "setting.key";
+
+    function __construct($value = null, $name = null)
+    {
+        $this->argument = $value;
+        $this->name = $name;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument)) {
+            $this->resolution();
+        }else {
+            $this->help();
+        }
+    }
+
+    private function resolution()
+    {
+        if ($this->argument == "setting") {
+            $this->create_setting();
+        }elseif ($this->argument == "generate") {
+            $this->generate_key();
+        }elseif ($this->argument == "edit") {
+            $this->edit_key();
+        }elseif ($this->argument == "show") {
+            $this->setting_show();
+        }else {
+            echo "\033[31m"." Не такого аргумента.\n";
+        }
+    }
+
+    public function gen_setting()
+    {
+        return <<<EOF
+        [GLOBAL_SETTING]
+        DRIVER = mysql
+        CHARSET = utf8
+        TIME_ZONE = Asia/Samarkand
+
+        SESSION_GC_PROBABILITY = 0
+        SESSION_GC_DIVISOR = 100
+        SESSION_TIMEOUT = 
+        SESSION_LIFE = 
+        SESSION_COOKIE_LIFETIME = 
+
+        ENGINEERING_WORKS = false
+        HIDE_EXTENSION = false
+        ROOT_MOD = false
+        DEBUG = false
+
+
+        [DATABASE]
+        HOST = localhost
+        NAME = 
+        USER = 
+        PASS = 
+
+        [SOCKET]
+        PORT = 8080
+        HOST = 
+        EOF;
+    }
+
+    public function create_setting()
+    {
+        if (!file_exists($this->setting_name)) {
+            $fp = fopen($this->setting_name, "x");
+            fwrite($fp, $this->gen_setting());
+            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
+            return fclose($fp);
+        }
+        echo "\033[33m". " $this->setting_name уже существует!\n";
+        return 0;
+    }
+
+    public function edit_key()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (file_exists($this->key_name)) {
+            $key = file(dirname(__DIR__, 2)."/$this->key_name")[0];
+            $code = json_decode(zlib_decode(hex2bin($key)), true);
+
+            $fp = fopen($this->setting_name, "x");
+            fwrite($fp, Mixin\array_to_ini($code));
+            fclose($fp);
+            unlink(dirname(__DIR__, 2)."/$this->key_name");
+            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
+            return 1;
+        }
+        echo "\033[33m". " $this->key_name не существует!\n";
+        return 0;
+    }
+
+    public function setting_show()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (file_exists($this->key_name)) {
+            $key = file(dirname(__DIR__, 2)."/$this->key_name")[0];
+            $code = json_decode(zlib_decode(hex2bin($key)), true);
+            print_r(Mixin\array_to_ini($code));
+            return 1;
+        }
+        echo "\033[33m". " $this->key_name не существует!\n";
+        return 0;
+    }
+
+    public function generate_key()
+    {
+        $FILE_setting_ini = dirname(__DIR__, 2)."/$this->setting_name";
+        $sett = parse_ini_file($FILE_setting_ini, true);
+        if (!file_exists($this->key_name)) {
+            $fp = fopen($this->key_name, "x");
+            fwrite($fp, bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)));
+            fclose($fp);
+            
+            if (unlink($FILE_setting_ini)) {
+                echo "\033[32m". " $this->key_name сгенирирован успешно!\n";
+            }else {
+                unlink(dirname(__DIR__, 2)."/$this->key_name");
+                echo "\033[31m"."Ошибка при генерации.\n";
+            }
+            return 1;
+        }
+        echo "\033[33m". " $this->key_name уже существует!\n";
+        return 0;
+    }
+
+    public function help()
+    {
+        echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+
 class __Install
 {
     private $argument;
