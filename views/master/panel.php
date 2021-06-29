@@ -9,7 +9,7 @@ $header = "Панель управления";
 <?php include 'head.php' ?>
 
 <script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->

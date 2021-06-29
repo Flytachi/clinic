@@ -66,8 +66,6 @@
 	<!-- JS chained -->
 	<script src="<?= stack("assets/js/jquery.chained.js") ?>"></script>
 
-	<script src="<?= stack("assets/js/sessions.js") ?>"></script>
-
 	<script type="text/javascript">
 
 		// Select
@@ -90,6 +88,10 @@
 
 	</script>
 
+	<?php if( empty($session->master_status) ): ?>
+		<script src="<?= stack("assets/js/sessions.js") ?>"></script>
+	<?php endif; ?>
+
 	<script src="<?= stack("assets/js/socket.js") ?>"></script>
 
 	<!-- JS CKEditor -->
@@ -101,8 +103,8 @@
 	<!-- Timeout modal -->
 	<div id="modal_timeout_auto_logout" class="modal fade" tabindex="-1" style="z-index:9999 !important;">
 		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header bg-success">
+			<div class="<?= $classes['modal-session_content'] ?>">
+				<div class="<?= $classes['modal-session_header'] ?>">
 					<h5 class="modal-title">Confirm login password</h5>
 				</div>
 
@@ -123,8 +125,8 @@
 					</div>
 
 					<div class="modal-footer">
-						<a href="<?= $session->logout_link() ?>" type="button" class="btn btn-sm btn-outline-danger">Выйти</a>
-						<button type="submit" class="btn btn-sm btn-outline-success" name="button_submit">Подтвердить</button>
+						<a href="<?= $session->logout_link() ?>" type="button" class="<?= $classes['modal-session_btn_logout'] ?>">Выйти</a>
+						<button type="submit" class="<?= $classes['modal-session_btn_confirm'] ?>" name="button_submit">Подтвердить</button>
 					</div>
 
 				</form>
@@ -132,6 +134,6 @@
 			</div>
 		</div>
 	</div>
-<!-- /Timeout modal -->
+	<!-- /Timeout modal -->
 <?php endif; ?>
 

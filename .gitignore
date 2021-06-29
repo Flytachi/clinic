@@ -4,4 +4,4 @@ libs/*
 node_modules
 storage
 tests
-setting.ini
+setting.*

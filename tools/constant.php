@@ -89,6 +89,11 @@ $classes = array(
     "modal-global_content" => "modal-content border-3 border-danger",
     "modal-global_header" => "modal-header bg-danger",
     "modal-global_btn_close" => "btn btn-outline-danger btn-sm legitRipple", // btn-link
+
+    "modal-session_content" => "modal-content border-3 border-success",
+    "modal-session_header" => "modal-header bg-success",
+    "modal-session_btn_logout" => "btn btn-outline-danger btn-sm legitRipple", // btn-link
+    "modal-session_btn_confirm" => "btn btn-outline-success btn-sm legitRipple", // btn-link
     
     // Others
     "input-search" => "form-control border-danger wmin-200",

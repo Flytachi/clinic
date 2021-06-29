@@ -7,14 +7,6 @@ $header = "Аптека";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -51,7 +43,7 @@ $header = "Аптека";
 						<?php if ( isset($_POST['flush']) ): ?>
 
 							<?php
-							$__storage = Mixin\T_flush('storage');
+							$__storage = Mixin\T_flush('storages');
 							?>
 
 							<?php if (!$__storage): ?>
@@ -72,7 +64,7 @@ $header = "Аптека";
 
 							<div class="col-md-9" id="form_card"><?php (new Storage)->form(); ?></div>
 
-							<div class="col-md-3"><?php (new Storage)->form_template(); ?></div>
+							<div class="col-md-3"><?php (new StoragesModel)->form(); ?></div>
 
 						</div>
 
@@ -86,7 +78,7 @@ $header = "Аптека";
 	                  	<h5 class="card-title">Список Препаратов</h5>
 	                  	<div class="header-elements">
 	                      	<div class="list-icons">
-							  <a href="<?= download_url('Storage', 'Препараты') ?>" class="btn">Шаблон</a>
+							  <a href="<?= download_url('StoragesModel', 'Препараты') ?>" class="btn">Шаблон</a>
 								<form action="" method="post">
 									<input style="display:none;" id="btn_flush" type="submit" value="FLUSH" name="flush"></input>
 								</form>
