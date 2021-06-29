@@ -1,7 +1,21 @@
 <?php
 // Database Constants
-$key = file(dirname(__DIR__, 2)."/setting.key")[0];
-$ini = json_decode(zlib_decode(hex2bin($key)), true);
+if (!file_exists(dirname(__DIR__, 2)."/.key")) {
+    $_error = "Authenticity check failed!";
+    die(include "error_db_connect.php");
+}else{
+    if (!file_exists(dirname(__DIR__, 2)."/.cfg")) {
+        $_error = "Сonfiguration key not found!";
+        die(include "error_db_connect.php");
+    }
+    $key = file(dirname(__DIR__, 2)."/.cfg")[0];
+    $ini = json_decode(zlib_decode(hex2bin($key)), true);
+    if ( isset($ini['SECURITY']['SERIA']) and trim( zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) ) !== trim($ini['SECURITY']['SERIA'])) {
+        $_error = "Authenticity check failed!";
+        die(include "error_db_connect.php");
+    }
+}
+
 $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
 
 // Site Constants
@@ -14,6 +28,7 @@ try {
     $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     $db->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
 } catch (\PDOException $e) {
+    $_error = $e->getMessage();
     die(include "error_db_connect.php");
     // Класический Вывод ошибок
     // die(include "error_db_connect.php");

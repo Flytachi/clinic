@@ -45,51 +45,6 @@ class __Make
         }
     }
 
-    public function gen_setting()
-    {
-        return <<<EOF
-        [GLOBAL_SETTING]
-        DRIVER = mysql
-        CHARSET = utf8
-        TIME_ZONE = Asia/Samarkand
-
-        SESSION_GC_PROBABILITY = 0
-        SESSION_GC_DIVISOR = 100
-        SESSION_TIMEOUT = 
-        SESSION_LIFE = 
-        SESSION_COOKIE_LIFETIME = 
-
-        ENGINEERING_WORKS = false
-        HIDE_EXTENSION = false
-        ROOT_MOD = false
-        DEBUG = false
-
-
-        [DATABASE]
-        HOST = localhost
-        NAME = 
-        USER = 
-        PASS = 
-
-        [SOCKET]
-        PORT = 8080
-        HOST = 
-        EOF;
-    }
-
-    public function create_setting()
-    {
-        $file_name = "setting.ini";
-        if (!file_exists($file_name)) {
-            $fp = fopen($file_name, "x");
-            fwrite($fp, $this->gen_setting());
-            echo "\033[32m". " $file_name сгенирирован успешно!\n";
-            return fclose($fp);
-        }
-        echo "\033[33m". " $file_name уже существует!\n";
-        return 0;
-    }
-
     public function create_storage()
     {
         // $result = exec("mkdir storage && mkdir storage/documents && chmod -R 777 storage && echo 1");
@@ -132,8 +87,84 @@ class __Key
 {
     private $argument;
     private $name;
+    private $key = ".key";
+    private $auth = "master_key_ITACHI:2021-06-30";
+
+    function __construct($value = null, $seria = null)
+    {
+        $this->argument = $value;
+        $this->seria = $seria;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument) and !is_null($this->seria)) {
+            $this->resolution();
+        }else {
+            echo "---ERROR---";
+        }
+    }
+
+    private function resolution()
+    {
+        if (hex2bin("$this->argument") === $this->auth) {
+            $this->generate_key();
+        }else {
+            echo "---ERROR---";
+        }
+    }
+
+    public function generate_key()
+    {
+        $KEY = dirname(__DIR__, 2)."/$this->key";
+        $fp = fopen($KEY, "w");
+        fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
+        fclose($fp);
+        echo "---DONE---";
+        return 1;
+    }
+
+}
+
+class __Cfg
+{
+    private $argument;
+    private $name;
     private $setting_name = "setting.ini";
-    private $key_name = "setting.key";
+    private $key_name = ".cfg";
+    private $default_configuratuons = array(
+        'SECURITY' => array(
+            'SERIA' => null, 
+        ),
+        'GLOBAL_SETTING' => array(
+            'DRIVER' => 'mysql', 
+            'CHARSET' => 'utf8', 
+            'TIME_ZONE' => 'Asia/Samarkand', 
+
+            'SESSION_GC_PROBABILITY' => 0, 
+            'SESSION_GC_DIVISOR' => 100, 
+            'SESSION_TIMEOUT' => null, 
+            'SESSION_LIFE' => null, 
+            'SESSION_COOKIE_LIFETIME' => null, 
+
+            'ENGINEERING_WORKS' => false, 
+            'HIDE_EXTENSION' => false, 
+            'ROOT_MOD' => false, 
+            'DEBUG' => false, 
+        ), 
+        'DATABASE' => array(
+            'HOST' => 'localhost',
+            'NAME' => null,  
+            'USER' => null,
+            'PASS' => null, 
+        ), 
+        'SOCKET' => array(
+            'PORT' => 8080, 
+            'HOST' => null,
+        ), 
+    );
+
 
     function __construct($value = null, $name = null)
     {
@@ -166,43 +197,13 @@ class __Key
         }
     }
 
-    public function gen_setting()
-    {
-        return <<<EOF
-        [GLOBAL_SETTING]
-        DRIVER = mysql
-        CHARSET = utf8
-        TIME_ZONE = Asia/Samarkand
-
-        SESSION_GC_PROBABILITY = 0
-        SESSION_GC_DIVISOR = 100
-        SESSION_TIMEOUT = 
-        SESSION_LIFE = 
-        SESSION_COOKIE_LIFETIME = 
-
-        ENGINEERING_WORKS = false
-        HIDE_EXTENSION = false
-        ROOT_MOD = false
-        DEBUG = false
-
-
-        [DATABASE]
-        HOST = localhost
-        NAME = 
-        USER = 
-        PASS = 
-
-        [SOCKET]
-        PORT = 8080
-        HOST = 
-        EOF;
-    }
-
     public function create_setting()
     {
-        if (!file_exists($this->setting_name)) {
-            $fp = fopen($this->setting_name, "x");
-            fwrite($fp, $this->gen_setting());
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (!file_exists(dirname(__DIR__, 2)."/$this->setting_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
+            fwrite($fp, Mixin\array_to_ini($this->default_configuratuons));
             echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
             return fclose($fp);
         }
@@ -213,12 +214,12 @@ class __Key
     public function edit_key()
     {
         require_once dirname(__DIR__).'/functions/mixin.php';
-
-        if (file_exists($this->key_name)) {
+        
+        if (file_exists(dirname(__DIR__, 2)."/$this->key_name")) {
             $key = file(dirname(__DIR__, 2)."/$this->key_name")[0];
             $code = json_decode(zlib_decode(hex2bin($key)), true);
 
-            $fp = fopen($this->setting_name, "x");
+            $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
             fwrite($fp, Mixin\array_to_ini($code));
             fclose($fp);
             unlink(dirname(__DIR__, 2)."/$this->key_name");
@@ -233,7 +234,7 @@ class __Key
     {
         require_once dirname(__DIR__).'/functions/mixin.php';
 
-        if (file_exists($this->key_name)) {
+        if (file_exists(dirname(__DIR__, 2)."/$this->key_name")) {
             $key = file(dirname(__DIR__, 2)."/$this->key_name")[0];
             $code = json_decode(zlib_decode(hex2bin($key)), true);
             print_r(Mixin\array_to_ini($code));
@@ -247,8 +248,8 @@ class __Key
     {
         $FILE_setting_ini = dirname(__DIR__, 2)."/$this->setting_name";
         $sett = parse_ini_file($FILE_setting_ini, true);
-        if (!file_exists($this->key_name)) {
-            $fp = fopen($this->key_name, "x");
+        if (!file_exists(dirname(__DIR__, 2)."/$this->key_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->key_name", "x");
             fwrite($fp, bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)));
             fclose($fp);
             
