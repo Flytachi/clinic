@@ -8,9 +8,11 @@ if (!file_exists(dirname(__DIR__, 2)."/.key")) {
         $_error = "Сonfiguration key not found!";
         die(include "error_db_connect.php");
     }
-    $key = file(dirname(__DIR__, 2)."/.cfg")[0];
-    $ini = json_decode(zlib_decode(hex2bin($key)), true);
-    if ( isset($ini['SECURITY']['SERIA']) and trim( zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) ) !== trim($ini['SECURITY']['SERIA'])) {
+    $cfg = file(dirname(__DIR__, 2)."/.cfg")[0];
+    $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) );
+    $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+
+    if ( empty($ini['SECURITY']['SERIA']) or trim($key[0]) !== trim($ini['SECURITY']['SERIA']) or date_diff( new \DateTime(date('Y-m-d H:i:s', $key[1])), new \DateTime(date('Y-m-d H:i:s')) )->d >= 3 ) {
         $_error = "Authenticity check failed!";
         die(include "error_db_connect.php");
     }
