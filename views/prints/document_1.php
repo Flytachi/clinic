@@ -18,13 +18,18 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.dateBith, vs.report_titl
 
         <div class="row">
 
-            <div class="col-6">
-                <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
-            </div>
-
-            <div class="col-6 text-right h3">
+            <div class="col-4 text-center" style="font-size: 32px; color: blue;font-family: Arial, Helvetica, sans-serif;">
                 <b>
                     <?= $company['print_header_title'] ?><br>
+                </b>
+            </div>
+
+            <div class="col-4 text-center">
+                <img src="<?= $company['print_header_logotype'] ?>" width="200" height="160">
+            </div>
+
+            <div class="col-4 text-right h3">
+                <b>
                     <?= $company['print_header_address'] ?><br>
                     <?= $company['print_header_phones'] ?>
                 </b>
