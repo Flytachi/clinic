@@ -65,7 +65,6 @@ class StoragesModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="form-group row">
 
