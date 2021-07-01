@@ -5,6 +5,17 @@ class StoragesModel extends Model
     public $table = 'storages';
     public $_supply = 'storage_supply';
     public $_supply_item = 'storage_supply_items';
+    public $table_label = array(
+        'item_key' => 'Ключ',
+        'item_name' => 'Препарат',
+        'item_supplier' => 'Поставщик',
+        'item_qty' => 'Кол-во',
+        'item_cost' => 'Цена прихода',
+        'item_price' => 'Цена расхода',
+        'item_faktura' => 'Счёт фактура',
+        'item_shtrih' => 'Штрих код',
+        'item_die_date' => 'Срок годности',
+    );
     // public $table_label = array(
     //     'id' => 'id',
     //     'code' => 'Код',
@@ -21,7 +32,7 @@ class StoragesModel extends Model
     //     'die_date' => 'Срок годности',
     // );
 
-    public function form($pk = null)
+    public function form_template($pk = null)
     {
         ?>
         <form method="post" action="<?= add_url() ?>" enctype="multipart/form-data">
@@ -35,6 +46,87 @@ class StoragesModel extends Model
             <div class="text-right">
                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                     <span class="ladda-label">Внести</span>
+                    <span class="ladda-spinner"></span>
+                </button>
+            </div>
+
+        </form>
+        <?php
+    }
+
+    public function form($pk = null)
+    {
+        global $CATEGORY, $classes;
+        if( isset($_SESSION['message']) ){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="form-group row">
+
+                <div class="col-md-3">
+                    <label>Ключ:</label>
+                    <input type="text" class="form-control" name="item_key" placeholder="Введите код" value="<?= $this->value('item_key') ?>">
+                </div>
+
+                <div class="col-md-5">
+                    <label>Препарат:</label>
+                    <input type="text" class="form-control" name="item_name" placeholder="Введите название препарата" required value="<?= $this->value('item_name') ?>">
+                </div>
+
+                <div class="col-md-4">
+                    <label>Поставщик:</label>
+                    <input type="text" class="form-control" name="item_supplier" placeholder="Введите поставщик" required value="<?= $this->value('item_supplier') ?>">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-4">
+                    <label>Срок годности:</label>
+                    <input type="date" class="form-control" name="item_die_date" placeholder="Введите дату" required value="<?= $this->value('item_die_date') ?>">
+                </div>
+
+                <div class="col-md-2">
+                    <label>Кол-во:</label>
+                    <input type="number" class="form-control" name="item_qty" placeholder="Введите колличество" required value="<?= $this->value('item_qty') ?>">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Цена прихода:</label>
+                    <input type="text" class="form-control" name="item_cost" placeholder="Введите цену" required value="<?= $this->value('item_cost') ?>">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Цена расхода:</label>
+                    <input type="text" class="form-control" name="item_price" placeholder="Введите цену" required value="<?= $this->value('item_price') ?>">
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+
+                <div class="col-md-6">
+                    <label>Штрих код:</label>
+                    <input type="text" class="form-control" name="item_shtrih" placeholder="Введите код" value="<?= $this->value('item_shtrih') ?>">
+                </div>
+
+                <div class="col-md-6">
+                    <label>Счёт фактура:</label>
+                    <input type="text" class="form-control" name="item_faktura" placeholder="Введите счёт" required value="<?= $this->value('item_faktura') ?>">
+                </div>
+
+            </div>
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
                     <span class="ladda-spinner"></span>
                 </button>
             </div>
