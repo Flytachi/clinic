@@ -30,7 +30,8 @@ class __Base
 
     public function create()
     {
-        $ini = parse_ini_file(dirname(__DIR__, 2)."/setting.ini", true);
+        $cfg = file(dirname(__DIR__, 2)."/.cfg")[0];
+        $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
         $this->create_db_name = $ini['DATABASE']['NAME'];
         $this->create_db_user = $ini['DATABASE']['USER'];
         $this->create_db_password = $ini['DATABASE']['PASS'];
