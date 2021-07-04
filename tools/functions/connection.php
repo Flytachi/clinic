@@ -19,6 +19,7 @@ if (!file_exists(dirname(__DIR__, 2)."/.key")) {
 }
 
 $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
+
 // Site Constants
 date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
 // print_r(PDO::getAvailableDrivers());
@@ -29,6 +30,7 @@ try {
     $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     $db->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
 } catch (\PDOException $e) {
+    $_error = $e->getMessage();
     die(include "error_db_connect.php");
     // Класический Вывод ошибок
     // die(include "error_db_connect.php");
