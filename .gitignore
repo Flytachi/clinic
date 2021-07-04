@@ -5,8 +5,4 @@ node_modules
 storage
 tests
 setting.ini
-<<<<<<< HEAD
 .*
-=======
-node_modules
->>>>>>> 97305bb5cad3a78322c8f17cecde24f8b9e0ae1e
