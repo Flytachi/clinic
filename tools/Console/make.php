@@ -1,9 +1,5 @@
 <?php
 
-// CREATE USER 'timaa'@'%' IDENTIFIED VIA mysql_native_password USING '456';
-// GRANT USAGE ON *.* TO 'tima'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
-// CREATE DATABASE IF NOT EXISTS `tima`;GRANT ALL PRIVILEGES ON `tima`.* TO 'tima'@'%';
-
 class __Base
 {
     protected String $db_driver = "mysql";
@@ -23,9 +19,8 @@ class __Base
 
     public function handle()
     {
-        echo "\033[33m"." Требуется 2 аргумента.\n";
+        echo "\033[33m"." Требуется 1 аргумента.\n";
         echo "\033[33m"." 1 => Пароль от root пользователя.\n";
-        echo "\033[33m"." 2 => Пароль для нового пользователя.\n";
     }
 
     public function create()

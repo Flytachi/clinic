@@ -132,7 +132,7 @@ class __Cfg
     private $argument;
     private $name;
     private $setting_name = "setting.ini";
-    private $key_name = ".cfg";
+    private $cfg_name = ".cfg";
     private $default_configuratuons = array(
         'SECURITY' => array(
             'SERIA' => null, 
@@ -215,18 +215,18 @@ class __Cfg
     {
         require_once dirname(__DIR__).'/functions/mixin.php';
         
-        if (file_exists(dirname(__DIR__, 2)."/$this->key_name")) {
-            $key = file(dirname(__DIR__, 2)."/$this->key_name")[0];
-            $code = json_decode(zlib_decode(hex2bin($key)), true);
+        if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
+            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
 
             $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
             fwrite($fp, Mixin\array_to_ini($code));
             fclose($fp);
-            unlink(dirname(__DIR__, 2)."/$this->key_name");
+            unlink(dirname(__DIR__, 2)."/$this->cfg_name");
             echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
             return 1;
         }
-        echo "\033[33m". " $this->key_name не существует!\n";
+        echo "\033[33m". " $this->cfg_name не существует!\n";
         return 0;
     }
 
@@ -234,13 +234,13 @@ class __Cfg
     {
         require_once dirname(__DIR__).'/functions/mixin.php';
 
-        if (file_exists(dirname(__DIR__, 2)."/$this->key_name")) {
-            $key = file(dirname(__DIR__, 2)."/$this->key_name")[0];
-            $code = json_decode(zlib_decode(hex2bin($key)), true);
+        if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
+            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
             print_r(Mixin\array_to_ini($code));
             return 1;
         }
-        echo "\033[33m". " $this->key_name не существует!\n";
+        echo "\033[33m". " $this->cfg_name не существует!\n";
         return 0;
     }
 
@@ -248,20 +248,19 @@ class __Cfg
     {
         $FILE_setting_ini = dirname(__DIR__, 2)."/$this->setting_name";
         $sett = parse_ini_file($FILE_setting_ini, true);
-        if (!file_exists(dirname(__DIR__, 2)."/$this->key_name")) {
-            $fp = fopen(dirname(__DIR__, 2)."/$this->key_name", "x");
-            fwrite($fp, bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)));
+        if (!file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->cfg_name", "x");
+            fwrite($fp, chunk_split( bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)) , 50, "\n") );
             fclose($fp);
-            
             if (unlink($FILE_setting_ini)) {
-                echo "\033[32m". " $this->key_name сгенирирован успешно!\n";
+                echo "\033[32m". " $this->cfg_name сгенирирован успешно!\n";
             }else {
-                unlink(dirname(__DIR__, 2)."/$this->key_name");
+                unlink(dirname(__DIR__, 2)."/$this->cfg_name");
                 echo "\033[31m"."Ошибка при генерации.\n";
             }
             return 1;
         }
-        echo "\033[33m". " $this->key_name уже существует!\n";
+        echo "\033[33m". " $this->cfg_name уже существует!\n";
         return 0;
     }
 
