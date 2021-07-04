@@ -1,6 +1,23 @@
 <?php
 // Database Constants
-$ini = parse_ini_file(dirname(__DIR__, 2)."/setting.ini", true);
+if (!file_exists(dirname(__DIR__, 2)."/.key")) {
+    $_error = "Authenticity check failed!";
+    die(include "error_db_connect.php");
+}else{
+    if (!file_exists(dirname(__DIR__, 2)."/.cfg")) {
+        $_error = "Сonfiguration key not found!";
+        die(include "error_db_connect.php");
+    }
+    $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/.cfg") );
+    $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) );
+    $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+
+    if ( empty($ini['SECURITY']['SERIA']) or trim($key[0]) !== trim($ini['SECURITY']['SERIA']) or date_diff( new \DateTime(date('Y-m-d H:i:s', $key[1])), new \DateTime(date('Y-m-d H:i:s')) )->d >= 3 ) {
+        $_error = "Authenticity check failed!";
+        die(include "error_db_connect.php");
+    }
+}
+
 $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
 // Site Constants
 date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
