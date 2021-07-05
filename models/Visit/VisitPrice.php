@@ -611,7 +611,7 @@ class VisitPriceModel extends Model
     public function err_temp(Int $temp = 0)
     {
         if (isset($this->bed_cost)) {
-            $range = range(-500,500);
+            $range = range(-3000000,3000000);
         } else {
             $range = range(-1,1);
         }
