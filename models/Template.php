@@ -6,6 +6,7 @@ class TemplateModel extends Model
 
     public function form($pk = null)
     {
+        global $session;
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -14,7 +15,7 @@ class TemplateModel extends Model
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
-            <input type="hidden" name="autor_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="autor_id" value="<?= $session->session_id ?>">
 
             <div class="row">
 
@@ -25,40 +26,41 @@ class TemplateModel extends Model
 
                 <div class="col-md-12">
 
-                    <div class="document-editor2">
-                        <div class="document-editor2__toolbar"></div>
-                        <div class="document-editor2__editable-container">
-                            <div class="document-editor2__editable">
-                                <?= $this->value('description') ?>
+                    <div class="document-editor">
+                        <div class="document-editor__toolbar"></div>
+                        <div class="document-editor__editable-container">
+                            <div class="document-editor__editable" id="document-editor__editable_template">
+                                <?= ($this->value('description')) ? $this->value('description') : "<br><strong>Рекомендация:</strong>" ?>
                             </div>
                         </div>
                     </div>
 
-                    <textarea id="document-editor2__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="description" rows="1"></textarea>
-                
+                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="description" rows="1"><?= ($this->value('description')) ? $this->value('description') : '' ?></textarea>
+
                 </div>
 
             </div>
 
-
             <div class="text-right mt-2">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" id="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
         <script>
             DecoupledEditor
-                .create( document.querySelector( '.document-editor2__editable' ))
+                .create( document.querySelector( '.document-editor__editable' ))
                 .then( editor => {
-                    const toolbarContainer = document.querySelector( '.document-editor2__toolbar' );
+                    const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
 
                     toolbarContainer.appendChild( editor.ui.view.toolbar.element );
 
                     window.editor = editor;
 
                     editor.model.document.on( 'change:data', ( evt, data ) => {
-                        console.log( data );
-                        $('textarea#document-editor2__area').html( editor.getData() );
+                        $('textarea#document-editor__area').html( editor.getData() );
                     } );
                 } )
                 .catch( err => {
