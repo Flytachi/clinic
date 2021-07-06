@@ -23,12 +23,11 @@ if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
 // END Settings mod
 
 // Settings debugger
-
-// if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) {
-//     ini_set('error_reporting', E_ALL);
-//     ini_set('display_errors', 1);
-//     ini_set('display_startup_errors', 1);
-// }
+if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) {
+    ini_set('error_reporting', E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+}
 
 // END Settings debugger
 

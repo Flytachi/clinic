@@ -6,7 +6,7 @@ class Session
      * 
      *  My Session
      * 
-     *  @version 5.2
+     *  @version 5.7
      **/
 
     private $db;
@@ -91,24 +91,30 @@ class Session
     private function auth(string $login = null, string $password = null)
     {
         $username = Mixin\clean($login);
-        $password = sha1($password);
+        $password = sha1(Mixin\clean($password));
 
         if ($username == "master" and $_POST['password'] == $this->gen_password()) {
             $this->set_data("master");
             $this->login_success();
         }
 
-        $stmt = $this->db->query("SELECT id FROM users WHERE username = '$username' AND password = '$password' AND is_active IS NOT NULL")->fetch(PDO::FETCH_OBJ);
-        if($stmt){
-            $this->set_data($stmt->id);
-            $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
-            if ($slot) {
-                $_SESSION['session_slot'] = Mixin\clean($slot);
+        try {
+            $stmt = $this->db->query("SELECT id FROM users WHERE username = '$username' AND password = '$password' AND is_active IS NOT NULL")->fetch(PDO::FETCH_OBJ);
+            if($stmt){
+                $this->set_data($stmt->id);
+                $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
+                if ($slot) {
+                    $_SESSION['session_slot'] = Mixin\clean($slot);
+                }
+                $this->login_success();
+            }else{
+                $_SESSION['message'] = 'Не верный логин или пароль';
             }
-            $this->login_success();
-        }else{
+        } catch (\Throwable $th) {
             $_SESSION['message'] = 'Не верный логин или пароль';
         }
+
+        
     }
 
     private function session_check()
@@ -245,12 +251,6 @@ class Session
         return $this->data->division_id;
     }
 
-}
-
-function is_auth($arr = null){
-    global $session;
-    $session->is_auth($arr);
-    echo '<span class="text-center text-danger">Используется старая система аунтификации! Обновите систему аунтификации!</span>';
 }
 
 ?>

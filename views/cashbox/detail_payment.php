@@ -3,6 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "История платежей ". addZero($_GET['pk']);
 
+if (!is_numeric($_GET['pk'])) {
+	Mixin\error('404');
+}
+
 $tb = new Table($db, "visit_prices");
 $search = $tb->get_serch();
 $search_array = array(

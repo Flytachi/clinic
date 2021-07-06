@@ -3,9 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Пациент";
 
-if ( isset($_GET['pk']) ) {
+if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
+
     $agr = "?pk=".$_GET['pk'];
-    if ( isset($_GET['activity']) and $_GET['activity'] ) {
+    if ( isset($_GET['activity']) and is_numeric($_GET['activity']) and $_GET['activity'] ) {
         $agr .= "&activity=".$_GET['activity'];
         $activity = True;
     }else{
@@ -34,8 +35,8 @@ if ( isset($_GET['pk']) ) {
     if (!$patient or ($activity and $patient->completed) ) {
         Mixin\error('404');
     }
+    
 } else {
     Mixin\error('404');
 }
-// dd($patient);
 ?>

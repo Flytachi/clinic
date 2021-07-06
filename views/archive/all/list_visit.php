@@ -1,8 +1,14 @@
 <?php
 require_once '../../../tools/warframe.php';
 $session->is_auth();
-$header = "Пациент ".addZero($_GET['id']);
-$patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+
+if (is_numeric($_GET['id'])) {
+	$header = "Пациент ".addZero($_GET['id']);
+	$patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+} else {
+	$patient = False;
+	echo "err";
+}
 if (!$patient) {
 	Mixin\error('404');
 }
