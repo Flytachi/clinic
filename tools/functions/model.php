@@ -8,7 +8,7 @@ class Model
      * Model + PDO
      * 
      * 
-     * @version 8.7
+     * @version 8.9
      */
 
     protected $post;
@@ -103,7 +103,7 @@ class Model
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         if($object){
             $this->set_post($object);
-            return $this->form($object['id']);
+            return $this->{$_GET['form']}($object['id']);
         }else{
             Mixin\error('404');
             exit;

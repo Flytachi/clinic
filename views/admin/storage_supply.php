@@ -36,9 +36,28 @@ $header = "Аптека / Поставки";
 
 	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Поставки</h5>
+						<div class="header-elements">
+							<div class="list-icons">
+								<div class="header-elements">
+									<div class="list-icons">
+										<a onclick="Update('<?= up_url(null, 'StorageSupplyModel') ?>')" class="list-icons-item text-success">
+											<i class="icon-plus22"></i>Приход
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
 	              	</div>
 
               		<div class="card-body">
+
+						<?php
+						if( isset($_SESSION['message']) ){
+							echo $_SESSION['message'];
+							unset($_SESSION['message']);
+						}
+						?>
+
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
@@ -62,7 +81,8 @@ $header = "Аптека / Поставки";
 											<td><?= date_f($row->add_date, 1) ?></td>
 											<td class="text-right">
 												<div class="list-icons">
-													<a href="<?= viv('admin/storage_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'StorageSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= ajax('storage_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
 												</div>
 											</td>
 										</tr>
@@ -82,6 +102,27 @@ $header = "Аптека / Поставки";
 
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
+
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
