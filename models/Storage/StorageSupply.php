@@ -54,9 +54,9 @@ class StorageSupplyModel extends Model
     {
         global $db, $session, $classes;
         ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $pk ?>">
+        <!-- <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form"> -->
+            <!-- <input type="hidden" name="model" value="<?= __CLASS__ ?>"> -->
+            <!-- <input type="hidden" name="id" value="<?= $pk ?>"> -->
 
 
             <div class="<?= $classes['card-header'] ?>">
@@ -83,82 +83,22 @@ class StorageSupplyModel extends Model
                             </tr>
                         </thead>
                         <tbody id="table_body">
-
-                            <!-- test -->
-                            <tr id="table_tr-0">
-                                <td>
-                                    <select name="0[item_key]" class="<?= $classes['form-select'] ?>" data-placeholder="Выберите Ключ">
-                                        <option></option>
-                                        <option value="key-60e6f3e706171">key-60e6f3e706171</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="0[item_name_id]" class="<?= $classes['form-select'] ?>" data-placeholder="Выберите Препарат">
-                                        <option></option>
-                                        <option value="1">Мой первый препарат</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="0[item_supplier_id]" class="<?= $classes['form-select'] ?>" data-placeholder="Выберите Поставщика">
-                                        <option></option>
-                                        <option value="1">Поставщик</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="0[item_manufacturer_id]" class="<?= $classes['form-select'] ?>" data-placeholder="Выберите Производителя">
-                                        <option></option>
-                                        <option value="1">Узбекистан</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="number" name="0[item_qty]" class="form-control" min="1" placeholder="№">
-                                </td>
-                                <td>
-                                    <input type="number" name="0[item_cost]" class="form-control" min="0" placeholder="Введите цену">
-                                </td>
-                                <td>
-                                    <input type="number" name="0[item_price]" class="form-control" min="0" placeholder="Введите цену">
-                                </td>
-                                <td>
-                                    <input type="text" name="0[item_faktura]" class="form-control" placeholder="Введите № фактуры">
-                                </td>
-                                <td>
-                                    <input type="text" name="0[item_shtrih]" class="form-control" placeholder="Введите штрих">
-                                </td>
-                                <td>
-                                    <input type="date" name="0[item_die_date]" class="form-control daterange-single">
-                                </td>
-                                <td class="text-center">
-                                    <div class="list-icons">
-                                        <a href="#" onclick="DeleteRowArea(null, 0)" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-                                    </div>
-                                </td>
-
-                            </tr>
-                            <!-- test -->
                             
                             <?php
-                            $tb = new Table($db, "storage_supply_items");
+                            $rosh = new StorageSupplyItemsModel();
+                            $rosh->uniq_key = $this->value('uniq_key');
+                            
+                            // table
+                            $tb = new Table($db, $rosh->table);
+                            $tb->set_data("id");
                             $tb->where("uniq_key = '{$this->value('uniq_key')}'");
+
+                            foreach ($tb->get_table(1) as $row) {
+                                $rosh->number = $row->count;
+                                $rosh->get_or_404($row->id);
+                                $rosh->clear_post();
+                            }
                             ?>
-                            <?php foreach ($tb->get_table(1) as $row): ?>
-                                <tr>
-                                    <td><?= $row->item_key ?></td>
-                                    <td><?= $row->item_name ?></td>
-                                    <td><?= $row->item_supplier ?></td>
-                                    <td><?= $row->item_qty ?></td>
-                                    <td><?= $row->item_cost ?></td>
-                                    <td><?= $row->item_price ?></td>
-                                    <td><?= $row->item_faktura ?></td>
-                                    <td><?= $row->item_shtrih ?></td>
-                                    <td><?= $row->item_die_date ?></td>
-                                    <td class="text-right">
-                                        <div class="list-icons">
-                                            <a href="#" type="button" onclick="return confirm('Вы уверены что хотите удалить препарат?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
@@ -168,20 +108,77 @@ class StorageSupplyModel extends Model
                 </div>
             </div>
 
-        </form>
+        <!-- </form> -->
 
         <script type="text/javascript">
+            var i = Number("<?= $rosh->number ?>");
 
-            var i = 0;
-            
             function AddRowArea() {
-                $('#table_body').append(`
-                    <h1>${i}</h1>
-                `);
-                i++;
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax("storage_add") ?>",
+                    data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>" },
+                    success: function (result) {
+                        $('#table_body').append(result);
+                        FormLayouts.init();
+                        i++;
+                    },
+                });
             }
 
-            function DeleteRowArea(pk = null, tr) {
+            function UpBtn(id) {
+                var btn = document.querySelector(`#${id}`);
+                btn.disabled = false;
+                btn.className = "btn list-icons-item text-success-600";
+            }
+
+            function SaveRowArea(tr) {
+                var btn = event.target;
+                btn.disabled = true;
+                btn.className = "btn list-icons-item text-gray-600";
+                
+                console.log($(`#table_tr-${tr}`).find('select, input').serializeArray());
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?= add_url() ?>",
+                    data: $(`#table_tr-${tr}`).find('select, input').serializeArray(),
+                    success: function (result) {
+                        console.log(result);
+                        var data = JSON.parse(result);
+
+                        if (data.status == "success") {
+                            
+                            new Noty({
+                                text: "Успешно!",
+                                type: "success",
+                            }).show();
+
+                            $.ajax({
+                                type: "GET",
+                                url: "<?= ajax("storage_add") ?>",
+                                data: { number: tr, uniq_key: "<?= $this->value('uniq_key') ?>", id: data.pk },
+                                success: function (result) {
+                                    $(`#table_tr-${tr}`).html(result);
+                                    FormLayouts.init();
+                                },
+                            });
+
+                        } else {
+
+                            btn.disabled = false;
+                            btn.className = "btn list-icons-item text-success-600";
+                            new Noty({
+                                text: data.message,
+                                type: "error",
+                            }).show();
+
+                        }
+                    },
+                });
+            }
+
+            function DeleteRowArea(tr) {
                 if (pk) {
                     console.log("delete");
                 } else {
