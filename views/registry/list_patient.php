@@ -77,7 +77,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 												<div class="text-muted">
 													<?php
 													if($stm = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id= $row->id")->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
+														echo "{$FLOOR[$stm['floor']]} ".$stm['ward']." палата ".$stm['bed']." койка";
 													}
 													?>
 												</div>
