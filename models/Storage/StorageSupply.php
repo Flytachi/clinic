@@ -3,6 +3,8 @@
 class StorageSupplyModel extends Model
 {
     public $table = 'storage_supply';
+    public $_storage = 'storages';
+    public $_storage_item = 'storage_supply_items';
 
 
     public function form($pk = null)
@@ -118,7 +120,7 @@ class StorageSupplyModel extends Model
                     <div class="row">
                         <div class="col-6 text-left">
                             <span style="font-size: 14px"><b>Status:</b></span>
-                            <span class="text-secondary" id="status_display">Не Проверен</span>
+                            <span class="text-secondary" id="status_display">Не проверен</span>
                         </div>
                         <div class="col-6 text-right">
                             <button type="submit" onclick="CheckSupply()" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
@@ -137,8 +139,19 @@ class StorageSupplyModel extends Model
         <?php if($is_active): ?>
             <script type="text/javascript">
                 var i = Number("<?= $rosh->number ?>");
+                var warning = false;
+
+                function DefaulStat() {
+                    var objText = document.querySelector("#btn_text");
+                    var objStatus = document.querySelector("#status_display");
+
+                    objText.innerHTML = "Проверить";
+                    objStatus.innerHTML = "Не проверен";
+                    objStatus.className = "text-secondary";
+                }
 
                 function AddRowArea() {
+                    DefaulStat();
                     $.ajax({
                         type: "GET",
                         url: "<?= ajax("storage_add") ?>",
@@ -152,13 +165,14 @@ class StorageSupplyModel extends Model
                 }
 
                 function UpBtn(id) {
+                    DefaulStat();
                     var btn = document.querySelector(`#${id}`);
                     btn.disabled = false;
                     btn.className = "btn list-icons-item text-success-600";
                 }
 
                 function SaveRowArea(tr) {
-
+                    DefaulStat();
                     var btn = event.target;
                     btn.disabled = true;
                     btn.className = "btn list-icons-item text-gray-600";
@@ -203,7 +217,7 @@ class StorageSupplyModel extends Model
                 }
 
                 function DeleteRowArea(tr) {
-
+                    DefaulStat();
                     var pk = $(`#table_tr-${tr}`).find('input[name="id"]')[0].value;
                     var btn = event.target;
                     btn.disabled = true;
@@ -267,34 +281,79 @@ class StorageSupplyModel extends Model
                             objText.innerHTML = "Отправить на склад";
                             objStatus.innerHTML = "Проверен";
                             objStatus.className = "text-success";
+
                         } else {
 
                             objStatus.innerHTML = "Проверка не пройдена";
                             objStatus.className = "text-danger";
+
                         }
                         
 
                     } else {
-                        
-                        swal({
-                            position: 'top',
-                            title: `Отправить препараты на склад`,
-                            text: `Вы точно хотите отправить препараты на склад?`,
-                            type: 'info',
-                            showCancelButton: true,
-                            confirmButtonText: 'Да'
-                        }).then(function(ivi) {
-                            if (ivi.value) {
-                                document.querySelector("#<?= __CLASS__ ?>_form").submit();
-                            }
-                        });
+
+                        if (warning) {
+                            swal({
+                                position: 'top',
+                                title: `Информация о некоторых препаратах, занесена не полностью!`,
+                                text: `Поля в которых нет данных, выделены синим цветом.`,
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Отправить'
+                            }).then(function(ivi) {
+                                if (ivi.value) {
+                                    SubmitSupply();
+                                }
+                            });
+                        }else{
+                            SubmitSupply();
+                        }
 
                     }
 
                 };
 
+                function SubmitSupply() {
+                    swal({
+                        position: 'top',
+                        title: `Отправить препараты на склад`,
+                        text: `Вы точно хотите отправить препараты на склад?`,
+                        type: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Да'
+                    }).then(function(ivi) {
+                        if (ivi.value) {
+                            document.querySelector("#<?= __CLASS__ ?>_form").submit();
+                        }
+                    });
+                }
+
                 function VerificationSupply() {
-                    return true;
+                    var status = true;
+                    var inputs = document.querySelectorAll(".verification_input");
+                    
+                    for (let key = 0; key < inputs.length; key++) {
+                        const element = inputs[key];
+                        if (!element.value) {
+                            
+                            if ( ["item_name_id","item_supplier_id"].includes(element.name) ) {
+                                $(element).next().css({"border-bottom": "2px solid red"});
+                                status = false;
+                            }if ( ["item_qty","item_cost","item_price","item_die_date"].includes(element.name) ) {
+                                element.className += " border-danger";
+                                status = false;
+                            }else{
+                                element.className += " border-primary";
+                                warning = true;
+                            }
+                        }else{
+                            if ( ["item_name_id","item_supplier_id"].includes(element.name) ) {
+                                $(element).next().css({"border-bottom": ""});
+                            }
+                        }
+                    }
+
+                    return status;
                 }
 
             </script>
@@ -304,16 +363,65 @@ class StorageSupplyModel extends Model
 
     public function clean()
     {
-        
-        if ($this->post['completed']) {
-            $this->post['completed_date'] = date("Y-m-d H:i:s");
-        }
         if (!$this->post['id']) {
             $this->post['uniq_key'] = uniqid('supply-');
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
+    }
+
+    public function update()
+    {
+        global $db;
+
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+
+            if ($this->post['completed']) {
+
+                // Storage Update
+                $this->post['completed_date'] = date("Y-m-d H:i:s");
+                $db->beginTransaction();
+
+                $this->storage_change($pk);
+
+                $object = Mixin\update($this->table, $this->post, $pk);
+                if (!intval($object)){
+                    $this->error($object);
+                    exit;
+                }
+
+                $db->commit();
+                $this->success();
+
+            } else {
+
+                // Default Update
+                $object = Mixin\update($this->table, $this->post, $pk);
+                if (!intval($object)){
+                    $this->error($object);
+                    exit;
+                }
+                $this->success();
+                    
+            }
+        }
+    }
+
+    public function storage_change($pk)
+    {
+        global $db;
+        $uniq = $db->query("SELECT uniq_key FROM $this->table WHERE id = $pk")->fetchColumn();
+        foreach ($db->query("SELECT * FROM $this->_storage_item WHERE uniq_key = '$uniq'") as $item) {
+            unset($item['uniq_key']);
+            $object = Mixin\insert($this->_storage, $item);
+            if (!intval($object)){
+                $this->error($object);
+                $db->rollBack();
+            }
+        }
     }
 
     public function success()
