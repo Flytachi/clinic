@@ -34,124 +34,6 @@ $header = "Панель управления";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php if ( isset($_POST['INITIALIZE']) ): ?>
-					<?php
-					$file = file_get_contents($_FILES['file_database']['tmp_name']);
-					$data = json_decode($file, true);
-					$_initialize =  Mixin\T_INITIALIZE_database($data);
-					?>
-
-					<?php if ($_initialize == 200): ?>
-						<div class="alert alert-primary" role="alert">
-                            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                            База данных создана!
-                        </div>
-					<?php else: ?>
-						<div class="alert bg-danger alert-styled-left alert-dismissible">
-							<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-							<span class="font-weight-semibold">Ошибка при создании базы данных!</span>
-					    </div>
-                    <?php endif; ?>
-
-				<?php elseif ( isset($_POST['GET_START']) ): ?>
-
-					<div style="display:none;">
-						<?php
-							$flush = new __Db("clean");
-							$_sidebar = new __Db("seed", "sidebar");
-							$_province = new __Db("seed", "province");
-							$_region = new __Db("seed", "region");
-							$_user = new __Db("seed", "users");
-							$_service = new __Db("seed", "service");
-						?>
-					</div>
-
-                    <?php if ($flush): ?>
-                        <div class="alert alert-primary" role="alert">
-                            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-                            Новая база данных готова к использованию!
-                            <ul>
-
-								<?php if ($_sidebar): ?>
-                                    <li>Очищен/Создан Сайдбар</li>
-                                <?php else: ?>
-                                    <li class="text-danger">Ошибка при создании сайдбара</li>
-									<?php if ($_sidebar): ?>
-										<ol class="text-danger">
-	                                        <li><?= $_sidebar ?></li>
-	                                    </ol>
-									<?php endif; ?>
-                                <?php endif; ?>
-
-								<?php if ($_province): ?>
-                                    <li>Очищен/Создан список областей</li>
-                                <?php else: ?>
-                                    <li class="text-danger">Ошибка при создании списока областей</li>
-									<?php if ($_province): ?>
-										<ol class="text-danger">
-	                                        <li><?= $_province ?></li>
-	                                    </ol>
-									<?php endif; ?>
-                                <?php endif; ?>
-
-								<?php if ($_region): ?>
-                                    <li>Очищен/Создан список регионов</li>
-                                <?php else: ?>
-                                    <li class="text-danger">Ошибка при создании списока регионов</li>
-									<?php if ($_region): ?>
-										<ol class="text-danger">
-	                                        <li><?= $_region ?></li>
-	                                    </ol>
-									<?php endif; ?>
-                                <?php endif; ?>
-
-                                <li>Очищены склады</li>
-								<li>Очищены заказы</li>
-                                <li>Очищены визиты</li>
-
-                                <li>Очищены услуги</li>
-                                <?php if ($_service): ?>
-                                    <li>Создана услуга</li>
-                                    <ol>
-                                        <li>Стационарный Осмотр</li>
-                                    </ol>
-                                <?php else: ?>
-                                    <li class="text-danger">Ошибка создания услуги</li>
-									<?php if ($_service): ?>
-										<ol class="text-danger">
-	                                        <li><?= $_service ?></li>
-	                                    </ol>
-									<?php endif; ?>
-                                <?php endif; ?>
-
-                                <li>Очищены пользователи</li>
-                                <?php if ($_user): ?>
-                                    <li>Создан администратор</li>
-                                    <ol>
-                                        <li>login: admin</li>
-                                        <li>password: admin</li>
-                                    </ol>
-                                <?php else: ?>
-                                    <li class="text-danger">Ошибка создания администратора</li>
-									<?php if ($_user): ?>
-										<ol class="text-danger">
-	                                        <li><?= $_user ?></li>
-	                                    </ol>
-									<?php endif; ?>
-                                <?php endif; ?>
-
-                            </ul>
-
-                        </div>
-					<?php else: ?>
-						<div class="alert bg-danger alert-styled-left alert-dismissible">
-							<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-							<span class="font-weight-semibold">Ошибка при очистке базы данных!</span>
-					    </div>
-                    <?php endif; ?>
-
-                <?php endif; ?>
-
                 <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
@@ -166,17 +48,17 @@ $header = "Панель управления";
 
 								<legend>The Settings Modules</legend>
 
-								<?php
-								try {
-									$company = new stdClass();
-									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
-									foreach ($comp as $value) {
-										$company->{$value->const_label} = $value->const_value;
-									}
-									?>
-									<div class="table-responsive">
-										<table class="table table-sm table-bordered">
-											<tbody>
+								<div class="table-responsive">
+									<table class="table table-sm table-bordered">
+										<tbody>
+											<?php
+											try {
+												$company = new stdClass();
+												$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
+												foreach ($comp as $value) {
+													$company->{$value->const_label} = $value->const_value;
+												}
+												?>
 												<tr>
 													<th>Laboratory</th>
 													<td class="text-right">
@@ -237,14 +119,14 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
-											</tbody>
-										</table>
-									</div>
-									<?php
-								} catch (\Exception $e) {
-									echo "Не установлена база данных";
-								}
-								?>
+												<?php
+											} catch (\Exception $e) {
+												echo '<tr class="text-center"><th colspan="2">Не установлена база данных</th></tr>';
+											}
+											?>
+										</tbody>
+									</table>
+								</div>
 
 							</div>
 
@@ -253,18 +135,17 @@ $header = "Панель управления";
 
 								<legend>The Settings Configurations</legend>
 
-								<?php
-								try {
-									$config = new stdClass();
-									$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'config_%'")->fetchAll(PDO::FETCH_OBJ);
-									foreach ($comp as $value) {
-										$config->{$value->const_label} = $value->const_value;
-									}
-									?>
-									<div class="table-responsive">
-										<table class="table table-sm table-bordered">
-											<tbody>
-
+								<div class="table-responsive">
+									<table class="table table-sm table-bordered">
+										<tbody>
+											<?php
+											try {
+												$config = new stdClass();
+												$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'config_%'")->fetchAll(PDO::FETCH_OBJ);
+												foreach ($comp as $value) {
+													$config->{$value->const_label} = $value->const_value;
+												}
+												?>
 												<tr>
 													<th>Wards by division</th>
 													<td class="text-right">
@@ -317,15 +198,14 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
-												
-											</tbody>
-										</table>
-									</div>
-									<?php
-								} catch (\Exception $e) {
-									echo "Не установлена база данных";
-								}
-								?>
+												<?php
+											} catch (\Exception $e) {
+												echo '<tr class="text-center"><th colspan="2">Не установлена база данных</th></tr>';
+											}
+											?>
+										</tbody>
+									</table>
+								</div>
 
                             </div>
 

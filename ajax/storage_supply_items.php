@@ -46,9 +46,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk'])) {
 
 				<div class="<?= $classes['card'] ?>">
 
-					<?php 
-					$form->get_or_404($_GET['pk']);
-					?>
+					<?php $form->get_or_404($_GET['pk']) ?>
 
           		</div>
 

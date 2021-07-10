@@ -70,9 +70,7 @@ $header = "Аптека / Поставки";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-									<?php
-									$tb = new Table($db, "storage_supply");
-									?>
+									<?php $tb = new Table($db, "storage_supply"); ?>
                                     <?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
 											<td><?= $row->count ?></td>
@@ -81,7 +79,9 @@ $header = "Аптека / Поставки";
 											<td><?= date_f($row->add_date, 1) ?></td>
 											<td class="text-right">
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'StorageSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<?php if(!$row->completed): ?>
+														<a onclick="Update('<?= up_url($row->id, 'StorageSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<?php endif; ?>
 													<a href="<?= ajax('storage_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
 												</div>
 											</td>

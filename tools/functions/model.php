@@ -8,13 +8,14 @@ class Model
      * Model + PDO
      * 
      * 
-     * @version 8.9
+     * @version 9.0
      */
 
     protected $post;
     protected $table = '';
     protected $file_directory = "/storage/";
     protected $file_format = null;
+    protected $dinamic_delete = true;
 
     public function set_post($post)
     {
@@ -245,7 +246,11 @@ class Model
         if ($object) {
             $this->success();
         } else {
-            Mixin\error('404');
+            if ($this->dinamic_delete) {
+                $this->error("Не найден объект для удаления!");
+            } else {
+                Mixin\error('404');
+            }
             exit;
         }
 
