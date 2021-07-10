@@ -576,7 +576,7 @@ class VisitPriceModel extends Model
 
     public function add_bed()
     {
-        global $db;
+        global $db, $FLOOR;
         $ti = $db->query("SELECT vs.*, vss.sale_bed, vss.sale_service FROM $this->table1 vs LEFT JOIN visit_sale vss ON(vss.visit_id=vs.id) WHERE vs.user_id = $this->user_pk AND vs.service_id = 1 AND vs.priced_date IS NULL AND vs.completed IS NOT NULL")->fetch();
         $this->ti = $ti['id'];
         $this->sale_bed = $ti['sale_bed'];
@@ -588,7 +588,7 @@ class VisitPriceModel extends Model
         $post['status'] = 0;
         $post['item_type'] = 101;
         $post['item_id'] = $ti['bed_id'];
-        $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
+        $post['item_name'] = "{$FLOOR[$bed['floor']]} ".$bed['ward']." палата ".$bed['bed']." койка";
         $post['item_cost'] = $this->bed_cost;
         $object = Mixin\insert($this->table, $post);
         if (!intval($object)) {

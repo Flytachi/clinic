@@ -233,7 +233,7 @@ if (!$patient) {
                                 <label class="col-md-4"><b>Размещён:</b></label>
                                 <div <?= $loc_attr ?> id="patient_location">
                                     <?php if ($activity): ?>
-                                        <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
+                                        <?= $FLOOR[$patient->floor] ?> <?= $patient->ward ?> палата <?= $patient->bed ?> койка
                                     <?php else: ?>
                                         <?= $patient->item_name ?>
                                     <?php endif; ?>
