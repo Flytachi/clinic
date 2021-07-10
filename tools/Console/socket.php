@@ -1,7 +1,6 @@
 <?php
 
 require dirname(__DIR__, 2).'/static/vendor/autoload.php';
-require_once dirname(__DIR__).'/functions/connection.php';
 
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;

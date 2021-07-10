@@ -2,20 +2,24 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 
-// print
+// Print
 if ( isset($_POST['print_header_title']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_title", 'const_value' => $_POST['print_header_title']), "const_label");
 if ( isset($_POST['print_header_address']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_address", 'const_value' => $_POST['print_header_address']), "const_label");
 if ( isset($_POST['print_header_phones']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_phones", 'const_value' => $_POST['print_header_phones']), "const_label");
+if ( isset($_POST['print_check_size']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_check_size", 'const_value' => $_POST['print_check_size']), "const_label");
 
+// Floor
+if ( isset($_POST['floors']) ) Mixin\insert_or_update("company_constants", array('const_label' => "floors", 'const_value' => json_encode($_POST['floors'])), "const_label");
+
+// Diet
 if ( isset($_POST['const_diet_time']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_diet_time", 'const_value' => json_encode($_POST['const_diet_time'])), "const_label");
-if ( isset($_POST['const_foreigner_sale']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_foreigner_sale", 'const_value' => $_POST['const_foreigner_sale']), "const_label");
 
-// pacs
+// Pacs
 if ( isset($_POST['const_zetta_pacs_IP']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_zetta_pacs_IP", 'const_value' => $_POST['const_zetta_pacs_IP']), "const_label");
 if ( isset($_POST['const_zetta_pacs_LICD']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_zetta_pacs_LICD", 'const_value' => $_POST['const_zetta_pacs_LICD']), "const_label");
 if ( isset($_POST['const_zetta_pacs_VTYPE']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_zetta_pacs_VTYPE", 'const_value' => $_POST['const_zetta_pacs_VTYPE']), "const_label");
 
-// logo
+// Logo
 if ( isset($_FILES['print_header_logotype']) and $_FILES['print_header_logotype']['name'] ) {
 
     if ($_FILES['print_header_logotype']['error'] === UPLOAD_ERR_OK) {

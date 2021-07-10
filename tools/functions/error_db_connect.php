@@ -31,7 +31,7 @@
                     <!-- Error title -->
                     <div class="text-center mb-3">
                         <h3 class="error-title text-danger">Ошибка</h3>
-                        <h3><?= $e->getMessage(); ?></h5>
+                        <h3><?= $_error; ?></h5>
                     </div>
                     <!-- /error title -->
 

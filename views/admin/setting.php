@@ -92,17 +92,36 @@ $header = "Настройки";
 									</div>
 								</div>
 
-							</fieldset>
-
-							<fieldset class="mb-3">
-								<legend class="text-uppercase font-size-sm font-weight-bold">Процент</legend>
-
-								<div class="form-group">
-									<label>Резидент (процент):</label>
-									<input type="number" name="const_foreigner_sale" value="<?= ( isset($company->const_foreigner_sale) ) ? $company->const_foreigner_sale : '' ?>" placeholder="Введите процент" class="form-control">
+								<div class="form-group row">
+									<label class="col-form-label col-lg-1 font-weight-bold">Размер чека:</label>
+									<div class="col-lg-3">
+										<input type="text" name="print_check_size" value="<?= ( isset($company->print_check_size) ) ? $company->print_check_size : '' ?>" placeholder="Введите размер в милиметрах" class="form-control">
+									</div>
 								</div>
 
 							</fieldset>
+
+
+                            <fieldset class="mb-3">
+                                <legend><b>Этажи:</b></legend>
+
+                            	<button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить этаж</button>
+                                <div class="form-group row" id="floors_div">
+                                    <?php if( isset($company->floors) ): ?>
+                                        <?php foreach (json_decode($company->floors) as $floor_key => $value): ?>
+                                            <div class="col-md-3" id="floors_input_<?= $floor_key ?>">
+                                                <div class="form-group-feedback form-group-feedback-right">
+                                                    <input type="number" name="floors[<?= $floor_key ?>]" class="form-control" value="<?= $value ?>" required>
+                                                    <div class="form-control-feedback text-danger">
+                                                        <i class="icon-minus-circle2" onclick="$('#floors_input_<?= $floor_key ?>').remove();"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+
+                            </fieldset>
 
 							<?php if(module('module_zetta_pacs')): ?>
 								<fieldset class="mb-3">
@@ -149,6 +168,23 @@ $header = "Настройки";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+        let i = Number("<?= (isset($floor_key)) ? $floor_key + 1 : 0 ?>");
+		function AddinputTime(floor = null) {
+			$('#floors_div').append(`
+				<div class="col-md-3" id="floors_input_${i}">
+					<div class="form-group-feedback form-group-feedback-right">
+						<input type="number" name="floors[${i}]" class="form-control" value="${floor}" required>
+						<div class="form-control-feedback text-danger">
+							<i class="icon-minus-circle2" onclick="$('#floors_input_${i}').remove();"></i>
+						</div>
+					</div>
+				</div>
+			`);
+			i++;
+		}
+	</script>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

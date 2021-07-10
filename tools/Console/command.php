@@ -27,9 +27,7 @@ class __Make
 
     private function resolution()
     {
-        if ($this->argument == "setting") {
-            $this->create_setting();
-        }elseif ($this->argument == "storage") {
+        if ($this->argument == "storage") {
             $this->create_storage();
         }elseif ($this->argument == "dump") {
             $this->create_dump();
@@ -47,57 +45,25 @@ class __Make
         }
     }
 
-    public function gen_setting()
-    {
-        return <<<EOF
-        [GLOBAL_SETTING]
-        DRIVER = mysql
-        CHARSET = utf8
-        TIME_ZONE = Asia/Samarkand
-
-        SESSION_GC_PROBABILITY = 0
-        SESSION_GC_DIVISOR = 100
-        SESSION_TIMEOUT = 
-        SESSION_LIFE = 
-        SESSION_COOKIE_LIFETIME = 
-
-        ENGINEERING_WORKS = false
-        HIDE_EXTENSION = false
-        ROOT_MOD = false
-        DEBUG = false
-
-
-        [DATABASE]
-        HOST = localhost
-        NAME = 
-        USER = 
-        PASS = 
-
-        [SOCKET]
-        PORT = 8080
-        HOST = 
-        EOF;
-    }
-
-    public function create_setting()
-    {
-        $file_name = "setting.ini";
-        if (!file_exists($file_name)) {
-            $fp = fopen($file_name, "x");
-            fwrite($fp, $this->gen_setting());
-            echo "\033[32m". " $file_name сгенирирован успешно!\n";
-            return fclose($fp);
-        }
-        echo "\033[33m". " $file_name уже существует!\n";
-        return 0;
-    }
-
     public function create_storage()
     {
-        $result = exec("mkdir storage && chmod 777 storage && echo 1");
-        if ($result) {
-            echo "\033[32m"." Директория storage создана.\n";
+        // $result = exec("mkdir storage && mkdir storage/documents && chmod -R 777 storage && echo 1");
+        if (exec("mkdir storage && echo 1")) {
+            echo "\033[32m"." => Директория storage создана.\n";
         }
+        if (exec("mkdir storage/documents && echo 1")) {
+            echo "\033[32m"." => Директория storage/documents создана.\n";
+        }
+        if (exec("mkdir storage/avatars && echo 1")) {
+            echo "\033[32m"." => Директория storage/avatars создана.\n";
+        }
+        if (exec("mkdir storage/images && echo 1")) {
+            echo "\033[32m"." => Директория storage/images создана.\n";
+        }
+        if (exec("chmod -R 777 storage && echo 1")) {
+            echo "\033[32m"." Права на запись установлены.\n";
+        }
+        
         return 1;
     }
 
@@ -108,6 +74,194 @@ class __Make
             echo "\033[32m"." Директория dump создана.\n";
         }
         return 1;
+    }
+
+    public function help()
+    {
+        echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+class __Key
+{
+    private $argument;
+    private $name;
+    private $key = ".key";
+    private $auth = "master_key_ITACHI:2021-06-30";
+
+    function __construct($value = null, $seria = null)
+    {
+        $this->argument = $value;
+        $this->seria = $seria;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument) and !is_null($this->seria)) {
+            $this->resolution();
+        }else {
+            echo "---ERROR---";
+        }
+    }
+
+    private function resolution()
+    {
+        if (hex2bin("$this->argument") === $this->auth) {
+            $this->generate_key();
+        }else {
+            echo "---ERROR---";
+        }
+    }
+
+    public function generate_key()
+    {
+        $KEY = dirname(__DIR__, 2)."/$this->key";
+        $fp = fopen($KEY, "w");
+        fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
+        fclose($fp);
+        echo "---DONE---";
+        return 1;
+    }
+
+}
+
+class __Cfg
+{
+    private $argument;
+    private $name;
+    private $setting_name = "setting.ini";
+    private $cfg_name = ".cfg";
+    private $default_configuratuons = array(
+        'SECURITY' => array(
+            'SERIA' => null, 
+        ),
+        'GLOBAL_SETTING' => array(
+            'DRIVER' => 'mysql', 
+            'CHARSET' => 'utf8', 
+            'TIME_ZONE' => 'Asia/Samarkand', 
+
+            'SESSION_GC_PROBABILITY' => 0, 
+            'SESSION_GC_DIVISOR' => 100, 
+            'SESSION_TIMEOUT' => null, 
+            'SESSION_LIFE' => null, 
+            'SESSION_COOKIE_LIFETIME' => null, 
+
+            'ENGINEERING_WORKS' => false, 
+            'HIDE_EXTENSION' => false, 
+            'ROOT_MOD' => false, 
+            'DEBUG' => false, 
+        ), 
+        'DATABASE' => array(
+            'HOST' => 'localhost',
+            'NAME' => null,  
+            'USER' => null,
+            'PASS' => null, 
+        ), 
+        'SOCKET' => array(
+            'PORT' => 8080, 
+            'HOST' => null,
+        ), 
+    );
+
+
+    function __construct($value = null, $name = null)
+    {
+        $this->argument = $value;
+        $this->name = $name;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument)) {
+            $this->resolution();
+        }else {
+            $this->help();
+        }
+    }
+
+    private function resolution()
+    {
+        if ($this->argument == "setting") {
+            $this->create_setting();
+        }elseif ($this->argument == "generate") {
+            $this->generate_key();
+        }elseif ($this->argument == "edit") {
+            $this->edit_key();
+        }elseif ($this->argument == "show") {
+            $this->setting_show();
+        }else {
+            echo "\033[31m"." Не такого аргумента.\n";
+        }
+    }
+
+    public function create_setting()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (!file_exists(dirname(__DIR__, 2)."/$this->setting_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
+            fwrite($fp, Mixin\array_to_ini($this->default_configuratuons));
+            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
+            return fclose($fp);
+        }
+        echo "\033[33m". " $this->setting_name уже существует!\n";
+        return 0;
+    }
+
+    public function edit_key()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+        
+        if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
+            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
+
+            $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
+            fwrite($fp, Mixin\array_to_ini($code));
+            fclose($fp);
+            unlink(dirname(__DIR__, 2)."/$this->cfg_name");
+            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
+            return 1;
+        }
+        echo "\033[33m". " $this->cfg_name не существует!\n";
+        return 0;
+    }
+
+    public function setting_show()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
+            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
+            print_r(Mixin\array_to_ini($code));
+            return 1;
+        }
+        echo "\033[33m". " $this->cfg_name не существует!\n";
+        return 0;
+    }
+
+    public function generate_key()
+    {
+        $FILE_setting_ini = dirname(__DIR__, 2)."/$this->setting_name";
+        $sett = parse_ini_file($FILE_setting_ini, true);
+        if (!file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->cfg_name", "x");
+            fwrite($fp, chunk_split( bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)) , 50, "\n") );
+            fclose($fp);
+            if (unlink($FILE_setting_ini)) {
+                echo "\033[32m". " $this->cfg_name сгенирирован успешно!\n";
+            }else {
+                unlink(dirname(__DIR__, 2)."/$this->cfg_name");
+                echo "\033[31m"."Ошибка при генерации.\n";
+            }
+            return 1;
+        }
+        echo "\033[33m". " $this->cfg_name уже существует!\n";
+        return 0;
     }
 
     public function help()
@@ -177,7 +331,7 @@ class __Db
     private String $file_name = "database";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
     private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private Array $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
+    private Array $MUL = array('beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,'wards' => '`building_id` (`building_id`,`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
 
     function __construct($value = null, $name = null)
     {
@@ -224,7 +378,7 @@ class __Db
 
     public function delete()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
         
@@ -237,7 +391,7 @@ class __Db
 
     public function clean()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
         if (!$this->clean_table) {
@@ -256,7 +410,7 @@ class __Db
 
     public function migrate()
     {
-        global $db; 
+        global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
 
@@ -272,18 +426,18 @@ class __Db
 
     public function generate()
     {
-        global $db;
+        global $db, $ini;
         require_once dirname(__DIR__).'/functions/connection.php';
 
         $json = array();
 
         foreach ($db->query("SHOW TABlES") as $table) {
 
-            $sql = $this->DB_HEADER." `{$table['Tables_in_clinic']}` (";
+            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
             $column = "";
             $keys = "";
 
-            foreach ($db->query("DESCRIBE {$table['Tables_in_clinic']}") as $col) {
+            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
                 $column .= "`{$col['Field']}` {$col['Type']}";
 
                 if ($col['Null'] == "YES") {
@@ -312,7 +466,7 @@ class __Db
 
                     case "MUL":
                         // $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
-                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_clinic']]} USING BTREE";
+                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
                         $keys.=",";
                         break;
                 }
@@ -485,11 +639,11 @@ class __Serve
 
     function __construct($value = null, $name = null)
     {
-        global $ini;
+        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/.cfg") );
+        $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
         echo "\033[32m"." Сокет сервер успешно запущен.\n";
         
         require 'socket.php';
-
     }
 
 }
