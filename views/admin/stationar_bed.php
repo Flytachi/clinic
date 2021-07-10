@@ -82,7 +82,7 @@ $header = "Койки";
                                 <tbody>
                                     <?php foreach($db->query('SELECT bd.id, wd.floor, wd.ward, bd.bed, bd.types from beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id)') as $row): ?>
                                         <tr>
-                                            <td><?= $row['floor'] ?> этаж</td>
+                                            <td><?= $FLOOR[$row['floor']] ?></td>
                                             <td><?= $row['ward'] ?> палата</td>
                                             <td><?= $row['bed'] ?> койка</td>
                                             <td>
