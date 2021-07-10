@@ -81,7 +81,7 @@ $header = "Палаты";
 	                              	<?php foreach($db->query('SELECT * from wards') as $row): ?>
                                   		<tr>
 											<td><?= $row['id'] ?></td>
-											<td><?= $row['floor'] ?> этаж</td>
+											<td><?= $FLOOR[$row['floor']] ?></td>
 											<td><?= $row['ward'] ?> палата</td>
 	                                      	<td>
 												<div class="list-icons">
