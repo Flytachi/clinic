@@ -5,6 +5,7 @@ class StorageSupplyModel extends Model
     public $table = 'storage_supply';
     public $_storage = 'storages';
     public $_storage_item = 'storage_supply_items';
+    public $_item_names = 'storage_item_names';
 
 
     public function form($pk = null)
@@ -416,6 +417,7 @@ class StorageSupplyModel extends Model
         $uniq = $db->query("SELECT uniq_key FROM $this->table WHERE id = $pk")->fetchColumn();
         foreach ($db->query("SELECT * FROM $this->_storage_item WHERE uniq_key = '$uniq'") as $item) {
             unset($item['uniq_key']);
+            $item['item_retail'] = $db->query("SELECT retail FROM $this->_item_names WHERE id = {$item['item_name_id']}")->fetchColumn();
             $object = Mixin\insert($this->_storage, $item);
             if (!intval($object)){
                 $this->error($object);
