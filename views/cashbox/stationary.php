@@ -2,15 +2,22 @@
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "Рабочий стол";
+
+$tb = new Table($db, "visits vs");
+$search = $tb->get_serch();
+$tb->set_data("vs.id, vs.user_id")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");
+
+$where_search = array(
+	"vs.direction IS NOT NULL AND vs.completed IS NULL", 
+	"vs.direction IS NOT NULL AND vs.completed IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->where_or_serch($where_search);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack('global_assets/js/plugins/forms/styling/switchery.min.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
-
-<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -47,16 +54,18 @@ $header = "Рабочий стол";
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Стационар</h5>
 								<div class="header-elements">
-									<div class="form-group-feedback form-group-feedback-right">
-										<input type="search" class="form-control wmin-200 border-success" id="search_input" placeholder="Введите ID или имя">
-										<div class="form-control-feedback text-success">
-											<i class="icon-search4 font-size-base text-muted"></i>
+									<form action="" class="mr-2">
+										<div class="form-group-feedback form-group-feedback-right">
+											<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+											<div class="form-control-feedback">
+												<i class="icon-search4 font-size-base text-muted"></i>
+											</div>
 										</div>
-									</div>
+									</form>
 								</div>
 							</div>
 
-                            <div class="card-body">
+                            <div class="card-body" id="search_display">
 
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -66,19 +75,21 @@ $header = "Рабочий стол";
                                                 <th class="text-center">ФИО</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="search_display">
-                                            <?php $i=0; foreach($db->query("SELECT DISTINCT us.id FROM users us LEFT JOIN visit vs ON(us.id=vs.user_id) WHERE us.user_level = 15 AND vs.direction IS NOT NULL AND vs.priced_date IS NULL AND vs.service_id = 1") as $row): ?>
-                                                <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>', '<?= $row['id'] ?>')">
-                                                    <td><?= addZero($row['id']) ?></td>
-                                                    <td class="text-center">
-                                                        <a>
-                                                            <div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-											<?php $i++; endforeach; ?>
+                                        <tbody>
+											<?php foreach($tb->get_table(1) as $row): ?>
+				                                <tr onclick="Check('get_mod.php?pk=<?= $row->id ?>')" id="VisitIDPrice_<?= $row->id ?>">
+				                                    <td><?= addZero($row->user_id) ?></td>
+				                                    <td class="text-center">
+				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+				                                    </td>
+				                                </tr>
+				                            <?php endforeach; ?>
 											<tr class="table-secondary">
-												<th colspan="2" class="text-right">Всего: <?= $i ?></th>
+												<?php if(isset($row->count)): ?>
+													<th colspan="2" class="text-right">Всего: <?= $row->count ?></th>
+												<?php else: ?>
+													<th colspan="2" class="text-center">Нет данных</th>
+												<?php endif; ?>
 											</tr>
                                         </tbody>
                                     </table>
@@ -111,17 +122,9 @@ $header = "Рабочий стол";
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_invest" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header bg-info">
-					<h6 class="modal-title">Оплата</h6>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<?php (new InvestmentModel)->form(); ?>
-
-			</div>
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
@@ -160,6 +163,21 @@ $header = "Рабочий стол";
     <!-- /footer -->
 
 	<script type="text/javascript">
+
+		$("#search_input").keyup(function() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/cashbox-stationary') ?>",
+				data: {
+					table_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		});
 
 		if (sessionStorage['message']) {
 			$('#check_div').html(sessionStorage['message']);
@@ -211,20 +229,6 @@ $header = "Рабочий стол";
 				},
 			});
 		};
-
-		$("#search_input").keyup(function() {
-			$.ajax({
-				type: "GET",
-				url: "search.php",
-				data: {
-					tab: 2,
-                    search: $("#search_input").val(),
-                },
-				success: function (result) {
-					$('#search_display').html(result);
-				},
-			});
-		});
 	</script>
 
 </body>

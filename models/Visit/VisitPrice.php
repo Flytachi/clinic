@@ -176,6 +176,118 @@ class VisitPriceModel extends Model
         <?php
     }
 
+    public function form_button($pk = null)
+    {
+        global $data;
+        dd("old function");
+        ?>
+        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="user_id" value="<?= $pk ?>">
+            <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <?php if(module('module_pharmacy')): ?>
+                <?php if($completed): ?>
+                    <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>
+                <?php endif; ?>
+            <?php endif; ?>
+            <button onclick="SaleCheck(<?= $pk_visit ?>, <?= round($price['cost_bed'] + $price['cost_beds'], 1) ?>, <?= round($price['cost_service'], 1) ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
+            <button onclick="CardFuncCheck('<?= up_url($data['id'], 'VisitInvestmentsModel') ?>&type=0')" type="button" class="btn btn-outline-success btn-sm">Предоплата</button>
+            <button onclick="CardFuncCheck('<?= up_url($data['id'], 'VisitInvestmentsModel') ?>&type=1')" type="button" class="btn btn-outline-danger btn-sm">Возврат</button>
+            <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed and $price['cost_item_2'] == 0) ? "" : "disabled" ?>>Расщёт</button>
+            <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
+        </form>
+        <script type="text/javascript">
+
+            function CardFuncCheck(events) {
+                $.ajax({
+                    type: "GET",
+                    url: events,
+                    success: function (data) {
+                        $('#modal_default').modal('show');
+                        $('#form_card').html(data);
+                    },
+                });
+            };
+
+            function printdiv(printpage) {
+                var printContents = document.getElementById(printpage).innerHTML;
+                var originalContents = document.body.innerHTML;
+                document.body.innerHTML = printContents;
+                window.print();
+                document.body.innerHTML = originalContents;
+            }
+
+            function Pharm(pk, cost, format_cost) {
+                $('#modal_default').modal('show');
+                $('#pharm_user_id').val(pk);
+                $('#pharm_total_price_hidden').val(cost);
+                $('#pharm_total_price').val(format_cost);
+            }
+
+            function SaleCheck(pk, bed_cost, service_cost){
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('cashbox_sale') ?>",
+                    data: {pk:pk},
+                    success: function (result) {
+                        $('#modal_sale').modal('show');
+                        $('#modal_sale_div').html(result);
+                        $('#bed_price_sale').val(bed_cost);
+                        $('#bed_price_original_sale').val(bed_cost);
+                        $('#service_price_sale').val(service_cost);
+                        $('#service_price_original_sale').val(service_cost);
+                    }
+                });
+            }
+
+            function Proter(pk) {
+                event.preventDefault();
+                // $('#<?= __CLASS__ ?>_form').submit();
+
+                if (Math.round($('#prot_item').val()) != 0) {
+
+                    if ($('#prot_item').val() < 0) {
+                        var text = "Нехватка средств!";
+                    }else {
+                        var text = "Верните пациенту деньги!";
+                    }
+                    new Noty({
+                        text: text,
+                        type: 'error'
+                    }).show();
+
+                }else {
+                    $.ajax({
+                        type: $('#<?= __CLASS__ ?>_form').attr("method"),
+                        url: $('#<?= __CLASS__ ?>_form').attr("action"),
+                        data: $('#<?= __CLASS__ ?>_form').serializeArray(),
+                        success: function (result) {
+                            // alert(result);
+                            var result = JSON.parse(result);
+
+                            if (result.status == "success") {
+                                // Выдача выписки
+                                var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                                Print(url);
+                                // Перезагрузка
+                                sessionStorage['message'] = result.message;
+                                setTimeout( function() {
+                                        location.reload();
+                                    }, 1000)
+                            }else {
+                                $('#check_div').html(result.message);
+                            }
+
+                        },
+                    });
+                }
+            }
+
+        </script>
+        <?php
+    }
+
     public function form_pharm($pk = null)
     {
         dd("old function");
@@ -286,107 +398,6 @@ class VisitPriceModel extends Model
                         Check('get_mod.php?pk='+$('#user_st_id').val() ,$('#user_st_id').val());
                     },
                 });
-            }
-
-        </script>
-        <?php
-    }
-
-    public function form_button($pk = null)
-    {
-        global $pk_visit, $completed, $price, $price_cost;
-        dd("old function");
-        ?>
-        <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="user_id" value="<?= $pk ?>">
-            <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
-            <?php if(module('module_pharmacy')): ?>
-                <?php if($completed): ?>
-                    <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>
-                <?php endif; ?>
-            <?php endif; ?>
-            <button onclick="SaleCheck(<?= $pk_visit ?>, <?= round($price['cost_bed'] + $price['cost_beds'], 1) ?>, <?= round($price['cost_service'], 1) ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
-            <button onclick="Invest(1)" type="button" data-name="Разница" data-balance="<?= number_format($price['balance'] + $price_cost) ?>" class="btn btn-outline-success btn-sm">Предоплата</button>
-            <button onclick="Invest(0)" type="button" data-name="Баланс" data-balance="<?= number_format($price['balance']) ?>" class="btn btn-outline-danger btn-sm">Возврат</button>
-            <button onclick="Proter('<?= $pk_visit ?>')" type="button" class="btn btn-outline-warning btn-sm" <?= ($completed and $price['cost_item_2'] == 0) ? "" : "disabled" ?>>Расщёт</button>
-            <button onclick="Detail('<?= viv('cashbox/get_detail')."?pk=".$pk?>')" type="button" class="btn btn-outline-primary btn-sm" data-show="1">Детально</button>
-        </form>
-        <script type="text/javascript">
-
-            function printdiv(printpage) {
-                var printContents = document.getElementById(printpage).innerHTML;
-                var originalContents = document.body.innerHTML;
-                document.body.innerHTML = printContents;
-                window.print();
-                document.body.innerHTML = originalContents;
-            }
-
-            function Pharm(pk, cost, format_cost) {
-                $('#modal_default').modal('show');
-                $('#pharm_user_id').val(pk);
-                $('#pharm_total_price_hidden').val(cost);
-                $('#pharm_total_price').val(format_cost);
-            }
-
-            function SaleCheck(pk, bed_cost, service_cost){
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('cashbox_sale') ?>",
-                    data: {pk:pk},
-                    success: function (result) {
-                        $('#modal_sale').modal('show');
-                        $('#modal_sale_div').html(result);
-                        $('#bed_price_sale').val(bed_cost);
-                        $('#bed_price_original_sale').val(bed_cost);
-                        $('#service_price_sale').val(service_cost);
-                        $('#service_price_original_sale').val(service_cost);
-                    }
-                });
-            }
-
-            function Proter(pk) {
-                event.preventDefault();
-                // $('#<?= __CLASS__ ?>_form').submit();
-
-                if (Math.round($('#prot_item').val()) != 0) {
-
-                    if ($('#prot_item').val() < 0) {
-                        var text = "Нехватка средств!";
-                    }else {
-                        var text = "Верните пациенту деньги!";
-                    }
-                    new Noty({
-                        text: text,
-                        type: 'error'
-                    }).show();
-
-                }else {
-                    $.ajax({
-                        type: $('#<?= __CLASS__ ?>_form').attr("method"),
-                        url: $('#<?= __CLASS__ ?>_form').attr("action"),
-                        data: $('#<?= __CLASS__ ?>_form').serializeArray(),
-                        success: function (result) {
-                            // alert(result);
-                            var result = JSON.parse(result);
-
-                            if (result.status == "success") {
-                                // Выдача выписки
-                                var url = "<?= viv('prints/document_3') ?>?id="+pk;
-                                Print(url);
-                                // Перезагрузка
-                                sessionStorage['message'] = result.message;
-                                setTimeout( function() {
-                                        location.reload();
-                                    }, 1000)
-                            }else {
-                                $('#check_div').html(result.message);
-                            }
-
-                        },
-                    });
-                }
             }
 
         </script>

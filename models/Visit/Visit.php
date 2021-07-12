@@ -214,7 +214,7 @@ class VisitModel extends Model
 
     public function form_sta($pk = null)
     {
-        global $db, $FLOOR, $classes;
+        global $db, $classes;
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -388,10 +388,10 @@ class VisitModel extends Model
                         }
 
                     });
-
-                    FormLayouts.init();
+                    // FormLayouts.init();
 
                 });
+
             </script>
         <?php endif; ?>
         <script type="text/javascript">
@@ -420,7 +420,6 @@ class VisitModel extends Model
                             floor: params.selectedOptions[0].value,
                         },
                         success: function (result) {
-                            console.log(result);
                             if (result.trim() == "<option></option>") {
                                 document.querySelector("#ward_id").disabled = true;
                             } else {
@@ -592,15 +591,16 @@ class VisitModel extends Model
 
     public function add_visit_bed()
     {
-        global $db;
-        $bed_data = $db->query("SELECT wd.floor, wd.ward, bd.bed, bdt.name FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN bed_types bdt ON(bdt.id=bd.types) WHERE bd.id = {$this->post['bed']}")->fetch();
+        global $db, $session;
+        $bed_data = $db->query("SELECT building, floor, ward, bed, types FROM beds bd WHERE id = {$this->post['bed']}")->fetch();
 
         $post = array(
             'visit_id' => $this->visit_pk,
+            'parent_id' => $session->session_id,
             'user_id' => $this->post['user_id'],
             'bed_id' => $this->post['bed'],
-            'location' => "{$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка",
-            'type' => $bed_data['name'],
+            'location' => "{$bed_data['building']} {$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка",
+            'type' => $bed_data['types'],
         );
         $object = Mixin\insert($this->_beds, $post);
         if (!intval($object)) {
@@ -623,7 +623,7 @@ class VisitModel extends Model
             $db->beginTransaction();
 
             $this->create_or_update_visit();
-            if (is_array($this->post['service'])) {
+            if (isset($this->post['service']) and is_array($this->post['service'])) {
 
                 foreach ($this->post['service'] as $key => $value) {
                     $this->add_visit_service($key, $value);
@@ -633,7 +633,6 @@ class VisitModel extends Model
                 
                 $this->add_visit_service(null, 1);
                 $this->add_visit_bed();
-                // $this->dd();
                 
             }
 
@@ -652,10 +651,11 @@ class VisitModel extends Model
     public function clean()
     {
         global $db;
-        
+
         if (is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
+        
         // if ($this->post['bed_stat']) {
         //     $this->bed_edit();
         // }

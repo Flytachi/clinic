@@ -74,7 +74,7 @@ $tb->where_or_serch($where_search);
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-				                            <?php foreach($tb->get_table() as $row): ?>
+				                            <?php foreach($tb->get_table(1) as $row): ?>
 				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')" id="VisitIDPrice_<?= $row->visit_id ?>">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
@@ -82,6 +82,13 @@ $tb->where_or_serch($where_search);
 				                                    </td>
 				                                </tr>
 				                            <?php endforeach; ?>
+											<tr class="table-secondary">
+												<?php if(isset($row->count)): ?>
+													<th colspan="2" class="text-right">Всего: <?= $row->count ?></th>
+												<?php else: ?>
+													<th colspan="2" class="text-center">Нет данных</th>
+												<?php endif; ?>
+											</tr>
 				                        </tbody>
 				                    </table>
 				                </div>

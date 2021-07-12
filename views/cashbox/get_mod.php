@@ -5,16 +5,16 @@ if ($_GET['pk']) {
     $pk = $_GET['pk'];
 
     if( isset($_GET['mod']) and $_GET['mod'] == "st"){
-        $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
-        $pk_visit = $ps['id'];
-        $completed = $ps['completed'];
+        $data = $db->query("SELECT * FROM visits WHERE id = $pk AND completed IS NULL")->fetch();
+        // $pk_visit = $ps['id'];
+        // $completed = $ps['completed'];
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($data['user_id']) ?> - <em><?= get_full_name($data['user_id']) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
-                        <a href="<?= viv('card/content_1')."?pk=$pk_visit" ?>" class="btn btn-outline-info btn-sm">Перейти к визиту</a>
+                        <a href="<?= viv('card/content_1')."?pk=$pk" ?>" class="btn btn-outline-info btn-sm">Перейти к визиту</a>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,35 @@ if ($_GET['pk']) {
                     <i class="icon-calculator3 mr-2"></i>Информация
                 </legend>
 
-                <?php
+                <table class="table table-hover">
+                    <tbody>
+                        <tr class="table-secondary" onclick="">
+                            <td>Баланс</td>
+                            <td class="text-right text-success">200</td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Сумма к оплате</td>
+                            <td class="text-right text-danger">200</td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <td>Скидка</td>
+                            <td class="text-right">0</td>
+                        </tr>
+                        <?php if(module('module_pharmacy')): ?>
+                            <tr class="table-secondary">
+                                <td>Сумма к оплате(лекарства)</td>
+                                <td class="text-right text-danger">0</td>
+                            </tr>
+                        <?php endif; ?>
+                        <tr class="table-secondary">
+                            <td>Разница</td>
+                            <td class="text-right text-dark">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <?php 
+                /*
                 // Скрипт подсчёта средств -----
                 $sql = "SELECT
                             vs.id,
@@ -97,6 +125,7 @@ if ($_GET['pk']) {
                         <input type="hidden" id="prot_item" value="<?= $price['balance'] + $price_cost ?>">
                     </tbody>
                 </table>
+                <?php */ ?>
 
                 <div class="text-right mt-3">
 

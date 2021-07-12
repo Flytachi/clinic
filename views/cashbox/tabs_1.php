@@ -5,6 +5,8 @@
         </a>
     </li>
     <li class="nav-item">
-        <a href="<?= viv('cashbox/stationary') ?>" class="nav-link <?= viv_link('cashbox/stationary') ?> legitRipple">Стационар</a>
+        <a href="<?= viv('cashbox/stationary') ?>" class="nav-link <?= viv_link('cashbox/stationary') ?> legitRipple">
+            Стационар <span class="badge bg-primary ml-auto"><?= $db->query("SELECT vs.id, vs.user_id FROM visits vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.direction IS NOT NULL AND vs.completed IS NULL")->rowCount() ?></span>
+        </a>
     </li>
 </ul>
