@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
-$header = "Рабочий стол";
+$header = "Приём платежей";
 
 $tb = new Table($db, "visits vs");
 $search = $tb->get_serch();
@@ -49,7 +49,7 @@ $tb->where_or_serch($where_search);
 				    <div class="col-md-5">
 				        <div class="<?= $classes['card'] ?>">
 
-							<div class="card-header bg-white header-elements-sm-inline">
+							<div class="<?= $classes['card-header'] ?>">
 								<h5 class="card-title">Приём платежей</h5>
 								<div class="header-elements">
 									<form action="" class="mr-2">
@@ -129,14 +129,8 @@ $tb->where_or_serch($where_search);
 	<!-- Basic modal -->
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
-			<div class="<?= $classes['modal-global_content'] ?>">
-				<div class="<?= $classes['modal-global_header'] ?>">
-					<h6 class="modal-title">Оплата</h6>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<div id="div_modal_price"></div>
-
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card">
+				
 			</div>
 		</div>
 	</div>

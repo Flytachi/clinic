@@ -181,14 +181,14 @@ if ($_GET['pk']) {
                     <strong>Итого: </strong><strong id="total_title"></strong>
                 </div>
                 <div class="text-right">
-                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    <button onclick="CardFuncCheck('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
                 </div>
 
             </div>
 
         </div>
         <script type="text/javascript">
-            function Get_Mod(pk) {
+            function CardFuncCheck(pk) {
                 var array_services = [];
 
                 Array.prototype.slice.call(document.querySelectorAll('.prices_class')).forEach(function(item) {
@@ -204,7 +204,7 @@ if ($_GET['pk']) {
                         service_pks: array_services,
                     },
                     success: function (result) {
-                        $("#div_modal_price").html(result);
+                        $("#form_card").html(result);
                         Swit.init();
                     },
                 });
@@ -259,14 +259,15 @@ if ($_GET['pk']) {
                     <strong>Итого: </strong><strong id="total_title"></strong>
                 </div>
                 <div class="text-right">
-                    <button onclick="Get_Mod('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    <button onclick="CardFuncCheck('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
                 </div>
 
             </div>
 
         </div>
         <script type="text/javascript">
-            function Get_Mod(pk) {
+
+            function CardFuncCheck(pk) {
                 var array_services = [];
 
                 Array.prototype.slice.call(document.querySelectorAll('.prices_class')).forEach(function(item) {
@@ -281,7 +282,7 @@ if ($_GET['pk']) {
                         service_pks: array_services,
                     },
                     success: function (result) {
-                        $("#div_modal_price").html(result);
+                        $("#form_card").html(result);
                         Swit.init();
                     },
                 });

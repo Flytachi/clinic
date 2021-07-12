@@ -49,7 +49,7 @@ $tb->where_or_serch($where_search);
 				    <div class="col-md-5">
 				        <div class="<?= $classes['card'] ?>">
 
-							<div class="card-header bg-white header-elements-sm-inline">
+							<div class="<?= $classes['card-header'] ?>">
 								<h5 class="card-title">Возврат</h5>
 								<div class="header-elements">
 									<form action="" class="mr-2">
@@ -74,7 +74,7 @@ $tb->where_or_serch($where_search);
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-				                            <?php foreach($tb->get_table() as $row): ?>
+				                            <?php foreach($tb->get_table(1) as $row): ?>
 				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
@@ -82,6 +82,13 @@ $tb->where_or_serch($where_search);
 				                                    </td>
 				                                </tr>
 				                            <?php endforeach; ?>
+											<tr class="table-secondary">
+												<?php if(isset($row->count)): ?>
+													<th colspan="2" class="text-right">Всего: <?= $row->count ?></th>
+												<?php else: ?>
+													<th colspan="2" class="text-center">Нет данных</th>
+												<?php endif; ?>
+											</tr>
 				                        </tbody>
 				                    </table>
 				                </div>
@@ -120,16 +127,11 @@ $tb->where_or_serch($where_search);
 	<!-- /page content -->
 
 	<!-- Basic modal -->
+
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
-			<div class="<?= $classes['modal-global_content'] ?>">
-				<div class="<?= $classes['modal-global_header'] ?>">
-					<h6 class="modal-title">Возврат</h6>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<div id="div_modal_price"></div>
-
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card">
+				
 			</div>
 		</div>
 	</div>

@@ -19,6 +19,11 @@ class VisitPriceModel extends Model
             $amount = $db->query("SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
         }
         ?>
+        <div class="<?= $classes['modal-global_header'] ?>">
+            <h6 class="modal-title"><?= ( isset($_GET['refund']) and $_GET['refund'] ) ? "Возврат" : "Оплата" ?></h6>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
         <form method="post" action="<?= add_url() ?>" onsubmit="Submit_alert()">
 
             <div class="modal-body">
@@ -186,11 +191,11 @@ class VisitPriceModel extends Model
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
             <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
-            <?php if(module('module_pharmacy')): ?>
+            <?php /*if(module('module_pharmacy')): ?>
                 <?php if($completed): ?>
                     <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>
                 <?php endif; ?>
-            <?php endif; ?>
+            <?php endif;*/ ?>
             <button onclick="SaleCheck(<?= $pk_visit ?>, <?= round($price['cost_bed'] + $price['cost_beds'], 1) ?>, <?= round($price['cost_service'], 1) ?>)" type="button" class="btn btn-outline-secondary btn-sm">Скидка</button>
             <button onclick="CardFuncCheck('<?= up_url($data['id'], 'VisitInvestmentsModel') ?>&type=0')" type="button" class="btn btn-outline-success btn-sm">Предоплата</button>
             <button onclick="CardFuncCheck('<?= up_url($data['id'], 'VisitInvestmentsModel') ?>&type=1')" type="button" class="btn btn-outline-danger btn-sm">Возврат</button>
@@ -206,6 +211,7 @@ class VisitPriceModel extends Model
                     success: function (data) {
                         $('#modal_default').modal('show');
                         $('#form_card').html(data);
+                        Swit.init();
                     },
                 });
             };

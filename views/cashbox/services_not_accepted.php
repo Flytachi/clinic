@@ -16,8 +16,6 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 <html lang="en">
 <?php include layout('head') ?>
 
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
-
 <body>
 	<!-- Main navbar -->
 	<?php include '../layout/navbar.php' ?>

@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
-$header = "Рабочий стол";
+$header = "Приём платежей";
 
 $tb = new Table($db, "visits vs");
 $search = $tb->get_serch();
@@ -51,7 +51,7 @@ $tb->where_or_serch($where_search);
 
                         <div class="<?= $classes['card'] ?>">
 
-							<div class="card-header bg-white header-elements-sm-inline">
+							<div class="<?= $classes['card-header'] ?>">
 								<h5 class="card-title">Стационар</h5>
 								<div class="header-elements">
 									<form action="" class="mr-2">
