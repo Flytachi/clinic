@@ -42,27 +42,29 @@ class UserModel extends Model
                             <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
                         </div>
 
-                        <div class="form-group">
-                            <label>Выбирите роль:</label>
-                            <select data-placeholder="Выбрать роль" onchange="TableChange(this)" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
-                                <option></option>
-                                <?php foreach ($PERSONAL as $key => $value): ?>
-                                    <?php if(!in_array($key, [1])): ?>
-                                        <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                        <?php if($this->value('user_level') != 1): ?>
+                            <div class="form-group">
+                                <label>Выбирите роль:</label>
+                                <select data-placeholder="Выбрать роль" onchange="TableChange(this)" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
+                                    <option></option>
+                                    <?php foreach ($PERSONAL as $key => $value): ?>
+                                        <?php if(!in_array($key, [1])): ?>
+                                            <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label>Отдел:</label>
-                            <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
-                                <option></option>
-                                <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label>Отдел:</label>
+                                <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
+                                    <option></option>
+                                    <?php foreach ($db->query("SELECT * FROM division") as $row): ?>
+                                        <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
 
                     </fieldset>
                 </div>
@@ -73,19 +75,21 @@ class UserModel extends Model
 
                         <div class="row">
 
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Кабинет:</label>
-                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value('room') ?>">
+                            <?php if($this->value('user_level') != 1): ?>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Кабинет:</label>
+                                        <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value('room') ?>">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value('share') ?>">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Доля:</label>
+                                        <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value('share') ?>">
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endif; ?>
 
                             <div class="col-md-12">
                                 <div class="form-group">
