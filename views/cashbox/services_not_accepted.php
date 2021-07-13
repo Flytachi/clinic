@@ -43,7 +43,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 				<!-- Highlighted tabs -->
                 <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header bg-white header-elements-sm-inline">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h5 class="card-title">Не принятые услуги</h5>
                         <div class="header-elements">
 							<form action="" class="mr-2">

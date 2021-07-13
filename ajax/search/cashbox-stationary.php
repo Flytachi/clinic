@@ -30,13 +30,15 @@ $tb->set_self(viv('cashbox/stationary'));
                     </td>
                 </tr>
             <?php endforeach; ?>
-            <tr class="table-secondary">
-                <?php if(isset($row->count)): ?>
+            <?php if(isset($row->count)): ?>
+                <tr class="<?= $classes['table-count_menu'] ?>">
                     <th colspan="2" class="text-right">Всего: <?= $row->count ?></th>
-                <?php else: ?>
+                </tr>
+            <?php else: ?>
+                <tr class="table-secondary">
                     <th colspan="2" class="text-center">Нет данных</th>
-                <?php endif; ?>
-            </tr>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
