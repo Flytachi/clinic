@@ -13,7 +13,7 @@ foreach ($comp as $value) {
         /*padding:2mm;*/
         margin: 0 auto;
         margin-left: -5px;
-        width: 50mm;
+        width: <?= $company['print_check_size'] ?>mm;
         background: #FFF;
     }
     ::selection {background: #f31544; color: #FFF;}

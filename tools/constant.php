@@ -16,11 +16,9 @@ $PERSONAL = array(
     32 => "Касса-Регистратура",
 );
 
-$FLOOR = array(
-    1 => "1 этаж",
-    2 => "2 этаж",
-    3 => "3 этаж",
-);
+foreach (json_decode($db->query("SELECT * FROM company_constants WHERE const_label LIKE 'floors'")->fetch()['const_value']) as $key => $value) {
+    $FLOOR[$key+1] = "$value этаж";
+}
 
 $CATEGORY = array(
     2 => "Лекарства",

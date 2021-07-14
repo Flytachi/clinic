@@ -158,6 +158,7 @@ $staus = 0;
 
 		function printS(body){
 			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
+				console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`);
 				$.ajax({
 			        type: "GET",
 			        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,

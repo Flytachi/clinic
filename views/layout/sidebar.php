@@ -27,9 +27,9 @@
                         </li>
                     <?php endforeach; ?>
 
-                    <?php if ( isset($_SESSION['master_status']) ): ?>
+                    <?php if ( isset($session->status) ): ?>
                         <li class="nav-item">
-                            <a href="<?= $session->logout_avatar_link() ?>" class="nav-link">
+                            <a href="<?= $session->logout_avatar_link($session->status) ?>" class="nav-link">
                                 <i class="icon-arrow-down16"></i>
                                 <span>Logout in avatar</span>
                             </a>
@@ -43,6 +43,8 @@
                                 <span>Пакеты<span>
                             </a>
                         </li>
+                    <?php endif; ?>
+                    <?php if (permission([5,10])): ?>
                         <li class="nav-item">
                             <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
                                 <i class="icon-users"></i>
