@@ -4,6 +4,8 @@ $session->is_auth();
 
 if ($_SESSION['session_id'] == "master") {
     render('master/index');
+}elseif ($_SESSION['session_id'] == "avatar") {
+    include "views/master/avatar_panel.php";
 }else {
     switch (level()):
         case 1:
