@@ -4,7 +4,7 @@
 
         <!-- User menu -->
         <div class="sidebar-user-material">
-            <div class="<?= ($session->master_status) ? "sidebar-master-material-body" : "sidebar-myuser-material-body";  ?>">
+            <div class="<?= ($session->status) ? "sidebar-master-material-body" : "sidebar-myuser-material-body";  ?>">
                 <div class="card-body text-center">
                     <h4 class="mb-0 text-white text-shadow-dark"><?= get_full_name() ?></h4>
                     <span class="font-size-sm text-white text-shadow-dark"><?= level_name() ." ". division_name() ?></span>
@@ -27,9 +27,9 @@
                         </li>
                     <?php endforeach; ?>
 
-                    <?php if ( isset($_SESSION['master_status']) ): ?>
+                    <?php if ( isset($session->status) ): ?>
                         <li class="nav-item">
-                            <a href="<?= $session->logout_avatar_link() ?>" class="nav-link">
+                            <a href="<?= $session->logout_avatar_link($session->status) ?>" class="nav-link">
                                 <i class="icon-arrow-down16"></i>
                                 <span>Logout in avatar</span>
                             </a>

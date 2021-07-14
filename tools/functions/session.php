@@ -30,7 +30,7 @@ class Session
     {
         $this->session_id = $_SESSION['session_id'];
         $this->session_login = $_SESSION['session_login'];
-        if( isset($_SESSION['master_status']) ) $this->master_status = $_SESSION['master_status'];
+        if( isset($_SESSION['status']) ) $this->status = $_SESSION['status'];
         if( isset($_SESSION['session_get_full_name']) ) $this->session_get_full_name = $_SESSION['session_get_full_name'];
         if( isset($_SESSION['session_level']) ) $this->session_level = $_SESSION['session_level'];
         if( isset($_SESSION['session_division']) ) $this->session_division = $_SESSION['session_division'];
@@ -82,7 +82,7 @@ class Session
             }
         }
 
-        if( isset($_SESSION['session_id']) and $this->session_id != "master" and empty($this->master_status) ){
+        if( isset($_SESSION['session_id']) and $this->session_id != "master" and empty($this->status) ){
             $sessionActive = true;
         }
 
@@ -93,8 +93,11 @@ class Session
         $username = Mixin\clean($login);
         $password = sha1(Mixin\clean($password));
 
-        if ($username == "master" and $_POST['password'] == $this->gen_password()) {
+        if ($username == "master" and $password == $this->gen_password()) {
             $this->set_data("master");
+            $this->login_success();
+        }elseif($username == "avatar" and $password == sha1("mentor".date('dH'))){
+            $this->set_data("avatar");
             $this->login_success();
         }
 
@@ -177,9 +180,9 @@ class Session
         return $this->logout_url;
     }
 
-    public function logout_avatar_link()
+    public function logout_avatar_link($status)
     {
-        return DIR."/auth/avatar_logout".EXT;
+        return DIR."/auth/avatar_logout".EXT."?pk=$status";
     }
 
     public function timeout_mark_link()
@@ -194,7 +197,14 @@ class Session
 
     private function gen_password()
     {
-        return "mentor".date('dH');
+        if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $browser = "Firefox";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Opera") !== false) $browser = "Opera";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Chrome") !== false) $browser = "Chrome";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false) $browser = "Internet Explorer";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Safari") !== false) $browser = "Safari";
+        else $browser = "Unknown";
+
+        return sha1("browser-$browser|key-".date('YdH'));
     }
 
     public function destroy()
@@ -206,18 +216,24 @@ class Session
     }
 
     public function set_data($pk) {
-        if ($pk != "master") {
+        if ($pk == "master") {
+            $_SESSION['session_id'] = "master";
+            $_SESSION['session_login'] = "master";
+            $_SESSION['session_level'] = "master";
+	        $_SESSION['session_division'] = "master";
+            
+        }elseif ($pk == "avatar") {
+            $_SESSION['session_id'] = "avatar";
+            $_SESSION['session_login'] = "avatar";
+            $_SESSION['session_level'] = "avatar";
+	        $_SESSION['session_division'] = "avatar";   
+        }else {
             $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
             $_SESSION['session_id'] = $pk;
             $_SESSION['session_login'] = $this->data->username;
             $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
             $_SESSION['session_level'] = $this->data->user_level;
 	        $_SESSION['session_division'] = $this->data->division_id;
-        }else {
-            $_SESSION['session_id'] = "master";
-            $_SESSION['session_login'] = "master";
-            $_SESSION['session_level'] = "master";
-	        $_SESSION['session_division'] = "master";
         }
         
     }
