@@ -6,7 +6,7 @@ class Session
      * 
      *  My Session
      * 
-     *  @version 5.7
+     *  @version 6.7
      **/
 
     private $db;
