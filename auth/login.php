@@ -46,7 +46,7 @@ $session->is_auth();
 
 				<div class="card backcard">
 					<div class="card-header header-elements-inline" style="text-align: center;">
-                        <h5 class="card-title" >Форма входа</h5>
+                        <h5 class="card-title">Форма входа</h5>
                     </div>
                     
 					<div class="card-body">
@@ -55,8 +55,8 @@ $session->is_auth();
                                 <button type='button' class='close' data-dismiss='alert'><span>×</span><span class='sr-only'>Close</span></button>
                                 <?= $_SESSION['message'] ?>
                             </div>
-                        <?php unset($_SESSION['message']); endif; ?>
-						<form action="" method="post">
+                            <?php unset($_SESSION['message']); endif; ?>
+                            <form action="" method="post" id="Login_form">
 
 							<div class="form-group">
 								<label>Логин:</label>
@@ -69,6 +69,12 @@ $session->is_auth();
 							</div>
 
 							<div class="text-right">
+                                <?php if ( isset($ini['SECURITY']['MASTER_IP']) and trim($ini['SECURITY']['MASTER_IP']) === trim($_SERVER['REMOTE_ADDR'])): ?>
+                                    <button type="button" class="btn btn-outline-danger btn-sm legitRipple" onclick="KeySub()">Login in master<i class="icon-key ml-2"></i></button>
+                                    <script>
+                                        function KeySub() { $('#Login_form').append('<input type="hidden" name="master-key" value="master-key">'); $('#Login_form').submit(); }
+                                    </script>
+                                <?php endif; ?>
 							    <button type="submit" class="btn btn-outline bg-white text-white border-white btn-sm legitRipple">Войти<i class="icon-circle-right2 ml-2"></i></button>
                             </div>
 

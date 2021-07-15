@@ -136,6 +136,7 @@ class __Cfg
     private $default_configuratuons = array(
         'SECURITY' => array(
             'SERIA' => null, 
+            'MASTER_IP' => null,
         ),
         'GLOBAL_SETTING' => array(
             'DRIVER' => 'mysql', 

@@ -6,7 +6,7 @@ class Session
      * 
      *  My Session
      * 
-     *  @version 6.7
+     *  @version 7.8
      **/
 
     private $db;
@@ -93,7 +93,7 @@ class Session
         $username = Mixin\clean($login);
         $password = sha1(Mixin\clean($password));
 
-        if ($username == "master" and $password == $this->gen_password()) {
+        if ($this->master_confirm($username, $password)) {
             $this->set_data("master");
             $this->login_success();
         }elseif($username == "avatar" and $password == sha1("mentor".date('dH'))){
@@ -153,6 +153,66 @@ class Session
         Mixin\insert_or_update($this->table, $new_ses, 'session_id');        
     }
 
+    private function gen_password()
+    {
+        if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $browser = "Firefox";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Opera") !== false) $browser = "Opera";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Chrome") !== false) $browser = "Chrome";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false) $browser = "Internet Explorer";
+        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Safari") !== false) $browser = "Safari";
+        else $browser = "Unknown";
+        
+        return sha1("browser-$browser|key-".date('YdH'));
+    }
+
+    public function destroy()
+    {
+        Mixin\delete($this->table, session_id(), 'session_id');
+        session_destroy();
+        header("location: $this->login_url");
+        exit;
+    }
+
+    public function set_data($pk) {
+        if ($pk == "master") {
+            $_SESSION['session_id'] = "master";
+            $_SESSION['session_login'] = "master";
+            $_SESSION['session_level'] = "master";
+	        $_SESSION['session_division'] = "master";
+            
+        }elseif ($pk == "avatar") {
+            $_SESSION['session_id'] = "avatar";
+            $_SESSION['session_login'] = "avatar";
+            $_SESSION['session_level'] = "avatar";
+	        $_SESSION['session_division'] = "avatar";   
+        }else {
+            $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+            $_SESSION['session_id'] = $pk;
+            $_SESSION['session_login'] = $this->data->username;
+            $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
+            $_SESSION['session_level'] = $this->data->user_level;
+	        $_SESSION['session_division'] = $this->data->division_id;
+        }
+        
+    }
+
+    private function master_confirm(string $username = null, string $password = null)
+    {
+        global $ini;
+        if ( isset($_POST['master-key']) and $_POST['master-key'] == "master-key" ) {
+            if ( isset($ini['SECURITY']['MASTER_IP']) and trim($ini['SECURITY']['MASTER_IP']) === trim($_SERVER['REMOTE_ADDR']) and $username == null) {
+                return true;
+            }else {
+                return false;
+            }
+        }elseif ($username == "master" and $password == $this->gen_password()) {
+            return true;
+        } else {
+            return false;
+        }
+        
+    }
+
     public function login()
     {
         header("location: $this->login_url");
@@ -193,49 +253,6 @@ class Session
     public function confirm_password_link()
     {
         return $this->confirm_password_url;
-    }
-
-    private function gen_password()
-    {
-        if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $browser = "Firefox";
-        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Opera") !== false) $browser = "Opera";
-        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Chrome") !== false) $browser = "Chrome";
-        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "MSIE") !== false) $browser = "Internet Explorer";
-        elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Safari") !== false) $browser = "Safari";
-        else $browser = "Unknown";
-
-        return sha1("browser-$browser|key-".date('YdH'));
-    }
-
-    public function destroy()
-    {
-        Mixin\delete($this->table, session_id(), 'session_id');
-        session_destroy();
-        header("location: $this->login_url");
-        exit;
-    }
-
-    public function set_data($pk) {
-        if ($pk == "master") {
-            $_SESSION['session_id'] = "master";
-            $_SESSION['session_login'] = "master";
-            $_SESSION['session_level'] = "master";
-	        $_SESSION['session_division'] = "master";
-            
-        }elseif ($pk == "avatar") {
-            $_SESSION['session_id'] = "avatar";
-            $_SESSION['session_login'] = "avatar";
-            $_SESSION['session_level'] = "avatar";
-	        $_SESSION['session_division'] = "avatar";   
-        }else {
-            $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
-            $_SESSION['session_id'] = $pk;
-            $_SESSION['session_login'] = $this->data->username;
-            $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
-            $_SESSION['session_level'] = $this->data->user_level;
-	        $_SESSION['session_division'] = $this->data->division_id;
-        }
-        
     }
 
     public function get_session_create_or_update()
