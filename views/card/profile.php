@@ -117,61 +117,61 @@
                 </fieldset>
 
                 <?php $class_color_add = "text-success"; ?>
-                <?php if ($patient->direction): ?>
+                <?php if ($patient->direction and false): ?>
                     <?php
                     // Баланс пациента
-                    $pl = 0;
-                    if ($activity) {
-                        $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
-                        foreach ($serv_id as $value) {
-                            $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']}")->fetchAll();
-                            foreach ($item_service as $pri_ze) {
-                                $pl += $pri_ze['price'];
-                            }
-                        }
-                        $sql = "SELECT
-                                    @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
-                                    @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
-                                    @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
-                                    IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
-                                    (
-                                        @bed_hours * (bdt.price / 24) +
-                                        IFNULL($pl, 0) +
-                                        (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
-                                    )
-                                     'balance'
-                                FROM users us
-                                    LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
-                                    LEFT JOIN beds bd ON(bd.user_id = us.id)
-                                    LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                                    LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                                WHERE us.id = $patient->id";
-                        $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-                    } else {
-                        $price = (object) array("balance" => 0);
-                        $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
-                        foreach ($serv_id as $value) {
-                            $item_service = $db->query("SELECT SUM(price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
-                            foreach ($item_service as $pri_ze) {
-                                $price->balance += $pri_ze['price'];
-                            }
-                        }
-                        // dd($price->balance);
-                    }
+                    // $pl = 0;
+                    // if ($activity) {
+                    //     $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
+                    //     foreach ($serv_id as $value) {
+                    //         $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']}")->fetchAll();
+                    //         foreach ($item_service as $pri_ze) {
+                    //             $pl += $pri_ze['price'];
+                    //         }
+                    //     }
+                    //     $sql = "SELECT
+                    //                 @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
+                    //                 @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
+                    //                 @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
+                    //                 IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
+                    //                 (
+                    //                     @bed_hours * (bdt.price / 24) +
+                    //                     IFNULL($pl, 0) +
+                    //                     (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
+                    //                 )
+                    //                  'balance'
+                    //             FROM users us
+                    //                 LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
+                    //                 LEFT JOIN beds bd ON(bd.user_id = us.id)
+                    //                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                    //                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
+                    //             WHERE us.id = $patient->id";
+                    //     $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+                    // } else {
+                    //     $price = (object) array("balance" => 0);
+                    //     $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
+                    //     foreach ($serv_id as $value) {
+                    //         $item_service = $db->query("SELECT SUM(price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
+                    //         foreach ($item_service as $pri_ze) {
+                    //             $price->balance += $pri_ze['price'];
+                    //         }
+                    //     }
+                    //     // dd($price->balance);
+                    // }
 
-                    if (!$activity and !$patient->priced_date) {
-                        $price->balance = -$price->balance;
-                    }
+                    // if (!$activity and !$patient->priced_date) {
+                    //     $price->balance = -$price->balance;
+                    // }
 
-                    if ($price->balance >= 0) {
-                        $class_card_balance = "text-success";
-                        $class_color_add = "cl_btn_balance text-success";
-                        $id_selector_balance = "1";
-                    }else {
-                        $class_card_balance = "text-danger";
-                        $class_color_add = "cl_btn_balance text-danger";
-                        $id_selector_balance = "0";
-                    }
+                    // if ($price->balance >= 0) {
+                    //     $class_card_balance = "text-success";
+                    //     $class_color_add = "cl_btn_balance text-success";
+                    //     $id_selector_balance = "1";
+                    // }else {
+                    //     $class_card_balance = "text-danger";
+                    //     $class_color_add = "cl_btn_balance text-danger";
+                    //     $id_selector_balance = "0";
+                    // }
                     ?>
                     <fieldset class="mb-3 row" style="margin-top: -50px; ">
                         <legend></legend>

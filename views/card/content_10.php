@@ -91,7 +91,7 @@ require_once 'callback.php';
 												<td class="text-right">
 													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<?php if( $activity and $row->status == 1 ): ?>
+														<?php if( $activity and ((!$patient->direction and $row->status == 1) or ($patient->direction and $row->status == 2) ) ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 														

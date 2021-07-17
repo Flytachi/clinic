@@ -3,6 +3,8 @@
 class VisitFailure extends Model
 {
     public $table = 'visit_services';
+    public $_visits = 'visits';
+    public $_prices = 'visit_prices';
 
     public function form($pk = null)
     {
@@ -86,24 +88,66 @@ class VisitFailure extends Model
 
     // }
 
+    public function status_update($pk)
+    {
+        return (new VisitModel())->is_delete($pk);
+    }
+
     public function delete(int $pk)
     {
         global $db, $session;
         $data = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        $visit = $db->query("SELECT * FROM $this->_visits WHERE id = {$data['visit_id']}")->fetch();
 
-        if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or ( ($data['level'] == 12 and permission(12)) ) or permission([2, 32]) ) {
-            
-            $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
-            if (!intval($object)){
-                $this->error($object);
+        if ($visit['direction']) {
+
+            # Стационар
+            if ($data['service_id'] == 1) {
+                $this->error("Функция отказа \"Полного стационара\" не сделана!");
+                return 1;
+            } else {
+
+                $db->beginTransaction();
+                // Visit prices 
+                $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
+                if(!intval($object)){
+                    $this->error($object);
+                    $db->rollBack();
+                }
+                // Visit service 
+                $object = Mixin\delete($this->table, $pk);
+                if(!intval($object)){
+                    $this->error($object);
+                    $db->rollBack();
+                }
+
+                $this->status_update($visit['id']);
+                
+                $db->commit();
+                $this->success($pk);
+                return 1;
+                
             }
-            
-            $this->success($pk);
 
-        }else {
-            $this->error("У вас нет прав на отказ!");
-            return 1;
+        } else {
+
+            // Абулатор
+            if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or ( ($data['level'] == 12 and permission(12)) ) or permission([2, 32]) ) {
+            
+                $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
+                if (!intval($object)){
+                    $this->error($object);
+                }
+                
+                $this->success($pk);
+    
+            }else {
+                $this->error("У вас нет прав на отказ!");
+                return 1;
+            }
+
         }
+        
 
     }
 

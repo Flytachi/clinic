@@ -126,7 +126,7 @@ function add_url(){
 }
 
 function del_url($id = null, $model = null){
-    if (is_null($id) and is_null($model)) {
+    if (!is_null($id) and !is_null($model)) {
         return DIR."/hook/delete".EXT."?id=$id&model=$model";
     } else {
         return DIR."/hook/delete".EXT;

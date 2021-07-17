@@ -9,8 +9,8 @@ $tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.add_date
 $search = $tb->get_serch();
 $is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $search_array = array(
-	"vs.status = 3 AND vs.level = 6 $is_division",
-	"vs.status = 3 AND vs.level = 6 $is_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 3 AND vs.level = 6 AND v.direction IS NULL $is_division",
+	"vs.status = 3 AND vs.level = 6 AND v.direction IS NULL $is_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
 ?>

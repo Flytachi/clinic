@@ -6,11 +6,11 @@ $tb = new Table($db, "visit_services vs");
 $tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.direction, v.add_date")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.status = 2 AND vs.level = 12 AND v.direction IS NULL",
-	"vs.status = 2 AND vs.level = 12 AND v.direction IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 2 AND vs.level = 12 AND v.direction IS NOT NULL",
+	"vs.status = 2 AND vs.level = 12 AND v.direction IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
-$tb->set_self(viv('physio/index'));
+$tb->set_self(viv('physio/list_stationary'));
 ?>
 <div class="table-responsive">
     <table class="table table-hover table-sm">

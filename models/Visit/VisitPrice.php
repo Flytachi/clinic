@@ -190,7 +190,7 @@ class VisitPriceModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
             <input type="hidden" name="user_id" value="<?= $pk ?>">
-            <input type="hidden" name="bed_cost" value="<?= $price['cost_bed'] ?>">
+            <input type="hidden" name="bed_cost" value="<?php // $price['cost_bed'] ?>">
             <?php /*if(module('module_pharmacy')): ?>
                 <?php if($completed): ?>
                     <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>

@@ -718,8 +718,8 @@ class VisitModel extends Model
         // }
     }
 
-    public function delete(int $pk)
-    {
+    // public function delete(int $pk)
+    // {
     //     global $db;
     //     if (empty($_GET['type'])) {
             
@@ -809,7 +809,7 @@ class VisitModel extends Model
     //         $this->success(1);
     //     }
 
-    }
+    // }
 
     public function is_update(int $pk)
     {

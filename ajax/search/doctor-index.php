@@ -33,11 +33,9 @@ $tb->set_self(viv('doctor/index'));
 					<td>
 						<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 						<div class="text-muted">
-							<?php
-							// if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-							// 	echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-							// }
-							?>
+							<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+								<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+							<?php endif; ?>
 						</div>
 					</td>
 					<td><?= date_f($row->birth_date) ?></td>

@@ -7,8 +7,8 @@ $tb = new Table($db, "visit_services vs");
 $tb->set_data("vs.id, vs.user_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id, vs.level")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.status = 2", 
-	"vs.status = 2 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
+	"vs.status = 2 AND v.direction IS NULL", 
+	"vs.status = 2 AND v.direction IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 ?>

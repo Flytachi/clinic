@@ -53,6 +53,33 @@ if ($_GET['pk']) {
                 </table>
 
                 <?php 
+
+                $sql = "SELECT
+                        v.id,
+                        IFNULL(SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer), 0) 'balance'
+                        -- @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
+                        -- @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
+                        -- @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
+                        -- bdt.name 'bed_type',
+                        -- bdt.price 'bed_price',
+                        -- @cost_bed := @bed_hours * (bdt.price / 24) 'cost_bed',
+                        -- @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5) AND price_date IS NULL), 0) 'cost_service',
+                        -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                        -- @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
+                        -- IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
+                        -- IFNULL(vss.sale_service_unit, 0) 'sale_service'
+                        -- -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
+                        -- -- vs.add_date
+                    FROM visits v
+                        LEFT JOIN visit_investments vi ON(vi.visit_id = v.id AND vi.expense IS NULL)
+                        -- LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
+                        -- LEFT JOIN visit_sale vss ON(vss.visit_id = vs.id)
+                        -- LEFT JOIN beds bd ON(bd.id = vs.bed_id)
+                        -- LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
+                    WHERE v.id = $pk";
+
+                $data = $db->query($sql)->fetch();
+                dd($data);
                 /*
                 // Скрипт подсчёта средств -----
                 $sql = "SELECT

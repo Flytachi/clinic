@@ -77,11 +77,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 												<div class="text-muted">
-													<?php
-													// if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-													// 	echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													// }
-													?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+													<?php endif; ?>
 												</div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
@@ -107,7 +105,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 
 												<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 												<?php if($session->session_id == $row->parent_id): ?>
-                                                	<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+                                                	<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 												<?php endif; ?>
                                             </td>
                                         </tr>
