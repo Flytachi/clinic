@@ -51,7 +51,7 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-repo-forked mr-2"></i><?= $title ?>
 							<?php if ($activity and $patient->direction and $patient->grant_id == $session->session_id): ?>
-								<a class="float-right text-info" data-toggle="modal" data-target="#modal_add_inspection">
+								<a onclick="Update('<?= up_url($patient->visit_id, 'VisitInspectionsModel') ?>')"  class="float-right text-info">
 									<i class="icon-plus22 mr-1"></i>Осмотр
 								</a>
 								<a class="float-right <?= $class_color_add ?> mr-2" data-toggle="modal" data-target="#modal_add_service">
@@ -89,7 +89,7 @@ require_once 'callback.php';
 												<td class="text-right" id="VisitService_tr_<?= $row->id ?>" data-is_new="<?= ($row->service_title) ? '' : 1 ?>">
 													<?php if ($row->service_title): ?>
 														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
+															<button onclick="Update('<?= up_url($row->id, 'VisitReport', 'form_finish') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
 															<?php if ($activity): ?>
@@ -98,7 +98,7 @@ require_once 'callback.php';
 														<?php endif; ?>
 													<?php else: ?>
 														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
-															<button onclick="UpdateFinish('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
+															<button onclick="Update('<?= up_url($row->id, 'VisitReport', 'form_finish') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
 															<?php if ( $activity ): ?>
 																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
@@ -115,7 +115,7 @@ require_once 'callback.php';
 										
 
 										<?php if ($patient->direction): ?>
-											<?php foreach ($db->query("SELECT * FROM visit_inspection WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
+											<?php foreach ($db->query("SELECT * FROM visit_inspections WHERE visit_id = $patient->visit_id ORDER BY add_date DESC") as $row): ?>
 												<tr>
 													<td><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
 													<td><?= get_full_name($row['parent_id']) ?></td>
@@ -152,16 +152,6 @@ require_once 'callback.php';
 			</div>
 		</div>
 
-		<div id="modal_report_finish" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
-				<div class="<?= $classes['modal-global_content'] ?>" id="form_card_finish">
-
-					<?php // VisitReport::form_finish(); ?>
-
-				</div>
-			</div>
-		</div>
-
 		<div id="modal_add_service" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
 				<div class="<?= $classes['modal-global_content'] ?>">
@@ -175,20 +165,6 @@ require_once 'callback.php';
 						<?php // (new VisitRoute)->form_sta_doc() ?>
 
 					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="modal_add_inspection" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="<?= $classes['modal-global_content'] ?>">
-					<div class="<?= $classes['modal-global_header'] ?>">
-						<h6 class="modal-title">Осмотр</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<?php //(new VisitInspectionModel)->form() ?>
-
 				</div>
 			</div>
 		</div>
@@ -224,17 +200,6 @@ require_once 'callback.php';
 					success: function (result) {
 						$('#modal_report').modal('show');
 						$('#form_card_report').html(result);
-					},
-				});
-			};
-
-			function UpdateFinish(events) {
-				$.ajax({
-					type: "GET",
-					url: events,
-					success: function (result) {
-						$('#modal_report_finish').modal('show');
-						$('#form_card_finish').html(result);
 					},
 				});
 			};
