@@ -472,7 +472,7 @@ class VisitPriceModel extends Model
                         $post['price_transfer'] = $temp;
                     }else {
                         if ($this->err_temp($temp)) {
-                            $this->error("Ошибка в price cash => transfer $temp");
+                            $this->error("Ошибка в price cash => transfer");
                         }
                     }
                 }
