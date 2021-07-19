@@ -1,6 +1,6 @@
 <?php
 
-class VisitPriceModel extends Model
+class VisitPricesModel extends Model
 {
     public $table = 'visit_prices';
     public $_services = 'visit_services';
@@ -423,14 +423,16 @@ class VisitPriceModel extends Model
         if ($this->visit['direction']) {
             # Stationar 
             $this->dd();
+            
+
         }else{
             # Ambulator
 
             // Refund or Price
             if ( isset($this->post['is_refund']) and $this->post['is_refund'] ) {
-                $sql = "SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")";
+                $sql = "SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE is_price IS NOT NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")";
             } else {
-                $sql = "SELECT SUM(item_cost) FROM $this->table WHERE price_date IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")";
+                $sql = "SELECT SUM(item_cost) FROM $this->table WHERE is_price IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).")";
             }
             $amount = $db->query($sql)->fetchColumn();
             if ( isset($this->post['sale']) and $this->post['sale'] > 0) $amount = $amount - ($amount * ($this->post['sale'] / 100));
@@ -497,9 +499,10 @@ class VisitPriceModel extends Model
         global $db;
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
-            'sale' => (isset($this->post['sale'])) ? $this->post['sale'] : null,
+            'sale' => (isset($this->post['sale'])) ? $this->post['sale'] : 0,
+            // 'is_visibility' => ($this->visit['direction']) ? null : 1,
+            'is_price' => true,
             'price_date' => date("Y-m-d H:i:s"),
-            'status' => ($this->visit['direction']) ? null : 1
         );
 
         // Sale for Stationar
@@ -600,11 +603,12 @@ class VisitPriceModel extends Model
             'visit_service_id' => $row['visit_service_id'],
             'user_id' => $row['user_id'],
             'pricer_id' => $this->post['pricer_id'],
-            'status' => 1,
             'item_type' => $row['item_type'],
             'item_id' => $row['item_id'],
             'item_cost' => $row['item_cost'],
             'item_name' => $row['item_name'],
+            'is_visibility' => true,
+            'is_price' => true,
             'price_date' => date("Y-m-d H:i:s"),
         );
 
@@ -666,7 +670,7 @@ class VisitPriceModel extends Model
         }
         // End
 
-        // Price visit_price
+        // Price => Refund: visit_price
         if(isset($post['price_cash'])) $post['price_cash'] = -$post['price_cash'];
         if(isset($post['price_card'])) $post['price_card'] = -$post['price_card'];
         if(isset($post['price_transfer'])) $post['price_transfer'] = -$post['price_transfer'];
@@ -695,10 +699,10 @@ class VisitPriceModel extends Model
         global $db;
         // Refund or Price
         if ( isset($this->post['is_refund']) and $this->post['is_refund'] ) {
-            $sql = "SELECT *, (price_cash + price_card + price_transfer) 'item_cost' FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
+            $sql = "SELECT *, (price_cash + price_card + price_transfer) 'item_cost' FROM $this->table WHERE is_price IS NOT NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
             $action = "refund";
         } else {
-            $sql = "SELECT id, visit_service_id, item_cost, item_name FROM $this->table WHERE price_date IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
+            $sql = "SELECT id, visit_service_id, item_cost, item_name FROM $this->table WHERE is_price IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
             $action = "price";
         }
 

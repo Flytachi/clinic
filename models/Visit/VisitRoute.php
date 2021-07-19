@@ -741,11 +741,11 @@ class VisitRoute extends Model
                 $post_price['visit_id'] = $this->visit_pk;
                 $post_price['visit_service_id'] = $object;
                 $post_price['user_id'] = $this->post['user_id'];
-                $post_price['status'] = ($this->post['direction']) ? 0 : 1;
                 $post_price['item_type'] = 1;
                 $post_price['item_id'] = $data['id'];
                 $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                 $post_price['item_name'] = $data['name'];
+                $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
                 $object = Mixin\insert($this->_prices, $post_price);
                 if (!intval($object)){
                     $this->error($object);

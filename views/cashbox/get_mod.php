@@ -25,138 +25,47 @@ if ($_GET['pk']) {
                     <i class="icon-calculator3 mr-2"></i>Информация
                 </legend>
 
-                <table class="table table-hover">
-                    <tbody>
-                        <tr class="table-secondary" onclick="">
-                            <td>Баланс</td>
-                            <td class="text-right text-success">200</td>
-                        </tr>
-                        <tr class="table-secondary">
-                            <td>Сумма к оплате</td>
-                            <td class="text-right text-danger">200</td>
-                        </tr>
-                        <tr class="table-secondary">
-                            <td>Скидка</td>
-                            <td class="text-right">0</td>
-                        </tr>
-                        <?php if(module('module_pharmacy')): ?>
-                            <tr class="table-secondary">
-                                <td>Сумма к оплате(лекарства)</td>
-                                <td class="text-right text-danger">0</td>
-                            </tr>
-                        <?php endif; ?>
-                        <tr class="table-secondary">
-                            <td>Разница</td>
-                            <td class="text-right text-dark">0</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <?php 
-
-                $sql = "SELECT
-                        v.id,
-                        IFNULL(SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer), 0) 'balance'
-                        -- @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
-                        -- @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
-                        -- @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
-                        -- bdt.name 'bed_type',
-                        -- bdt.price 'bed_price',
-                        -- @cost_bed := @bed_hours * (bdt.price / 24) 'cost_bed',
-                        -- @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5) AND price_date IS NULL), 0) 'cost_service',
-                        -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
-                        -- @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
-                        -- IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
-                        -- IFNULL(vss.sale_service_unit, 0) 'sale_service'
-                        -- -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
-                        -- -- vs.add_date
-                    FROM visits v
-                        LEFT JOIN visit_investments vi ON(vi.visit_id = v.id AND vi.expense IS NULL)
-                        -- LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                        -- LEFT JOIN visit_sale vss ON(vss.visit_id = vs.id)
-                        -- LEFT JOIN beds bd ON(bd.id = vs.bed_id)
-                        -- LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                    WHERE v.id = $pk";
-
-                $data = $db->query($sql)->fetch();
+                <?php
+                $visit_price_status = (new VisitModel)->price_status($pk);
                 dd($data);
-                /*
-                // Скрипт подсчёта средств -----
-                $sql = "SELECT
-                            vs.id,
-                            IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) 'balance',
-                            @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
-                            @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
-                            @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
-                            bdt.name 'bed_type',
-                            bdt.price 'bed_price',
-                            @cost_bed := @bed_hours * (bdt.price / 24) 'cost_bed',
-                            @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5) AND price_date IS NULL), 0) 'cost_service',
-                            @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
-                            @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
-                            IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
-                            IFNULL(vss.sale_service_unit, 0) 'sale_service'
-                            -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
-                            -- vs.add_date
-                        FROM users us
-                            LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
-                            LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                            LEFT JOIN visit_sale vss ON(vss.visit_id = vs.id)
-                            LEFT JOIN beds bd ON(bd.id = vs.bed_id)
-                            LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                        WHERE us.id = $pk";
-                $price = $db->query($sql)->fetch();
-                $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $pk AND service_id != 1 AND priced_date IS NULL")->fetchAll();
-                foreach ($serv_id as $value) {
-                    $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type = 1")->fetchAll();
-                    foreach ($item_service as $pri_ze) {
-                        $price['cost_service'] += $pri_ze['price'];
-                    }
-                }
-                $price['amount_bed'] = ($price['cost_bed'] + $price['cost_beds']) - $price['sale_bed'];
-                $price['amount_service'] = $price['cost_service'] - $price['sale_service'];
-                // dd($price);
-                // Скрипт -----
-                $price_cost = -round($price['amount_service'] + $price['amount_bed']);
                 ?>
                 <table class="table table-hover">
                     <tbody>
                         <tr class="table-secondary">
                             <td>Баланс</td>
-                            <td class="text-right text-success"><?= number_format($price['balance']) ?></td>
+                            <td class="text-right text-success"><?= number_format($visit_price_status['balance']) ?></td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Сумма к оплате</td>
-                            <td class="text-right text-danger"><?= number_format(round($price['cost_service'] + $price['cost_bed'] + $price['cost_beds'])) ?></td> <!--  + $price['cost_item_2'] -->
+                            <td class="text-right text-danger"><?= number_format(round($visit_price_status['cost_services'] + $visit_price_status['cost_beds'])) ?></td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Скидка</td>
-                            <td class="text-right"><?= number_format( ($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed']) ) ?></td>
+                            <td class="text-right"><?= 0// number_format( ($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed']) ) ?></td>
                         </tr>
-                        <?php if(module('module_pharmacy')): ?>
+                        <?php /*if(module('module_pharmacy')): ?>
                             <tr class="table-secondary">
                                 <td>Сумма к оплате(лекарства)</td>
                                 <td class="text-right text-danger"><?= number_format(round($price['cost_item_2'])) ?></td>
                             </tr>
-                        <?php endif; ?>
+                        <?php endif;*/ ?>
                         <tr class="table-secondary">
                             <td>Разница</td>
-                            <?php if (($price['balance'] + $price_cost) > 0): ?>
+                            <?php /*if (($price['balance'] + $price_cost) > 0): ?>
                                 <td class="text-right text-success"><?= number_format($price['balance'] + $price_cost) ?></td>
                             <?php elseif(($price['balance'] + $price_cost) < 0): ?>
                                 <td class="text-right text-danger"><?= number_format($price['balance'] + $price_cost) ?></td>
                             <?php else: ?>
                                 <td class="text-right text-dark"><?= number_format($price['balance'] + $price_cost) ?></td>
-                            <?php endif; ?>
+                            <?php endif;*/ ?>
                         </tr>
-                        <input type="hidden" id="prot_item" value="<?= $price['balance'] + $price_cost ?>">
+                        <input type="hidden" id="prot_item" value="<?= 0//$price['balance'] + $price_cost ?>">
                     </tbody>
                 </table>
-                <?php */ ?>
 
                 <div class="text-right mt-3">
 
-                    <?php (new VisitPriceModel)->form_button($pk) ?>
+                    <?php (new VisitPricesModel)->form_button($pk) ?>
 
                 </div>
 
@@ -224,7 +133,7 @@ if ($_GET['pk']) {
 
                 $.ajax({
                     type: "GET",
-                    url: "<?= up_url(null, 'VisitPriceModel') ?>",
+                    url: "<?= up_url(null, 'VisitPricesModel') ?>",
                     data: {
                         visit_pk: pk,
                         refund: 1,
@@ -303,7 +212,7 @@ if ($_GET['pk']) {
 
                 $.ajax({
                     type: "GET",
-                    url: "<?= up_url(null, 'VisitPriceModel') ?>",
+                    url: "<?= up_url(null, 'VisitPricesModel') ?>",
                     data: {
                         visit_pk: pk,
                         service_pks: array_services,

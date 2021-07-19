@@ -579,6 +579,7 @@ class VisitModel extends Model
                 $post_price['item_id'] = $data['id'];
                 $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                 $post_price['item_name'] = $data['name'];
+                $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
                 $object = Mixin\insert($this->_prices, $post_price);
                 if (!intval($object)){
                     $this->error($object);
@@ -860,6 +861,32 @@ class VisitModel extends Model
             return $data;
         }
         
+    }
+
+    public function price_status(Int $pk)
+    {
+        global $db;
+        if ($db->query("SELECT completed FROM $this->table WHERE id = $pk")->fetchColumn()) {
+            return "В разработке!";
+        } else {
+            $sql = "SELECT
+                    v.id,
+                    v.grant_id,
+                    IFNULL( (SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL) , 0) 'balance',
+                    IFNULL( (SELECT SUM(vp.item_cost) FROM visit_prices vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,3) AND vp.is_price IS NULL) , 0) 'cost_services',
+                    IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'cost_beds',
+                    IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed_time'
+
+                    -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                    -- @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
+                    -- IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
+                    -- IFNULL(vss.sale_service_unit, 0) 'sale_service'
+                    -- -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
+                    -- -- vs.add_date
+                FROM visits v WHERE v.id = $pk";
+            return $db->query($sql)->fetch();
+        }
+
     }
 
     public function status_update($user)
