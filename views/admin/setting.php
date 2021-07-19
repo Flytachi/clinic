@@ -47,11 +47,6 @@ $header = "Настройки";
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
-						$comp = $db->query("SELECT * FROM company_constants WHERE const_label NOT LIKE 'module_%'")->fetchAll(PDO::FETCH_OBJ);
-						$company = new stdClass();
-						foreach ($comp as $value) {
-       		 				$company->{$value->const_label} = $value->const_value;
-						}
 						?>
 
 						<form action="<?= viv('admin/admin_model') ?>" method="post" enctype="multipart/form-data">
@@ -61,26 +56,26 @@ $header = "Настройки";
 
 								<div class="form-group row">
 									<div class="col-form-label col-lg-2">
-										<img class="border-1" src="<?= ( isset($company->print_header_logotype) ) ? $company->print_header_logotype : '' ?>" width="200" height="60">
+										<img class="border-1" src="<?= config("print_header_logotype") ?>" width="200" height="60">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Иконка печати:</label>
 									<div class="col-lg-9">
-										<input type="file" name="print_header_logotype" class="form-control">
+										<input type="file" name="constant_print_header_logotype" class="form-control">
 									</div>
 								</div>
 
 								<div class="form-group row">
 									<label class="col-form-label col-lg-1 font-weight-bold">Заглавие:</label>
 									<div class="col-lg-3">
-										<input type="text" name="print_header_title" value="<?= ( isset($company->print_header_title) ) ? $company->print_header_title : '' ?>" placeholder="Введите заглавие" class="form-control">
+										<input type="text" name="constant_print_header_title" value="<?= config("print_header_title") ?>" placeholder="Введите заглавие" class="form-control">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Адрес:</label>
 									<div class="col-lg-3">
-										<input type="text" name="print_header_address" value="<?= ( isset($company->print_header_address) ) ? $company->print_header_address : '' ?>" placeholder="Введите адрес" class="form-control">
+										<input type="text" name="constant_print_header_address" value="<?= config("print_header_address") ?>" placeholder="Введите адрес" class="form-control">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Телефон:</label>
 									<div class="col-lg-3">
-										<input type="text" name="print_header_phones" value="<?= ( isset($company->print_header_phones) ) ? $company->print_header_phones : '' ?>" placeholder="Введите телефон" class="form-control">
+										<input type="text" name="constant_print_header_phones" value="<?= config("print_header_phones") ?>" placeholder="Введите телефон" class="form-control">
 									</div>
 								</div>
 
@@ -94,17 +89,17 @@ $header = "Настройки";
 
 										<label class="col-form-label col-lg-1 font-weight-bold">Ip:</label>
 										<div class="col-lg-3">
-											<input type="text" name="const_zetta_pacs_IP" value="<?= ( isset($company->const_zetta_pacs_IP) ) ? $company->const_zetta_pacs_IP : '' ?>" placeholder="Введите ip" class="form-control">
+											<input type="text" name="constant_zetta_pacs_IP" value="<?= config("zetta_pacs_IP")  ?>" placeholder="Введите ip" class="form-control">
 										</div>
 
 										<label class="col-form-label col-lg-1 font-weight-bold">LICD:</label>
 										<div class="col-lg-3">
-											<input type="text" name="const_zetta_pacs_LICD" value="<?= ( isset($company->const_zetta_pacs_LICD) ) ? $company->const_zetta_pacs_LICD : '' ?>" placeholder="Введите LICD" class="form-control">
+											<input type="text" name="constant_zetta_pacs_LICD" value="<?= config("zetta_pacs_LICD") ?>" placeholder="Введите LICD" class="form-control">
 										</div>
 
 										<label class="col-form-label col-lg-1 font-weight-bold">VTYPE:</label>
 										<div class="col-lg-3">
-											<input type="text" name="const_zetta_pacs_VTYPE" value="<?= ( isset($company->const_zetta_pacs_VTYPE) ) ? $company->const_zetta_pacs_VTYPE : '' ?>" placeholder="Введите VTYPE" class="form-control">
+											<input type="text" name="constant_zetta_pacs_VTYPE" value="<?= config("zetta_pacs_VTYPE") ?>" placeholder="Введите VTYPE" class="form-control">
 										</div>
 
 									</div>

@@ -27,17 +27,17 @@ if ($_GET['pk']) {
 
                 <?php
                 $visit_price_status = (new VisitModel)->price_status($pk);
-                dd($data);
+                dd($visit_price_status);
                 ?>
                 <table class="table table-hover">
                     <tbody>
                         <tr class="table-secondary">
                             <td>Баланс</td>
-                            <td class="text-right text-success"><?= number_format($visit_price_status['balance']) ?></td>
+                            <td class="text-right text-<?= number_color($visit_price_status['balance']) ?>"><?= number_format($visit_price_status['balance']) ?></td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Сумма к оплате</td>
-                            <td class="text-right text-danger"><?= number_format(round($visit_price_status['cost_services'] + $visit_price_status['cost_beds'])) ?></td>
+                            <td class="text-right text-<?= number_color($visit_price_status['cost_services'] + $visit_price_status['cost_beds'], true) ?>"><?= number_format($visit_price_status['cost_services'] + $visit_price_status['cost_beds']) ?></td>
                         </tr>
                         <tr class="table-secondary">
                             <td>Скидка</td>

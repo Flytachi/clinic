@@ -22,7 +22,7 @@ function module($value = null)
 function config($value = null)
 {
     global $db;
-    $mark = "config_";
+    $mark = "constant_";
     try {
         if ($value) {
             $value = str_replace($mark, '', $value);

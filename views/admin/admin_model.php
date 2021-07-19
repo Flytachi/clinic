@@ -2,18 +2,20 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 
-// print
-if ( isset($_POST['print_header_title']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_title", 'const_value' => $_POST['print_header_title']), "const_label");
-if ( isset($_POST['print_header_address']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_address", 'const_value' => $_POST['print_header_address']), "const_label");
-if ( isset($_POST['print_header_phones']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_phones", 'const_value' => $_POST['print_header_phones']), "const_label");
 
-if ( isset($_POST['const_diet_time']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_diet_time", 'const_value' => json_encode($_POST['const_diet_time'])), "const_label");
-if ( isset($_POST['const_foreigner_sale']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_foreigner_sale", 'const_value' => $_POST['const_foreigner_sale']), "const_label");
+if ( isset($_POST) ) {
 
-// pacs
-if ( isset($_POST['const_zetta_pacs_IP']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_zetta_pacs_IP", 'const_value' => $_POST['const_zetta_pacs_IP']), "const_label");
-if ( isset($_POST['const_zetta_pacs_LICD']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_zetta_pacs_LICD", 'const_value' => $_POST['const_zetta_pacs_LICD']), "const_label");
-if ( isset($_POST['const_zetta_pacs_VTYPE']) ) Mixin\insert_or_update("company_constants", array('const_label' => "const_zetta_pacs_VTYPE", 'const_value' => $_POST['const_zetta_pacs_VTYPE']), "const_label");
+    foreach ($_POST as $key => $value) {
+
+        if (in_array($key, ["constant_diet_time"])) {
+            Mixin\insert_or_update("company_constants", array('const_label' => $key, 'const_value' => json_encode($value)), "const_label");
+        } else {
+            Mixin\insert_or_update("company_constants", array('const_label' => $key, 'const_value' => $value), "const_label");
+        }
+        
+    }
+
+}
 
 // logo
 if ( isset($_FILES['print_header_logotype']) and $_FILES['print_header_logotype']['name'] ) {

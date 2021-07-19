@@ -141,7 +141,7 @@ $header = "Панель управления";
 											<?php
 											try {
 												$config = new stdClass();
-												$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'config_%'")->fetchAll(PDO::FETCH_OBJ);
+												$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_%'")->fetchAll(PDO::FETCH_OBJ);
 												foreach ($comp as $value) {
 													$config->{$value->const_label} = $value->const_value;
 												}
@@ -151,7 +151,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_wards_by_division" <?= (isset($config->config_wards_by_division) and $config->config_wards_by_division) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_wards_by_division" <?= (isset($config->constant_wards_by_division) and $config->constant_wards_by_division) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -161,7 +161,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_document_autosave" <?= (isset($config->config_document_autosave) and $config->config_document_autosave) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_document_autosave" <?= (isset($config->constant_document_autosave) and $config->constant_document_autosave) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -173,7 +173,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_laboratory_end_all_button" <?= (isset($config->config_laboratory_end_all_button) and $config->config_laboratory_end_all_button) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_laboratory_end_all_button" <?= (isset($config->constant_laboratory_end_all_button) and $config->constant_laboratory_end_all_button) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -183,7 +183,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_laboratory_end_service_button" <?= (isset($config->config_laboratory_end_service_button) and $config->config_laboratory_end_service_button) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_laboratory_end_service_button" <?= (isset($config->constant_laboratory_end_service_button) and $config->constant_laboratory_end_service_button) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -193,7 +193,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="config_laboratory_failure_service_button" <?= (isset($config->config_laboratory_failure_service_button) and $config->config_laboratory_failure_service_button) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_laboratory_failure_service_button" <?= (isset($config->constant_laboratory_failure_service_button) and $config->constant_laboratory_failure_service_button) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

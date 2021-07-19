@@ -132,15 +132,15 @@ function zeTTa_data()
     $company = new stdClass();
     $data = new stdClass();
     $stmt = $db->query("SELECT pacs_login, pacs_password from users where id = $session->session_id")->fetch(PDO::FETCH_OBJ);
-    $comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'const_zetta_pacs_%'")->fetchAll(PDO::FETCH_OBJ);
+    $comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_zetta_pacs_%'")->fetchAll(PDO::FETCH_OBJ);
     foreach ($comp as $value) {
         $company->{$value->const_label} = $value->const_value;
     }
-    $data->IP = ( isset($company->const_zetta_pacs_IP) ) ? $company->const_zetta_pacs_IP : '';
+    $data->IP = ( isset($company->constant_zetta_pacs_IP) ) ? $company->constant_zetta_pacs_IP : '';
     $data->LID = $stmt->pacs_login;
     $data->LPW = $stmt->pacs_password;
-    $data->LICD = ( isset($company->const_zetta_pacs_LICD) ) ? $company->const_zetta_pacs_LICD : '';
-    $data->VTYPE = ( isset($company->const_zetta_pacs_VTYPE) ) ? $company->const_zetta_pacs_VTYPE : '';
+    $data->LICD = ( isset($company->constant_zetta_pacs_LICD) ) ? $company->constant_zetta_pacs_LICD : '';
+    $data->VTYPE = ( isset($company->constant_zetta_pacs_VTYPE) ) ? $company->constant_zetta_pacs_VTYPE : '';
     return $data;
 }
 
@@ -184,6 +184,17 @@ function permission($arr){
         }
     }
 
+}
+
+function number_color(Int $int = null, Bool $type = false)
+{
+    if ($int > 0) {
+        return ($type) ? "danger" : "success";
+    }elseif ($int < 0) {
+        return ($type) ? "success" : "danger";
+    } else {
+        return "dark";
+    }
 }
 
 function date_f($item = null, $type = null){
