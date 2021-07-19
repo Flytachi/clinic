@@ -101,6 +101,22 @@ $header = "Настройки";
 
 							</fieldset>
 
+							<fieldset class="mb-3">
+								<legend class="text-uppercase font-size-sm font-weight-bold">Касса</legend>
+
+								<div class="form-group row">
+									<label class="col-form-label col-lg-2 font-weight-bold">Пропускная цена(от):</label>
+									<div class="col-lg-4">
+										<input type="number" name="const_throughput_from" value="<?= ( isset($company->const_throughput_from) ) ? $company->const_throughput_from : '' ?>" placeholder="Введите заглавие" class="form-control">
+									</div>
+									<label class="col-form-label col-lg-2 font-weight-bold">Пропускная цена(до):</label>
+									<div class="col-lg-4">
+										<input type="number" name="const_throughput_before" value="<?= ( isset($company->const_throughput_before) ) ? $company->const_throughput_before : '' ?>" placeholder="Введите адрес" class="form-control">
+									</div>
+								</div>
+
+							</fieldset>
+
 
                             <fieldset class="mb-3">
                                 <legend><b>Этажи:</b></legend>
