@@ -16,7 +16,7 @@ $session->is_auth();
 
 				<!-- Error title -->
 				<div class="text-center mb-3">
-					<h1 class="error-title">423</h1>
+					<h1 class="error-title <?= $classes['error_page-code-color'] ?>">423</h1>
 					<h3>Доступ на запись запрещён!</h3>
 				</div>
 				<!-- /error title -->
@@ -27,7 +27,7 @@ $session->is_auth();
 					<div class="col-xl-4 offset-xl-4 col-md-8 offset-md-2 text-right">
 
 						<!-- Buttons -->
-							<button class="btn btn-light btn-block mt-3 mt-sm-0" data-dismiss="modal" title="Вернуться на предыдущую страницу">Закрыть</button>
+						<button class="btn btn-light btn-block mt-3 mt-sm-0" data-dismiss="modal" title="Закрыть">Закрыть</button>
 						<!-- /buttons -->
 
 					</div>

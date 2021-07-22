@@ -30,7 +30,7 @@
 
                     <!-- Error title -->
                     <div class="text-center mb-3">
-                        <h1 class="error-title">505</h1>
+                        <h1 class="error-title <?= $classes['error_page-code-color'] ?>">505</h1>
                         <h3>Ошибка на сервере</h5>
                     </div>
                     <!-- /error title -->

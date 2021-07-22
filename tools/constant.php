@@ -64,6 +64,9 @@ $classes = array(
     "header" => "page-header page-header-light",
     "footer" => "navbar navbar-expand-lg navbar-light",
 
+    // Error
+    "error_page-code-color" => "",
+
     // Cards
     "card" => "card border-1 border-danger",
     "card-header" => "card-header text-dark header-elements-inline alpha-danger",
@@ -84,6 +87,13 @@ $classes = array(
     "btn-viewing" => "btn btn-outline-danger btn-sm legitRipple",
     "btn-diagnostic_finally" => "btn btn-outline-danger btn-sm legitRipple",
     "btn-table" => "btn btn-dark btn-sm legitRipple",
+    "btn-render" => "btn btn-dark btn-sm legitRipple",
+        // cashbox 
+        "price_btn-sale" => "btn btn-outline-secondary btn-sm legitRipple",
+        "price_btn-prepayment" => "btn btn-outline-success btn-sm legitRipple",
+        "price_btn-refund" => "btn btn-outline-danger btn-sm legitRipple",
+        "price_btn-finish" => "btn btn-outline-warning btn-sm legitRipple",
+        "price_btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
     
     // Modals
     "modal-global_content" => "modal-content border-3 border-danger",

@@ -23,11 +23,6 @@ require_once '../tools/warframe.php';
 
 <body>
 
-	<!-- Main navbar -->
-
-	<!-- /main navbar -->
-
-
 	<!-- Page content -->
 	<div class="page-content">
 

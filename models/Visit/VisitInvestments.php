@@ -5,12 +5,27 @@ class VisitInvestmentsModel extends Model
     public $table = 'visit_investments';
     public $_visits = 'visits';
 
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->_visits WHERE id = $pk AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+            $this->set_post($object);
+            $this->post['type'] = $_GET['type'];
+            return $this->{$_GET['form']}($object['id']);
+        }else{
+            Mixin\error('report_permissions_false');
+        }
+
+    }
+    
     public function form($pk = null)
     {
         global $classes, $session;
+        $vps = (new VisitModel)->price_status($pk);
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
-            <h6 class="modal-title">Оплата: <?= get_full_name($this->value('user_id')) ?></h6>
+            <h6 class="modal-title"><?= ($this->value('type')) ? "Возврат": "Предоплата" ?>: <?= get_full_name($this->value('user_id')) ?></h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
@@ -26,7 +41,8 @@ class VisitInvestmentsModel extends Model
                 <table class="table table-hover mb-2">
                     <tbody>
                         <tr class="table-secondary">
-                            <td><?= ($this->value('type')) ? "Предоплата": "Возврат" ?></td>
+                            <td><?= ($this->value('type')) ? "Баланс": "Сумма к оплате" ?></td>
+                            <td><?= ($this->value('type')) ? number_format($vps['balance']): number_format(-$vps['total_cost']) ?></td>
                         </tr>
                     </tbody>
                 </table>
@@ -84,6 +100,7 @@ class VisitInvestmentsModel extends Model
             </div>
 
         </form>
+
         <script type="text/javascript">
 
             function Subi_investment() {
@@ -105,7 +122,7 @@ class VisitInvestmentsModel extends Model
                             }).show();
                         }
                         $('#modal_default').modal('hide');
-                        Check('get_mod.php?pk=<?= $pk ?>');
+                        Check('<?= up_url($pk, 'PricePanel') ?>');
                     },
                 });
             }
@@ -121,25 +138,6 @@ class VisitInvestmentsModel extends Model
 
         </script>
         <?php
-    }
-
-    public function get_or_404(int $pk)
-    {
-        /**
-         * Данные о записи!
-         * если не найдёт запись то выдаст 404 
-         */
-        global $db;
-        $object = $db->query("SELECT * FROM $this->_visits WHERE id = $pk AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-        if($object){
-            $this->set_post($object);
-            $this->post['type'] = $_GET['type'];
-            return $this->{$_GET['form']}($object['id']);
-        }else{
-            Mixin\error('report_permissions_false');
-            exit;
-        }
-
     }
 
     public function clean()

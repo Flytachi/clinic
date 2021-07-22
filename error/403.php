@@ -23,11 +23,6 @@ $session->is_auth();
 
 <body>
 
-	<!-- Main navbar -->
-
-	<!-- /main navbar -->
-
-
 	<!-- Page content -->
 	<div class="page-content">
 
@@ -42,7 +37,7 @@ $session->is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title">403</h1>
+						<h1 class="error-title <?= $classes['error_page-code-color'] ?>">403</h1>
 						<h4>Forbidden!</h4>
 					</div>
 					<!-- /error title -->

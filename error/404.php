@@ -22,12 +22,7 @@ $session->is_auth();
 </head>
 
 <body>
-
-	<!-- Main navbar -->
-
-	<!-- /main navbar -->
-
-
+	
 	<!-- Page content -->
 	<div class="page-content">
 
@@ -42,7 +37,7 @@ $session->is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title">404</h1>
+						<h1 class="error-title <?= $classes['error_page-code-color'] ?>">404</h1>
 						<h4>Страница не найдена!</h4>
 					</div>
 					<!-- /error title -->

@@ -23,7 +23,7 @@ $tb->set_self(viv('cashbox/stationary'));
         </thead>
         <tbody>
             <?php foreach($tb->get_table(1) as $row): ?>
-                <tr onclick="Check('get_mod.php?pk=<?= $row->id ?>')" id="VisitIDPrice_<?= $row->id ?>">
+                <tr onclick="Check('<?= up_url($row->id, 'PricePanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
                     <td><?= addZero($row->user_id) ?></td>
                     <td class="text-center">
                         <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>

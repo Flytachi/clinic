@@ -75,7 +75,7 @@ $tb->where_or_serch($where_search);
 				                        </thead>
 				                        <tbody id="search_display">
 				                            <?php foreach($tb->get_table(1) as $row): ?>
-				                                <tr onclick="Check('get_mod.php?pk=<?= $row->visit_id ?>')">
+				                                <tr onclick="Check('<?= up_url($row->visit_id, 'PricePanel') ?>')">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
 				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
@@ -132,9 +132,7 @@ $tb->where_or_serch($where_search);
 
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">
-			<div class="<?= $classes['modal-global_content'] ?>" id="form_card">
-				
-			</div>
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
@@ -171,7 +169,7 @@ $tb->where_or_serch($where_search);
 		function Check(events) {
 			$.ajax({
 				type: "GET",
-				url: events+"&mod=rf",
+				url: events+"&refund=1",
 				success: function (result) {
 					$('#check_div').html(result);
 					sumTo($('.total_cost'));

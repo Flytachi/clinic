@@ -77,7 +77,7 @@ $tb->where_or_serch($where_search);
                                         </thead>
                                         <tbody>
 											<?php foreach($tb->get_table(1) as $row): ?>
-				                                <tr onclick="Check('get_mod.php?pk=<?= $row->id ?>')" id="VisitIDPrice_<?= $row->id ?>">
+				                                <tr onclick="Check('<?= up_url($row->id, 'PricePanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
 				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
@@ -146,20 +146,6 @@ $tb->where_or_serch($where_search);
 		</div>
 	<?php endif; ?>
 
-	<div id="modal_sale" class="modal fade" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header bg-info">
-					<h6 class="modal-title">Скидка</h6>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<div id="modal_sale_div"></div>
-
-			</div>
-		</div>
-	</div>
-
 	<!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->
@@ -186,37 +172,10 @@ $tb->where_or_serch($where_search);
 			sessionStorage['message'] = '';
 		}
 
-		function Detail(events) {
-			if (event.target.dataset.show == 1) {
-				$(event.target).addClass('btn-primary');
-				$(event.target).removeClass('btn-outline-primary');
-				event.target.dataset.show = 0;
-				$.ajax({
-					type: "GET",
-					url: events,
-					success: function (result) {
-						$('#detail_div').html(result);
-					},
-				});
-			}else {
-				$(event.target).addClass('btn-outline-primary');
-				$(event.target).removeClass('btn-primary');
-				event.target.dataset.show = 1;
-				$('#detail_div').html("");
-			}
-		}
-
-		function Invest(status) {
-			$('#modal_invest').modal('show');
-			$('#input_balance').text(event.target.dataset.balance);
-			$('#balance_name').text(event.target.dataset.name);
-			$('#price_type').val(status);
-		}
-
 		function Check(events, pk) {
 			$.ajax({
 				type: "GET",
-				url: events+"&mod=st",
+				url: events,
 				success: function (result) {
 					$('#check_div').html(result);
 					$('#user_st_id').val(pk);
