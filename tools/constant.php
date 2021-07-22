@@ -93,7 +93,7 @@ $classes = array(
         "price_btn-prepayment" => "btn btn-outline-success btn-sm legitRipple",
         "price_btn-refund" => "btn btn-outline-danger btn-sm legitRipple",
         "price_btn-finish" => "btn btn-outline-warning btn-sm legitRipple",
-        "price_btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
+        "price_btn-detail" => "btn btn-outline-dark btn-sm legitRipple",
     
     // Modals
     "modal-global_content" => "modal-content border-3 border-danger",

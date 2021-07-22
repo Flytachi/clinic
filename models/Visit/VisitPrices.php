@@ -218,8 +218,8 @@ class VisitPricesModel extends Model
 
             function CardFuncDetail(events) {
                 if (event.target.dataset.show == 1) {
-                    $(event.target).addClass('btn-primary');
-                    $(event.target).removeClass('btn-outline-primary');
+                    $(event.target).addClass('btn-dark');
+                    $(event.target).removeClass('btn-outline-dark');
                     event.target.dataset.show = 0;
                     $.ajax({
                         type: "GET",
@@ -229,8 +229,8 @@ class VisitPricesModel extends Model
                         },
                     });
                 }else {
-                    $(event.target).addClass('btn-outline-primary');
-                    $(event.target).removeClass('btn-primary');
+                    $(event.target).addClass('btn-outline-dark');
+                    $(event.target).removeClass('btn-dark');
                     event.target.dataset.show = 1;
                     $('#detail_div').html("");
                 }
