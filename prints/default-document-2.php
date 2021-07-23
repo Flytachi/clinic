@@ -2,7 +2,7 @@
 require_once '../tools/warframe.php';
 is_module('module_laboratory');
 
-$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
+$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_print_%'")->fetchAll();
 foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
@@ -21,7 +21,7 @@ if ( isset($_GET['items']) ) {
 <html lang="en">
 
     <?php include layout('head') ?>
-    <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
+    <link rel="stylesheet" href="<?= stack("assets/my_css/document.css") ?>">
 
     <style>
         body
@@ -35,14 +35,14 @@ if ( isset($_GET['items']) ) {
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
+                <img src="<?= $company['constant_print_header_logotype'] ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h4">
                 <b>
-                    <?= $company['print_header_title'] ?><br>
-                    <?= $company['print_header_address'] ?><br>
-                    <?= $company['print_header_phones'] ?>
+                    <?= $company['constant_print_header_title'] ?><br>
+                    <?= $company['constant_print_header_address'] ?><br>
+                    <?= $company['constant_print_header_phones'] ?>
                 </b>
             </div>
 

@@ -8,7 +8,7 @@ class Model
      * Model + PDO
      * 
      * 
-     * @version 9.0
+     * @version 9.2
      */
 
     protected $post;
@@ -79,7 +79,7 @@ class Model
 
     protected function value(String $var = null)
     {
-        return (isset($this->post[$var])) ? $this->post[$var] : '';
+        return (isset($this->post[$var])) ? $this->post[$var] : null;
     }
 
     public function get(int $pk)

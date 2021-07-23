@@ -58,8 +58,8 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 
 						<div class="table-responsive">
 							<table class="table table-hover table-sm">
-                                <thead>
-                                    <tr class="<?= $classes['table-thead'] ?>">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>

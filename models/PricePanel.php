@@ -41,7 +41,7 @@ class PricePanel extends Model
                 <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
-                        <a href="<?= viv('card/content_1')."?pk=$pk" ?>" class="<?= $classes['btn-render'] ?>">Перейти к визиту</a>
+                        <a href="<?= viv('card/content_1')."?pk=$pk" ?>" class="<?= $classes['btn-render'] ?>">Перейти к визиту № <?= $pk ?></a>
                     </div>
                 </div>
             </div>
@@ -170,7 +170,7 @@ class PricePanel extends Model
                         },
                     });
                 }
-                
+
                 function Delete(events, tr) {
                     swal({
                         position: 'top',
@@ -304,7 +304,6 @@ class PricePanel extends Model
 
     public function DetailPanel($pk = null)
     {
-        global $classes;
         ?>
         <legend class="font-weight-semibold text-uppercase font-size-sm">
             <i class="icon-cogs mr-2"></i>Детально
@@ -316,8 +315,9 @@ class PricePanel extends Model
         <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelInvestments') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Инвестиции</a></li>
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelServices') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Услуги</a></li>
-            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Лекарства</a></li>
-            <!-- <li class="nav-item"><a onclick="Detail_control('<?= up_url($pk, 'PricePanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Итог</a></li> -->
+            <?php if(module('module_pharmacy')): ?>
+                <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Лекарства</a></li>
+            <?php endif; ?>
         </ul>
 
         <div class="table-responsive" id="div_show_detail">
@@ -344,20 +344,52 @@ class PricePanel extends Model
 
     public function DetailPanelInvestments($pk = null)
     {
-        global $classes;
+        global $db, $classes;
+        $tb = new Table($db, "visit_investments");
+        $tb->where("visit_id = $pk")->order_by("add_date ASC");
+        $tbc_cash = $tbc_card = $tbc_transfer = 0;
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
             <table class="table table-hover table-sm">
-                <thead>
-                    <tr class="bg-dark">
-                        <th class="text-left" colspan="2">Наименование</th>
-                        <th>Дата и время</th>
-                        <th class="text-right">Сумма</th>
+                <thead class="<?= $classes['table_detail-thead'] ?> text-right">
+                    <tr>
+                        <th class="text-left">Дата и время</th>
+                        <th>Наличные</th>
+                        <th>Пластик</th>
+                        <th>Перечисление</th>
+                        <th>Сумма</th>
                     </tr>
                 </thead>
                 <tbody>
-                    
-
+                    <?php foreach($tb->get_table(1) as $row): ?>
+                        <tr class="text-right">
+                            <td class="text-left">  
+                                <?php if($row->expense): ?>
+                                    <span class="badge bg-danger">Used</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Not used</span>
+                                <?php endif; ?>
+                                <?= date_f($row->add_date, 1) ?>
+                            </td>
+                            <td class="text-<?= number_color($row->balance_cash) ?>"><?php $tbc_cash += $row->balance_cash; echo number_format($row->balance_cash); ?></td>
+                            <td class="text-<?= number_color($row->balance_card) ?>"><?php $tbc_card += $row->balance_card; echo number_format($row->balance_card); ?></td>
+                            <td class="text-<?= number_color($row->balance_transfer) ?>"><?php $tbc_transfer += $row->balance_transfer; echo number_format($row->balance_transfer); ?></td>
+                            <td class="text-<?= number_color($row->balance_cash + $row->balance_card + $row->balance_transfer) ?>"><?= number_format($row->balance_cash + $row->balance_card + $row->balance_transfer) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if(isset($row->count)): ?>
+                        <tr class="<?= $classes['table_detail-count_menu'] ?>">
+                            <th class="text-left">Всего: <?= $row->count ?></th>
+                            <th class="text-right"><?= number_format($tbc_cash) ?></th>
+                            <th class="text-right"><?= number_format($tbc_card) ?></th>
+                            <th class="text-right"><?= number_format($tbc_transfer) ?></th>
+                            <th class="text-right"><?= number_format($tbc_cash + $tbc_card +$tbc_transfer) ?></th>
+                        </tr>
+                    <?php else: ?>
+                        <tr class="table-secondary">
+                            <th colspan="5" class="text-center">Нет данных</th>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -366,20 +398,43 @@ class PricePanel extends Model
 
     public function DetailPanelServices($pk = null)
     {
-        global $classes;
+        global $db, $classes;
+        $tb = new Table($db, "visit_prices");
+        $tb->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $pk AND item_type IN (1,3)")->order_by("item_name ASC");
+        $tpc = $tqy = 0;
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
             <table class="table table-hover table-sm">
-                <thead>
-                    <tr class="bg-dark">
-                        <th class="text-left" colspan="2">Наименование</th>
-                        <th>Дата и время</th>
-                        <th class="text-right">Сумма</th>
+                <thead class="<?= $classes['table_detail-thead'] ?> text-right">
+                    <tr>
+                        <th class="text-left">Услуга</th>
+                        <th>Цена(ед)</th>
+                        <th class="text-center">Кол-во</th>
+                        <th>Стоимость</th>
                     </tr>
                 </thead>
                 <tbody>
-                    
-
+                    <?php foreach($tb->get_table(1) as $row): ?>
+                        <tr class="text-right">
+                            <td class="text-left">
+                                <?= $row->item_name ?>
+                            </td>
+                            <td><?= number_format($row->item_cost); ?></td>
+                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT * FROM visit_prices WHERE visit_id = $pk AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
+                            <td class="text-<?= number_color($row->qty * $row->item_cost, true) ?>"><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if(isset($row->count)): ?>
+                        <tr class="<?= $classes['table_detail-count_menu'] ?>">
+                            <th class="text-left" colspan="2"></th>
+                            <th class="text-center"><?= number_format($tqy) ?></th>
+                            <th class="text-right"><?= number_format($tpc) ?></th>
+                        </tr>
+                    <?php else: ?>
+                        <tr class="table-secondary">
+                            <th colspan="5" class="text-center">Нет данных</th>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -389,6 +444,7 @@ class PricePanel extends Model
     public function DetailPanelPharm($pk = null)
     {
         global $classes;
+        if (!module('module_pharmacy')) Mixin\error('cash_permissions_false');
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
             <table class="table table-hover table-sm">

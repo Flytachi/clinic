@@ -110,5 +110,9 @@ $classes = array(
     "input-service_search" => "form-control border-danger wmin-200 mb-2",
     "table-thead" => "bg-danger",
     "table-count_menu" => "table-danger",
+
+    "table_detail-thead" => "bg-dark",
+    "table_detail-count_menu" => "table-secondary",
+
 )
 ?>

@@ -2,7 +2,7 @@
 require_once '../tools/warframe.php';
 $session->is_auth();
 
-$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
+$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_print_%'")->fetchAll();
 foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
@@ -55,7 +55,7 @@ foreach ($comp as $value) {
     <div id="invoice-POS">
 
         <center>
-            <img src="<?= $company['print_header_logotype'] ?>" alt="Логотип" height="90" width="180">
+            <img src="<?= $company['constant_print_header_logotype'] ?>" alt="Логотип" height="90" width="180">
         </center>
 
         <div id="mid">

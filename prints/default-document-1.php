@@ -1,7 +1,7 @@
 <?php
 require_once '../tools/warframe.php';
 
-$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
+$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_print_%'")->fetchAll();
 foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
@@ -12,21 +12,21 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.birth_date, vs.service_t
 <html lang="en">
 
     <?php include layout('head') ?>
-    <link rel="stylesheet" href="<?= stack("vendors/css/document.css") ?>">
+    <link rel="stylesheet" href="<?= stack("assets/my_css/document.css") ?>">
 
     <body>
 
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
+                <img src="<?= $company['constant_print_header_logotype'] ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h3">
                 <b>
-                    <?= $company['print_header_title'] ?><br>
-                    <?= $company['print_header_address'] ?><br>
-                    <?= $company['print_header_phones'] ?>
+                    <?= $company['constant_print_header_title'] ?><br>
+                    <?= $company['constant_print_header_address'] ?><br>
+                    <?= $company['constant_print_header_phones'] ?>
                 </b>
             </div>
 
