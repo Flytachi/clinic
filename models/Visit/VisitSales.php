@@ -58,8 +58,8 @@ class VisitSalesModel extends Model
                         <label class="col-form-label col-md-2">Скидка:</label>
                         <div class="col-md-10">
                             <div class="input-group">
-
-                                <input type="number" name="sale_bed_unit" id="input_sale_bed_unit" step="0.01" class="form-control" value="<?= $this->value('sale_bed_unit') ?>">
+                            
+                                <input type="text" name="sale_bed_unit" id="input_sale_bed_unit" class="form-control input-price" value="<?= number_format($this->value('sale_bed_unit')) ?>">
                                 
                                 <div class="form-group-feedback form-group-feedback-right" style="margin-left: 20px;">
                                     <input type="number" class="form-control" step="0.01" name="sale_bed" id="input_sale_bed" value="<?= $this->value('sale_bed') ?>">
@@ -98,7 +98,7 @@ class VisitSalesModel extends Model
                         <div class="col-md-10">
                             <div class="input-group">
 
-                                <input type="number" name="sale_service_unit" id="input_sale_service_unit" step="0.01" class="form-control" value="<?= $this->value('sale_service_unit') ?>">
+                                <input type="text" name="sale_service_unit" id="input_sale_service_unit" step="0.01" class="form-control input-price" value="<?= number_format($this->value('sale_service_unit')) ?>">
                                 
                                 <div class="form-group-feedback form-group-feedback-right" style="margin-left: 20px;">
                                     <input type="number" class="form-control" step="0.01" name="sale_service" id="input_sale_service" value="<?= $this->value('sale_service') ?>">
@@ -140,12 +140,12 @@ class VisitSalesModel extends Model
             $(bed_input).keyup(function() {
                 var original = bed_price_original.innerHTML.replace(/,/g,'');
                 var proc = Math.round( (original * (bed_input.value / 100)) *100)/100;
-                bed_input_unit.value = proc;
+                bed_input_unit.value = number_format(proc);
                 bed_price.innerHTML = number_format( Math.round( (original - proc) *100)/100 );
             });
             $(bed_input_unit).keyup(function() {
                 var original = bed_price_original.innerHTML.replace(/,/g,'');
-                var proc = bed_input_unit.value;
+                var proc = bed_input_unit.value.replace(/,/g,'');
                 bed_input.value = Math.round( (proc / (original / 100)) *100)/100;
                 bed_price.innerHTML = number_format( Math.round( (original - proc) *100)/100 );
             });
@@ -153,14 +153,34 @@ class VisitSalesModel extends Model
             $(service_input).keyup(function() {
                 var original = service_price_original.innerHTML.replace(/,/g,'');
                 var proc = Math.round( (original * (service_input.value / 100)) *100)/100;
-                service_input_unit.value = proc;
+                service_input_unit.value = number_format(proc);
                 service_price.innerHTML = number_format( Math.round( (original - proc) *100)/100 );
             });
             $(service_input_unit).keyup(function() {
                 var original = service_price_original.innerHTML.replace(/,/g,'');
-                var proc = service_input_unit.value;
+                var proc = service_input_unit.value.replace(/,/g,'');
                 service_input.value = Math.round( (proc / (original / 100)) *100)/100;
                 service_price.innerHTML = number_format( Math.round( (original - proc) *100)/100 );
+            });
+
+            $(".input-price").on("input", function (event) {
+                if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                    try {
+                        event.target.value = event.target.value.replace(
+                            new RegExp(event.originalEvent.data, "g"),
+                            ""
+                        );
+                    } catch (e) {
+                        event.target.value = event.target.value.replace(
+                            event.originalEvent.data,
+                            ""
+                        );
+                    }
+                } else {
+                    event.target.value = number_with(
+                        event.target.value.replace(/,/g, "")
+                    );
+                }
             });
 
             function Subi_Sales() {
@@ -189,6 +209,15 @@ class VisitSalesModel extends Model
 
         </script>
         <?php
+    }
+
+    public function clean()
+    {
+        if( isset($this->post['sale_bed_unit']) ) $this->post['sale_bed_unit'] = str_replace(',', '', $this->post['sale_bed_unit']);
+        if( isset($this->post['sale_service_unit']) ) $this->post['sale_service_unit'] = str_replace(',', '', $this->post['sale_service_unit']);
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
     }
 
     public function success()

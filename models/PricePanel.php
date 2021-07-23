@@ -150,26 +150,78 @@ class PricePanel extends Model
             </div>
             <script type="text/javascript">
 
-            function CardFuncCheck(pk) {
-                var array_services = [];
+                function CardFuncCheck(pk) {
+                    var array_services = [];
 
-                Array.prototype.slice.call(document.querySelectorAll('.prices_class')).forEach(function(item) {
-                    array_services.push(item.value);
-                });
+                    Array.prototype.slice.call(document.querySelectorAll('.prices_class')).forEach(function(item) {
+                        array_services.push(item.value);
+                    });
 
-                $.ajax({
-                    type: "GET",
-                    url: "<?= up_url(null, 'VisitPricesModel') ?>",
-                    data: {
-                        visit_pk: pk,
-                        service_pks: array_services,
-                    },
-                    success: function (result) {
-                        $("#form_card").html(result);
-                        Swit.init();
-                    },
-                });
-            }
+                    $.ajax({
+                        type: "GET",
+                        url: "<?= up_url(null, 'VisitPricesModel') ?>",
+                        data: {
+                            visit_pk: pk,
+                            service_pks: array_services,
+                        },
+                        success: function (result) {
+                            $("#form_card").html(result);
+                            Swit.init();
+                        },
+                    });
+                }
+                
+                function Delete(events, tr) {
+                    swal({
+                        position: 'top',
+                        title: 'Вы уверены что хотоите отменить услугу?',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: "Да"
+                    }).then(function(ivi) {
+                        if (ivi.value) {
+                            $.ajax({
+                                type: "GET",
+                                url: events,
+                                success: function (result) {
+                                    var data = JSON.parse(result);
+                                    console.log(data);
+
+                                    if (data.status == "success") {
+                                        if (data.count == 0) {
+                                            $('#check_div').html("");
+                                            $('#VisitIDPrice_'+data.visit_pk).css("background-color", "red");
+                                            $('#VisitIDPrice_'+data.visit_pk).css("color", "white");
+                                            $('#VisitIDPrice_'+data.visit_pk).fadeOut('slow', function() {
+                                                $(this).remove();
+                                            });
+                                        }else{
+                                            $('#'+tr).css("background-color", "red");
+                                            $('#'+tr).css("color", "white");
+                                            $('#'+tr).fadeOut('slow', function() {
+                                                $(this).remove();
+                                                sumTo($('.total_cost'));
+                                            });
+                                        }
+                                        new Noty({
+                                            text: data.message,
+                                            type: 'success'
+                                        }).show();
+                                        
+                                    }else {
+
+                                        new Noty({
+                                            text: data.message,
+                                            type: 'error'
+                                        }).show();
+                                        
+                                    }
+                                },
+                            });
+                        }
+                    });
+                };
+
             </script>
         <?php
     }

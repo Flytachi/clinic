@@ -22,6 +22,10 @@ function number_format(number, decimals, decPoint, thousandsSep) {
     return s.join(dec);
 }
 
+function number_with(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function date_format(params) {
     return `${params.getFullYear().toString().padStart(4, "0")}-${(
         params.getMonth() + 1

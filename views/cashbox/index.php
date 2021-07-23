@@ -157,65 +157,6 @@ $tb->where_or_serch($where_search);
 			});
 		});
 
-		function Delete(events, tr) {
-			swal({
-                position: 'top',
-                title: 'Вы уверены что хотоите отменить услугу?',
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonText: "Да"
-            }).then(function(ivi) {
-                if (ivi.value) {
-					$.ajax({
-						type: "GET",
-						url: events,
-						success: function (result) {
-							var data = JSON.parse(result);
-							console.log(data);
-
-							if (data.status == "success") {
-								if (data.count == 0) {
-									$('#check_div').html("");
-									$('#VisitIDPrice_'+data.visit_pk).css("background-color", "red");
-									$('#VisitIDPrice_'+data.visit_pk).css("color", "white");
-									$('#VisitIDPrice_'+data.visit_pk).fadeOut('slow', function() {
-										$(this).remove();
-									});
-								}else{
-									$('#'+tr).css("background-color", "red");
-									$('#'+tr).css("color", "white");
-									$('#'+tr).fadeOut('slow', function() {
-										$(this).remove();
-										sumTo($('.total_cost'));
-									});
-								}
-								new Noty({
-									text: data.message,
-									type: 'success'
-								}).show();
-								
-							}else {
-
-								new Noty({
-									text: data.message,
-									type: 'error'
-								}).show();
-								
-							}
-						},
-					});
-                }
-            });
-		};
-
-		function sumTo(arr) {
-			var total = 0;
-			for (value of arr) {
-				total += Number($(value).text());
-			}
-			$('#total_title').html(total);
-		}
-
 		function Check(events) {
 			$.ajax({
 				type: "GET",
@@ -227,26 +168,14 @@ $tb->where_or_serch($where_search);
 			});
 		};
 
-
-		function Downsum(input) {
-			input.className = "form-control";
-			input.value = "";
-			var input_selectors = document.querySelectorAll(".input_chek");
-
-			for (let item of input_selectors) {
-				item.value = (document.querySelector("#total_price").value).replace(/,/g,'') / input_selectors.length;
+		function sumTo(arr) {
+			var total = 0;
+			for (value of arr) {
+				total += Number($(value).text());
 			}
+			$('#total_title').html(total);
 		}
 
-		function Upsum(input) {
-			input.className = "form-control input_chek";
-			var input_selectors = document.querySelectorAll(".input_chek");
-			var vas = 0;
-			for (let key of input_selectors) {
-				vas += Number(key.value);
-			}
-			input.value = (document.querySelector("#total_price").value).replace(/,/g,'') - vas;
-		}
 	</script>
 
 </body>

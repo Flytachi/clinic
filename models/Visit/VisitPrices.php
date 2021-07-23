@@ -63,7 +63,7 @@ class VisitPricesModel extends Model
                     <label class="col-form-label col-md-3">Наличный</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="price_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="<?= ( isset($price_cash) ) ? number_format($price_cash) : 'расчет' ?>" disabled>
+                            <input type="text" name="price_cash" id="input_chek_1" class="form-control input-price" placeholder="<?= ( isset($price_cash) ) ? number_format($price_cash) : 'расчет' ?>" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_1" onchange="Checkert(this)">
@@ -115,6 +115,63 @@ class VisitPricesModel extends Model
 
         <script type="text/javascript">
 
+            $(".input-price").on("input", function (event) {
+                if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                    try {
+                        event.target.value = event.target.value.replace(
+                            new RegExp(event.originalEvent.data, "g"),
+                            ""
+                        );
+                    } catch (e) {
+                        event.target.value = event.target.value.replace(
+                            event.originalEvent.data,
+                            ""
+                        );
+                    }
+                } else {
+                    event.target.value = number_with(
+                        event.target.value.replace(/,/g, "")
+                    );
+                }
+            });
+
+            $("#sale_input").keyup(function() {
+                var sum = document.querySelector("#total_price_original").value;
+                var proc = document.querySelector("#sale_input").value / 100;
+                document.querySelector("#total_price").value = number_format( (sum - (sum * proc)), 1);
+            });
+
+            function Checkert(event) {
+                var input = document.querySelector("#input_"+event.id);
+                if(input.disabled){
+                    input.disabled = false;
+                    Upsum(input);
+                }else {
+                    input.disabled = true;
+                    Downsum(input);
+                }
+            }
+
+            function Downsum(input) {
+                input.className = "form-control";
+                input.value = "";
+                var input_selectors = document.querySelectorAll(".input_chek");
+
+                for (let item of input_selectors) {
+                    item.value = number_format((document.querySelector("#total_price").value).replace(/,/g,'') / input_selectors.length);
+                }
+            }
+
+            function Upsum(input) {
+                input.className = "form-control input_chek";
+                var input_selectors = document.querySelectorAll(".input_chek");
+                var vas = 0;
+                for (let key of input_selectors) {
+                    vas += Number(key.value);
+                }
+                input.value = number_format((document.querySelector("#total_price").value).replace(/,/g,'') - vas);
+            }
+
             function Submit_alert() {
                 var btn = event.submitter;
                 event.preventDefault();
@@ -159,23 +216,6 @@ class VisitPricesModel extends Model
                     },
                 });
             }
-
-            function Checkert(event) {
-                var input = document.querySelector("#input_"+event.id);
-                if(input.disabled){
-                    input.disabled = false;
-                    Upsum(input);
-                }else {
-                    input.disabled = true;
-                    Downsum(input);
-                }
-            }
-
-            $("#sale_input").keyup(function() {
-                var sum = document.querySelector("#total_price_original").value;
-                var proc = document.querySelector("#sale_input").value / 100;
-                document.querySelector("#total_price").value = number_format( (sum - (sum * proc)), 1);
-            });
 
         </script>
         <?php
@@ -418,9 +458,9 @@ class VisitPricesModel extends Model
     {
         global $db;
         // Constructor
-        $this->post['price_cash'] = (isset($this->post['price_cash'])) ? $this->post['price_cash'] : 0;
-        $this->post['price_card'] = (isset($this->post['price_card'])) ? $this->post['price_card'] : 0;
-        $this->post['price_transfer'] = (isset($this->post['price_transfer'])) ? $this->post['price_transfer'] : 0;
+        $this->post['price_cash'] = (isset($this->post['price_cash'])) ? str_replace(',', '', $this->post['price_cash']) : 0;
+        $this->post['price_card'] = (isset($this->post['price_card'])) ? str_replace(',', '', $this->post['price_card']) : 0;
+        $this->post['price_transfer'] = (isset($this->post['price_transfer'])) ? str_replace(',', '', $this->post['price_transfer']) : 0;
         $this->visit = $db->query("SELECT * FROM $this->table1 WHERE id = {$this->post['visit_id']}")->fetch();
         unset($this->post['visit_id']);
         

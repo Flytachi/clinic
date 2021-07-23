@@ -51,7 +51,7 @@ class VisitInvestmentsModel extends Model
                     <label class="col-form-label col-md-3">Наличный</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="balance_cash" id="input_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <input type="text" name="balance_cash" id="input_chek_1" step="0.5" class="form-control input-price" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_1" onchange="Checkert(this)">
@@ -65,7 +65,7 @@ class VisitInvestmentsModel extends Model
                     <label class="col-form-label col-md-3">Пластиковый</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="balance_card" id="input_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <input type="text" name="balance_card" id="input_chek_2" step="0.5" class="form-control input-price" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_2" onchange="Checkert(this)">
@@ -79,7 +79,7 @@ class VisitInvestmentsModel extends Model
                     <label class="col-form-label col-md-3">Перечисление</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="balance_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
+                            <input type="text" name="balance_transfer" id="input_chek_3" step="0.5" class="form-control input-price" placeholder="расчет" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_3" onchange="Checkert(this)">
@@ -102,6 +102,35 @@ class VisitInvestmentsModel extends Model
         </form>
 
         <script type="text/javascript">
+
+            function Checkert(event) {
+                var input = document.querySelector("#input_"+event.id);
+                if(input.disabled){
+                    input.disabled = false;
+                }else {
+                    input.disabled = true;
+                }
+            }
+
+            $(".input-price").on("input", function (event) {
+                if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                    try {
+                        event.target.value = event.target.value.replace(
+                            new RegExp(event.originalEvent.data, "g"),
+                            ""
+                        );
+                    } catch (e) {
+                        event.target.value = event.target.value.replace(
+                            event.originalEvent.data,
+                            ""
+                        );
+                    }
+                } else {
+                    event.target.value = number_with(
+                        event.target.value.replace(/,/g, "")
+                    );
+                }
+            });
 
             function Subi_investment() {
                 event.preventDefault();
@@ -127,21 +156,15 @@ class VisitInvestmentsModel extends Model
                 });
             }
 
-            function Checkert(event) {
-                var input = document.querySelector("#input_"+event.id);
-                if(input.disabled){
-                    input.disabled = false;
-                }else {
-                    input.disabled = true;
-                }
-            }
-
         </script>
         <?php
     }
 
     public function clean()
     {
+        if( isset($this->post['balance_cash']) ) $this->post['balance_cash'] = str_replace(',', '', $this->post['balance_cash']);
+        if( isset($this->post['balance_card']) ) $this->post['balance_card'] = str_replace(',', '', $this->post['balance_card']);
+        if( isset($this->post['balance_transfer']) ) $this->post['balance_transfer'] = str_replace(',', '', $this->post['balance_transfer']);
         if ($this->post['price_type']) {
             if (isset($this->post['balance_cash'])) {
                 $this->post['balance_cash'] *= -1;
