@@ -63,7 +63,7 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 12")->order_by('add_date DESC');
+										$tb->set_data("id, division_id, route_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 12")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
@@ -91,7 +91,7 @@ require_once 'callback.php';
 												<td class="text-right">
 													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<?php if( $activity and ((!$patient->direction and $row->status == 1) or ($patient->direction and $row->status == 2) ) ): ?>
+														<?php if( $activity and ( (!$patient->direction and $row->status == 1) or ( $patient->direction and $row->status == 2 and ($row->route_id == $session->session_id or is_grant()) ) ) ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 														
@@ -200,12 +200,29 @@ require_once 'callback.php';
             $.ajax({
 				type: "GET",
 				url: url,
-				success: function (data) {
-                    $(tr).css("background-color", "rgb(244, 67, 54)");
-                    $(tr).css("color", "white");
-                    $(tr).fadeOut(900, function() {
-                        $(tr).remove();
-                    });
+				success: function (result) {
+					var data = JSON.parse(result);
+
+					if (data.status == "success") {
+						$(tr).css("background-color", "rgb(244, 67, 54)");
+						$(tr).css("color", "white");
+						$(tr).fadeOut(900, function() {
+							$(tr).remove();
+						});
+						new Noty({
+							text: data.message,
+							type: 'success'
+						}).show();
+						
+					}else {
+
+						new Noty({
+							text: data.message,
+							type: 'error'
+						}).show();
+						
+					}
+
 				},
 			});
         };

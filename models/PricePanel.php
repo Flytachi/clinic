@@ -186,7 +186,6 @@ class PricePanel extends Model
                                 url: events,
                                 success: function (result) {
                                     var data = JSON.parse(result);
-                                    console.log(data);
 
                                     if (data.status == "success") {
                                         if (data.count == 0) {

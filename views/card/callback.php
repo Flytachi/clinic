@@ -35,6 +35,20 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     if (!$patient or ($activity and $patient->completed) ) {
         Mixin\error('404');
     }
+
+    function is_grant(Int $id = null)
+    {
+        global $patient, $session;
+        if ($patient->grant_id) {
+            if ($id) {
+                return ($patient->grant_id == $id) ? True : False;
+            }else {
+                return ($patient->grant_id == $session->session_id) ? True : False;
+            }
+        } else {
+            return False;
+        }
+    }
     
 } else {
     Mixin\error('404');

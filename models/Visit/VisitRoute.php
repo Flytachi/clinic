@@ -709,9 +709,8 @@ class VisitRoute extends Model
 
             }
 
-            $this->dd();
-            // $db->commit();
-            // $this->success();
+            $db->commit();
+            $this->success();
         }
     }
 
@@ -729,6 +728,7 @@ class VisitRoute extends Model
         $post['division_id'] = $this->post['division_id'][$key];
         if (isset($this->post['status'])) {
             $post['status'] = $this->post['status'];
+            $post['accept_date'] = date("Y-m-d H:i:s");
         } else {
             $post['status'] = ($this->post['direction']) ? 2 : 1;
         }

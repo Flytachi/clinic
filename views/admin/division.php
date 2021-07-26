@@ -12,8 +12,6 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->

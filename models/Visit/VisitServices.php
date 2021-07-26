@@ -46,27 +46,58 @@ class VisitServicesModel extends Model
 
     public function delete(int $pk)
     {
-        global $db;
-        $this->visit_pk = $db->query("SELECT visit_id FROM $this->table WHERE id = $pk")->fetchColumn();
+        global $db, $session;
+        $data = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch();
+        $this->visit_pk = $data['visit_id'];
 
-        $db->beginTransaction();
-        // Visit prices 
-        $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
-        if(!intval($object)){
-            Mixin\error('404');
-            $db->rollBack();
-        }
-        // Visit service 
-        $object = Mixin\delete($this->table, $pk);
-        if(!intval($object)){
-            Mixin\error('404');
-            $db->rollBack();
-        }
+        if ($this->visit_pk) {
+            $visit = $db->query("SELECT * FROM $this->_visits WHERE id = $this->visit_pk")->fetch();
+            
+            // --------------------------------
+            // Права амбулаторного удаления
+            $permission_amb = $data['status'] == 1 && permission([32, 3]);
+            // Права стационарного удаления
+            $permission_sta = $data['status'] == 2 && ($visit['grant_id'] == $session->session_id | $data['route_id'] == $session->session_id);
+            // --------------------------------
 
-        $this->status_update();
-        
-        $db->commit();
-        $this->success($db->query("SELECT * FROM $this->table WHERE visit_id = $this->visit_pk AND status = 1")->rowCount());
+            // Права распределенние
+            $permission = ($visit['direction']) ? $permission_sta : $permission_amb;
+
+            // Контроллер
+            if ( $permission ) {
+
+                // Начало Транкзации
+                $db->beginTransaction();
+                // Visit prices 
+                $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
+                if(!intval($object)){
+                    $this->error("Произошла ошибка на сервере!");
+                    $db->rollBack();
+                    exit;
+                }
+                // Visit service 
+                $object = Mixin\delete($this->table, $pk);
+                if(!intval($object)){
+                    $this->error("Произошла ошибка на сервере!");
+                    $db->rollBack();
+                    exit;
+                }
+
+                $this->status_update();
+                
+                $db->commit();
+                $this->success($db->query("SELECT * FROM $this->table WHERE visit_id = $this->visit_pk AND status = 1")->rowCount());
+                // Конец Транкзации
+
+            }else {
+                $this->error("Отказано в доступе!");
+                exit;
+            }
+
+        }else {
+            $this->error("Невозможно удалить!");
+            exit;
+        }
 
     }
 

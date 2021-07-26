@@ -103,29 +103,47 @@ class VisitFailure extends Model
 
             # Стационар
             if ($data['service_id'] == 1) {
-                $this->error("Функция отказа \"Полного стационара\" не сделана!");
-                return 1;
-            } else {
 
-                $db->beginTransaction();
-                // Visit prices 
-                $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
-                if(!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
+                // Проверка прав
+                if ( $visit['grant_id'] == $session->session_id ) {
+            
+                    $this->error("Функция отказа \"Полного стационара\" не сделана!");
+                    return 1;
+        
+                }else {
+                    $this->error("Отказано в доступе!");
+                    return 1;
                 }
-                // Visit service 
-                $object = Mixin\delete($this->table, $pk);
-                if(!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
-                }
-
-                $this->status_update($visit['id']);
                 
-                $db->commit();
-                $this->success($pk);
-                return 1;
+            } else {
+                
+                // Проверка прав
+                if ( in_array($data['status'], [2,3]) and ($data['parent_id'] == $session->session_id or $data['route_id'] == $session->session_id)) {
+                    
+                    $db->beginTransaction();
+                    // Visit prices 
+                    $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
+                    if(!intval($object)){
+                        $this->error("Произошла ошибка на сервере!");
+                        $db->rollBack();
+                    }
+                    // Visit service 
+                    $object = Mixin\delete($this->table, $pk);
+                    if(!intval($object)){
+                        $this->error("Произошла ошибка на сервере!");
+                        $db->rollBack();
+                    }
+
+                    $this->status_update($visit['id']);
+                    
+                    $db->commit();
+                    $this->success($pk);
+                    return 1;
+
+                }else{
+                    $this->error("Отказано в доступе!");
+                    return 1;
+                }
                 
             }
 
@@ -142,7 +160,7 @@ class VisitFailure extends Model
                 $this->success($pk);
     
             }else {
-                $this->error("У вас нет прав на отказ!");
+                $this->error("Отказано в доступе!");
                 return 1;
             }
 

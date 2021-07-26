@@ -13,6 +13,7 @@ class DivisionModel extends Model
             unset($_SESSION['message']);
         }
         ?>
+        <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <form method="post" action="<?= add_url() ?>" enctype="multipart/form-data">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
@@ -70,13 +71,11 @@ class DivisionModel extends Model
                             </div>
                         </div>
                     `;
-                    
+                    document.querySelector('#change_table_div').innerHTML = div;
+                    Swit.init();
                 }else{
-                    var div = ``;
+                    document.querySelector('#change_table_div').innerHTML = '';
                 }
-
-                document.querySelector('#change_table_div').innerHTML = div;
-                Swit.init();
             }
 
             function AddDoc() {
