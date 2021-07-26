@@ -610,8 +610,11 @@ class VisitPriceModel extends Model
 
     public function err_temp(Int $temp = 0)
     {
+        global $db;
+        $throughput_from = $db->query("SELECT const_value FROM company_constants WHERE const_label LIKE 'const_throughput_from'")->fetchColumn();
+        $throughput_before = $db->query("SELECT const_value FROM company_constants WHERE const_label LIKE 'const_throughput_before'")->fetchColumn();
         if (isset($this->bed_cost)) {
-            $range = range(-3000,3000);
+            $range = range(($throughput_from) ? $throughput_from : -1 , ($throughput_before) ? $throughput_before : 1);
         } else {
             $range = range(-1,1);
         }

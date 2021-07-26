@@ -107,7 +107,7 @@ $header = "Отчёт лаборатории по услугам";
 										<?php
 										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
 											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
 											<?php
 										}
 										?>
@@ -128,7 +128,7 @@ $header = "Отчёт лаборатории по услугам";
 								</div>
 
 							</div>
-
+ 
 							<div class="text-right">
 								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>

@@ -79,7 +79,7 @@ if ( isset($_GET['items']) ) {
                                     <th class="text-left">Анализ</th>
                                     <th class="text-right" style="width:15%">Норма</th>
                                     <th class="text-right" style="width:10%">Ед</th>
-                                    <th class="text-right" style="width:15%">Результат</th>
+                                    <th class="text-center" style="width:15%">Результат</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,7 +98,7 @@ if ( isset($_GET['items']) ) {
                                         <td class="text-right">
                                             <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                                         </td>
-                                        <td class="text-right"><?= $row['result'] ?></td>
+                                        <td class="text-center"><?= $row['result'] ?></td>
                                     </tr>
                                     <?php
                                 }
@@ -120,7 +120,7 @@ if ( isset($_GET['items']) ) {
                                 <th class="text-left">Анализ</th>
                                 <th class="text-right" style="width:15%">Норма</th>
                                 <th class="text-right" style="width:10%">Ед</th>
-                                <th class="text-right" style="width:15%">Результат</th>
+                                <th class="text-center" style="width:15%">Результат</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -139,7 +139,7 @@ if ( isset($_GET['items']) ) {
                                     <td class="text-right">
                                         <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                                     </td>
-                                    <td class="text-right"><?= $row['result'] ?></td>
+                                    <td class="text-center"><?= $row['result'] ?></td>
                                 </tr>
                                 <?php
                             }
