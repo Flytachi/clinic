@@ -12,11 +12,12 @@ class PricePanel extends Model
             $this->set_post($object);
 
             if ($object['direction']) {
-                if ($_GET['form'] != "form") {
-                    return $this->{$_GET['form']}($object['id']);
-                } else {
-                    return $this->FirstPanel($object['id']);
-                }
+                // if ($_GET['form'] != "form") {
+                //     return $this->{$_GET['form']}($object['id']);
+                // } else {
+                //     return $this->FirstPanel($object['id']);
+                // }
+                Mixin\error('cash_permissions_false');
             } else {
                 if (!(isset($_GET['refund']) and $_GET['refund'])) {
                     return $this->SecondPanel($object['id']);
@@ -449,7 +450,6 @@ class PricePanel extends Model
         $tb = new Table($db, "visit_beds");
         $tb->set_data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->where("visit_id = $pk")->order_by("start_date ASC");
         $sale_info = (new Table($db, "visit_sales"))->where("visit_id = $pk")->get_row();
-        // dd($vps);
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
             <table class="table table-hover table-sm">
