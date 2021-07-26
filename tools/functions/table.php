@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 5.8
+     * @version 7.5
      */
 
     // database handle
@@ -296,6 +296,28 @@ class Table
             $this->sql .= " LIMIT $this->limit OFFSET $offset";
         }
         $get = $this->db->query($this->sql)->fetchAll(PDO::FETCH_OBJ);
+        if ($count_status) {
+            $off_count = (($this->limit) ? $offset : 0) + 1;
+            foreach ($get as $key => $value) {
+                $get[$key]->{'count'} = $off_count++;
+            }
+        }
+        return $get;
+    }
+
+    public function get_row($count_status = null)
+    {
+        /*
+            Получение 1 элемента массива с данными!
+        */
+        $this->generate_sql();
+        
+        if ($this->limit) {
+            $page =  (int)(isset($_GET['table_page'])) ? $_GET['table_page'] : $page = 1;
+            $offset = $this->limit * ($page - 1);
+            $this->sql .= " LIMIT $this->limit OFFSET $offset";
+        }
+        $get = $this->db->query($this->sql)->fetch(PDO::FETCH_OBJ);
         if ($count_status) {
             $off_count = (($this->limit) ? $offset : 0) + 1;
             foreach ($get as $key => $value) {

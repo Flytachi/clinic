@@ -3,6 +3,8 @@ require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "Приём платежей";
 
+Mixin\error('403'); 
+
 $tb = new Table($db, "visits vs");
 $search = $tb->get_serch();
 $tb->set_data("vs.id, vs.user_id")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");

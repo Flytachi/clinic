@@ -54,7 +54,7 @@ require_once 'callback.php';
 								<a onclick="Update('<?= up_url($patient->visit_id, 'VisitInspectionsModel') ?>')"  class="float-right text-info">
 									<i class="icon-plus22 mr-1"></i>Осмотр
 								</a>
-								<a class="float-right <?= $class_color_add ?> mr-2" data-toggle="modal" data-target="#modal_add_service">
+								<a onclick='Check(`<?= up_url(null, "VisitRoute", "form_second") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?> mr-2">
 									<i class="icon-plus22 mr-1"></i>Услуга
 								</a>
 							<?php endif; ?>
@@ -149,23 +149,6 @@ require_once 'callback.php';
 		<div id="modal_report" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
 				<div class="<?= $classes['modal-global_content'] ?>" id="form_card_report"></div>
-			</div>
-		</div>
-
-		<div id="modal_add_service" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="<?= $classes['modal-global_content'] ?>">
-					<div class="<?= $classes['modal-global_header'] ?>">
-						<h6 class="modal-title">Назначить услугу</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body">
-
-						<?php // (new VisitRoute)->form_sta_doc() ?>
-
-					</div>
-				</div>
 			</div>
 		</div>
 

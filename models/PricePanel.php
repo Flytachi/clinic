@@ -318,6 +318,7 @@ class PricePanel extends Model
             <?php if(module('module_pharmacy')): ?>
                 <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Лекарства</a></li>
             <?php endif; ?>
+            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelTotal') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Итог</a></li>
         </ul>
 
         <div class="table-responsive" id="div_show_detail">
@@ -435,6 +436,87 @@ class PricePanel extends Model
                             <th colspan="5" class="text-center">Нет данных</th>
                         </tr>
                     <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+
+    public function DetailPanelTotal($pk = null)
+    {
+        global $db, $classes;
+        $vps = (new VisitModel)->price_status($pk);
+        $tb = new Table($db, "visit_beds");
+        $tb->set_data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->where("visit_id = $pk")->order_by("start_date ASC");
+        $sale_info = (new Table($db, "visit_sales"))->where("visit_id = $pk")->get_row();
+        // dd($vps);
+        ?>
+        <div class="table-responsive mt-3 card" id="check_detail">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr class="bg-dark">
+                        <th class="text-left">Информация</th>
+                        <th class="text-right">Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>
+                            <strong style="font-size: 15px;">Прибывание:</strong><br>
+                            <ul class="list-unstyled">
+                                <?php foreach($tb->get_table() as $row): ?>
+                                    <li>
+                                        <span class="text-success"><?= number_format( $row->time * ($row->cost / 24) ) ?> -</span>
+                                        <?= $row->location ?> 
+                                        <span class="text-primary">(<?= $row->type ?>)</span> 
+                                        -----------> <?= number_format($row->cost) ?>/День 
+                                        <span class="text-primary">(<?= $row->time ?> ч.)</span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </td>
+                        <td class="text-right"><?= number_format(-$vps['cost-beds']) ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong style="font-size: 15px;">Услуги</strong></td>
+                        <td class="text-right"><?= number_format(-$vps['cost-services']) ?></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong style="font-size: 15px;">Скидки:</strong><br>
+                            <ul class="list-unstyled">
+                                <li>
+                                    Койка - <?= number_format($sale_info->sale_bed_unit) ?> <span class="text-muted">(<?= $sale_info->sale_bed ?>%)</span><br>
+                                    Услуги - <?= number_format($sale_info->sale_service_unit) ?> <span class="text-muted">(<?= $sale_info->sale_service ?>%)</span>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="text-right"><?= number_format($vps['sale-total']) ?></td>
+                    </tr>
+
+                    <tr>
+                        <td><strong style="font-size: 15px;">Инвестиции</strong></td>
+                        <td class="text-right text-success"><?= number_format($vps['balance']) ?></td>
+                    </tr>
+                    <tr>
+                        <td><strong style="font-size: 15px;">К оплате</strong></td>
+                        <td class="text-right text-danger"><?= number_format(-$vps['total_cost']) ?></td>
+                    </tr>
+                    <?php if($vps['result'] > 0): ?>
+                        <tr class="table-danger">
+                            <td><strong style="font-size: 15px;">Остаток</strong></td>
+                            <td class="text-right text-success"><?= number_format($vps['result']) ?></td>
+                        </tr>
+                    <?php elseif($vps['result'] < 0): ?>
+                        <tr class="table-danger">
+                            <td><strong style="font-size: 15px;">Недостаток</strong></td>
+                            <td class="text-right text-danger"><?= number_format(-$vps['result']) ?></td>
+                        </tr>
+                    <?php endif; ?>
+
+                    
+
                 </tbody>
             </table>
         </div>
