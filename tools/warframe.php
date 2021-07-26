@@ -226,6 +226,34 @@ function addZero($number){
     return $strNumber;
 }
 
+function num_word($value, $words, $show = true) 
+{
+    $num = $value % 100;
+    if ($num > 19) $num = $num % 10;
+    $out = ($show) ? $value . ' ' : '';
+    switch ($num) {
+        case 1:  $out .= $words[0]; break;
+        case 2: 
+        case 3: 
+        case 4:  $out .= $words[1]; break;
+        default: $out .= $words[2]; break;
+    }
+    return $out;
+}
+
+function minToStr($mins)
+{
+    $res = '';
+    $days = floor($mins / 24);
+    $mins = $mins % 24;
+    $res .= num_word($days, array('день', 'дня', 'дней')) . ' ';
+    $hours = floor($mins / 1);
+    $mins = $mins % 1;
+    $res .= num_word($hours, array('час', 'часа', 'часов')) . ' ';
+    return $res;
+}
+
+
 // Divisions
 function division($id = null) {
     global $db, $session;

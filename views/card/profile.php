@@ -117,61 +117,18 @@
                 </fieldset>
 
                 <?php $class_color_add = "text-success"; ?>
-                <?php if ($patient->direction and false): ?>
+                <?php if ($patient->direction): ?>
                     <?php
-                    // Баланс пациента
-                    // $pl = 0;
-                    // if ($activity) {
-                    //     $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND priced_date IS NULL AND service_id != 1")->fetchAll();
-                    //     foreach ($serv_id as $value) {
-                    //         $item_service = $db->query("SELECT SUM(item_cost) 'price' FROM visit_price WHERE visit_id = {$value['id']}")->fetchAll();
-                    //         foreach ($item_service as $pri_ze) {
-                    //             $pl += $pri_ze['price'];
-                    //         }
-                    //     }
-                    //     $sql = "SELECT
-                    //                 @date_start := IFNULL((SELECT add_date FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) ORDER BY add_date DESC LIMIT 1), vs.add_date) 'date_start',
-                    //                 @date_end := IFNULL(vs.completed, CURRENT_TIMESTAMP()) 'date_end',
-                    //                 @bed_hours := ROUND(DATE_FORMAT(TIMEDIFF(@date_end, @date_start), '%H')) 'bed_hours',
-                    //                 IFNULL(SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer), 0) -
-                    //                 (
-                    //                     @bed_hours * (bdt.price / 24) +
-                    //                     IFNULL($pl, 0) +
-                    //                     (SELECT IFNULL(SUM(item_cost), 0) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,2,3,4,5,101))
-                    //                 )
-                    //                  'balance'
-                    //             FROM users us
-                    //                 LEFT JOIN investment iv ON(iv.user_id = us.id AND iv.status IS NOT NULL)
-                    //                 LEFT JOIN beds bd ON(bd.user_id = us.id)
-                    //                 LEFT JOIN bed_type bdt ON(bdt.id = bd.types)
-                    //                 LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.grant_id = vs.parent_id AND priced_date IS NULL)
-                    //             WHERE us.id = $patient->id";
-                    //     $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
-                    // } else {
-                    //     $price = (object) array("balance" => 0);
-                    //     $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
-                    //     foreach ($serv_id as $value) {
-                    //         $item_service = $db->query("SELECT SUM(price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
-                    //         foreach ($item_service as $pri_ze) {
-                    //             $price->balance += $pri_ze['price'];
-                    //         }
-                    //     }
-                    //     // dd($price->balance);
-                    // }
-
-                    // if (!$activity and !$patient->priced_date) {
-                    //     $price->balance = -$price->balance;
-                    // }
-
-                    // if ($price->balance >= 0) {
-                    //     $class_card_balance = "text-success";
-                    //     $class_color_add = "cl_btn_balance text-success";
-                    //     $id_selector_balance = "1";
-                    // }else {
-                    //     $class_card_balance = "text-danger";
-                    //     $class_color_add = "cl_btn_balance text-danger";
-                    //     $id_selector_balance = "0";
-                    // }
+                    $vps = (new VisitModel)->price_status($patient->visit_id);
+                    if ($vps['result'] >= 0) {
+                        $class_card_balance = "text-success";
+                        $class_color_add = "cl_btn_balance text-success";
+                        $id_selector_balance = "1";
+                    }else {
+                        $class_card_balance = "text-danger";
+                        $class_color_add = "cl_btn_balance text-danger";
+                        $id_selector_balance = "0";
+                    }
                     ?>
                     <fieldset class="mb-3 row" style="margin-top: -50px; ">
                         <legend></legend>
@@ -180,7 +137,7 @@
                             <div class="form-group row">
 
                                 <label class="col-md-5"><b>Лечащий врач:</b></label>
-                                <div class="col-md-7 text-right <?= ($patient->grant_id == $_SESSION['session_id']) ? "text-success" : "text-primary" ?>">
+                                <div class="col-md-7 text-right <?= (is_grant()) ? "text-success" : "text-primary" ?>">
                                     <?= get_full_name($patient->grant_id) ?>
                                 </div>
 
@@ -193,16 +150,12 @@
                                 ?>
                                 <label class="col-md-4"><b>Размещён:</b></label>
                                 <div <?= $loc_attr ?> id="patient_location">
-                                    <?php if ($activity): ?>
-                                        <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
-                                    <?php else: ?>
-                                        <?= $patient->item_name ?>
-                                    <?php endif; ?>
+                                    <?= $db->query("SELECT location FROM visit_beds WHERE visit_id = $patient->visit_id AND end_date IS NULL")->fetchColumn() ?>
                                 </div>
 
                                 <label class="col-md-4"><b>Дата размещения:</b></label>
                                 <div class="col-md-8 text-right">
-                                    <?= date('d.m.Y  H:i', strtotime($patient->add_date)) ?>
+                                    <?= date_f($patient->add_date, 1) ?>
                                 </div>
 
                             </div>
@@ -213,23 +166,21 @@
                                 <?php if ($activity): ?>
                                     <label class="col-md-4"><b>Баланс:</b></label>
                                     <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
-                                        <?= number_format($price->balance) ?>
+                                        <?= number_format($vps['result']) ?>
                                     </div>
                                 <?php else: ?>
                                     <label class="col-md-4"><b>Прибыль:</b></label>
                                     <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
-                                        <?= number_format($price->balance) ?>
+                                        <?= number_format($vps['result']) ?>
                                     </div>
                                 <?php endif; ?>
 
                                 <label class="col-md-3"><b>Прибывание:</b></label>
                                 <div class="col-md-9 text-right">
                                     <?php
-                                    $date_finish = (isset($patient->completed)) ? new \DateTime($patient->completed) : new \DateTime();
-                                    $dr = date_diff($date_finish, new \DateTime($patient->add_date));
-                                    if ($dr->h >= 1) {
-                                        echo $dr->days." д. ".$dr->h." ч.";
-                                    }else {
+                                    if ($vps['bed-time'] > 0) {
+                                        echo minToStr($vps['bed-time']);
+                                    } else {
                                         echo "Прибыл сегодня";
                                     }
                                     ?>

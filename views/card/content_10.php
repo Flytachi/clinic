@@ -94,69 +94,10 @@ require_once 'callback.php';
 														<?php if( $activity and ( (!$patient->direction and $row->status == 1) or ( $patient->direction and $row->status == 2 and ($row->route_id == $session->session_id or is_grant()) ) ) ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
-														
-														<?php /*if ($patient->direction and !$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
-															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
-														<?php endif;*/ ?>
 													</div>
 												</td>
 											</tr>
 										<?php endforeach; ?>
-										<?php /*
-										$i = 1;
-										if ( isset($patient->completed) ) {
-											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation, vs.route_id
-															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
-															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"$patient->completed\") ORDER BY vs.id DESC";
-										} else {
-											$sql_table = "SELECT vs.id, vs.parent_id, vs.direction, vs.accept_date, vs.completed, vs.status, sc.name, vs.physio, vs.manipulation, vs.route_id
-															FROM visit vs LEFT JOIN service sc ON(vs.service_id=sc.id)
-															WHERE vs.user_id = $patient->id AND (vs.physio IS NOT NULL OR vs.manipulation IS NOT NULL) AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$patient->add_date\" AND \"CURRENT_TIMESTAMP()\") ORDER BY vs.id DESC";
-										}
-										foreach ($db->query($sql_table) as $row) {
-										?>
-											<tr id="TR_<?= $row['id'] ?>">
-												<td><?= $i++ ?></td>
-												<td>
-													<?= level_name($row['parent_id']) ." ". division_name($row['parent_id']) ?>
-													<div class="text-muted"><?= get_full_name($row['parent_id']) ?></div>
-												</td>
-												<td><?= ($row['accept_date']) ? date('d.m.Y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['name'] ?></td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td>
-													<?php if ($row['completed']): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-													<?php else: ?>
-														<?php if ($row['status'] == 0): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-														<?php elseif ($row['status'] == 1): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-														<?php elseif ($row['status'] == 2): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-														<?php else: ?>
-															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-														<?php endif; ?>
-													<?php endif; ?>
-												</td>
-												<td class="text-center">
-													<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
-	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<?php if ($row['physio']): ?>
-															<a onclick="Check('<?= viv('physio/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-														<?php elseif ($row['manipulation']): ?>
-															<a onclick="Check('<?= viv('manipulation/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-														<?php endif; ?>
-														<?php if ($patient->direction and !$row['accept_date'] and ($_SESSION['session_id'] == $row['route_id'] or $_SESSION['session_id'] == $patient->grant_id)): ?>
-															<a onclick="Delete('<?= del_url($row['id'], 'VisitModel') ?>', '#TR_<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
-														<?php endif; ?>
-													</div>
-												</td>
-											</tr>
-										<?php
-										}*/
-									 	?>
 									</tbody>
 								</table>
 							</div>
