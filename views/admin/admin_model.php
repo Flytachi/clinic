@@ -7,6 +7,7 @@ if ( isset($_POST['print_header_title']) ) Mixin\insert_or_update("company_const
 if ( isset($_POST['print_header_address']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_address", 'const_value' => $_POST['print_header_address']), "const_label");
 if ( isset($_POST['print_header_phones']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_header_phones", 'const_value' => $_POST['print_header_phones']), "const_label");
 if ( isset($_POST['print_check_size']) ) Mixin\insert_or_update("company_constants", array('const_label' => "print_check_size", 'const_value' => $_POST['print_check_size']), "const_label");
+Mixin\insert_or_update("company_constants", array('const_label' => "print_type_center", 'const_value' => $_POST['print_type_center']), "const_label");
 
 // Floor
 if ( isset($_POST['floors']) ) Mixin\insert_or_update("company_constants", array('const_label' => "floors", 'const_value' => json_encode($_POST['floors'])), "const_label");
