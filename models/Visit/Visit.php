@@ -4,6 +4,7 @@ class VisitModel extends Model
 {
     public $table = 'visits';
     public $table2 = 'beds';
+    public $_bed_types = 'bed_types';
     public $_user = 'users';
     public $_service = 'visit_services';
     public $_beds = 'visit_beds';
@@ -503,6 +504,7 @@ class VisitModel extends Model
     {
         global $db;
         $post = array(
+            'parad_id' => ( isset($this->post['direction']) ) ? $db->query("SELECT IFNULL(MAX(parad_id), 0) FROM $this->table WHERE direction IS NOT NULL")->fetchColumn() + 1 : null,
             'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
             'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
             'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
@@ -566,7 +568,8 @@ class VisitModel extends Model
     public function add_visit_bed()
     {
         global $db, $session;
-        $bed_data = $db->query("SELECT building, floor, ward, bed, types FROM beds bd WHERE id = {$this->post['bed']}")->fetch();
+        $bed_data = $db->query("SELECT * FROM $this->table2 WHERE id = {$this->post['bed']}")->fetch();
+        $bed_types = $db->query("SELECT * FROM  $this->_bed_types WHERE id = {$bed_data['type_id']}")->fetch();
 
         $post = array(
             'visit_id' => $this->visit_pk,
@@ -575,7 +578,9 @@ class VisitModel extends Model
             'bed_id' => $this->post['bed'],
             'location' => "{$bed_data['building']} {$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка",
             'type' => $bed_data['types'],
+            'cost' => ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'],
         );
+
         $object = Mixin\insert($this->_beds, $post);
         if (!intval($object)) {
             $this->error($object);
@@ -616,6 +621,7 @@ class VisitModel extends Model
                 $this->error($object1);
                 $db->rollBack();
             }
+            
             $db->commit();
             $this->success();
 

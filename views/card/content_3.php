@@ -64,7 +64,7 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, division_id, route_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 5 AND route_id = $session->session_id")->order_by('add_date DESC');
+										$tb->set_data("id, division_id, route_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 5 AND route_id = $session->session_id AND parent_id != $session->session_id")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">

@@ -469,7 +469,7 @@ class PricePanel extends Model
                                         <?= $row->location ?> 
                                         <span class="text-primary">(<?= $row->type ?>)</span> 
                                         -----------> <?= number_format($row->cost) ?>/День 
-                                        <span class="text-primary">(<?= minToStr($row->time) ?> ч.)</span>
+                                        <span class="text-primary">(<?= minToStr($row->time) ?>)</span>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -480,18 +480,20 @@ class PricePanel extends Model
                         <td><strong style="font-size: 15px;">Услуги</strong></td>
                         <td class="text-right"><?= number_format(-$vps['cost-services']) ?></td>
                     </tr>
-                    <tr>
-                        <td>
-                            <strong style="font-size: 15px;">Скидки:</strong><br>
-                            <ul class="list-unstyled">
-                                <li>
-                                    Койка - <?= number_format($sale_info->sale_bed_unit) ?> <span class="text-muted">(<?= $sale_info->sale_bed ?>%)</span><br>
-                                    Услуги - <?= number_format($sale_info->sale_service_unit) ?> <span class="text-muted">(<?= $sale_info->sale_service ?>%)</span>
-                                </li>
-                            </ul>
-                        </td>
-                        <td class="text-right"><?= number_format($vps['sale-total']) ?></td>
-                    </tr>
+                    <?php if($sale_info): ?>
+                        <tr>
+                            <td>
+                                <strong style="font-size: 15px;">Скидки:</strong><br>
+                                <ul class="list-unstyled">
+                                    <li>
+                                        Койка - <?= number_format($sale_info->sale_bed_unit) ?> <span class="text-muted">(<?= $sale_info->sale_bed ?>%)</span><br>
+                                        Услуги - <?= number_format($sale_info->sale_service_unit) ?> <span class="text-muted">(<?= $sale_info->sale_service ?>%)</span>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td class="text-right"><?= number_format($vps['sale-total']) ?></td>
+                        </tr>
+                    <?php endif; ?>
 
                     <tr>
                         <td><strong style="font-size: 15px;">Инвестиции</strong></td>

@@ -85,6 +85,11 @@
                                 <?php else: ?>
                                     <span style="font-size:15px;" class="badge badge-flat border-grey text-grey-600">Закрытый</span>
                                 <?php endif; ?>
+                                <?php if ( $patient->is_foreigner ): ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-teal text-teal">Иностранец</span>
+                                <?php else: ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-brown text-brown">Местный</span>
+                                <?php endif; ?>
 
                             </div>
 

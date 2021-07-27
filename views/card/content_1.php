@@ -81,32 +81,31 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, service_id, service_name, service_title")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id AND status = 3")->order_by('id ASC');
+										$tb->set_data("id, service_id, service_name, service_title, status")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id AND status IN (3,7)")->order_by('id ASC');
 										?>
 										<?php foreach ($tb->get_table() as $row): ?>
 											<tr id="TR_<?= $row->id ?>" class="list_services <?= ( isset($row->service_id) and $row->service_id == 1) ? "table-warning" :$table_tr ?>">
 												<td colspan="<?= ($patient->direction) ? 2 : 1 ?>"><?= $row->service_name ?></td>
 												<td class="text-right" id="VisitService_tr_<?= $row->id ?>" data-is_new="<?= ($row->service_title) ? '' : 1 ?>">
-													<?php if ($row->service_title): ?>
-														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
-															<button onclick="Update('<?= up_url($row->id, 'VisitReport', 'form_finish') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
-														<?php else: ?>
+													<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
+														<button onclick="Update('<?= up_url($row->id, 'VisitReport', 'form_finish') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
+													<?php else: ?>
+														<?php if ( $row->service_title ): ?>
+															<?php if ( $activity and is_grant() and $row->status == 3 ): ?>
+																<a href="<?= up_url($row->id, 'VisitFinish', "service") ?>" type="button" class="<?= $classes['btn-completed'] ?>">Завершить</a>
+															<?php endif; ?>
 															<button onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
-															<?php if ($activity): ?>
+															<?php if ( $activity and $row->status == 3 ): ?>
 																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Редактировать</button>
 															<?php endif; ?>
-														<?php endif; ?>
-													<?php else: ?>
-														<?php if ( isset($row->service_id) and $row->service_id == 1): ?>
-															<button onclick="Update('<?= up_url($row->id, 'VisitReport', 'form_finish') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Выписка</button>
 														<?php else: ?>
-															<?php if ( $activity ): ?>
+															<?php if ( $activity and $row->status == 3 ): ?>
 																<button onclick="Update('<?= up_url($row->id, 'VisitReport') ?>')" type="button" class="btn btn-outline-success btn-sm legitRipple">Провести</button>
 															<?php endif; ?>
 														<?php endif; ?>
 													<?php endif; ?>
 													
-													<?php if ( $activity ): ?>
+													<?php if ( $activity and $row->status == 3 ): ?>
 														<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отмена</button>
 													<?php endif; ?>
 												</td>
