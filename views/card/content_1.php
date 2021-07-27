@@ -50,7 +50,7 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-repo-forked mr-2"></i><?= $title ?>
-							<?php if ($activity and $patient->direction and $patient->grant_id == $session->session_id): ?>
+							<?php if ($activity and $patient->direction and is_grant()): ?>
 								<a onclick="Update('<?= up_url($patient->visit_id, 'VisitInspectionsModel') ?>')"  class="float-right text-info">
 									<i class="icon-plus22 mr-1"></i>Осмотр
 								</a>

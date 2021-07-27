@@ -12,7 +12,7 @@ $data = $db->query("SELECT * FROM visit_documents WHERE id={$_GET['pk']}")->fetc
 
 <div class="modal-body ml-3 mr-3 text-justify">
 
-    <div class="row">
+    <div class="row" style="font-size: 14px;">
     
         <div class="col-8">
             <?php if($data['location']): ?>

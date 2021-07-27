@@ -17,7 +17,7 @@ $i = 0; $cost = 0;
     }
     ?>
 
-    <?php if ( $_GET['divisions'] ): ?>
+    <?php if ( isset($_GET['divisions']) and $_GET['divisions'] ): ?>
 
         <?php
         $divisions = implode(',', $_GET['divisions']);
@@ -99,7 +99,7 @@ $i = 0; $cost = 0;
        
     <?php endif; ?>
     
-    <?php if ( $others ): ?>
+    <?php if ( isset($others) and $others ): ?>
 
         <?php
         $levels = implode(',', $others);

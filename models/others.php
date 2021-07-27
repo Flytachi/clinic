@@ -1,43 +1,5 @@
 <?php
 
-class LaboratoryUpStatus extends Model
-{
-    public $table = 'visit';
-    public $table2 = 'visit_analyze';
-
-    public function get_or_404($pk)
-    {
-        global $db;
-
-        foreach ($db->query("SELECT id FROM visit WHERE user_id = $pk AND laboratory IS NOT NULL AND accept_date IS NULL AND completed IS NULL") as $value) {
-            $this->post['id'] = $value['id'];
-            $this->post['status'] = 2;
-            $this->post['accept_date'] = date('Y-m-d H:i:s');
-            $this->update();
-        }
-        $this->success();
-    }
-
-    public function update()
-    {
-        if($this->clean()){
-            $pk = $this->post['id'];
-            unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
-            if (!intval($object)){
-                $this->error($object);
-            }
-
-        }
-    }
-
-    public function success()
-    {
-        render();
-    }
-
-}
-
 class NotesModel extends Model
 {
 

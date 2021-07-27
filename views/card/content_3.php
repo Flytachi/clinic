@@ -39,7 +39,7 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-add mr-2"></i>Назначенные Визиты
-							<?php if ($activity and !$patient->direction or ($patient->direction and $patient->grant_id == $_SESSION['session_id'])): ?>
+							<?php if ($activity and !$patient->direction or ($patient->direction and is_grant())): ?>
 								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>

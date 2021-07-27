@@ -164,9 +164,9 @@ var SweetAlert = (function () {
             // stage 1
             $.ajax({
                 type: "GET",
-                url: $("#verification_url").val(),
+                url: document.querySelector("#verification_url").value,
                 data: {
-                    id: params.dataset.user_id,
+                    pk: params.dataset.pk,
                     main: 1,
                     stage: 1,
                 },
@@ -191,9 +191,9 @@ var SweetAlert = (function () {
             // stage 2
             $.ajax({
                 type: "GET",
-                url: $("#verification_url").val(),
+                url: document.querySelector("#verification_url").value,
                 data: {
-                    id: params.dataset.user_id,
+                    pk: params.dataset.pk,
                     main: 1,
                     stage: 2,
                 },
@@ -218,9 +218,9 @@ var SweetAlert = (function () {
             // stage 3
             $.ajax({
                 type: "GET",
-                url: $("#verification_url").val(),
+                url: document.querySelector("#verification_url").value,
                 data: {
-                    id: params.dataset.user_id,
+                    pk: params.dataset.pk,
                     main: 1,
                     stage: 3,
                 },
@@ -245,9 +245,9 @@ var SweetAlert = (function () {
             // stage 4
             $.ajax({
                 type: "GET",
-                url: $("#verification_url").val(),
+                url: document.querySelector("#verification_url").value,
                 data: {
-                    id: params.dataset.user_id,
+                    pk: params.dataset.pk,
                     main: 1,
                     stage: 4,
                 },
@@ -283,9 +283,9 @@ var SweetAlert = (function () {
             // stage 5
             $.ajax({
                 type: "GET",
-                url: $("#verification_url").val(),
+                url: document.querySelector("#verification_url").value,
                 data: {
-                    id: params.dataset.user_id,
+                    pk: params.dataset.pk,
                     main: 1,
                     stage: 5,
                 },
@@ -295,6 +295,33 @@ var SweetAlert = (function () {
                             position: "top",
                             title: "Stage 1-5! Невозможно выписать!",
                             text: "Форма заключения не запонена.",
+                            type: "error",
+                            padding: 30,
+                        });
+                        return 0;
+                    } else {
+                        Main_1_stages_6(params, url, question, btn);
+                    }
+                },
+            });
+        }
+
+        function Main_1_stages_6(params, url, question, btn) {
+            // stage 6
+            $.ajax({
+                type: "GET",
+                url: document.querySelector("#verification_url").value,
+                data: {
+                    pk: params.dataset.pk,
+                    main: 1,
+                    stage: 6,
+                },
+                success: function (data) {
+                    if (data >= 1) {
+                        swal({
+                            position: "top",
+                            title: "Stage 1-6! Невозможно выписать!",
+                            text: "Форма выписки не запонена.",
                             type: "error",
                             padding: 30,
                         });

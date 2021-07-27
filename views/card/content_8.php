@@ -1,7 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
-$header = "Пациент";
+require_once 'callback.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,14 +45,14 @@ $header = "Пациент";
 						</legend>
 
 						<div class="card border-1 border-warning">
-							<!-- <div class="card-header header-elements-inline alpha-warning">
+							 <div class="card-header header-elements-inline alpha-warning">
 								<h5 class="card-title">Динамика показателей</h5>
 								<div class="header-elements">
 									<div class="list-icons">
 										<a class="list-icons-item" data-action="collapse"></a>
 									</div>
 								</div>
-							</div> -->
+							</div> 
 
 							<div class="card-body">
 								<div class="chart-container">
@@ -67,7 +65,7 @@ $header = "Пациент";
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-clipboard2 mr-2"></i>Состояние
 							<?php if ($activity and permission(7)): ?>
-								<a class="float-right text-primary" data-toggle="modal" data-target="#modal_add">
+								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitStatsModel") ?>`)' class="float-right text-primary">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -91,9 +89,13 @@ $header = "Пациент";
 										</tr>
 									</thead>
 									<tbody>
-										<?php
-										foreach ($db->query("SELECT * FROM visit_stats WHERE visit_id=$patient->visit_id ORDER BY add_date DESC") as $row) {
-											switch ($row['stat']):
+									<?php
+										$tb = new Table($db, "visit_stats");
+										$tb->where("visit_id = $patient->visit_id")->order_by('add_date DESC');
+										?>
+										<?php foreach ($tb->get_table() as $row): ?>
+											<?php
+											switch ($row->stat):
 												case 1:
 													$stat = "Пассив";
 													$class_tr = "table-danger";
@@ -102,22 +104,20 @@ $header = "Пациент";
 													$stat = "Актив";
 													$class_tr = "table-success";
 													break;
-											endswitch;
+											endswitch;	
 											?>
-											<tr class="<?= $class_tr ?> tolltip" data-popup="tooltip" title="<?= $row['description'] ?>">
-												<td class="chart_date"><?= date('d.m.Y H:i', strtotime($row['add_date'])) ?></td>
+											<tr class="<?= $class_tr ?> tolltip" data-popup="tooltip" title="<?= $row->description ?>">
+												<td class="chart_date"><?= date_f($row->add_date, 1) ?></td>
 												<td><?= $stat ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td class="chart_pressure"><?= $row['pressure'] ?></td>
-												<td class="chart_pulse"><?= $row['pulse'] ?></td>
-												<td class="chart_temperature"><?= $row['temperature'] ?></td>
-												<td class="chart_saturation"><?= $row['saturation'] ?></td>
-												<td><?= $row['breath'] ?></td>
-												<td><?= $row['urine'] ?></td>
+												<td><?= get_full_name($row->parent_id) ?></td>
+												<td class="chart_pressure"><?= $row->pressure ?></td>
+												<td class="chart_pulse"><?= $row->pulse ?></td>
+												<td class="chart_temperature"><?= $row->temperature ?></td>
+												<td class="chart_saturation"><?= $row->saturation ?></td>
+												<td><?= $row->breath ?></td>
+												<td><?= $row->urine ?></td>
 											</tr>
-											<?php
-										}
-										?>
+										<?php endforeach; ?>
 									</tbody>
 								</table>
 							</div>
@@ -137,22 +137,29 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<?php if ($activity): ?>
-		<?php if (permission(7)): ?>
-			<div id="modal_add" class="modal fade" tabindex="-1">
-				<div class="modal-dialog">
-					<div class="modal-content border-3 border-info">
-						<div class="modal-header bg-info">
-							<h5 class="modal-title">Добавить примечание</h5>
-							<button type="button" class="close" data-dismiss="modal">×</button>
-						</div>
+	<?php if ($activity and permission(7)): ?>
 
-						<?= (new VisitStatsModel)->form() ?>
-
-					</div>
-				</div>
+		<div id="modal_default" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-lg">
+				<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 			</div>
-		<?php endif; ?>
+		</div>
+
+		<script type="text/javascript">
+
+			function Update(events) {
+				$.ajax({
+					type: "GET",
+					url: events,
+					success: function (result) {
+						$('#modal_default').modal('show');
+						$('#form_card').html(result);
+					},
+				});
+			};
+
+		</script>
+		
 	<?php endif; ?>
 
     <!-- Footer -->

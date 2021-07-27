@@ -109,7 +109,7 @@ function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
             if (is_array($pk)) {
                 foreach ($pk as $key => $value) {
                     if (isset($filter)) {
-                        $filter .= ", ".$key."=".$value;
+                        $filter .= " AND ".$key."=".$value;
                     }else{
                         $filter = $key."=".$value;
                     }
@@ -172,7 +172,7 @@ function update($tb, $post, $pk)
     if (is_array($pk)) {
         foreach ($pk as $key => $value) {
             if (isset($filter)) {
-                $filter .= ", ".$key."=".$value;
+                $filter .= " AND ".$key."=".$value;
             }else{
                 $filter = $key."=".$value;
             }

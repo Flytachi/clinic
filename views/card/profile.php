@@ -136,16 +136,23 @@
                         <div class="col-md-6">
                             <div class="form-group row">
 
+                                <?php
+                                if ($activity and is_grant()) {
+                                    $grant_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitModel", "form_grant")."`)' class=\"col-md-7 text-right text-primary\"";
+                                }else {
+                                    $grant_attr = "class=\"col-md-7 text-right\"";
+                                }
+                                ?>
                                 <label class="col-md-5"><b>Лечащий врач:</b></label>
-                                <div class="col-md-7 text-right <?= (is_grant()) ? "text-success" : "text-primary" ?>">
+                                <div <?= $grant_attr ?>>
                                     <?= get_full_name($patient->grant_id) ?>
                                 </div>
 
                                 <?php
                                 if ($activity and permission(7)) {
-                                    $loc_attr = 'class="col-md-8 text-right text-primary" data-toggle="modal" data-target="#modal_edit_bed"';
+                                    $loc_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitBedsModel")."`)' class=\"col-md-8 text-right text-primary\"";
                                 }else {
-                                    $loc_attr = 'class="col-md-8 text-right"';
+                                    $loc_attr = "class=\"col-md-8 text-right\"";
                                 }
                                 ?>
                                 <label class="col-md-4"><b>Размещён:</b></label>
@@ -176,30 +183,22 @@
                                 <?php endif; ?>
 
                                 <label class="col-md-3"><b>Прибывание:</b></label>
-                                <div class="col-md-9 text-right">
-                                    <?php
-                                    if ($vps['bed-time'] > 0) {
-                                        echo minToStr($vps['bed-time']);
-                                    } else {
-                                        echo "Прибыл сегодня";
-                                    }
-                                    ?>
-                                </div>
+                                <div class="col-md-9 text-right"><?= minToStr($vps['bed-time']); ?></div>
 
                                 <label class="col-md-4"><b>Дата выписки:</b></label>
                                 <?php if ($activity): ?>
-                                    <?php if ($patient->grant_id == $_SESSION['session_id']): ?>
+                                    <?php if (is_grant()): ?>
                                         <div class="col-md-8 text-right text-primary" data-toggle="modal" data-target="#modal_discharge_date">
-                                            <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Назначить дату выписки" ?>
+                                            <?= ($patient->discharge_date) ? date_f($patient->discharge_date) : "Назначить дату выписки" ?>
                                         </div>
                                     <?php else: ?>
                                         <div class="col-md-8 text-right <?= ($patient->discharge_date) ? "text-primary" : "text-danger" ?>">
-                                            <?= ($patient->discharge_date) ? date('d.m.Y', strtotime($patient->discharge_date)) : "Не назначено" ?>
+                                            <?= ($patient->discharge_date) ? date_f($patient->discharge_date) : "Не назначено" ?>
                                         </div>
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <div class="col-md-8 text-right">
-                                        <?= ($patient->completed) ? date('d.m.Y H:i', strtotime($patient->completed)) : "Не выписан" ?>
+                                        <?= ($patient->completed) ? date_f($patient->completed, 1) : "Не выписан" ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -238,7 +237,10 @@
                                 </div>
 
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                                    <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                        <span class="ladda-label">Отправить</span>
+                                        <span class="ladda-spinner"></span>
+                                    </button>
                                 </div>
 
                             </form>
@@ -255,7 +257,7 @@
                     <div class="col-md-12">
                         <div class="text-right">
                             <?php
-                            if ($patient->direction and $patient->grant_id == $_SESSION['session_id']) {
+                            if ($patient->direction and is_grant()) {
                                 $button_tip = 'data-btn="Выписать" data-question="Вы точно хотите выписать пациента!" data-pk="'.$patient->visit_id.'"';
                                 $button_inner = "Выписать";
                             }else {
@@ -273,34 +275,34 @@
 
                 <?php elseif (permission(7)): ?>
 
-                    <div id="modal_edit_bed" class="modal fade" tabindex="-1">
-                        <div class="modal-dialog modal-md">
-                            <div class="<?= $classes['modal-global_content'] ?>">
-                                <div class="<?= $classes['modal-global_header'] ?>">
-                                    <h6 class="modal-title">Переместить на другую койку</h6>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <?php (new VisitModel)->form_beds(); ?>
-
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="col-md-12">
                         <div class="text-right">
-                            <button data-grant_id="<?= $patient->grant_id ?>" data-parent="<?= get_full_name($_SESSION['session_id']) ?>" id="sweet_call_nurce" data-btn="Вызвать" data-question="Вы точно хотите срочно вызвать врача!" class="btn btn-outline-danger btn-sm">Вызвать</button>
+                            <button data-grant_id="<?= $patient->grant_id ?>" data-parent="<?= get_full_name($session->session_id) ?>" id="sweet_call_nurce" data-btn="Вызвать" data-question="Вы точно хотите срочно вызвать врача!" class="btn btn-outline-danger btn-sm">Вызвать</button>
                         </div>
                     </div>
 
-                    <script type="text/javascript">
-                        $(function(){
-                            $("#ward").chained("#floor");
-                            $("#bed").chained("#ward");
-                        });
-                    </script>
-
                 <?php endif; ?>
+
+                <div id="modal_profile" class="modal fade" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="<?= $classes['modal-global_content'] ?>" id="form_card_profile"></div>
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+
+                    function UpdateProfile(events) {
+                        $.ajax({
+                            type: "GET",
+                            url: events,
+                            success: function (result) {
+                                $('#modal_profile').modal('show');
+                                $('#form_card_profile').html(result);
+                            },
+                        });
+                    };
+
+                </script>
 
             <?php else: ?>
                 <!--

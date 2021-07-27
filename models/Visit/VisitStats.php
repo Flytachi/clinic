@@ -3,15 +3,33 @@
 class VisitStatsModel extends Model
 {
     public $table = 'visit_stats';
+    public $_visits = 'visits';
+
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        $object = $db->query("SELECT * FROM $this->_visits WHERE id = $pk AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+        if($object and permission(7)){
+            $this->set_post($object);
+            return $this->{$_GET['form']}($object['id']);
+        }else{
+            Mixin\error('report_permissions_false');
+        }
+    }
 
     public function form($pk = null)
     {
-        global $patient;
+        global $classes, $session;
         ?>
         <form method="post" action="<?= add_url() ?>">
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Добавить иформацию о показателях</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="visit_id" value="<?= $pk ?>">
+            <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
             <div class="modal-body">
 
@@ -77,7 +95,7 @@ class VisitStatsModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-link legitRipple" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                     <span class="ladda-label">Сохранить</span>
                     <span class="ladda-spinner"></span>
@@ -86,6 +104,7 @@ class VisitStatsModel extends Model
 
         </form>
         <?php
+        $this->jquery_init();
     }
 
     public function success()

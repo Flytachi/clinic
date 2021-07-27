@@ -12,12 +12,11 @@ class PricePanel extends Model
             $this->set_post($object);
 
             if ($object['direction']) {
-                // if ($_GET['form'] != "form") {
-                //     return $this->{$_GET['form']}($object['id']);
-                // } else {
-                //     return $this->FirstPanel($object['id']);
-                // }
-                Mixin\error('cash_permissions_false');
+                if ($_GET['form'] != "form") {
+                    return $this->{$_GET['form']}($object['id']);
+                } else {
+                    return $this->FirstPanel($object['id']);
+                }
             } else {
                 if (!(isset($_GET['refund']) and $_GET['refund'])) {
                     return $this->SecondPanel($object['id']);
@@ -470,7 +469,7 @@ class PricePanel extends Model
                                         <?= $row->location ?> 
                                         <span class="text-primary">(<?= $row->type ?>)</span> 
                                         -----------> <?= number_format($row->cost) ?>/День 
-                                        <span class="text-primary">(<?= $row->time ?> ч.)</span>
+                                        <span class="text-primary">(<?= minToStr($row->time) ?> ч.)</span>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
