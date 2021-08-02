@@ -38,11 +38,9 @@ if( isset($_SESSION['message']) ){
                     <td>
                         <div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
                         <div class="text-muted">
-                            <?php
-                            if($stm = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id= $row->id")->fetch()){
-                                echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-                            }
-                            ?>
+                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
+                                <?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+                            <?php endif; ?>
                         </div>
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
@@ -69,10 +67,16 @@ if( isset($_SESSION['message']) ){
                         <?php endif; ?>
                     </td>
                     <td class="text-center">
-                        <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                        <button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-                            <a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
+                            <?php if ( !$row->status or ($row->status and !$stm_dr['direction']) ): ?>
+                                <a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
+                            <?php endif; ?>
+                            <?php if ( !$row->status ): ?>
+                                <a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
+                            <?php endif; ?>
                             <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
+                            <a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                         </div>
                     </td>
                 </tr>

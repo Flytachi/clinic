@@ -111,7 +111,7 @@ class PricePanel extends Model
 
                 <div class="table-responsive card">
                     <table class="table table-hover table-sm">
-                        <thead class="<?= $classes['table-thead'] ?>">
+                        <thead class="<?= $classes['table_detail-thead'] ?>">
                             <tr>
                                 <th class="text-left">Дата назначения</th>
                                 <th>Мед услуги</th>
@@ -243,7 +243,7 @@ class PricePanel extends Model
 
                 <div class="table-responsive card">
                     <table class="table table-hover table-sm">
-                        <thead class="<?= $classes['table-thead'] ?>">
+                        <thead class="<?= $classes['table_detail-thead'] ?>">
                             <tr>
                                 <th class="text-left">Дата назначения</th>
                                 <th>Мед услуги</th>

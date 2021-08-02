@@ -77,7 +77,7 @@ class VisitPricesModel extends Model
                     <label class="col-form-label col-md-3">Пластиковый</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="price_card" id="input_chek_2" step="0.5" class="form-control" placeholder="<?= ( isset($price_card) ) ? number_format($price_card) : 'расчет' ?>" disabled>
+                            <input type="text" name="price_card" id="input_chek_2" step="0.5" class="form-control input-price" placeholder="<?= ( isset($price_card) ) ? number_format($price_card) : 'расчет' ?>" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_2" onchange="Checkert(this)">
@@ -91,7 +91,7 @@ class VisitPricesModel extends Model
                     <label class="col-form-label col-md-3">Перечисление</label>
                     <div class="col-md-9">
                         <div class="input-group">
-                            <input type="number" name="price_transfer" id="input_chek_3" step="0.5" class="form-control" placeholder="<?= ( isset($price_transfer) ) ? number_format($price_transfer) : 'расчет' ?>" disabled>
+                            <input type="text" name="price_transfer" id="input_chek_3" step="0.5" class="form-control input-price" placeholder="<?= ( isset($price_transfer) ) ? number_format($price_transfer) : 'расчет' ?>" disabled>
                             <span class="input-group-prepend ml-5">
                                 <span class="input-group-text">
                                     <input type="checkbox" class="swit" id="chek_3" onchange="Checkert(this)">
@@ -167,7 +167,7 @@ class VisitPricesModel extends Model
                 var input_selectors = document.querySelectorAll(".input_chek");
                 var vas = 0;
                 for (let key of input_selectors) {
-                    vas += Number(key.value);
+                    vas += Number( (key.value).replace(/,/g,'') );
                 }
                 input.value = number_format((document.querySelector("#total_price").value).replace(/,/g,'') - vas);
             }

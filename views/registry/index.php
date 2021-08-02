@@ -35,8 +35,6 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include 'tabs.php' ?>
-
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
@@ -113,45 +111,17 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 													<span style="font-size:15px;" class="badge badge-flat border-grey text-grey-300">Нет данных</span>
 												<?php endif; ?>
 											</td>
-											
-												<!-- <?php if ($stm_dr['direction']): ?>
-													<td>
-														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
-													</td>
-													<td>
-														<?php if ($stm_dr['status'] == 1): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-														<?php elseif ($stm_dr['status'] == 2): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">Размещён</span>
-														<?php elseif ($stm_dr['status'] == 3): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">Активный</span>
-														<?php else: ?>
-															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-														<?php endif; ?>
-													</td>
-												<?php else: ?>
-													<td>
-														<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
-													</td>
-													<td>
-														<?php if ($stm_dr['status'] == 1): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-														<?php elseif ($stm_dr['status'] == 2): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-														<?php elseif ($stm_dr['status'] == 3): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-														<?php elseif ($stm_dr['status'] == 5): ?>
-															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Возврат</span>
-														<?php else: ?>
-															<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
-														<?php endif; ?>
-													</td>
-												<?php endif; ?> -->
 											<td class="text-center">
 												<button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
+													<?php if ( !$row->status or ($row->status and !$stm_dr['direction']) ): ?>
+														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
+													<?php endif; ?>
+													<?php if ( !$row->status ): ?>
+														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
+													<?php endif; ?>
 													<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
+													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                                                 </div>
 											</td>
 										</tr>
@@ -175,18 +145,9 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_update" class="modal fade" tabindex="-1">
+	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-full">
-			<div class="<?= $classes['modal-global_content'] ?>">
-				<div class="<?= $classes['modal-global_header'] ?>">
-					<h5 class="modal-title">Добавить/Редактировать пациента <span id="vis_title"></h5>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-				<div class="modal-body" id="update_card">
-
-				</div>
-			</div>
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
@@ -200,8 +161,8 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 				type: "GET",
 				url: events,
 				success: function (result) {
-					$('#modal_update').modal('show');
-					$('#update_card').html(result);
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
 		};

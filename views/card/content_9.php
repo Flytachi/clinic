@@ -1,7 +1,5 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
-$header = "Пациент";
+require_once 'callback.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,8 +41,8 @@ $header = "Пациент";
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-bed2 mr-2"></i>Операционный блок
-							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add_operation">
+							<?php if ($activity and $patient->direction and is_grant()): ?>
+								<a onclick='Update(`<?= up_url(null, "VisitOperationsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -64,24 +62,28 @@ $header = "Пациент";
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($db->query("SELECT op.id, sc.name, op.add_date, op.oper_date, op.completed FROM operation op LEFT JOIN service sc ON(sc.id=op.item_id) WHERE op.visit_id = $patient->visit_id AND op.user_id = $patient->id") as $row): ?>
+									<?php
+										$tb = new Table($db, "visit_operations");
+										$tb->where("visit_id = $patient->visit_id")->order_by('add_date ASC');
+										?>
+										<?php foreach ($tb->get_table() as $row): ?>
 											<tr>
-												<td><?= $row['name'] ?></td>
-												<td><?= ($row['add_date']) ? date('d.m.Y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<?php if (!$row['completed'] and $patient->grant_id == $_SESSION['session_id']): ?>
-													<td class="text-primary" onclick="Oper_date('<?= $row['id'] ?>', '<?= date('Y-m-d', strtotime($row['oper_date'])) ?>', '<?= date('H:i', strtotime($row['oper_date'])) ?>')">
-														<?= ($row['oper_date']) ? date('d.m.Y H:i', strtotime($row['oper_date'])) : '<span class="text-muted">Нет данных</span>' ?>
+												<td><?= $row->operation_name ?></td>
+												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<?php if (!$row->completed_date and is_grant()): ?>
+													<td class="text-primary" onclick='Update(`<?= up_url($row->id, "VisitOperationsModel", "form_operation_date") ?>`)'>
+														<?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1): '<span class="text-muted">Нет данных</span>' ?>
 													</td>
 												<?php else: ?>
-													<td><?= ($row['oper_date']) ? date('d.m.Y H:i', strtotime($row['oper_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+													<td><?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<?php endif; ?>
-												<td><?= ($row['completed']) ? date('d.m.Y H:i', strtotime($row['completed'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row->completed_date) ? date_f($row->completed_date) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td class="text-right">
-													<?php if ($row['completed']): ?>
-														<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&type=0&activity=<?= $activity ?>')" class="btn btn-outline-warning btn-sm">До</button>
-														<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&type=1&activity=<?= $activity ?>')" class="btn btn-outline-success btn-sm">После</button>
+													<?php if ($row->completed_date): ?>
+														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>&type=0`)' class="btn btn-outline-warning btn-sm">До</button>
+														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>&type=1`)' class="btn btn-outline-success btn-sm">После</button>
 													<?php else: ?>
-														<button type="button" onclick="Show_info('<?= viv('card/operation_info') ?>?pk=<?= $row['id'] ?>&activity=<?= $activity ?>')" class="btn btn-outline-primary btn-sm">Информация</button>
+														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="btn btn-outline-primary btn-sm">Информация</button>
 													<?php endif; ?>
 												</td>
 											</tr>
@@ -108,38 +110,26 @@ $header = "Пациент";
 	<!-- /page content -->
 
 	<?php if ($activity): ?>
-		<div id="modal_add_operation" class="modal fade" tabindex="-1">
+		<div id="modal_default" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-lg">
-				<div class="modal-content border-3 border-info">
-					<div class="modal-header bg-info">
-						<h5 class="modal-title">Назначить операцию</h5>
-						<button type="button" class="close" data-dismiss="modal">×</button>
-					</div>
-
-					<div class="modal-body">
-						<?= (new OperationModel)->form() ?>
-					</div>
-
-				</div>
-			</div>
-		</div>
-
-		<div id="modal_oper_date" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-md">
-				<div class="modal-content border-3 border-info">
-					<div class="modal-header bg-info">
-						<h5 class="modal-title">Переназначить дату операций</h5>
-						<button type="button" class="close" data-dismiss="modal">×</button>
-					</div>
-
-					<?php (new OperationModel)->form_oper_update() ?>
-
-				</div>
+				<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 			</div>
 		</div>
 	<?php endif; ?>
 
 	<script type="text/javascript">
+	
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
+
 		function Show_info(events) {
 			$.ajax({
 				type: "GET",
@@ -150,13 +140,6 @@ $header = "Пациент";
 					EchartsLines.init();
 				},
 			});
-		};
-
-		function Oper_date(pk, date, time) {
-			$('#modal_oper_date').modal('show');
-			$('#oper_id').val(pk);
-			$('#oper_date').val(date);
-			$('#oper_time').val(time);
 		};
 	</script>
 
