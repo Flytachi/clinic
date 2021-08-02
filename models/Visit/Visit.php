@@ -123,6 +123,9 @@ class VisitModel extends Model
         }else{
             $this->visit_pk = $object;
             $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+            if (isset($this->post['order'])) {
+                $this->create_order();
+            }
         }
     }
 
@@ -130,19 +133,19 @@ class VisitModel extends Model
     {
         global $db;
         $data = $db->query("SELECT * FROM services WHERE id = $value")->fetch();
-        $post['division_id'] = ($this->post['direction']) ? $this->post['division_id'] : $this->post['division_id'][$key];
+        $post['division_id'] = (isset($this->post['direction']) and $this->post['direction']) ? $this->post['division_id'] : $this->post['division_id'][$key];
 
         $post['visit_id'] = $this->visit_pk;
         $post['user_id'] = $this->post['user_id'];
-        $post['parent_id'] = ($this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
+        $post['parent_id'] = (isset($this->post['direction']) and $this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
         $post['level'] = ($this->post['division_id']) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
-        $post['status'] = ($this->post['direction']) ? 2 : 1;
+        $post['status'] = (isset($this->post['direction']) and $this->post['direction']) ? 2 : 1;
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];
         
-        $count = ($this->post['direction']) ? 1 : $this->post['count'][$key];
+        $count = (isset($this->post['direction']) and $this->post['direction']) ? 1 : $this->post['count'][$key];
         for ($i=0; $i < $count; $i++) {
             $post = Mixin\clean_form($post);
             $post = Mixin\to_null($post);
@@ -152,7 +155,7 @@ class VisitModel extends Model
                 $db->rollBack();
             }
 
-            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
+            if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
                 $post_price['visit_id'] = $this->visit_pk;
                 $post_price['visit_service_id'] = $object;
                 $post_price['user_id'] = $this->post['user_id'];
@@ -160,7 +163,7 @@ class VisitModel extends Model
                 $post_price['item_id'] = $data['id'];
                 $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                 $post_price['item_name'] = $data['name'];
-                $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
+                $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
                 $object = Mixin\insert($this->_prices, $post_price);
                 if (!intval($object)){
                     $this->error($object);
@@ -198,6 +201,16 @@ class VisitModel extends Model
             $this->error($object2);
             $db->rollBack();
         }
+    }
+
+    public function create_order()
+    {
+        global $db;
+        $post = Mixin\clean_form($this->post['order']);
+        $post = Mixin\to_null($post);
+        dd($post);
+        // $object = Mixin\insert($this->_service, $post);
+        $this->dd();
     }
 
     public function save()

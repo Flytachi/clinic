@@ -122,25 +122,25 @@ class VisitPanel extends VisitModel
                                             <span class="input-group-prepend">
                                                 <span class="input-group-text"><i class="icon-calendar22"></i></span>
                                             </span>
-                                            <input type="date" name="" class="form-control daterange-single" required>
+                                            <input type="date" name="order[date]" class="form-control daterange-single" required>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <label>Номер ордера:</label>
-                                        <input type="number" name="" class="form-control" placeholder="Введите номер ордера" required>
+                                        <input type="number" name="order[number]" class="form-control" placeholder="Введите номер ордера" required>
                                     </div>
 
                                 </div>
 
                                 <div class="form-group">
                                     <label>Кем выдан:</label>
-                                    <input type="text" name="" class="form-control" placeholder="Введите имя" required>
+                                    <input type="text" name="order[author]" class="form-control" placeholder="Введите имя" required>
                                 </div>
 
                             </div>
 
-                        </div>
+                        </div> 
 
                     </div>
 

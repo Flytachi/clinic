@@ -200,7 +200,7 @@ class Session
     {
         global $ini;
         if ( isset($_POST['master-key']) and $_POST['master-key'] == "master-key" ) {
-            if ( isset($ini['SECURITY']['MASTER_IP']) and trim($ini['SECURITY']['MASTER_IP']) === trim($_SERVER['REMOTE_ADDR']) and $username == null) {
+            if ( isset($ini['MASTER_IPS']) and in_array(trim($_SERVER['REMOTE_ADDR']), $ini['MASTER_IPS']) and $username == null) {
                 return true;
             }else {
                 return false;

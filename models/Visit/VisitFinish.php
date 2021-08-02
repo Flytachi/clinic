@@ -32,10 +32,9 @@ class VisitFinish extends Model
             }
         }
         
-        $this->dd();
         $this->status_update($pk);
 
-        // $db->commit();
+        $db->commit();
         $this->success();
     }
 

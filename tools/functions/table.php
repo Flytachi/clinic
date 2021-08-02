@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 7.7
+     * @version 7.9
      */
 
     // database handle
@@ -291,8 +291,8 @@ class Table
         $this->generate_sql();
         
         if ($this->limit) {
-            $page =  (int)(isset($_GET['table_page'])) ? $_GET['table_page'] : $page = 1;
-            $offset = $this->limit * ($page - 1);
+            $page = (int)(isset($_GET['table_page'])) ? (int) $_GET['table_page'] : $page = 1;
+            $offset = (int) $this->limit * ($page - 1);
             $this->sql .= " LIMIT $this->limit OFFSET $offset";
         }
         try {
