@@ -21,18 +21,6 @@ class StorageSupplyItemsModel extends Model
 
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $this->value('item_key') ?>">
-                <?php else: ?>
-                    <select name="item_key" class="<?= $classes['form-select'] ?> " data-placeholder="Выберите Ключ" onchange="UpBtn('btn_save-<?= $this->number ?>')">
-                        <option value="0">New key</option>
-                        <?php foreach ($db->query("SELECT DISTINCT item_key FROM storage_supply_items") as $row): ?>
-                            <option value="<?= $row['item_key'] ?>" <?= ($this->value('item_key') == $row['item_key']) ? 'selected': '' ?>><?= $row['item_key'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                <?php endif; ?>
-            </td>
-            <td>
-                <?php if($status): ?>
                     <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT name FROM storage_item_names WHERE id =".$this->value('item_name_id'))->fetchColumn() ?>">
                 <?php else: ?>
                     <select name="item_name_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Препарат" onchange="UpBtn('btn_save-<?= $this->number ?>')">
@@ -158,9 +146,6 @@ class StorageSupplyItemsModel extends Model
 
     public function clean()
     {
-        if (!$this->post['item_key']) {
-            $this->post['item_key'] = uniqid('key-');
-        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

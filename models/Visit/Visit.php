@@ -4,11 +4,12 @@ class VisitModel extends Model
 {
     public $table = 'visits';
     public $table2 = 'beds';
-    public $_bed_types = 'bed_types';
-    public $_user = 'users';
     public $_service = 'visit_services';
-    public $_beds = 'visit_beds';
+    public $_bed_types = 'bed_types';
     public $_prices = 'visit_prices';
+    public $_orders = 'visit_orders';
+    public $_beds = 'visit_beds';
+    public $_user = 'users';
 
     public function form_grant($pk = null)
     {
@@ -123,9 +124,7 @@ class VisitModel extends Model
         }else{
             $this->visit_pk = $object;
             $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
-            if (isset($this->post['order'])) {
-                $this->create_order();
-            }
+            $this->create_order();
         }
     }
 
@@ -205,12 +204,20 @@ class VisitModel extends Model
 
     public function create_order()
     {
-        global $db;
-        $post = Mixin\clean_form($this->post['order']);
-        $post = Mixin\to_null($post);
-        dd($post);
-        // $object = Mixin\insert($this->_service, $post);
-        $this->dd();
+        global $db, $session;
+        if (isset($this->post['order']) and $this->post['order']['order_number']) {
+            $post = Mixin\clean_form($this->post['order']);
+            $post = Mixin\to_null($post);
+            $post['visit_id'] = $this->visit_pk;
+            $post['parent_id'] = $session->session_id;
+            $post['user_id'] = $this->post['user_id'];
+            $object = Mixin\insert($this->_orders, $post);
+            if (!intval($object)) {
+                $this->error($object);
+                $db->rollBack();
+            }
+            
+        }
     }
 
     public function save()
@@ -241,7 +248,7 @@ class VisitModel extends Model
                 $db->rollBack();
             }
             
-            $db->commit();
+            // $db->commit();
             $this->success();
 
         }

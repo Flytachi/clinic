@@ -2,6 +2,7 @@
 
 function read_excel($filepath){
     require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
+    error_reporting(0);
 
     $ar=array(); // инициализируем массив
     $inputFileType = PHPExcel_IOFactory::identify($filepath); // узнаем тип файла, excel может хранить файлы в разных форматах, xls, xlsx и другие

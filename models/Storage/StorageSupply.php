@@ -30,7 +30,7 @@ class StorageSupplyModel extends Model
                 <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
                 <div class="form-group">
-                    <label>Дата рождение:</label>
+                    <label>Дата поставки:</label>
                     <div class="input-group">
                         <span class="input-group-prepend">
                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
@@ -68,10 +68,9 @@ class StorageSupplyModel extends Model
                 <table class="table table-hover">
                     <thead>
                         <tr class="<?= $classes['table-thead'] ?>">
-                            <th style="width:190px">Ключ</th>
-                            <th>Препарат</th>
+                            <th style="width:400px">Препарат</th>
                             <th style="width:200px">Поставщик</th>
-                            <th style="width:200px">Производитель</th>
+                            <th>Производитель</th>
                             <th style="width:90px">Кол-во</th>
                             <th style="width:170px">Цена прихода</th>
                             <th style="width:170px">Цена расхода</th>
@@ -128,6 +127,7 @@ class StorageSupplyModel extends Model
                                 <span id="btn_text" class="ladda-label">Проверить</span>
                                 <span class="ladda-spinner"></span>
                             </button>
+                            <button type="button" onclick="AddItemName('<?= up_url(null, 'StorageItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
                             <button type="button" onclick="AddRowArea()" class="btn btn-sm btn-outline-success legitRipple"><i class="icon-plus22 mr-1"></i>Добавить</button>
                         </div>
                     </div>
@@ -137,8 +137,26 @@ class StorageSupplyModel extends Model
 
         </div>
 
+        <div id="modal_default" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+            </div>
+        </div>
+
         <?php if($is_active): ?>
             <script type="text/javascript">
+
+                function AddItemName(events) {
+                    $.ajax({
+                        type: "GET",
+                        url: events,
+                        success: function (result) {
+                            $('#modal_default').modal('show');
+                            $('#form_card').html(result);
+                        },
+                    });
+                };
+
                 var i = Number("<?= $rosh->number ?>");
                 var warning = false;
 
@@ -417,7 +435,6 @@ class StorageSupplyModel extends Model
         $uniq = $db->query("SELECT uniq_key FROM $this->table WHERE id = $pk")->fetchColumn();
         foreach ($db->query("SELECT * FROM $this->_storage_item WHERE uniq_key = '$uniq'") as $item) {
             unset($item['uniq_key']);
-            $item['item_retail'] = $db->query("SELECT retail FROM $this->_item_names WHERE id = {$item['item_name_id']}")->fetchColumn();
             $object = Mixin\insert($this->_storage, $item);
             if (!intval($object)){
                 $this->error($object);
