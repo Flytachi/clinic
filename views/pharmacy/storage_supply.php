@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(4);
 is_module('module_pharmacy');
 $header = "Аптека / Поставки";
 ?>
@@ -82,7 +82,7 @@ $header = "Аптека / Поставки";
 													<?php if(!$row->completed): ?>
 														<a onclick="Update('<?= up_url($row->id, 'StorageSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php endif; ?>
-													<a href="<?= ajax('storage_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
+													<a href="<?= viv('pharmacy/storage_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
 												</div>
 											</td>
 										</tr>

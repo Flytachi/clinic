@@ -1,13 +1,10 @@
 <?php
-require_once '../tools/warframe.php';
-$session->is_auth(1);
+require_once '../../tools/warframe.php';
+$session->is_auth(4);
 is_module('module_pharmacy');
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk'])) {
 	$supply = $db->query("SELECT parent_id, uniq_key FROM storage_supply WHERE id = {$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
-	if ($supply->parent_id != $session->session_id) {
-		Mixin\error('404');
-	}
 	$form = new StorageSupplyModel;
 	$_GET['form'] = 'table';
 	$header = "Аптека / Поставка $supply->uniq_key";

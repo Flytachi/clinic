@@ -58,10 +58,10 @@ class StorageSupplyItemsModel extends Model
                 <input type="number" name="item_qty" <?= $status ?> class="form-control verification_input" min="1" placeholder="№" value="<?= $this->value('item_qty') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
             <td>
-                <input type="number" name="item_cost" <?= $status ?> class="form-control verification_input" min="0" placeholder="Введите цену" value="<?= $this->value('item_cost') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
+                <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
             </td>
             <td>
-                <input type="number" name="item_price" <?= $status ?> class="form-control verification_input" min="0" placeholder="Введите цену" value="<?= $this->value('item_price') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
+                <input id="item_price-<?= $this->number ?>" type="text" name="item_price" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_price')) ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
             <td>
                 <input type="text" name="item_faktura" <?= $status ?> class="form-control verification_input" placeholder="Введите № фактуры" value="<?= $this->value('item_faktura') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
@@ -146,6 +146,8 @@ class StorageSupplyItemsModel extends Model
 
     public function clean()
     {
+        $this->post['item_cost'] = (isset($this->post['item_cost'])) ? str_replace(',', '', $this->post['item_cost']) : 0;
+        $this->post['item_price'] = (isset($this->post['item_price'])) ? str_replace(',', '', $this->post['item_price']) : 0;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

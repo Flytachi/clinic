@@ -90,6 +90,9 @@
                                 <?php else: ?>
                                     <span style="font-size:15px;" class="badge badge-flat border-brown text-brown">Местный</span>
                                 <?php endif; ?>
+                                <?php if ( $patient->order ): ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+                                <?php endif; ?>
 
                             </div>
 

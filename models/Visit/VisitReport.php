@@ -17,10 +17,8 @@ class VisitReport extends Model
 
             <div class="modal-body">
 
-                <?php if(!config('document_autosave')): ?>
-                    <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                    <input type="hidden" name="id" value="<?= $pk ?>">
-                <?php endif; ?>
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="id" value="<?= $pk ?>">
 
                 <div class="col-md-4 offset-md-8">
                     <select data-placeholder="Выбрать пациента" class="<?= $classes['form-select'] ?>" onchange="ChangePack(this)">
@@ -279,7 +277,6 @@ class VisitReport extends Model
 
             <div class="modal-body">
 
-                
                 <?php if(!config('document_autosave')): ?>
                     <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                     <input type="hidden" name="id" value="<?= $pk ?>">

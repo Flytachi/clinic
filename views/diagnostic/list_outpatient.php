@@ -8,11 +8,12 @@ if (division_assist() == 1) {
 $header = "Амбулаторные пациенты";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.accept_date, vs.route_id, v.complaint, vs.service_title, vs.service_name, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.accept_date, vs.route_id, v.complaint, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
+$is_division = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
 $search_array = array(
-	"vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = $session->session_id OR vs.assist_id IS NOT NULL )",
-	"vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = $session->session_id OR vs.assist_id IS NOT NULL ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
+	"vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = $session->session_id $is_division )",
+	"vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = $session->session_id $is_division ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
 ?>
@@ -89,7 +90,12 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 										?>
 										<tr class="<?= $tr ?>">
                                             <td><?= addZero($row->user_id) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div></td>
+                                            <td>
+												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+												<?php if ( $row->order ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+												<?php endif; ?>
+											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= date_f($row->accept_date, 1) ?></td>
                                             <td>

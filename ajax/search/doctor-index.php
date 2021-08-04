@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND vs.level = 5 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
@@ -14,8 +14,8 @@ $tb->set_self(viv('doctor/index'));
 ?>
 <div class="table-responsive">
 	<table class="table table-hover table-sm">
-		<thead>
-			<tr class="<?= $classes['table-thead'] ?>">
+		<thead class="<?= $classes['table-thead'] ?>">
+			<tr>
 				<th>ID</th>
 				<th>ФИО</th>
 				<th>Дата рождения</th>
@@ -51,6 +51,9 @@ $tb->set_self(viv('doctor/index'));
 						<?php else: ?>
 							<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
 						<?php endif; ?>
+						<?php if ( $row->order ): ?>
+							<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+						<?php endif; ?>
 					</td>
 					<td class="text-center">
 						<!-- <a href="<?= up_url($row->id, 'VisitUpStatus') ?>&user_id=<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row->user_id ?>" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
@@ -61,7 +64,7 @@ $tb->set_self(viv('doctor/index'));
 
 						<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 						<?php if($session->session_id == $row->parent_id): ?>
-							<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+							<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 						<?php endif; ?>
 					</td>
 				</tr>

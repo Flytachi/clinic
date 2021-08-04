@@ -5,7 +5,7 @@ is_module('module_laboratory');
 $header = "Приём пациетов";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.direction, v.add_date")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND vs.level = 6",
@@ -102,6 +102,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 												<?php else: ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+												<?php endif; ?>
+												<?php if ( $row->order ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">

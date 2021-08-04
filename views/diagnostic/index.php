@@ -8,7 +8,7 @@ if (division_assist() == 2) {
 $header = "Приём пациетов";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, v.complaint")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, v.complaint, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND vs.level = 10 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
@@ -98,6 +98,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                                     <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
 												<?php else: ?>
                                                     <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
+												<?php endif; ?>
+												<?php if ( $row->order ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">

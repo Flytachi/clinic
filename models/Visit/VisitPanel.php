@@ -25,6 +25,10 @@ class VisitPanel extends VisitModel
                         Mixin\error('report_permissions_false');
                         exit;
                     }
+                    $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE user_id = $pk AND completed IS NULL")->fetchColumn();
+                    if ( $this->visit_pk ) {
+                        $this->order_data = $db->query("SELECT * FROM visit_orders WHERE visit_id = $this->visit_pk")->fetch();
+                    }
 
                 }
 
@@ -61,106 +65,145 @@ class VisitPanel extends VisitModel
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
                 <input type="hidden" name="user_id" value="<?= $pk ?>">
 
-                <div class="form-group row mb-3">
+                <div class="form-group row">
 
                     <div class="col-md-8">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm table-bordered">
-                                <tbody class="bg-secondary">
-                                    <tr>
-                                        <th style="width:150px">ID:</th>
-                                        <td><?= addZero($pk) ?></td>
 
-                                        <th style="width:150px">Пол:</th>
-                                        <td><?= ($this->value('gender')) ? "Мужской" : "Женский" ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="width:150px">FIO:</th>
-                                        <td><?= get_full_name($pk) ?></td>
+                        <div class="mb-3">
 
-                                        <th style="width:150px">Дата рождения:</th>
-                                        <td><?= date_f($this->value('birth_date')) ?></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm table-bordered">
+                                    <tbody class="bg-<?= ($this->value('status')) ? 'danger' : 'success' ?>">
+                                        <tr>
+                                            <th style="width:50%" colspan="2">Статус:</th>
+                                            <th style="width:50%" colspan="2"><?= ($this->value('status')) ? 'Лечится' : 'Свободен' ?></th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover table-sm table-bordered">
+                                    <tbody class="bg-secondary">
+                                        <tr>
+                                            <th style="width:150px">ID:</th>
+                                            <td><?= addZero($pk) ?></td>
+
+                                            <th style="width:150px">Пол:</th>
+                                            <td><?= ($this->value('gender')) ? "Мужской" : "Женский" ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:150px">FIO:</th>
+                                            <td><?= get_full_name($pk) ?></td>
+
+                                            <th style="width:150px">Дата рождения:</th>
+                                            <td><?= date_f($this->value('birth_date')) ?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
+
+                        <div class="form-group">
+                            <label>Направитель:</label>
+                            <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
+                                <option></option>
+                                <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
+                                    <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Жалоба:</label>
+                            <textarea class="form-control" name="complaint" rows="1" cols="1" placeholder="Жалоба"></textarea>
+                        </div>
+
                     </div>
 
                     <div class="col-md-4">
 
-                        <div class="table-responsive mb-4">
-                            <table class="table table-hover table-sm table-bordered">
-                                <tbody class="bg-<?= ($this->value('status')) ? 'danger' : 'success' ?>">
-                                    <tr>
-                                        <th style="width:50%" colspan="2">Статус:</th>
-                                        <th style="width:50%" colspan="2"><?= ($this->value('status')) ? 'Лечится' : 'Свободен' ?></th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <?php if( isset($this->order_data) and $this->order_data ): ?>
+                            <div class="<?= $classes['card'] ?>">
 
-                        <div class="form-check form-check-switchery form-check-switchery-double">
-                            <label class="form-check-label">
-                                <input type="checkbox" class="swit" onclick="Checkert(this)">
-                                Ордер
-                            </label>
-                        </div>
+                                <div class="<?= $classes['card-header'] ?>">
+                                    <h6 class="card-title">Ордер</h6>
+                                </div>
 
-                        <div class="<?= $classes['card'] ?>" id="order_card" style="display:none;">
+                                <div class="card-body">
 
-                            <div class="<?= $classes['card-header'] ?>">
-                                <h6 class="card-title">Ордер</h6>
-                            </div>
+                                    <div class="form-group row">
 
-                            <div class="card-body">
-
-                                <div class="form-group row">
-
-                                    <div class="col-md-6">
-                                        <label>Дата выдачи:</label>
-                                        <div class="input-group">
-                                            <span class="input-group-prepend">
-                                                <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                                            </span>
-                                            <input type="date" name="order[order_date]" class="form-control daterange-single order_inputs" disambled>
+                                        <div class="col-md-6">
+                                            <label>Дата выдачи:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                                </span>
+                                                <input type="date" value="<?= $this->order_data['order_date'] ?>" class="form-control daterange-single" readonly>
+                                            </div>
                                         </div>
+
+                                        <div class="col-md-6">
+                                            <label>Номер ордера:</label>
+                                            <input type="number" value="<?= $this->order_data['order_number'] ?>" class="form-control" placeholder="Введите номер ордера" readonly>
+                                        </div>
+
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <label>Номер ордера:</label>
-                                        <input type="number" name="order[order_number]" class="form-control order_inputs" placeholder="Введите номер ордера" disambled>
+                                    <div class="form-group">
+                                        <label>Кем выдан:</label>
+                                        <input type="text" value="<?= $this->order_data['order_author'] ?>" class="form-control" placeholder="Введите имя" readonly>
                                     </div>
 
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Кем выдан:</label>
-                                    <input type="text" name="order[order_author]" class="form-control order_inputs" placeholder="Введите имя" disambled>
-                                </div>
-
+                            </div> 
+                        <?php else: ?>
+                            <div class="form-check form-check-switchery form-check-switchery-double">
+                                <label class="form-check-label">
+                                    <input type="checkbox" name="order_status" class="swit" onclick="Checkert(this)">
+                                    Ордер
+                                </label>
                             </div>
 
-                        </div> 
+                            <div class="<?= $classes['card'] ?>" id="order_card" style="display:none;">
 
-                    </div>
+                                <div class="<?= $classes['card-header'] ?>">
+                                    <h6 class="card-title">Ордер</h6>
+                                </div>
 
-                </div>
+                                <div class="card-body">
 
-                <div class="form-group row">
+                                    <div class="form-group row">
 
-                    <div class="col-md-6">
-                        <label>Направитель:</label>
-                        <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
-                            <option></option>
-                            <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                                        <div class="col-md-6">
+                                            <label>Дата выдачи:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                                </span>
+                                                <input type="date" name="order[order_date]" class="form-control daterange-single order_inputs" disambled>
+                                            </div>
+                                        </div>
 
-                    <div class="col-md-6">
-                        <label>Жалоба:</label>
-                        <textarea class="form-control" name="complaint" rows="1" cols="1" placeholder="Жалоба"></textarea>
+                                        <div class="col-md-6">
+                                            <label>Номер ордера:</label>
+                                            <input type="number" name="order[order_number]" class="form-control order_inputs" placeholder="Введите номер ордера" disambled>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Кем выдан:</label>
+                                        <input type="text" name="order[order_author]" class="form-control order_inputs" placeholder="Введите имя" disambled>
+                                    </div>
+
+                                </div>
+
+                            </div> 
+                        <?php endif; ?>
+
                     </div>
 
                 </div>

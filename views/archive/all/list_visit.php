@@ -205,7 +205,7 @@ if (!$patient) {
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>№</th>
 										<th style="width: 16%">№ Визита</th>
-			                            <th>Жалоба</th>
+			                            <th>Дополнения</th>
 										<th style="width: 11%">Дата визита</th>
 										<th style="width: 11%">Дата завершения</th>
 										<th>Тип визита</th>
@@ -216,19 +216,24 @@ if (!$patient) {
                                 <tbody>
 
 									<?php
-									$tb = new Table($db, "visits");
+									$tb = new Table($db, "visits v");
+									$tb->set_data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 									$search = $tb->get_serch();
 									$search_array = array(
-										"user_id = $patient->id", 
-										"user_id = $patient->id"
+										"v.user_id = $patient->id", 
+										"v.user_id = $patient->id"
 									);
-									$tb->where_or_serch($search_array)->order_by('add_date DESC')->set_limit(20);
+									$tb->where_or_serch($search_array)->order_by('v.add_date DESC')->set_limit(20);
 									?>
 									<?php foreach($tb->get_table(1) as $row): ?>
 										<tr>
                                             <td><?= $row->count ?></td>
                                             <td><?= $row->id ?></td>
-                                            <td><?= $row->complaint ?></td>
+                                            <td>
+												<?php if ( $row->order ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+												<?php endif; ?>
+											</td>
                                             <td><?= date_f($row->add_date, 1) ?></td>
                                             <td><?= date_f($row->completed, 1) ?></td>
 											<td>

@@ -60,10 +60,19 @@ class StorageSupplyModel extends Model
         ?>
         <div class="<?= $classes['card-header'] ?>">
             <h5 class="card-title"><b>Поставка:</b> <?= date_f($this->value('supply_date')) ?></h5>
-            <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('parent_id')) ?></span>
+            <div class="header-elements">
+                <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('parent_id')) ?></span>
+                <div class="form-group-feedback form-group-feedback-right ml-3" style="width:70px;">
+                    <input type="number" class="form-control border-danger" value="<?= config('constant_pharmacy_percent') ?>" max="999" id="percent_input" placeholder="%" title="Введите процент">
+                    <div class="form-control-feedback">
+                        <i class="icon-percent font-size-base text-muted"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="card-body">
+
             <div class="table-responsive card">
                 <table class="table table-hover">
                     <thead>
@@ -146,6 +155,36 @@ class StorageSupplyModel extends Model
         <?php if($is_active): ?>
             <script type="text/javascript">
 
+                $("#percent_input").keyup(function() {
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= ajax('controller_constant') ?>",
+                        data: {
+                            constant_pharmacy_percent: $("#percent_input").val(),
+                        },
+                    });
+                });
+
+                $(".input-price").on("input", function (event) {
+                    if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                        try {
+                            event.target.value = event.target.value.replace(
+                                new RegExp(event.originalEvent.data, "g"),
+                                ""
+                            );
+                        } catch (e) {
+                            event.target.value = event.target.value.replace(
+                                event.originalEvent.data,
+                                ""
+                            );
+                        }
+                    } else {
+                        event.target.value = number_with(
+                            event.target.value.replace(/,/g, "")
+                        );
+                    }
+                });
+
                 function AddItemName(events) {
                     $.ajax({
                         type: "GET",
@@ -181,6 +220,16 @@ class StorageSupplyModel extends Model
                             i++;
                         },
                     });
+                }
+
+                function UpBtnPrice(id) {
+                    var input_cost = event.target;
+                    var input_price = document.querySelector("#item_price-"+(input_cost.id).replace("item_cost-", ''));
+                    var input_percent = Number(document.querySelector("#percent_input").value);
+                    var input_cost_value = Number(input_cost.value.replace(/,/g,''));
+                    
+                    input_price.value = number_format( input_cost_value + (input_cost_value * (input_percent / 100)) );
+                    UpBtn(id);
                 }
 
                 function UpBtn(id) {

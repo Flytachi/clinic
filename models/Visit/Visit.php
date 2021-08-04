@@ -119,12 +119,12 @@ class VisitModel extends Model
         );
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
-            $this->error($object);
+            $this->error("Ошибка создании или обновлении визита!");
             $db->rollBack();
         }else{
             $this->visit_pk = $object;
             $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
-            $this->create_order();
+            $this->chek_order();
         }
     }
 
@@ -140,9 +140,10 @@ class VisitModel extends Model
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
         $post['level'] = ($this->post['division_id']) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
-        $post['status'] = (isset($this->post['direction']) and $this->post['direction']) ? 2 : 1;
+        $post['status'] = ( (isset($this->post['direction']) and $this->post['direction']) or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];
+
         
         $count = (isset($this->post['direction']) and $this->post['direction']) ? 1 : $this->post['count'][$key];
         for ($i=0; $i < $count; $i++) {
@@ -150,24 +151,26 @@ class VisitModel extends Model
             $post = Mixin\to_null($post);
             $object = Mixin\insert($this->_service, $post);
             if (!intval($object)){
-                $this->error($object);
+                $this->error("Ошибка при создании услуги!");
                 $db->rollBack();
             }
-
-            if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
-                $post_price['visit_id'] = $this->visit_pk;
-                $post_price['visit_service_id'] = $object;
-                $post_price['user_id'] = $this->post['user_id'];
-                $post_price['item_type'] = 1;
-                $post_price['item_id'] = $data['id'];
-                $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
-                $post_price['item_name'] = $data['name'];
-                $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
-                $object = Mixin\insert($this->_prices, $post_price);
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
-                }
+            
+            if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
+                if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
+                    $post_price['visit_id'] = $this->visit_pk;
+                    $post_price['visit_service_id'] = $object;
+                    $post_price['user_id'] = $this->post['user_id'];
+                    $post_price['item_type'] = 1;
+                    $post_price['item_id'] = $data['id'];
+                    $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
+                    $post_price['item_name'] = $data['name'];
+                    $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
+                    $object = Mixin\insert($this->_prices, $post_price);
+                    if (!intval($object)){
+                        $this->error("Ошибка при создании платежа услуги!");
+                        $db->rollBack();
+                    }
+                } 
             }
         }
         unset($post);
@@ -191,21 +194,23 @@ class VisitModel extends Model
 
         $object = Mixin\insert($this->_beds, $post);
         if (!intval($object)) {
-            $this->error($object);
+            $this->error("Ошибка при создании платежа для койки!");
             $db->rollBack();
         }
 
         $object2 = Mixin\update($this->table2, array('user_id' => $this->post['user_id']), $this->post['bed']);
         if (!intval($object2)){
-            $this->error($object2);
+            $this->error("Ошибка при бронировании пациентом койки!");
             $db->rollBack();
         }
     }
 
-    public function create_order()
+    public function chek_order()
     {
         global $db, $session;
-        if (isset($this->post['order']) and $this->post['order']['order_number']) {
+        if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
+            $this->is_order = True;
+        }else if (isset($this->post['order_status'])) {
             $post = Mixin\clean_form($this->post['order']);
             $post = Mixin\to_null($post);
             $post['visit_id'] = $this->visit_pk;
@@ -215,8 +220,9 @@ class VisitModel extends Model
             if (!intval($object)) {
                 $this->error($object);
                 $db->rollBack();
+                $this->error("Ошибка при создании ордера!");
             }
-            
+            $this->is_order = True;
         }
     }
 
@@ -229,7 +235,7 @@ class VisitModel extends Model
 
             $this->create_or_update_visit();
             if (isset($this->post['service']) and is_array($this->post['service'])) {
-
+                
                 foreach ($this->post['service'] as $key => $value) {
                     $this->add_visit_service($key, $value);
                 }
@@ -244,11 +250,11 @@ class VisitModel extends Model
             // Обновление статуса у пациента
             $object1 = Mixin\update($this->_user, array('status' => True), $this->post['user_id']);
             if (!intval($object1)){
-                $this->error($object1);
+                $this->error("Ошибка в обновление статуса пациента!");
                 $db->rollBack();
             }
-            
-            // $db->commit();
+            // $this->dd();
+            $db->commit();
             $this->success();
 
         }

@@ -5,7 +5,7 @@ is_module('module_laboratory');
 $header = "Амбулаторные пациенты";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.add_date")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)  LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $search_array = array(
@@ -81,6 +81,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+												<?php if ( $row->order ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+												<?php endif; ?>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
