@@ -23,7 +23,7 @@ class DivisionModel extends Model
                 <select data-placeholder="Выбрать роль" id="level_use" name="level" class="<?= $classes['form-select'] ?>" onchange="TableChange(this)" required>
                     <option></option>
                     <?php foreach ($PERSONAL as $key => $value): ?>
-                        <?php if(!in_array($key, [1,2,3,4,7,8,12,13,32])): ?>
+                        <?php if(!in_array($key, [1,2,3,4,7,8,32])): ?>
                             <option value="<?= $key ?>"<?= ($this->value('level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                         <?php endif; ?>
                     <?php endforeach; ?>

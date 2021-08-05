@@ -459,7 +459,7 @@ class VisitRoute extends Model
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
                     data: {
-                        divisions: ['other_12'],
+                        divisions: ['12'],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         search: $("#search_input").val(),
                         selected: service,

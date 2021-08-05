@@ -159,7 +159,7 @@ class ServiceModel extends Model
 
     public function save_excel()
     {
-        global $db;
+        /* global $db;
         $db->beginTransaction();
         foreach ($this->post['template'] as $key_p => $value_p) {
             if ($key_p) {
@@ -180,7 +180,7 @@ class ServiceModel extends Model
             }
         }
         $db->commit();
-        $this->success();
+        $this->success(); */
     }
 
     public function success()

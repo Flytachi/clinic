@@ -80,6 +80,16 @@ $header = "Панель управления";
 													</td>
 												</tr>
 												<tr>
+													<th>Physio</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_physio" <?= (isset($company->module_physio) and $company->module_physio) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Pharmacy</th>
 													<td class="text-right">
 														<div class="list-icons">
@@ -229,7 +239,7 @@ $header = "Панель управления";
 		function ConstChange(input) {
 			$.ajax({
 				type: "POST",
-				url: "<?= ajax('master_controller') ?>",
+				url: "<?= ajax('master/controller') ?>",
 				data: Object.assign({}, { module: input.name }, $(input).serializeArray()),
 				success: function (data) {
 					console.log(data);

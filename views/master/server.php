@@ -65,9 +65,9 @@ $header = "Контроль базы данных";
 												<td><?= $i++ ?></td>
 												<td><?= pathinfo($value, PATHINFO_FILENAME); ?></td>
 												<td>
-													<a onclick="Conf('<?= viv('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
+													<a onclick="Conf('<?= ajax('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
 													<a href="/dump/<?= $value ?>" class="list-icons-up text-dark" download><i class="icon-download"></i></a>
-													<a onclick="Conf('<?= viv('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>', 1)" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
+													<a onclick="Conf('<?= ajax('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>', 1)" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
 												</td>
 											</tr>
 										<?php endforeach; ?>

@@ -230,12 +230,19 @@ class VisitPanel extends VisitModel
                                 <?php endforeach; ?>
                             </optgroup>
                         <?php endif; ?>
+                        <?php if(module('module_physio')): ?>
+                            <optgroup label="Физиотерапия">
+                                <?php foreach ($db->query("SELECT * from divisions WHERE level = 12") as $row): ?>
+                                    <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                        <?php endif; ?>
                         <optgroup label="Остальные">
-                            <?php foreach ($PERSONAL as $key => $value): ?>
-                                <?php if(in_array($key, [12,13])): ?>
+                            <?php /* foreach ($PERSONAL as $key => $value): ?>
+                                <?php if(in_array($key, [13])): ?>
                                     <option value="other_<?= $key ?>"><?= $value ?></option>
                                 <?php endif; ?>
-                            <?php endforeach; ?>
+                            <?php endforeach;*/ ?>
                         </optgroup>
                     </select>
                 </div>

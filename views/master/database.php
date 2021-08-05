@@ -70,7 +70,7 @@ $header = "База данных";
                                             </td>
                                             <td>
 												<?php if ($rec != 0): ?>
-													<a onclick="Conf('<?= viv('master/flush') ?>', '<?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?>')" class="list-icons-up text-danger">flush</a>
+													<a onclick="Conf('<?= ajax('master/flush') ?>', '<?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?>')" class="list-icons-up text-danger">flush</a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

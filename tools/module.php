@@ -60,4 +60,9 @@ if (!module('module_diet')) {
 if (!module('module_diagnostic')) {
     unset($PERSONAL[10]);
 }
+
+if (!module('module_physio')) {
+    unset($PERSONAL[12]);
+}
+
 ?>

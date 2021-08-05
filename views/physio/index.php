@@ -6,9 +6,11 @@ $header = "Амбулаторные пациенты";
 $tb = new Table($db, "visit_services vs");
 $tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
+$is_division = (division()) ? "AND vs.division_id = ".division() : null;
+$is_division2 = (division()) ? "AND division_id = ".division() : null;
 $search_array = array(
-	"vs.status = 2 AND vs.level = 12 AND v.direction IS NULL",
-	"vs.status = 2 AND vs.level = 12 AND v.direction IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 2 AND vs.level = 12 AND v.direction IS NULL AND (vs.parent_id IS NULL OR vs.parent_id = $session->session_id) $is_division",
+	"vs.status = 2 AND vs.level = 12 AND v.direction IS NULL AND (vs.parent_id IS NULL OR vs.parent_id = $session->session_id) $is_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
 ?>
@@ -44,14 +46,12 @@ $tb->where_or_serch($search_array)->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 
@@ -82,7 +82,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT DISTINCT service_name FROM visit_services WHERE visit_id = $row->id AND level = 12") as $serv): ?>
+												<?php foreach($db->query("SELECT DISTINCT service_name FROM visit_services WHERE visit_id = $row->id AND status = 2 AND level = 12 AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division2") as $serv): ?>
 													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>
 											</td>

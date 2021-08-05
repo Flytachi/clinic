@@ -9,10 +9,6 @@ class VisitPhysioModel extends Model
 
     public function get_or_404(int $pk)
     {
-        /**
-         * Данные о записи!
-         * если не найдёт запись то выдаст 404 
-         */
         global $db;
         $object = $db->query("SELECT * FROM $this->_visit WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
         if($object){
@@ -29,8 +25,9 @@ class VisitPhysioModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $classes;
+        global $db, $classes, $session;
         $user = $db->query("SELECT id, birth_date, gender FROM $this->_user WHERE id = {$this->post['user_id']}")->fetch();
+        $is_division = (division()) ? "AND division_id = ".division() : null;
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h5 class="modal-title">Детально</h5>
@@ -76,11 +73,11 @@ class VisitPhysioModel extends Model
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($db->query("SELECT DISTINCT service_id, service_name FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2") as $row): ?>
-                            <?php $value = $db->query("SELECT id, COUNT(id) 'count' FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND service_id = {$row['service_id']}")->fetch(); ?>
-                            <tr>
+                        <?php foreach ($db->query("SELECT DISTINCT service_id, service_name FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division") as $row): ?>
+                            <?php $value = $db->query("SELECT id, COUNT(id) 'count' FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND service_id = {$row['service_id']} AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division")->fetch(); ?>
+                            <tr class="changer_tab-services">
                                 <td><?= $row['service_name'] ?></td>
-                                <td class="text-center"><?= $value['count'] ?></td>
+                                <td class="text-center changer_tab-service_qty"><?= $value['count'] ?></td>
                                 <td class="text-right">
                                     <a onclick="CompleteVisitService('<?= del_url($value['id'], __CLASS__) ?>')" class="text-success">Завершить</a>
                                     <a onclick="FailureVisitService('<?= del_url($value['id'], 'VisitFailure') ?>')" type="button" class="text-danger legitRipple">Отказ</a>
@@ -105,12 +102,18 @@ class VisitPhysioModel extends Model
                     success: function (result) {
 
                         if (result == "success") {
-                            new Noty({
-                                text: 'Процедура завершения прошла успешно!',
-                                type: 'success'
-                            }).show();
 
-                            ListVisit('<?= up_url($pk, __CLASS__) ?>');
+                            if ($(".changer_tab-services").length == 1 && Number(document.querySelector(".changer_tab-service_qty").innerHTML) == 1) {
+                                location.reload();
+                            } else {
+                                new Noty({
+                                    text: 'Процедура завершения прошла успешно!',
+                                    type: 'success'
+                                }).show();
+
+                                ListVisit('<?= up_url($pk, __CLASS__) ?>');
+                            }
+                            
                             
                         }else{
 
@@ -136,12 +139,17 @@ class VisitPhysioModel extends Model
                         var data = JSON.parse(result);
 
                         if (data.status == "success") {
-                            new Noty({
-                                text: 'Процедура отказа прошла успешно!',
-                                type: 'success'
-                            }).show();
 
-                            ListVisit('<?= up_url($pk, __CLASS__) ?>');
+                            if ($(".changer_tab-services").length == 1 && Number(document.querySelector(".changer_tab-service_qty").innerHTML) == 1) {
+                                location.reload();
+                            } else {
+                                new Noty({
+                                    text: 'Процедура отказа прошла успешно!',
+                                    type: 'success'
+                                }).show();
+
+                                ListVisit('<?= up_url($pk, __CLASS__) ?>');
+                            }
                             
                         }else{
 

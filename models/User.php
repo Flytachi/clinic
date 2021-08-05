@@ -197,7 +197,7 @@ class UserModel extends Model
                     `;
                     document.querySelector('#change_table_div').innerHTML = div;
                 }
-                if (the.value == 6) {
+                if (the.value == 6 || the.value == 12) {
                     document.querySelector('#division_id').required = false;
                 }else{
                     if (!document.querySelector('#division_id').required) {
