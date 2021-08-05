@@ -19,7 +19,6 @@ $header = "Контроль базы данных";
 		<?php include 'sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -34,10 +33,11 @@ $header = "Контроль базы данных";
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Дамп базы данных</h5>
-
-						<div class="header-elements">
-							<a href="<?= viv('master/cap').'?is_create=1' ?>" class="btn btn-sm border-1 text-dark">Create Dump</a>
-						</div>
+						<?php if( $dir = is_dir(dirname(__DIR__, 2)."/dump") ): ?>
+							<div class="header-elements">
+								<a href="<?= ajax('master/cap').'?is_create=1' ?>" class="btn btn-sm border-1 text-dark">Create Dump</a>
+							</div>
+						<?php endif; ?>
 				    </div>
 
 				    <div class="card-body">
@@ -59,7 +59,7 @@ $header = "Контроль базы данных";
 				                    </tr>
 				                </thead>
 				                <tbody>
-									<?php if( is_dir(dirname(__DIR__, 2)."/dump") ): ?>
+									<?php if( $dir ): ?>
 										<?php $i=1; foreach (array_diff(scandir(dirname(__DIR__, 2)."/dump"), array('..', '.')) as $value): ?>
 											<tr> 
 												<td><?= $i++ ?></td>

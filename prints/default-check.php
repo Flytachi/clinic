@@ -62,12 +62,12 @@ foreach ($comp as $value) {
 
             <div class="info">
                 <span style="text-align: center;">
-                    <h2><?= $_GET['id'] ?></h2>
+                    <h2><?= $_GET['pk'] ?></h2>
                 </span>
                 <p class="h4">
-                    <b>ФИО</b>: <?= get_full_name($_GET['id']) ?></br>
+                    <b>ФИО</b>: <?= get_full_name($_GET['pk']) ?></br>
                     <b>Дата</b>: <?= date('d.m.Y H:i') ?></br>
-                    <b>Дата рождения</b>: <?= date_f($db->query("SELECT birth_date FROM users WHERE id = {$_GET['id']}")->fetchColumn()) ?>
+                    <b>Дата рождения</b>: <?= date_f($db->query("SELECT birth_date FROM users WHERE id = {$_GET['pk']}")->fetchColumn()) ?>
                 </p>
             </div>
 

@@ -7,10 +7,10 @@ foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
 
-if ( isset($_GET['items']) ) {
-    $docs = $db->query("SELECT us.*, vs.accept_date FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND vs.id = ".json_decode($_GET['items'])[0].") WHERE us.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+if ( empty($_GET['pk']) ) {
+    $docs = $db->query("SELECT us.id, us.birth_date, v.add_date, v.completed FROM users us LEFT JOIN visits v ON(v.user_id=us.id) WHERE v.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 }else {
-    $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.birth_date, vs.accept_date FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
     // if ($docs->is_document) {
     //     global_render($docs->is_document.'?id='.$_GET['id']);
     // }
@@ -53,23 +53,24 @@ if ( isset($_GET['items']) ) {
 
         <div class="text-left">
             <div class="h3">
-                <?php if ( isset($_GET['items']) ): ?>
+                <?php if ( empty($_GET['pk']) ): ?>
                     <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
                     <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
-                    <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->dateBith)) ?><br>
-                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?><br>
+                    <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
+                    <b>Дата начала визита: </b><?= date('d.m.Y H:i', strtotime($docs->add_date)) ?><br>
+                    <b>Дата конца визита: </b><?= date('d.m.Y H:i', strtotime($docs->completed)) ?>
                 <?php else: ?>
                     <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
                     <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
-                    <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->dateBith)) ?><br>
-                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?><br>
+                    <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
+                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?>
                 <?php endif; ?>
             </div>
 
-            <?php if ( isset($_GET['items']) ): ?>
+            <?php if ( empty($_GET['pk']) ): ?>
 
                 <?php foreach (json_decode($_GET['items']) as $item): ?>
-                    <h1 class="text-center"><b><?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?></b> </h1>
+                    <h1 class="text-center"><b><?= $db->query("SELECT service_name FROM visit_services WHERE id=$item")->fetchColumn() ?></b> </h1>
 
                     <div class="table-responsive card">
                         <table class="minimalistBlack">
@@ -77,32 +78,25 @@ if ( isset($_GET['items']) ) {
                                 <t id="text-h">
                                     <th style="width:3%">№</th>
                                     <th class="text-left">Анализ</th>
-                                    <th class="text-right" style="width:15%">Норма</th>
-                                    <th class="text-right" style="width:10%">Ед</th>
-                                    <th class="text-right" style="width:15%">Результат</th>
+                                    <th class="text-center" style="width:15%">Норма</th>
+                                    <th class="text-center" style="width:10%">Ед</th>
+                                    <th class="text-center" style="width:15%">Результат</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $i = 1;
-                                $norm = "scl.name, scl.code, scl.standart";
-                                $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = $item";
-                                foreach ($db->query($sql) as $row) {
-                                    ?>
+                                <?php $i=1; foreach ($db->query("SELECT va.analyze_name, va.result, sa.standart, sa.unit FROM visit_analyzes va LEFT JOIN service_analyzes sa ON (sa.id=va.service_analyze_id) WHERE va.visit_service_id = $item") as $row): ?>
                                     <tr id="text-b">
                                         <td><?= $i++ ?></td>
-                                        <td class="text-left"><?= $row['name'] ?></td>
-                                        <td class="text-right">
+                                        <td class="text-left"><?= $row['analyze_name'] ?></td>
+                                        <td class="text-center">
                                             <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-center">
                                             <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                                         </td>
-                                        <td class="text-right"><?= $row['result'] ?></td>
+                                        <td class="text-center"><?= $row['result'] ?></td>
                                     </tr>
-                                    <?php
-                                }
-                                ?>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -110,7 +104,7 @@ if ( isset($_GET['items']) ) {
 
             <?php else: ?>
 
-                <h1 class="text-center"><b><?= $db->query("SELECT name FROM service WHERE id={$docs->service_id}")->fetch()['name'] ?></b></h1>
+                <h1 class="text-center"><b><?= $docs->service_name ?></b></h1>
 
                 <div class="table-responsive card">
                     <table class="minimalistBlack">
@@ -118,32 +112,25 @@ if ( isset($_GET['items']) ) {
                             <tr id="text-h">
                                 <th style="width:3%">№</th>
                                 <th class="text-left">Анализ</th>
-                                <th class="text-right" style="width:15%">Норма</th>
-                                <th class="text-right" style="width:10%">Ед</th>
-                                <th class="text-right" style="width:15%">Результат</th>
+                                <th class="text-center" style="width:15%">Норма</th>
+                                <th class="text-center" style="width:10%">Ед</th>
+                                <th class="text-center" style="width:15%">Результат</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $i = 1;
-                            $norm = "scl.name, scl.code, scl.standart";
-                            $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = {$_GET['id']}";
-                            foreach ($db->query($sql) as $row) {
-                                ?>
+                            <?php $i=1; foreach ($db->query("SELECT va.analyze_name, va.result, sa.standart, sa.unit FROM visit_analyzes va LEFT JOIN service_analyzes sa ON (sa.id=va.service_analyze_id) WHERE va.visit_service_id = {$_GET['pk']}") as $row): ?>
                                 <tr id="text-b">
                                     <td><?= $i++ ?></td>
-                                    <td class="text-left"><?= $row['name'] ?></td>
-                                    <td class="text-right">
+                                    <td class="text-left"><?= $row['analyze_name'] ?></td>
+                                    <td class="text-center">
                                         <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-center">
                                         <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                                     </td>
-                                    <td class="text-right"><?= $row['result'] ?></td>
+                                    <td class="text-center"><?= $row['result'] ?></td>
                                 </tr>
-                                <?php
-                            }
-                            ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>

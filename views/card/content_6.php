@@ -126,7 +126,7 @@ is_module('module_diagnostic');
 														<?php endif; ?>
 														<?php if ( in_array($row->status, [3,5,7]) ): ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													</div>
 												</td>

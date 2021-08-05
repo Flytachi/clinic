@@ -52,7 +52,7 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
-								<button onclick="Print(`<?= prints('check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`);" type="button" class="<?= $classes['btn-table'] ?>">Чек</button>
+								<button onclick="Print(`<?= prints('check') ?>?pk=<?= $_GET['pk']?>&items=[${arr}]`);" type="button" class="<?= $classes['btn-table'] ?>">Чек</button>
 								<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="<?= $classes['btn-table'] ?>">Excel</button>
 							</div>
 							<div class="form-group-feedback form-group-feedback-right mr-2 ml-2">

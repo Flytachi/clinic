@@ -879,7 +879,7 @@ class VisitPricesModel extends Model
             echo json_encode(array(
                 'status' => "success" ,
                 'message' => $value,
-                'val' => prints('check')."?id=".$this->visit['user_id']."&items=".json_encode($this->visit_prices_items)
+                'val' => prints('check')."?pk=".$this->visit['user_id']."&items=".json_encode($this->visit_prices_items)
             ));
         }
     }

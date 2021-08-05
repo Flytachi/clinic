@@ -45,7 +45,7 @@ is_module('module_laboratory');
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php else: ?>
-								<a onclick="PrePrint('<?= viv('prints/document_2') ?>?id=<?= $patient->id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
+								<a onclick="PrePrint('<?= prints('document-2') ?>?id=<?= $patient->visit_id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
 							<a onclick="AnalizeCheck(<?= $patient->visit_id ?>)" class="float-right text-info mr-2">
 								<i class="icon-drawer3 mr-1"></i>Сводка анализов
@@ -111,7 +111,7 @@ is_module('module_laboratory');
 														<?php endif; ?>
 														<?php if ( in_array($row->status, [3,7]) ): ?>
 															<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-															<a <?= ($row->completed) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-2').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													</div>
 												</td>
