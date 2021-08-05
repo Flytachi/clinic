@@ -49,14 +49,12 @@ $tb->where_or_serch($search_array)->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 
@@ -125,9 +123,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_result_show" class="modal fade" tabindex="-1">
+	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-full">
-			<div class="<?= $classes['modal-global_content'] ?>" id="modal_result_show_content">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card">
 
 			</div>
 		</div>
@@ -157,8 +155,8 @@ $tb->where_or_serch($search_array)->set_limit(20);
 				type: "GET",
 				url: events,
 				success: function (result) {
-					$('#modal_result_show').modal('show');
-					$('#modal_result_show_content').html(result);
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
 		};

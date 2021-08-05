@@ -81,6 +81,48 @@ $header = "Настройки";
 
 							</fieldset>
 
+							<fieldset class="mb-3">
+								<legend class="text-uppercase font-size-sm font-weight-bold">Касса</legend>
+
+								<div class="form-group row">
+
+									<div class="col-md-6">
+
+										<label class="font-weight-bold">Пропускная цена(Амбулатор):</label>
+										<div class="row">
+											<label class="col-form-label col-lg-2 font-weight-bold">От:</label>
+											<div class="col-lg-4">
+												<input type="text" name="constant_throughput_ambulator_from" value="<?= number_format(config("throughput_ambulator_from")) ?>" placeholder="Введите сумму" class="form-control input-price">
+											</div>
+											<label class="col-form-label col-lg-2 font-weight-bold">До:</label>
+											<div class="col-lg-4">
+												<input type="text" name="constant_throughput_ambulator_before" value="<?= number_format(config("throughput_ambulator_before")) ?>" placeholder="Введите сумму" class="form-control input-price">
+											</div>
+										</div>
+
+									</div>
+
+									<div class="col-md-6">
+
+										<label class="font-weight-bold">Пропускная цена(Стационар):</label>
+										<div class="row">
+											<label class="col-form-label col-lg-2 font-weight-bold">От:</label>
+											<div class="col-lg-4">
+												<input type="text" name="constant_throughput_stationar_from" value="<?= number_format(config("throughput_stationar_from")) ?>" placeholder="Введите сумму" class="form-control input-price">
+											</div>
+											<label class="col-form-label col-lg-2 font-weight-bold">До:</label>
+											<div class="col-lg-4">
+												<input type="text" name="constant_throughput_stationar_before" value="<?= number_format(config("throughput_stationar_before")) ?>" placeholder="Введите сумму" class="form-control input-price">
+											</div>
+										</div>
+
+									</div>
+
+									
+								</div>
+
+							</fieldset>
+
 							<?php if(module('module_zetta_pacs')): ?>
 								<fieldset class="mb-3">
 									<legend class="text-uppercase font-size-sm font-weight-bold">ZettaPacs</legend>
@@ -89,7 +131,7 @@ $header = "Настройки";
 
 										<label class="col-form-label col-lg-1 font-weight-bold">Ip:</label>
 										<div class="col-lg-3">
-											<input type="text" name="constant_zetta_pacs_IP" value="<?= config("zetta_pacs_IP")  ?>" placeholder="Введите ip" class="form-control">
+											<input type="text" name="constant_zetta_pacs_IP" value="<?= config("zetta_pacs_IP") ?>" placeholder="Введите ip" class="form-control">
 										</div>
 
 										<label class="col-form-label col-lg-1 font-weight-bold">LICD:</label>
@@ -126,6 +168,30 @@ $header = "Настройки";
 
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+
+		$(".input-price").on("input", function (event) {
+			if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+				try {
+					event.target.value = event.target.value.replace(
+						new RegExp(event.originalEvent.data, "g"),
+						""
+					);
+				} catch (e) {
+					event.target.value = event.target.value.replace(
+						event.originalEvent.data,
+						""
+					);
+				}
+			} else {
+				event.target.value = number_with(
+					event.target.value.replace(/,/g, "")
+				);
+			}
+		});
+		
+	</script>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

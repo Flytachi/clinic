@@ -49,14 +49,12 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Амбулаторные пациенты</h6>
 						<div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID, имя пациента или название услуги">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID, имя пациента или название услуги">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 

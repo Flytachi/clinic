@@ -467,7 +467,6 @@ class VisitPricesModel extends Model
         if ($this->visit['direction']) {
             # Stationar 
             $this->dd();
-            
 
         }else{
             # Ambulator
@@ -481,15 +480,15 @@ class VisitPricesModel extends Model
             $amount = $db->query($sql)->fetchColumn();
             if ( isset($this->post['sale']) and $this->post['sale'] > 0) $amount = $amount - ($amount * ($this->post['sale'] / 100));
             $result = $amount - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
-            if ($result < 0) {
-                $this->error("Есть остаток ".$result);
-            }elseif ($result > 0) {
-                $this->error("Недостаточно средств! ". $result);
-            }else {
+            //
+            if ($result == 0) {
                 $this->post = Mixin\clean_form($this->post);
                 $this->post = Mixin\to_null($this->post);
                 return True;
+            }else {
+                $this->error("В транзакции отказано!");
             }
+            
         }
 
         // $this->user_pk = $this->post['user_id'];
@@ -544,7 +543,7 @@ class VisitPricesModel extends Model
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
             'sale' => (isset($this->post['sale'])) ? $this->post['sale'] : 0,
-            // 'is_visibility' => ($this->visit['direction']) ? null : 1,
+            'is_visibility' => ($this->visit['direction']) ? null : 1,
             'is_price' => true,
             'price_date' => date("Y-m-d H:i:s"),
         );
@@ -838,13 +837,8 @@ class VisitPricesModel extends Model
     // }
 
     public function err_temp(Int $temp = 0)
-    {
-        if (isset($this->bed_cost)) {
-            $range = range(-500,500);
-        } else {
-            $range = range(-1,1);
-        }
-        
+    {   
+        $range = range(config('throughput_ambulator_from'), config('throughput_ambulator_before'));   
         if (in_array($temp, $range)) {
             return false;
         }
@@ -892,12 +886,7 @@ class VisitPricesModel extends Model
 
     public function error($message)
     {
-        $value = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold">'.$message.'</span>
-        </div>
-        ';
+        $value = $message;
         echo json_encode(array(
             'status' => "error" ,
             'message' => $value

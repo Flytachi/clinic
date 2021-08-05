@@ -9,7 +9,9 @@ if ( isset($_POST) ) {
 
         if (in_array($key, ["constant_diet_time"])) {
             Mixin\insert_or_update("company_constants", array('const_label' => $key, 'const_value' => json_encode($value)), "const_label");
-        } else {
+        }elseif (in_array($key, ["constant_throughput_ambulator_from", "constant_throughput_ambulator_before", "constant_throughput_stationar_from", "constant_throughput_stationar_before"])) {
+            Mixin\insert_or_update("company_constants", array('const_label' => $key, 'const_value' => str_replace(',', '', $value)), "const_label");
+        }else {
             Mixin\insert_or_update("company_constants", array('const_label' => $key, 'const_value' => $value), "const_label");
         }
         

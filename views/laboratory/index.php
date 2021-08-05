@@ -44,14 +44,12 @@ $tb->where_or_serch($search_array)->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Пациенты на приём</h6>
 						<div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 
@@ -78,11 +76,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                             <td>
 												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
 												<div class="text-muted">
-													<?php
-													// if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-													// 	echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													// }
-													?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+													<?php endif; ?>
 												</div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>

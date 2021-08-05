@@ -134,9 +134,11 @@ class __Cfg
     private $setting_name = "setting.ini";
     private $cfg_name = ".cfg";
     private $default_configuratuons = array(
+        'MASTER_IPS' => array(
+            "127.0.0.1"
+        ),
         'SECURITY' => array(
-            'SERIA' => null, 
-            'MASTER_IP' => null,
+            'SERIA' => null,
         ),
         'GLOBAL_SETTING' => array(
             'DRIVER' => 'mysql', 
@@ -187,7 +189,7 @@ class __Cfg
     {
         if ($this->argument == "setting") {
             $this->create_setting();
-        }elseif ($this->argument == "generate") {
+        }elseif ($this->argument == "gen") {
             $this->generate_key();
         }elseif ($this->argument == "edit") {
             $this->edit_key();

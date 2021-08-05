@@ -4,10 +4,11 @@ class VisitRoute extends Model
 {
     public $table = 'visit_services';
     public $table2 = 'beds';
-    public $_user = 'users';
-    public $_visits = 'visits';
-    public $_beds = 'visit_beds';
     public $_prices = 'visit_prices';
+    public $_orders = 'visit_orders';
+    public $_beds = 'visit_beds';
+    public $_visits = 'visits';
+    public $_user = 'users';
 
     public function form($pk = null)
     {
@@ -675,7 +676,7 @@ class VisitRoute extends Model
 
     public function clean()
     {
-        if (is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
+        if (isset($this->post['division_id']) and is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
         // if($this->post['package']){
@@ -719,29 +720,39 @@ class VisitRoute extends Model
         global $db;
         $this->visit_pk = $this->post['visit_id'];
         $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+        $this->chek_order();
+    }
+
+    public function chek_order()
+    {
+        global $db, $session;
+        if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
+            $this->is_order = True;
+        }
     }
 
     public function add_visit_service($key = null, $value)
     {
         global $db;
         $data = $db->query("SELECT * FROM services WHERE id = $value")->fetch();
-        $post['division_id'] = $this->post['division_id'][$key];
+
+        if ( isset($this->post['division_id'][$key]) and $this->post['division_id'][$key] ) {
+            $post['division_id'] = $this->post['division_id'][$key];
+        }
         if (isset($this->post['status'])) {
             $post['status'] = $this->post['status'];
             $post['accept_date'] = date("Y-m-d H:i:s");
         } else {
-            $post['status'] = ($this->post['direction']) ? 2 : 1;
+            $post['status'] = ($this->post['direction'] or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
         }
         $post['visit_id'] = $this->visit_pk;
         $post['user_id'] = $this->post['user_id'];
         $post['route_id'] = $_SESSION['session_id'];
         $post['parent_id'] = (is_array($this->post['parent_id'])) ? $this->post['parent_id'][$key] : $this->post['parent_id'];
         $post['guide_id'] = (isset($this->post['guide_id'])) ? $this->post['guide_id'] : null;
-        $post['level'] = ($this->post['division_id']) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
+        $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];
-
-        dd($post);
         
         $count = ($this->post['direction']) ? 1 : $this->post['count'][$key];
         for ($i=0; $i < $count; $i++) {
@@ -749,25 +760,28 @@ class VisitRoute extends Model
             $post = Mixin\to_null($post);
             $object = Mixin\insert($this->table, $post);
             if (!intval($object)){
-                $this->error($object);
+                $this->error("Ошибка при создании услуги!");
                 $db->rollBack();
             }
 
-            if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
-                $post_price['visit_id'] = $this->visit_pk;
-                $post_price['visit_service_id'] = $object;
-                $post_price['user_id'] = $this->post['user_id'];
-                $post_price['item_type'] = 1;
-                $post_price['item_id'] = $data['id'];
-                $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
-                $post_price['item_name'] = $data['name'];
-                $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
-                $object = Mixin\insert($this->_prices, $post_price);
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
+            if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
+                if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
+                    $post_price['visit_id'] = $this->visit_pk;
+                    $post_price['visit_service_id'] = $object;
+                    $post_price['user_id'] = $this->post['user_id'];
+                    $post_price['item_type'] = 1;
+                    $post_price['item_id'] = $data['id'];
+                    $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
+                    $post_price['item_name'] = $data['name'];
+                    $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
+                    $object = Mixin\insert($this->_prices, $post_price);
+                    if (!intval($object)){
+                        $this->error("Ошибка при создании платежа услуги!");
+                        $db->rollBack();
+                    }
                 }
             }
+            
         }
         unset($post);
     }

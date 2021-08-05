@@ -59,7 +59,7 @@ $methods = array(
 // )
 $classes = array(
     // Layouts
-    "navbar" => "navbar navbar-expand-md navbar-dark bg-danger navbar-static", //fixed-top
+    "navbar" => "navbar navbar-expand-md navbar-dark bg-primary navbar-static", //fixed-top
     "sidebar" => "sidebar sidebar-light sidebar-main sidebar-expand-md",
     "header" => "page-header page-header-light",
     "footer" => "navbar navbar-expand-lg navbar-light",
@@ -68,8 +68,8 @@ $classes = array(
     "error_page-code-color" => "",
 
     // Cards
-    "card" => "card border-1 border-danger",
-    "card-header" => "card-header text-dark header-elements-inline alpha-danger",
+    "card" => "card border-1 border-primary",
+    "card-header" => "card-header text-dark header-elements-inline alpha-primary",
     "card-filter" => "card border-1 border-violet",
     "card-filter_header" => "card-header text-dark header-elements-inline alpha-violet",
     "card-filter_btn" => "btn bg-violet btn-sm legitRipple",
@@ -82,9 +82,9 @@ $classes = array(
     
     // Buttons
     "btn-completed" => "btn btn-outline bg-purple text-purple border-purple btn-sm legitRipple",
-    "btn-price" => "btn btn-outline-danger btn-sm legitRipple",
-    "btn-detail" => "btn btn-outline-danger btn-sm legitRipple",
-    "btn-viewing" => "btn btn-outline-danger btn-sm legitRipple",
+    "btn-price" => "btn btn-outline-primary btn-sm legitRipple",
+    "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
+    "btn-viewing" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-diagnostic_finally" => "btn btn-outline-danger btn-sm legitRipple",
     "btn-table" => "btn btn-dark btn-sm legitRipple",
     "btn-render" => "btn btn-dark btn-sm legitRipple",
@@ -96,9 +96,9 @@ $classes = array(
         "price_btn-detail" => "btn btn-outline-dark btn-sm legitRipple",
     
     // Modals
-    "modal-global_content" => "modal-content border-3 border-danger",
-    "modal-global_header" => "modal-header bg-danger",
-    "modal-global_btn_close" => "btn btn-outline-danger btn-sm legitRipple", // btn-link
+    "modal-global_content" => "modal-content border-3 border-primary",
+    "modal-global_header" => "modal-header bg-primary",
+    "modal-global_btn_close" => "btn btn-outline-primary btn-sm legitRipple", // btn-link
 
     "modal-session_content" => "modal-content border-3 border-success",
     "modal-session_header" => "modal-header bg-success",
@@ -106,10 +106,10 @@ $classes = array(
     "modal-session_btn_confirm" => "btn btn-outline-success btn-sm legitRipple", // btn-link
     
     // Others
-    "input-search" => "form-control border-danger wmin-200",
-    "input-service_search" => "form-control border-danger wmin-200 mb-2",
-    "table-thead" => "bg-danger",
-    "table-count_menu" => "table-danger",
+    "input-search" => "form-control border-primary wmin-200",
+    "input-service_search" => "form-control border-primary wmin-200 mb-2",
+    "table-thead" => "bg-primary",
+    "table-count_menu" => "table-primary",
 
     "table_detail-thead" => "bg-dark",
     "table_detail-count_menu" => "table-secondary",

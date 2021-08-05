@@ -132,19 +132,24 @@ class VisitModel extends Model
     {
         global $db;
         $data = $db->query("SELECT * FROM services WHERE id = $value")->fetch();
-        $post['division_id'] = (isset($this->post['direction']) and $this->post['direction']) ? $this->post['division_id'] : $this->post['division_id'][$key];
+        if ( isset($this->post['direction']) and $this->post['direction'] ) {
+            $post['division_id'] = $this->post['division_id'];
+        }else{
+            if ( isset($this->post['division_id'][$key]) and $this->post['division_id'][$key] ) {
+                $post['division_id'] = $this->post['division_id'][$key];
+            }
+        }
 
         $post['visit_id'] = $this->visit_pk;
         $post['user_id'] = $this->post['user_id'];
         $post['parent_id'] = (isset($this->post['direction']) and $this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
-        $post['level'] = ($this->post['division_id']) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
+        $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
         $post['status'] = ( (isset($this->post['direction']) and $this->post['direction']) or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];
-
-        
+   
         $count = (isset($this->post['direction']) and $this->post['direction']) ? 1 : $this->post['count'][$key];
         for ($i=0; $i < $count; $i++) {
             $post = Mixin\clean_form($post);
@@ -253,7 +258,7 @@ class VisitModel extends Model
                 $this->error("Ошибка в обновление статуса пациента!");
                 $db->rollBack();
             }
-            // $this->dd();
+            
             $db->commit();
             $this->success();
 

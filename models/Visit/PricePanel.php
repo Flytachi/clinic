@@ -468,7 +468,7 @@ class PricePanel extends Model
                                         <span class="text-success"><?= number_format( $row->time * ($row->cost / 24) ) ?> -</span>
                                         <?= $row->location ?> 
                                         <span class="text-primary">(<?= $row->type ?>)</span> 
-                                        -----------> <?= number_format($row->cost) ?>/День 
+                                        ------> <?= number_format($row->cost) ?>/День 
                                         <span class="text-primary">(<?= minToStr($row->time) ?>)</span>
                                     </li>
                                 <?php endforeach; ?>

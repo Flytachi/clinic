@@ -85,7 +85,7 @@ class VisitAnalyzesModel extends Model
                                 <button type="button" onclick="SubmitCheckAll(<?= json_encode($this->items) ?>)" class="<?= $classes['btn-completed'] ?>">Завершить все</button>
                             <?php endif; ?>
                             <button type="button" id="btn_save" onclick="FinishService()" class="btn btn-outline-info btn-sm legitRipple">Сохранить</button>
-                            <button type="submit" id="btn_submit" style="display:none;"></button>
+                            <div id="submit_button_area"></div>
                         </div>
                     </div>
 
@@ -104,7 +104,7 @@ class VisitAnalyzesModel extends Model
                 <div class="tab-content">
 
                     <?php $s=0; foreach ($this->divisions as $key => $title): ?>
-                        <div class="tab-pane fade <?= ($s++ === 0) ? "show active" : "" ?>" id="laboratory_tab-<?= $key ?>">
+                        <div class="tab-pane fade <?= ($s++ === 0) ? "show active" : "" ?> changer_tab-divisions" id="laboratory_tab-<?= $key ?>">
 
                             <div class="table-responsive">
                                 <table class="table table-hover table-sm table-bordered">
@@ -121,7 +121,7 @@ class VisitAnalyzesModel extends Model
                                     <?php foreach ($db->query("SELECT id, service_id, service_name FROM $this->_visit_service WHERE level = 6 AND status = 3 AND division_id = $key AND id IN (".implode(',', $this->items).")") as $service_row): ?>
                                         
                                         <?php $submit_division_items[] = $service_row['id']; ?>
-                                        <tbody id="VisitService_tr_<?= $service_row['id'] ?>">
+                                        <tbody id="VisitService_tr_<?= $service_row['id'] ?>" class="changer_tab-services">
                                             <tr>
                                                 <th colspan="4" class="text-center"><b><?= $service_row['service_name'] ?></b></th>
                                                 <th class="text-right">
@@ -185,6 +185,7 @@ class VisitAnalyzesModel extends Model
             Swit.init();
 
             function SubmitSave(params) {
+                document.querySelector("#submit_button_area").innerHTML = "";
                 event.preventDefault();
                 $.ajax({
                     type: $(event.target).attr("method"),
@@ -205,39 +206,49 @@ class VisitAnalyzesModel extends Model
                             }
                             // finish for service
                             if (data.action == "finish for service") { 
-                                new Noty({
-                                    text: "Анализ успешно завершён!",
-                                    type: 'success'
-                                }).show();
-                                $(`#VisitService_tr_${deletes_pks}`).css("background-color", "rgb(0, 255, 0)");
-                                $(`#VisitService_tr_${deletes_pks}`).css("color", "white");
-                                $(`#VisitService_tr_${deletes_pks}`).fadeOut(900, function() {
-                                    $(this).remove();
-                                });
+
+                                if ( ($(".changer_tab-services").length - 1) < 1 ) {
+                                    location.reload();
+                                }else{
+                                    new Noty({
+                                        text: "Анализ успешно завершён!",
+                                        type: 'success'
+                                    }).show();
+                                    $(`#VisitService_tr_${deletes_pks}`).css("background-color", "rgb(0, 255, 0)");
+                                    $(`#VisitService_tr_${deletes_pks}`).css("color", "white");
+                                    $(`#VisitService_tr_${deletes_pks}`).fadeOut(900, function() {
+                                        $(this).remove();
+                                    });
+                                }
+                                
                             }
                             // finish for division
                             if (data.action == "finish for division") {
-                                new Noty({
-                                    text: "Все анализы отдела успешно завершены!",
-                                    type: 'success'
-                                }).show();
-                                $(`#laboratory_tab-${deletes_pks}`).css("background-color", "rgb(0, 255, 0)");
-                                $(`#laboratory_tab-${deletes_pks}`).css("color", "white");
-                                $(`#laboratory_tab-${deletes_pks}`).fadeOut(900, function() {
-                                    $(this).remove();
-                                });
-                                $(`#laboratory_tab_label-${deletes_pks}`).css("background-color", "rgb(0, 0, 255)");
-                                $(`#laboratory_tab_label-${deletes_pks}`).css("color", "white");
-                                $(`#laboratory_tab_label-${deletes_pks}`).fadeOut(900, function() {
-                                    $(this).remove();
-                                });
+
+                                if ( ($(".changer_tab-divisions").length - 1) < 1 ) {
+                                    location.reload();
+                                }else{
+                                    new Noty({
+                                        text: "Все анализы отдела успешно завершены!",
+                                        type: 'success'
+                                    }).show();
+                                    $(`#laboratory_tab-${deletes_pks}`).css("background-color", "rgb(0, 255, 0)");
+                                    $(`#laboratory_tab-${deletes_pks}`).css("color", "white");
+                                    $(`#laboratory_tab-${deletes_pks}`).fadeOut(900, function() {
+                                        $(this).remove();
+                                    });
+                                    $(`#laboratory_tab_label-${deletes_pks}`).css("background-color", "rgb(0, 0, 255)");
+                                    $(`#laboratory_tab_label-${deletes_pks}`).css("color", "white");
+                                    $(`#laboratory_tab_label-${deletes_pks}`).fadeOut(900, function() {
+                                        $(this).remove();
+                                    });
+                                }
                                 
                             }
                             // finish all
                             if (data.action == "finish all") { 
                                 location.reload();
                             }
-                            
                             
                         }else{
 
@@ -249,6 +260,7 @@ class VisitAnalyzesModel extends Model
                         }
                     },
                 });
+
             }
 
             function FailureVisitService(url) {
@@ -410,6 +422,7 @@ class VisitAnalyzesModel extends Model
                 }else{
                     display_finish.innerHTML += `<input type="hidden" name="finish_service" value="${params}"></input>`;
                 }
+                document.querySelector("#submit_button_area").innerHTML = `<button type="submit" id="btn_submit" style="display:none;"></button>`;
                 document.querySelector("#btn_submit").click();
             }
             

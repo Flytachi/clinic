@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 7.9
+     * @version 8.5
      */
 
     // database handle
@@ -92,10 +92,15 @@ class Table
         /*
             Установка Лимита строк на странице
         */
-        $this->limit = $limit;
-        $this->generate_sql();
-        $this->total_pages = ceil($this->db->query($this->sql)->rowCount() / $this->limit);
-        return $this;
+        try {
+            $this->limit = $limit;
+            $this->generate_sql();
+            $this->total_pages = ceil($this->db->query($this->sql)->rowCount() / $this->limit);
+            return $this;
+        } catch (\Throwable $th) {
+            //throw $th;
+            die("Ошибка в генерации скрипта!");
+        }
     }
 
     public function set_data(String $data = null)
@@ -157,11 +162,17 @@ class Table
 
     private function generate_sql()
     {
-        $this->sql = "SELECT $this->data FROM $this->table";
-        if($this->additions) $this->sql .= " ".$this->additions;
-        if($this->where) $this->sql .= " WHERE ".$this->where;
-        if($this->order_by) $this->sql .= " ORDER BY ".$this->order_by;
-        $this->search = (isset($_GET['table_search']) and $_GET['table_search']) ? $this->search_get_name.$_GET['table_search'] : "";
+        try {
+            $this->sql = "SELECT $this->data FROM $this->table";
+            if($this->additions) $this->sql .= " ".$this->additions;
+            if($this->where) $this->sql .= " WHERE ".$this->where;
+            if($this->order_by) $this->sql .= " ORDER BY ".$this->order_by;
+            $this->search = (isset($_GET['table_search']) and $_GET['table_search']) ? $this->search_get_name.$_GET['table_search'] : "";
+        } catch (\Throwable $th) {
+            //throw $th;
+            die("Ошибка в генерации скрипта!");
+        }
+        
     }
     
     private function create_panel($page)
@@ -306,7 +317,7 @@ class Table
             return $get;
         } catch (\Throwable $th) {
             //throw $th;
-            return "Ошибка в скрипте!";
+            die("Ошибка в генерации скрипта!");
         }
         
     }
@@ -400,7 +411,8 @@ class Table
             Получить искомый объект!
         */
         $this->search = (isset($_GET['table_search']) and $_GET['table_search']) ? $this->search_get_name.$_GET['table_search'] : "";
-        return str_replace($this->search_get_name, "", $this->search);        
+        $search = str_replace($this->search_get_name, "", $this->search);
+        return Mixin\clean($search);
     }
 
     public function get_sql()

@@ -3,8 +3,9 @@
 class VisitFailure extends Model
 {
     public $table = 'visit_services';
-    public $_visits = 'visits';
     public $_prices = 'visit_prices';
+    public $_orders = 'visit_orders';
+    public $_visits = 'visits';
 
     public function form($pk = null)
     {
@@ -102,6 +103,13 @@ class VisitFailure extends Model
         if ($visit['direction']) {
 
             # Стационар
+            if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
+                    
+                $this->error("Функция отказа стационара с ордером не сделана!");
+                return 1;
+
+            }
+
             if ($data['service_id'] == 1) {
 
                 // Проверка прав
@@ -152,12 +160,30 @@ class VisitFailure extends Model
             // Абулатор
             if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or ( ($data['level'] == 12 and permission(12)) ) or permission([2, 32]) ) {
             
-                $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
-                if (!intval($object)){
-                    $this->error($object);
+                // Is order
+                if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
+                    
+                    // Visit service 
+                    $object = Mixin\delete($this->table, $pk);
+                    if(!intval($object)){
+                        $this->error("Произошла ошибка на сервере!");
+                        $db->rollBack();
+                    }
+
+                    $this->status_update($visit['id']);
+                    $this->success($pk);
+
+                }else{
+
+                    $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
+                    if (!intval($object)){
+                        $this->error($object);
+                    }
+                    
+                    $this->success($pk);
+
                 }
                 
-                $this->success($pk);
     
             }else {
                 $this->error("Отказано в доступе!");

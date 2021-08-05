@@ -106,6 +106,7 @@ function TabControl(tab) {
 }
 
 $(document).ready(function () {
+
     function getDate() {
         var date = new Date();
         var hours = date.getHours();
@@ -124,4 +125,5 @@ $(document).ready(function () {
     if (document.querySelector("#timedisplay")) {
         setInterval(getDate, 0);
     }
+    
 });
