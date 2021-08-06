@@ -255,15 +255,14 @@ function minToStr($mins)
 
 
 // Divisions
-function division($id = null) {
+function division(Int $id = null) {
     global $db, $session;
-
     if (!$id) {
         return $session->get_division();
     } else {
-        $id = $db->query("SELECT division_id from users where id = $id")->fetchColumn();
+        $pk = (Int) $db->query("SELECT division_id FROM users WHERE id = $id")->fetchColumn();
         try{
-            $stmt = $db->query("SELECT id from divisions where id = $id")->fetchColumn();
+            $stmt = $db->query("SELECT id FROM divisions WHERE id = $pk")->fetchColumn();
         }
         catch (PDOException $ex) {
             $stmt = null;
@@ -276,7 +275,7 @@ function division($id = null) {
 function division_name($id = null) {
     global $db;
     try{
-        $stmt = $db->query("SELECT name FROM divisions WHERE id =".division($id))->fetchColumn();
+        $stmt = $db->query("SELECT name FROM divisions WHERE id =".(int) division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
