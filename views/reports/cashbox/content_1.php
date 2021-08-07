@@ -8,16 +8,10 @@ $header = "Отчёт кассы";
 <?php include layout('head') ?>
 
 <script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
-<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
-<!-- 
-<script src="<?= stack("global_assets/js/plugins/tables/datatables/datatables.min.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script> -->
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+
+<script src="<?= stack("global_assets/js/plugins/tables/datatables/datatables.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -60,7 +54,7 @@ $header = "Отчёт кассы";
 								<div class="col-md-3">
 									<label>Дата визита:</label>
 									<div class="input-group">
-										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : "" ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_GET['date']) ) ? $_GET['date'] : "" ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -69,9 +63,9 @@ $header = "Отчёт кассы";
 
 								<div class="col-md-3">
 									<label>Кассир:</label>
-									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать кассира" name="priser_id[]" multiple="multiple" required>
-										<?php foreach ($db->query("SELECT * from users WHERE user_level IN (3, 32)") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['priser_id']) and in_array($row['id'], $_POST['priser_id'])) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать кассира" name="pricer_id[]" multiple="multiple">
+										<?php foreach ($db->query("SELECT DISTINCT pricer_id FROM visit_prices WHERE is_visibility IS NOT NULL AND is_price IS NOT NULL") as $row): ?>
+											<option value="<?= $row['pricer_id'] ?>" <?= ( isset($_POST['pricer_id']) and in_array($row['pricer_id'], $_POST['pricer_id'])) ? "selected" : "" ?>><?= get_full_name($row['pricer_id']) ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -105,93 +99,68 @@ $header = "Отчёт кассы";
 							<?php
 							$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 							$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-							$sql = "SELECT
-										vs.pricer_id,
-										vs.user_id,
-										(vs.price_cash + vs.price_card + vs.price_transfer) 'price',
-										vs.price_cash,
-										vs.price_card,
-										vs.price_transfer,
-										vs.price_date
-									FROM visit_price vs
-									WHERE
-										vs.status = 1 AND
-										vs.item_type = 1 AND
-										vs.price_date IS NOT NULL AND
-										(DATE_FORMAT(vs.price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-										vs.pricer_id IN (".implode(",", $_POST['priser_id']).")
-									UNION ALL
-									SELECT
-										iv.pricer_id,
-										iv.user_id,
-										(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'price',
-										iv.balance_cash,
-										iv.balance_card,
-										iv.balance_transfer,
-										iv.add_date
-									FROM investment iv
-									WHERE
-										iv.add_date IS NOT NULL AND
-										(DATE_FORMAT(iv.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."') AND
-										iv.pricer_id IN (".implode(",", $_POST['priser_id']).")
-									";
+							$where = " AND (DATE_FORMAT(price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+							if( isset($_GET['pricer_id']) ) $where .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
+
+							$tb = new Table($db, "visit_prices");
+							$tb->where("is_visibility IS NOT NULL AND is_price IS NOT NULL $where")->order_by('price_date ASC');
 							$total_price=$total_price_cash=$total_price_card=$total_price_transfer=0;
 							?>
 
 							<table class="table table-hover datatable-basic table-sm" id="table">
-								<thead>
-									<tr class="<?= $classes['table-thead'] ?>">
+								<thead class="<?= $classes['table-thead'] ?>">
+									<tr>
 										<th style="width: 100px">№</th>
 										<th style="width: 11%">Дата</th>
 										<th>Кассир</th>
 										<th>Пациент</th>
-										<th class="text-right">Сумма оплаты</th>
 										<th class="text-right">Наличные</th>
 										<th class="text-right">Терминал</th>
 										<th class="text-right">Перечисление</th>
+										<th class="text-right">Сумма оплаты</th>
 									</tr>
 								</thead>
 								<tbody>
-									<?php $i=1; foreach ($db->query($sql) as $row): ?>
+									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
-											<th><?= $i++ ?></th>
-											<th><?= date("d.m.Y H:i", strtotime($row['price_date'])) ?></th>
-											<th><?= get_full_name($row['pricer_id']) ?></th>
-											<th><?= get_full_name($row['user_id'])  ?></th>
-											<th class="text-right <?= ($row['price']!=0) ? ($row['price']>0) ? 'text-success' : 'text-danger' : '' ?>">
+											<th><?= $row->count ?></th>
+											<th><?= date_f($row->price_date, 1) ?></th>
+											<th><?= get_full_name($row->pricer_id) ?></th>
+											<th><?= get_full_name($row->user_id)  ?></th>
+											<th class="text-right text-<?= number_color($row->price_cash) ?>">
 												<?php
-												$total_price += $row['price'];
-												echo number_format($row['price']);
+												$total_price_cash += $row->price_cash;
+												echo number_format($row->price_cash);
 												?>
 											</th>
-											<th class="text-right <?= ($row['price_cash']!=0) ? ($row['price_cash']>0) ? 'text-success' : 'text-danger' : '' ?>">
+											<th class="text-right text-<?= number_color($row->price_card) ?>">
 												<?php
-												$total_price_cash += $row['price_cash'];
-												echo number_format($row['price_cash']);
+												$total_price_card += $row->price_card;
+												echo number_format($row->price_card);
 												?>
 											</th>
-											<th class="text-right <?= ($row['price_card']!=0) ? ($row['price_card']>0) ? 'text-success' : 'text-danger' : '' ?>">
+											<th class="text-right text-<?= number_color($row->price_transfer) ?>">
 												<?php
-												$total_price_card += $row['price_card'];
-												echo number_format($row['price_card']);
+												$total_price_transfer += $row->price_transfer;
+												echo number_format($row->price_transfer);
 												?>
 											</th>
-											<th class="text-right <?= ($row['price_transfer']!=0) ? ($row['price_transfer']>0) ? 'text-success' : 'text-danger' : '' ?>">
+											<th class="text-right text-<?= number_color($row->price_cash + $row->price_card + $row->price_transfer) ?>">
 												<?php
-												$total_price_transfer += $row['price_transfer'];
-												echo number_format($row['price_transfer']);
+												$total_price += $row->price_cash + $row->price_card + $row->price_transfer;
+												echo number_format($row->price_cash + $row->price_card + $row->price_transfer);
 												?>
 											</th>
 										</tr>
 									<?php endforeach; ?>
 								</tbody>
 								<tr class="table-secondary strong">
-									<th colspan="2">Общее колличество: <?= $i-1 ?></th>
+									<th colspan="2">Общее колличество: <?= $row->count ?></th>
 									<td colspan="2" class="text-right"><b>Итого :</b></td>
-									<td class="text-right <?= ($total_price!=0) ? ($total_price>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price) ?></td>
-									<td class="text-right <?= ($total_price_cash!=0) ? ($total_price_cash>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_cash) ?></td>
-									<td class="text-right <?= ($total_price_card!=0) ? ($total_price_card>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_card) ?></td>
-									<td class="text-right <?= ($total_price_transfer!=0) ? ($total_price_transfer>0) ? 'text-success' : 'text-danger' : '' ?>"><?= number_format($total_price_transfer) ?></td>
+									<td class="text-right text-<?= number_color($total_price_cash) ?>"><?= number_format($total_price_cash) ?></td>
+									<td class="text-right text-<?= number_color($total_price_card) ?>"><?= number_format($total_price_card) ?></td>
+									<td class="text-right text-<?= number_color($total_price_transfer) ?>"><?= number_format($total_price_transfer) ?></td>
+									<td class="text-right text-<?= number_color($total_price) ?>"><?= number_format($total_price) ?></td>
 								</tr>
 							</table>
 
@@ -208,13 +177,6 @@ $header = "Отчёт кассы";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
-
-	<script type="text/javascript">
-		$(function(){
-			$("#service").chained("#division");
-			$("#parent_id").chained("#division");
-		});
-	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
