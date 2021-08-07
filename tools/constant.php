@@ -85,7 +85,7 @@ $classes = array(
     "btn-price" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-viewing" => "btn btn-outline-primary btn-sm legitRipple",
-    "btn-diagnostic_finally" => "btn btn-outline-danger btn-sm legitRipple",
+    "btn-diagnostic_finally" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-table" => "btn btn-dark btn-sm legitRipple",
     "btn-render" => "btn btn-dark btn-sm legitRipple",
         // cashbox 

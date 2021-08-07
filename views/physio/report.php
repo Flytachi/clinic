@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth();
-
+is_module('module_physio');
 ?>
 <div class="<?= $classes['modal-global_header'] ?>">
     <h5 class="modal-title">Примечание</h5>

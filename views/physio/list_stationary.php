@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(12);
+is_module('module_physio');
 $header = "Стационарные пациенты";
 
 $tb = new Table($db, "visit_services vs");

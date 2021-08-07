@@ -97,7 +97,6 @@ function get_full_name($id = null) {
     }
 }
 
-
 function bytes($bytes, $force_unit = NULL, $format = NULL, $si = TRUE)
 {
     // Format string

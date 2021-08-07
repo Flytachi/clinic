@@ -13,10 +13,10 @@ $header = "Отчёт кассы";
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
 <script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
-
+<!-- 
 <script src="<?= stack("global_assets/js/plugins/tables/datatables/datatables.min.js") ?>"></script>
 
-<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script>
+<script src="<?= stack("global_assets/js/demo_pages/datatables_basic.js") ?>"></script> -->
 <script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
 
 <body>
@@ -40,9 +40,9 @@ $header = "Отчёт кассы";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="<?= $classes['card'] ?>">
+				<div class="<?= $classes['card-filter'] ?>">
 
-					<div class="<?= $classes['card-header'] ?>">
+					<div class="<?= $classes['card-filter_header'] ?>">
 						<h6 class="card-title" >Фильтр</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -79,7 +79,7 @@ $header = "Отчёт кассы";
 							</div>
 
 							<div class="text-right">
-								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
+								<button type="submit" class="<?= $classes['card-filter_btn'] ?>"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
 
 						</form>

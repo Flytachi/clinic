@@ -134,7 +134,6 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 
 				</div>
 
-
 			</div>
             <!-- /content area -->
 		</div>

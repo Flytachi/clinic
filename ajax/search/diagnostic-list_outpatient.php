@@ -13,6 +13,13 @@ $search_array = array(
 $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
 $tb->set_self(viv('diagnostic/list_outpatient'));
 ?>
+<?php
+if( isset($_SESSION['message']) ){
+    echo $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
+
 <div class="table-responsive">
     <table class="table table-hover table-sm">
         <thead>

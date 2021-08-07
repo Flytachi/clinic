@@ -60,6 +60,13 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 
 					<div class="card-body" id="search_display">
 
+						<?php
+						if( isset($_SESSION['message']) ){
+							echo $_SESSION['message'];
+							unset($_SESSION['message']);
+						}
+						?>
+
 						<div class="table-responsive">
                             <table class="table table-hover table-sm">
                                 <thead>
