@@ -19,6 +19,9 @@ class UserModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
+            <?php if(!$pk): ?>
+                <input type="hidden" name="is_active" value="1">
+            <?php endif; ?>
 
             <div class="row">
 
@@ -26,21 +29,6 @@ class UserModel extends Model
                     <fieldset>
 
                         <legend class="font-weight-semibold"><i class="icon-user mr-2"></i> Персональные данные</legend>
-
-                        <div class="form-group">
-                            <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Имя пользователя:</label>
-                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Отчество пользователя:</label>
-                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
-                        </div>
 
                         <?php if( $this->value('user_level') == 1): ?>
 
@@ -90,6 +78,21 @@ class UserModel extends Model
                             </div>
 
                         <?php endif; ?>
+
+                        <div class="form-group">
+                            <label>Фамилия пользователя:</label>
+                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Имя пользователя:</label>
+                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Отчество пользователя:</label>
+                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
+                        </div>
 
                     </fieldset>
                 </div>
