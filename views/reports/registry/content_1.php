@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth();
+$session->is_auth([2,32]);
 $header = "Отчёт регистратуры по регистрации";
 ?>
 <!DOCTYPE html>
@@ -30,9 +30,9 @@ $header = "Отчёт регистратуры по регистрации";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="<?= $classes['card'] ?>">
+                <div class="<?= $classes['card-filter'] ?>">
 
-                    <div class="<?= $classes['card-header'] ?>">
+                    <div class="<?= $classes['card-filter_header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -48,15 +48,6 @@ $header = "Отчёт регистратуры по регистрации";
 							<div class="form-group row">
 
 								<div class="col-md-3">
-									<label>Регистратор:</label>
-									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать регистратора" name="route_id[]" multiple="multiple">
-										<?php foreach ($db->query("SELECT * from users WHERE user_level IN (2,32)") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['route_id']) and in_array($row['id'], $_POST['route_id'])) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
 									<label>Дата регистрации:</label>
 									<div class="input-group">
 										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
@@ -65,59 +56,47 @@ $header = "Отчёт регистратуры по регистрации";
 										</span>
 									</div>
 								</div>
-
+								
 								<div class="col-md-3">
-									<label>Отдел:</label>
-									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать услуги" name="division_id[]" multiple="multiple">
-										<?php foreach ($db->query("SELECT * FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and in_array($row['id'], $_POST['division_id'])) ? "selected" : "" ?>><?= $row['title'] ?></option>
+									<label>Регистратор:</label>
+									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать регистратора" name="parent_id[]" multiple="multiple">
+										<?php foreach ($db->query("SELECT DISTINCT parent_id FROM users WHERE user_level = 15") as $row): ?>
+											<option value="<?= $row['parent_id'] ?>" <?= ( isset($_POST['parent_id']) and in_array($row['parent_id'], $_POST['parent_id'])) ? "selected" : "" ?>><?= get_full_name($row['parent_id']) ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
 
 								<div class="col-md-3">
-									<label>Направитель:</label>
-									<select name="guide_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите направителя</option>
-										<?php foreach($db->query('SELECT * from guides') as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['guide_id']) and $_POST['guide_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+									<label>Область:</label>
+									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать область" name="province_id[]" multiple="multiple" onchange="CheckRegions(this)">
+										<?php foreach ($db->query("SELECT DISTINCT province_id, province FROM users WHERE user_level = 15") as $row): ?>
+											<option value="<?= $row['province_id'] ?>" <?= ( isset($_POST['province_id']) and in_array($row['province_id'], $_POST['province_id'])) ? "selected" : "" ?>><?= $row['province'] ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
 
-							</div>
-
-							<div class="from-group row">
-
-								<div class="col-md-3">
-									<label>Пациент:</label>
-									<select name="user_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите пациента</option>
-										<?php foreach($db->query('SELECT * from users WHERE user_level = 15') as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
+								<div class="col-md-3" id="region">
+									<label>Регионы:</label>
+									<select class="form-control" data-placeholder="Выбрать регион" name="region_id[]" multiple="multiple">
+										<?php if( isset($_POST['province_id']) ): ?>
+											<?php foreach ($db->query("SELECT DISTINCT region_id, region FROM users WHERE user_level = 15 AND province_id IN(".implode(",", $_POST['province_id']) .")") as $row): ?>
+												<option value="<?= $row['region_id'] ?>" <?= ( isset($_POST['region_id']) and in_array($row['region_id'], $_POST['region_id'])) ? "selected" : "" ?>><?= $row['region'] ?></option>
+											<?php endforeach; ?>
+										<?php else: ?>
+											<?php foreach ($db->query("SELECT DISTINCT region_id, region FROM users WHERE user_level = 15") as $row): ?>
+												<?php if( isset($_POST['region_id']) and in_array($row['region_id'], $_POST['region_id']) ): ?>
+													<option value="<?= $row['region_id'] ?>" selected><?= $row['region'] ?></option>
+												<?php endif; ?>
+											<?php endforeach; ?>
+										<?php endif; ?>
 									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label class="d-block font-weight-semibold">Статус</label>
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="compl_true" <?= (empty($_POST) or isset($_POST['compl_true'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
-									</div>
-
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="compl_false" <?= (empty($_POST) or isset($_POST['compl_false'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
-									</div>
 								</div>
 
 							</div>
 
 							<div class="text-right">
-								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
+								<button type="submit" class="<?= $classes['card-filter_btn'] ?>"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
-
 
 						</form>
 
@@ -129,59 +108,22 @@ $header = "Отчёт регистратуры по регистрации";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT
-								vs.add_date,
-								gd.name 'guide',
-								vs.user_id,
-								vp.item_name,
-								vp.item_cost,
-								vs.route_id,
-								vs.direction,
-								vs.laboratory,
-								gd.price,
-								gd.share
-							FROM visit vs
-								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-								LEFT JOIN guides gd ON(gd.id=vs.guide_id)
-							WHERE
-								vp.item_type = 1 AND vs.add_date IS NOT NULL";
-					// Обработка
-					if ($_POST['route_id']) {
-						$sql .= " AND vs.route_id IN (".implode(",", $_POST['route_id']).")";
-					}
-					if ($_POST['date_start'] and $_POST['date_end']) {
-						$sql .= " AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-					}
-					if ( isset($_POST['division_id']) and $_POST['division_id']) {
-						$sql .= " AND vs.division_id IN (".implode(",", $_POST['division_id']).")";
-					}
-					if ( isset($_POST['guide_id']) and $_POST['guide_id']) {
-						$sql .= " AND vs.guide_id = {$_POST['guide_id']}";
-					}
-					if ( isset($_POST['user_id']) and $_POST['user_id']) {
-						$sql .= " AND vs.user_id = {$_POST['user_id']}";
-					}
-					if ( isset($_POST['direction']) and $_POST['direction']) {
-						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
-					}
-					if (!$_POST['compl_true'] or !$_POST['compl_false']) {
-						if ($_POST['compl_true']) {
-							$sql .= " AND vs.completed IS NOT NULL";
-						}
-						if ($_POST['compl_false']) {
-							$sql .= " AND vs.completed IS NULL";
-						}
-					}
-					$total_price=0;
-					$i=1;
+					$where = " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+					if( isset($_POST['parent_id']) ) $where .= " AND parent_id IN(".implode(",", $_POST['parent_id']) .")";
+					if( isset($_POST['province_id']) ) $where .= " AND province_id IN(".implode(",", $_POST['province_id']) .")";
+					if( isset($_POST['region_id']) ) $where .= " AND region_id IN(".implode(",", $_POST['region_id']) .")";
+
+					$tb = new Table($db, "users");
+					$tb->set_data("add_date, id, province, region, parent_id, birth_date");
+					$tb->where("user_level = 15 $where")->order_by('add_date ASC');
 					?>
 					<div class="<?= $classes['card'] ?>">
 
 						<div class="<?= $classes['card-header'] ?>">
-							<h6 class="card-title">Направители</h6>
+							<h6 class="card-title">Пациенты</h6>
 							<div class="header-elements">
 								<div class="list-icons">
-									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="<?= $classes['btn-table'] ?>">Excel</button>
 								</div>
 							</div>
 						</div>
@@ -189,36 +131,40 @@ $header = "Отчёт регистратуры по регистрации";
 						<div class="card-body">
 
 							<div class="table-responsive">
-	                            <table class="table table-hover table-sm table-bordered" id="table">
-	                                <thead>
-	                                    <tr class="<?= $classes['table-thead'] ?>">
+	                            <table class="table table-hover table-sm table-bordered datatable-basic" id="table">
+	                                <thead class="<?= $classes['table-thead'] ?>">
+	                                    <tr>
 											<th style="width: 50px">№</th>
 											<th style="width: 13%">Дата регистрации</th>
-				                            <th>Напрвитель</th>
 											<th>Id</th>
-											<th>Пациент</th>
-											<th>Мед услуга</th>
+				                            <th>FIO</th>
+											<th>Область</th>
+											<th>Регион</th>
 											<th>Регистратор</th>
-											<th style="width: 10%">Тип визита</th>
+											<th style="width: 10%">Дата рождения</th>
 	                                    </tr>
 	                                </thead>
 	                                <tbody>
-										<?php foreach ($db->query($sql) as $row): ?>
+										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr>
-												<td><?= $i++ ?></td>
-												<td><?= ($row['add_date']) ? date('d.m.y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['guide'] ?></td>
-												<td><?= addZero($row['user_id']) ?></td>
-												<td><?= get_full_name($row['user_id']) ?></td>
-												<td><?= $row['item_name'] ?></td>
-												<td><?= get_full_name($row['route_id']) ?></td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
+												<th><?= $row->count ?></th>
+												<th><?= date_f($row->add_date, 1) ?></th>
+												<th><?= addZero($row->id) ?></th>
+												<th><?= get_full_name($row->id)  ?></th>
+												<th><?= $row->province ?></th>
+												<th><?= $row->region ?></th>
+												<th><?= get_full_name($row->parent_id) ?></th>
+												<th><?= date_f($row->birth_date) ?></th>
 											</tr>
 										<?php endforeach; ?>
-										<tr class="table-secondary">
-											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
-										</tr>
 	                                </tbody>
+									<?php if(isset($row->count)): ?>
+										<tfooter>
+											<tr class="table-secondary strong">
+												<td colspan="2">Общее колличество: <?= $row->count ?></td>
+											</tr>
+										</tfooter>
+									<?php endif; ?>
 	                            </table>
 	                        </div>
 
@@ -234,6 +180,34 @@ $header = "Отчёт регистратуры по регистрации";
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
+
+	<script type="text/javascript">
+
+		function CheckRegions(params) {
+			var selected = params.selectedOptions;
+			var items = [];
+			for (let i = 0; i < selected.length; i++) {
+				items.push(selected[i].value);
+			}
+
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('options/regions') ?>",
+				data: {
+					province: items,
+				},
+				success: function (result) {
+					if (result.trim() == "") {
+						document.querySelector("#region").disabled = false;
+					} else {
+						document.querySelector("#region").disabled = true;
+						document.querySelector("#region").innerHTML = result;
+					}
+				},
+			});
+		}
+
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

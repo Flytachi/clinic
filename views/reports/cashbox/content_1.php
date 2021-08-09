@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth();
+$session->is_auth([3,32]);
 $header = "Отчёт кассы";
 ?>
 <!DOCTYPE html>
@@ -89,7 +89,7 @@ $header = "Отчёт кассы";
 							<h6 class="card-title">Отчёт</h6>
 							<div class="header-elements">
 								<div class="list-icons">
-									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="<?= $classes['btn-table'] ?>">Excel</button>
 								</div>
 							</div>
 						</div>
@@ -100,7 +100,7 @@ $header = "Отчёт кассы";
 							$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 							$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 							$where = " AND (DATE_FORMAT(price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-							if( isset($_GET['pricer_id']) ) $where .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
+							if( isset($_POST['pricer_id']) ) $where .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
 
 							$tb = new Table($db, "visit_prices");
 							$tb->where("is_visibility IS NOT NULL AND is_price IS NOT NULL $where")->order_by('price_date ASC');
@@ -154,14 +154,18 @@ $header = "Отчёт кассы";
 										</tr>
 									<?php endforeach; ?>
 								</tbody>
-								<tr class="table-secondary strong">
-									<th colspan="2">Общее колличество: <?= $row->count ?></th>
-									<td colspan="2" class="text-right"><b>Итого :</b></td>
-									<td class="text-right text-<?= number_color($total_price_cash) ?>"><?= number_format($total_price_cash) ?></td>
-									<td class="text-right text-<?= number_color($total_price_card) ?>"><?= number_format($total_price_card) ?></td>
-									<td class="text-right text-<?= number_color($total_price_transfer) ?>"><?= number_format($total_price_transfer) ?></td>
-									<td class="text-right text-<?= number_color($total_price) ?>"><?= number_format($total_price) ?></td>
-								</tr>
+								<?php if(isset($row->count)): ?>
+									<tfooter>
+										<tr class="table-secondary strong">
+											<td colspan="2">Общее колличество: <?= $row->count ?></td>
+											<td colspan="2" class="text-right"><b>Итого :</b></td>
+											<td class="text-right text-<?= number_color($total_price_cash) ?>"><?= number_format($total_price_cash) ?></td>
+											<td class="text-right text-<?= number_color($total_price_card) ?>"><?= number_format($total_price_card) ?></td>
+											<td class="text-right text-<?= number_color($total_price_transfer) ?>"><?= number_format($total_price_transfer) ?></td>
+											<td class="text-right text-<?= number_color($total_price) ?>"><?= number_format($total_price) ?></td>
+										</tr>
+									</tfooter>
+								<?php endif; ?>
 							</table>
 
 						</div>
