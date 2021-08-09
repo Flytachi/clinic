@@ -55,7 +55,7 @@
             </div>
         </div>
         <!-- /user menu -->
-
+        
         <!-- Main navigation -->
         <div class="card card-sidebar-mobile">
 
@@ -65,93 +65,52 @@
 
                 <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id IS NULL AND level = $session->session_level ORDER BY sort ASC") as $row): ?>
                     
-                    <?php if (!$row['is_division'] or ($row['is_division'] and str_split($row['is_division'])[intval(division_assist())])): ?>
+                    <?php if (!$row['is_division'] or ($row['is_division'] and str_split($row['is_division'])[intval(division_assist())]) ): ?>
 
                         <?php if($row['is_parent']): ?>
-                    
-                            <?php if($row['module']): ?>
-                                <?php if(module($row['module'])): ?>
 
-                                    <li class="nav-item nav-item-submenu <?= viv_link(json_decode($row['is_active']), 'nav-item-expanded nav-item-open') ?>">
-                                        <a href="#" class="nav-link legitRipple"><i class="<?= $row['icon'] ?>"></i> <span><?= $row['name'] ?></span></a>
-
-                                        <ul class="nav nav-group-sub" data-submenu-title="<?= $row['name'] ?>">
-
-                                            <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id = {$row['id']} ORDER BY sort ASC") as $subrow): ?>
-                                                <?php if($subrow['module']): ?>
-                                                    <?php if(module($subrow['module'])): ?>
-                                                        <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
-                                                    <?php endif; ?>
-                                                <?php else: ?>
-                                                    <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
-                                                <?php endif; ?>
-                                            <?php endforeach; ?>
-
-                                        </ul>
-                                    </li>
-                                    
-                                <?php endif; ?>
-                            <?php else: ?>
-
+                            <?php if(is_null($row['module']) or ($row['module'] and module($row['module']))): ?>
                                 <li class="nav-item nav-item-submenu <?= viv_link(json_decode($row['is_active']), 'nav-item-expanded nav-item-open') ?>">
                                     <a href="#" class="nav-link legitRipple"><i class="<?= $row['icon'] ?>"></i> <span><?= $row['name'] ?></span></a>
 
                                     <ul class="nav nav-group-sub" data-submenu-title="<?= $row['name'] ?>">
 
-                                        <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id = {$row['id']} ORDER BY sort ASC") as $subrow): ?>
-                                            <?php if($subrow['module']): ?>
-                                                <?php if(module($subrow['module'])): ?>
-                                                    <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
-                                                <?php endif; ?>
-                                            <?php else: ?>
-                                                <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link($subrow['is_active']) ?>"><?= $subrow['name'] ?></a></li>
+                                        <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id = {$row['is_parent']} ORDER BY sort ASC") as $subrow): ?>
+                                            <?php if(is_null($subrow['module']) or ($subrow['module'] and module($subrow['module']))): ?>
+                                                <li class="nav-item"><a href="<?= viv($subrow['route']) ?>" class="nav-link legitRipple <?= viv_link(json_decode($subrow['is_active'])) ?>"><?= $subrow['name'] ?></a></li>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
 
                                     </ul>
                                 </li>
-
                             <?php endif; ?>
                             
                         <?php else: ?>
 
-                            <?php if($row['module']): ?>
-                                <?php if(module($row['module'])): ?>
-                                    <li class="nav-item">
-                                        <a href="<?= viv($row['route']) ?>" class="nav-link legitRipple <?= viv_link($row['is_active']) ?>">
-                                            <i class="<?= $row['icon'] ?>"></i>
-                                            <span><?= $row['name'] ?></span>
-                                            <?php /*if($row['script']): ?>
-                                                <?php
-                                                if ($row['script_item']) {
-                                                    $srt = (array) json_decode($row['script_item']);
-                                                    foreach (array_values($srt) as $key => $value) {$val[$key] = $session->{$value};}
-                                                    $new_script = str_replace(array_keys($srt), $val, $row['script']);
-                                                    unset($val);
-                                                }
-                                                ?>
-                                                <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
-                                                <?php if($side): ?>
-                                                    <span class="<?= $row['badge_class'] ?>"><?= $side ?></span>
-                                                <?php endif; ?>
-                                                <?php unset($side) ?>
-
-                                            <?php endif;*/ ?>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                            <?php else: ?>
+                            <?php if(is_null($row['module']) or ($row['module'] and module($row['module']))): ?>
                                 <li class="nav-item">
-                                    <a href="<?= viv($row['route']) ?>" class="nav-link legitRipple <?= viv_link($row['is_active']) ?>">
+                                    <a href="<?= viv($row['route']) ?>" class="nav-link legitRipple <?= viv_link(json_decode($row['is_active'])) ?>">
                                         <i class="<?= $row['icon'] ?>"></i>
                                         <span><?= $row['name'] ?></span>
-                                        <?php /*if($row['script']): ?>
+                                        <?php if($row['script']): ?>
                                             <?php
                                             if ($row['script_item']) {
                                                 $srt = (array) json_decode($row['script_item']);
-                                                foreach (array_values($srt) as $key => $value) {$val[$key] = $session->{$value};}
+                                                foreach ($srt as $key => $value) {
+                                                    if ($key == "selector") {
+                                                        if ($value == 0) {
+                                                            $val[$key] = (division()) ? "AND vs.division_id = ".division() : null;
+                                                        }
+                                                        elseif ($value == 1) {
+                                                            $val[$key] = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
+                                                        }
+                                                    }else {
+                                                        $val[$key] = $session->{$value};
+                                                    }
+                                                }
                                                 $new_script = str_replace(array_keys($srt), $val, $row['script']);
                                                 unset($val);
+                                                // dd($new_script);
                                             }
                                             ?>
                                             <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
@@ -159,8 +118,7 @@
                                                 <span class="<?= $row['badge_class'] ?>"><?= $side ?></span>
                                             <?php endif; ?>
                                             <?php unset($side); unset($new_script); ?>
-
-                                        <?php endif;*/ ?>
+                                        <?php endif; ?>
                                     </a>
                                 </li>
                             <?php endif; ?>

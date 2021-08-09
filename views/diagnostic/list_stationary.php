@@ -2,6 +2,7 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(10);
 is_module('module_diagnostic');
+
 if (division_assist() == 1) {
 	Mixin\error('423');
 }
@@ -15,6 +16,8 @@ $search_array = array(
 	"vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = $session->session_id OR vs.assist_id IS NOT NULL ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
+Mixin\error('423');
+dd($tb->get_sql());
 ?>
 <!DOCTYPE html>
 <html lang="en">
