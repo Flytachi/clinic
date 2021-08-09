@@ -405,7 +405,7 @@ class __Db
             }
         }else {
             $_clean = Mixin\T_flush($this->clean_table);
-            echo "\033[32m"." База данных '$this->clean_table' успешно очищена.\n";
+            echo "\033[32m"." Таблица '$this->clean_table' успешно очищена.\n";
             return 1;
         }
        
