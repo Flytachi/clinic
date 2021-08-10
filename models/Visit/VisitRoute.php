@@ -67,7 +67,7 @@ class VisitRoute extends Model
                                     <th>#</th>
                                     <th>Отдел</th>
                                     <th>Услуга</th>
-                                    <th>Доктор</th>
+                                    <th>Cпециалист</th>
                                     <th style="width: 100px">Кол-во</th>
                                     <th class="text-right">Цена</th>
                                 </tr>
@@ -189,8 +189,7 @@ class VisitRoute extends Model
                                     <th>#</th>
                                     <th>Отдел</th>
                                     <th>Услуга</th>
-                                    <!-- <th>Тип</th> -->
-                                    <th>Доктор</th>
+                                    <th>Cпециалист</th>
                                     <th style="width: 100px">Кол-во</th>
                                     <th class="text-right">Цена</th>
                                 </tr>
@@ -312,8 +311,7 @@ class VisitRoute extends Model
                                     <th>#</th>
                                     <th>Отдел</th>
                                     <th>Услуга</th>
-                                    <!-- <th>Тип</th> -->
-                                    <th>Доктор</th>
+                                    <th>Cпециалист</th>
                                     <th style="width: 100px">Кол-во</th>
                                     <th class="text-right">Цена</th>
                                 </tr>
@@ -387,19 +385,24 @@ class VisitRoute extends Model
         <form method="post" action="<?= add_url() ?>">
 
             <div class="<?= $classes['modal-global_header'] ?>">
-                <h6 class="modal-title">Назначить визит</h6>
+                <h6 class="modal-title">Назначить физиотерапию</h6>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            
+
             <div class="modal-body">
-            
+
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
                 <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
-                    <button type="button" class="btn btn-sm btn-block legitRipple" onclick="TableChangeServices(this)">Показать Услуги</button>    
+                    <label>Отделы</label>
+                    <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 12") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="form-group-feedback form-group-feedback-right row">
@@ -430,8 +433,7 @@ class VisitRoute extends Model
                                     <th>#</th>
                                     <th>Отдел</th>
                                     <th>Услуга</th>
-                                    <!-- <th>Тип</th> -->
-                                    <th>Доктор</th>
+                                    <th>Cпециалист</th>
                                     <th style="width: 100px">Кол-во</th>
                                     <th class="text-right">Цена</th>
                                 </tr>
@@ -459,11 +461,11 @@ class VisitRoute extends Model
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
                     data: {
-                        divisions: ['12'],
+                        divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         search: $("#search_input").val(),
                         selected: service,
-                        types: "1",
+                        types: "1,2",
                         cols: 1
                     },
                     success: function (result) {
@@ -479,10 +481,10 @@ class VisitRoute extends Model
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
                     data: {
-                        divisions: ['other_12'],
+                        divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         selected: service,
-                        types: "1",
+                        types: "1,2",
                         cols: 1
                     },
                     success: function (result) {
@@ -494,7 +496,7 @@ class VisitRoute extends Model
             }
 
         </script>
-        <?php
+        <?php 
     }
 
     public function form_second($pk = null)

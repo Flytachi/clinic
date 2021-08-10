@@ -31,7 +31,10 @@ $tb->set_self(viv('laboratory/index'));
                 <tr id="VisitService_tr_<?= $row->id ?>">
                     <td><?= addZero($row->user_id) ?></td>
                     <td>
-                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+                        <span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+                        <?php if ( $row->order ): ?>
+                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+                        <?php endif; ?>
                         <div class="text-muted">
                             <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
                                 <?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
@@ -55,9 +58,6 @@ $tb->set_self(viv('laboratory/index'));
                             <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
                         <?php else: ?>
                             <span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
-                        <?php endif; ?>
-                        <?php if ( $row->order ): ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
                         <?php endif; ?>
                     </td>
                     <td class="text-center">

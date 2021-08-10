@@ -29,9 +29,9 @@ $tb->set_self(viv('doctor/list_outpatient'));
                 <tr>
                     <td><?= addZero($row->user_id) ?></td>
                     <td>
-                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+                        <span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
                         <?php if ( $row->order ): ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер</span>
                         <?php endif; ?>
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>

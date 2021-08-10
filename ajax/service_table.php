@@ -81,7 +81,7 @@ $i = 0; $cost = 0;
                     </td>
                 <?php endif; ?>
                 <td style="width:70px;">
-                    <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
+                    <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts form-control" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
                 </td>
                 <td class="text-right text-success"><?= number_format($row->price) ?></td>
 

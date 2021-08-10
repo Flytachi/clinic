@@ -31,7 +31,10 @@ $tb->set_self(viv('doctor/index'));
 				<tr id="VisitService_tr_<?= $row->id ?>">
 					<td><?= addZero($row->user_id) ?></td>
 					<td>
-						<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+						<span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+						<?php if ( $row->order ): ?>
+							<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+						<?php endif; ?>
 						<div class="text-muted">
 							<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
 								<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
@@ -51,17 +54,8 @@ $tb->set_self(viv('doctor/index'));
 						<?php else: ?>
 							<span style="font-size:15px;" class="badge badge-flat border-primary text-primary">Амбулаторный</span>
 						<?php endif; ?>
-						<?php if ( $row->order ): ?>
-							<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
-						<?php endif; ?>
 					</td>
 					<td class="text-center">
-						<!-- <a href="<?= up_url($row->id, 'VisitUpStatus') ?>&user_id=<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row->user_id ?>" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
-							<?php if (!$row->direction): ?>
-								onclick="sendPatient(this)"
-							<?php endif; ?>
-							>Принять</a> -->
-
 						<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 						<?php if($session->session_id == $row->parent_id): ?>
 							<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>

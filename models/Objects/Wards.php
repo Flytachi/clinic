@@ -49,7 +49,7 @@ class WardsModel extends Model
                         <label>Отдел:</label>
                         <select data-placeholder="Выбрать отдел" name="division_id" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
-                            <?php foreach ($db->query("SELECT * FROM divisions") as $row): ?>
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5") as $row): ?>
                                 <option value="<?= $row['id'] ?>"<?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </select>

@@ -276,7 +276,7 @@ class VisitPanel extends VisitModel
                                     <th>Отдел</th>
                                     <th>Услуга</th>
                                     <th>Тип</th>
-                                    <th>Доктор</th>
+                                    <th>Cпециалист</th>
                                     <th style="width:100px">Кол-во</th>
                                     <th class="text-right">Цена</th>
                                 </tr>

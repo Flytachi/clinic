@@ -50,14 +50,14 @@ class UserModel extends Model
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </optgroup>
-                                    <optgroup label="Специолисты">
+                                    <optgroup label="Специалисты">
                                         <?php foreach ($PERSONAL as $key => $value): ?>
                                             <?php if(in_array($key, [5,6,10,11,12,13])): ?>
                                                 <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
                                     </optgroup>
-                                    <optgroup label="Аминистрация">
+                                    <optgroup label="Администрация">
                                         <?php foreach ($PERSONAL as $key => $value): ?>
                                             <?php if(in_array($key, [8])): ?>
                                                 <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>

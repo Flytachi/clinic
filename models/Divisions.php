@@ -36,8 +36,8 @@ class DivisionModel extends Model
             </div>
 
             <div class="form-group">
-                <label>Название специолиста:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название специолиста" required value="<?= $this->value('name') ?>">
+                <label>Название специалиста:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите название специалиста" required value="<?= $this->value('name') ?>">
             </div>
 
             <div id="change_table_div"></div>
