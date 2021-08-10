@@ -110,7 +110,6 @@
                                                 }
                                                 $new_script = str_replace(array_keys($srt), $val, $row['script']);
                                                 unset($val);
-                                                // dd($new_script);
                                             }
                                             ?>
                                             <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
