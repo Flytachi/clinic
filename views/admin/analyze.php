@@ -58,14 +58,12 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
                     <div class="<?= $classes['card-header'] ?>">
                         <h5 class="card-title">Список Анализов</h5>
                         <div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите код, название анализа или название услуги">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите код, название анализа или название услуги">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
                         </div>
                     </div>
 
@@ -118,7 +116,9 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
 														</div>
 													</div>
 													<a onclick="Update('<?= up_url($row->id, 'ServiceAnalyzesModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'ServiceAnalyzesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<?php if (config("admin_delete_button_analyzes")): ?>										
+														<a href="<?= del_url($row->id, 'ServiceAnalyzesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<?php endif; ?>
 				                                </div>
 	                                      	</td>
                               			</tr>

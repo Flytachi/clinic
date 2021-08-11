@@ -61,8 +61,10 @@ $tb->set_self(viv('admin/index'));
                             <?php endif; ?>
 
                             <a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                            <?php if ($row->user_level !=1): ?>
-                                <a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php if (config("admin_delete_button_users")): ?>
+                                <?php if ($row->user_level != 1): ?>
+                                    <a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                                <?php endif; ?>													
                             <?php endif; ?>
                         </div>
                     </td>

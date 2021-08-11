@@ -58,14 +58,12 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 				    <div class="<?= $classes['card-header'] ?>">
 				        <h5 class="card-title">Список Пользователей</h5>
 				        <div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите логин или имя">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите логин или имя">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
 				        </div>
 				    </div>
 
@@ -123,8 +121,10 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 													<?php endif; ?>
 
 													<a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php if ($row->user_level != 1): ?>
-														<a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<?php if (config("admin_delete_button_users")): ?>
+														<?php if ($row->user_level != 1): ?>
+															<a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+														<?php endif; ?>													
 													<?php endif; ?>
 				                                </div>
 				                            </td>
@@ -159,8 +159,8 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('admin_index') ?>",
-				data: { id:id, is_active: stat },
+				url: "<?= ajax('admin_status') ?>",
+				data: { table:"users", id:id, is_active: stat },
 				success: function (data) {
                     if (data) {
 						var badge = document.getElementById(`status_change_${id}`);

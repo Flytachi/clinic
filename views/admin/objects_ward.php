@@ -59,14 +59,12 @@ $tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->se
 	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Список Палат</h5>
 						<div class="header-elements">
-							<form action="" class="mr-2">
-								<div class="form-group-feedback form-group-feedback-right">
-									<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите название объекта, отдела или палату">
-									<div class="form-control-feedback">
-										<i class="icon-search4 font-size-base text-muted"></i>
-									</div>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите название объекта, отдела или палату">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
-							</form>
+							</div>
 				        </div>
 	              	</div>
 

@@ -57,7 +57,9 @@ $tb->set_self(viv('admin/analyze'));
                                 </div>
                             </div>
                             <a onclick="Update('<?= up_url($row->id, 'ServiceAnalyzesModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                            <a href="<?= del_url($row->id, 'ServiceAnalyzesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php if (config("admin_delete_button_analyzes")): ?>										
+                                <a href="<?= del_url($row->id, 'ServiceAnalyzesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

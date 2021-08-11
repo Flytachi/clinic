@@ -48,8 +48,28 @@ $tb->set_self(viv('admin/service'));
                     <td><?= $row->price ?></td>
                     <td>
                         <div class="list-icons">
+                            <div class="dropdown">                      
+                                <?php if ($row->is_active): ?>
+                                    <a href="#" id="status_change_<?= $row->id ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
+                                <?php else: ?>
+                                    <a href="#" id="status_change_<?= $row->id ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
+                                <?php endif; ?>
+
+                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
+                                    <a onclick="Change(<?= $row->id ?>, 1)" class="dropdown-item">
+                                        <span class="badge badge-mark mr-2 border-success"></span>
+                                        Active
+                                    </a>
+                                    <a onclick="Change(<?= $row->id ?>, 0)" class="dropdown-item">
+                                        <span class="badge badge-mark mr-2 border-secondary"></span>
+                                        Pasive
+                                    </a>
+                                </div>
+                            </div>
                             <a onclick="Update('<?= up_url($row->id, 'ServiceModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-                            <a href="<?= del_url($row->id, 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить услугу?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php if (config("admin_delete_button_services")): ?>										
+                                <a href="<?= del_url($row->id, 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить услугу?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

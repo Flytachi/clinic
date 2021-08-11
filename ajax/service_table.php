@@ -21,9 +21,9 @@ $i = 0; $cost = 0;
 
         <?php if ( isset($_GET['search']) ): ?>
             <?php $ser = $_GET['search']; ?>
-            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
+            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.is_active IS NOT NULL AND sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']}) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )"; ?>
         <?php else: ?>
-            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']})"; ?>
+            <?php $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.is_active IS NOT NULL AND sc.division_id IN($divisions) AND sc.type IN ({$_GET['types']})"; ?>
         <?php endif; ?>
 
         <?php foreach ($db->query($sql) as $row): ?>

@@ -177,6 +177,38 @@ $header = "Панель управления";
 													</td>
 												</tr>
 
+												<!-- Admin -->
+												<tr>
+													<th>Admin Delete Button (users)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_admin_delete_button_users" <?= (isset($config->constant_admin_delete_button_users) and $config->constant_admin_delete_button_users) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Admin Delete Button (services)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_admin_delete_button_services" <?= (isset($config->constant_admin_delete_button_services) and $config->constant_admin_delete_button_services) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Admin Delete Button (analyzes)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_admin_delete_button_analyzes" <?= (isset($config->constant_admin_delete_button_analyzes) and $config->constant_admin_delete_button_analyzes) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+
 												<!-- Laboratory -->
 												<tr>
 													<th>Laboratory End All Button</th>

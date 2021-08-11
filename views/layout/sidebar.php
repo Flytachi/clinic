@@ -43,6 +43,9 @@
                                 <span>Пакеты<span>
                             </a>
                         </li>
+                    <?php endif; ?>
+
+                    <?php if (permission([5,10])): ?>
                         <li class="nav-item">
                             <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
                                 <i class="icon-users"></i>
