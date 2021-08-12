@@ -7,9 +7,7 @@ if ($_GET['main']) {
     if ($_GET['stage'] == 1) {
         $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id != $session->session_id AND completed IS NULL";
     } else if($_GET['stage'] == 2) {
-        // $sql = "SELECT id FROM operation WHERE user_id = {$_GET['id']} AND grant_id = {$_SESSION['session_id']} AND completed IS NULL";
-        echo 0;
-        exit;
+        $sql = "SELECT id FROM visit_operations WHERE visit_id = {$_GET['pk']} AND completed IS NULL";
     } else if($_GET['stage'] == 3) {
         // $sql = "SELECT
         //             (
@@ -28,7 +26,7 @@ if ($_GET['main']) {
     } else if($_GET['stage'] == 5) {
         $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_id != 1 AND service_title IS NULL";
     } else if($_GET['stage'] == 6) {
-        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_id = 1 AND service_title IS NULL";
+        // $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_id = 1 AND service_title IS NULL";
     }
 
 }else {

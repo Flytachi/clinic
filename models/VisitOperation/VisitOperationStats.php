@@ -1,19 +1,48 @@
 <?php
 
-class OperationStatsModel extends Model
+class VisitOperationStatsModel extends Model
 {
-    public $table = 'operation_stats';
+    public $table = 'visit_operation_stats';
+    public $_visit_operations = 'visit_operations';
+    public $_visits = 'visits';
+
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        // Visit
+        $object = $db->query("SELECT * FROM $this->_visits WHERE id = {$_GET['visit_id']} AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+
+            // Operation
+            $object = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+            if($object){
+                $this->visit_id = $_GET['visit_id'];
+                $this->operation_id = $pk;
+                return $this->{$_GET['form']}();
+                // $this->set_post($object);
+                // return $this->{$_GET['form']}($object['id']);
+            }else{
+                Mixin\error('report_permissions_false');
+                exit;
+            }
+
+        }else{
+            Mixin\error('report_permissions_false');
+        }
+
+    }
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $session, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="operation_id" value="<?= $patient->pk ?>">
-            <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="visit_id" value="<?= $this->visit_id ?>">
+            <input type="hidden" name="operation_id" value="<?= $this->operation_id ?>">
+            <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
-            <div class="modal-header bg-info">
+            <div class="<?= $classes['modal-global_header'] ?>">
                 <h5 class="modal-title">Добавить показатель состояния</h5>
                 <button type="button" class="close" data-dismiss="modal">×</button>
             </div>
@@ -56,6 +85,7 @@ class OperationStatsModel extends Model
             </div>
 
             <div class="modal-footer">
+                <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                     <span class="ladda-label">Сохранить</span>
                     <span class="ladda-spinner"></span>
@@ -73,7 +103,7 @@ class OperationStatsModel extends Model
                     success: function (data) {
                         var result = JSON.parse(data);
 
-                        $('#modal_add').modal('toggle');
+                        $('#modal_default').modal('hide');
                         if (result.status == "success") {
                             new Noty({
                                 text: result.message,
@@ -94,6 +124,13 @@ class OperationStatsModel extends Model
         <?php
     }
 
+    public function clean()
+    {
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
     public function success()
     {
         echo json_encode(array(
@@ -111,6 +148,7 @@ class OperationStatsModel extends Model
         ));
         exit;
     }
-}
 
+}
+        
 ?>

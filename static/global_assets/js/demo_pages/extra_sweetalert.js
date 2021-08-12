@@ -308,29 +308,29 @@ var SweetAlert = (function () {
 
         function Main_1_stages_6(params, url, question, btn) {
             // stage 6
-            $.ajax({
-                type: "GET",
-                url: document.querySelector("#verification_url").value,
-                data: {
-                    pk: params.dataset.pk,
-                    main: 1,
-                    stage: 6,
-                },
-                success: function (data) {
-                    if (data >= 1) {
-                        swal({
-                            position: "top",
-                            title: "Stage 1-6! Невозможно выписать!",
-                            text: "Форма выписки не запонена.",
-                            type: "error",
-                            padding: 30,
-                        });
-                        return 0;
-                    } else {
-                        Stage_success(params, url, question, btn);
-                    }
-                },
-            });
+            // $.ajax({
+            //     type: "GET",
+            //     url: document.querySelector("#verification_url").value,
+            //     data: {
+            //         pk: params.dataset.pk,
+            //         main: 1,
+            //         stage: 6,
+            //     },
+            //     success: function (data) {
+            //         if (data >= 1) {
+            //             swal({
+            //                 position: "top",
+            //                 title: "Stage 1-6! Невозможно выписать!",
+            //                 text: "Форма выписки не запонена.",
+            //                 type: "error",
+            //                 padding: 30,
+            //             });
+            //             return 0;
+            //         } else {
+            Stage_success(params, url, question, btn);
+            //         }
+            //     },
+            // });
         }
 
         // END stages

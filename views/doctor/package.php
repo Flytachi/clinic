@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(5);
+is_config("package");
 $header = "Мой пакеты";
 ?>
 <!DOCTYPE html>

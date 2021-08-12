@@ -157,6 +157,26 @@ $header = "Панель управления";
 												}
 												?>
 												<tr>
+													<th>Package</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_package" <?= (isset($config->constant_package) and $config->constant_package) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Template</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_template" <?= (isset($config->constant_template) and $config->constant_template) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Wards by division</th>
 													<td class="text-right">
 														<div class="list-icons">

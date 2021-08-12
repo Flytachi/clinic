@@ -39,6 +39,12 @@ function config($value = null)
 
 }
 
+function is_config($value = null){
+    if (!config($value)) {
+        Mixin\error('404');
+    }
+}
+
 function is_module($value = null){
     if (!module($value)) {
         Mixin\error('404');

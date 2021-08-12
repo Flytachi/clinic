@@ -81,17 +81,17 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
+                            <input type="text" class="form-control input-textup" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Имя пользователя:</label>
-                            <input type="text" class="form-control" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
+                            <input type="text" class="form-control input-textup" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Отчество пользователя:</label>
-                            <input type="text" class="form-control" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
+                            <input type="text" class="form-control input-textup" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
                         </div>
 
                     </fieldset>
@@ -110,12 +110,12 @@ class UserModel extends Model
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                            <!-- <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Доля:</label>
                                     <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value('share') ?>">
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -170,14 +170,20 @@ class UserModel extends Model
                 </button>
             </div>
 
-            <script type="text/javascript">
-                $(function(){
-                    $("#division_id").chained("#user_level");
-                });
-            </script>
         </form>
 
-        <script>
+        <script type="text/javascript">
+
+            $(function(){
+                $("#division_id").chained("#user_level");
+            });
+
+            document.querySelector(".input-textup").addEventListener("input", function() {
+                if (this.value[0]) {
+                    this.value = this.value[0].toUpperCase() + this.value.slice(1);
+                }
+            });
+
             function TableChange(the) {
                 if (the.value == 5) {
                     var div = `
@@ -202,6 +208,7 @@ class UserModel extends Model
                 }
                 if (the.value == 6 || the.value == 12) {
                     document.querySelector('#division_id').required = false;
+                    $("#division_id").prepend(`<option value="0">Выбрать весь отдел</option>`);
                 }else{
                     if (!document.querySelector('#division_id').required) {
                         document.querySelector('#division_id').required = true;
@@ -209,6 +216,7 @@ class UserModel extends Model
                     document.querySelector('#change_table_div').innerHTML = ``;
                 }
             }
+
         </script>
         <?php
         if ($pk) {

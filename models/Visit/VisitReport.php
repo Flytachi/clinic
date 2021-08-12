@@ -20,14 +20,16 @@ class VisitReport extends Model
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="id" value="<?= $pk ?>">
 
-                <div class="col-md-4 offset-md-8">
-                    <select data-placeholder="Выбрать пациента" class="<?= $classes['form-select'] ?>" onchange="ChangePack(this)">
-                        <option value="0">Шаблоны</option>
-                        <?php foreach ($db->query("SELECT * FROM templates WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                <?php if(config("template")): ?>
+                    <div class="col-md-4 offset-md-8">
+                        <select data-placeholder="Выбрать пациента" class="<?= $classes['form-select'] ?>" onchange="ChangePack(this)">
+                            <option value="0">Шаблоны</option>
+                            <?php foreach ($db->query("SELECT * FROM templates WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
 
                 <h1>
                     <div class="col-md-8 offset-md-2">

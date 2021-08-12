@@ -36,7 +36,7 @@
                         </li>
                     <?php endif; ?>
 
-                    <?php if (permission(5)): ?>
+                    <?php if (config("package") and permission(5)): ?>
                         <li class="nav-item">
                             <a href="<?= viv('doctor/package') ?>" class="nav-link legitRipple">
                                 <i class="icon-bag"></i>
@@ -45,7 +45,7 @@
                         </li>
                     <?php endif; ?>
 
-                    <?php if (permission([5,10])): ?>
+                    <?php if (config("template") and permission([5,10])): ?>
                         <li class="nav-item">
                             <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
                                 <i class="icon-users"></i>

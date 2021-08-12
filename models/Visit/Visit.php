@@ -69,44 +69,6 @@ class VisitModel extends Model
         }
     }
 
-    public function form_gudes($pk = null)
-    {
-        global $db, $classes;
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="id" value="<?= $pk ?>">
-
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
-                        <option></option>
-                        <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($this->value('guide_id') == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="text-right">
-                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                    <span class="ladda-label">Сохранить</span>
-                    <span class="ladda-spinner"></span>
-                </button>
-            </div>
-
-        </form>
-        <?php
-        if ($pk) {
-            $this->jquery_init();
-        }
-    }
-
     public function create_or_update_visit()
     {
         global $db;
