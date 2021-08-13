@@ -2,6 +2,15 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(11);
 $header = "Стационарные пациенты";
+
+$tb = new Table($db, "visit_operations vo");
+$tb->set_data("DISTINCT v.id, vo.user_id, us.birth_date, vo.grant_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vo.visit_id) LEFT JOIN users us ON(us.id=vo.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$search = $tb->get_serch();
+$search_array = array(
+	"v.completed IS NULL",
+	"v.completed IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+);
+$tb->where_or_serch($search_array)->order_by('')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +38,6 @@ $header = "Стационарные пациенты";
 			<!-- Content area -->
 			<div class="content">
 
-
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
@@ -41,7 +49,7 @@ $header = "Стационарные пациенты";
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
                         <div class="table-responsive">
                             <table class="table table-hover table-sm">
@@ -49,54 +57,56 @@ $header = "Стационарные пациенты";
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
-                                        <th>Дата рождения</th>
-                                        <th>Направитель</th>
+										<th>Дата рождения</th>
+                                        <th>Операции</th>
                                         <th class="text-center" style="width:210px">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
-									<?php foreach ($db->query("SELECT DISTINCT us.id, us.dateBith, vs.route_id FROM operation op LEFT JOIN visit vs ON(vs.id=op.visit_id) LEFT JOIN users us ON(us.id=op.user_id) WHERE vs.completed IS NULL AND vs.accept_date IS NOT NULL") as $row): ?>
+									<?php foreach($tb->get_table() as $row): ?>
 										<tr>
-											<td><?= addZero($row['id']) ?></td>
+                                            <td><?= addZero($row->user_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row['id']) ?></div>
+												<span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+												<?php if ( $row->order ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер</span>
+												<?php endif; ?>
 												<div class="text-muted">
-													<?php
-													if($stm = $db->query('SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id='.$row['id'])->fetch()){
-														echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
-													}
-													?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+													<?php endif; ?>
 												</div>
 											</td>
-                                            <td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date_f($row->birth_date) ?></td>
                                             <td>
-												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
-												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+												<?php foreach($db->query("SELECT operation_name, completed FROM visit_operations WHERE visit_id = $row->id") as $serv): ?>
+													<span class="<?= ($serv['completed']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['operation_name'] ?></span><br>
+												<?php endforeach; ?>
 											</td>
                                             <td class="text-center">
-                                                <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
-                                                <div class="dropdown-menu dropdown-menu-right" x-placement="top-end" style="position: absolute; transform: translate3d(928px, -95px, 0px); top: 0px; left: 0px; will-change: transform;">
+												<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													<a href="<?= viv('card/content_1') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-repo-forked"></i>Осмотр Врача</a>
 													<?php if(module('module_laboratory')): ?>
-														<a href="<?= viv('card/content_5') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
+														<a href="<?= viv('card/content_5') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 													<?php endif; ?>
 													<?php if(module('module_diagnostic')): ?>
-														<a href="<?= viv('card/content_6') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
+														<a href="<?= viv('card/content_6') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-pulse2"></i>Диагностика</a>
 													<?php endif; ?>
-                                                    <a href="<?= viv('card/content_8') ?>?id=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
-                                                </div>
-                                          	</td>
-										</tr>
+													<a href="<?= viv('card/content_8') ?>?pk=<?= $row->id ?>&activity=1" class="dropdown-item"><i class="icon-clipboard2"></i> Состояние</a>
+												</div>
+                                            </td>
+                                        </tr>
 									<?php endforeach; ?>
-
                                 </tbody>
                             </table>
                         </div>
 
+						<?php $tb->get_panel(); ?>
+
 					</div>
 
 				</div>
-
 
 			</div>
             <!-- /content area -->

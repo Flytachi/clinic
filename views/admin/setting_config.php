@@ -49,20 +49,10 @@ $header = "Настройки";
 				        }
 						?>
 
-						<form action="<?= viv('admin/admin_model') ?>" method="post" enctype="multipart/form-data">
+						<form action="<?= ajax('admin/config') ?>" method="post" enctype="multipart/form-data">
 
 							<fieldset class="mb-3">
 								<legend class="text-uppercase font-size-sm font-weight-bold">Печать</legend>
-
-								<div class="form-group row">
-									<div class="col-form-label col-lg-2">
-										<img class="border-1" src="<?= config("print_header_logotype") ?>" width="200" height="60">
-									</div>
-									<label class="col-form-label col-lg-1 font-weight-bold">Иконка печати:</label>
-									<div class="col-lg-9">
-										<input type="file" name="constant_print_header_logotype" class="form-control">
-									</div>
-								</div>
 
 								<div class="form-group row">
 									<label class="col-form-label col-lg-1 font-weight-bold">Заглавие:</label>

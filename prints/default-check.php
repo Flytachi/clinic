@@ -1,11 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
 $session->is_auth();
-
-$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_print_%'")->fetchAll();
-foreach ($comp as $value) {
-    $company[$value['const_label']] = $value['const_value'];
-}
 ?>
 <style>
     #invoice-POS{
@@ -14,6 +9,15 @@ foreach ($comp as $value) {
         margin: 0 auto;
         width: 50mm;
         background: #FFF;
+    }
+    #image{
+        text-align: center;
+        height: 25mm;
+        width: 50mm;
+    }
+    table{
+        width: 50mm;
+        border-collapse: collapse;
     }
 
     ::selection { background: #f31544; color: #FFF; }
@@ -24,8 +28,8 @@ foreach ($comp as $value) {
     p{ font-size: .7em; line-height: 1.2em; }
     
     #top, #mid, #bot{ border-bottom: 1px solid #EEE; }
-    #top{ min-height: 100px; }
-    #mid{ min-height: 80px; }
+    #top{ min-height: 60px; }
+    #mid{ min-height: 60px; }
     #bot{ min-height: 50px; }
 
     .tabletitle{ background: #9e9e9e; }
@@ -39,14 +43,6 @@ foreach ($comp as $value) {
         /* float:left; */
         margin-left: 0;
     }
-    table{
-        width: 50mm;
-        border-collapse: collapse;
-    }
-    /* td{
-        padding: 5px 0 5px 15px;
-        border: 1px solid #EEE
-    } */
 
 </style>
 
@@ -54,9 +50,9 @@ foreach ($comp as $value) {
 
     <div id="invoice-POS">
 
-        <center>
-            <img src="<?= $company['constant_print_header_logotype'] ?>" alt="Логотип" height="90" width="180">
-        </center>
+        <div id="top">
+            <center><img id="image" src="<?= ( config('print_header_logotype') ) ? config('print_header_logotype') : stack('global_assets/images/placeholders/cover.jpg') ; ?>" alt="Логотип"></center>
+        </div>
 
         <div id="mid">
 

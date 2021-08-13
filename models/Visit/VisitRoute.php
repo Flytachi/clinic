@@ -343,7 +343,7 @@ class VisitRoute extends Model
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         search: $("#search_input").val(),
                         selected: service,
-                        types: "1,2",
+                        types: "1",
                         cols: 1
                     },
                     success: function (result) {
@@ -362,7 +362,7 @@ class VisitRoute extends Model
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         selected: service,
-                        types: "1,2",
+                        types: "1",
                         cols: 1
                     },
                     success: function (result) {
@@ -465,7 +465,7 @@ class VisitRoute extends Model
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         search: $("#search_input").val(),
                         selected: service,
-                        types: "1,2",
+                        types: "1",
                         cols: 1
                     },
                     success: function (result) {
@@ -484,7 +484,7 @@ class VisitRoute extends Model
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         selected: service,
-                        types: "1,2",
+                        types: "1",
                         cols: 1
                     },
                     success: function (result) {

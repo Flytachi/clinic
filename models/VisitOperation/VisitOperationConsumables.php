@@ -8,15 +8,15 @@ class VisitOperationConsumablesModel extends Model
 
     public function get_or_404(int $pk)
     {
-        global $db;
+        global $db, $session;
 
         // Visit
         $object = $db->query("SELECT * FROM $this->_visits WHERE id = {$_GET['visit_id']} AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
         if($object){
 
             // Operation
-            $object = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-            if($object){
+            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+            if($object2 and ($session->session_id == $object2['grant_id'] or permission(8))){
 
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;
@@ -46,7 +46,7 @@ class VisitOperationConsumablesModel extends Model
 
     public function form($pk = null)
     {
-        global $session, $classes;
+        global $classes;
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -145,6 +145,8 @@ class VisitOperationConsumablesModel extends Model
 
     public function clean()
     {
+        global $session;
+        $this->post['creater_id'] = $session->session_id;
         $this->post['item_cost'] = (isset($this->post['item_cost'])) ? str_replace(',', '', $this->post['item_cost']) : 0;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);

@@ -8,19 +8,17 @@ class VisitOperationStatsModel extends Model
 
     public function get_or_404(int $pk)
     {
-        global $db;
+        global $db, $session;
         // Visit
         $object = $db->query("SELECT * FROM $this->_visits WHERE id = {$_GET['visit_id']} AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
         if($object){
 
             // Operation
-            $object = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-            if($object){
+            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+            if($object2 and permission(11)){
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;
                 return $this->{$_GET['form']}();
-                // $this->set_post($object);
-                // return $this->{$_GET['form']}($object['id']);
             }else{
                 Mixin\error('report_permissions_false');
                 exit;
@@ -34,13 +32,12 @@ class VisitOperationStatsModel extends Model
 
     public function form($pk = null)
     {
-        global $session, $classes;
+        global $classes;
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="visit_id" value="<?= $this->visit_id ?>">
             <input type="hidden" name="operation_id" value="<?= $this->operation_id ?>">
-            <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
             <div class="<?= $classes['modal-global_header'] ?>">
                 <h5 class="modal-title">Добавить показатель состояния</h5>
@@ -126,6 +123,8 @@ class VisitOperationStatsModel extends Model
 
     public function clean()
     {
+        global $session;
+        $this->post['creater_id'] = $session->session_id;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

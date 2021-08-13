@@ -8,15 +8,15 @@ class VisitOperationMembersModel extends Model
 
     public function get_or_404(int $pk)
     {
-        global $db;
+        global $db, $session;
 
         // Visit
         $object = $db->query("SELECT * FROM $this->_visits WHERE id = {$_GET['visit_id']} AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
         if($object){
 
             // Operation
-            $object = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-            if($object){
+            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+            if($object2 and $session->session_id == $object2['grant_id']){
 
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;
@@ -175,6 +175,8 @@ class VisitOperationMembersModel extends Model
 
     public function clean()
     {
+        global $session;
+        $this->post['creater_id'] = $session->session_id;
         if (isset($this->post['member_operator']) and $this->post['member_operator']) $this->post['member_operator'] = 1;
         else $this->post['member_operator'] = null;
         $this->post['member_price'] = (isset($this->post['member_price'])) ? str_replace(',', '', $this->post['member_price']) : 0;

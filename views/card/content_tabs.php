@@ -72,9 +72,11 @@
             <a href="<?= viv('card/content_12').$agr ?>" class="nav-link <?= viv_link('card/content_12') ?> legitRipple" style="white-space:nowrap;"><i class="icon-calculator3 mr-1"></i>Расходы</a>
         </li>
     <?php endif; ?>
-    <li class="nav-item">
-        <a href="<?= viv('card/content_13').$agr ?>" class="nav-link <?= viv_link('card/content_13') ?> legitRipple" style="white-space:nowrap;"><i class="icon-files-empty mr-1"></i>Документы</a>
-    </li>
+    <?php if (permission(5)): ?>
+        <li class="nav-item">
+            <a href="<?= viv('card/content_13').$agr ?>" class="nav-link <?= viv_link('card/content_13') ?> legitRipple" style="white-space:nowrap;"><i class="icon-files-empty mr-1"></i>Документы</a>
+        </li>
+    <?php endif; ?>
 </ul>
 
 <?php

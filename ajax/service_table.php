@@ -4,6 +4,7 @@ $session->is_auth();
 
 $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 $i = 0; $cost = 0;
+$requared = "";
 ?>
 
 <?php if( isset($_GET['divisions']) ): ?>
@@ -11,6 +12,7 @@ $i = 0; $cost = 0;
     <?php if ( isset($_GET['divisions']) and $_GET['divisions'] ): ?>
 
         <?php
+        if (isset($_GET['is_requared']) and $_GET['is_requared']) $requared = "required";
         $divisions = implode(',', $_GET['divisions']);
         if ( isset($_GET['is_foreigner']) and $_GET['is_foreigner']) {
             $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
@@ -66,8 +68,10 @@ $i = 0; $cost = 0;
 
                 <?php if (empty($_GET['head'])): ?>
                     <td>
-                        <select name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>">
-                            <option value="">Выберан весь отдел</option>
+                        <select name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>" <?= $requared ?>>
+                            <?php if ($requared == ""): ?>
+                                <option value="">Выберан весь отдел</option>
+                            <?php endif; ?>
                             <?php if ($row->user_level == 6): ?>
                                 <?php foreach ($db->query("SELECT id from users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
                                     <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
@@ -109,7 +113,6 @@ $i = 0; $cost = 0;
                 total.text( number_format(Number(cost) - (Number(price) * service[the.value]), '.', ',') );
                 delete service[the.value];
             }
-            // console.log(service);
         }
 
         $(".counts").keyup(function() {
@@ -120,7 +123,6 @@ $i = 0; $cost = 0;
                 total.text( number_format(Number(cost) + (this.dataset.price * (this.value - service[this.dataset.id])), '.', ',') );
                 service[this.dataset.id] = this.value;
             }
-            // console.log(service);
         });
 
     </script>

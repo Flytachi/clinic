@@ -1,11 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
 
-$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_print_%'")->fetchAll();
-foreach ($comp as $value) {
-    $company[$value['const_label']] = $value['const_value'];
-}
-
 $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.birth_date, vs.service_title, vs.service_report, vs.completed FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
 ?>
 <!DOCTYPE html>
@@ -19,14 +14,14 @@ $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.birth_date, vs.service_t
         <div class="row">
 
             <div class="col-6">
-                <img src="<?= $company['constant_print_header_logotype'] ?>" width="400" height="120">
+                <img src="<?= ( config('print_header_logotype') ) ? config('print_header_logotype') : stack('global_assets/images/placeholders/cover.jpg') ; ?>" width="400" height="120">
             </div>
 
             <div class="col-6 text-right h3">
                 <b>
-                    <?= $company['constant_print_header_title'] ?><br>
-                    <?= $company['constant_print_header_address'] ?><br>
-                    <?= $company['constant_print_header_phones'] ?>
+                    <?= ( config('print_header_title') ) ? config('print_header_title') : "Title text"; ?><br>
+                    <?= ( config('print_header_address') ) ? config('print_header_address') : "Title text"; ?><br>
+                    <?= ( config('print_header_phones') ) ? config('print_header_phones') : "Title text"; ?><br>
                 </b>
             </div>
 
