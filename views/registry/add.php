@@ -18,7 +18,6 @@ $header = "Рабочий стол";
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -32,7 +31,7 @@ $header = "Рабочий стол";
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h6 class="card-title">Амбулаторная</h6>
+						<h6 class="card-title">Регистрация</h6>
 						<div class="header-elements">
 							<div class="list-icons">
 		                		<a class="list-icons-item" data-action="collapse"></a>
@@ -40,8 +39,8 @@ $header = "Рабочий стол";
 	                	</div>
 					</div>
 
-					<div class="card-body">
-						<?php (new VisitModel)->form_out(); ?>
+					<div class="card-body" id="form_up">
+						<?php (new PatientForm)->form(); ?>
 					</div>
 
 				</div>
@@ -55,6 +54,7 @@ $header = "Рабочий стол";
 
 	</div>
 	<!-- /page content -->
+
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

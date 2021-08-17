@@ -203,7 +203,7 @@ class PatientForm extends Model
             Успешно
         </div>
         ';
-        render();
+        render('registry/index');
     }
 
     public function error($message)
@@ -214,7 +214,7 @@ class PatientForm extends Model
 			<span class="font-weight-semibold"> '.$message.'</span>
 	    </div>
         ';
-        render();
+        render('registry/index');
     }
 }
 

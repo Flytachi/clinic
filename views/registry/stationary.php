@@ -31,8 +31,6 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include 'tabs.php' ?>
-
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
