@@ -66,7 +66,7 @@ $header = "Мой пакеты";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-									<?php foreach ($db->query("SELECT * from package WHERE autor_id = {$_SESSION['session_id']}") as $row): ?>
+									<?php foreach ($db->query("SELECT * from packages WHERE autor_id = {$_SESSION['session_id']}") as $row): ?>
 										<tr>
 											<td><?= $row['id'] ?></td>
 											<td><?= $row['name'] ?></td>
@@ -98,7 +98,6 @@ $header = "Мой пакеты";
 
     <script type="text/javascript">
 		function Update(events) {
-			events
 			$.ajax({
 				type: "GET",
 				url: events,

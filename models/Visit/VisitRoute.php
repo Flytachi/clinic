@@ -32,7 +32,7 @@ class VisitRoute extends Model
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -97,6 +97,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1,2",
@@ -117,6 +118,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         selected: service,
                         types: "1,2",
                         cols: 1
@@ -155,7 +157,7 @@ class VisitRoute extends Model
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -219,6 +221,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1",
@@ -239,6 +242,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -277,7 +281,7 @@ class VisitRoute extends Model
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 6") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -341,6 +345,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1",
@@ -361,6 +366,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -399,7 +405,7 @@ class VisitRoute extends Model
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * from divisions WHERE level = 12") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 12") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -463,6 +469,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1",
@@ -483,6 +490,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -577,6 +585,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1",
@@ -598,6 +607,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
                         selected: service,
                         types: "1",
                         cols: 3,
@@ -616,62 +626,57 @@ class VisitRoute extends Model
 
     public function form_package($pk = null)
     {
-        global $db, $patient, $classes;
+        global $db, $classes, $session;
+        $patient = json_decode($_GET['patient']);
         ?>
         <form method="post" action="<?= add_url() ?>">
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="package" value="1">
-            <?php if($patient->direction): ?>
-                <input type="hidden" name="direction" value="1">
-                <input type="hidden" name="status" value="1">
-            <?php endif; ?>
-            <input type="hidden" name="route_id" value="<?= $_SESSION['session_id'] ?>">
-            <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Назначить пакет</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
 
             <div class="modal-body">
 
-                <div class="form-group row">
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="direction" value="<?= $patient->direction ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
-                    <div class="col-md-12">
-                        <label>Пакеты:</label>
-                        <select data-placeholder="Выбрать пакет" class="<?= $classes['form-select'] ?>" required onchange="Change_Package_list(this)">
-                            <option></option>
-                            <?php foreach ($db->query("SELECT * FROM package WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
+                <div class="form-group">
+                    <label>Пакеты:</label>
+                    <select data-placeholder="Выбрать пакет" class="<?= $classes['form-select'] ?>" required onchange="Change_Package_list(this)">
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * FROM packages WHERE autor_id = $session->session_id ORDER BY name DESC") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
-                <div class="form-group row">
-                    <div id="package_item_result"></div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <div class="text-right">
-                    <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                        <span class="ladda-label">Сохранить</span>
-                        <span class="ladda-spinner"></span>
-                    </button>
-                </div>
+                <div id="div_form"></div>
+                
             </div>
 
         </form>
         <script type="text/javascript">
+
             function Change_Package_list(params) {
                 $.ajax({
-                    type: "POST",
+                    type: "GET",
                     url: "<?= ajax('card_package_items') ?>",
-                    data: { id:params.value },
+                    data: { 
+                        pk:params.value,
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
+                    },
                     success: function (result) {
-                        $('#package_item_result').html(result);
+                        $('#div_form').html(result);
                     },
                 });
             }
+
+            FormLayouts.init();
+            
         </script>
         <?php
     }
@@ -681,17 +686,6 @@ class VisitRoute extends Model
         if (isset($this->post['division_id']) and is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
-        // if($this->post['package']){
-        //     $this->save_package();
-        // }
-        // if (is_array($this->post['service'])) {
-        //     $this->save_rows();
-        // }
-        // if ($this->post['accept_date']) {
-        //     $this->post['accept_date'] = date('Y-m-d H:i:s');
-        // }
-        // $this->post = Mixin\clean_form($this->post);
-        // $this->post = Mixin\to_null($this->post);
         return True;
     }
 
@@ -727,7 +721,7 @@ class VisitRoute extends Model
 
     public function chek_order()
     {
-        global $db, $session;
+        global $db;
         if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
             $this->is_order = True;
         }
@@ -735,7 +729,7 @@ class VisitRoute extends Model
 
     public function add_visit_service($key = null, $value)
     {
-        global $db;
+        global $db, $session;
         $data = $db->query("SELECT * FROM services WHERE id = $value")->fetch();
 
         if ( isset($this->post['division_id'][$key]) and $this->post['division_id'][$key] ) {
@@ -749,7 +743,7 @@ class VisitRoute extends Model
         }
         $post['visit_id'] = $this->visit_pk;
         $post['user_id'] = $this->post['user_id'];
-        $post['route_id'] = $_SESSION['session_id'];
+        $post['route_id'] = $session->session_id;
         $post['parent_id'] = (is_array($this->post['parent_id'])) ? $this->post['parent_id'][$key] : $this->post['parent_id'];
         $post['guide_id'] = (isset($this->post['guide_id'])) ? $this->post['guide_id'] : null;
         $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
@@ -786,63 +780,6 @@ class VisitRoute extends Model
             
         }
         unset($post);
-    }
-
-    public function save_package()
-    {
-        global $db;
-        $db->beginTransaction();
-
-        foreach ($this->post['service'] as $key => $value) {
-
-            $post_big['direction'] = $this->post['direction'];
-            $post_big['route_id'] = $this->post['route_id'];
-            $post_big['grant_id'] = $this->post['grant_id'];
-            $post_big['user_id'] = $this->post['user_id'];
-            if($this->post['direction']){$post_big['direction'] = $this->post['direction'];}
-            if($this->post['status']){$post_big['status'] = $this->post['status'];}            
-            $post_big['service_id'] = $value;
-            $post_big['division_id'] = $this->post['division_id'][$key];
-            $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
-            if ($level_divis == 12) {
-                $post_big['physio'] = True;
-            }elseif ($level_divis == 13) {
-                $post_big['manipulation'] = True;
-            }elseif ($level_divis == 10) {
-                $post_big['diagnostic'] = True;
-            }elseif ($level_divis == 6) {
-                $post_big['laboratory'] = True;
-            }
-            $post_big['parent_id'] = $this->post['parent_id'][$key];
-            for ($i=0; $i < $this->post['count'][$key]; $i++) {
-                $post_big = Mixin\clean_form($post_big);
-                $post_big = Mixin\to_null($post_big);
-                $object = Mixin\insert($this->table, $post_big);
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
-                }
-
-                if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
-                    $service = $db->query("SELECT price, name FROM service WHERE id = $value")->fetch();
-                    $post['visit_id'] = $object;
-                    $post['user_id'] = $this->post['user_id'];
-                    $post['item_type'] = 1;
-                    $post['item_id'] = $value;
-                    $post['item_cost'] = $service['price'];
-                    $post['item_name'] = $service['name'];
-                    $object = Mixin\insert('visit_price', $post);
-                    if (!intval($object)){
-                        $this->error($object);
-                        $db->rollBack();
-                    }
-                }
-            }
-            unset($post_big);
-        }
-
-        $db->commit();
-        $this->success();
     }
 
     public function success()

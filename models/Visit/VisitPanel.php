@@ -212,27 +212,27 @@ class VisitPanel extends VisitModel
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
                         <optgroup label="Врачи">
-                            <?php foreach ($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5") as $row): ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                         <?php if(module('module_diagnostic')): ?>
                             <optgroup label="Диогностика">
-                                <?php foreach ($db->query("SELECT * from divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         <?php endif; ?>
                         <?php if(module('module_laboratory')): ?>
                             <optgroup label="Лаборатория">
-                                <?php foreach ($db->query("SELECT * from divisions WHERE level = 6") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         <?php endif; ?>
                         <?php if(module('module_physio')): ?>
                             <optgroup label="Физиотерапия">
-                                <?php foreach ($db->query("SELECT * from divisions WHERE level = 12") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 12") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </optgroup>

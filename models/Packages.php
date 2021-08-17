@@ -2,19 +2,15 @@
 
 class PackageModel extends Model
 {
-    public $table = 'package';
+    public $table = 'packages';
 
     public function form($pk = null)
     {
-        global $db, $classes;
+        global $db, $classes, $session;
         if($pk){
             $this->post['items'] = json_decode($this->post['items']);
-            foreach ($this->post['items'] as $key => $value) {
-                $service_pk[] = $key;
-                if (!isset($division) or ($division and !in_array($value->division_id, $division))) {
-                    $division[] = $value->division_id;
-                }
-            }
+            $this->post['divisions'] = json_decode($this->post['divisions']);
+            // dd($this->value('items'));
         }
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
@@ -24,7 +20,7 @@ class PackageModel extends Model
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
-            <input type="hidden" name="autor_id" value="<?= $_SESSION['session_id'] ?>">
+            <input type="hidden" name="autor_id" value="<?= $session->session_id ?>">
 
             <div class="form-group">
                 <label>Название пакета:</label>
@@ -33,38 +29,40 @@ class PackageModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)">
+                <select data-placeholder="Выбрать отдел" multiple="multiple" name="divisions[]" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)">
                     <optgroup label="Врачи">
-                        <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ( $this->value('divisions') and in_array($row['id'], $this->value('divisions'))) ? "selected" : "" ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </optgroup>
                     <?php if(module('module_diagnostic')): ?>
                         <optgroup label="Диогностика">
-                            <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ( $this->value('divisions') and in_array($row['id'], $this->value('divisions'))) ? "selected" : "" ?>><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                     <?php endif; ?>
                     <?php if(module('module_laboratory')): ?>
                         <optgroup label="Лаборатория">
-                            <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ( $this->value('divisions') and in_array($row['id'], $this->value('divisions'))) ? "selected" : "" ?>><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                     <?php endif; ?>
-                    <optgroup label="Остальные">
-                        <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </optgroup>
+                    <?php if(module('module_physio')): ?>
+                        <optgroup label="Физиотерапия">
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 12") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ( $this->value('divisions') and in_array($row['id'], $this->value('divisions'))) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
                 </select>
             </div>
 
             <div class="form-group-feedback form-group-feedback-right row">
 
                 <div class="col-md-11">
-                    <input type="text" class="form-control border-info" id="search_input" placeholder="Введите ID или имя">
+                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
                     <div class="form-control-feedback">
                         <i class="icon-search4 font-size-base text-muted"></i>
                     </div>
@@ -97,10 +95,202 @@ class PackageModel extends Model
                         </thead>
                         <tbody id="table_form">
 
+                            <?php if ( $this->value('items') ): ?>
+
+                                <script type="text/javascript">var service = {};</script>
+
+                                <?php foreach ($this->value('items') as $value): ?>
+                                    <script type="text/javascript">
+                                        service["<?= $value->service_id ?>"] = {};
+                                        service["<?= $value->service_id ?>"]['parent'] = "<?= $value->parent_id ?>";
+                                        service["<?= $value->service_id ?>"]['count'] = "<?= $value->count ?>";
+                                    </script>
+                                <?php endforeach; ?>
+
+                                <script type="text/javascript">
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "<?= ajax('service_table') ?>",
+                                        data: {
+                                            divisions: $("#division_selector").val(),
+                                            selected: service,
+                                            types: "1,2",
+                                            cols: 0,
+                                            is_service_checked: 1,
+                                        },
+                                        success: function (result) {
+                                            var service = {};
+                                            $('#table_form').html(result);
+                                        },
+                                    });
+
+                                    $( document ).ready(function() {
+                                        FormLayouts.init();
+                                        BootstrapMultiselect.init();
+                                    });
+                                </script>
+
+                            <?php endif; ?>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            
+
+        </form>
+
+        <?php if ( !$this->value('items') ): ?>
+            <script type="text/javascript">var service = {};</script>
+        <?php endif; ?>
+        <script type="text/javascript">
+
+            $("#search_input").keyup(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        search: $("#search_input").val(),
+                        selected: service,
+                        types: "1,2",
+                        cols: 0
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function TableChangeServices(params) {
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('service_table') ?>",
+                    data: {
+                        divisions: $(params).val(),
+                        selected: service,
+                        types: "1,2",
+                        cols: 0
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+
+        </script>
+        <?php
+    }
+
+    public function form_old($pk = null)
+    {
+        global $db, $classes, $session;
+        if($pk){
+            $this->post['items'] = json_decode($this->post['items']);
+            foreach ($this->post['items'] as $key => $value) {
+                $service_pk[] = $key;
+                $parent_pk[] = $value->parent_id;
+                if (!isset($division) or ($division and !in_array($value->division_id, $division))) {
+                    $division[] = $value->division_id;
+                }
+            }
+        }
+        if( isset($_SESSION['message']) ){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="autor_id" value="<?= $_SESSION['session_id'] ?>">
+
+            <div class="form-group">
+                <label>Название пакета:</label>
+                <input type="text" name="name" value="<?= $this->value('name') ?>" class="form-control" placeholder="Введите название пакета" required>
+            </div>
+
+            <div class="form-group">
+                <label>Отделы</label>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)">
+                    <optgroup label="Врачи">
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </optgroup>
+                    <?php if(module('module_diagnostic')): ?>
+                        <optgroup label="Диогностика">
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
+                    <?php if(module('module_laboratory')): ?>
+                        <optgroup label="Лаборатория">
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
+                    <?php if(module('module_physio')): ?>
+                        <optgroup label="Физиотерапия">
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 12") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ( isset($division) and in_array($row['id'], $division)) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </optgroup>
+                    <?php endif; ?>
+                </select>
+            </div>
+
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-11">
+                    <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Отправить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Отдел</th>
+                                <th>Услуга</th>
+                                <th>Тип</th>
+                                <th>Доктор</th>
+                                <th style="width:100px">Кол-во</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
                             <?php if ( isset($this->post['items']) ): ?>
                                 <?php
                                 $_GET['cols'] = 0;
                                 $_GET['head'] = null;
+                                dd($this->post['items']);
+                                dd($division);
+                                dd($service_pk);
+                                dd($parent_pk);
                                 ?>
 
                                 <script type="text/javascript">var service = {};</script>
@@ -110,7 +300,7 @@ class PackageModel extends Model
 
                                 <?php $i=$cost=0; foreach ($division as $divis_pk): ?>
 
-                                    <?php foreach ($db->query("SELECT sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price from service sc LEFT JOIN division dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN (1,2) AND sc.id IN (".implode(', ', $service_pk).")") as $row): ?>
+                                    <?php foreach ($db->query("SELECT sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.division_id = $divis_pk AND sc.type IN (1,2) AND sc.id IN (".implode(', ', $service_pk).")") as $row): ?>
                                         <?php $i++; ?>
                                         <tr>
 
@@ -148,21 +338,22 @@ class PackageModel extends Model
                                             <?php endif; ?>
                                             <?php if (!$_GET['head']): ?>
                                                 <td>
-                                                    <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="form-control select" required>
-                                                        <?php if ($row['user_level'] == 6): ?>
-                                                            <?php foreach ($db->query("SELECT id from users WHERE user_level = 6") as $par): ?>
-                                                                <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
+                                                    <select data-placeholder="Выберите специалиста" name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>">
+                                                        <option value="">Выберан весь отдел</option>
+                                                        <?php if ($row->user_level == 6): ?>
+                                                            <?php foreach ($db->query("SELECT id FROM users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
+                                                                <option value="<?= $parent['id'] ?>"><?= get_full_name($parent['id']) ?></option>
                                                             <?php endforeach; ?>
                                                         <?php else: ?>
-                                                            <?php foreach ($db->query("SELECT id from users WHERE division_id = $divis_pk") as $par): ?>
-                                                                <option value="<?= $par['id'] ?>"><?= get_full_name($par['id']) ?></option>
+                                                            <?php foreach ($db->query("SELECT id FROM users WHERE division_id = $divis_pk AND is_active IS NOT NULL") as $parent): ?>
+                                                                <option value="<?= $parent['id'] ?>"><?= get_full_name($parent['id']) ?></option>
                                                             <?php endforeach; ?>
                                                         <?php endif; ?>
                                                     </select>
                                                 </td>
                                             <?php endif; ?>
                                             <td style="width:70px;">
-                                                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="counts" name="count[<?= $i ?>]" value="<?= ((array) $this->post['items'])[$row['id']]->count ?>" min="1" max="1000000">
+                                                <input type="number" id="count_input_<?= $row['id'] ?>" data-id="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" class="form-control counts" name="count[<?= $i ?>]" value="<?= ((array) $this->post['items'])[$row['id']]->count ?>" min="1" max="1000000">
                                             </td>
                                             <td class="text-right text-success"><?= number_format($row['price']) ?></td>
 
@@ -240,13 +431,13 @@ class PackageModel extends Model
                 });
             });
 
-            function table_change(the) {
+            function TableChangeServices(params) {
 
                 $.ajax({
                     type: "GET",
                     url: "<?= ajax('service_table') ?>",
                     data: {
-                        divisions: $(the).val(),
+                        divisions: $(params).val(),
                         selected: service,
                         types: "1,2",
                         cols: 0
@@ -259,17 +450,56 @@ class PackageModel extends Model
 
             }
 
+            // var service = {};
+
+            // $("#search_input").keyup(function() {
+            //     $.ajax({
+            //         type: "GET",
+            //         url: "<?= ajax('service_table') ?>",
+            //         data: {
+            //             divisions: $("#division_selector").val(),
+            //             search: $("#search_input").val(),
+            //             selected: service,
+            //             types: "1,2",
+            //             cols: 0
+            //         },
+            //         success: function (result) {
+            //             var service = {};
+            //             $('#table_form').html(result);
+            //         },
+            //     });
+            // });
+
+            // function table_change(the) {
+
+            //     $.ajax({
+            //         type: "GET",
+            //         url: "<?= ajax('service_table') ?>",
+            //         data: {
+            //             divisions: $(the).val(),
+            //             selected: service,
+            //             types: "1,2",
+            //             cols: 0
+            //         },
+            //         success: function (result) {
+            //             var service = {};
+            //             $('#table_form').html(result);
+            //         },
+            //     });
+
+            // }
+
         </script>
         <?php
     }
 
     public function clean()
     {
-        $this->post['name'] = Mixin\clean($this->post['name']);
         foreach ($this->post['service'] as $key => $value) {
-            $items[$value] = array(
-                'parent_id' => $this->post['parent_id'][$key],
+            $items[] = array(
+                'service_id' => $this->post['service'][$key],
                 'division_id' => $this->post['division_id'][$key],
+                'parent_id' => $this->post['parent_id'][$key],
                 'count' => $this->post['count'][$key],
             );
         }
@@ -279,6 +509,7 @@ class PackageModel extends Model
         unset($this->post['count']);
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
+        $this->post['divisions'] = json_encode($this->post['divisions']);
         $this->post['items'] = json_encode($items);
         return True;
     }

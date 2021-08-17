@@ -58,8 +58,8 @@ require_once 'callback.php';
 									<i class="icon-plus22 mr-1"></i>Услуга
 								</a>
 							<?php endif; ?>
-							<?php if (config("package") and $activity and permission(5)): ?>
-								<a href="#" class="float-right text-teal mr-2" data-toggle="modal" data-target="#modal_package">
+							<?php if (config("package") and $activity and permission(5) and !$patient->direction): ?>
+								<a onclick='Check(`<?= up_url(null, "VisitRoute", "form_package") ?>&patient=<?= json_encode($patient) ?>`)' href="" class="float-right text-teal">
 									<i class="icon-bag mr-1"></i>Пакеты
 								</a>
 							<?php endif; ?>
@@ -150,20 +150,6 @@ require_once 'callback.php';
 				<div class="<?= $classes['modal-global_content'] ?>" id="form_card_report"></div>
 			</div>
 		</div>
-
-		<div id="modal_package" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="<?= $classes['modal-global_content'] ?>">
-					<div class="<?= $classes['modal-global_header'] ?>">
-						<h6 class="modal-title">Назначить пакет</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<?php (new VisitRoute)->form_package() ?>
-
-				</div>
-			</div>
-		</div>
 	<?php endif; ?>
 
 	<div id="modal_default" class="modal fade" tabindex="-1">
@@ -229,6 +215,7 @@ require_once 'callback.php';
 
 	<script type="text/javascript">
 		function Check(events) {
+			event.preventDefault();
 			$.ajax({
 				type: "GET",
 				url: events,

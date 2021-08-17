@@ -18,7 +18,7 @@ $requared = "";
             $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
         } else {
             $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price";
-        } 
+        }
         ?>
 
         <?php if ( isset($_GET['search']) ): ?>
@@ -29,100 +29,140 @@ $requared = "";
         <?php endif; ?>
 
         <?php foreach ($db->query($sql) as $row): ?>
-            <?php $i++; ?>
-            <tr>
-
-                <td>
-                    <?php
-                    $result = "";
-                    if ( isset($_GET['selected']) and in_array($row->id, array_keys($_GET['selected']))) {
-                        $result = "checked";
-                        $cost += ($row->price * $_GET['selected'][$row->id]);
-                    }
-                    ?>
-                    <input type="checkbox" name="service[<?= $i ?>]" value="<?= $row->id ?>" class="form-input-styled" onchange="tot_sum(this, <?= $row->price ?>)" <?= $result ?>>
-                    <input type="hidden" name="division_id[<?= $i ?>]" value="<?= $row->division_id ?>">
-                </td>
-
-                <?php if ($_GET['cols'] < 2): ?>
-                    <td><?= $row->title ?></td>
-                <?php endif; ?>
-
-                <td><?= $row->name ?></td>
-
-                <?php if ($_GET['cols'] < 1): ?>
+            <?php
+            $result = ""; $i++;
+            if ( isset($_GET['selected']) and in_array($row->id, array_keys($_GET['selected'])) ) {
+                $result = "checked";
+                $cost += ($row->price * $_GET['selected'][$row->id]['count']);
+            }
+            ?>
+            <?php if ( (isset($_GET['is_service_checked']) and $_GET['is_service_checked'] and $result == "checked") or empty($_GET['is_service_checked']) ): ?>
+                <tr>
+    
                     <td>
-                        <?php switch ($row->type) {
-                            case 1:
-                                echo "Обычная";
-                                break;
-                            case 2:
-                                echo "Консультация";
-                                break;
-                            case 3:
-                                echo "Операционная";
-                                break;
-                        } ?>
+                        <input type="checkbox" name="service[<?= $i ?>]" value="<?= $row->id ?>" class="form-input-styled" onchange="tot_sum(this)" <?= $result ?>>
+                        <input type="hidden" name="division_id[<?= $i ?>]" value="<?= $row->division_id ?>">
                     </td>
-                <?php endif; ?>
-
-                <?php if (empty($_GET['head'])): ?>
-                    <td>
-                        <select name="parent_id[<?= $i ?>]" class="<?= $classes['form-select'] ?>" <?= $requared ?>>
-                            <?php if ($requared == ""): ?>
-                                <option value="">Выберан весь отдел</option>
-                            <?php endif; ?>
-                            <?php if ($row->user_level == 6): ?>
-                                <?php foreach ($db->query("SELECT id from users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
-                                    <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <?php foreach ($db->query("SELECT id from users WHERE division_id = $row->division_id AND is_active IS NOT NULL") as $parent): ?>
-                                    <option value="<?= $parent->id ?>"><?= get_full_name($parent->id) ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </select>
+    
+                    <?php if ($_GET['cols'] < 2): ?>
+                        <td><?= $row->title ?></td>
+                    <?php endif; ?>
+    
+                    <td><?= $row->name ?></td>
+    
+                    <!-- Type -->
+                    <?php if ($_GET['cols'] < 1): ?>
+                        <td>
+                            <?php switch ($row->type) {
+                                case 1:
+                                    echo "Обычная";
+                                    break;
+                                case 2:
+                                    echo "Консультация";
+                                    break;
+                                case 3:
+                                    echo "Операционная";
+                                    break;
+                            } ?>
+                        </td>
+                    <?php endif; ?>
+    
+                    <!-- Parent -->
+                    <?php if (empty($_GET['head'])): ?>
+                        <td>
+                            <select name="parent_id[<?= $i ?>]" id="parent_input_<?= $row->id ?>" class="<?= $classes['form-select'] ?> parents" data-id="<?= $row->id ?>" <?= $requared ?>>
+                                <?php if ($requared == ""): ?>
+                                    <option value="">Выберан весь отдел</option>
+                                <?php endif; ?>
+                                <?php if ($row->user_level == 6): ?>
+                                    <?php foreach ($db->query("SELECT id FROM users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
+                                        <option value="<?= $parent->id ?>" <?= ( isset($_GET['selected'][$row->id]) and isset($_GET['selected'][$row->id]['parent']) and  $_GET['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <?php foreach ($db->query("SELECT id FROM users WHERE division_id = $row->division_id AND is_active IS NOT NULL") as $parent): ?>
+                                        <option value="<?= $parent->id ?>" <?= ( isset($_GET['selected'][$row->id]) and isset($_GET['selected'][$row->id]['parent']) and  $_GET['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </td>
+                    <?php endif; ?>
+                    
+                    <!-- Count -->
+                    <td style="width:70px;">
+                        <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts form-control" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]['count']) ) ? $_GET['selected'][$row->id]['count'] : "1" ?>" min="1" max="1000000">
                     </td>
-                <?php endif; ?>
-                <td style="width:70px;">
-                    <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts form-control" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
-                </td>
-                <td class="text-right text-success"><?= number_format($row->price) ?></td>
 
-            </tr>
+                    <!-- Price -->
+                    <?php if( isset($_GET['is_order']) and $_GET['is_order'] ): ?>
+                        <td class="text-right">
+                            <span class="text-muted">Бесплатно</span>
+                        </td>
+                    <?php else: ?>
+                        <td class="text-right text-<?= number_color($row->price) ?>">
+                            <?= number_format($row->price) ?>
+                        </td>                    
+                    <?php endif; ?>
+    
+                </tr>
+            <?php endif; ?>
         <?php endforeach; ?>
        
     <?php endif; ?>
 
     <tr class="table-secondary">
         <th class="text-right" colspan="<?= 6-$_GET['cols'] ?>">Итого:</th>
-        <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
+        <?php if( isset($_GET['is_order']) and $_GET['is_order'] ): ?>
+            <th class="text-right"><span class="text-muted">Бесплатно</span></th>
+        <?php else: ?>                
+            <th class="text-right" id="total_price"><?= number_format($cost) ?></th>
+        <?php endif; ?>
     </tr>
     <script type="text/javascript">
         $( document ).ready(function() {
             FormLayouts.init();
         });
 
-        function tot_sum(the, price) {
+        function tot_sum(the) {
+            var order = "<?= ( isset($_GET['is_order']) and $_GET['is_order'] ) ? null : 1 ?>";
             var total = $('#total_price');
             var cost = total.text().replace(/,/g,'');
+            var price = (document.querySelector('#count_input_'+the.value)).dataset.price;
+
             if (the.checked) {
-                service[the.value] = $("#count_input_"+the.value).val();
-                total.text( number_format(Number(cost) + (Number(price) * service[the.value]), '.', ',') );
+                service[the.value] = {};
+                service[the.value]['parent'] = $("#parent_input_"+the.value).val();
+                service[the.value]['count'] = $("#count_input_"+the.value).val();
+                if (order) {
+                    total.text( number_format(Number(cost) + (Number(price) * service[the.value]['count']), '.', ',') );
+                }
             }else {
-                total.text( number_format(Number(cost) - (Number(price) * service[the.value]), '.', ',') );
+                if (order) {
+                    total.text( number_format(Number(cost) - (Number(price) * service[the.value]['count']), '.', ',') );
+                }
                 delete service[the.value];
             }
+
+            
         }
 
+        $(".parents").change(function() {
+            if (typeof service[this.dataset.id] !== "undefined") {
+                service[this.dataset.id]['parent'] = this.value;
+            }
+        });
+
         $(".counts").keyup(function() {
+            var order = "<?= ( isset($_GET['is_order']) and $_GET['is_order'] ) ? null : 1 ?>";
             var total = $('#total_price');
             var cost = total.text().replace(/,/g,'');
 
             if (typeof service[this.dataset.id] !== "undefined") {
-                total.text( number_format(Number(cost) + (this.dataset.price * (this.value - service[this.dataset.id])), '.', ',') );
-                service[this.dataset.id] = this.value;
+                if (order) {
+                    total.text( number_format(Number(cost) + (this.dataset.price * (this.value - service[this.dataset.id]['count'])), '.', ',') );
+                }
+                service[this.dataset.id]['count'] = this.value;
             }
+
         });
 
     </script>

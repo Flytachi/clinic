@@ -24,9 +24,15 @@ class VisitAnalyzesModel extends Model
                     $this->divisions[$item['division_id']] = $db->query("SELECT title FROM divisions WHERE id = {$item['division_id']}")->fetchColumn();
                 }
             }
-            $this->divisions = array_unique($this->divisions);
-            $this->set_post($object);
-            return $this->form($object['id']);
+            if ( isset($this->divisions) ) {
+                $this->divisions = array_unique($this->divisions);
+                $this->set_post($object);
+                return $this->form($object['id']);
+            }else {
+                Mixin\error('report_permissions_false');
+                exit;
+            }
+            
 
         }else{
             Mixin\error('report_permissions_false');
