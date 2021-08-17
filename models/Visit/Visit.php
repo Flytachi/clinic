@@ -23,16 +23,8 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT DISTINCT us.id, us.status, vs.user_id 'stationar' FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
-                            <?php if ($row['stationar']): ?>
-                                <option value="<?= $row['id'] ?>" disabled><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(стационар лечится)---" : "---(стационар оплачивается)---" ?></option>
-                            <?php else: ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
+                    <input class="form-control" type="text" value="<?= get_full_name($_GET['id']) ?>" readonly>
                 </div>
 
                 <div class="col-md-6">
@@ -228,12 +220,8 @@ class VisitModel extends Model
 
                 <div class="col-md-5">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="<?= $classes['form-select'] ?>" required data-fouc>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($row['status']) ? "disabled" : "" ?>><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
+                    <input class="form-control" type="text" value="<?= get_full_name($_GET['id']) ?>" readonly>
                 </div>
 
                 <div class="col-md-2">
@@ -721,7 +709,7 @@ class VisitModel extends Model
                 Успешно
             </div>
             ';
-            render();
+            render("registry/index");
         }
     }
 
@@ -741,7 +729,7 @@ class VisitModel extends Model
                 <span class="font-weight-semibold"> '.$message.'</span>
             </div>
             ';
-            render();
+            render("registry/index");
         }
     }
 }
