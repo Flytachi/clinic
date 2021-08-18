@@ -7,8 +7,15 @@ $search = $tb->get_serch();
 $where_search = array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
 $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
-$tb->set_self(viv('registry/list_patient'));  
+$tb->set_self(viv('registry/index'));  
 ?>
+<?php 
+if( isset($_SESSION['message']) ){
+    echo $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
+
 <div class="table-responsive">
     <table class="table table-hover table-sm table-bordered">
         <thead class="<?= $classes['table-thead'] ?>">
@@ -33,7 +40,7 @@ $tb->set_self(viv('registry/list_patient'));
                         <div class="text-muted">
                             <?php
                             if($stm = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.user_id= $row->id")->fetch()){
-                                echo $stm['floor']." этаж ".$stm['ward']." палата ".$stm['bed']." койка";
+                                echo "{$FLOOR[$stm['floor']]} ".$stm['ward']." палата ".$stm['bed']." койка";
                             }
                             ?>
                         </div>
@@ -87,8 +94,14 @@ $tb->set_self(viv('registry/list_patient'));
                         </td>
                     <?php endif; ?>
                     <td class="text-center">
-                        <button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                        <button type="button" class="<?= $classes['btn_detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+                            <?php if (empty($stm_dr) or ($stm_dr and !$stm_dr['direction']) ): ?>
+                                <a href="<?= viv('registry/outpatient') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
+                            <?php endif; ?>
+                            <?php if (!$row->status): ?>
+                                <a href="<?= viv('registry/stationary') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
+                            <?php endif; ?>
                             <a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                             <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
                         </div>
