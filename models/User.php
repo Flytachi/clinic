@@ -81,17 +81,17 @@ class UserModel extends Model
 
                         <div class="form-group">
                             <label>Фамилия пользователя:</label>
-                            <input type="text" class="form-control input-textup" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
+                            <input type="text" class="form-control text-capitalize" name="last_name" placeholder="Введите Фамилия" required value="<?= $this->value('last_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Имя пользователя:</label>
-                            <input type="text" class="form-control input-textup" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
+                            <input type="text" class="form-control text-capitalize" name="first_name" placeholder="Введите имя" required value="<?= $this->value('first_name') ?>">
                         </div>
 
                         <div class="form-group">
                             <label>Отчество пользователя:</label>
-                            <input type="text" class="form-control input-textup" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
+                            <input type="text" class="form-control text-capitalize" name="father_name" placeholder="Введите Отчество" required value="<?= $this->value('father_name') ?>">
                         </div>
 
                     </fieldset>
@@ -176,12 +176,6 @@ class UserModel extends Model
 
             $(function(){
                 $("#division_id").chained("#user_level");
-            });
-
-            document.querySelector(".input-textup").addEventListener("input", function() {
-                if (this.value[0]) {
-                    this.value = this.value[0].toUpperCase() + this.value.slice(1);
-                }
             });
 
             function TableChange(the) {

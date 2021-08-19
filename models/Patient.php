@@ -55,15 +55,15 @@ class PatientForm extends Model
 
                                     <div class="form-group">
                                         <label>Фамилия пациента:</label>
-                                        <input type="text" name="last_name" id="last_name" class="form-control input-textup" placeholder="Введите Фамилия" value="<?= $this->value('last_name') ?>" required>
+                                        <input type="text" name="last_name" id="last_name" class="form-control text-capitalize" placeholder="Введите Фамилия" value="<?= $this->value('last_name') ?>" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Имя пациента:</label>
-                                        <input type="text" name="first_name" id="first_name" class="form-control input-textup" placeholder="Введите имя" value="<?= $this->value('first_name') ?>" required>
+                                        <input type="text" name="first_name" id="first_name" class="form-control text-capitalize" placeholder="Введите имя" value="<?= $this->value('first_name') ?>" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Отчество пациента:</label>
-                                        <input type="text" name="father_name" id="father_name" class="form-control input-textup" placeholder="Введите Отчество" value="<?= $this->value('father_name') ?>" required>
+                                        <input type="text" name="father_name" id="father_name" class="form-control text-capitalize" placeholder="Введите Отчество" value="<?= $this->value('father_name') ?>" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Дата рождение:</label>
@@ -179,12 +179,6 @@ class PatientForm extends Model
         <script type="text/javascript">
             $(function(){
                 $("#region").chained("#province");
-            });
-
-            document.querySelector(".input-textup").addEventListener("input", function() {
-                if (this.value[0]) {
-                    this.value = this.value[0].toUpperCase() + this.value.slice(1);
-                }
             });
         </script>
         <?php

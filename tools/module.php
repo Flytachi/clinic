@@ -19,14 +19,22 @@ function module($value = null)
 
 }
 
-function config($value = null)
+function config($value = null, $group = null)
 {
     global $db;
     $mark = "constant_";
     try {
         if ($value) {
             $value = str_replace($mark, '', $value);
-            return $db->query("SELECT const_value FROM company_constants WHERE const_label = '$mark$value'")->fetchColumn();
+            if ($group) {
+                foreach ($db->query("SELECT * FROM company_constants WHERE const_label LIKE '$mark$value%'") as $row) {
+                    $modules[$row['const_label']] = $row['const_value'];
+                }
+                return $modules;
+            } else {
+                return $db->query("SELECT const_value FROM company_constants WHERE const_label = '$mark$value'")->fetchColumn();
+            }
+            
         } else {
             foreach ($db->query("SELECT * FROM company_constants WHERE const_label LIKE '$mark%'") as $row) {
                 $modules[$row['const_label']] = $row['const_value'];
