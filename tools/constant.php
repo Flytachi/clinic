@@ -16,6 +16,9 @@ $PERSONAL = array(
     32 => "Касса-Регистратура",
 );
 
+$print_text_count = 3;
+$print_hr_count = 4;
+
 $CATEGORY = array(
     2 => "Лекарства",
     3 => "Расходные материалы",

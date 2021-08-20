@@ -68,7 +68,7 @@ $header = "Настройки";
 										<input type="text" name="constant_print_header_phones" value="<?= config("print_header_phones") ?>" placeholder="Введите телефон" class="form-control">
 									</div>
 								</div>
-
+								
 							</fieldset>
 
 							<fieldset class="mb-3">

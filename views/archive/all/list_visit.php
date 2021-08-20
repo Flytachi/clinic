@@ -89,8 +89,8 @@ if (!$patient) {
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
 											</td>
-                                            <td><?= date_f($row->add_date, 1) ?></td>
-                                            <td><?= date_f($row->completed, 1) ?></td>
+                                            <td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+                                            <td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td>
 												<?php if ($row->direction): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Стационарный</span>
