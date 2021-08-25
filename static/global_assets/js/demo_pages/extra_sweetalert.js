@@ -87,7 +87,7 @@ var SweetAlert = (function () {
                         swal({
                             position: "top",
                             title: "Stage 0-1! Невозможно завершить!",
-                            text: "У пациента есть не завершёные услуги, направленые вами.",
+                            text: "У пациента есть незавершенные услуги, направленные вами.",
                             type: "error",
                             padding: 30,
                         });
@@ -142,7 +142,7 @@ var SweetAlert = (function () {
                             position: "top",
                             title: "Внимание!",
                             html:
-                                "Есть не завершённые визиты диагностики!<br>" +
+                                "Есть незавершенные визиты диагностики!<br>" +
                                 question,
                             type: "warning",
                             showCancelButton: true,
@@ -175,7 +175,7 @@ var SweetAlert = (function () {
                         swal({
                             position: "top",
                             title: "Stage 1-1! Невозможно выписать!",
-                            text: "У пациента есть не завершёные визиты.",
+                            text: "У пациента есть незавершенные визиты.",
                             type: "error",
                             padding: 30,
                         });
@@ -202,7 +202,7 @@ var SweetAlert = (function () {
                         swal({
                             position: "top",
                             title: "Stage 1-2! Невозможно выписать!",
-                            text: "У пациента есть не завершёные операции.",
+                            text: "У пациента есть незавершенные операции.",
                             type: "error",
                             padding: 30,
                         });
@@ -229,7 +229,7 @@ var SweetAlert = (function () {
                         swal({
                             position: "top",
                             title: "Stage 1-3! Невозможно выписать!",
-                            text: "В листе назначений есть не завершённые процедуры.",
+                            text: "В листе назначений есть незавершенные процедуры.",
                             type: "error",
                             padding: 30,
                         });
@@ -259,7 +259,7 @@ var SweetAlert = (function () {
                             swal({
                                 position: "top",
                                 title: "Stage 1-4! Невозможно выписать!",
-                                text: "Дата выписки не совпадает с сегоднешней.",
+                                text: "Дата выписки не совпадает с сегодняшней.",
                                 type: "error",
                                 padding: 30,
                             });
@@ -294,7 +294,7 @@ var SweetAlert = (function () {
                         swal({
                             position: "top",
                             title: "Stage 1-5! Невозможно выписать!",
-                            text: "Форма заключения не запонена.",
+                            text: "У вас есть незавершённые услуги.",
                             type: "error",
                             padding: 30,
                         });

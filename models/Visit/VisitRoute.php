@@ -18,7 +18,7 @@ class VisitRoute extends Model
         <form method="post" action="<?= add_url() ?>">
 
             <div class="<?= $classes['modal-global_header'] ?>">
-                <h6 class="modal-title">Назначить визит</h6>
+                <h6 class="modal-title">Назначить услугу</h6>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 

@@ -70,16 +70,16 @@ require_once 'callback.php';
 											<tr>
 												<td><?= $row->operation_name ?></td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<?php if (!$row->completed_date and is_grant()): ?>
+												<?php if (!$row->completed and is_grant()): ?>
 													<td class="text-primary" onclick='Update(`<?= up_url($row->id, "VisitOperationsModel", "form_operation_date") ?>`)'>
-														<?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1): '<span class="text-muted">Нет данных</span>' ?>
+														<?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1) : '<span class="text-muted">Нет данных</span>' ?>
 													</td>
 												<?php else: ?>
 													<td><?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<?php endif; ?>
-												<td><?= ($row->completed_date) ? date_f($row->completed_date) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= ($row->operation_end_date) ? date_f("$row->operation_end_date $row->operation_end_time", 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td class="text-right">
-													<?php if ($row->completed_date): ?>
+													<?php if ($row->completed): ?>
 														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>&type=0`)' class="btn btn-outline-warning btn-sm">До</button>
 														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>&type=1`)' class="btn btn-outline-success btn-sm">После</button>
 													<?php else: ?>

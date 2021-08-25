@@ -22,13 +22,22 @@ class VisitFinish extends Model
             $data = $db->query("SELECT * FROM $this->_visits WHERE id = $pk")->fetch();
             
             if ($data['direction'] and $data['grant_id'] == $session->session_id) {
+
                 // Выписка
-                dd($data);
+                $vis_service = $db->query("SELECT id FROM $this->table WHERE visit_id = $pk AND completed IS NULL AND status = 3 AND service_id = 1")->fetchColumn();
+                Mixin\update($this->_visits, array('is_active' => null), $data['id']);
+                Mixin\update($this->table, array('status' => 1, 'completed' => date('Y-m-d H:i:s')), $vis_service);
+                $bed = $db->query("SELECT * FROM visit_beds WHERE visit_id = $pk AND end_date IS NULL")->fetch();
+                Mixin\update($this->_beds, array('user_id' => null), $bed['bed_id']);
+                Mixin\update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
+
             }else {
+
                 // Завершение
                 foreach($db->query("SELECT * FROM $this->table WHERE visit_id = $pk AND completed IS NULL AND status = 3 AND parent_id = $session->session_id") as $row){
                     $this->update_service($row['id']);
                 }
+
             }
         }
         

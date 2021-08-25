@@ -4,8 +4,8 @@ class VisitPricesModel extends Model
 {
     public $table = 'visit_prices';
     public $_services = 'visit_services';
+    public $_investment = 'visit_investments';
     public $table1 = 'visits';
-    public $table2 = 'investment';
 
     public function form($pk = null)
     {
@@ -224,12 +224,12 @@ class VisitPricesModel extends Model
     public function form_button($pk = null, $vps = null)
     {
         global $session, $classes;
+        dd($vps);
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $session->session_id ?>">
-            <input type="hidden" name="user_id" value="<?= $pk ?>">
-            <input type="hidden" name="bed_cost" value="<?php // $price['cost_bed'] ?>">
+            <input type="hidden" name="visit_id" value="<?= $pk ?>">
             <?php /*if(module('module_pharmacy')): ?>
                 <?php if($completed): ?>
                     <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>
@@ -238,7 +238,9 @@ class VisitPricesModel extends Model
             <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitSalesModel') ?>')" type="button" class="<?= $classes['price_btn-sale'] ?>">Скидка</button>
             <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentsModel') ?>&type=0')" type="button" class="<?= $classes['price_btn-prepayment'] ?>">Предоплата</button>
             <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentsModel') ?>&type=1')" type="button" class="<?= $classes['price_btn-refund'] ?>">Возврат</button>
-            <button onclick="CardFuncFinish('<?= $vps['id'] ?>')" type="button" class="<?= $classes['price_btn-finish'] ?>">Расщёт</button>
+            <?php if(!$vps['is_active']): ?>
+                <button onclick="CardFuncFinish('<?= $vps['id'] ?>')" type="button" class="<?= $classes['price_btn-finish'] ?>">Расщёт</button>
+            <?php endif; ?>
             <button onclick="CardFuncDetail('<?= up_url($vps['id'], 'PricePanel', 'DetailPanel') ?>')" type="button" class="<?= $classes['price_btn-detail'] ?>" data-show="1">Детально</button>
             
         </form>
@@ -279,7 +281,6 @@ class VisitPricesModel extends Model
             function CardFuncFinish(pk) {
                 var result = Number("<?= $vps['result'] ?>");
                 event.preventDefault();
-                // $('#<?= __CLASS__ ?>_form').submit();
 
                 if (Math.round(result) != 0) {
 
@@ -294,45 +295,34 @@ class VisitPricesModel extends Model
                     }).show();
 
                 }else {
-
-                    new Noty({
-                        text: "В разработке!",
-                        type: 'warning'
-                    }).show();
                     
-                    // $.ajax({
-                    //     type: $('#<?= __CLASS__ ?>_form').attr("method"),
-                    //     url: $('#<?= __CLASS__ ?>_form').attr("action"),
-                    //     data: $('#<?= __CLASS__ ?>_form').serializeArray(),
-                    //     success: function (result) {
-                    //         // alert(result);
-                    //         var result = JSON.parse(result);
+                    $.ajax({
+                        type: $('#<?= __CLASS__ ?>_form').attr("method"),
+                        url: $('#<?= __CLASS__ ?>_form').attr("action"),
+                        data: $('#<?= __CLASS__ ?>_form').serializeArray(),
+                        success: function (result) {
+                            var result = JSON.parse(result);
 
-                    //         if (result.status == "success") {
-                    //             // Выдача выписки
-                    //             var url = "<?= viv('prints/document_3') ?>?id="+pk;
-                    //             Print(url);
-                    //             // Перезагрузка
-                    //             sessionStorage['message'] = result.message;
-                    //             setTimeout( function() {
-                    //                     location.reload();
-                    //                 }, 1000)
-                    //         }else {
-                    //             $('#check_div').html(result.message);
-                    //         }
+                            if (result.status == "success") {
+                                // Выдача выписки
+                                Print(result.val);
+                                // Перезагрузка
+                                sessionStorage['message'] = result.message;
+                                setTimeout( function() {
+                                        location.reload();
+                                    }, 1000)
+                            }else {
+                                new Noty({
+                                    text: result.message,
+                                    type: 'error'
+                                }).show();
+                            }
 
-                    //     },
-                    // });
+                        },
+                    });
+
                 }
             }
-
-            // function printdiv(printpage) {
-            //     var printContents = document.getElementById(printpage).innerHTML;
-            //     var originalContents = document.body.innerHTML;
-            //     document.body.innerHTML = printContents;
-            //     window.print();
-            //     document.body.innerHTML = originalContents;
-            // }
 
         </script>
         <?php
@@ -463,10 +453,14 @@ class VisitPricesModel extends Model
         $this->post['price_transfer'] = (isset($this->post['price_transfer'])) ? str_replace(',', '', $this->post['price_transfer']) : 0;
         $this->visit = $db->query("SELECT * FROM $this->table1 WHERE id = {$this->post['visit_id']}")->fetch();
         unset($this->post['visit_id']);
+
         
         if ($this->visit['direction']) {
-            # Stationar 
-            $this->dd();
+            # Stationar
+
+            $this->post = Mixin\clean_form($this->post);
+            $this->post = Mixin\to_null($this->post);
+            return True;
 
         }else{
             # Ambulator
@@ -760,81 +754,17 @@ class VisitPricesModel extends Model
 
     public function stationar_price()
     {
-        global $db;
-        // if (isset($this->pharm_cost)) {
-        //     foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.operation_id, vp.item_type, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vp.item_type IN(2,3,4) AND vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
-        //         $this->price($row, 0);
-        //     }
-        //     $db->commit();
-        //     echo 1;
-        //     exit;
-        // } else {
-        //     if (module('module_pharmacy') and 0 < $db->query("SELECT vp.id FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vp.item_type IN(2,3,4) AND vs.priced_date IS NULL AND vs.user_id = $this->user_pk AND vp.price_date IS NULL ORDER BY vp.item_cost")->rowCount()) {
-        //         $this->error("Ошибка! Оплатите лекарства.");
-        //         exit;
-        //     }
-        //     $balance = $db->query("SELECT SUM(balance_cash) 'balance_cash', SUM(balance_card) 'balance_card', SUM(balance_transfer) 'balance_transfer' FROM $this->table2 WHERE user_id = $this->user_pk")->fetch();
-        //     if ($balance['balance_cash'] < 0 or $balance['balance_card'] < 0 or $balance['balance_transfer'] < 0) {
-        //         $this->error("Критическая ошибка!");
-        //         exit;
-        //     }
-        //     $this->add_bed();
-        //     $this->post['sale'] = null;
-        //     if ($balance['balance_cash'] != 0) {
-        //         $this->post['price_cash'] = $balance['balance_cash'];
-        //     }
-        //     if ($balance['balance_card'] != 0) {
-        //         $this->post['price_card'] = $balance['balance_card'];
-        //     }
-        //     if ($balance['balance_transfer'] != 0) {
-        //         $this->post['price_transfer'] = $balance['balance_transfer'];
-        //     }
-
-        //     foreach ($db->query("SELECT vp.id, vs.id 'visit_id', vp.operation_id, vp.item_type, vp.item_id, vp.item_cost, vp.item_name FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vp.item_type IN(1,5,101) AND vs.priced_date IS NULL AND vs.user_id = $this->user_pk ORDER BY vp.item_cost") as $row) {
-        //         if ($row['operation_id']) {
-        //             Mixin\update('operation', array('priced_date' => date('Y-m-d H:i:s')), $row['operation_id']);
-        //             unset($row['operation_id']);
-        //         }
-        //         $this->price($row, 0);
-        //     }
-        //     $this->up_invest();
-        //     Mixin\update($this->table1, array('status' => null), $this->ti);
-        // }
+        global $session;
+        $vps = (new VisitModel)->price_status($this->visit['id']);
+        if ($vps['result'] != 0) {
+            $this->error("В транзакции отказано!");
+        }
+        Mixin\update($this->_investment, array('expense' => 1, 'expense_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
+        Mixin\update($this->table, array('pricer_id' => $session->session_id, 'is_price' => 1, 'price_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
+        Mixin\update($this->table1, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
+        (new UserModel())->update_status($this->visit['user_id']);
+        
     }
-
-    // public function add_bed()
-    // {
-    //     global $db;
-    //     $ti = $db->query("SELECT vs.*, vss.sale_bed, vss.sale_service FROM $this->table1 vs LEFT JOIN visit_sale vss ON(vss.visit_id=vs.id) WHERE vs.user_id = $this->user_pk AND vs.service_id = 1 AND vs.priced_date IS NULL AND vs.completed IS NOT NULL")->fetch();
-    //     $this->ti = $ti['id'];
-    //     $this->sale_bed = $ti['sale_bed'];
-    //     $this->sale_service = $ti['sale_service'];
-    //     $bed = $db->query("SELECT wd.floor, wd.ward, bd.bed FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) WHERE bd.id = {$ti['bed_id']}")->fetch();
-    //     $post['visit_id'] = $ti['id'];
-    //     $post['user_id'] = $this->user_pk;
-    //     $post['pricer_id'] = $this->post['pricer_id'];
-    //     $post['status'] = 0;
-    //     $post['item_type'] = 101;
-    //     $post['item_id'] = $ti['bed_id'];
-    //     $post['item_name'] = $bed['floor']." этаж ".$bed['ward']." палата ".$bed['bed']." койка";
-    //     $post['item_cost'] = $this->bed_cost;
-    //     $object = Mixin\insert($this->table, $post);
-    //     if (!intval($object)) {
-    //         $this->error($object);
-    //     }
-    // }
-
-    // public function up_invest()
-    // {
-    //     global $db;
-    //     foreach ($db->query("SELECT * FROM $this->table2 WHERE user_id = $this->user_pk") as $row) {
-    //         $object = Mixin\update($this->table2, array('status' => null), $row['id']);
-    //         if (!intval($object)){
-    //             $this->error($object);
-    //         }
-    //     }
-    //     Mixin\update('users', array('status' => null), $this->user_pk);
-    // }
 
     public function err_temp(Int $temp = 0)
     {   
@@ -870,10 +800,11 @@ class VisitPricesModel extends Model
             Успешно
         </div>
         ';
-        if (isset($this->bed_cost)) {
+        if (isset($this->visit['direction'])) {
             echo json_encode(array(
                 'status' => "success",
-                'message' => $value
+                'message' => $value,
+                'val' => prints('document-3')."?pk=".$this->visit['id']
             ));
         }else {
             echo json_encode(array(

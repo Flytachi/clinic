@@ -5,7 +5,7 @@ $session->is_auth();
 if ($_GET['main']) {
 
     if ($_GET['stage'] == 1) {
-        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id != $session->session_id AND completed IS NULL";
+        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND (parent_id IS NULL OR parent_id IS NOT NULL AND parent_id != $session->session_id) AND completed IS NULL";
     } else if($_GET['stage'] == 2) {
         $sql = "SELECT id FROM visit_operations WHERE visit_id = {$_GET['pk']} AND completed IS NULL";
     } else if($_GET['stage'] == 3) {
@@ -24,7 +24,7 @@ if ($_GET['main']) {
         echo $db->query($sql)->fetchColumn();
         exit;
     } else if($_GET['stage'] == 5) {
-        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_id != 1 AND service_title IS NULL";
+        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_id != 1";
     } else if($_GET['stage'] == 6) {
         // $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_id = 1 AND service_title IS NULL";
     }
@@ -32,7 +32,7 @@ if ($_GET['main']) {
 }else {
 
     if ($_GET['stage'] == 1) {
-        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND route_id = $session->session_id AND parent_id != $session->session_id AND completed IS NULL";
+        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND route_id = $session->session_id AND (parent_id IS NULL OR parent_id IS NOT NULL AND parent_id != $session->session_id) AND completed IS NULL";
     } else if($_GET['stage'] == 2) {
         $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_title IS NOT NULL";
     } else if($_GET['stage'] == 3) {

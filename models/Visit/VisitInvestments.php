@@ -42,7 +42,7 @@ class VisitInvestmentsModel extends Model
                     <tbody>
                         <tr class="table-secondary">
                             <td><?= ($this->value('type')) ? "Баланс": "Сумма к оплате" ?></td>
-                            <td><?= ($this->value('type')) ? number_format($vps['balance']): number_format(-$vps['total_cost']) ?></td>
+                            <td><?= ($this->value('type')) ? number_format($vps['balance']): number_format(-$vps['result']) ?></td>
                         </tr>
                     </tbody>
                 </table>

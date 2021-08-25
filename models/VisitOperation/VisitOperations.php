@@ -137,9 +137,54 @@ class VisitOperationsModel extends Model
         </form>
         <?php
     }
+
+    public function form_operation_finish($pk = null)
+    {
+        global $classes;
+        ?>
+        <div class="<?= $classes['modal-global_header'] ?>">
+            <h5 class="modal-title">Завершить операцию</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <form method="post" action="<?= add_url() ?>">
+            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="completed" value="1">
+
+            <div class="modal-body">
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Дата:</label>
+                        <input type="date" class="form-control" name="operation_end_date" value="<?= $this->value('operation_date') ?>">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Время:</label>
+                        <input type="time" class="form-control" name="operation_end_time" value="<?= $this->value('operation_time') ?>">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
+            </div>
+
+        </form>
+        <?php
+    }
     
     public function clean()
     {
+        if (isset($this->post['completed']) and $this->post['completed']) {
+            $this->post['completed_date'] = date('Y-m-d H:i:s');
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -175,6 +220,37 @@ class VisitOperationsModel extends Model
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
+            }
+
+            $db->commit();
+            $this->success();
+        }
+    }
+
+    public function update()
+    {
+        global $db;
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $db->beginTransaction();
+
+            $price = $db->query("SELECT operation_cost FROM $this->table WHERE id = $pk")->fetchColumn(); 
+            $price += $db->query("SELECT SUM(item_cost) FROM visit_operation_services WHERE operation_id = $pk")->fetchColumn(); 
+            $price += $db->query("SELECT SUM(member_price) FROM visit_operation_members WHERE operation_id = $pk")->fetchColumn(); 
+            // preparats $price += $db->query("SELECT SUM(member_price) FROM visit_operation_members WHERE operation_id = $pk")->fetchColumn(); 
+            $price += $db->query("SELECT SUM(item_cost) FROM visit_operation_consumables WHERE operation_id = $pk")->fetchColumn(); 
+            
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error("Ошибка при завершении операции!");
+                exit;
+            }
+
+            $object2 = Mixin\update($this->_prices, array('item_cost' => $price), array('visit_service_id' => $pk, 'item_type' => 3));
+            if (!intval($object2)){
+                $this->error("Ошибка при записи новой цены!");
+                exit;
             }
 
             $db->commit();

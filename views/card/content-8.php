@@ -1,11 +1,12 @@
 <?php
 require_once 'callback.php';
+is_module('module_diagnostic');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-
 <body>
+
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
 	<!-- /main navbar -->
@@ -35,14 +36,34 @@ require_once 'callback.php';
 
 				    <div class="card-body">
 
-						<?php include "content_tabs.php"; ?>
+				        <?php include "content_tabs.php"; ?>
 
-						<legend class="font-weight-semibold text-uppercase font-size-sm">
-							<i class="icon-googleplus5 mr-2"></i>Физиотерапия
-							<?php if ( ($activity and !$patient->direction) or ($patient->direction and permission(5)) ): ?>
-								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_physio") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
+						<legend class="font-weight-semibold font-size-sm">
+							<i class="icon-fire2 mr-2"></i><span class="text-uppercase">Диагностика</span>
+							<?php if ($activity and permission(5)): ?>
+								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_diagnostic") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right text-uppercase <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
+								<?php if (module('module_zetta_pacs')): ?>
+									<?php 
+									$zeT = zeTTa_data();
+									$message_z = "";
+									foreach ($zeT as $key => $value) {
+										if (!$value) {
+											$message_z .= "Данных о $key нет!<br>";
+										}
+									}
+									?>
+									<?php if ($message_z == ""): ?>
+										<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
+											ZeTTa-PACS
+										</a>
+									<?php else: ?>
+										<a onclick="swal('<?= $message_z ?>')" class="float-right text-violet mr-2">
+											ZeTTa-PACS
+										</a>
+									<?php endif; ?>
+								<?php endif; ?>
 							<?php endif; ?>
 						</legend>
 
@@ -53,9 +74,11 @@ require_once 'callback.php';
 									<thead class="<?= $classes['table-thead'] ?>">
 										<tr>
 											<th>№</th>
-				                            <th>Мед услуга</th>
+				                            <th>Отдел/Специалист</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
+				                            <th>Мед услуга</th>
+				                            <th>Направитель</th>
 											<th>Статус</th>
 											<th class="text-right">Действия</th>
 										</tr>
@@ -63,14 +86,33 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, division_id, route_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 12")->order_by('add_date DESC');
+										$tb->set_data("id, division_id, route_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 10")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
-												<td><?= $row->service_name ?></td>
+												<td>
+													<?php if($row->parent_id): ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php else: ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+													<?php endif; ?>
+												</td>
 												<td><?= ($row->accept_date) ? date_f($row->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= $row->service_name ?></td>
+												<td>
+													<?php
+													if ($title = division_title($row->route_id)) {
+														echo $title;
+													}else {
+														echo level_name($row->route_id);
+													}
+													unset($title);
+													?>
+													<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
+												</td>
 												<td>
 													<?php if ($row->status == 1): ?>
 														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
@@ -93,6 +135,10 @@ require_once 'callback.php';
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<?php if( $activity and ( (!$patient->direction and $row->status == 1) or ( $patient->direction and $row->status == 2 and ($row->route_id == $session->session_id or is_grant()) ) ) ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
+														<?php endif; ?>
+														<?php if ( in_array($row->status, [3,5,7]) ): ?>
+															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
 													</div>
 												</td>
@@ -136,19 +182,30 @@ require_once 'callback.php';
 			});
 		};
 
-        function Delete(url, tr) {
-            event.preventDefault();
-            $.ajax({
+		function Check(events) {
+			$.ajax({
 				type: "GET",
-				url: url,
+				url: events,
+				success: function (data) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(data);
+				},
+			});
+		};
+
+		function Delete(events, tr) {
+			$.ajax({
+				type: "GET",
+				url: events,
 				success: function (result) {
 					var data = JSON.parse(result);
 
 					if (data.status == "success") {
-						$(tr).css("background-color", "rgb(244, 67, 54)");
+
+						$(tr).css("background-color", "red");
 						$(tr).css("color", "white");
-						$(tr).fadeOut(900, function() {
-							$(tr).remove();
+						$(tr).fadeOut('slow', function() {
+							$(this).remove();
 						});
 						new Noty({
 							text: data.message,
@@ -163,11 +220,9 @@ require_once 'callback.php';
 						}).show();
 						
 					}
-
 				},
 			});
-        };
-
+		};
 	</script>
 
     <!-- Footer -->

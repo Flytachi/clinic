@@ -458,20 +458,41 @@ class VisitModel extends Model
         global $db;
         if ($pk) {
             if ($db->query("SELECT completed FROM $this->table WHERE id = $pk")->fetchColumn()) {
-                return "В разработке!";
-            } else {
                 $sql = "SELECT
                         v.id,
                         v.grant_id,
-                        IFNULL( (SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL) , 0) 'balance',
+                        IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NOT NULL)), 0) 'balance',
                         IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
-                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1, 0) 'cost-beds',
-                        IFNULL( (SELECT SUM(vp.item_cost) FROM visit_prices vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,3) AND vp.is_price IS NULL) * -1, 0) 'cost-services',
+                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_prices vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,3) AND vp.is_price IS NOT NULL) * -1), 0) 'cost-services',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
                         IFNULL( vl.sale_bed_unit + vl.sale_service_unit , 0) 'sale-total',
                         -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
-                        v.add_date
+                        v.add_date,
+                        v.is_active,
+                        v.completed
+                    FROM visits v 
+                        LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
+                    WHERE v.id = $pk";
+                $object = $db->query($sql)->fetch();
+                $object['total_cost'] = $object['cost-services'] + $object['cost-beds'];
+                $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
+                return $object;
+            } else {
+                $sql = "SELECT
+                        v.id,
+                        v.grant_id,
+                        IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL)), 0) 'balance',
+                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
+                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_prices vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,3) AND vp.is_price IS NULL) * -1), 0) 'cost-services',
+                        IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
+                        IFNULL( vl.sale_service_unit , 0) 'sale-service',
+                        IFNULL( vl.sale_bed_unit + vl.sale_service_unit , 0) 'sale-total',
+                        -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                        v.add_date,
+                        v.is_active
                     FROM visits v 
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";

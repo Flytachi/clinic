@@ -38,34 +38,55 @@ require_once 'callback.php';
 				        <?php include "content_tabs.php"; ?>
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
-							<i class="icon-vcard mr-2"></i>Мои заключения
+							<i class="icon-clipboard6 mr-2"></i>Другие услуги
 						</legend>
-
+						
 						<div class="card">
 
 							<div class="table-responsive">
-				                <table class="table table-hover table-sm">
-				                    <thead class="<?= $classes['table-thead'] ?>">
-				                        <tr>
-				                            <th>№</th>
-				                            <th>Мед услуга</th>
+								<table class="table table-hover table-sm">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
+											<th>№</th>
+				                            <th>Отдел/Специалист</th>
 											<th>Дата визита</th>
 											<th>Дата завершения</th>
+				                            <th>Мед услуга</th>
+											<th>Напрвитель</th>
 											<th>Статус</th>
-				                            <th class="text-center">Действия</th>
-				                        </tr>
-				                    </thead>
-				                    <tbody>
+											<th class="text-right">Действия</th>
+										</tr>
+									</thead>
+									<tbody>
 										<?php
 										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, service_name, accept_date, completed, status")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id")->order_by('add_date DESC');
+										$tb->set_data("id, route_id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 5 AND route_id != $session->session_id AND parent_id != $session->session_id AND service_id != 1")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
-											<tr>
+											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
-												<td><?= $row->service_name ?></td>
+												<td>
+													<?php if($row->parent_id): ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+													<?php else: ?>
+														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
+													<?php endif; ?>
+												</td>
 												<td><?= ($row->accept_date) ? date_f($row->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
+												<td><?= $row->service_name ?></td>
+												<td>
+													<?php
+													if ($title = division_title($row->route_id)) {
+														echo $title;
+													}else {
+														echo level_name($row->route_id);
+													}
+													unset($title);
+													?>
+													<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
+												</td>
 												<td>
 													<?php if ($row->status == 1): ?>
 														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
@@ -88,15 +109,16 @@ require_once 'callback.php';
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<?php if ( in_array($row->status, [3,5,7]) ): ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>
-														<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													</div>
 												</td>
 											</tr>
 										<?php endforeach; ?>
-				                    </tbody>
-				                </table>
-				            </div>
+										
+									</tbody>
+								</table>
+							</div>
 
 						</div>
 
@@ -112,7 +134,7 @@ require_once 'callback.php';
 		<!-- /main content -->
 	</div>
 	<!-- /page content -->
-	
+
 	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
@@ -124,13 +146,45 @@ require_once 'callback.php';
 			$.ajax({
 				type: "GET",
 				url: events,
-				success: function (result) {
+				success: function (data) {
 					$('#modal_default').modal('show');
-					$('#form_card').html(result);
+					$('#form_card').html(data);
 				},
 			});
 		};
 	</script>
+
+	<?php if(module('module_laboratory')): ?>
+		<script type="text/javascript">
+
+			items = [];
+
+			function Change_lab(tbody, id) {
+				if (tbody.dataset.stat == 1) {
+					tbody.dataset.stat = "0";
+					tbody.className = "";
+
+					for(let a = 0; a < items.length; a++){
+						if(items[a] == id ){
+							items.splice(a, 1);
+						}
+					}
+
+				}else {
+					tbody.dataset.stat = "1";
+					tbody.className = "table-warning";
+					items.push(id);
+				}
+			}
+
+			function PrePrint(url) {
+				if (items.length != 0) {
+					Print(url+`&items=[${items}]`);
+				}
+			}
+
+		</script>
+	<?php endif; ?>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

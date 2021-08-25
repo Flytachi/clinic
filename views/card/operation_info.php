@@ -80,8 +80,8 @@ if (!isset($_GET['type'])) {
                     <div style="display:none;" id="content_dinamic">
                         <?php
                         if (!isset($_GET['type'])) $stats_where = "operation_id=$operation->id";
-                        elseif ($_GET['type'] == 1) $stats_where = "operation_id=$operation->id AND add_date >= \"$patient->completed\"";
-                        else $stats_where = "operation_id=$operation->id AND add_date < \"$patient->completed\"";
+                        elseif ($_GET['type'] == 1) $stats_where = "operation_id=$operation->id AND \"$operation->completed\" >= CURRENT_DATE()";
+                        else $stats_where = "operation_id=$operation->id AND \"$operation->completed\" < CURRENT_DATE()";
                         $operation_stats = (new Table($db, "visit_operation_stats"))->set_data("pressure, pulse, temperature, saturation, time")->where($stats_where)->order_by('add_date DESC');
                         ?>
                         <?php foreach ($operation_stats->get_table() as $row): ?>
@@ -106,7 +106,7 @@ if (!isset($_GET['type'])) {
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
             <i class="icon-bag mr-2"></i>Услуги анестезиолога
-            <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission([8,11]))): ?>
+            <?php if ($activity and !$operation->completed and (is_grant() or permission([8,11]))): ?>
                 <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationServicesModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
                     <i class="icon-plus22"></i>Добавить
                 </a>
@@ -121,7 +121,7 @@ if (!isset($_GET['type'])) {
                         <tr class="bg-<?= $color ?>">
                             <th style="width:84%">Услуга</th>
                             <th class="text-right">Сумма</th>
-                            <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission([8,11]))): ?>
+                            <?php if ($activity and !$operation->completed and (is_grant() or permission([8,11]))): ?>
                                 <th class="text-right" style="width:50px">Действия</th>
                             <?php endif; ?>
                         </tr>
@@ -137,7 +137,7 @@ if (!isset($_GET['type'])) {
                                     echo number_format($row->item_cost, 1);   
                                     ?>
                                 </td>
-                                <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission([8,11]))): ?>
+                                <?php if ($activity and !$operation->completed and (is_grant() or permission([8,11]))): ?>
                                     <td class="text-right">
                                         <div class="list-icons">
                                             <button onclick="Delete('<?= del_url($row->id, 'VisitOperationServicesModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
@@ -149,7 +149,7 @@ if (!isset($_GET['type'])) {
                         <tr class="table-secondary">
                             <th colspan="1" class="text-right">Итого:</th>
                             <th class="text-right"><?= number_format($total_service_price, 1) ?></th>
-                            <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission([8,11]))): ?>
+                            <?php if ($activity and !$operation->completed and (is_grant() or permission([8,11]))): ?>
                                 <th></th>
                             <?php endif; ?>
                         </tr>
@@ -166,7 +166,7 @@ if (!isset($_GET['type'])) {
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
     		<i class="icon-reading mr-2"></i>Персонал
-            <?php if ($activity and $patient->direction and is_grant() and !$patient->completed): ?>
+            <?php if ($activity and is_grant() and !$operation->completed): ?>
                 <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationMembersModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
         			<i class="icon-plus22"></i>Добавить
         		</a>
@@ -181,7 +181,7 @@ if (!isset($_GET['type'])) {
                         <tr class="bg-<?= $color ?>">
                             <th>ФИО</th>
                             <th>Сумма</th>
-                            <?php if ($activity and $patient->direction and is_grant() and !$patient->completed): ?>
+                            <?php if ($activity and is_grant() and !$operation->completed): ?>
                                 <th class="text-right" style="width:50px">Действия</th>
                             <?php endif; ?>
                         </tr>
@@ -197,7 +197,7 @@ if (!isset($_GET['type'])) {
                                     echo number_format($row->member_price, 1);
                                     ?>
                                 </td>
-                                <?php if ($activity and $patient->direction and is_grant() and !$patient->completed): ?>
+                                <?php if ($activity and is_grant() and !$operation->completed): ?>
                                     <td class="text-right">
                                         <div class="list-icons">
                                             <button onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationMembersModel').$get_data.'&item='.$row->id ?>')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
@@ -210,7 +210,7 @@ if (!isset($_GET['type'])) {
                         <tr class="table-secondary">
                             <th class="text-right">Итого:</th>
                             <th class="text-right"><?= number_format($total_opetrator_price, 1) ?></th>
-                            <?php if ($activity and $patient->direction and is_grant() and !$patient->completed): ?>
+                            <?php if ($activity and is_grant() and !$operation->completed): ?>
                                 <th></th>
                             <?php endif; ?>
                         </tr>
@@ -222,12 +222,75 @@ if (!isset($_GET['type'])) {
 
     </div>
 
+    <?php if(module('module_pharmacy')): ?>
+        <!-- Preparasts -->
+        <div class="col-md-5">
+
+            <legend class="font-weight-semibold text-uppercase font-size-sm">
+                <i class="icon-reading mr-2"></i>Персонал
+                <?php if ($activity and is_grant() and !$operation->completed): ?>
+                    <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationMembersModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
+                        <i class="icon-plus22"></i>Добавить
+                    </a>
+                <?php endif; ?>
+            </legend>
+
+            <div class="card border-1 border-<?= $color ?>">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-<?= $color ?>">
+                                <th>ФИО</th>
+                                <th>Сумма</th>
+                                <?php if ($activity and is_grant() and !$operation->completed): ?>
+                                    <th class="text-right" style="width:50px">Действия</th>
+                                <?php endif; ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $operation_members = (new Table($db, "visit_operation_members"))->where("operation_id = $operation->id")->order_by('member_name ASC'); ?>
+                            <?php foreach ($operation_members->get_table() as $row): ?>
+                                <tr>
+                                    <td><?= $row->member_name ?><?= ($row->member_operator) ? " <span class=\"text-$color\">(Оператор)</span>" : "" ?></td>
+                                    <td class="text-right text-success">
+                                        <?php
+                                        $total_opetrator_price += $row->member_price;
+                                        echo number_format($row->member_price, 1);
+                                        ?>
+                                    </td>
+                                    <?php if ($activity and is_grant() and !$operation->completed): ?>
+                                        <td class="text-right">
+                                            <div class="list-icons">
+                                                <button onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationMembersModel').$get_data.'&item='.$row->id ?>')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
+                                                <button onclick="Delete('<?= del_url($row->id, 'VisitOperationMembersModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    <?php endif; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                            <tr class="table-secondary">
+                                <th class="text-right">Итого:</th>
+                                <th class="text-right"><?= number_format($total_opetrator_price, 1) ?></th>
+                                <?php if ($activity and is_grant() and !$operation->completed): ?>
+                                    <th></th>
+                                <?php endif; ?>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    <?php endif; ?>
+
     <!-- Сonsumables -->
     <div class="col-md-5">
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
     		<i class="icon-puzzle3 mr-2"></i>Расходы
-            <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission(8))): ?>
+            <?php if ($activity and !$operation->completed and (is_grant() or permission(8))): ?>
                 <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationConsumablesModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
         			<i class="icon-plus22"></i>Добавить
         		</a>
@@ -242,7 +305,7 @@ if (!isset($_GET['type'])) {
                         <tr class="bg-<?= $color ?>">
                             <th style="width:84%;">Наименование</th>
                             <th class="text-right">Сумма</th>
-                            <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission(8))): ?>
+                            <?php if ($activity and !$operation->completed and (is_grant() or permission(8))): ?>
                                 <th class="text-right" style="width:50px">Действия</th>
                             <?php endif; ?>
                         </tr>
@@ -258,7 +321,7 @@ if (!isset($_GET['type'])) {
                                     echo number_format($row->item_cost, 1);
                                     ?>
                                 </td>
-                                <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission(8))): ?>
+                                <?php if ($activity and !$operation->completed and (is_grant() or permission(8))): ?>
                                     <td class="text-right">
                                         <div class="list-icons">
                                             <button onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationConsumablesModel').$get_data.'&item='.$row->id ?>')" class="btn btn-sm list-icons-item text-primary"><i class="icon-pencil7"></i></button>
@@ -271,7 +334,7 @@ if (!isset($_GET['type'])) {
                         <tr class="table-secondary">
                             <th colspan="1" class="text-right">Итого:</th>
                             <th class="text-right"><?= number_format($total_other_price, 1) ?></th>
-                            <?php if ($activity and $patient->direction and !$patient->completed and (is_grant() or permission(8))): ?>
+                            <?php if ($activity and !$operation->completed and (is_grant() or permission(8))): ?>
                                 <th></th>
                             <?php endif; ?>
                         </tr>
@@ -280,6 +343,60 @@ if (!isset($_GET['type'])) {
             </div>
 
         </div>
+
+    </div>
+
+<!-- ==> 3 Stage <== -->
+
+    <div class="col-md-12">
+
+        <legend class="font-weight-semibold text-uppercase font-size-sm">
+            <i class="icon-stats-bars mr-2"></i>Итог
+        </legend>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <tbody>
+
+                    <tr class="table-secondary">
+                        <td>Начальная стоимость операции</td>
+                        <td class="text-right text-success"><?= number_format($operation->operation_cost, 1) ?></td>
+                    </tr>
+                    <tr class="table-secondary">
+                        <td>Стоимость персонала операции</td>
+                        <td class="text-right text-success"><?= number_format($total_opetrator_price, 1) ?></td>
+                    </tr>
+                    <tr class="table-secondary">
+                        <td>Стоимость услуг анестезиолога</td>
+                        <td class="text-right text-success"><?= number_format($total_service_price, 1) ?></td>
+                    </tr>
+                    <?php if(module('module_pharmacy')): ?>    
+                        <tr class="table-secondary">
+                            <td>Стоимость препаратов</td>
+                            <td class="text-right text-success"><?= number_format($total_preparats_price, 1) ?></td>
+                        </tr>
+                    <?php endif; ?>
+                    <tr class="table-secondary">
+                        <td>Стоимость расходов</td>
+                        <td class="text-right text-success"><?= number_format($total_other_price, 1) ?></td>
+                    </tr>
+
+                    <tr class="table-<?= $color ?>">
+                        <th>Общая стоимость операции</th>
+                        <th class="text-right text-default"><?= number_format($total_opetrator_price + $total_service_price + $total_preparats_price + $total_other_price + $operation->operation_cost, 1) ?></th>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <?php if ($activity and is_grant() and !$operation->completed): ?>
+            <?php if(strtotime("$operation->operation_date $operation->operation_time") <= strtotime(date('Y-m-d H:i:s'))): ?>
+                <div class="text-right">
+                    <button onclick='UpdateOperations(`<?= up_url($operation->id, "VisitOperationsModel", "form_operation_finish") ?>`)' class="btn btn-outline-success btn-sm mt-2">Завершить</a>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
 
     </div>
 
@@ -327,6 +444,13 @@ if (!isset($_GET['type'])) {
 
             },
         });
+    };
+
+    function Finish_date(pk, visit_id, date) {
+        $('#modal_finish_date').modal('show');
+        $('#finish_id').val(pk);
+        $('#visit_id').val(visit_id);
+        document.getElementById('OperationModel_form').dataset.c_date = date;
     };
 
 </script>

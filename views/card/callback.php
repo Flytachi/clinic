@@ -16,7 +16,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $sql = "SELECT
                 us.id, us.birth_date, us.province, us.region, us.phone_number, us.gender, 
                 us.address_residence, us.address_registration, us.status, us.is_foreigner,
-                v.id 'visit_id', v.grant_id, v.direction, v.complaint, v.add_date, v.discharge_date, v.completed,
+                v.id 'visit_id', v.grant_id, v.direction, v.complaint, v.is_active, v.add_date, v.discharge_date, v.completed,
                 vr.id 'order'
             FROM visits v
                 LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)
@@ -24,8 +24,13 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
             WHERE v.id = {$_GET['pk']}";
 
     $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
+
     if (!$patient or ($activity and $patient->completed) ) {
         Mixin\error('404');
+    }if (!$patient->is_active and $activity) {
+        Mixin\error('404');
+    }elseif(!$patient->is_active and !$activity) {
+        $activity = False;
     }
 
     function is_grant(Int $id = null)

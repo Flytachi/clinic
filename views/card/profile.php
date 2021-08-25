@@ -178,13 +178,13 @@
                         <div class="col-md-6">
                             <div class="form-group row">
 
-                                <?php if ($activity): ?>
-                                    <label class="col-md-4"><b>Баланс:</b></label>
+                                <?php if ($patient->completed): ?>
+                                    <label class="col-md-4"><b>Прибыль:</b></label>
                                     <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
-                                        <?= number_format($vps['result']) ?>
+                                        <?= number_format($vps['balance']) ?>
                                     </div>
                                 <?php else: ?>
-                                    <label class="col-md-4"><b>Прибыль:</b></label>
+                                    <label class="col-md-4"><b>Баланс:</b></label>
                                     <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
                                         <?= number_format($vps['result']) ?>
                                     </div>
@@ -314,10 +314,10 @@
                 </script>
 
             <?php else: ?>
-                <!--
+
                 <div class="col-md-12">
                     <div class="text-right">
-                        <button onclick="Check_kwin('<?= viv('doctor/report') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-danger btn-sm">Выписка</button>
+                        <button onclick="Check_kwin('<?= viv('doctor/report-2') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>">Выписка</button>
                     </div>
                 </div>
 
@@ -341,7 +341,6 @@
             			});
             		};
             	</script>
-                -->
             <?php endif; ?>
 
         </div>

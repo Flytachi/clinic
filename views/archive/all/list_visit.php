@@ -107,22 +107,29 @@ if (!$patient) {
 											</td>
 											<td class="text-right">
 												<?php if(permission([5])): ?>
-													<a href="<?= viv('card/content_4') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
-												<?php elseif(permission([3,32])): ?>
-													<a href="<?= viv('card/content_3') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<?php if ($row->direction): ?>
+														<a href="<?= viv('card/content-2') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<?php else: ?>
+														<a href="<?= viv('card/content-6') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<?php endif; ?>
+												<?php elseif(permission([2,32])): ?>
+													<?php if ($row->direction): ?>
+														<a href="<?= viv('card/content-2') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<?php else: ?>
+														<a href="<?= viv('card/content-5') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<?php endif; ?>
 												<?php elseif(permission(6)): ?>
-													<a href="<?= viv('card/content_5') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<a href="<?= viv('card/content-7') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 												<?php elseif(permission(10)): ?>
-													<a href="<?= viv('card/content_6') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<a href="<?= viv('card/content-8') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 												<?php elseif(permission(12)): ?>
-													<a href="<?= viv('card/content_10') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<a href="<?= viv('card/content-10') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 												<?php else: ?>
-													<a href="<?= viv('card/content_2') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<a href="<?= viv('card/content-4') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 												<?php endif; ?>
 											</td>
                                         </tr>
 									<?php endforeach; ?>
-
                                 </tbody>
                             </table>
                         </div>

@@ -73,8 +73,8 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
-										<tr id="VisitService_tr_<?= $row->id ?>">
+									<?php foreach($tb->get_table(1) as $row): ?>
+										<tr id="VisitService_tr_<?= $row->count ?>">
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td>
 												<span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
@@ -103,21 +103,21 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                             </td>
                                             <td class="text-center">
 												<?php if (!division_assist()): ?>
-													<button onclick="VisitUpStatus(<?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+													<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                             	<?php else: ?>
                                             		<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
 														<?php if (!$row->direction): ?>
 															onclick="sendPatient(this)"
 														<?php endif; ?>
                                             			>Принять</button>
-													<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
+													<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
                                             	<?php endif; ?>
 
 												<?php if ($row->complaint): ?>
 													<button onclick="swal('<?= $row->complaint ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
 												<?php endif; ?>
 												<?php if($session->session_id == $row->parent_id): ?>
-													<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+													<button onclick="FailureVisitService(<?= $row->count ?>, '<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 												<?php endif; ?>
                                             </td>
                                         </tr>
@@ -164,7 +164,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 
 	<script type="text/javascript">
 
-		function VisitUpStatus(id) {
+		function VisitUpStatus(tr, id) {
 			data_ajax.id = id;
 			$.ajax({
 				type: "POST",
@@ -179,9 +179,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 							type: 'success'
 						}).show();
 						
-						$(`#VisitService_tr_${data.pk}`).css("background-color", "rgb(0, 255, 0)");
-                        $(`#VisitService_tr_${data.pk}`).css("color", "black");
-                        $(`#VisitService_tr_${data.pk}`).fadeOut(900, function() {
+						$(`#VisitService_tr_${tr}`).css("background-color", "rgb(0, 255, 0)");
+                        $(`#VisitService_tr_${tr}`).css("color", "black");
+                        $(`#VisitService_tr_${tr}`).fadeOut(900, function() {
 							$(this).remove();
                         });
 						
@@ -197,7 +197,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 			});
 		}
 
-		function FailureVisitService(url) {
+		function FailureVisitService(tr, url) {
 			
 			$.ajax({
 				type: "GET",
@@ -211,9 +211,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 							type: 'success'
 						}).show();
 						
-						$(`#VisitService_tr_${data.pk}`).css("background-color", "rgb(244, 67, 54)");
-                        $(`#VisitService_tr_${data.pk}`).css("color", "white");
-                        $(`#VisitService_tr_${data.pk}`).fadeOut(900, function() {
+						$(`#VisitService_tr_${tr}`).css("background-color", "rgb(244, 67, 54)");
+                        $(`#VisitService_tr_${tr}`).css("color", "white");
+                        $(`#VisitService_tr_${tr}`).fadeOut(900, function() {
 							$(this).remove();
                         });
 						

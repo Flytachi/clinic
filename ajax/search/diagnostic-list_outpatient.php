@@ -19,6 +19,7 @@ if( isset($_SESSION['message']) ){
     unset($_SESSION['message']);
 }
 ?>
+
 <div class="table-responsive">
     <table class="table table-hover table-sm">
         <thead>

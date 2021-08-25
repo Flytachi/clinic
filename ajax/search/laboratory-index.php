@@ -27,8 +27,8 @@ $tb->set_self(viv('laboratory/index'));
             </tr>
         </thead>
         <tbody>
-            <?php foreach($tb->get_table() as $row): ?>
-                <tr id="VisitService_tr_<?= $row->id ?>">
+            <?php foreach($tb->get_table(1) as $row): ?>
+                <tr id="VisitService_tr_<?= $row->count ?>">
                     <td><?= addZero($row->user_id) ?></td>
                     <td>
                         <span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
@@ -61,7 +61,7 @@ $tb->set_self(viv('laboratory/index'));
                         <?php endif; ?>
                     </td>
                     <td class="text-center">
-                        <button onclick="VisitUpStatus(<?= $row->id ?>, <?= json_encode($services) ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+                        <button onclick="VisitUpStatus(<?= $row->count ?>, <?= json_encode($services) ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                     </td>
                 </tr>
             <?php unset($services); endforeach; ?>

@@ -137,16 +137,14 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 		</div>
 		<!-- /main content -->
 
-		<div id="modal_result_show" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
-				<div class="<?= $classes['modal-global_content'] ?>" id="modal_result_show_content">
-
-				</div>
-			</div>
-		</div>
-
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_result_show" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg" style="max-width: 1200px !important;">
+			<div class="<?= $classes['modal-global_content'] ?>" id="modal_result_show_content"></div>
+		</div>
+	</div>
 
 	<script type="text/javascript">
 

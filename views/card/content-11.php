@@ -39,7 +39,7 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-files-empty mr-2"></i>Документы
-							<?php if ($activity and !$patient->direction or ($patient->direction and permission(5))): ?>
+							<?php if ($activity and (!$patient->direction or ($patient->direction and permission(5))) ): ?>
 								<a onclick='Update(`<?= up_url(null, "VisitDocumentsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right text-primary">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
