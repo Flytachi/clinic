@@ -208,7 +208,7 @@ class VisitAnalyzesModel extends Model
                                     text: "Анализы успешно сохранены!",
                                     type: 'success'
                                 }).show();
-                                // document.querySelector("#btn_save").disabled = false;
+                                $("#modal_default").modal("hide");
                             }
                             // finish for service
                             if (data.action == "finish for service") { 

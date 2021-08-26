@@ -64,7 +64,8 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-clipboard2 mr-2"></i>Состояние
-							<?php if ($activity and permission(7)): ?>
+							
+							<?php if ( $activity and ( permission(7) or (config('constant_card_stationar_condition_button') and is_grant()) ) ): ?>
 								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitStatsModel") ?>`)' class="float-right text-primary">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
@@ -78,8 +79,8 @@ require_once 'callback.php';
 									<thead class="<?= $classes['table-thead'] ?>">
 										<tr>
 											<th>Дата и время</th>
+											<th>Специалист</th>
 											<th>Состояние пациента</th>
-											<th>Медсестра ФИО</th>
 											<th>Давление</th>
 											<th>Пульс</th>
 											<th>Температура</th>
@@ -108,8 +109,8 @@ require_once 'callback.php';
 											?>
 											<tr class="<?= $class_tr ?> tolltip" data-popup="tooltip" title="<?= $row->description ?>">
 												<td class="chart_date"><?= date_f($row->add_date, 1) ?></td>
-												<td><?= $stat ?></td>
 												<td><?= get_full_name($row->parent_id) ?></td>
+												<td><?= $stat ?></td>
 												<td class="chart_pressure"><?= $row->pressure ?></td>
 												<td class="chart_pulse"><?= $row->pulse ?></td>
 												<td class="chart_temperature"><?= $row->temperature ?></td>
@@ -137,30 +138,27 @@ require_once 'callback.php';
 	</div>
 	<!-- /page content -->
 
-	<?php if ($activity and permission(7)): ?>
 
-		<div id="modal_default" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
-			</div>
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
+	</div>
 
-		<script type="text/javascript">
+	<script type="text/javascript">
 
-			function Update(events) {
-				$.ajax({
-					type: "GET",
-					url: events,
-					success: function (result) {
-						$('#modal_default').modal('show');
-						$('#form_card').html(result);
-					},
-				});
-			};
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
 
-		</script>
-		
-	<?php endif; ?>
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

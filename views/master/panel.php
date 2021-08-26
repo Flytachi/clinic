@@ -60,6 +60,14 @@ $header = "Панель управления";
 												}
 												?>
 												<tr>
+													<th style="width:90%">Personal Qty</th>
+													<td class="text-right">
+														<div class="form-group">
+															<input onkeyup="ConstChange(this)" type="number" min="2" max="1000" class="form-control" name="module_personal_qty" value="<?= (isset($company->module_personal_qty)) ? $company->module_personal_qty : 5 ?>" style="height:25.5px">
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Laboratory</th>
 													<td class="text-right">
 														<div class="list-icons">
@@ -157,7 +165,7 @@ $header = "Панель управления";
 												}
 												?>
 												<tr>
-													<th>Package</th>
+													<th style="width:90%">Package</th>
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
@@ -260,6 +268,58 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+
+												<!-- Card -->
+												<tr>
+													<th>Card Stationar Doctor Button (not grant)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_doctor_button" <?= (isset($config->constant_card_stationar_doctor_button) and $config->constant_card_stationar_doctor_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Card Stationar Analyze Button (not grant)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_analyze_button" <?= (isset($config->constant_card_stationar_analyze_button) and $config->constant_card_stationar_analyze_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Card Stationar Diagnostic Button (not grant)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_diagnostic_button" <?= (isset($config->constant_card_stationar_diagnostic_button) and $config->constant_card_stationar_diagnostic_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Card Stationar Physio Button (not grant)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_physio_button" <?= (isset($config->constant_card_stationar_physio_button) and $config->constant_card_stationar_physio_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Card Stationar Doctor Add Condition Button (grant)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_condition_button" <?= (isset($config->constant_card_stationar_condition_button) and $config->constant_card_stationar_condition_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 												<?php
 											} catch (\Exception $e) {
 												echo '<tr class="text-center"><th colspan="2">Не установлена база данных</th></tr>';
@@ -294,11 +354,15 @@ $header = "Панель управления";
 				url: "<?= ajax('master/controller') ?>",
 				data: Object.assign({}, { module: input.name }, $(input).serializeArray()),
 				success: function (data) {
-					console.log(data);
 					if (data == 1) {
 						new Noty({
 							text: "Успешно",
 							type: 'success'
+						}).show();
+					}else{
+						new Noty({
+							text: data,
+							type: 'error'
 						}).show();
 					}
 				},

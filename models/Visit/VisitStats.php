@@ -7,9 +7,9 @@ class VisitStatsModel extends Model
 
     public function get_or_404(int $pk)
     {
-        global $db;
+        global $db, $session;
         $object = $db->query("SELECT * FROM $this->_visits WHERE id = $pk AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-        if($object and permission(7)){
+        if($object and ( permission(7) or (config('constant_card_stationar_condition_button') and $session->session_id == $object['grant_id']) ) ){
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
         }else{

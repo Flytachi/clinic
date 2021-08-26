@@ -52,7 +52,7 @@ $tb->set_self(viv('laboratory/list_outpatient'));
                         <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
                             <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzesModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Добавить результ</a>
-                            <a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row->id ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+                            <a onclick="Print('<?= prints('test_tube') ?>?pk=<?= $row->user_id ?>')" class="dropdown-item"><i class="icon-unlink2"></i> Пробирка</a>
                         </div>
                     </td>
                 </tr>

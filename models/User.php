@@ -11,7 +11,7 @@ class UserModel extends Model
             echo $_SESSION['message'];
             unset($_SESSION['message']);
             if( isset($_SESSION['message_post']) ){
-                $post = $_SESSION['message_post'];
+                $this->post = $_SESSION['message_post'];
                 unset($_SESSION['message_post']);
             }
         }
@@ -220,30 +220,31 @@ class UserModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        if ($this->post['password'] and $this->post['password2']){
-            if ($this->post['password'] == $this->post['password2']){
-                unset($this->post['password2']);
+        global $db;
+        $qty = $db->query("SELECT id FROM $this->table WHERE user_level != 15")->rowCount();
+        $ti = module("personal_qty");
+        if ( ($ti and $ti > $qty) or (!$ti and 5 > $qty) ) {
+            $this->post = Mixin\clean_form($this->post);
+            $this->post = Mixin\to_null($this->post);
+            if ($this->post['password'] and $this->post['password2']){
+                if ($this->post['password'] == $this->post['password2']){
+                    unset($this->post['password2']);
+                }else{
+                    $_SESSION['message_post']= $this->post;
+                    $this->error("Пароли не совпадают!");
+                }
+                $this->post['password'] = sha1($this->post['password']);
             }else{
-                $_SESSION['message'] = '
-                <div class="alert bg-danger alert-styled-left alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-                    <span class="font-weight-semibold"> Пароли не совпадают!</span>
-                </div>
-                ';
-                $_SESSION['message_post']= $this->post;
-                render('admin/index');
+                unset($this->post['password']);
+                unset($this->post['password2']);
             }
-            $this->post['password'] = sha1($this->post['password']);
-        }else{
-            unset($this->post['password']);
-            unset($this->post['password2']);
+            if($this->post['user_level'] and !$this->post['division_id']){
+                $this->post['division_id'] = null;
+            }
+            return True;
+        } else {
+            $this->error("Достигнут предел создания пользователей!");
         }
-        if($this->post['user_level'] and !$this->post['division_id']){
-            $this->post['division_id'] = null;
-        }
-        return True;
     }
 
     public function update_status(int $pk)

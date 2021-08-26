@@ -7,7 +7,7 @@ is_module('module_laboratory');
 <div class="<?= $classes['modal-global_header'] ?>">
     <h5 class="modal-title"> 
         <?php if(isset($_GET['visit_pk'])): ?>
-            Сводка Анализов (Визит № <?= $_GET['visit_pk'] ?>)
+            Сводка Анализов
         <?php else: ?>
             Анализы
         <?php endif; ?>

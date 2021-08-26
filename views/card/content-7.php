@@ -40,16 +40,15 @@ is_module('module_laboratory');
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-fire2 mr-2"></i>Анализы
-							<?php if ($activity and permission(5)): ?>
+							<?php if ( $activity and permission(5) and (!$patient->direction or ($patient->direction and (config('card_stationar_analyze_button') or is_grant()) )) ): ?>
 								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_labaratory") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-							<?php else: ?>
-								<a onclick="PrePrint('<?= prints('document-2') ?>?id=<?= $patient->visit_id ?>')" type="button" class="float-right mr-1"><i class="icon-printer2"></i></a>
 							<?php endif; ?>
 							<a onclick="AnalizeCheck(<?= $patient->visit_id ?>)" class="float-right text-info mr-2">
 								<i class="icon-drawer3 mr-1"></i>Сводка анализов
 							</a>
+							<a onclick="PrePrint('<?= prints('document-2') ?>?id=<?= $patient->visit_id ?>')" type="button" class="float-right mr-2"><i class="icon-printer2"></i></a>
 						</legend>
 
 						<div class="card">

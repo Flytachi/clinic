@@ -43,11 +43,13 @@
                                 <?php endif; ?>
 
                             </div>
-
-                            <label class="col-md-6"><b>№ истории болезни:</b></label>
-                            <div class="col-md-6 text-right">
-                                <?= addZero($patient->visit_id) ?>
-                            </div>  
+                            
+                            <?php if ( $patient->parad_id ): ?>
+                                <label class="col-md-6"><b>№ истории болезни:</b></label>
+                                <div class="col-md-6 text-right">
+                                    <?= addZero($patient->parad_id) ?>
+                                </div>  
+                            <?php endif; ?>
 
                             <label class="col-md-4"><b>Дата рождение:</b></label>
     						<div class="col-md-8 text-right">

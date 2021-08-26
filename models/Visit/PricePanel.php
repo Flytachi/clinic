@@ -41,7 +41,7 @@ class PricePanel extends Model
                 <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
-                        <a href="<?= viv('card/content-2')."?pk=$pk" ?>" class="<?= $classes['btn-render'] ?>">Перейти к визиту № <?= $pk ?></a>
+                        <a href="<?= viv('card/content-2')."?pk=$pk" ?>" class="<?= $classes['btn-render'] ?>">Перейти к визиту № <?= $this->value('parad_id') ?></a>
                     </div>
                 </div>
             </div>

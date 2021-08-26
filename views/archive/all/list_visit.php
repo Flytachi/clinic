@@ -60,7 +60,6 @@ if (!$patient) {
                                 <thead>
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>№</th>
-										<th style="width: 16%">№ Визита</th>
 			                            <th>Дополнения</th>
 										<th style="width: 11%">Дата визита</th>
 										<th style="width: 11%">Дата завершения</th>
@@ -72,7 +71,7 @@ if (!$patient) {
                                 <tbody>
 									<?php
 									$tb = new Table($db, "visits v");
-									$tb->set_data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+									$tb->set_data("v.id, v.parad_id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 									$search = $tb->get_serch();
 									$search_array = array(
 										"v.user_id = $patient->id", 
@@ -83,8 +82,10 @@ if (!$patient) {
 									<?php foreach($tb->get_table(1) as $row): ?>
 										<tr>
                                             <td><?= $row->count ?></td>
-                                            <td><?= $row->id ?></td>
                                             <td>
+												<?php if ( $row->parad_id ): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-indigo text-indigo">Иcтория болезни №<?= $row->parad_id ?></span>
+												<?php endif; ?>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>

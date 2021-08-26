@@ -68,9 +68,9 @@ $header = "База данных";
                                                     <span class="text-danger"><?= $rec ?></span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td class="text-right">
 												<?php if ($rec != 0): ?>
-													<a onclick="Conf('<?= ajax('master/flush') ?>', '<?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?>')" class="list-icons-up text-danger">flush</a>
+													<a onclick="Conf('<?= ajax('master/flush') ?>', '<?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?>')" title="Flush Database" class="list-icons-up text-danger"><i class="icon-database-refresh"></i></a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

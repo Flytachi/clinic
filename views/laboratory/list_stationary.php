@@ -98,7 +98,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                                 <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
                                                     <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzesModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Добавить результ</a>
-													<a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row->id ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+													<a onclick="Print('<?= prints('test_tube') ?>?pk=<?= $row->user_id ?>')" class="dropdown-item"><i class="icon-unlink2"></i> Пробирка</a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -122,11 +122,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_result_show" class="modal fade" tabindex="-1">
+	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-full">
-			<div class="<?= $classes['modal-global_content'] ?>" id="modal_result_show_content">
-
-			</div>
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
 
@@ -154,30 +152,11 @@ $tb->where_or_serch($search_array)->set_limit(20);
 				type: "GET",
 				url: events,
 				success: function (result) {
-					$('#modal_result_show').modal('show');
-					$('#modal_result_show_content').html(result);
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
 		};
-
-		function PrintLab(url) {
-			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
-				$.ajax({
-					type: "GET",
-					url: url,
-					success: function (data) {
-						let ww = window.open();
-						ww.document.write(data);
-						ww.focus();
-						ww.print();
-						ww.close();
-					},
-				});
-			}else {
-				let we = window.open(url,'mywindow');
-				setTimeout(function() {we.close()}, 100);
-			}
-		}
 
 	</script>
 

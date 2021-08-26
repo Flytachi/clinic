@@ -39,7 +39,7 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-googleplus5 mr-2"></i>Физиотерапия
-							<?php if ( $activity and (!$patient->direction or ($patient->direction and permission(5))) ): ?>
+							<?php if ( $activity and permission(5) and (!$patient->direction or ($patient->direction and (config('card_stationar_physio_button') or is_grant()) )) ): ?>
 								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_physio") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>

@@ -40,29 +40,29 @@ is_module('module_diagnostic');
 
 						<legend class="font-weight-semibold font-size-sm">
 							<i class="icon-fire2 mr-2"></i><span class="text-uppercase">Диагностика</span>
-							<?php if ($activity and permission(5)): ?>
+							<?php if ( $activity and permission(5) and (!$patient->direction or ($patient->direction and (config('card_stationar_diagnostic_button') or is_grant()) )) ): ?>
 								<a onclick='Route(`<?= up_url(null, "VisitRoute", "form_diagnostic") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right text-uppercase <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
-								<?php if (module('module_zetta_pacs')): ?>
-									<?php 
-									$zeT = zeTTa_data();
-									$message_z = "";
-									foreach ($zeT as $key => $value) {
-										if (!$value) {
-											$message_z .= "Данных о $key нет!<br>";
-										}
+							<?php endif; ?>
+							<?php if ( module('module_zetta_pacs') and permission(5) ): ?>
+								<?php 
+								$zeT = zeTTa_data();
+								$message_z = "";
+								foreach ($zeT as $key => $value) {
+									if (!$value) {
+										$message_z .= "Данных о $key нет!<br>";
 									}
-									?>
-									<?php if ($message_z == ""): ?>
-										<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
-											ZeTTa-PACS
-										</a>
-									<?php else: ?>
-										<a onclick="swal('<?= $message_z ?>')" class="float-right text-violet mr-2">
-											ZeTTa-PACS
-										</a>
-									<?php endif; ?>
+								}
+								?>
+								<?php if ($message_z == ""): ?>
+									<a href="zetta://URL=http://<?= $zeT->IP ?>&LID=<?= $zeT->LID ?>&LPW=<?= $zeT->LPW ?>&LICD=<?= $zeT->LICD ?>&PID=<?= $patient->id ?>&VTYPE=<?= $zeT->VTYPE ?>" class="float-right text-violet mr-2">
+										ZeTTa-PACS
+									</a>
+								<?php else: ?>
+									<a onclick="swal('<?= $message_z ?>')" class="float-right text-violet mr-2">
+										ZeTTa-PACS
+									</a>
 								<?php endif; ?>
 							<?php endif; ?>
 						</legend>

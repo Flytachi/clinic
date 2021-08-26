@@ -224,7 +224,6 @@ class VisitPricesModel extends Model
     public function form_button($pk = null, $vps = null)
     {
         global $session, $classes;
-        dd($vps);
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
