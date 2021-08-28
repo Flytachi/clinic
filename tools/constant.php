@@ -1,4 +1,9 @@
 <?php
+
+/* 
+    My Constants
+*/
+
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",
@@ -37,29 +42,6 @@ $methods = array(
     9 => "Поверхностное натирание",
 );
 
-// $classes = array(
-//     "navbar" => "navbar navbar-expand-md navbar-dark bg-indigo navbar-static", //fixed-top
-//     "sidebar" => "sidebar sidebar-light sidebar-main sidebar-expand-md",
-//     "header" => "page-header page-header-light",
-//     "footer" => "navbar navbar-expand-lg navbar-light",
-
-//     "card" => "card border-1 border-primary",
-//     "card-header" => "card-header text-dark header-elements-inline alpha-primary",
-//     "table-thead" => "bg-primary",
-//     "form-select" => "form-control form-control-select2",
-//     "form-select_price" => "form-control myselect",
-//     "form-multiselect" => "form-control multiselect-full-featured",
-//     "form-daterange" => "form-control daterange-locale",
-
-//     "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
-//     "btn-viewing" => "btn btn-outline-primary btn-sm legitRipple",
-//     "btn-diagnostic_аinally" => "btn btn-outline-primary btn-sm",
-
-//     "input-search" => "form-control border-info",
-
-//     "modal-global_content" => "modal-content border-3 border-info",
-//     "modal-global_header" => "modal-header bg-info",
-// )
 $classes = array(
     // Layouts
     "navbar" => "navbar navbar-expand-md navbar-dark bg-primary navbar-static", //fixed-top

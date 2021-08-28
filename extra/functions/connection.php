@@ -8,11 +8,6 @@ if (!file_exists(dirname(__DIR__, 2)."/.key")) {
         $_error = "Сonfiguration key not found!";
         die(include "error_db_connect.php");
     }
-    function ds($value) {
-        echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
-        print_r($value);
-        echo "</pre>";
-    }
     $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/.cfg") );
     $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) );
     $ini = json_decode(zlib_decode(hex2bin($cfg)), true);

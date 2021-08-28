@@ -328,8 +328,8 @@ class __Install
 class __Db
 {
     private $argument;
-    private String $path = "tools/Data/database"; 
-    private String $path_seed = "tools/Data/ci"; 
+    private String $path = "extra/Data/database"; 
+    private String $path_seed = "extra/Data/ci"; 
     private String $format = "json"; 
     private String $file_name = "database";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
