@@ -223,7 +223,7 @@ class UserModel extends Model
         global $db;
         $qty = $db->query("SELECT id FROM $this->table WHERE user_level != 15")->rowCount();
         $ti = module("personal_qty");
-        if ( ($ti and $ti > $qty) or (!$ti and 5 > $qty) ) {
+        if ( isset($this->post['id']) or (($ti and $ti > $qty) or (!$ti and 5 > $qty)) ) {
             $this->post = Mixin\clean_form($this->post);
             $this->post = Mixin\to_null($this->post);
             if ($this->post['password'] and $this->post['password2']){
