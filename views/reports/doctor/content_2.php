@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth();
+$session->is_auth([5, 8]);
 $header = "Отчёт врачей по визитам";
 ?>
 <!DOCTYPE html>
