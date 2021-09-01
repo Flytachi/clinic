@@ -151,7 +151,7 @@ class VisitInvestmentsModel extends Model
                             }).show();
                         }
                         $('#modal_default').modal('hide');
-                        Check('<?= up_url($pk, 'PricePanel') ?>');
+                        Check('<?= up_url($pk, 'TransactionPanel') ?>');
                     },
                 });
             }

@@ -1,8 +1,8 @@
 <?php
 
-class StorageSupplyItemsModel extends Model
+class WarehouseSupplyItemsModel extends Model
 {
-    public $table = 'storage_supply_items';
+    public $table = 'warehouse_supply_items';
     public $number = 0;
     public $not_tr = false;
     public $uniq_key, $is_active;
@@ -21,11 +21,11 @@ class StorageSupplyItemsModel extends Model
 
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT name FROM storage_item_names WHERE id =".$this->value('item_name_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT name FROM warehouse_item_names WHERE id =".$this->value('item_name_id'))->fetchColumn() ?>">
                 <?php else: ?>
                     <select name="item_name_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Препарат" onchange="UpBtn('btn_save-<?= $this->number ?>')">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM storage_item_names") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM warehouse_item_names") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($this->value('item_name_id') == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -33,11 +33,11 @@ class StorageSupplyItemsModel extends Model
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT suplier FROM storage_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT suplier FROM warehouse_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
                 <?php else: ?>
                     <select name="item_supplier_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Поставщика" onchange="UpBtn('btn_save-<?= $this->number ?>')">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM storage_item_suppliers") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM warehouse_item_suppliers") as $row): ?>
                             <option value="<?= $row['id'] ?>"  <?= ($this->value('item_supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['suplier'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -45,10 +45,10 @@ class StorageSupplyItemsModel extends Model
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT manufacturer FROM storage_item_manufacturers WHERE id =".$this->value('item_manufacturer_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id =".$this->value('item_manufacturer_id'))->fetchColumn() ?>">
                 <?php else: ?>
                     <select name="item_manufacturer_id" class="<?= $classes['form-select'] ?> " data-placeholder="Выберите Производителя" onchange="UpBtn('btn_save-<?= $this->number ?>')">
-                        <?php foreach ($db->query("SELECT * FROM storage_item_manufacturers") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM warehouse_item_manufacturers") as $row): ?>
                             <option value="<?= $row['id'] ?>"  <?= ($this->value('item_manufacturer_id') == $row['id']) ? 'selected': '' ?>><?= $row['manufacturer'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -58,7 +58,7 @@ class StorageSupplyItemsModel extends Model
                 <input type="number" name="item_qty" <?= $status ?> class="form-control verification_input" min="1" placeholder="№" value="<?= $this->value('item_qty') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
             <td>
-                <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
+                <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
             </td>
             <td>
                 <input id="item_price-<?= $this->number ?>" type="text" name="item_price" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_price')) ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
@@ -165,8 +165,6 @@ class StorageSupplyItemsModel extends Model
                 'status' => 'success',
             ));
         }
-        
-        
         exit;
     }
 

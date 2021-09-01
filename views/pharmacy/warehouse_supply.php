@@ -1,8 +1,8 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(4);
 is_module('module_pharmacy');
-$header = "Аптека";
+$header = "Аптека / Поставки";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,52 +34,57 @@ $header = "Аптека";
 
 				<div class="<?= $classes['card'] ?>">
 
-					<div class="<?= $classes['card-header'] ?>">
-						<h5 class="card-title">Добавить Склад</h5>
-					</div>
-
-					<div class="card-body" id="form_card">
-
-						<?php (new StorageWarehousesModel)->form(); ?>
-
-					</div>
-
-				</div>
-
-				<div class="<?= $classes['card'] ?>">
-
 	          		<div class="<?= $classes['card-header'] ?>">
-	                  	<h5 class="card-title">Склад</h5>
+	                  	<h5 class="card-title">Поставки</h5>
+						<div class="header-elements">
+							<div class="list-icons">
+								<div class="header-elements">
+									<div class="list-icons">
+										<a onclick="Update('<?= up_url(null, 'WarehouseSupplyModel') ?>')" class="list-icons-item text-success">
+											<i class="icon-plus22"></i>Приход
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
 	              	</div>
 
               		<div class="card-body">
+
+						<?php
+						if( isset($_SESSION['message']) ){
+							echo $_SESSION['message'];
+							unset($_SESSION['message']);
+						}
+						?>
+
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
 	                              	<tr class="<?= $classes['table-thead'] ?>">
 									  	<th style="width:50px">№</th>
-									  	<th>Склад</th>
-                                        <th>Роль</th>
-                                        <th>Отдел</th>
-                                        <th>Ответственный</th>
+									  	<th style="width:200px">Ключ</th>
+									  	<th style="width:35%">Препарат</th>
+                                        <th>Дата поставки</th>
+                                        <th>Дата заноса</th>
 										<th class="text-right" style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-									<?php
-									$tb = new Table($db, "storage_warehouses");
-									?>
+									<?php $tb = new Table($db, "warehouse_supply"); ?>
                                     <?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
 											<td><?= $row->count ?></td>
-											<td><?= $row->name ?></td>
-											<td><?= $PERSONAL[$row->level] ?></td>
-											<td><?= $row->division_id ?></td>
+											<td><?= $row->uniq_key ?></td>
 											<td><?= get_full_name($row->parent_id) ?></td>
+											<td><?= date_f($row->supply_date) ?></td>
+											<td><?= ($row->completed) ? date_f($row->completed_date, 1) : '<span class="text-muted">Нет данных</span>'; ?></td>
 											<td class="text-right">
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'StorageWarehousesModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'StorageWarehousesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить препарат?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<?php if(!$row->completed): ?>
+														<a onclick="Update('<?= up_url($row->id, 'WarehouseSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<?php endif; ?>
+													<a href="<?= viv('pharmacy/warehouse_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
 												</div>
 											</td>
 										</tr>
@@ -100,18 +105,25 @@ $header = "Аптека";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
 
 		function Update(events) {
-			events
 			$.ajax({
 				type: "GET",
 				url: events,
 				success: function (result) {
+					$('#modal_default').modal('show');
 					$('#form_card').html(result);
 				},
 			});
 		};
+
 	</script>
 
     <!-- Footer -->

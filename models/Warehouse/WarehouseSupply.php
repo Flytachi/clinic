@@ -1,11 +1,11 @@
 <?php
 
-class StorageSupplyModel extends Model
+class WarehouseSupplyModel extends Model
 {
-    public $table = 'storage_supply';
-    public $_storage = 'storages';
-    public $_storage_item = 'storage_supply_items';
-    public $_item_names = 'storage_item_names';
+    public $table = 'warehouse_supply';
+    public $_warehouse = 'warehouse_common';
+    public $_warehouse_item = 'warehouse_supply_items';
+    public $_item_names = 'warehouse_item_names';
 
 
     public function form($pk = null)
@@ -63,7 +63,8 @@ class StorageSupplyModel extends Model
             <div class="header-elements">
                 <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('parent_id')) ?></span>
                 <div class="form-group-feedback form-group-feedback-right ml-3" style="width:70px;">
-                    <input type="number" class="form-control border-danger" value="<?= config('constant_pharmacy_percent') ?>" max="999" id="percent_input" placeholder="%" title="Введите процент">
+
+                    <input type="number" class="form-control border-indigo" value="<?= config('constant_pharmacy_percent') ?>" max="999" id="percent_input" placeholder="%" title="Введите процент">
                     <div class="form-control-feedback">
                         <i class="icon-percent font-size-base text-muted"></i>
                     </div>
@@ -94,7 +95,7 @@ class StorageSupplyModel extends Model
                     <tbody id="table_body">
                         
                         <?php
-                        $rosh = new StorageSupplyItemsModel();
+                        $rosh = new WarehouseSupplyItemsModel();
                         $rosh->uniq_key = $this->value('uniq_key');
                         $rosh->is_active = $is_active;
                         
@@ -136,7 +137,7 @@ class StorageSupplyModel extends Model
                                 <span id="btn_text" class="ladda-label">Проверить</span>
                                 <span class="ladda-spinner"></span>
                             </button>
-                            <button type="button" onclick="AddItemName('<?= up_url(null, 'StorageItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
+                            <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
                             <button type="button" onclick="AddRowArea()" class="btn btn-sm btn-outline-success legitRipple"><i class="icon-plus22 mr-1"></i>Добавить</button>
                         </div>
                     </div>
@@ -212,7 +213,7 @@ class StorageSupplyModel extends Model
                     DefaulStat();
                     $.ajax({
                         type: "GET",
-                        url: "<?= ajax("storage_add") ?>",
+                        url: "<?= ajax("warehouse_add") ?>",
                         data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>" },
                         success: function (result) {
                             $('#table_body').append(result);
@@ -223,6 +224,25 @@ class StorageSupplyModel extends Model
                 }
 
                 function UpBtnPrice(id) {
+
+                    if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                        try {
+                            event.target.value = event.target.value.replace(
+                                new RegExp(event.originalEvent.data, "g"),
+                                ""
+                            );
+                        } catch (e) {
+                            event.target.value = event.target.value.replace(
+                                event.originalEvent.data,
+                                ""
+                            );
+                        }
+                    } else {
+                        event.target.value = number_with(
+                            event.target.value.replace(/,/g, "")
+                        );
+                    }
+                    
                     var input_cost = event.target;
                     var input_price = document.querySelector("#item_price-"+(input_cost.id).replace("item_cost-", ''));
                     var input_percent = Number(document.querySelector("#percent_input").value);
@@ -296,7 +316,7 @@ class StorageSupplyModel extends Model
                         $.ajax({
                             type: "GET",
                             url: "<?= del_url() ?>",
-                            data: { model:"StorageSupplyItemsModel", id: pk },
+                            data: { model:"WarehouseSupplyItemsModel", id: pk },
                             success: function (result) {
                                 var data = JSON.parse(result);
 
@@ -453,7 +473,7 @@ class StorageSupplyModel extends Model
                 $this->post['completed_date'] = date("Y-m-d H:i:s");
                 $db->beginTransaction();
 
-                $this->storage_change($pk);
+                $this->warehouse_change($pk);
 
                 $object = Mixin\update($this->table, $this->post, $pk);
                 if (!intval($object)){
@@ -478,13 +498,14 @@ class StorageSupplyModel extends Model
         }
     }
 
-    public function storage_change($pk)
+    public function warehouse_change($pk)
     {
         global $db;
         $uniq = $db->query("SELECT uniq_key FROM $this->table WHERE id = $pk")->fetchColumn();
-        foreach ($db->query("SELECT * FROM $this->_storage_item WHERE uniq_key = '$uniq'") as $item) {
+        foreach ($db->query("SELECT * FROM $this->_warehouse_item WHERE uniq_key = '$uniq'") as $item) {
+            unset($item['item_cost']);
             unset($item['uniq_key']);
-            $object = Mixin\insert($this->_storage, $item);
+            $object = Mixin\insert($this->_warehouse, $item);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
@@ -500,7 +521,7 @@ class StorageSupplyModel extends Model
             Успешно
         </div>
         ';
-        render("admin/storage_supply");
+        render("pharmacy/warehouse_supply");
     }
 
     public function error($message)
@@ -511,7 +532,7 @@ class StorageSupplyModel extends Model
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>
         ';
-        render("admin/storage_supply");
+        render("pharmacy/warehouse_supply");
     }
 }
         

@@ -129,15 +129,15 @@ require_once 'callback.php';
 									   
  								  	<tbody>
 									   	<?php  
-										$price = new Table($db, "visit_prices");
-										$price->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,3)")->order_by("item_name ASC");
+										$price = new Table($db, "visit_service_transactions");
+										$price->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,2,3)")->order_by("item_name ASC");
 										$total_ser = 0; 
 										?>
 										<?php foreach ($price->get_table(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->item_name ?></td>
-												<td class="text-center"><?php $row->qty = $db->query("SELECT * FROM visit_prices WHERE visit_id = $patient->visit_id AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
+												<td class="text-center"><?php $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $patient->visit_id AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
                             					<td class="text-right text-<?= number_color($row->item_cost) ?>">
 													<?= number_format($row->item_cost); ?>
 												</td>

@@ -315,7 +315,9 @@
 
                 </script>
 
-            <?php else: ?>
+            <?php endif; ?>
+
+            <?php if (!$activity and (!$patient->is_active or $patient->completed)): ?>
 
                 <div class="col-md-12">
                     <div class="text-right">
@@ -324,25 +326,26 @@
                 </div>
 
                 <div id="modal_report_kwin" class="modal fade" tabindex="-1">
-            		<div class="modal-dialog modal-lg">
-            			<div class="<?= $classes['modal-global_content'] ?>" id="report_show_kwin">
+                    <div class="modal-dialog modal-lg">
+                        <div class="<?= $classes['modal-global_content'] ?>" id="report_show_kwin">
 
-            			</div>
-            		</div>
-            	</div>
+                        </div>
+                    </div>
+                </div>
 
                 <script type="text/javascript">
-            		function Check_kwin(events) {
-            			$.ajax({
-            				type: "GET",
-            				url: events,
-            				success: function (result) {
-            					$('#modal_report_kwin').modal('show');
-            					$('#report_show_kwin').html(result);
-            				},
-            			});
-            		};
-            	</script>
+                    function Check_kwin(events) {
+                        $.ajax({
+                            type: "GET",
+                            url: events,
+                            success: function (result) {
+                                $('#modal_report_kwin').modal('show');
+                                $('#report_show_kwin').html(result);
+                            },
+                        });
+                    };
+                </script>
+
             <?php endif; ?>
 
         </div>

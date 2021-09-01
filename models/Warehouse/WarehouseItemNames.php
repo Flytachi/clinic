@@ -1,8 +1,8 @@
 <?php
 
-class StorageItemNamesModel extends Model
+class WarehouseItemNamesModel extends Model
 {
-    public $table = 'storage_item_names';
+    public $table = 'warehouse_item_names';
 
     public function form($pk = null)
     {

@@ -179,7 +179,6 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
         }
 
 		function Update(events) {
-			events
 			$.ajax({
 				type: "GET",
 				url: events,

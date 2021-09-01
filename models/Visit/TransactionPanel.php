@@ -1,6 +1,6 @@
 <?php
 
-class PricePanel extends Model
+class TransactionPanel extends Model
 {
     public $table = 'visits';
 
@@ -82,7 +82,7 @@ class PricePanel extends Model
 
                 <div class="text-right mt-3">
 
-                    <?php (new VisitPricesModel)->form_button($pk, $vps) ?>
+                    <?php (new VisitTransactionsModel)->form_button($pk, $vps) ?>
 
                 </div>
 
@@ -120,7 +120,7 @@ class PricePanel extends Model
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1") as $row): ?>
+                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, vp.item_cost FROM visit_services vss LEFT JOIN visit_service_transactions vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 1") as $row): ?>
                                 <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
                                     <input type="hidden" class="parent_class" value="<?= $row['parent_id'] ?>">
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
@@ -159,7 +159,7 @@ class PricePanel extends Model
 
                     $.ajax({
                         type: "GET",
-                        url: "<?= up_url(null, 'VisitPricesModel') ?>",
+                        url: "<?= up_url(null, 'VisitTransactionsModel') ?>",
                         data: {
                             visit_pk: pk,
                             service_pks: array_services,
@@ -252,7 +252,7 @@ class PricePanel extends Model
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'item_cost', vp.price_date FROM visit_services vss LEFT JOIN visit_prices vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 5") as $row): ?>
+                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'item_cost', vp.price_date FROM visit_services vss LEFT JOIN visit_service_transactions vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 5") as $row): ?>
                                 <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
                                     <td><?= date_f($row['add_date'], 1) ?></td>
@@ -285,7 +285,7 @@ class PricePanel extends Model
 
                 $.ajax({
                     type: "GET",
-                    url: "<?= up_url(null, 'VisitPricesModel') ?>",
+                    url: "<?= up_url(null, 'VisitTransactionsModel') ?>",
                     data: {
                         visit_pk: pk,
                         refund: 1,
@@ -312,18 +312,18 @@ class PricePanel extends Model
         </legend>
 
         <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelInvestments') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Инвестиции</a></li>
-            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelServices') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Услуги</a></li>
+            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelInvestments') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Инвестиции</a></li>
+            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelServices') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Услуги</a></li>
             <?php if(module('module_pharmacy')): ?>
-                <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Лекарства</a></li>
+                <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Лекарства</a></li>
             <?php endif; ?>
-            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelTotal') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Итог</a></li>
+            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelTotal') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Итог</a></li>
         </ul>
 
         <div class="table-responsive" id="div_show_detail">
             <script>
                 $(document).ready(function(){
-                    DetailControl('<?= up_url($pk, 'PricePanel', 'DetailPanelInvestments') ?>');
+                    DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelInvestments') ?>');
                 });
             </script>
         </div>
@@ -399,8 +399,8 @@ class PricePanel extends Model
     public function DetailPanelServices($pk = null)
     {
         global $db, $classes;
-        $tb = new Table($db, "visit_prices");
-        $tb->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $pk AND item_type IN (1,3)")->order_by("item_name ASC");
+        $tb = new Table($db, "visit_service_transactions");
+        $tb->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $pk AND item_type IN (1,2,3)")->order_by("item_name ASC");
         $tpc = $tqy = 0;
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
@@ -420,7 +420,7 @@ class PricePanel extends Model
                                 <?= $row->item_name ?>
                             </td>
                             <td><?= number_format($row->item_cost); ?></td>
-                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT * FROM visit_prices WHERE visit_id = $pk AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
+                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $pk AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
                             <td class="text-<?= number_color($row->qty * $row->item_cost, true) ?>"><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
                         </tr>
                     <?php endforeach; ?>

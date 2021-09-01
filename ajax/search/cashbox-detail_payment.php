@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$tb = new Table($db, "visit_prices");
+$tb = new Table($db, "visit_service_transactions");
 $search = $tb->get_serch();
 $search_array = array(
 	"user_id = {$_GET['pk']} AND price_date IS NOT NULL", 

@@ -75,7 +75,7 @@ $tb->where_or_serch($where_search);
                                         </thead>
                                         <tbody>
 											<?php foreach($tb->get_table(1) as $row): ?>
-				                                <tr onclick="Check('<?= up_url($row->id, 'PricePanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
+				                                <tr onclick="Check('<?= up_url($row->id, 'TransactionPanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
 				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
@@ -128,21 +128,6 @@ $tb->where_or_serch($where_search);
 		</div>
 	</div>
 
-	<?php if(module('module_pharmacy')): ?>
-		<div id="modal_default" class="modal fade" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
-						<h6 class="modal-title">Оплата Препаратов</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<?php (new VisitPricesModel)->form_pharm(); ?>
-
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

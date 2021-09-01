@@ -236,6 +236,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												<tr>
+													<th>Admin Delete Button (warehouses)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_admin_delete_button_warehouses" <?= (isset($config->constant_admin_delete_button_warehouses) and $config->constant_admin_delete_button_warehouses) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 
 												<!-- Laboratory -->
 												<tr>

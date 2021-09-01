@@ -4,12 +4,12 @@ class VisitModel extends Model
 {
     public $table = 'visits';
     public $table2 = 'beds';
-    public $_service = 'visit_services';
-    public $_bed_types = 'bed_types';
-    public $_prices = 'visit_prices';
-    public $_orders = 'visit_orders';
-    public $_beds = 'visit_beds';
     public $_user = 'users';
+    public $_beds = 'visit_beds';
+    public $_orders = 'visit_orders';
+    public $_bed_types = 'bed_types';
+    public $_service = 'visit_services';
+    public $_transactions = 'visit_service_transactions';
 
     public function form_grant($pk = null)
     {
@@ -127,12 +127,12 @@ class VisitModel extends Model
                     $post_price['visit_id'] = $this->visit_pk;
                     $post_price['visit_service_id'] = $object;
                     $post_price['user_id'] = $this->post['user_id'];
-                    $post_price['item_type'] = 1;
+                    $post_price['item_type'] = $data['type'];
                     $post_price['item_id'] = $data['id'];
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                     $post_price['item_name'] = $data['name'];
                     $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
-                    $object = Mixin\insert($this->_prices, $post_price);
+                    $object = Mixin\insert($this->_transactions, $post_price);
                     if (!intval($object)){
                         $this->error("Ошибка при создании платежа услуги!");
                         $db->rollBack();
@@ -326,7 +326,7 @@ class VisitModel extends Model
                         IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NOT NULL)), 0) 'balance',
                         IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
                         IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
-                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_prices vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,3) AND vp.is_price IS NOT NULL) * -1), 0) 'cost-services',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_service_transactions vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,2,3) AND vp.is_price IS NOT NULL) * -1), 0) 'cost-services',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
                         IFNULL( vl.sale_bed_unit + vl.sale_service_unit , 0) 'sale-total',
@@ -348,7 +348,7 @@ class VisitModel extends Model
                         IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL)), 0) 'balance',
                         IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
                         IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
-                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_prices vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,3) AND vp.is_price IS NULL) * -1), 0) 'cost-services',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_service_transactions vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,2,3) AND vp.is_price IS NULL) * -1), 0) 'cost-services',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
                         IFNULL( vl.sale_bed_unit + vl.sale_service_unit , 0) 'sale-total',

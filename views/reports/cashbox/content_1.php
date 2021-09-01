@@ -64,7 +64,7 @@ $header = "Отчёт кассы";
 								<div class="col-md-3">
 									<label>Кассир:</label>
 									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать кассира" name="pricer_id[]" multiple="multiple">
-										<?php foreach ($db->query("SELECT DISTINCT pricer_id FROM visit_prices WHERE is_visibility IS NOT NULL AND is_price IS NOT NULL") as $row): ?>
+										<?php foreach ($db->query("SELECT DISTINCT pricer_id FROM visit_service_transactions WHERE is_visibility IS NOT NULL AND is_price IS NOT NULL") as $row): ?>
 											<option value="<?= $row['pricer_id'] ?>" <?= ( isset($_POST['pricer_id']) and in_array($row['pricer_id'], $_POST['pricer_id'])) ? "selected" : "" ?>><?= get_full_name($row['pricer_id']) ?></option>
 										<?php endforeach; ?>
 									</select>
@@ -102,7 +102,7 @@ $header = "Отчёт кассы";
 							$where = " AND (DATE_FORMAT(price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 							if( isset($_POST['pricer_id']) ) $where .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
 
-							$tb = new Table($db, "visit_prices");
+							$tb = new Table($db, "visit_service_transactions");
 							$tb->where("is_visibility IS NOT NULL AND is_price IS NOT NULL $where")->order_by('price_date ASC');
 							$total_price=$total_price_cash=$total_price_card=$total_price_transfer=0;
 							?>
@@ -123,46 +123,46 @@ $header = "Отчёт кассы";
 								<tbody>
 									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
-											<th><?= $row->count ?></th>
-											<th><?= date_f($row->price_date, 1) ?></th>
-											<th><?= get_full_name($row->pricer_id) ?></th>
-											<th><?= get_full_name($row->user_id)  ?></th>
-											<th class="text-right text-<?= number_color($row->price_cash) ?>">
+											<td><?= $row->count ?></td>
+											<td><?= date_f($row->price_date, 1) ?></td>
+											<td><?= get_full_name($row->pricer_id) ?></td>
+											<td><?= get_full_name($row->user_id)  ?></td>
+											<td class="text-right text-<?= number_color($row->price_cash) ?>">
 												<?php
 												$total_price_cash += $row->price_cash;
 												echo number_format($row->price_cash);
 												?>
-											</th>
-											<th class="text-right text-<?= number_color($row->price_card) ?>">
+											</td>
+											<td class="text-right text-<?= number_color($row->price_card) ?>">
 												<?php
 												$total_price_card += $row->price_card;
 												echo number_format($row->price_card);
 												?>
-											</th>
-											<th class="text-right text-<?= number_color($row->price_transfer) ?>">
+											</td>
+											<td class="text-right text-<?= number_color($row->price_transfer) ?>">
 												<?php
 												$total_price_transfer += $row->price_transfer;
 												echo number_format($row->price_transfer);
 												?>
-											</th>
-											<th class="text-right text-<?= number_color($row->price_cash + $row->price_card + $row->price_transfer) ?>">
+											</td>
+											<td class="text-right text-<?= number_color($row->price_cash + $row->price_card + $row->price_transfer) ?>">
 												<?php
 												$total_price += $row->price_cash + $row->price_card + $row->price_transfer;
 												echo number_format($row->price_cash + $row->price_card + $row->price_transfer);
 												?>
-											</th>
+											</td>
 										</tr>
 									<?php endforeach; ?>
 								</tbody>
 								<?php if(isset($row->count)): ?>
 									<tfooter>
-										<tr class="table-secondary strong">
-											<td colspan="2">Общее колличество: <?= $row->count ?></td>
-											<td colspan="2" class="text-right"><b>Итого :</b></td>
-											<td class="text-right text-<?= number_color($total_price_cash) ?>"><?= number_format($total_price_cash) ?></td>
-											<td class="text-right text-<?= number_color($total_price_card) ?>"><?= number_format($total_price_card) ?></td>
-											<td class="text-right text-<?= number_color($total_price_transfer) ?>"><?= number_format($total_price_transfer) ?></td>
-											<td class="text-right text-<?= number_color($total_price) ?>"><?= number_format($total_price) ?></td>
+										<tr class="table-secondary">
+											<th colspan="2">Общее колличество: <?= $row->count ?></th>
+											<th colspan="2" class="text-right">Итого:</th>
+											<th class="text-right text-<?= number_color($total_price_cash) ?>"><?= number_format($total_price_cash) ?></th>
+											<th class="text-right text-<?= number_color($total_price_card) ?>"><?= number_format($total_price_card) ?></th>
+											<th class="text-right text-<?= number_color($total_price_transfer) ?>"><?= number_format($total_price_transfer) ?></th>
+											<th class="text-right text-<?= number_color($total_price) ?>"><?= number_format($total_price) ?></th>
 										</tr>
 									</tfooter>
 								<?php endif; ?>

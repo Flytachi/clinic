@@ -3,12 +3,12 @@
 class VisitRoute extends Model
 {
     public $table = 'visit_services';
-    public $table2 = 'beds';
-    public $_prices = 'visit_prices';
-    public $_orders = 'visit_orders';
-    public $_beds = 'visit_beds';
-    public $_visits = 'visits';
     public $_user = 'users';
+    public $table2 = 'beds';
+    public $_visits = 'visits';
+    public $_beds = 'visit_beds';
+    public $_orders = 'visit_orders';
+    public $_transactions = 'visit_service_transactions';
 
     public function form($pk = null)
     {
@@ -765,12 +765,12 @@ class VisitRoute extends Model
                     $post_price['visit_id'] = $this->visit_pk;
                     $post_price['visit_service_id'] = $object;
                     $post_price['user_id'] = $this->post['user_id'];
-                    $post_price['item_type'] = 1;
+                    $post_price['item_type'] = $data['type'];
                     $post_price['item_id'] = $data['id'];
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                     $post_price['item_name'] = $data['name'];
                     $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
-                    $object = Mixin\insert($this->_prices, $post_price);
+                    $object = Mixin\insert($this->_transactions, $post_price);
                     if (!intval($object)){
                         $this->error("Ошибка при создании платежа услуги!");
                         $db->rollBack();

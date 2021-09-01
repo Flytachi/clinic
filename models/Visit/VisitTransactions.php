@@ -1,11 +1,11 @@
 <?php
 
-class VisitPricesModel extends Model
+class VisitTransactionsModel extends Model
 {
-    public $table = 'visit_prices';
+    public $table = 'visit_service_transactions';
     public $_services = 'visit_services';
     public $_investment = 'visit_investments';
-    public $table1 = 'visits';
+    public $_visits = 'visits';
 
     public function form($pk = null)
     {
@@ -240,7 +240,7 @@ class VisitPricesModel extends Model
             <?php if(!$vps['is_active']): ?>
                 <button onclick="CardFuncFinish('<?= $vps['id'] ?>')" type="button" class="<?= $classes['price_btn-finish'] ?>">Расщёт</button>
             <?php endif; ?>
-            <button onclick="CardFuncDetail('<?= up_url($vps['id'], 'PricePanel', 'DetailPanel') ?>')" type="button" class="<?= $classes['price_btn-detail'] ?>" data-show="1">Детально</button>
+            <button onclick="CardFuncDetail('<?= up_url($vps['id'], 'TransactionPanel', 'DetailPanel') ?>')" type="button" class="<?= $classes['price_btn-detail'] ?>" data-show="1">Детально</button>
             
         </form>
         <script type="text/javascript">
@@ -450,7 +450,7 @@ class VisitPricesModel extends Model
         $this->post['price_cash'] = (isset($this->post['price_cash'])) ? str_replace(',', '', $this->post['price_cash']) : 0;
         $this->post['price_card'] = (isset($this->post['price_card'])) ? str_replace(',', '', $this->post['price_card']) : 0;
         $this->post['price_transfer'] = (isset($this->post['price_transfer'])) ? str_replace(',', '', $this->post['price_transfer']) : 0;
-        $this->visit = $db->query("SELECT * FROM $this->table1 WHERE id = {$this->post['visit_id']}")->fetch();
+        $this->visit = $db->query("SELECT * FROM $this->_visits WHERE id = {$this->post['visit_id']}")->fetch();
         unset($this->post['visit_id']);
 
         
@@ -511,7 +511,7 @@ class VisitPricesModel extends Model
 
         // } else {
 
-        //     $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->table1 vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
+        //     $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->_visits vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
         //     if ($this->post['sale'] > 0) {
         //         $tot['total_price'] = $tot['total_price'] - ($tot['total_price'] * ($this->post['sale'] / 100));
         //     }
@@ -536,22 +536,10 @@ class VisitPricesModel extends Model
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
             'sale' => (isset($this->post['sale'])) ? $this->post['sale'] : 0,
-            'is_visibility' => ($this->visit['direction']) ? null : 1,
+            'is_visibility' => 1,
             'is_price' => true,
             'price_date' => date("Y-m-d H:i:s"),
         );
-
-        // Sale for Stationar
-        if ($this->visit['direction']) {
-            if (isset($this->sale_service) and $this->sale_service > 0 and in_array($row['item_type'], [1,5])) {
-                $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->sale_service / 100));
-                $post['sale'] = $this->sale_service;
-            }
-            if (isset($this->sale_bed) and $this->sale_bed > 0 and in_array($row['item_type'], [101])) {
-                $row['item_cost'] = $row['item_cost'] - ($row['item_cost'] * ($this->sale_bed / 100));
-                $post['sale'] = $this->sale_bed;
-            }
-        }
 
         // Begin script 'PRICE'
         if ($this->post['price_cash'])
@@ -616,19 +604,13 @@ class VisitPricesModel extends Model
         if (!intval($object)){
             $this->error($object);
         }
-        $this->visit_prices_items[] = $row['id'];
+        $this->visit_service_transactions_items[] = $row['id'];
 
         // Update visit_services 
         $object = Mixin\update($this->_services, array('status' => ($this->visit['direction']) ? 1 : 2), $row['visit_service_id']);
         if (!intval($object)){
             $this->error($object);
         }
-        // if (empty($this->pharm_cost)) {
-        //     $object = Mixin\update($this->table1, array('status' => $this->status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
-        //     if (!intval($object)){
-        //         $this->error($object);
-        //     }
-        // }
     }
 
     public function refund($row)
@@ -715,19 +697,13 @@ class VisitPricesModel extends Model
         if (!intval($object)){
             $this->error($object);
         }
-        $this->visit_prices_items[] = $object;
+        $this->visit_service_transactions_items[] = $object;
 
         // Update visit_services 
         $object = Mixin\update($this->_services, array('status' => 6, 'completed' => date("Y-m-d H:i:s")), $row['visit_service_id']);
         if (!intval($object)){
             $this->error($object);
         }
-        // if (empty($this->pharm_cost)) {
-        //     $object = Mixin\update($this->table1, array('status' => $this->status, 'priced_date' => date('Y-m-d H:i:s')), $row['visit_id']);
-        //     if (!intval($object)){
-        //         $this->error($object);
-        //     }
-        // }
     }
 
     public function ambulator_price()
@@ -760,7 +736,8 @@ class VisitPricesModel extends Model
         }
         Mixin\update($this->_investment, array('expense' => 1, 'expense_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
         Mixin\update($this->table, array('pricer_id' => $session->session_id, 'is_price' => 1, 'price_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
-        Mixin\update($this->table1, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
+        Mixin\update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1));
+        Mixin\update($this->_visits, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
         (new UserModel())->update_status($this->visit['user_id']);
         
     }
@@ -809,7 +786,7 @@ class VisitPricesModel extends Model
             echo json_encode(array(
                 'status' => "success" ,
                 'message' => $value,
-                'val' => prints('check')."?pk=".$this->visit['user_id']."&items=".json_encode($this->visit_prices_items)
+                'val' => prints('check')."?pk=".$this->visit['user_id']."&items=".json_encode($this->visit_service_transactions_items)
             ));
         }
     }

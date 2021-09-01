@@ -3,7 +3,7 @@
 class VisitOperationsModel extends Model
 {
     public $table = 'visit_operations';
-    public $_prices = 'visit_prices';
+    public $_transactions = 'visit_service_transactions';
     public $_services = 'services';
     public $_user = 'users';
 
@@ -216,7 +216,7 @@ class VisitOperationsModel extends Model
             $post_price['item_cost'] = ($this->is_foreigner) ? $service['price_foreigner'] : $service['price'];
             $post_price['item_name'] = $service['name'];
             $post_price['is_visibility'] =  null;
-            $object = Mixin\insert($this->_prices, $post_price);
+            $object = Mixin\insert($this->_transactions, $post_price);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
@@ -247,7 +247,7 @@ class VisitOperationsModel extends Model
                 exit;
             }
 
-            $object2 = Mixin\update($this->_prices, array('item_cost' => $price), array('visit_service_id' => $pk, 'item_type' => 3));
+            $object2 = Mixin\update($this->_transactions, array('item_cost' => $price), array('visit_service_id' => $pk, 'item_type' => 3));
             if (!intval($object2)){
                 $this->error("Ошибка при записи новой цены!");
                 exit;

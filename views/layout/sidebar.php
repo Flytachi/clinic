@@ -64,7 +64,7 @@
 
             <ul class="nav nav-sidebar" data-nav-type="accordion">
                 <!-- Main -->
-                <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
+                <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Main</div> <i class="icon-menu" title="Main"></i></li>
 
                 <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id IS NULL AND level = $session->session_level ORDER BY sort ASC") as $row): ?>
                     
@@ -132,15 +132,27 @@
                     
 
                 <?php endforeach; ?>
+                <!-- /Main -->
 
-                <!-- <li class="nav-item">
-                    <a href="test.php" class="nav-link legitRipple">
-                        <i class="icon-width"></i>
-                        <span>Tests</span>
-                        <span class="badge bg-blue-400 align-self-center ml-auto">2.0</span>
-                    </a>
-                </li> -->
-                <!-- /main -->
+                <?php if(module('module_pharmacy')): ?>
+                    <?php foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $warehouse): ?>
+
+                        <?php if( permission(json_decode($warehouse['level'])) and ( !$session->get_division() or in_array($session->get_division(), json_decode($warehouse['division'])) ) ): ?>
+                            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $warehouse['name'] ?></div> <i class="icon-menu" title="Main"></i></li>
+                        
+                            <li class="nav-item">
+                                <a href="#" class="nav-link legitRipple">
+                                    <i class="icon-store"></i>
+                                    <span>Склад</span>
+                                    <span class="badge bg-blue-400 align-self-center ml-auto">1.2</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                    <?php endforeach; ?>
+                    
+                <?php endif; ?>
+                
             </ul>
 
         </div>

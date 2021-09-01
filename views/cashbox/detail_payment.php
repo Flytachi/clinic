@@ -7,7 +7,7 @@ if (!is_numeric($_GET['pk'])) {
 	Mixin\error('404');
 }
 
-$tb = new Table($db, "visit_prices");
+$tb = new Table($db, "visit_service_transactions");
 $search = $tb->get_serch();
 $search_array = array(
 	"user_id = {$_GET['pk']} AND price_date IS NOT NULL", 

@@ -3,7 +3,7 @@
 class VisitFailure extends Model
 {
     public $table = 'visit_services';
-    public $_prices = 'visit_prices';
+    public $_transactions = 'visit_service_transactions';
     public $_orders = 'visit_orders';
     public $_visits = 'visits';
 
@@ -130,7 +130,7 @@ class VisitFailure extends Model
                     
                     $db->beginTransaction();
                     // Visit prices 
-                    $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
+                    $object = Mixin\delete($this->_transactions, $pk, "visit_service_id");
                     if(!intval($object)){
                         $this->error("Произошла ошибка на сервере!");
                         $db->rollBack();
