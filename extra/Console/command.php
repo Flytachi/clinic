@@ -250,21 +250,26 @@ class __Cfg
     public function generate_key()
     {
         $FILE_setting_ini = dirname(__DIR__, 2)."/$this->setting_name";
-        $sett = parse_ini_file($FILE_setting_ini, true);
-        if (!file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
-            $fp = fopen(dirname(__DIR__, 2)."/$this->cfg_name", "x");
-            fwrite($fp, chunk_split( bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)) , 50, "\n") );
-            fclose($fp);
-            if (unlink($FILE_setting_ini)) {
-                echo "\033[32m". " $this->cfg_name сгенирирован успешно!\n";
-            }else {
-                unlink(dirname(__DIR__, 2)."/$this->cfg_name");
-                echo "\033[31m"."Ошибка при генерации.\n";
+        if (file_exists($FILE_setting_ini)) {
+            $sett = parse_ini_file($FILE_setting_ini, true);
+            if (!file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+                $fp = fopen(dirname(__DIR__, 2)."/$this->cfg_name", "x");
+                fwrite($fp, chunk_split( bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)) , 50, "\n") );
+                fclose($fp);
+                if (unlink($FILE_setting_ini)) {
+                    echo "\033[32m". " $this->cfg_name сгенирирован успешно!\n";
+                }else {
+                    unlink(dirname(__DIR__, 2)."/$this->cfg_name");
+                    echo "\033[31m"."Ошибка при генерации.\n";
+                }
+                return 1;
             }
-            return 1;
+            echo "\033[33m". " $this->cfg_name уже существует!\n";
+            return 0;
+        }else {
+            echo "\033[33m". " $this->setting_name не найден!\n";
+            return 0;
         }
-        echo "\033[33m". " $this->cfg_name уже существует!\n";
-        return 0;
     }
 
     public function help()

@@ -72,4 +72,5 @@ $(document).ready(function () {
     if (typeof sessionActive !== "undefined" && sessionActive) {
         setupTimers();
     }
+    warningInactive();
 });

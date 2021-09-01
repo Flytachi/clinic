@@ -70,7 +70,7 @@
 		// Sessions
 		var sessionActive = Boolean("<?= ( isset($sessionActive) ) ? 'true' : 'false' ?>");
 		var warningTimeout = Number("<?= ( isset($ini['GLOBAL_SETTING']['SESSION_TIMEOUT']) ) ? $ini['GLOBAL_SETTING']['SESSION_TIMEOUT'] : 1 ?>") * 60000; 
-		var timoutNow = (Number("<?= $ini['GLOBAL_SETTING']['SESSION_LIFE'] ?>") * 60000) - warningTimeout - 60000;
+		var timoutNow = (Number("<?= $ini['GLOBAL_SETTING']['SESSION_LIFE'] ?>") * 60000) - warningTimeout;
 		var logout_url = "<?= $session->logout_link() ?>";
 		var timeout_mark = "<?= $session->timeout_mark_link() ?>";
 		var warningTimerID,timeoutTimerID;
@@ -84,7 +84,7 @@
 
 	</script>
 
-	<?php if( empty($session->master_status) ): ?>
+	<?php if( empty($session->status) or $session->status != "master" ): ?>
 		<script src="<?= stack("assets/js/sessions.js") ?>"></script>
 	<?php endif; ?>
 
@@ -95,7 +95,7 @@
 </head>
 
 
-<?php if( empty($session->master_status) ): ?>
+<?php if( empty($session->status) or $session->status != "master" ): ?>
 	<!-- Timeout modal -->
 	<div id="modal_timeout_auto_logout" class="modal fade" tabindex="-1" style="z-index:9999 !important;">
 		<div class="modal-dialog">

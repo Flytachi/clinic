@@ -6,7 +6,7 @@ class Session
      * 
      *  My Session
      * 
-     *  @version 9.1
+     *  @version 9.2
      **/
 
     protected $db;
@@ -113,8 +113,8 @@ class Session
 
     protected function session_check()
     {
-        $this->session_old_delete();
         $sid = session_id();
+        $this->session_old_delete($sid);
         $object = $this->db->query("SELECT * FROM $this->table WHERE session_id = \"$sid\"")->fetch();
         if ($object) {
             $this->init();
@@ -124,9 +124,9 @@ class Session
         }
     }
 
-    protected function session_old_delete()
+    protected function session_old_delete($sid)
     {
-        $stmt = $this->db->prepare("DELETE FROM $this->table WHERE last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
+        $stmt = $this->db->prepare("DELETE FROM $this->table WHERE session_id = \"$sid\" AND last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
         $stmt->execute();
     }
 
