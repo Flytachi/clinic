@@ -1,4 +1,3 @@
-<?php include "content_tabs-old.php"; ?>
 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
     <?php if ( $activity ): ?>
         <li class="nav-item">
