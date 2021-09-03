@@ -42,7 +42,7 @@ class VisitRoute extends Model
                 <div class="form-group-feedback form-group-feedback-right row">
 
                     <div class="col-md-10">
-                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input_service" placeholder="Поиск..." title="Введите назване отдела или услуги">
                         <div class="form-control-feedback">
                             <i class="icon-search4 font-size-base text-muted"></i>
                         </div>
@@ -90,15 +90,15 @@ class VisitRoute extends Model
 
             var service = {};
 
-            $("#search_input").keyup(function() {
+            $("#search_input_service").keyup(function() {
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $patient->order ?>",
-                        search: $("#search_input").val(),
+                        search: this.value,
                         selected: service,
                         types: "1,2",
                         cols: 1
@@ -113,8 +113,8 @@ class VisitRoute extends Model
             function TableChangeServices(params) {
 
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
@@ -133,6 +133,130 @@ class VisitRoute extends Model
 
         </script>
         <?php
+    }
+
+    public function form_labaratory($pk = null)
+    {
+        global $db, $classes, $session;
+        $patient = json_decode($_GET['patient']);
+        ?>
+        <form method="post" action="<?= add_url() ?>">
+
+            <div class="<?= $classes['modal-global_header'] ?>">
+                <h6 class="modal-title">Назначить анализ</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="direction" value="<?= $patient->direction ?>">
+                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+
+                <div class="form-group">
+                    <label>Отделы</label>
+                    <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="form-group-feedback form-group-feedback-right row">
+
+                    <div class="col-md-10">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input_service" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 font-size-base text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>                    
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-dark">
+                                    <th>#</th>
+                                    <th>Отдел</th>
+                                    <th>Услуга</th>
+                                    <th>Cпециалист</th>
+                                    <th style="width: 100px">Кол-во</th>
+                                    <th class="text-right">Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_form">
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+        <script type="text/javascript">
+
+            BootstrapMultiselect.init();
+            FormLayouts.init();
+
+            var service = {};
+
+            $("#search_input_service").keyup(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
+                    data: {
+                        divisions: $("#division_selector").val(),
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
+                        search: this.value,
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+            function TableChangeServices(params) {
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
+                    data: {
+                        divisions: $(params).val(),
+                        is_foreigner: "<?= $patient->is_foreigner ?>",
+                        is_order: "<?= $patient->order ?>",
+                        selected: service,
+                        types: "1",
+                        cols: 1
+                    },
+                    success: function (result) {
+                        var service = {};
+                        $('#table_form').html(result);
+                    },
+                });
+
+            }
+
+        </script>
+        <?php 
     }
 
     public function form_diagnostic($pk = null)
@@ -166,7 +290,7 @@ class VisitRoute extends Model
                 <div class="form-group-feedback form-group-feedback-right row">
 
                     <div class="col-md-10">
-                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input_service" placeholder="Поиск..." title="Введите назване отдела или услуги">
                         <div class="form-control-feedback">
                             <i class="icon-search4 font-size-base text-muted"></i>
                         </div>
@@ -214,15 +338,15 @@ class VisitRoute extends Model
 
             var service = {};
 
-            $("#search_input").keyup(function() {
+            $("#search_input_service").keyup(function() {
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $patient->order ?>",
-                        search: $("#search_input").val(),
+                        search: this.value,
                         selected: service,
                         types: "1",
                         cols: 1
@@ -237,8 +361,8 @@ class VisitRoute extends Model
             function TableChangeServices(params) {
 
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
@@ -257,130 +381,6 @@ class VisitRoute extends Model
 
         </script>
         <?php
-    }
-
-    public function form_labaratory($pk = null)
-    {
-        global $db, $classes, $session;
-        $patient = json_decode($_GET['patient']);
-        ?>
-        <form method="post" action="<?= add_url() ?>">
-
-            <div class="<?= $classes['modal-global_header'] ?>">
-                <h6 class="modal-title">Назначить анализ</h6>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <div class="modal-body">
-
-                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
-                <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
-
-                <div class="form-group">
-                    <label>Отделы</label>
-                    <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-group-feedback form-group-feedback-right row">
-
-                    <div class="col-md-10">
-                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
-                        <div class="form-control-feedback">
-                            <i class="icon-search4 font-size-base text-muted"></i>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                                <span class="ladda-label">Сохранить</span>
-                                <span class="ladda-spinner"></span>
-                            </button>                    
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="form-group">
-
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm">
-                            <thead>
-                                <tr class="bg-dark">
-                                    <th>#</th>
-                                    <th>Отдел</th>
-                                    <th>Услуга</th>
-                                    <th>Cпециалист</th>
-                                    <th style="width: 100px">Кол-во</th>
-                                    <th class="text-right">Цена</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table_form">
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </form>
-        <script type="text/javascript">
-
-            BootstrapMultiselect.init();
-            FormLayouts.init();
-
-            var service = {};
-
-            $("#search_input").keyup(function() {
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $("#division_selector").val(),
-                        is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
-                        search: $("#search_input").val(),
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        var service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-            });
-
-            function TableChangeServices(params) {
-
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
-                    data: {
-                        divisions: $(params).val(),
-                        is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
-                        selected: service,
-                        types: "1",
-                        cols: 1
-                    },
-                    success: function (result) {
-                        var service = {};
-                        $('#table_form').html(result);
-                    },
-                });
-
-            }
-
-        </script>
-        <?php 
     }
 
     public function form_physio($pk = null)
@@ -414,7 +414,7 @@ class VisitRoute extends Model
                 <div class="form-group-feedback form-group-feedback-right row">
 
                     <div class="col-md-10">
-                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input_service" placeholder="Поиск..." title="Введите назване отдела или услуги">
                         <div class="form-control-feedback">
                             <i class="icon-search4 font-size-base text-muted"></i>
                         </div>
@@ -462,15 +462,15 @@ class VisitRoute extends Model
 
             var service = {};
 
-            $("#search_input").keyup(function() {
+            $("#search_input_service").keyup(function() {
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $patient->order ?>",
-                        search: $("#search_input").val(),
+                        search: this.value,
                         selected: service,
                         types: "1",
                         cols: 1
@@ -485,8 +485,8 @@ class VisitRoute extends Model
             function TableChangeServices(params) {
 
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
@@ -534,7 +534,7 @@ class VisitRoute extends Model
                 <div class="form-group-feedback form-group-feedback-right row">
     
                     <div class="col-md-10">
-                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input_service" placeholder="Поиск..." title="Введите назване отдела или услуги">
                         <div class="form-control-feedback">
                             <i class="icon-search4 font-size-base text-muted"></i>
                         </div>
@@ -578,15 +578,15 @@ class VisitRoute extends Model
         <script type="text/javascript">
             let service = {};
 
-            $("#search_input").keyup(function() {
+            $("#search_input_service").keyup(function() {
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $patient->order ?>",
-                        search: $("#search_input").val(),
+                        search: this.value,
                         selected: service,
                         types: "1",
                         cols: 3,
@@ -602,8 +602,8 @@ class VisitRoute extends Model
             function table_change() {
 
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
@@ -647,7 +647,7 @@ class VisitRoute extends Model
                     <label>Пакеты:</label>
                     <select data-placeholder="Выбрать пакет" class="<?= $classes['form-select'] ?>" required onchange="Change_Package_list(this)">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM packages WHERE autor_id = $session->session_id ORDER BY name DESC") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM package_services WHERE is_active IS NOT NULL AND autor_id = $session->session_id ORDER BY name DESC") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -662,8 +662,8 @@ class VisitRoute extends Model
 
             function Change_Package_list(params) {
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('card_package_items') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'PackagePanel') ?>",
                     data: { 
                         pk:params.value,
                         is_foreigner: "<?= $patient->is_foreigner ?>",

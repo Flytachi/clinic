@@ -6,7 +6,7 @@ class Session
      * 
      *  My Session
      * 
-     *  @version 9.2
+     *  @version 9.5
      **/
 
     protected $db;
@@ -17,12 +17,14 @@ class Session
     protected $timeout_mark_url = DIR."/auth/timeout_mark".EXT;
     
     protected $table = "sessions";
-    public $life_session = 20; // minute
+    public $life_session = 5; // minute
 
-    function __construct($database, $time = null)
+    function __construct($database, $life_session = null, $divisor_session = null, $probability_session = null)
     {
         $this->db = $database;
-        if ($time >= 1) $this->life_session = $time;
+        if ($life_session) $this->life_session = $life_session;
+        if ($divisor_session) $this->divisor_session = $divisor_session;
+        if ($probability_session) $this->probability_session = $probability_session;
         session_start();
     }
 
@@ -48,6 +50,13 @@ class Session
 
     public function is_auth($arr = null)
     {
+        if ( $this->divisor_session and $this->probability_session ) {
+            $tet = rand(1, $this->divisor_session);
+            if ($tet <= $this->probability_session) {
+                $this->session_old_delete();
+            }
+        }
+
         if ( isset($_SESSION['session_timeout_logout']) ) {
             $this->logout();
         }elseif ( isset($_SESSION['session_id']) ) {
@@ -114,7 +123,7 @@ class Session
     protected function session_check()
     {
         $sid = session_id();
-        $this->session_old_delete($sid);
+        $this->session_confirm($sid);
         $object = $this->db->query("SELECT * FROM $this->table WHERE session_id = \"$sid\"")->fetch();
         if ($object) {
             $this->init();
@@ -124,9 +133,16 @@ class Session
         }
     }
 
-    protected function session_old_delete($sid)
+    protected function session_confirm($sid)
     {
         $stmt = $this->db->prepare("DELETE FROM $this->table WHERE session_id = \"$sid\" AND last_update + INTERVAL $this->life_session MINUTE < CURRENT_TIMESTAMP()");
+        $stmt->execute();
+    }
+
+    protected function session_old_delete()
+    {
+        $life_session = $this->life_session + 15;
+        $stmt = $this->db->prepare("DELETE FROM $this->table WHERE last_update + INTERVAL $life_session MINUTE < CURRENT_TIMESTAMP()");
         $stmt->execute();
     }
 

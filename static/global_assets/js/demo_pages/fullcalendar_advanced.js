@@ -30,82 +30,12 @@ var FullCalendarAdvanced = (function () {
         // Add demo events
         // ------------------------------
 
-        // Event colors
-        var eventColors = [
-            {
-                title: "All Day Event",
-                start: "2014-11-01",
-                color: "#EF5350",
-            },
-            {
-                title: "Long Event",
-                start: "2014-11-07",
-                end: "2014-11-10",
-                color: "#26A69A",
-            },
-            {
-                id: 999,
-                title: "Repeating Event",
-                start: "2014-11-09T16:00:00",
-                color: "#26A69A",
-            },
-            {
-                id: 999,
-                title: "Repeating Event",
-                start: "2014-11-16T16:00:00",
-                color: "#5C6BC0",
-            },
-            {
-                title: "Conference",
-                start: "2014-11-11",
-                end: "2014-11-13",
-                color: "#546E7A",
-            },
-            {
-                title: "Meeting",
-                start: "2014-11-12T10:30:00",
-                end: "2014-11-12T12:30:00",
-                color: "#546E7A",
-            },
-            {
-                title: "Lunch",
-                start: "2014-11-12T12:00:00",
-                color: "#546E7A",
-            },
-            {
-                title: "Meeting",
-                start: "2014-11-12T14:30:00",
-                color: "#546E7A",
-            },
-            {
-                title: "Happy Hour",
-                start: "2014-11-12T17:30:00",
-                color: "#546E7A",
-            },
-            {
-                title: "Dinner",
-                start: "2014-11-12T20:00:00",
-                color: "#546E7A",
-            },
-            {
-                title: "Birthday Party",
-                start: "2014-11-13T07:00:00",
-                color: "#546E7A",
-            },
-            {
-                title: "Click for Google",
-                url: "http://google.com/",
-                start: "2014-11-28",
-                color: "#FF7043",
-            },
-        ];
-
         // External events
         // ------------------------------
 
         // Add switcher for events removal
-        var remove = document.querySelector(".form-check-input-switchery");
-        var removeInit = new Switchery(remove);
+        // var remove = document.querySelector(".form-check-input-switchery");
+        // var removeInit = new Switchery(remove);
 
         // Initialize the calendar
         $(".fullcalendar-external").fullCalendar({
@@ -114,38 +44,26 @@ var FullCalendarAdvanced = (function () {
                 center: "title",
                 right: "month,agendaWeek,agendaDay",
             },
+            timeZone: "UTC",
             editable: true,
             defaultDate: new Date(),
             events: eventColors,
             locale: "ru",
             droppable: true, // this allows things to be dropped onto the calendar
-            drop: function () {
-                if ($("#drop-remove").is(":checked")) {
-                    // is the "remove after drop" checkbox checked?
-                    $(this).remove(); // if so, remove the element from the "Draggable Events" list
-                }
-                $(this).html("test");
-                // oncontextmenu="alert('lol')"
-                console.log("add");
+            drop: function (info) {
+                CalendarDrop(info, this);
             },
-            eventDrop: function () {
-                console.log("update");
+            eventDrop: function (info) {
+                CalendarEventDropAndResize(info, this);
             },
-            eventClick: function (calEvent, jsEvent, view) {
-                // alert("Event: " + calEvent.title);
-                // alert("Coordinates: " + jsEvent.pageX + "," + jsEvent.pageY);
-                // alert("View: " + view.name);
-                // alert("This needs to be deleted");
-
-                // // change the border color just for fun
-                // $(this).css("border-color", "red");
-                // $(".fullcalendar-external").fullCalendar("removeEvents"[this]);
-                $(".fullcalendar-external").fullCalendar(
-                    "removeEvents",
-                    function (ev) {
-                        return ev._id == calEvent._id;
-                    }
-                );
+            eventResize: function (info) {
+                CalendarEventDropAndResize(info, this);
+            },
+            // eventRender: function (info) {
+            //     console.log("render");
+            // },
+            eventClick: function (info) {
+                CalendarEventClick(info, this);
             },
             isRTL: $("html").attr("dir") == "rtl" ? true : false,
         });

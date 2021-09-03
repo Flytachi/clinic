@@ -5,14 +5,8 @@ is_module('module_bypass');
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<!-- <script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script> -->
-
-<script src="<?= stack("global_assets/js/plugins/extensions/jquery_ui/interactions.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/ui/fullcalendar/fullcalendar.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/ui/fullcalendar/lang/ru.js") ?>"></script>
-
-<script src="<?= stack("global_assets/js/demo_pages/fullcalendar_advanced.js") ?>"></script>
-
+<script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
+<!-- <script src="<?= stack("vendors/js/custom.js") ?>"></script> -->
 
 <body>
 	<!-- Main navbar -->
@@ -58,52 +52,77 @@ is_module('module_bypass');
 							</a>
 						</legend>
 
-						<!-- External events -->
-						<div class="card">
-							<div class="card-header header-elements-inline">
-								<h5 class="card-title">External events</h5>
-								<div class="header-elements">
-									<div class="list-icons">
-										<a class="list-icons-item" data-action="collapse"></a>
-										<a class="list-icons-item" data-action="reload"></a>
-										<a class="list-icons-item" data-action="remove"></a>
-									</div>
+						<?php if ($activity and empty($patient->completed)): ?>
+
+							<div class="card">
+								<div class="table-responsive">
+									<table class="table table-hover table-sm table-bordered">
+										<thead class="<?= $classes['table-thead'] ?>">
+											<tr>
+												<th style="width: 40px !important;">№</th>
+												<th style="width: 45%;">Препарат</th>
+												<th>Описание</th>
+												<th class="text-center" style="width: 150px;">Метод введения </th>
+												<th class="text-center" style="width: 100px;">Время</th>
+												<th class="text-right" style="width: 150px;">Действия</th>
+											</tr>
+										</thead>
+										<tbody>
+											<?php
+											$i=1;
+											foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id ORDER BY diet_id DESC") as $row) {
+												?>
+												<tr>
+													<td><?= $i++ ?></td>
+													<td>
+														<?php
+														if ($row['diet_id']) {
+															echo "<b>Диета: </b>".$db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
+														}else {
+															foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
+																if ($serv['preparat_id']) {
+																	echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
+																} else {
+																	echo $serv['preparat_name']."<br>";
+																}
+															}
+														}
+														?>
+													</td>
+													<td><?= $row['description'] ?></td>
+													<td><?= ( isset($row['method']) ) ? $methods[$row['method']] : '' ?></td>
+													<td class="text-center">
+														<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
+															<?php if ($time['status']): ?>
+																<?php if ($time['completed']): ?>
+																	<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+																<?php else: ?>
+																	<span class="text-danger"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+																<?php endif; ?>
+															<?php else: ?>
+																<span class="text-muted"><?= date('H:i', strtotime($time['time'])) ?></span><br>
+															<?php endif; ?>
+														<?php endforeach; ?>
+													</td>
+													<td>
+														<button onclick="Check('<?= viv('card/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
+													</td>
+												</tr>
+												<?php
+											}
+											?>
+										</tbody>
+									</table>
 								</div>
 							</div>
-							
-							<div class="card-body">
-								<p class="mb-3">Add extended dragging functionality with <code>droppable</code> option. Data can be attached to the element in order to specify its duration when dropped. A Duration-ish value can be provided. This can either be done via jQuery or via an <code>data-duration</code> attribute. Please note: since droppable option operates with jQuery UI draggables, you must download the appropriate jQuery UI files and initialize a draggable element.</p>
 
-								<div class="row">
-									<div class="col-md-3">
-										<div class="mb-3" id="external-events">
-											<h6>Draggable Events</h6>
-											<div class="fc-events-container mb-3">
-												<div class="fc-event" data-color="#546E7A">Sauna and stuff</div>
-												<div class="fc-event" data-color="#26A69A">Lunch time</div>
-												<div class="fc-event" data-color="#546E7A">Meeting with Fred</div>
-												<div class="fc-event" data-color="#FF7043">Shopping</div>
-												<div class="fc-event" data-color="#5C6BC0">Restaurant</div>
-												<div class="fc-event">Basketball</div>
-												<div class="fc-event">Daily routine</div>
-											</div>
+						<?php else: ?>
 
-											<div class="form-check form-check-right form-check-switchery">
-												<label class="form-check-label">
-													<input type="checkbox" class="form-check-input-switchery" checked id="drop-remove">
-													Remove after drop
-												</label>
-											</div>
-										</div>
-									</div>
-
-									<div class="col-md-9">
-										<div class="fullcalendar-external"></div>
-									</div>
-								</div>
+							<div class="alert bg-warning alert-styled-left alert-dismissible">
+								<span class="font-weight-semibold">Технические работы</span>
 							</div>
-						</div>
-						<!-- /external events -->
+
+						<?php endif; ?>
 
 				    </div>
 

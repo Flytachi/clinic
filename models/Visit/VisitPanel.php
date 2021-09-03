@@ -250,7 +250,7 @@ class VisitPanel extends VisitModel
                 <div class="form-group-feedback form-group-feedback-right row">
 
                     <div class="col-md-11">
-                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input" placeholder="Поиск..." title="Введите назване отдела или услуги">
+                        <input type="text" class="<?= $classes['input-service_search'] ?>" id="search_input_service" placeholder="Поиск..." title="Введите назване отдела или услуги">
                         <div class="form-control-feedback">
                             <i class="icon-search4 font-size-base text-muted"></i>
                         </div>
@@ -317,14 +317,14 @@ class VisitPanel extends VisitModel
 
             var service = {};
 
-            $("#search_input").keyup(function() {
+            $("#search_input_service").keyup(function() {
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $this->value('is_foreigner') ?>",
-                        search: $("#search_input").val(),
+                        search: this.value,
                         selected: service,
                         types: "1,2",
                         cols: 0
@@ -339,8 +339,8 @@ class VisitPanel extends VisitModel
             function TableChangeServices(params) {
 
                 $.ajax({
-                    type: "GET",
-                    url: "<?= ajax('service_table') ?>",
+                    type: "POST",
+                    url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $this->value('is_foreigner') ?>",
