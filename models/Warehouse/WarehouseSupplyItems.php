@@ -33,12 +33,12 @@ class WarehouseSupplyItemsModel extends Model
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT suplier FROM warehouse_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
                 <?php else: ?>
                     <select name="item_supplier_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Поставщика" onchange="UpBtn('btn_save-<?= $this->number ?>')">
                         <option></option>
                         <?php foreach ($db->query("SELECT * FROM warehouse_item_suppliers") as $row): ?>
-                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['suplier'] ?></option>
+                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['supplier'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>
