@@ -6,7 +6,7 @@ class PackageBypassModel extends Model
 
     public function form($pk = null)
     {
-        global $session;
+        global $session, $classes;
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -27,14 +27,68 @@ class PackageBypassModel extends Model
                 <textarea class="form-control" name="description" rows="2" cols="1" placeholder="Описание"><?= $this->value('description') ?></textarea>
             </div>
 
-            <div class="text-right">
-                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                    <span class="ladda-label">Сохранить</span>
-                    <span class="ladda-spinner"></span>
-                </button>
+            <div class="form-group-feedback form-group-feedback-right row">
+
+                <div class="col-md-11">
+                    <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
+                    <div class="form-control-feedback">
+                        <i class="icon-search4 font-size-base text-muted"></i>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-dark">
+                                <th>#</th>
+                                <th>Наименование</th>
+                                <th>Поставщик</th>
+                                <th>Производитель</th>
+                                <th style="width:100px">Кол-во</th>
+                                <th class="text-right">Цена</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table_form">
+
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
         </form>
+        <script type="text/javascript">
+
+            var product = {};
+
+            $("#search_input_product").keyup(function() {
+                $.ajax({
+                    type: "POST",
+                    url: "<?= up_url(1, 'WarehouseCustomPanel') ?>",
+                    data: {
+                        search: this.value,
+                        selected: product,
+                    },
+                    success: function (result) {
+                        var product = {};
+                        $('#table_form').html(result);
+                    },
+                });
+            });
+
+        </script>
         <?php
     }
 

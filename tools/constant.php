@@ -94,6 +94,7 @@ $classes = array(
     // Others
     "input-search" => "form-control border-primary wmin-200",
     "input-service_search" => "form-control border-primary wmin-200 mb-2",
+    "input-product_search" => "form-control border-teal wmin-200 mb-2",
     "table-thead" => "bg-primary",
     "table-count_menu" => "table-primary",
 
