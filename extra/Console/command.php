@@ -475,7 +475,6 @@ class __Db
                         $keys .= "PRIMARY KEY (`{$col['Field']}`)";
                         $keys .=",";
                         break;
-
                     case "UNI":
                         $keys .= "UNIQUE KEY `{$col['Field']}` (`{$col['Field']}`)";
                         $keys .=",";
