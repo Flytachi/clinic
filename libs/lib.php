@@ -1,8 +1,10 @@
 <?php
 
 function read_excel($filepath){
+    ini_set('error_reporting', 0);
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
     require_once "PHPExcel/Classes/PHPExcel.php"; //подключаем наш фреймворк
-    error_reporting(0);
 
     $ar=array(); // инициализируем массив
     $inputFileType = PHPExcel_IOFactory::identify($filepath); // узнаем тип файла, excel может хранить файлы в разных форматах, xls, xlsx и другие
@@ -15,7 +17,10 @@ function read_excel($filepath){
 function write_excel($table, $file_name = "docs", $table_label=null, $is_null = false)
 {
     global $db;
-    include 'PHPExcel/Classes/PHPExcel.php';
+    ini_set('error_reporting', 0);
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    include 'PHPExcel/Classes/PHPExcel.php'; //подключаем наш фреймворк
 
     if ($is_null) {
         unset($table_label['id']);
