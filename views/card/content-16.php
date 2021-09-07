@@ -204,7 +204,7 @@ require_once 'callback.php';
 											<td class="text-right text-<?= number_color($total_bed, true) ?>"><?= number_format($total_bed) ?></td>
 										</tr>
 										<tr>
-											<td><strong style="font-size: 15px;">Услуги/Препараты</strong></td>
+											<td><strong style="font-size: 15px;">Услуги</strong></td>
 											<td class="text-right text-<?= number_color($total_ser, true) ?>"><?= number_format($total_ser) ?></td>
 										</tr>
 										<?php if($sale_info): ?>
@@ -229,12 +229,12 @@ require_once 'callback.php';
 										<?php if($patient->completed): ?>
 											<?php
 											if ($vps['sale-total'] > 0) {
-												$formul = "<strong>Формула</strong><br> ".number_format($vps['balance'])." + ".number_format($vps['sale-total'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
+												$formul = number_format($vps['balance'])." + ".number_format($vps['sale-total'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
 											}else {
-												$formul = "<strong>Формула</strong><br> ".number_format($vps['balance'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
+												$formul = number_format($vps['balance'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
 											}
 											?>
-											<tr class="table-secondary text-center text-<?= ($vps['result'] == 0) ? 'success' : 'danger'; ?>" data-popup="tooltip" title="" data-html="true" data-original-title="<?= $formul ?>">
+											<tr class="table-secondary text-center text-<?= ($vps['result'] == 0) ? 'success' : 'danger'; ?>" data-trigger="hover" data-popup="popover" data-placement="top" title="" data-content="<?= $formul ?>" data-original-title="Формула">
 												<td colspan="2"><strong style="font-size: 15px;">Расчитанно</strong></td>
 											</tr>
 										<?php endif; ?>

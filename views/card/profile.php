@@ -217,12 +217,6 @@
                     </fieldset>
                 <?php endif; ?>
 
-                <?php if (!$patient->direction): ?>
-                    <div class="col-md-12">
-                        <b>Жалоба: </b><?= $patient->complaint ?>
-                    </div>
-                <?php endif; ?>
-
             </div>
 
             <?php if ($patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>

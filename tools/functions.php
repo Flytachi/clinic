@@ -175,4 +175,15 @@ function division_assist($id = null) {
     return $stmt;
 }
 // END Divisions
+
+function icd($pk = null, $title = 'code,decryption')
+{
+    global $db;
+    if ($pk) {
+        $stmt = $db->query("SELECT $title FROM international_classification_diseases WHERE id = $pk")->fetch();
+    }else{
+        $stmt = null;
+    }
+    return $stmt;
+}
 ?>

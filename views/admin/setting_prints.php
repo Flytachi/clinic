@@ -74,7 +74,7 @@ $header = "Настройки";
 															<input type="checkbox" class="swit" name="constant_print_document_hr-<?= $s ?>" <?= ( config("print_document_hr-$s") ) ? 'checked': '' ?>>
 														</div>
 														<div class="col-1">
-															<input type="color" name="constant_print_document_hr-<?= $s ?>-color" value="<?= config("print_document_hr-$s-color") ?>" class="form-control">
+															<input type="color" name="constant_print_document_hr-<?= $s ?>-color" value="<?= config("print_document_hr-$s-color") ?>" class="form-controlanimations_velocity_examples">
 														</div>
 													</div>
 												<?php endfor; ?>

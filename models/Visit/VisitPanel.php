@@ -114,11 +114,6 @@ class VisitPanel extends VisitModel
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label>Жалоба:</label>
-                            <textarea class="form-control" name="complaint" rows="1" cols="1" placeholder="Жалоба"></textarea>
-                        </div>
-
                     </div>
 
                     <div class="col-md-4">

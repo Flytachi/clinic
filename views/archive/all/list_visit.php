@@ -71,7 +71,7 @@ if (!$patient) {
                                 <tbody>
 									<?php
 									$tb = new Table($db, "visits v");
-									$tb->set_data("v.id, v.parad_id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+									$tb->set_data("v.id, v.parad_id, v.icd_id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 									$search = $tb->get_serch();
 									$search_array = array(
 										"v.user_id = $patient->id", 
@@ -85,6 +85,12 @@ if (!$patient) {
                                             <td>
 												<?php if ( $row->parad_id ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-indigo text-indigo">Иcтория болезни №<?= $row->parad_id ?></span>
+												<?php endif; ?>
+												<?php if ( $row->icd_id ): ?>
+													<?php $icd = icd($row->icd_id) ?>
+													<span data-trigger="hover" data-popup="popover" data-placement="right" title="" data-content="<?= $icd['decryption'] ?>" data-original-title="<?= $icd['code'] ?>" style="font-size:15px;" class="badge badge-flat border-teal text-teal">
+														ICD <?= $icd['code'] ?>
+													</span>
 												<?php endif; ?>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>

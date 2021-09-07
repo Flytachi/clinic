@@ -77,7 +77,6 @@ class VisitModel extends Model
             'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
             'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
             'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
-            'complaint' => ( isset($this->post['complaint']) ) ? $this->post['complaint'] : null,
         );
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
