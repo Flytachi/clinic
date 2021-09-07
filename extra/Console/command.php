@@ -339,7 +339,11 @@ class __Db
     private String $file_name = "database";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
     private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private Array $MUL = array('beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,'wards' => '`building_id` (`building_id`,`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
+    private Array $MUL = array(
+        'beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,
+        'wards' => '`building_id` (`building_id`,`floor`,`ward`)',
+        'international_classification_diseases' => '`code` (`code`)',
+    );
 
     function __construct($value = null, $name = null)
     {
@@ -469,17 +473,20 @@ class __Db
                 switch ($col['Key']) {
                     case "PRI":
                         $keys .= "PRIMARY KEY (`{$col['Field']}`)";
-                        $keys.=",";
+                        $keys .=",";
                         break;
 
+                    case "UNI":
+                        $keys .= "UNIQUE KEY `{$col['Field']}` (`{$col['Field']}`)";
+                        $keys .=",";
+                        break;
                     case "MUL":
-                        // $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
                         $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
-                        $keys.=",";
+                        $keys .=",";
                         break;
                 }
 
-                $column.=",";
+                $column .= ",";
                 unset($col);
             }
             $column_keys = substr($column.$keys,0,-1);
