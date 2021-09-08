@@ -12,7 +12,7 @@ class ServicePanel extends Model
         global $db;
         if ( isset($_GET) and $_GET['id'] == 1 and isset($_POST) ) {
             $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-            $this->post = $_POST;
+            $this->set_post($_POST);
             unset($_POST);
             if ( isset($this->post['divisions']) and $this->post['divisions'] ) {
 

@@ -16,7 +16,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $sql = "SELECT
                 us.id, us.birth_date, us.province, us.region, us.phone_number, us.gender, 
                 us.address_residence, us.address_registration, us.status, us.is_foreigner,
-                v.id 'visit_id', v.parad_id, v.grant_id, v.direction, v.is_active, v.add_date, v.discharge_date, v.completed, 
+                v.id 'visit_id', v.parad_id, v.grant_id, v.direction, v.icd_id, v.icd_autor, v.is_active, v.add_date, v.discharge_date, v.completed, 
                 vr.id 'order'
             FROM visits v
                 LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)

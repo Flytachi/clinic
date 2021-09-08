@@ -33,23 +33,23 @@ class WarehouseSupplyItemsModel extends Model
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id =".$this->value('item_manufacturer_id'))->fetchColumn() ?>">
                 <?php else: ?>
-                    <select name="item_supplier_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Поставщика" onchange="UpBtn('btn_save-<?= $this->number ?>')">
-                        <option></option>
-                        <?php foreach ($db->query("SELECT * FROM warehouse_item_suppliers") as $row): ?>
-                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['supplier'] ?></option>
+                    <select name="item_manufacturer_id" class="<?= $classes['form-select'] ?> " data-placeholder="Выберите Производителя" onchange="UpBtn('btn_save-<?= $this->number ?>')">
+                        <?php foreach ($db->query("SELECT * FROM warehouse_item_manufacturers") as $row): ?>
+                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_manufacturer_id') == $row['id']) ? 'selected': '' ?>><?= $row['manufacturer'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id =".$this->value('item_manufacturer_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
                 <?php else: ?>
-                    <select name="item_manufacturer_id" class="<?= $classes['form-select'] ?> " data-placeholder="Выберите Производителя" onchange="UpBtn('btn_save-<?= $this->number ?>')">
-                        <?php foreach ($db->query("SELECT * FROM warehouse_item_manufacturers") as $row): ?>
-                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_manufacturer_id') == $row['id']) ? 'selected': '' ?>><?= $row['manufacturer'] ?></option>
+                    <select name="item_supplier_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Поставщика" onchange="UpBtn('btn_save-<?= $this->number ?>')">
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * FROM warehouse_item_suppliers") as $row): ?>
+                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['supplier'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>

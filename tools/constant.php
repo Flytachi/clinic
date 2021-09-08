@@ -67,6 +67,7 @@ $classes = array(
     
     // Buttons
     // "btn-completed" => "btn btn-outline bg-purple text-purple border-purple btn-sm legitRipple",
+    "btn-icd" => "btn btn-outline bg-pink text-pink border-pink btn-sm legitRipple",
     "btn-completed" => "btn btn-outline-danger btn-sm legitRipple",
     "btn-price" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
@@ -74,7 +75,7 @@ $classes = array(
     "btn-diagnostic_finally" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-table" => "btn btn-dark btn-sm legitRipple",
     "btn-render" => "btn btn-dark btn-sm legitRipple",
-        // cashbox 
+        // Cashbox 
         "price_btn-sale" => "btn btn-outline-secondary btn-sm legitRipple",
         "price_btn-prepayment" => "btn btn-outline-success btn-sm legitRipple",
         "price_btn-refund" => "btn btn-outline-danger btn-sm legitRipple",

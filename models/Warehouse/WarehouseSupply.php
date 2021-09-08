@@ -79,11 +79,11 @@ class WarehouseSupplyModel extends Model
                     <thead>
                         <tr class="<?= $classes['table-thead'] ?>">
                             <th style="width:400px">Препарат</th>
-                            <th style="width:200px">Поставщик</th>
                             <th>Производитель</th>
+                            <th style="width:200px">Поставщик</th>
                             <th style="width:90px">Кол-во</th>
-                            <th style="width:170px">Цена прихода</th>
-                            <th style="width:170px">Цена расхода</th>
+                            <th style="width:100px">Ц.приход</th>
+                            <th style="width:100px">Ц.расход</th>
                             <th style="width:100px">Счёт фактура</th>
                             <th style="width:140px">Штрих код</th>
                             <th style="width: 150px">Срок годности</th>
@@ -503,8 +503,9 @@ class WarehouseSupplyModel extends Model
         global $db;
         $uniq = $db->query("SELECT uniq_key FROM $this->table WHERE id = $pk")->fetchColumn();
         foreach ($db->query("SELECT * FROM $this->_warehouse_item WHERE uniq_key = '$uniq'") as $item) {
-            unset($item['item_cost']);
             unset($item['uniq_key']);
+            unset($item['item_cost']);
+            unset($item['item_faktura']);
             $object = Mixin\insert($this->_warehouse, $item);
             if (!intval($object)){
                 $this->error($object);

@@ -135,6 +135,7 @@
                 <!-- /Main -->
 
                 <?php if(module('module_pharmacy')): ?>
+                    <!-- Warehouse -->
                     <?php foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $warehouse): ?>
 
                         <?php if( permission(json_decode($warehouse['level'])) and ( !$session->get_division() or in_array($session->get_division(), json_decode($warehouse['division'])) ) ): ?>
@@ -147,10 +148,18 @@
                                     <span class="badge bg-blue-400 align-self-center ml-auto">1.2</span>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="<?= viv('warehouse/application') ?>?pk=<?= $warehouse['id'] ?>" class="nav-link legitRipple">
+                                    <i class="icon-store"></i>
+                                    <span>Заяви</span>
+                                    <span class="badge bg-blue-400 align-self-center ml-auto">3</span>
+                                </a>
+                            </li>
                         <?php endif; ?>
 
                     <?php endforeach; ?>
-                    
+                    <!-- /Warehouse -->
                 <?php endif; ?>
                 
             </ul>

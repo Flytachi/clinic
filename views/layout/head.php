@@ -83,7 +83,6 @@
 		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 
 	</script>
-
 	<?php if( empty($session->status) or $session->status != "master" ): ?>
 		<script src="<?= stack("assets/js/sessions.js") ?>"></script>
 	<?php endif; ?>
