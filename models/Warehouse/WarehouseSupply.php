@@ -522,7 +522,7 @@ class WarehouseSupplyModel extends Model
             Успешно
         </div>
         ';
-        render("pharmacy/warehouse_supply");
+        render("pharmacy/supply");
     }
 
     public function error($message)
@@ -533,7 +533,7 @@ class WarehouseSupplyModel extends Model
             <span class="font-weight-semibold"> '.$message.'</span>
         </div>
         ';
-        render("pharmacy/warehouse_supply");
+        render("pharmacy/supply");
     }
 }
         

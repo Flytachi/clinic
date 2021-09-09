@@ -84,7 +84,7 @@ $header = "Аптека / Поставки";
 													<?php if(!$row->completed): ?>
 														<a onclick="Update('<?= up_url($row->id, 'WarehouseSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php endif; ?>
-													<a href="<?= viv('pharmacy/warehouse_supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
+													<a href="<?= viv('pharmacy/supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
 												</div>
 											</td>
 										</tr>

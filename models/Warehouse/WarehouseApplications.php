@@ -4,7 +4,7 @@ class WarehouseApplicationsModel extends Model
 {
     public $table = 'warehouse_applications';
 
-    public function store($pk = null)
+    public function store($status = 1)
     {
         global $classes;
         if( isset($_SESSION['message']) ){
@@ -50,6 +50,7 @@ class WarehouseApplicationsModel extends Model
                     url: "<?= up_url(1, 'WarehouseCommonPanel') ?>",
                     data: {
                         warehouse_id: "<?= $_GET['pk'] ?>", 
+                        status: <?= $status ?>,
                         search: this.value, 
                     },
                     success: function (result) {

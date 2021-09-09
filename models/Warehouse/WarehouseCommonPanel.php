@@ -5,6 +5,7 @@ class WarehouseCommonPanel extends Model
     public $table = 'warehouse_common';
     public $_name = 'warehouse_item_names';
     public $_suppliers = 'warehouse_item_suppliers';
+    public $_applications = 'warehouse_applications';
     public $_manufacturers = 'warehouse_item_manufacturers';
     public $i = 0;
 
@@ -37,10 +38,14 @@ class WarehouseCommonPanel extends Model
             $this->i++;
             ?>
             <tr id="Item_<?= $this->i ?>">
+
+                <!-- Name -->
                 <td>
                     <?= $row->name ?>
                     <input type="hidden" id="name_id_input_<?= $this->i ?>" value="<?= $row->item_name_id ?>">
                 </td>
+
+                <!-- Manufacturer -->
                 <td>
                     <select id="manufacturer_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> manufacturers" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
                         <option value="" >Производитель будет выбран автоматически</option>
@@ -49,6 +54,8 @@ class WarehouseCommonPanel extends Model
                         <?php endforeach; ?>
                     </select>
                 </td>
+
+                <!-- Supplier -->
                 <td>
                     <select id="supplier_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> suppliers" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
                         <option value="" >Поставщик будет выбран автоматически</option>
@@ -57,16 +64,33 @@ class WarehouseCommonPanel extends Model
                         <?php endforeach; ?>
                     </select>
                 </td>
+
+                <!-- Max qty -->
                 <td class="text-center">
-                    <span id="max_qty_input_<?= $this->i ?>"><?= $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->table WHERE item_die_date > CURRENT_DATE() AND item_name_id = $row->item_name_id")->fetchColumn() ?></span>
+                    <span id="max_qty_input_<?= $this->i ?>">
+                        <?php
+                        $max_qty = $applications = 0;
+                        $max_qty += $db->query("SELECT SUM(item_qty) FROM $this->table WHERE item_die_date > CURRENT_DATE() AND item_name_id = $row->item_name_id")->fetchColumn();
+                        $applications += $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE item_name_id = $row->item_name_id AND status != 3")->fetchColumn();
+                        echo $max_qty - $applications;
+                        ?>
+                    </span>
                 </td>
+
+                <!-- Qty -->
                 <td style="width:70px;">
                     <input type="number" id="qty_input_<?= $this->i ?>" class="form-control counts" value="1" min="1" max="<?= $max_qty ?>">
                 </td>
 
+                <!-- Buttons -->
                 <td>
                     <button onclick="SendProduct(this, <?= $this->i ?>)" type="button" class="btn btn-sm btn-outline bg-teal border-teal text-teal btn-icon rounded-round legitRipple">
-                        <i class="icon-plus2"></i>
+                        <!-- <i class="icon-plus2"></i> -->
+                        <?php if($this->post['status'] == 2): ?>
+                            <i class="icon-checkmark-circle"></i>
+                        <?php else: ?>
+                            <i class="icon-radio-unchecked"></i>
+                        <?php endif; ?>
                     </button>
                 </td>
 
@@ -93,7 +117,7 @@ class WarehouseCommonPanel extends Model
                         item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
                         item_supplier_id: document.querySelector('#supplier_id_input_'+index).value,
                         item_qty: document.querySelector('#qty_input_'+index).value,
-                        tran_status: 1,
+                        status: <?= $this->post['status'] ?>,
                     },
                     success: function (data) {
 
@@ -174,9 +198,12 @@ class WarehouseCommonPanel extends Model
         global $db;
         $m = ( isset($data['manufacturer_id']) and $data['manufacturer_id'] ) ? " AND wc.item_manufacturer_id = ".$data['manufacturer_id'] : null;
         $s = ( isset($data['supplier_id']) and $data['supplier_id'] ) ? " AND wc.item_supplier_id = ".$data['supplier_id'] : null;
+
         $supplier_result = $db->query("SELECT DISTINCT wis.id, wis.supplier FROM $this->table wc LEFT JOIN $this->_suppliers wis ON (wis.id=wc.item_supplier_id) WHERE wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_die_date, wc.item_price")->fetchAll();
-        $qty_result = $db->query("SELECT SUM(item_qty) FROM $this->table wc WHERE wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
-        echo json_encode(array('supplier' => $supplier_result, 'max_qty' => $qty_result));
+        $qty_max = $db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
+        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.item_name_id = {$data['item_name_id']} AND wc.status != 3 $m $s")->fetchColumn();
+        $qty = $qty_max - $qty_applications;
+        echo json_encode(array('supplier' => $supplier_result, 'max_qty' => $qty));
     }
 
     public function empty_result()

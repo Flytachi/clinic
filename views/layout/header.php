@@ -12,7 +12,7 @@
         <div class="header-elements d-none">
             <div class="breadcrumb justify-content-center">
                 <a href="" class="breadcrumb-elements-item" class="dropdown-toggle legitRipple" data-toggle="dropdown">
-                    <i class="icon-book3 mr-2"></i>
+                    <i class="icon-bookmark mr-2"></i>
                     ICD
                 </a>
                 <div class="dropdown-menu dropdown-menu-right content card-body" style="width:500px;">
