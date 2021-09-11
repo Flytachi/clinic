@@ -6,7 +6,7 @@ class PackageBypassModel extends Model
 
     public function form($pk = null)
     {
-        global $session, $classes;
+        global $session, $classes, $methods;
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
@@ -20,6 +20,16 @@ class PackageBypassModel extends Model
             <div class="form-group">
                 <label>Название пакета:</label>
                 <input type="text" name="name" value="<?= $this->value('name') ?>" class="form-control" placeholder="Введите название пакета" required>
+            </div>
+
+            <div class="form-group">
+                <label>Метод:</label>
+                <select data-placeholder="Выбрать метод" name="method" class="<?= $classes['form-select'] ?>" required>
+                    <option></option>
+                    <?php foreach ($methods as $key => $value): ?>
+                        <option value="<?= $key ?>" <?= ($this->value('method') == $key) ? 'selected' : '' ?>><?= $value ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
             <div class="form-group">
@@ -71,7 +81,7 @@ class PackageBypassModel extends Model
         </form>
         <script type="text/javascript">
 
-            var product = {};
+            /* var product = {};
 
             $("#search_input_product").keyup(function() {
                 $.ajax({
@@ -86,10 +96,11 @@ class PackageBypassModel extends Model
                         $('#table_form').html(result);
                     },
                 });
-            });
+            }); */
 
         </script>
         <?php
+        if ($pk) $this->jquery_init();
     }
 
     public function clean()

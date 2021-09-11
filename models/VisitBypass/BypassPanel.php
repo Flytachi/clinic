@@ -3,12 +3,26 @@
 class BypassPanel extends Model
 {
     public $table = 'bypassPanel';
+    public $_visits = 'visits';
+
+    public function get_or_404(int $pk)
+    {
+        global $db;
+        // Visit
+        $object = $db->query("SELECT * FROM $this->_visits WHERE id = $pk AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+        if($object){
+            return $this->{$_GET['form']}($pk);
+        }else{
+            Mixin\error('report_permissions_false');
+        }
+
+    }
 
     public function TabPanel($pk = null)
     {
         ?>
         <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Пользовательские</a></li>
+            <!-- <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Пользовательские</a></li> -->
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelPackage') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Мои</a></li>
             <?php if(module('module_diet')): ?>
                 <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelDiet') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Диета</a></li>
@@ -18,7 +32,8 @@ class BypassPanel extends Model
         <div class="fc-events-container mb-3" id="efect">
             <script>
                 $(document).ready(function(){
-                    DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>');
+                    DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelPackage') ?>');
+                    // DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>');
                 });
             </script>
         </div>
@@ -45,7 +60,7 @@ class BypassPanel extends Model
         <div class="fc-event" data-color="#546E7A" onmousedown="CheckPack(this)">Sauna and stuff</div>
 
         <hr>
-        <button class="btn btn-success btn-block btn-sm legitRipple" type="button"><i class="icon-plus22 mr-1"></i>Добавить</button>
+        <button onclick="Update('<?= up_url($pk, 'VisitBypassModel') ?>')" class="btn btn-success btn-block btn-sm legitRipple" type="button"><i class="icon-plus22 mr-1"></i>Добавить</button>
         <?php
         $this->jquery_init();
     }

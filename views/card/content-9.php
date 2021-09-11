@@ -68,7 +68,7 @@ is_module('module_bypass');
 										<div class="mb-3" id="external-events">
 											<h6>Пакеты назначений</h6>
 
-											<?php (new BypassPanel)->TabPanel() ?>
+											<?php (new BypassPanel)->TabPanel($patient->visit_id) ?>
 
 											<!-- <div class="form-check form-check-right form-check-switchery">
 												<label class="form-check-label">
@@ -100,6 +100,12 @@ is_module('module_bypass');
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
 	<div id="modal_event_card" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content border-3 border-info" id="event_card_body">
@@ -109,6 +115,17 @@ is_module('module_bypass');
 	</div>
 
 	<script type="text/javascript">
+
+		function Update(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
 
 		var eventColors = [];
 
