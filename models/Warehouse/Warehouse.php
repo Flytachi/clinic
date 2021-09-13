@@ -28,7 +28,8 @@ class WarehouseModel extends Model
                 <label>Выбирите роль:</label>
                 <select data-placeholder="Выбрать роль" multiple="multiple" name="level[]" class="<?= $classes['form-multiselect'] ?>" onchange="ChangeLevel(this)" required>
                     <?php foreach ($PERSONAL as $key => $value): ?>
-                        <?php if(in_array($key, [5,6,7,10,11,12,13])): ?>
+                        <!-- [5,6,7,10,11,12,13] -->
+                        <?php if(in_array($key, [7])): ?>
                             <option value="<?= $key ?>" <?= ($this->value('level') and in_array($key, $level)) ? 'selected': '' ?>><?= $value ?></option>
                         <?php endif; ?>
                     <?php endforeach; ?>
@@ -42,7 +43,13 @@ class WarehouseModel extends Model
                 <div class="col-md-6">
                     <label>Отделы:</label>
                     <select data-placeholder="Выбрать отделы" multiple="multiple" name="division[]" class="<?= $classes['form-multiselect'] ?>">
-                        <?php foreach($db->query("SELECT * from divisions WHERE level IN ($level_imp)") as $row): ?>
+                        <?php if(in_array(7, $level)): ?>
+                            <?php $sql = "SELECT * from divisions WHERE level IN (5)"; ?>
+                        <?php else: ?>
+                            <?php $sql = "SELECT * from divisions WHERE level IN ($level_imp)"; ?>
+                        <?php endif; ?>
+
+                        <?php foreach($db->query($sql) as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($this->value('division') and in_array($row['id'], $division)) ? 'selected': '' ?>><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>

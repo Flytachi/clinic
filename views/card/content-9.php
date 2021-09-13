@@ -5,13 +5,13 @@ is_module('module_bypass');
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<!-- <script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script> -->
 
 <script src="<?= stack("global_assets/js/plugins/extensions/jquery_ui/interactions.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/ui/fullcalendar/fullcalendar.min.js") ?>"></script>
 <script src="<?= stack("global_assets/js/plugins/ui/fullcalendar/lang/ru.js") ?>"></script>
 
 <script src="<?= stack("global_assets/js/demo_pages/fullcalendar_advanced.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 
 <body>
@@ -70,6 +70,13 @@ is_module('module_bypass');
 
 											<?php (new BypassPanel)->TabPanel($patient->visit_id) ?>
 
+
+											<div class="form-check form-check-right form-check-switchery">
+												<label class="form-check-label">
+													<input type="checkbox" class="swit" id="item-information">
+													Показать данные
+												</label>
+											</div>
 											<!-- <div class="form-check form-check-right form-check-switchery">
 												<label class="form-check-label">
 													<input type="checkbox" class="form-check-input-switchery" id="drop-remove">
@@ -80,7 +87,7 @@ is_module('module_bypass');
 									</div>
 
 									<div class="col-md-8">
-										<div class="fullcalendar-external"></div>
+										<div class="fullcalendar-external" style="height: 670px;"></div>
 									</div>
 								</div>
 							</div>
@@ -101,7 +108,7 @@ is_module('module_bypass');
 	<!-- /page content -->
 
 	<div id="modal_default" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-full">
 			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
@@ -116,6 +123,8 @@ is_module('module_bypass');
 
 	<script type="text/javascript">
 
+ 		var bypassEventUrl = "<?= ajax('visit_events').'?pk='.$patient->visit_id ?>";
+
 		function Update(events) {
 			$.ajax({
 				type: "GET",
@@ -126,8 +135,6 @@ is_module('module_bypass');
 				},
 			});
 		};
-
-		var eventColors = [];
 
 		function toTimestamp(strDate) {
             var datum = Date.parse(strDate);
@@ -140,56 +147,13 @@ is_module('module_bypass');
 				[null].concat(strDate)
 			))();
         }
-		
-		<?php
-			$tb = new Table($db, "visit_bypass_events");
-			$tb->where("visit_id = $patient->visit_id");
-		?>
-		<?php foreach ($tb->get_table() as $event): ?>
-			eventColors.push({
-				id: <?= $event->id ?>,
-				url: null,
-				title: "<?= $event->event_title ?>",
-				start: "<?= $event->event_start ?>",
-				end: "<?= $event->event_end ?>",
-				color: "<?= $event->event_color ?>",
-			});
-		<?php endforeach; ?>
-		
 
-		// Event colors
-        // var eventExamples = [
-        //     {
-        //         title: "All Day Event",
-        //         start: "2021-09-01",
-        //         color: "#EF5350",
-        //     },
-        //     {
-        //         title: "Long Event",
-        //         start: "2021-09-02",
-        //         end: "2021-09-04",
-        //         color: "#26A69A",
-        //     },
-        //     {
-        //         title: "Meeting",
-        //         start: "2021-09-04T10:30:00",
-        //         end: "2021-09-05T12:30:00",
-        //         color: "#546E7A",
-        //     },
-        //     {
-        //         title: "Click for Google",
-        //         url: "http://google.com/",
-        //         start: "2021-09-23",
-        //         color: "#FF7043",
-        //     },
-        // ];
 
 		function CalendarDrop(info, element) {
 			if ($("#drop-remove").is(":checked")) {
 				// is the "remove after drop" checkbox checked?
 				$(element).remove(); // if so, remove the element from the "Draggable Events" list
 			}
-
 			if (Array.isArray(info._i)) {
 				var d_date = toDataformat(info._i)
 				var is_time = true;
@@ -204,6 +168,7 @@ is_module('module_bypass');
 				data: {
 					model: "VisitBypassEventsModel",
 					visit_id: "<?= $patient->visit_id ?>",
+					visit_bypass_id: element.dataset.id,
 					parent_id: "<?= $session->session_id ?>",
 					user_id: "<?= $patient->id ?>",
 					event_title: element.innerHTML,
@@ -213,6 +178,7 @@ is_module('module_bypass');
 				},
 				success: function (result) {
 					console.log("create event => "+result);
+					FullCalendarAdvanced.init(bypassEventUrl);
 				},
 			});
 		};
@@ -223,6 +189,10 @@ is_module('module_bypass');
 			if (info.end) {
 				end_time = toTimestamp(toDataformat(info.end._i));
 			}
+
+			console.log(info.start._i);
+			console.log(toDataformat(info.start._i));
+			console.log(toTimestamp(toDataformat(info.start._i)));
 
 			$.ajax({
 				type: "POST",
@@ -253,14 +223,49 @@ is_module('module_bypass');
 
 		
 		function CheckPack(params) {
-			event.preventDefault();
-			// params.style.backgroundColor='#546E7A';
-			// params.style.borderColor='#546E7A';
-			// params.style.pointerEvents='none';
-			// $(params).remove();
-			// $("#efect").append(params);
-			console.log(params);
+			$('.fullcalendar-external').fullCalendar('destroy');
+			$('.fullcalendar-external').html('<img src="<?= stack('assets/images/load.gif') ?>" alt="Загрузка..."/>');
+			
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('visit_event_bypass_change') ?>",
+				data: {pk:params.dataset.id},
+				success: function (bypassEventStatus) {
+					$('.fullcalendar-external').html('');
+					params.dataset.check = true;
+					if(bypassEventStatus == "success"){
+
+						FullCalendarAdvanced.init(bypassEventUrl);
+						params.style.backgroundColor='';
+						params.style.borderColor='';
+
+					}else{
+
+						FullCalendarAdvanced.block(bypassEventUrl);
+						params.style.backgroundColor='#546E7A';
+						params.style.borderColor='#546E7A';
+						// params.style.pointerEvents='none';
+						new Noty({
+							text: '<strong>Внимание!</strong><br>'+bypassEventStatus,
+							type: 'error'
+						}).show();
+
+					}
+				},
+			});
+
 		};
+
+		function PackDefault(params) {
+			if(!params.dataset.check){
+				FullCalendarAdvanced.init(bypassEventUrl);
+			}
+			params.dataset.check = false;
+		}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			FullCalendarAdvanced.init(bypassEventUrl);
+		});
 
 	</script>
 

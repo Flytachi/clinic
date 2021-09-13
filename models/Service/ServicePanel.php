@@ -96,7 +96,7 @@ class ServicePanel extends Model
                                         <option value="<?= $parent->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['parent']) and  $this->post['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <?php foreach ($db->query("SELECT id FROM users WHERE division_id = $row->division_id AND is_active IS NOT NULL") as $parent): ?>
+                                    <?php foreach ($db->query("SELECT id FROM users WHERE division_id = $row->division_id AND user_level != 7 AND is_active IS NOT NULL") as $parent): ?>
                                         <option value="<?= $parent->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['parent']) and  $this->post['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

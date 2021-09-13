@@ -81,7 +81,7 @@ $tb->set_self(viv('warehouse/application'));
                     </td>
                     <td class="text-right"s>
                         <div class="list-icons">
-                            <?php if ( is_parent() or $row->status == 1 ): ?>
+                            <?php if ( (is_parent() or $row->status == 1) and $row->status != 2 ): ?>
                                 <a href="<?= del_url($row->id, 'WarehouseApplicationsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                             <?php endif; ?>
                             <?php if (is_parent()): ?>

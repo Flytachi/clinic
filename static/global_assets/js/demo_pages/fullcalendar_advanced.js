@@ -15,7 +15,7 @@ var FullCalendarAdvanced = (function () {
     //
 
     // External events
-    var _componentFullCalendarEvents = function () {
+    var _componentFullCalendarEvents = function (url, droppable_status) {
         if (
             !$().fullCalendar ||
             typeof Switchery == "undefined" ||
@@ -27,45 +27,51 @@ var FullCalendarAdvanced = (function () {
             return;
         }
 
-        // Add demo events
-        // ------------------------------
-
-        // External events
-        // ------------------------------
-
         // Add switcher for events removal
         // var remove = document.querySelector(".form-check-input-switchery");
         // var removeInit = new Switchery(remove);
 
-        // Initialize the calendar
-        $(".fullcalendar-external").fullCalendar({
-            header: {
-                left: "prev,next today",
-                center: "title",
-                right: "month,agendaWeek,agendaDay",
+        // External events
+        // ------------------------------
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: 'json',
+            success: function (bypassEventData) {
+
+                // Initialize the calendar
+                $(".fullcalendar-external").fullCalendar({
+                    header: {
+                        left: "prev,next today",
+                        center: "title",
+                        right: "month,agendaWeek,agendaDay",
+                    },
+                    // timeZone: "UTC",
+                    timeZone: "Asia/Samarkand",
+                    editable: true,
+                    defaultDate: new Date(),
+                    events: bypassEventData,
+                    locale: "ru",
+                    droppable: droppable_status, // this allows things to be dropped onto the calendar
+                    drop: function (info) {
+                        CalendarDrop(info, this);
+                    },
+                    eventDrop: function (info) {
+                        CalendarEventDropAndResize(info, this);
+                    },
+                    eventResize: function (info) {
+                        CalendarEventDropAndResize(info, this);
+                    },
+                    // eventRender: function (info) {
+                    //     console.log("render");
+                    // },
+                    eventClick: function (info) {
+                        CalendarEventClick(info, this);
+                    },
+                    isRTL: $("html").attr("dir") == "rtl" ? true : false,
+                });
+
             },
-            timeZone: "UTC",
-            editable: true,
-            defaultDate: new Date(),
-            events: eventColors,
-            locale: "ru",
-            droppable: true, // this allows things to be dropped onto the calendar
-            drop: function (info) {
-                CalendarDrop(info, this);
-            },
-            eventDrop: function (info) {
-                CalendarEventDropAndResize(info, this);
-            },
-            eventResize: function (info) {
-                CalendarEventDropAndResize(info, this);
-            },
-            // eventRender: function (info) {
-            //     console.log("render");
-            // },
-            eventClick: function (info) {
-                CalendarEventClick(info, this);
-            },
-            isRTL: $("html").attr("dir") == "rtl" ? true : false,
         });
 
         // Initialize the external events
@@ -97,15 +103,11 @@ var FullCalendarAdvanced = (function () {
     //
 
     return {
-        init: function () {
-            _componentFullCalendarEvents();
+        init: function (url) {
+            _componentFullCalendarEvents(url, true);
         },
+        block: function (url) {
+            _componentFullCalendarEvents(url, false);
+        }
     };
 })();
-
-// Initialize module
-// ------------------------------
-
-document.addEventListener("DOMContentLoaded", function () {
-    FullCalendarAdvanced.init();
-});

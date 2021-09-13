@@ -95,6 +95,17 @@ $header = "Заявки";
 			});
 		}
 
+		function ChangeWareType(params) {
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('pharmacy/application-change_ware_type.php') ?>",
+				data: { pk: params },
+				success: function (result) {
+					document.querySelector('#display_parents').innerHTML = result;
+				},
+			});
+		}
+
     </script>
 
 	<!-- Footer -->

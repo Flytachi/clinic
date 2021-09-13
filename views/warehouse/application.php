@@ -86,7 +86,6 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 
 					<div class="card-body" id="form_card">
 
-
                         <?php
 						if (is_parent()) (new WarehouseApplicationsModel)->store(2); 
 						else (new WarehouseApplicationsModel)->store();

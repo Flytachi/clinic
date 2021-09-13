@@ -7,7 +7,13 @@ $session->is_auth();
     <div class="col-md-6">
         <label>Отделы:</label>
         <select data-placeholder="Выбрать отделы" multiple="multiple" name="division[]" id="division" class="<?= $classes['form-multiselect'] ?>">
-            <?php foreach($db->query("SELECT * from divisions WHERE level IN ($level)") as $row): ?>
+            <?php if($level == 7): ?>
+                <?php $sql = "SELECT * from divisions WHERE level IN (5)"; ?>
+            <?php else: ?>
+                <?php $sql = "SELECT * from divisions WHERE level IN ($level)"; ?>
+            <?php endif; ?>
+
+            <?php foreach($db->query($sql) as $row): ?>
                 <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
             <?php endforeach; ?>
         </select>

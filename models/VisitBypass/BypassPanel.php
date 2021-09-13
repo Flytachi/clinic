@@ -2,7 +2,8 @@
 
 class BypassPanel extends Model
 {
-    public $table = 'bypassPanel';
+    public $_package = 'package_bypass';
+    public $_bypass = 'visit_bypass';
     public $_visits = 'visits';
 
     public function get_or_404(int $pk)
@@ -22,8 +23,8 @@ class BypassPanel extends Model
     {
         ?>
         <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-            <!-- <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Пользовательские</a></li> -->
-            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelPackage') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Мои</a></li>
+            <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Пользовательские</a></li>
+            <!-- <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelPackage') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Мои</a></li> -->
             <?php if(module('module_diet')): ?>
                 <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelDiet') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Диета</a></li>
             <?php endif; ?>
@@ -32,8 +33,7 @@ class BypassPanel extends Model
         <div class="fc-events-container mb-3" id="efect">
             <script>
                 $(document).ready(function(){
-                    DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelPackage') ?>');
-                    // DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>');
+                    DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>');
                 });
             </script>
         </div>
@@ -54,10 +54,45 @@ class BypassPanel extends Model
 
     public function DetailPanelCustom($pk = null)
     {
+        global $db, $session;
+        $tb = new Table($db, $this->_bypass);
+        $tb->where("visit_id = $pk AND parent_id = $session->session_id")->order_by("name ASC");
+        foreach ($tb->get_table() as $row) {
+            ?>
+            <div class="fc-event fc-item" title="" onmouseup="PackDefault(this)" onmousedown="CheckPack(this)" data-id="<?= $row->id ?>"><?= $row->name ?></div>
+            <?php
+        }
         ?>
-        <div class="fc-event" data-color="#26A69A" onmousedown="CheckPack(this)">Капельница</div>
-        <div class="fc-event" data-color="#5C6BC0" onmousedown="CheckPack(this)">Препарат с собой</div>
-        <div class="fc-event" data-color="#546E7A" onmousedown="CheckPack(this)">Sauna and stuff</div>
+
+        <!-- <div class="fc-event" data-color="#26A69A" onmousedown="CheckPack(this)">Капельница</div> -->
+        <!-- <div class="fc-event" data-color="#5C6BC0" onmousedown="CheckPack(this)">Препарат с собой</div> -->
+        <!-- <div class="fc-event" data-color="#546E7A" onmouseup="PackDefault(this)" onmousedown="CheckPack(this)">Sauna and stuff</div> -->
+
+        <script type="text/javascript">
+            $(".fc-item").on('mouseover', function() {
+                if ($("#item-information").is(":checked")) {
+                    var item = this;
+
+                    $.ajax({
+                        type: "GET",
+                        url: "<?= ajax('visit_event_bypass_data') ?>",
+                        data: {pk: item.dataset.id},
+                        success: function (result) {
+                            $(item).popover({
+                                trigger: "hover",
+                                popup: "popover",
+                                placement: "top",
+                                html: true,
+                                title: item.innerHTML,
+                                content: result,
+                            });
+                            $(item).popover('show');
+                        },
+                    });
+                }
+                
+            });
+        </script>
 
         <hr>
         <button onclick="Update('<?= up_url($pk, 'VisitBypassModel') ?>')" class="btn btn-success btn-block btn-sm legitRipple" type="button"><i class="icon-plus22 mr-1"></i>Добавить</button>
@@ -68,7 +103,7 @@ class BypassPanel extends Model
     public function DetailPanelPackage($pk = null)
     {
         global $db, $session;
-        $tb = new Table($db, "package_bypass");
+        $tb = new Table($db, $this->_package);
         $tb->where("is_active IS NOT NULL AND autor_id = $session->session_id")->order_by("name ASC");
         foreach ($tb->get_table() as $row) {
             ?>
