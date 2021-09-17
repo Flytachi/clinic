@@ -2,6 +2,28 @@
 namespace Mixin;
 
 
+function array_to_ini(array $a, array $parent = array())
+{
+    $out = '';
+    foreach ($a as $k => $v)
+    {
+        if (is_array($v))
+        {
+            //subsection case
+            $sec = array_merge((array) $parent, (array) $k);
+            $out .= PHP_EOL;
+            $out .= '[' . join('.', $sec) . ']' . PHP_EOL;
+            $out .= array_to_ini($v, $sec);
+        }
+        else
+        {
+            //plain key->value case
+            $out .= "$k=$v" . PHP_EOL;
+        }
+    }
+    return $out;
+}
+
 function clean($value = "") {
     $value = trim($value);
     $value = stripslashes($value);
@@ -51,10 +73,11 @@ function insert_or_update($tb, $post, $name_pk = null)
         $pk = $post[$lb];
         unset($post[$lb]);
         $where = "$lb = $pk";
-        if ($name_pk and !intval($pk)) {
+        
+        if ($name_pk and !is_int($pk)) {
             $where = "$lb = \"$pk\"";
         }
-
+        
         // select
         if ($db->query("SELECT $lb FROM $tb WHERE ".$where)->fetchColumn()) {
             // update
@@ -205,13 +228,13 @@ function T_flush($table)
 
 function T_DELETE_database()
 {
-    global $db;
+    global $db, $ini;
 
     try {
         $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
-            $db->exec("DROP TABLE {$table['Tables_in_clinic']}");
+            $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
 
         $db->commit();
@@ -225,14 +248,14 @@ function T_DELETE_database()
 
 function T_FLUSH_database()
 {
-    global $db;
+    global $db, $ini;
 
     try {
         $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
-            if ($table['Tables_in_clinic'] != "sessions") {
-                T_flush($table['Tables_in_clinic']);
+            if ($table['Tables_in_'.$ini['DATABASE']['NAME']] != "sessions") {
+                T_flush($table['Tables_in_'.$ini['DATABASE']['NAME']]);
             }
         }
 

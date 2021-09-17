@@ -22,7 +22,10 @@ class OperationServiceModel extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Сохранить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 

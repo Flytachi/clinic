@@ -6,7 +6,7 @@ class OperationPreparatModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         if($pk){
             $post = $this->post;
             $operation_id = $post['operation_id'];
@@ -35,16 +35,16 @@ class OperationPreparatModel extends Model
 
                     <div class="col-md-10">
                         <label>Препарат:</label>
-                        <select data-placeholder="Выберите материал" name="item_id" class="form-control select-price" required>
+                        <select data-placeholder="Выберите материал" name="item_id" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php $sql = "SELECT st.id, st.price, st.name,
                                             (
                                                 st.qty -
                                                 IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0)
                                             ) 'qty'
-                                            FROM storage st WHERE st.category AND st.qty != 0 ORDER BY st.name"; ?>
+                                            FROM storage st WHERE st.category = 4 AND st.qty != 0 ORDER BY st.name"; ?>
                             <?php foreach ($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ($post['item_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> (в наличии - <?= $row['qty'] ?>)</option>
+                                <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>" <?= ( isset($post['item_id']) and $post['item_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?> (в наличии - <?= $row['qty'] ?>)</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -59,7 +59,10 @@ class OperationPreparatModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-outline-info btn-sm legitRipple" type="submit" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -90,6 +93,11 @@ class OperationPreparatModel extends Model
                         Title_up();
                     },
                 });
+            });
+
+            $( document ).ready(function() {
+                FormLayouts.init();
+                Select2Selects.init();
             });
 
         </script>

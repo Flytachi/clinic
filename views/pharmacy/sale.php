@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(4);
+is_module('module_pharmacy');
 $header = "Продажа";
 ?>
 <!DOCTYPE html>
@@ -30,15 +31,15 @@ $header = "Продажа";
 			<div class="content">
 
                 <?php
-                if($_SESSION['message']){
+                if( isset($_SESSION['message']) ){
                     echo $_SESSION['message'];
                     unset($_SESSION['message']);
                 }
                 ?>
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Продажа</h6>
 					</div>
 
@@ -65,8 +66,8 @@ $header = "Продажа";
 
                                 <div class="table-responsive card">
         							<table class="table table-hover table-sm">
-                                        <thead>
-                                            <tr class="bg-info">
+                                        <thead class="<?= $classes['table-thead'] ?>">
+                                            <tr>
                                                 <th style="width:45%">Препарат</th>
                                                 <th>Срок годности</th>
                                                 <th class="text-right">Кол-во</th>
@@ -84,7 +85,7 @@ $header = "Продажа";
 
                             <div class="col-md-6">
 
-                                <?php StorageSale::form() ?>
+                                <?php (new StorageSale)->form() ?>
 
                             </div>
 
@@ -114,7 +115,7 @@ $header = "Продажа";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php StorageSale::modal(); ?>
+				<?php (new StorageSale)->modal(); ?>
 
 			</div>
 		</div>
@@ -134,15 +135,17 @@ $header = "Продажа";
 		}
 
         function Search_storage(events) {
+			var inp = events;
             event.preventDefault();
 			$.ajax({
 				type: "GET",
 				url: "<?= ajax('pharmacy_search_item') ?>",
 				data: {
-					search: events.search.value,
+					search: inp.search.value,
 				},
 				success: function (result) {
 					$('#search_display').html(result);
+					inp.search.value = "";
 				},
 			});
         }

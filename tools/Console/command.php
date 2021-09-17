@@ -1,5 +1,5 @@
 <?php
-require_once 'model.php';
+require_once 'make.php';
 
 /**
  * CMD
@@ -27,9 +27,7 @@ class __Make
 
     private function resolution()
     {
-        if ($this->argument == "setting") {
-            $this->create_setting();
-        }elseif ($this->argument == "storage") {
+        if ($this->argument == "storage") {
             $this->create_storage();
         }elseif ($this->argument == "dump") {
             $this->create_dump();
@@ -37,17 +35,8 @@ class __Make
 
             try {
 
-                if ($this->name) {
-                    $Class_construct = "__".ucfirst($this->argument);
-                    $cmd = new $Class_construct($this->name);
-                    if ($cmd->create()) {
-                        echo "\033[32m". " Модель успешно создана.\n";
-                    }else {
-                        echo "\033[31m"." Ошибка при создании модели.\n";
-                    }
-                }else {
-                    echo "\033[33m"." Введите название модели.\n";
-                }
+                $Class_construct = "__".ucfirst($this->argument);
+                new $Class_construct($this->name);
     
             } catch (\Error $e) {
                 echo "\033[31m"." Не такого аргумента.\n";
@@ -56,47 +45,25 @@ class __Make
         }
     }
 
-    public function gen_setting()
-    {
-        return <<<EOF
-        [GLOBAL_SETTING]
-        DRIVER = mysql
-        CHARSET = utf8
-        TIME_ZONE = Asia/Samarkand
-        SESSION_LIFE = 
-
-        HIDE_EXTENSION = false
-        ROOT_MOD = false
-        DEBUG = true
-
-
-        [DATABASE]
-        HOST = localhost
-        NAME = 
-        USER = 
-        PASS = 
-        EOF;
-    }
-
-    public function create_setting()
-    {
-        $file_name = "setting.ini";
-        if (!file_exists($file_name)) {
-            $fp = fopen($file_name, "x");
-            fwrite($fp, $this->gen_setting());
-            echo "\033[32m". " $file_name сгенирирован успешно!\n";
-            return fclose($fp);
-        }
-        echo "\033[33m". " $file_name уже существует!\n";
-        return 0;
-    }
-
     public function create_storage()
     {
-        $result = exec("mkdir storage && chmod 777 storage && echo 1");
-        if ($result) {
-            echo "\033[33m"." Директория storage создана.\n";
+        // $result = exec("mkdir storage && mkdir storage/documents && chmod -R 777 storage && echo 1");
+        if (exec("mkdir storage && echo 1")) {
+            echo "\033[32m"." => Директория storage создана.\n";
         }
+        if (exec("mkdir storage/documents && echo 1")) {
+            echo "\033[32m"." => Директория storage/documents создана.\n";
+        }
+        if (exec("mkdir storage/avatars && echo 1")) {
+            echo "\033[32m"." => Директория storage/avatars создана.\n";
+        }
+        if (exec("mkdir storage/images && echo 1")) {
+            echo "\033[32m"." => Директория storage/images создана.\n";
+        }
+        if (exec("chmod -R 777 storage && echo 1")) {
+            echo "\033[32m"." Права на запись установлены.\n";
+        }
+        
         return 1;
     }
 
@@ -104,9 +71,197 @@ class __Make
     {
         $result = exec("mkdir dump && chmod 777 dump && echo 1");
         if ($result) {
-            echo "\033[33m"." Директория dump создана.\n";
+            echo "\033[32m"." Директория dump создана.\n";
         }
         return 1;
+    }
+
+    public function help()
+    {
+        echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+class __Key
+{
+    private $argument;
+    private $name;
+    private $key = ".key";
+    private $auth = "master_key_ITACHI:2021-06-30";
+
+    function __construct($value = null, $seria = null)
+    {
+        $this->argument = $value;
+        $this->seria = $seria;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument) and !is_null($this->seria)) {
+            $this->resolution();
+        }else {
+            echo "---ERROR---";
+        }
+    }
+
+    private function resolution()
+    {
+        if (hex2bin("$this->argument") === $this->auth) {
+            $this->generate_key();
+        }else {
+            echo "---ERROR---";
+        }
+    }
+
+    public function generate_key()
+    {
+        $KEY = dirname(__DIR__, 2)."/$this->key";
+        $fp = fopen($KEY, "w");
+        fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
+        fclose($fp);
+        echo "---DONE---";
+        return 1;
+    }
+
+}
+
+class __Cfg
+{
+    private $argument;
+    private $name;
+    private $setting_name = "setting.ini";
+    private $cfg_name = ".cfg";
+    private $default_configuratuons = array(
+        'SECURITY' => array(
+            'SERIA' => null, 
+        ),
+        'GLOBAL_SETTING' => array(
+            'DRIVER' => 'mysql', 
+            'CHARSET' => 'utf8', 
+            'TIME_ZONE' => 'Asia/Samarkand', 
+
+            'SESSION_GC_PROBABILITY' => 0, 
+            'SESSION_GC_DIVISOR' => 100, 
+            'SESSION_TIMEOUT' => null, 
+            'SESSION_LIFE' => null, 
+            'SESSION_COOKIE_LIFETIME' => null, 
+
+            'ENGINEERING_WORKS' => false, 
+            'HIDE_EXTENSION' => false, 
+            'ROOT_MOD' => false, 
+            'DEBUG' => false, 
+        ), 
+        'DATABASE' => array(
+            'HOST' => 'localhost',
+            'NAME' => null,  
+            'USER' => null,
+            'PASS' => null, 
+        ), 
+        'SOCKET' => array(
+            'PORT' => 8080, 
+            'HOST' => null,
+        ), 
+    );
+
+
+    function __construct($value = null, $name = null)
+    {
+        $this->argument = $value;
+        $this->name = $name;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument)) {
+            $this->resolution();
+        }else {
+            $this->help();
+        }
+    }
+
+    private function resolution()
+    {
+        if ($this->argument == "setting") {
+            $this->create_setting();
+        }elseif ($this->argument == "generate") {
+            $this->generate_key();
+        }elseif ($this->argument == "edit") {
+            $this->edit_key();
+        }elseif ($this->argument == "show") {
+            $this->setting_show();
+        }else {
+            echo "\033[31m"." Не такого аргумента.\n";
+        }
+    }
+
+    public function create_setting()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (!file_exists(dirname(__DIR__, 2)."/$this->setting_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
+            fwrite($fp, Mixin\array_to_ini($this->default_configuratuons));
+            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
+            return fclose($fp);
+        }
+        echo "\033[33m". " $this->setting_name уже существует!\n";
+        return 0;
+    }
+
+    public function edit_key()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+        
+        if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
+            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
+
+            $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
+            fwrite($fp, Mixin\array_to_ini($code));
+            fclose($fp);
+            unlink(dirname(__DIR__, 2)."/$this->cfg_name");
+            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
+            return 1;
+        }
+        echo "\033[33m". " $this->cfg_name не существует!\n";
+        return 0;
+    }
+
+    public function setting_show()
+    {
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
+            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
+            print_r(Mixin\array_to_ini($code));
+            return 1;
+        }
+        echo "\033[33m". " $this->cfg_name не существует!\n";
+        return 0;
+    }
+
+    public function generate_key()
+    {
+        $FILE_setting_ini = dirname(__DIR__, 2)."/$this->setting_name";
+        $sett = parse_ini_file($FILE_setting_ini, true);
+        if (!file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
+            $fp = fopen(dirname(__DIR__, 2)."/$this->cfg_name", "x");
+            fwrite($fp, chunk_split( bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)) , 50, "\n") );
+            fclose($fp);
+            if (unlink($FILE_setting_ini)) {
+                echo "\033[32m". " $this->cfg_name сгенирирован успешно!\n";
+            }else {
+                unlink(dirname(__DIR__, 2)."/$this->cfg_name");
+                echo "\033[31m"."Ошибка при генерации.\n";
+            }
+            return 1;
+        }
+        echo "\033[33m". " $this->cfg_name уже существует!\n";
+        return 0;
     }
 
     public function help()
@@ -121,7 +276,8 @@ class __Install
     private $argument;
     private $name;
     private $git_links = array(
-        "https://github.com/PHPOffice/PHPExcel.git" => "tools/PHPExcel",
+        "https://github.com/PHPOffice/PHPExcel.git" => "libs/PHPExcel",
+        "https://github.com/t0k4rt/phpqrcode.git" => "libs/QRcode",
     );
 
     function __construct($value = null, $name = null)
@@ -169,10 +325,13 @@ class __Install
 class __Db
 {
     private $argument;
-    private $file_name = "database";
-    private $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
-    private $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private $MUL = array('beds' => '`bed` (`ward_id`,`bed`)' ,'wards' => '`floor` (`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
+    private String $path = "tools/Data/database"; 
+    private String $path_seed = "tools/Data/ci"; 
+    private String $format = "json"; 
+    private String $file_name = "database";
+    private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
+    private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    private Array $MUL = array('beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,'wards' => '`building_id` (`building_id`,`floor`,`ward`)'); // array('beds' => 'bed' ,'wards' => 'floor');
 
     function __construct($value = null, $name = null)
     {
@@ -200,9 +359,13 @@ class __Db
             }elseif($this->argument == "migrate") {
                 $this->migrate();
             }elseif($this->argument == "clean") {
+                $this->clean_table = ($this->file_name == "database") ? null : $this->file_name;
                 $this->clean();
             }elseif($this->argument == "delete") {
                 $this->delete();
+            }elseif($this->argument == "seed") {
+                $this->seed_table = ($this->file_name == "database") ? null : $this->file_name;
+                $this->seed();
             }else{
                 echo "\033[31m"." Нет такого аргумента.\n";
             }
@@ -215,9 +378,9 @@ class __Db
 
     public function delete()
     {
-        global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+        global $db, $ini; 
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
         
         $_delete = Mixin\T_DELETE_database();
         if ($_delete == 200) {
@@ -228,24 +391,31 @@ class __Db
 
     public function clean()
     {
-        global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
-        
-        $_clean = Mixin\T_FLUSH_database();
-        if ($_clean == 200) {
-            echo "\033[32m"." База данных успешно очищена.\n";
+        global $db, $ini; 
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
+        if (!$this->clean_table) {
+            $_clean = Mixin\T_FLUSH_database();
+            if ($_clean == 200) {
+                echo "\033[32m"." База данных успешно очищена.\n";
+                return 1;
+            }
+        }else {
+            $_clean = Mixin\T_flush($this->clean_table);
+            echo "\033[32m"." База данных '$this->clean_table' успешно очищена.\n";
             return 1;
         }
+       
     }
 
     public function migrate()
     {
-        global $db; 
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
-        require_once dirname(__DIR__, 1).'/functions/mixin.php';
+        global $db, $ini; 
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
 
-        $file = file_get_contents(dirname(__DIR__, 1)."/DB/$this->file_name.json");
+        $file = file_get_contents(dirname(__DIR__, 2)."/$this->path/$this->file_name.$this->format");
+        
         $data = json_decode($file, true);
         $_initialize = Mixin\T_INITIALIZE_database($data);
         if ($_initialize == 200) {
@@ -256,18 +426,18 @@ class __Db
 
     public function generate()
     {
-        global $db;
-        require_once dirname(__DIR__, 1).'/functions/connection.php';
+        global $db, $ini;
+        require_once dirname(__DIR__).'/functions/connection.php';
 
         $json = array();
 
         foreach ($db->query("SHOW TABlES") as $table) {
 
-            $sql = $this->DB_HEADER." `{$table['Tables_in_clinic']}` (";
+            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
             $column = "";
             $keys = "";
 
-            foreach ($db->query("DESCRIBE {$table['Tables_in_clinic']}") as $col) {
+            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
                 $column .= "`{$col['Field']}` {$col['Type']}";
 
                 if ($col['Null'] == "YES") {
@@ -296,7 +466,7 @@ class __Db
 
                     case "MUL":
                         // $keys .= "UNIQUE KEY `{$MUL[$table['Tables_in_clinic']]}` (`{$col['Field']}`,`{$MUL[$table['Tables_in_clinic']]}`) USING BTREE";
-                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_clinic']]} USING BTREE";
+                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
                         $keys.=",";
                         break;
                 }
@@ -318,16 +488,162 @@ class __Db
 
     public function create_file($code = "")
     {
-        $path = "tools/DB/$this->file_name.json";
-        $fp = fopen($path, "w");
-        fwrite($fp, $code);
+        $file = fopen("$this->path/$this->file_name.$this->format", "w");
+        fwrite($file, $code);
         echo "\033[32m"." Генерация прошла успешно!\n";
-        return fclose($fp);
+        return fclose($file);
+    }
+
+    public function seed()
+    {
+        global $db; 
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__).'/functions/tag.php';
+        require_once dirname(__DIR__).'/functions/mixin.php';
+
+        if (!$this->seed_table) {
+
+            foreach (glob(dirname(__DIR__, 2)."/$this->path_seed/*.$this->format") as $file_name) {
+                $table = pathinfo($file_name)['filename'];
+                $data = json_decode(file_get_contents($file_name), true);
+    
+                foreach ($data as $row) {
+                    Mixin\insert($table, $row);
+                }
+            }
+
+        }else{
+
+            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_seed/$this->seed_table.$this->format"), true);
+    
+            foreach ($data as $row) {
+                Mixin\insert($this->seed_table, $row);
+            }
+
+        }
+
+        echo "\033[32m"." Данные успешно внесены.\n";
+        return 1;
     }
 
     public function help()
     {
         echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+class __Dump
+{
+    private $argument;
+    private $name;
+    private String $file_format = "sql";
+    private String $path = "dump"; 
+
+    function __construct($value = null, $name = null)
+    {
+        $this->argument = $value;
+        $this->name = $name;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument)) {
+            $this->resolution();
+        }else {
+            $this->help();
+        }
+    }
+
+    private function resolution()
+    {
+
+        try {
+
+            if ($this->argument == "create") {
+                $this->create();
+            }elseif ($this->argument == "show") {
+                $this->show();
+            }elseif ($this->argument == "delete") {
+                $this->delete();
+            }elseif ($this->argument == "migrate") {
+                $this->migrate();
+            }else{
+                echo "\033[31m"." Нет такого аргумента.\n";
+            }
+
+        } catch (\Error $e) {
+            echo "\033[31m"." Не такого аргумента.\n";
+        }
+
+    }
+
+    public function create()
+    {
+        global $ini;
+        require_once dirname(__DIR__).'/functions/connection.php';
+        $path = dirname(__DIR__, 2)."/".$this->path;
+        $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
+        exec("mysqldump -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} > $path/$file_name.$this->file_format");
+        echo "\033[32m"." Дамп успешно создан.\n";
+        return 1;
+    }
+
+    public function delete()
+    {
+        if ($this->name) {
+            $path = dirname(__DIR__, 2)."/".$this->path;
+            unlink("$path/$this->name.$this->file_format");
+            echo "\033[32m"." Дамп успешно удалён.\n";
+        }else {
+            echo "\033[33m"." Введите название удаляемого дампа.\n";
+        }
+        return 1;
+    }
+
+    public function migrate()
+    {
+        global $ini;
+        if ($this->name) {
+            require_once dirname(__DIR__).'/functions/connection.php';
+            $path = dirname(__DIR__, 2)."/".$this->path;
+            $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
+            exec("mysql -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} < $path/$file_name.$this->file_format");
+            echo "\033[32m"." Миграция дампа прошлаа успешно.\n";
+        }else {
+            echo "\033[33m"." Введите название файла дампа.\n";
+        }
+        return 1;
+    }
+
+    public function show()
+    {
+        $path = dirname(__DIR__, 2)."/".$this->path;
+        $scanned_files = array_diff(scandir($path), array('..', '.'));
+        foreach ($scanned_files as $file) {
+            print_r(pathinfo($file, PATHINFO_FILENAME)."\n");
+        }
+        return 1;
+    }
+
+    public function help()
+    {
+        echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+class __Serve
+{
+
+    function __construct($value = null, $name = null)
+    {
+        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/.cfg") );
+        $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+        echo "\033[32m"." Сокет сервер успешно запущен.\n";
+        
+        require 'socket.php';
     }
 
 }

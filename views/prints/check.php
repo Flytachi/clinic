@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$comp = $db->query("SELECT * FROM company")->fetchAll();
+$comp = $db->query("SELECT * FROM company_constants")->fetchAll();
 foreach ($comp as $value) {
     $company[$value['const_label']] = $value['const_value'];
 }
@@ -13,7 +13,7 @@ foreach ($comp as $value) {
         /*padding:2mm;*/
         margin: 0 auto;
         margin-left: -5px;
-        width: 50mm;
+        width: <?= $company['print_check_size'] ?>mm;
         background: #FFF;
     }
     ::selection {background: #f31544; color: #FFF;}

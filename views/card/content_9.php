@@ -32,8 +32,8 @@ $header = "Пациент";
 
 				<?php include "profile.php"; ?>
 
-				<div class="card border-1 border-info">
-				    <div class="card-header text-dark header-elements-inline alpha-info">
+				<div class="<?= $classes['card'] ?>">
+				    <div class="<?= $classes['card-header'] ?>">
 				        <h6 class="card-title">Просмотр визита</h6>
 				    </div>
 
@@ -54,8 +54,8 @@ $header = "Пациент";
 
 							<div class="table-responsive">
 								<table class="table table-hover table-sm">
-									<thead>
-										<tr class="bg-info">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
 											<th>Операция</th>
 											<th style="width: 12%;">Дата назначения</th>
 											<th style="width: 12%;">Дата операции</th>
@@ -117,7 +117,7 @@ $header = "Пациент";
 					</div>
 
 					<div class="modal-body">
-						<?= OperationModel::form() ?>
+						<?= (new OperationModel)->form() ?>
 					</div>
 
 				</div>
@@ -132,7 +132,7 @@ $header = "Пациент";
 						<button type="button" class="close" data-dismiss="modal">×</button>
 					</div>
 
-					<?php OperationModel::form_oper_update() ?>
+					<?php (new OperationModel)->form_oper_update() ?>
 
 				</div>
 			</div>

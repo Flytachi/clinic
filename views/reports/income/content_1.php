@@ -30,9 +30,9 @@ $header = "Доход";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -50,7 +50,7 @@ $header = "Доход";
 								<div class="col-md-3">
 									<label>Промежуток времени:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -75,9 +75,9 @@ $header = "Доход";
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Доход</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -91,7 +91,7 @@ $header = "Доход";
 							<div class="table-responsive">
 	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
-	                                    <tr class="bg-info">
+	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th class="text-center">Тип</th>
 											<th class="text-right">Наличные</th>
 											<th class="text-right">Пластик</th>

@@ -30,9 +30,9 @@ $header = "Отчёт врачей по визитам";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -48,22 +48,18 @@ $header = "Отчёт врачей по визитам";
 
 								<div class="col-md-3">
 				                    <label>Пациент:</label>
-									<select class="form-control form-control-select2" name="user_id" data-fouc>
+									<select class="<?= $classes['form-select'] ?>" name="user_id">
 				                        <option value="">Выберите пациента</option>
-										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-											<?php
-										}
-										?>
+										<?php foreach($db->query('SELECT * from users WHERE user_level = 15') as $row): ?>
+											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+										<?php endforeach; ?>
 				                    </select>
 				                </div>
 
 								<div class="col-md-3">
 									<label>Дата приёма:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -72,22 +68,22 @@ $header = "Отчёт врачей по визитам";
 
 								<div class="col-md-3">
 				                    <label>Тип визита:</label>
-				                    <select class="form-control form-control-select2" name="direction" data-fouc>
+				                    <select class="<?= $classes['form-select'] ?>" name="direction">
 				                        <option value="">Выберите тип визита</option>
-										<option value="1" <?= ($_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
-										<option value="2" <?= ($_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
+										<option value="1" <?= ( isset($_POST['direction']) and $_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
+										<option value="2" <?= ( isset($_POST['direction']) and $_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
 				                    </select>
 				                </div>
 
 								<div class="col-md-3">
 									<label class="d-block font-weight-semibold">Статус</label>
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="compl_true" <?= (!$_POST or $_POST['compl_true']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="compl_true" <?= (empty($_POST) or isset($_POST['compl_true'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
 									</div>
 
 									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="compl_false" <?= (!$_POST or $_POST['compl_false']) ? "checked" : "" ?>>
+										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="compl_false" <?= (empty($_POST) or isset($_POST['compl_false'])) ? "checked" : "" ?>>
 										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
 									</div>
 								</div>
@@ -119,13 +115,13 @@ $header = "Отчёт врачей по визитам";
 								vp.item_type = 1 AND vs.accept_date IS NOT NULL AND ds.level = 5";
 
 					// Обработка
-					if ($_POST['user_id']) {
+					if ( isset($_POST['user_id']) and $_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
 					}
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					if ($_POST['direction']) {
+					if ( isset($_POST['direction']) and $_POST['direction']) {
 						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
 					}
 					if (!$_POST['compl_true'] or !$_POST['compl_false']) {
@@ -139,9 +135,9 @@ $header = "Отчёт врачей по визитам";
 					$total_price=0;
 					$i=1;
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Визиты</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -155,7 +151,7 @@ $header = "Отчёт врачей по визитам";
 							<div class="table-responsive">
 	                            <table class="table table-hover table-sm table-bordered" id="table">
 	                                <thead>
-	                                    <tr class="bg-info">
+	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
 	                                        <th>Пациент</th>
 				                            <th style="width: 11%">Дата приёма</th>

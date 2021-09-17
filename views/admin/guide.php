@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "Услуги";
 ?>
 <!DOCTYPE html>
@@ -51,7 +51,7 @@ $header = "Услуги";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php GuideModel::form(); ?>
+		    			<?php (new GuideModel)->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -71,7 +71,7 @@ $header = "Услуги";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:50px">№</th>
 										<th style="width:50%">ФИО</th>
 										<th>Сумма</th>

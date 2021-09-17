@@ -14,7 +14,7 @@ is_module('module_laboratory');
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
-                <tr class="bg-info">
+                <tr class="<?= $classes['table-thead'] ?>">
                     <th style="width:3%">№</th>
                     <th>Название услуги</th>
                     <th>Анализ</th>

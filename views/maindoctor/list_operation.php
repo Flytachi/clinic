@@ -30,9 +30,9 @@ $header = "Операционные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Операционные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -46,7 +46,7 @@ $header = "Операционные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
                                         <th>Дата рождения</th>
@@ -68,7 +68,7 @@ $header = "Операционные пациенты";
 													?>
 												</div>
 											</td>
-											<td><?= date('d.m.Y', strtotime($row['dateBith'])) ?></td>
+											<td><?= date_f($row['dateBith']) ?></td>
 											<td>
 												<?= level_name($row['route_id']) ." ". division_name($row['route_id']) ?>
 												<div class="text-muted"><?= get_full_name($row['route_id']) ?></div>

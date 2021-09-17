@@ -8,8 +8,8 @@ class VisitModel extends Model
 
     public function form_out($pk = null)
     {
-        global $db;
-        if($_SESSION['message']){
+        global $db, $classes;
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -23,21 +23,13 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT DISTINCT us.id, us.status, vs.user_id 'stationar' FROM users us LEFT JOIN visit vs ON(vs.user_id = us.id AND direction IS NOT NULL AND (completed IS NULL OR priced_date IS NULL)) WHERE us.user_level = 15 ORDER BY us.id DESC") as $row): ?>
-                            <?php if ($row['stationar']): ?>
-                                <option value="<?= $row['id'] ?>" disabled><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(стационар лечится)---" : "---(стационар оплачивается)---" ?></option>
-                            <?php else: ?>
-                                <option value="<?= $row['id'] ?>"><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
+                    <input class="form-control" type="text" value="<?= get_full_name($_GET['id']) ?>" readonly>
                 </div>
 
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
@@ -54,7 +46,7 @@ class VisitModel extends Model
 
             <div class="form-group">
                 <label>Отделы</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="form-control select" onchange="table_change(this)" data-fouc>
+                <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="table_change(this)" required>
                     <optgroup label="Врачи">
                         <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
@@ -93,7 +85,10 @@ class VisitModel extends Model
                 </div>
                 <div class="col-md-1">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                        <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <span class="ladda-label">Отправить</span>
+                            <span class="ladda-spinner"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -131,7 +126,7 @@ class VisitModel extends Model
             $("#search_input").keyup(function() {
                 $.ajax({
                     type: "GET",
-                    url: "<?= ajax('service_table_search') ?>",
+                    url: "<?= ajax('service_table') ?>",
                     data: {
                         divisions: $("#division_selector").val(),
                         search: $("#search_input").val(),
@@ -171,15 +166,10 @@ class VisitModel extends Model
 
     public function form_gudes($pk = null)
     {
-        global $db;
-        if($_SESSION['message']){
+        global $db, $classes;
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
-        }
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
         }
         ?>
         <form method="post" action="<?= add_url() ?>">
@@ -189,27 +179,33 @@ class VisitModel extends Model
             <div class="form-group row">
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2">
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($post['guide_id'] == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+                            <option value="<?= $row['id'] ?>" <?= ($this->value('guide_id') == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
             </div>
 
             <div class="text-right">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function form_sta($pk = null)
     {
-        global $db, $FLOOR;
-        if($_SESSION['message']){
+        global $db, $FLOOR, $classes;
+        if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
@@ -224,17 +220,13 @@ class VisitModel extends Model
 
                 <div class="col-md-5">
                     <label>Пациент:</label>
-                    <select data-placeholder="Выбрать пациента" name="user_id" class="form-control form-control-select2" required data-fouc>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT * FROM users WHERE user_level = 15 ORDER BY id DESC") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($row['status']) ? "disabled" : "" ?>><?= addZero($row['id']) ?> - <?= get_full_name($row['id']) ?> <?= ($row['status']) ? "---(лечится)---" : "" ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <input type="hidden" name="user_id" value="<?= $_GET['id'] ?>">
+                    <input class="form-control" type="text" value="<?= get_full_name($_GET['id']) ?>" readonly>
                 </div>
 
                 <div class="col-md-2">
                     <label>Этаж:</label>
-                    <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать этаж" name="" id="floor" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($FLOOR as $key => $value): ?>
                             <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
@@ -248,7 +240,7 @@ class VisitModel extends Model
 
                 <div class="col-md-2">
                     <label>Палата:</label>
-                    <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выбрать палату" name="" id="ward" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
                             <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
@@ -262,7 +254,7 @@ class VisitModel extends Model
 
                 <div class="col-md-3">
                     <label>Койка:</label>
-                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="form-control select-price" required data-fouc>
+                    <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                         <option></option>
                         <?php foreach ($db->query('SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)') as $row): ?>
                             <?php if ($row['user_id']): ?>
@@ -280,28 +272,20 @@ class VisitModel extends Model
 
                 <div class="col-md-6">
                     <label>Отдел:</label>
-                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="form-control form-control-select2" required data-fouc>
+                    <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php
-                        foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
-                            ?>
+                        <?php foreach($db->query("SELECT * from division WHERE level = 5") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-md-6">
                     <label>Специалиста:</label>
-                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="form-control form-control-select2" required data-fouc>
-                        <?php
-                        foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
-                            ?>
+                    <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
+                        <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
                             <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php
-                        }
-                        ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
@@ -310,7 +294,7 @@ class VisitModel extends Model
             <div class="form-group row">
                 <div class="col-md-6">
                     <label>Направитель:</label>
-                    <select data-placeholder="Выберите направителя" name="guide_id" class="form-control form-control-select2" data-fouc>
+                    <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                         <option></option>
                         <?php foreach ($db->query("SELECT * from guides") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
@@ -327,7 +311,10 @@ class VisitModel extends Model
             </div> -->
 
             <div class="text-right">
-                <button type="submit" onclick="submitAlert()" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" onclick="submitAlert()" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Отправить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -347,7 +334,7 @@ class VisitModel extends Model
 
     public function form_beds($pk = null)
     {
-        global $db, $FLOOR, $patient;
+        global $db, $FLOOR, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -359,7 +346,7 @@ class VisitModel extends Model
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label">Этаж:</label>
                     <div class="col-lg-9">
-                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="form-control form-control-select2" required data-fouc>
+                        <select data-placeholder="Выбрать этаж" name="" id="floor" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
                             <?php foreach ($FLOOR as $key => $value): ?>
                                 <?php if ($db->query("SELECT id FROM wards WHERE floor = $key")->rowCount() != 0): ?>
@@ -375,7 +362,7 @@ class VisitModel extends Model
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label">Палата:</label>
                     <div class="col-lg-9">
-                        <select data-placeholder="Выбрать палату" name="" id="ward" class="form-control form-control-select2" required data-fouc>
+                        <select data-placeholder="Выбрать палату" name="" id="ward" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT ws.id, ws.floor, ws.ward FROM wards ws") as $row): ?>
                                 <?php if ($db->query("SELECT id FROM beds WHERE ward_id = {$row['id']}")->rowCount() != 0): ?>
@@ -391,7 +378,7 @@ class VisitModel extends Model
                 <div class="form-group row">
                     <label class="col-lg-3 col-form-label">Койка:</label>
                     <div class="col-lg-9">
-                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="form-control select-price" required data-fouc>
+                        <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT bd.*, bdt.price, bdt.name from beds bd LEFT JOIN bed_type bdt ON(bd.types=bdt.id)") as $row): ?>
                                 <?php if ($row['user_id']): ?>
@@ -407,7 +394,10 @@ class VisitModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -473,6 +463,7 @@ class VisitModel extends Model
     public function save_rows()
     {
         global $db;
+        $db->beginTransaction();
         foreach ($this->post['service'] as $key => $value) {
 
             $post_big['direction'] = $this->post['direction'];
@@ -500,6 +491,7 @@ class VisitModel extends Model
                 $object = Mixin\insert($this->table, $post_big);
                 if (!intval($object)){
                     $this->error($object);
+                    $db->rollBack();
                 }
 
                 if (!$post_big['direction'] or (!permission([2, 32]) and $post_big['direction'])) {
@@ -513,6 +505,7 @@ class VisitModel extends Model
                     $object = Mixin\insert('visit_price', $post);
                     if (!intval($object)){
                         $this->error($object);
+                        $db->rollBack();
                     }
                 }
             }
@@ -522,13 +515,18 @@ class VisitModel extends Model
         $object1 = Mixin\update($this->table1, array('status' => True), $this->post['user_id']);
         if (!intval($object1)){
             $this->error($object1);
+            $db->rollBack();
         }
+        $db->commit();
         $this->success();
     }
 
     public function clean()
     {
         global $db;
+        if (is_array($this->post['division_id']) and !$this->post['direction'] and !$this->post['service']) {
+            $this->error("Не назначены услуги!");
+        }
         if ($this->post['bed_stat']) {
             $this->bed_edit();
         }
@@ -604,8 +602,8 @@ class VisitModel extends Model
     public function delete(int $pk)
     {
         global $db;
-        if (!$_GET['type']) {
-
+        if (empty($_GET['type'])) {
+            
             // Нахождение id визита
             $object_sel = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
 
@@ -615,7 +613,7 @@ class VisitModel extends Model
                 if ($object_sel->service_id == 1) {
                     // Удаляем все визиты внутри гланого визита
 
-                    foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
+                    foreach ($db->query("SELECT vs.id FROM $this->table vs WHERE vs.id != $pk AND vs.user_id = $object_sel->user_id AND vs.direction IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d %H:%i:%s') BETWEEN \"$object_sel->add_date\" AND \"IFNULL($object_sel->completed, CURRENT_TIMESTAMP())\")") as $value) {
                         $object = Mixin\delete($this->table, $value['id']);
                         if (!intval($object)) {
                             $this->error($object, 1);
@@ -649,15 +647,40 @@ class VisitModel extends Model
                     Mixin\delete('visit_price', $pk, 'visit_id');
     
                     // Обновляем статус
-                    $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND priced_date IS NULL AND completed IS NULL")->rowCount();
-                    if(!$status){
-                        Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
+                    if($status <= 1){
+                        if ($status == 0) {
+                            Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                        }
                         $success = 2;
                     }else {
                         $success = 1;
                     }
                 }
 
+                $db->commit();
+                $this->success($success);
+            }else {
+                $db->beginTransaction();
+                
+                // Удаляем визит
+                $object = Mixin\delete($this->table, $pk);
+                if (!intval($object)) {
+                    $this->error($object, 1);
+                    $db->rollBack();
+                }
+                Mixin\delete('visit_price', $pk, 'visit_id');
+
+                // Обновляем статус
+                $status = $db->query("SELECT * FROM $this->table WHERE user_id = $object_sel->user_id AND completed IS NULL")->rowCount();
+                if($status <= 1){
+                    if ($status == 0) {
+                        Mixin\update($this->table1, array('status' => null), $object_sel->user_id);
+                    }
+                    $success = 2;
+                }else {
+                    $success = 1;
+                }
                 $db->commit();
                 $this->success($success);
             }
@@ -686,7 +709,7 @@ class VisitModel extends Model
                 Успешно
             </div>
             ';
-            render();
+            render("registry/index");
         }
     }
 
@@ -706,7 +729,7 @@ class VisitModel extends Model
                 <span class="font-weight-semibold"> '.$message.'</span>
             </div>
             ';
-            render();
+            render("registry/index");
         }
     }
 }

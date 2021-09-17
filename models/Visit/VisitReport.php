@@ -6,12 +6,7 @@ class VisitReport extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
+        global $db, $classes;
         ?>
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
 
@@ -26,7 +21,7 @@ class VisitReport extends Model
                 <input type="hidden" name="id" value="<?= $pk ?>">
 
                 <div class="col-md-4 offset-md-8">
-                    <select data-placeholder="Выбрать пациента" class="form-control form-control-select2" onchange="ChangePack(this)">
+                    <select data-placeholder="Выбрать пациента" class="<?= $classes['form-select'] ?>" onchange="ChangePack(this)">
                         <option value="0">Шаблоны</option>
                         <?php foreach ($db->query("SELECT * FROM templates WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
@@ -36,7 +31,7 @@ class VisitReport extends Model
 
                 <h1>
                     <div class="col-md-8 offset-md-2">
-                        <input type="text" style="font-size:1.3rem;" name="report_title" value="<?= ($post['report_title']) ? $post['report_title'] : $post['name'] ?>" class="form-control" placeholder="Названия отчета">
+                        <input type="text" style="font-size:1.3rem;" name="report_title" value="<?= ($this->post['report_title']) ? $this->post['report_title'] : $this->post['name'] ?>" class="form-control" placeholder="Названия отчета">
                     </div>
                 </h1>
                 
@@ -46,7 +41,7 @@ class VisitReport extends Model
                         <div class="document-editor__toolbar"></div>
                         <div class="document-editor__editable-container">
                             <div class="document-editor__editable" id="document-editor__editable_template">
-                                <?= ($post['report']) ? $post['report'] : "<br><strong>Рекомендация:</strong>" ?>
+                                <?= ($this->post['report']) ? $this->post['report'] : "<br><strong>Рекомендация:</strong>" ?>
                             </div>
                         </div>
                     </div>
@@ -119,7 +114,10 @@ class VisitReport extends Model
                 <?php if (permission([12, 13])): ?>
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end" id="end"></input>
                 <?php else: ?>
-                    <button type="submit" class="btn btn-outline-info btn-sm" id="submit">Сохранить</button>
+                    <button type="submit" id="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                        <span class="ladda-label">Сохранить</span>
+                        <span class="ladda-spinner"></span>
+                    </button>
                 <?php endif; ?>
             </div>
 
@@ -144,23 +142,20 @@ class VisitReport extends Model
             }
         </script>
         <?php if (permission([10,12,13])): ?>
-        <script type="text/javascript">
-            document.getElementById( 'end' ).onclick = () => {
-                textarea.value = editor.getData();
-            }
-        </script>
+            <script type="text/javascript">
+                document.getElementById( 'end' ).onclick = () => {
+                    textarea.value = editor.getData();
+                }
+            </script>
         <?php endif; ?>
         <?php
+        if ($pk) {
+            $this->jquery_init();
+        }
     }
 
     public function form_finish($pk = null)
     {
-        global $db, $patient;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
         ?>
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
 
@@ -173,14 +168,14 @@ class VisitReport extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="id" value="<?= $pk ?>">
-                <input type="hidden" name="report_title" value="<?= $post['name'] ?>">
+                <input type="hidden" name="report_title" value="<?= $this->post['name'] ?>">
 
                 <div class="document-editor2">
                     <div class="document-editor2__toolbar"></div>
                     <div class="document-editor2__editable-container">
                         <div class="document-editor2__editable">
-                            <?php if ($post['report']): ?>
-                                <?= $post['report'] ?>
+                            <?php if ($this->post['report']): ?>
+                                <?= $this->post['report'] ?>
                             <?php else: ?>
                                 <span class="text-big"><strong>Клинический диагноз:</strong></span><br>
                                 <span class="text-big"><strong>Сопутствующие заболевания:</strong></span><br>
@@ -202,7 +197,10 @@ class VisitReport extends Model
                     <!-- <a href="<?= up_url($_GET['user_id'], 'VisitFinish') ?>" onclick="return confirm('Вы точно хотите завершить визит пациента!')" class="btn btn-outline-danger">Завершить</a> -->
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php endif; ?>
-                <button type="submit" class="btn btn-outline-info btn-sm" id="submit">Сохранить</button>
+                <button type="submit" id="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>
@@ -260,12 +258,12 @@ class VisitReport extends Model
                 Mixin\error('404');
             }
         }
-    }
+    }              
 
     public function update()
     {
         global $db;
-        $end = ($this->post['end']) ? true : false;
+        $end = (isset($this->post['end'])) ? true : false;
         unset($this->post['end']);
         if($this->clean()){
             $db->beginTransaction();
@@ -274,11 +272,11 @@ class VisitReport extends Model
             if ($end) {
                 $row = $db->query("SELECT * FROM visit WHERE id = {$pk}")->fetch();
                 if ($row['assist_id']) {
-                    if ($row['grant_id'] != $row['route_id'] or !$db->query("SELECT * FROM visit WHERE id != {$pk} AND user_id = {$row['user_id']} AND completed IS NULL")->fetchColumn()) {
+                    if (0 == $db->query("SELECT * FROM visit WHERE id != $pk AND user_id = {$row['user_id']} AND completed IS NULL")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }else {
-                    if ($row['grant_id'] == $row['parent_id'] and 1 == $db->query("SELECT * FROM visit WHERE user_id={$row['user_id']} AND status != 5 AND completed IS NULL AND service_id != 1")->rowCount()) {
+                    if (0 == $db->query("SELECT * FROM visit WHERE id != $pk AND user_id={$row['user_id']} AND completed IS NULL")->rowCount()) {
                         Mixin\update('users', array('status' => null), $row['user_id']);
                     }
                 }
@@ -297,6 +295,7 @@ class VisitReport extends Model
                 }
             }
         }
+        
         $db->commit();
         $this->success();
     }
@@ -310,7 +309,7 @@ class VisitReport extends Model
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if ($report) {
+        if ( isset($report) ) {
             $this->post['report'] = $report;
         }
         return True;

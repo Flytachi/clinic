@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(11);
+is_module('module_pharmacy');
 $header = "Рабочий стол";
 ?>
 <!DOCTYPE html>
@@ -35,9 +36,9 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h5 class="card-title">Склад</h5>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -51,7 +52,7 @@ $header = "Рабочий стол";
 					<div class="card-body">
 
 						<?php
-						if($_SESSION['message']){
+						if( isset($_SESSION['message']) ){
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
@@ -60,7 +61,7 @@ $header = "Рабочий стол";
 						<div class="table-responsive">
                             <table class="table table-hover table-sm">
 								<thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>Препарат</th>
                                         <th>Ответственный</th>
                                         <th>Изначально</th>
@@ -111,7 +112,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php StorageOrdersModel::form() ?>
+				<?php (new StorageOrdersModel)->form() ?>
 
 			</div>
 		</div>

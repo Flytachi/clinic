@@ -12,7 +12,7 @@ $session->is_auth();
     <div class="card table-responsive">
         <table class="table table-sm table-hover">
 
-            <thead class="bg-info">
+            <thead class="<?= $classes['table-thead'] ?>">
                 <tr>
                     <th>Название</th>
                     <th class="text-center">Кол-во</th>

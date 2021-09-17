@@ -30,16 +30,17 @@ $header = "Рабочий стол";
 			<div class="content">
 
 				<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-					<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/floor') ?>?type=1')" href="#" class="nav-link legitRipple" data-toggle="tab">1 Этаж</a></li>
-					<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/floor') ?>?type=2')" href="#" class="nav-link legitRipple active show" data-toggle="tab">2 Этаж</a></li>
-					<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/floor') ?>?type=3')" href="#" class="nav-link legitRipple" data-toggle="tab">3 Этаж</a></li>
+					<?php $first_key = array_keys($FLOOR)[0] ?>
+					<?php foreach ($FLOOR as $key => $value): ?>
+						<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/floor') ?>?type=<?= $key ?>')" href="#" class="nav-link legitRipple <?= ($first_key == $key)? 'active show' : '' ?>" data-toggle="tab"><?= $value ?></a></li>
+					<?php endforeach; ?>
 				</ul>
 
 				<div id="tab_div">
 
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-					    <div class="card-header text-dark header-elements-inline alpha-info">
+					    <div class="<?= $classes['card-header'] ?>">
 					        <h6 class="card-title">2 Этаж</h6>
 					        <div class="header-elements">
 					            <div class="list-icons">
@@ -52,7 +53,7 @@ $header = "Рабочий стол";
 
 					        <div class="table-responsive">
 					            <table class="table table-hover table-sm">
-					                <thead class="bg-info">
+					                <thead class="<?= $classes['table-thead'] ?>">
 					                    <tr>
 					                        <th>ID</th>
 					                        <th>ФИО</th>
@@ -65,7 +66,7 @@ $header = "Рабочий стол";
 					                </thead>
 					                <tbody>
 					                    <?php
-					                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = 2 AND vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
+					                    foreach($db->query("SELECT vs.id, wd.ward, bd.bed, bd.types, vs.user_id, vs.grant_id, vs.add_date, vs.discharge_date, us.dateBith FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN visit vs ON (vs.user_id=bd.user_id) LEFT JOIN users us ON (us.id=bd.user_id) WHERE bd.user_id IS NOT NULL AND wd.floor = $first_key AND vs.accept_date IS NOT NULL AND vs.completed IS NULL AND vs.grant_id = vs.parent_id") as $row) {
 					                        ?>
 					                        <tr>
 					                            <td><?= addZero($row['user_id']) ?></td>
@@ -88,7 +89,9 @@ $header = "Рабочий стол";
 															<a href="<?= viv('card/content_5') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-fire2"></i>Анализы</a>
 															<a onclick="PrintLab('<?= viv('prints/labrotoria_label') ?>?id=<?= $row['user_id'] ?>')" class="dropdown-item"><i class="icon-printer2"></i> Печать пробирки</a>
 														<?php endif; ?>
-					                                    <a href="<?= viv('card/content_7') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначений</a>
+														<?php if(module('module_bypass')): ?>
+					                                    	<a href="<?= viv('card/content_7') ?>?id=<?= $row['user_id'] ?>" class="dropdown-item"><i class="icon-magazine"></i>Лист назначений</a>
+														<?php endif; ?>
 													</div>
 					                            </td>
 					                        </tr>

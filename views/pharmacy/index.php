@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(4);
+is_module('module_pharmacy');
 $header = "Препараты";
 ?>
 <!DOCTYPE html>
@@ -29,16 +30,16 @@ $header = "Препараты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Препараты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
 								<div class="header-elements">
 									<div class="list-icons">
-										<a href="<?= viv("pharmacy/add_product") ?>" class="list-icons-item text-success">
-											<i class="icon-plus22"></i>Добавить
+										<a href="<?= viv("pharmacy/storage") ?>" class="list-icons-item text-success">
+											<i class="icon-plus22"></i>Склад
 										</a>
 									</div>
 								</div>
@@ -127,8 +128,8 @@ $header = "Препараты";
 
 						<div class="table-responsive">
 							<table class="table table-hover table-sm datatable-basic">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th style="width:35%">Препарат</th>
                                         <th>Поставщик</th>
                                         <th>Код</th>
@@ -137,7 +138,6 @@ $header = "Препараты";
 										<th class="text-right">Бронь</th>
                                         <th class="text-right">Кол-во</th>
                                         <th class="text-right">Цена ед.</th>
-                                        <!-- <th class="text-right" style="width:50px">Действия</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -148,7 +148,7 @@ $header = "Препараты";
 												IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
 
 											) 'reservation'
-											FROM storage st ORDER BY st.name ASC";
+											FROM storage st WHERE st.qty > 0 ORDER BY st.name ASC";
 								 	?>
                                     <?php foreach ($db->query($sql) as $row): ?>
 										<?php
@@ -173,14 +173,6 @@ $header = "Препараты";
                                             <td class="text-right"><?= $row['reservation'] ?></td>
 											<td class="text-right"><?= $row['qty'] ?></td>
                                             <td class="text-right"><?= number_format($row['price'], 1) ?></td>
-											<!--
-											<td>
-												<div class="list-icons">
-													<a href="<?= up_url($row['id'], 'Storage') ?>" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row['id'], 'Storage') ?>" onclick="return confirm('Вы уверены что хотите удалить препарат?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-												</div>
-											</td>
-											-->
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

@@ -40,7 +40,7 @@ $header = "Рабочий стол";
 				<div class="row">
 
 				    <div class="col-md-5">
-				        <div class="card border-1 border-info">
+				        <div class="<?= $classes['card'] ?>">
 
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Приём платежей</h5>
@@ -90,7 +90,7 @@ $header = "Рабочий стол";
 
 				        <div id="message_ses">
 				            <?php
-				            if($_SESSION['message']){
+				            if( isset($_SESSION['message']) ){
 				                echo $_SESSION['message'];
 				                unset($_SESSION['message']);
 				            }
@@ -123,7 +123,7 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php VisitPriceModel::form(); ?>
+				<?php (new VisitPriceModel)->form(); ?>
 
 			</div>
 		</div>
@@ -154,6 +154,7 @@ $header = "Рабочий стол";
 						type: "GET",
 						url: events,
 						success: function (data) {
+							// console.log(data);
 							if (data == 1) {
 								$('#'+tr).css("background-color", "red");
 								$('#'+tr).css("color", "white");

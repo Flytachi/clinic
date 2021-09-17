@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
 $header = "Мульти-аккаунт";
 ?>
 <!DOCTYPE html>
@@ -49,7 +49,7 @@ $header = "Мульти-аккаунт";
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php MultiAccountsModel::form(); ?>
+		    			<?php (new MultiAccountsModel)->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -69,7 +69,7 @@ $header = "Мульти-аккаунт";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
 										<th>Slot</th>
                                         <th>id</th>
                                         <th>Пользователь</th>

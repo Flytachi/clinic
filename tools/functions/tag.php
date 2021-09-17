@@ -29,6 +29,20 @@ function dd($value) {
     echo "</pre>";
 }
 
+function api( $url, $param ){
+    if ($url) {
+        return DIR."/api/$url".EXT."?url=$param";
+    }
+}
+
+function global_render( $url=null ){
+    if ($url) {
+        header("location:".DIR."$url".EXT);
+    }else {
+        header("location:".$_SERVER['HTTP_REFERER']);
+    }
+    exit;
+}
 
 function render($url=null){
     if ($url) {
@@ -36,6 +50,11 @@ function render($url=null){
     }else {
         header("location:".$_SERVER['HTTP_REFERER']);
     }
+    exit;
+}
+
+function index(){
+    header("location:".DIR."/index".EXT);
     exit;
 }
 
@@ -106,7 +125,7 @@ function del_url($id = null, $model = null){
     return DIR."/hook/delete".EXT."?id=$id&model=$model";
 }
 
-function up_url($id, $model, $form=null){
+function up_url($id = null, $model, $form=null){
     if ($form) {
         $result = DIR."/hook/get".EXT."?id=$id&model=$model&form=$form";
     }else {

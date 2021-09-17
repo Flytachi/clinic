@@ -38,9 +38,9 @@ $staus = 0;
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -55,8 +55,8 @@ $staus = 0;
 
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm" id="table">
-                                <thead>
-                                    <tr class="bg-info">
+                                <thead class="<?= $classes['table-thead'] ?>">
+                                    <tr>
                                         <th>№</th>
                                         <th>Дата  платежа</th>
 										<th>Услуга/Медикоменты</th>
@@ -158,6 +158,7 @@ $staus = 0;
 
 		function printS(body){
 			if ("<?= $_SESSION['browser'] ?>" == "Firefox") {
+				console.log(`<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`);
 				$.ajax({
 			        type: "GET",
 			        url: `<?= viv('prints/check') ?>?id=<?= $_GET['pk']?>&items=[${arr}]`,

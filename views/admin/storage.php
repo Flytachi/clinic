@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
-is_auth(1);
+$session->is_auth(1);
+is_module('module_pharmacy');
 $header = "Аптека";
 ?>
 <!DOCTYPE html>
@@ -47,7 +48,7 @@ $header = "Аптека";
 
 					<div class="card-body">
 
-						<?php if ($_POST['flush']): ?>
+						<?php if ( isset($_POST['flush']) ): ?>
 
 							<?php
 							$__storage = Mixin\T_flush('storage');
@@ -69,9 +70,9 @@ $header = "Аптека";
 
 						<div class="row">
 
-							<div class="col-md-9" id="form_card"><?php Storage::form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php (new Storage)->form(); ?></div>
 
-							<div class="col-md-3"><?php Storage::form_template(); ?></div>
+							<div class="col-md-3"><?php (new Storage)->form_template(); ?></div>
 
 						</div>
 
@@ -98,7 +99,7 @@ $header = "Аптека";
                   		<div class="table-responsive">
 	                      	<table class="table table-hover datatable-basic">
 	                          	<thead>
-	                              	<tr class="bg-blue">
+	                              	<tr class="<?= $classes['table-thead'] ?>">
 									  	<th style="width:35%">Препарат</th>
                                         <th>Поставщик</th>
                                         <th>Код</th>

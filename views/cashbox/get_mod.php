@@ -4,14 +4,17 @@ $session->is_auth([3, 32]);
 if ($_GET['pk']) {
     $pk = $_GET['pk'];
 
-    if($_GET['mod'] == "st"){
+    if( isset($_GET['mod']) and $_GET['mod'] == "st"){
+        $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
+        $pk_visit = $ps['id'];
+        $completed = $ps['completed'];
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
                 <h5 class="card-title"><b><?= addZero($pk) ?> - <em><?= get_full_name($pk) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
-
+                        <a href="<?= viv('card/content_1')."?pk=$pk_visit" ?>" class="btn btn-outline-info btn-sm">Перейти к визиту</a>
                     </div>
                 </div>
             </div>
@@ -23,10 +26,6 @@ if ($_GET['pk']) {
                 </legend>
 
                 <?php
-                $ps = $db->query("SELECT id, bed_id, completed FROM visit WHERE user_id = $pk AND service_id = 1 AND priced_date IS NULL")->fetch();
-                $pk_visit = $ps['id'];
-                $completed = $ps['completed'];
-
                 // Скрипт подсчёта средств -----
                 $sql = "SELECT
                             vs.id,
@@ -37,11 +36,11 @@ if ($_GET['pk']) {
                             bdt.name 'bed_type',
                             bdt.price 'bed_price',
                             @cost_bed := @bed_hours * (bdt.price / 24) 'cost_bed',
-                            @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5)), 0) 'cost_service',
-                            @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4)), 0) 'cost_item_2',
-                            @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101)), 0) 'cost_beds',
-                            IFNULL(vss.sale_bed, 0) 'sale_bed',
-                            IFNULL(vss.sale_service, 0) 'sale_service'
+                            @cost_service := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (1,5) AND price_date IS NULL), 0) 'cost_service',
+                            @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                            @cost_beds := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (101) AND price_date IS NULL), 0) 'cost_beds',
+                            IFNULL(vss.sale_bed_unit, 0) 'sale_bed',
+                            IFNULL(vss.sale_service_unit, 0) 'sale_service'
                             -- ((@cost_bed + @cost_beds) - ((@cost_bed + @cost_beds) * (@sale_bed / 100)) ) 'amount_bed'
                             -- vs.add_date
                         FROM users us
@@ -59,12 +58,11 @@ if ($_GET['pk']) {
                         $price['cost_service'] += $pri_ze['price'];
                     }
                 }
-                $price['amount_bed'] = ($price['cost_bed'] + $price['cost_beds']) - (($price['cost_bed'] + $price['cost_beds']) * ($price['sale_bed'] / 100));
-                $price['amount_service'] = $price['cost_service'] - ($price['cost_service'] * ($price['sale_service'] / 100));
+                $price['amount_bed'] = ($price['cost_bed'] + $price['cost_beds']) - $price['sale_bed'];
+                $price['amount_service'] = $price['cost_service'] - $price['sale_service'];
                 // dd($price);
                 // Скрипт -----
-
-                $price_cost -= round($price['amount_service'] + $price['amount_bed'] + $price['cost_item_2']);
+                $price_cost = -round($price['amount_service'] + $price['amount_bed']);
                 ?>
                 <table class="table table-hover">
                     <tbody>
@@ -74,12 +72,18 @@ if ($_GET['pk']) {
                         </tr>
                         <tr class="table-secondary">
                             <td>Сумма к оплате</td>
-                            <td class="text-right text-danger"><?= number_format(round($price['cost_service'] + $price['cost_bed'] + $price['cost_beds'] + $price['cost_item_2'])) ?></td>
+                            <td class="text-right text-danger"><?= number_format(round($price['cost_service'] + $price['cost_bed'] + $price['cost_beds'])) ?></td> <!--  + $price['cost_item_2'] -->
                         </tr>
                         <tr class="table-secondary">
                             <td>Скидка</td>
-                            <td class="text-right"><?= number_format(($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed'])) ?></td>
+                            <td class="text-right"><?= number_format( ($price['cost_service'] - $price['amount_service']) + (($price['cost_bed'] + $price['cost_beds']) - $price['amount_bed']) ) ?></td>
                         </tr>
+                        <?php if(module('module_pharmacy')): ?>
+                            <tr class="table-secondary">
+                                <td>Сумма к оплате(лекарства)</td>
+                                <td class="text-right text-danger"><?= number_format(round($price['cost_item_2'])) ?></td>
+                            </tr>
+                        <?php endif; ?>
                         <tr class="table-secondary">
                             <td>Разница</td>
                             <?php if (($price['balance'] + $price_cost) > 0): ?>
@@ -96,7 +100,7 @@ if ($_GET['pk']) {
 
                 <div class="text-right mt-3">
 
-                    <?php VisitPriceModel::form_button() ?>
+                    <?php (new VisitPriceModel)->form_button($pk) ?>
 
                 </div>
 
@@ -105,7 +109,7 @@ if ($_GET['pk']) {
             </div>
         </div>
         <?php
-    }elseif ($_GET['mod'] == "rf"){
+    }elseif ( isset($_GET['mod']) and $_GET['mod'] == "rf"){
         ?>
         <div class="card border-1 border-dark">
 
@@ -116,8 +120,8 @@ if ($_GET['pk']) {
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead>
-                            <tr class="bg-blue">
+                        <thead class="<?= $classes['table-thead'] ?>">
+                            <tr>
                                 <th class="text-left">Дата и время</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>
@@ -170,8 +174,8 @@ if ($_GET['pk']) {
 
                 <div class="table-responsive card">
                     <table class="table table-hover table-sm">
-                        <thead>
-                            <tr class="bg-blue">
+                        <thead class="<?= $classes['table-thead'] ?>">
+                            <tr>
                                 <th class="text-left">Дата и время</th>
                                 <th>Мед услуги</th>
                                 <th class="text-right">Сумма</th>

@@ -31,11 +31,9 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include 'tabs.php' ?>
+				<div class="<?= $classes['card'] ?>">
 
-				<div class="card border-1 border-info">
-
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Стационарная</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -45,7 +43,7 @@ $header = "Рабочий стол";
 					</div>
 
 					<div class="card-body">
-						<?php VisitModel::form_sta(); ?>
+						<?php (new VisitModel)->form_sta(); ?>
 					</div>
 
 				</div>

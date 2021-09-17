@@ -6,16 +6,8 @@ $header = "Класификация персонала";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-
-<script src="<?= stack('global_assets/js/plugins/forms/inputs/touchspin.min.js') ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switch.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/selects/select2.min.js") ?>"></script>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/uniform.min.js") ?>"></script>
-
-<script src="<?= stack('global_assets/js/demo_pages/form_input_groups.js') ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
-<script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -51,7 +43,7 @@ $header = "Класификация персонала";
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php DivisionModel::form(); ?>
+                      	<?php (new DivisionModel)->form(); ?>
                   	</div>
 
             	</div>
@@ -71,7 +63,7 @@ $header = "Класификация персонала";
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
-                                    <tr class="bg-blue">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:7%">Id</th>
                                         <th>Роль</th>
                                         <th>Отдел</th>
@@ -80,9 +72,7 @@ $header = "Класификация персонала";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    foreach($db->query('SELECT * from division') as $row) {
-                                        ?>
+                                    <?php foreach($db->query('SELECT * from division') as $row): ?>
                                         <tr>
                                             <td><?= $row['id'] ?></td>
                                             <td><?= $PERSONAL[$row['level']] ?></td>
@@ -95,9 +85,7 @@ $header = "Класификация персонала";
 				                                </div>
                                             </td>
                                         </tr>
-                                        <?php
-                                    }
-                                    ?>
+									<?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>

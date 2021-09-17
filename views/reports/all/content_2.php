@@ -30,9 +30,9 @@ $header = "Общий отчёт по врачам";
 
 				<?php include "content_tabs.php"; ?>
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -50,7 +50,7 @@ $header = "Общий отчёт по врачам";
 								<div class="col-md-3">
 									<label>Дата завершения:</label>
 									<div class="input-group">
-										<input type="text" class="form-control daterange-locale" name="date" value="<?= $_POST['date'] ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -59,30 +59,30 @@ $header = "Общий отчёт по врачам";
 
 								<div class="col-md-3">
 									<label>Отдел:</label>
-									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
+									<select id="division" name="division_id" class="<?= $classes['form-select'] ?>">
 								   		<option value="">Выберите отдел</option>
 								   		<?php foreach ($db->query("SELECT * FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-									   		<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+									   		<option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
 									   	<?php endforeach; ?>
 									</select>
 								</div>
 
 								<div class="col-md-3">
 									<label>Услуга:</label>
-									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
+									<select id="service" name="service_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите услугу</option>
 										<?php foreach ($db->query("SELECT * from service WHERE user_level IN(5, 6, 10, 12)") as $row): ?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['service_id']) and $_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 									   	<?php endforeach; ?>
 									</select>
 								</div>
 
 								<div class="col-md-3">
 									<label>Специалист:</label>
-									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
+									<select id="parent_id" name="parent_id" class="<?= $classes['form-select'] ?>">
 										<option value="">Выберите специалиста</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level IN(5, 6, 10, 12)") as $row): ?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['parent_id']) and $_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
 									   	<?php endforeach; ?>
 									</select>
 								</div>
@@ -93,10 +93,10 @@ $header = "Общий отчёт по врачам";
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select class="form-control form-control-select2" name="user_id" data-fouc>
+									<select class="<?= $classes['form-select'] ?>" name="user_id">
 										<option value="">Выберите пациента</option>
 										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
+											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
 									   	<?php endforeach; ?>
 									</select>
 								</div>
@@ -131,24 +131,24 @@ $header = "Общий отчёт по врачам";
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					if ($_POST['division_id']) {
+					if ( isset($_POST['division_id']) and $_POST['division_id']) {
 						$sql .= " AND vs.division_id = {$_POST['division_id']}";
 					}
-					if ($_POST['service_id']) {
+					if ( isset($_POST['service_id']) and $_POST['service_id']) {
 						$sql .= " AND vs.service_id = {$_POST['service_id']}";
 					}
-					if ($_POST['parent_id']) {
+					if ( isset($_POST['parent_id']) and $_POST['parent_id']) {
 						$sql .= " AND vs.parent_id = {$_POST['parent_id']}";
 					}
-					if ($_POST['user_id']) {
+					if ( isset($_POST['user_id']) and $_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
 					}
 					$total_price = $total_price_share = 0;
 					$i=1;
 					?>
-					<div class="card border-1 border-info">
+					<div class="<?= $classes['card'] ?>">
 
-						<div class="card-header text-dark header-elements-inline alpha-info">
+						<div class="<?= $classes['card-header'] ?>">
 							<h6 class="card-title">Врачи</h6>
 							<div class="header-elements">
 								<div class="list-icons">
@@ -162,7 +162,7 @@ $header = "Общий отчёт по врачам";
 							<div class="table-responsive">
 								<table class="table table-hover table-sm table-bordered" id="table">
 									<thead>
-										<tr class="bg-info">
+										<tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
 											<th style="width: 11%">Дата завершения</th>
 	                                        <th>Специалист</th>

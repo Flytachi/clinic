@@ -42,7 +42,7 @@ $header = "Рабочий стол";
 
                     <div class="col-md-5">
 
-                        <div class="card border-1 border-info">
+                        <div class="<?= $classes['card'] ?>">
 
 							<div class="card-header bg-white header-elements-sm-inline">
 								<h5 class="card-title">Стационар</h5>
@@ -92,7 +92,7 @@ $header = "Рабочий стол";
 
                     <div class="col-md-7" id="check_div">
                         <?php
-                        if($_SESSION['message']){
+                        if( isset($_SESSION['message']) ){
                             echo $_SESSION['message'];
                             unset($_SESSION['message']);
                         }
@@ -119,11 +119,27 @@ $header = "Рабочий стол";
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
-				<?php InvestmentModel::form(); ?>
+				<?php (new InvestmentModel)->form(); ?>
 
 			</div>
 		</div>
 	</div>
+
+	<?php if(module('module_pharmacy')): ?>
+		<div id="modal_default" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Оплата Препаратов</h6>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+					<?php (new VisitPriceModel)->form_pharm(); ?>
+
+				</div>
+			</div>
+		</div>
+	<?php endif; ?>
 
 	<div id="modal_sale" class="modal fade" tabindex="-1">
 		<div class="modal-dialog">

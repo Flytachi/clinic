@@ -37,11 +37,12 @@ $header = "Логи";
 				// 	Mixin\update('visit', array('report' => $report), $value['id']);
 				// 	// dd($report);
 				// }
+				dd($_SERVER['HTTP_USER_AGENT']);
 				?>
-
+				<?php parad("_COOKIE ",$_COOKIE); ?>
 				<?php parad("_SERVER ",$_SERVER); ?>
 				<?php parad("Modules ",module()); ?>
-				<?php parad("_session ",$_SESSION); ?>
+				<?php parad("_session ",$session); ?>
 				<?php parad("_SESSION ",$_SESSION); ?>
 
 			</div>
@@ -52,6 +53,5 @@ $header = "Логи";
 
 	</div>
 	<!-- /page content -->
-
 </body>
 </html>

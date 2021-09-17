@@ -2,6 +2,9 @@
 require_once '../../tools/warframe.php';
 $session->is_auth(10);
 is_module('module_diagnostic');
+if (division_assist() == 1) {
+	Mixin\error('423');
+}
 $header = "Стационарные пациенты";
 ?>
 <!DOCTYPE html>
@@ -31,9 +34,9 @@ $header = "Стационарные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Стационарные пациенты</h6>
 						<div class="header-elements">
 							<div class="list-icons">
@@ -47,7 +50,7 @@ $header = "Стационарные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
 										<th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(4);
-$pk = $_GET['pk'];
-StorageHomeModel::form()
+is_module('module_pharmacy');
+(new StorageHomeModel)->form($_GET['pk']);
 ?>

@@ -33,16 +33,16 @@ $header = "Стационарные пациенты";
 			<div class="content">
 
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Стационарные пациенты</h6>
 					</div>
 
 					<div class="card-body">
 
 						<?php
-			            if($_SESSION['message']){
+			            if( isset($_SESSION['message']) ){
 			                echo $_SESSION['message'];
 			                unset($_SESSION['message']);
 			            }
@@ -51,7 +51,7 @@ $header = "Стационарные пациенты";
                         <div class="table-responsive">
                             <table class="table table-hover table-sm datatable-basic">
                                 <thead>
-									<tr class="bg-info">
+									<tr class="<?= $classes['table-thead'] ?>">
                                         <th>ID</th>
                                         <th>ФИО</th>
 										<th>Дата рождения</th>

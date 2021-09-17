@@ -6,12 +6,7 @@ class BypassModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient, $methods;
-        if($pk){
-            $post = $this->post;
-        }else{
-            $post = array();
-        }
+        global $db, $patient, $methods, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -21,34 +16,39 @@ class BypassModel extends Model
 
             <div class="modal-body">
 
-                <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-                    <li class="nav-item">
-                        <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
-                    </li>
-                    <li class="nav-item">
-                        <a onclick="Tab_Diet_Preparat(this, 1)" href="#" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>
-                    </li>
-                </ul>
-
+                <?php if(module('module_diet')): ?>
+					<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                        <li class="nav-item">
+                            <a onclick="Tab_Diet_Preparat(this, 0)" href="#" class="nav-link legitRipple active show" style="white-space:nowrap;" data-toggle="tab"><i class="icon-clipboard6 mr-1"></i>Препараты</a>
+                        </li>
+                        <li class="nav-item">
+                            <a onclick="Tab_Diet_Preparat(this, 1)" href="#" class="nav-link legitRipple" style="white-space:nowrap;" data-toggle="tab"><i class="icon-add mr-1"></i>Диета</a>
+                        </li>
+                    </ul>
+                <?php endif; ?>
+                
                 <div id="div_live">
 
                     <div class="form-group row">
-                        <div class="col-md-9">
-                            <label>Препараты:</label>
-                            <select id="select_preparat" class="form-control my_multiselect" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
-                                <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
-                                    ( 
-                                        st.qty -
-                                        IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
-                                        IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
-                                    ) 'qty'
-                                    FROM storage st WHERE st.category = 2 AND st.qty != 0";?>
-                                <?php foreach ($db->query($sql) as $row): ?>
-                                    <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
-                                <?php endforeach; ?>
-                            </select>
 
-                        </div>
+                        <?php if(module('module_pharmacy')): ?>
+                            <div class="col-md-9">
+                                <label>Препараты:</label>
+                                <select id="select_preparat" class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать препарат" name="preparat[]" multiple="multiple">
+                                    <?php $sql = "SELECT st.id, st.price, st.name, st.supplier, st.die_date,
+                                        ( 
+                                            st.qty -
+                                            IFNULL((SELECT SUM(opp.item_qty) FROM operation op LEFT JOIN operation_preparat opp ON(opp.operation_id=op.id) WHERE op.completed IS NULL AND opp.item_id=st.id), 0) -
+                                            IFNULL((SELECT SUM(sto.qty) FROM storage_orders sto WHERE sto.preparat_id=st.id), 0)
+                                        ) 'qty'
+                                        FROM storage st WHERE st.category = 2 AND st.qty != 0";?>
+                                    <?php foreach ($db->query($sql) as $row): ?>
+                                        <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
+                        
 
                         <div class="col-md-3">
                             <label>Сторонний препарат:</label>
@@ -76,7 +76,7 @@ class BypassModel extends Model
 
                         <div class="col-md-6">
                             <label>Метод:</label>
-                            <select data-placeholder="Выбрать метод" name="method" class="form-control form-control-select2" required>
+                            <select data-placeholder="Выбрать метод" name="method" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach ($methods as $key => $value): ?>
                                     <option value="<?= $key ?>"><?= $value ?></option>
@@ -104,7 +104,7 @@ class BypassModel extends Model
             </div>
 
             <div class="modal-footer">
-                <button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить время</button>
+                <button onclick="AddinputTime()" id="bypass_button_AddinputTime" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить время</button>
                 <button class="btn btn-outline-info btn-sm legitRipple" type="submit">Сохранить</button>
             </div>
 
@@ -138,7 +138,7 @@ class BypassModel extends Model
                         </div>
                     </td>
                     <td class="text-right">
-                        <input type="number" class="form-control" name="qty_outside[${s}]" value="1" style="border-width: 0px 0; padding: 0.2rem 0;">
+                        <input type="number" class="form-control" name="qty_outside[${s}]" value="1" min="1" style="border-width: 0px 0; padding: 0.2rem 0;" required>
                     </td>
                 </tr>`);
                 s++;

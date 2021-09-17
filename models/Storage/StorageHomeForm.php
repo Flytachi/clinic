@@ -6,7 +6,7 @@ class StorageHomeForm extends Model
 
     public function form($pk = null)
     {
-        global $db, $patient;
+        global $db, $patient, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -19,7 +19,7 @@ class StorageHomeForm extends Model
 
                     <div class="col-md-10">
                         <label>Расходные материалы:</label>
-                        <select data-placeholder="Выберите материал" name="product" class="form-control select-price" required data-fouc>
+                        <select data-placeholder="Выберите материал" name="product" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT * FROM storage_home WHERE status = 7") as $row): ?>
                                 <option value="<?= $row['id'] ?>" data-price="<?= $row['price'] ?>"><?= $row['name'] ?> | <?= $row['supplier'] ?> (годен до <?= date("d.m.Y", strtotime($row['die_date'])) ?>) в наличии - <?= $row['qty'] ?></option>
@@ -39,7 +39,10 @@ class StorageHomeForm extends Model
             </div>
 
             <div class="modal-footer">
-                <button type="submit" class="btn btn-outline-info btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                    <span class="ladda-label">Сохранить</span>
+                    <span class="ladda-spinner"></span>
+                </button>
             </div>
 
         </form>

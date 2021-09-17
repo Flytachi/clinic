@@ -32,9 +32,9 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card border-1 border-info">
+                <div class="<?= $classes['card'] ?>">
 
-                    <div class="card-header text-dark header-elements-inline alpha-info">
+                    <div class="<?= $classes['card-header'] ?>">
                         <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -168,9 +168,9 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 
                 </div>
 
-				<div class="card border-1 border-info">
+				<div class="<?= $classes['card'] ?>">
 
-					<div class="card-header text-dark header-elements-inline alpha-info">
+					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Визиты</h6>
 						<?php if(module('module_laboratory')): ?>
 							<div class="header-elements">
@@ -184,16 +184,16 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 					<div class="card-body">
 
 						<?php
-						if($_SESSION['message']){
+						if( isset($_SESSION['message']) ){
 				            echo $_SESSION['message'];
 				            unset($_SESSION['message']);
 				        }
 						?>
 
-						<div class="table-responsive card">
+						<div class="table-responsive">
                             <table class="table table-hover table-sm">
                                 <thead>
-                                    <tr class="bg-info">
+                                    <tr class="<?= $classes['table-thead'] ?>">
                                         <th>№</th>
 										<th style="width: 16%">Специолист</th>
 										<th style="width: 11%">Дата визита</th>
@@ -246,34 +246,22 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 											</td>
 											<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
 											<td>
-												<?php
-												if ($row['completed']) {
-													?>
+												<?php if ($row['completed']): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-													<?php
-												} else {
-													switch ($row['status']):
-														case 1:
-															?>
-															<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-															<?php
-															break;
-														case 2:
-															?>
-															<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
-															<?php
-															break;
-														default:
-															?>
-															<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-															<?php
-															break;
-													endswitch;
-												}
-												?>
+												<?php else: ?>
+													<?php if ($row['status'] == 0): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
+													<?php elseif ($row['status'] == 1): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
+													<?php elseif ($row['status'] == 2): ?>
+														<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специалиста</span>
+													<?php else: ?>
+														<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Закрытый</span>
+													<?php endif; ?>
+												<?php endif; ?>
 											</td>
                                             <td class="text-right">
-												<button type="button" class="btn btn-outline-info btn-sm legitRipple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+												<button type="button" class="<?= $classes['btn_detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 													<?php if (module('module_laboratory') and $row['laboratory']): ?>
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
@@ -282,6 +270,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
 															<a href="<?= viv('card/content_1') ?>?pk=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
 															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
+															<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_4').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer"></i>Акт сверки</a>
 														<?php else: ?>
 															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
 															<?php if (permission([2,32]) and (level($row['route_id']) == 2 or level($row['route_id']) == 32)): ?>

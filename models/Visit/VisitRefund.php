@@ -6,7 +6,6 @@ class VisitRefundModel extends Model
 
     public function form($pk = null)
     {
-        global $db;
         ?>
         <form method="post" action="<?= add_url() ?>">
 

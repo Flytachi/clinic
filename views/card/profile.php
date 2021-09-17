@@ -1,5 +1,5 @@
 <?php
-if ($_GET['pk']) {
+if ( isset($_GET['pk']) ) {
     $agr = "?pk=".$_GET['pk'];
     $activity = False;
     $sql = "SELECT
@@ -13,7 +13,7 @@ if ($_GET['pk']) {
                 LEFT JOIN visit vs ON (vs.user_id = us.id)
                 LEFT JOIN visit_price vp ON (vp.visit_id=vs.id AND vp.item_type = 101)
             WHERE vs.id = {$_GET['pk']} ORDER BY add_date ASC";
-} else if ($_GET['id']){
+} else if ( isset($_GET['id']) ){
     $agr = "?id=".$_GET['id'];
     $activity = True;
     $sql = "SELECT
@@ -41,9 +41,9 @@ if (!$patient) {
 }
 // prit($patient);
 ?>
-<div class="card border-1 border-info">
+<div class="<?= $classes['card'] ?>">
 
-    <div class="card-header text-dark header-elements-inline alpha-info">
+    <div class="<?= $classes['card-header'] ?>">
         <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
         <div class="header-elements">
             <div class="list-icons">
@@ -187,6 +187,7 @@ if (!$patient) {
                                 WHERE us.id = $patient->id";
                         $price = $db->query($sql)->fetch(PDO::FETCH_OBJ);
                     } else {
+                        $price = (object) array("balance" => 0);
                         $serv_id = $db->query("SELECT id FROM visit WHERE user_id = $patient->id AND accept_date BETWEEN \"$patient->add_date\" AND \"$patient->completed\"")->fetchAll();
                         foreach ($serv_id as $value) {
                             $item_service = $db->query("SELECT SUM(price_cash + price_card + price_transfer) 'price' FROM visit_price WHERE visit_id = {$value['id']} AND item_type IN (1,2,3,4,5,101)")->fetchAll();
@@ -194,7 +195,7 @@ if (!$patient) {
                                 $price->balance += $pri_ze['price'];
                             }
                         }
-                        // prit($price->balance);
+                        // dd($price->balance);
                     }
 
                     if (!$activity and !$patient->priced_date) {
@@ -232,7 +233,7 @@ if (!$patient) {
                                 <label class="col-md-4"><b>Размещён:</b></label>
                                 <div <?= $loc_attr ?> id="patient_location">
                                     <?php if ($activity): ?>
-                                        <?= $patient->floor ?> этаж <?= $patient->ward ?> палата <?= $patient->bed ?> койка
+                                        <?= $FLOOR[$patient->floor] ?> <?= $patient->ward ?> палата <?= $patient->bed ?> койка
                                     <?php else: ?>
                                         <?= $patient->item_name ?>
                                     <?php endif; ?>
@@ -263,7 +264,8 @@ if (!$patient) {
                                 <label class="col-md-3"><b>Прибывание:</b></label>
                                 <div class="col-md-9 text-right">
                                     <?php
-                                    $dr= date_diff(new \DateTime($patient->completed), new \DateTime($patient->add_date));
+                                    $date_finish = (isset($patient->completed)) ? new \DateTime($patient->completed) : new \DateTime();
+                                    $dr = date_diff($date_finish, new \DateTime($patient->add_date));
                                     if ($dr->h >= 1) {
                                         echo $dr->days." д. ".$dr->h." ч.";
                                     }else {
@@ -367,7 +369,7 @@ if (!$patient) {
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
 
-                                <?php VisitModel::form_beds(); ?>
+                                <?php (new VisitModel)->form_beds(); ?>
 
                             </div>
                         </div>
