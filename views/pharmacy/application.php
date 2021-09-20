@@ -28,7 +28,6 @@ $header = "Заявки";
 			<!-- Content area -->
 			<div class="content">
 
-
                 <div class="<?= $classes['card-filter'] ?>">
 
 					<div class="<?= $classes['card-filter_header'] ?>">
@@ -37,41 +36,45 @@ $header = "Заявки";
 
 					<div class="card-body">
 
-						<div class="row">
-
-							<div class="col-5">
-								<div class="table-responsive card">
-									<table class="table table-hover">
-										<thead>
-											<tr class="bg-dark">
-												<th>Склад</th>
-												<th>Ответственный</th>
-												<th class="text-right">Кол-во заявок</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php $tb_ware = (new Table($db, "warehouse_applications wa"))->set_data("DISTINCT w.id, w.name, w.parent_id")->additions("LEFT JOIN warehouses w ON (w.id=wa.warehouse_id)")->where("wa.status = 2"); ?>
-											<?php foreach ($tb_ware->get_table() as $row): ?>
-												<tr onclick="ChangeWare(<?= $row->id ?>)">
-													<td><?= $row->name ?></td>
-													<td><?= get_full_name($row->parent_id) ?></td>
-													<td class="text-right">
-														<?= $db->query("SELECT * FROM warehouse_applications WHERE warehouse_id = $row->id AND status = 2")->rowCount(); ?>
-													</td>
-												</tr>
-											<?php endforeach; ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
-
-							<div class="col-7" id="display_parents"></div>
-							
+						<div class="table-responsive card">
+							<table class="table table-hover">
+								<thead>
+									<tr class="bg-dark">
+										<th>Склад</th>
+										<th>Ответственный</th>
+										<th>Отдел</th>
+										<th class="text-right">Кол-во заявок</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php $tb_ware = (new Table($db, "warehouse_applications wa"))->set_data("DISTINCT w.id, w.name, w.parent_id, w.division")->additions("LEFT JOIN warehouses w ON (w.id=wa.warehouse_id)")->where("wa.status = 2"); ?>
+									<?php foreach ($tb_ware->get_table() as $row): ?>
+										<tr onclick="ChangeWare(<?= $row->id ?>)">
+											<td><?= $row->name ?></td>
+											<td><?= get_full_name($row->parent_id) ?></td>
+											<td>
+												<?php if ( isset($row->division) ): ?>
+                                                    <?php foreach (json_decode($row->division) as $key): ?>
+                                                        <li><?= $db->query("SELECT title FROM divisions WHERE id = $key")->fetchColumn() ?></li>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <span class="text-muted">Нет данных</span>
+                                                <?php endif; ?>
+											</td>
+											<td class="text-right">
+												<?= $db->query("SELECT * FROM warehouse_applications WHERE warehouse_id = $row->id AND status = 2")->rowCount(); ?>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
 						</div>
 
 					</div>
 
 				</div>
+
+				<div id="display_items"></div>
 
 			</div>
             <!-- /content area -->
@@ -85,23 +88,15 @@ $header = "Заявки";
     <script type="text/javascript">
 
 		function ChangeWare(params) {
+			
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('pharmacy/application-change_ware.php') ?>",
-				data: { pk: params },
+				url: "<?= up_url(null, "WarehouseApplicationsPanel") ?>",
+				data: { id: params },
+				// url: "<?= ajax('pharmacy/application-change_ware.php') ?>",
+				// data: { pk: params },
 				success: function (result) {
-					document.querySelector('#display_parents').innerHTML = result;
-				},
-			});
-		}
-
-		function ChangeWareType(params) {
-			$.ajax({
-				type: "GET",
-				url: "<?= ajax('pharmacy/application-change_ware_type.php') ?>",
-				data: { pk: params },
-				success: function (result) {
-					document.querySelector('#display_parents').innerHTML = result;
+					document.querySelector('#display_items').innerHTML = result;
 				},
 			});
 		}

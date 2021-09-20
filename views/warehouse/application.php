@@ -9,6 +9,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 	if ($warehouse) {
 		$level = ($warehouse['level']) ? json_decode($warehouse['level']) : null;
 		$division = ($warehouse['division']) ? json_decode($warehouse['division']) : null;
+		$is_parent = ($warehouse['parent_id'] == $session->session_id) ? true : false;
 
 		if ($level) {
 			if (permission($level)) {
@@ -17,13 +18,6 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 				Mixin\error('423');
 			}
 		}
-		function is_parent($pk = null)
-		{
-			global $session, $warehouse;
-			if (!$pk) $pk = $session->session_id;
-			return $warehouse['parent_id'] == $pk;
-		}
-		
 
 	} else {
 		Mixin\error('404');
@@ -33,12 +27,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     Mixin\error('404');
 }
 
-
-
 $tb = new Table($db, "warehouse_applications wa");
 $search = $tb->get_serch();
 $tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.item_supplier_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
-if (is_parent()) {
+if ($is_parent) {
 	$where_search = array(
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3", 
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
@@ -87,7 +79,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 					<div class="card-body" id="form_card">
 
                         <?php
-						if (is_parent()) (new WarehouseApplicationsModel)->store(2); 
+						if ($is_parent) (new WarehouseApplicationsModel)->store(2); 
 						else (new WarehouseApplicationsModel)->store();
 						?>
 
@@ -98,7 +90,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
                 <div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h5 class="card-title"><?= (is_parent()) ? "Все Заявки" : "Мои Заявки"; ?></h5>
+						<h5 class="card-title"><?= ($is_parent) ? "Все Заявки" : "Мои Заявки"; ?></h5>
                         <div class="header-elements">
 							<div class="form-group-feedback form-group-feedback-right mr-2">
 								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите наименование препарата">
@@ -116,7 +108,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				                <thead>
 				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th style="width: 50px">#</th>
-										<?php if(is_parent()): ?>
+										<?php if($is_parent): ?>
                                             <th style="width:200px">Заявитель</th>
 										<?php endif; ?>
 				                        <th>Наименование</th>
@@ -132,7 +124,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr id="TR_item_<?= $row->count ?>">
 				                            <td><?= $row->count ?></td>
-											<?php if(is_parent()): ?>
+											<?php if($is_parent): ?>
 												<td><?= get_full_name($row->parent_id) ?></td>
 											<?php endif; ?>
 				                            <td><?= $row->name ?></td>
@@ -165,10 +157,10 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 											</td>
 				                            <td class="text-right"s>
 				                                <div class="list-icons">
-													<?php if ( (is_parent() or $row->status == 1) and $row->status != 2 ): ?>
+													<?php if ( ($is_parent or $row->status == 1) and $row->status != 2 ): ?>
 														<a href="<?= del_url($row->id, 'WarehouseApplicationsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
-                                                    <?php if (is_parent()): ?>
+                                                    <?php if ($is_parent): ?>
 														<?php if ( $row->status == 2 ): ?>
 															<span class="list-icons-item text-success ml-1"><i class="icon-checkmark-circle"></i></span>
 														<?php else: ?>
@@ -208,7 +200,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				url: "<?= ajax('warehouse/search-application') ?>",
 				data: {
                     pk: "<?= $_GET['pk'] ?>",
-					is_parent: <?= is_parent() ?>,
+					is_parent: "<?= $is_parent ?>",
 					table_search: input.value,
 				},
 				success: function (result) {

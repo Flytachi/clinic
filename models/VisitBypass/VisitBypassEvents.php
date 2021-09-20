@@ -57,7 +57,7 @@ class VisitBypassEventsModel extends Model
             } 
 
             $db->commit();
-            $this->success();
+            $this->success($object);
 
         }
     }
@@ -73,13 +73,13 @@ class VisitBypassEventsModel extends Model
                 $this->error($object);
                 exit;
             }
-            $this->success();
+            $this->success("success");
         }
     }
 
-    public function success()
+    public function success($pk = null)
     {
-        echo "Успешно";
+        echo $pk;
     }
 
     public function error($message)

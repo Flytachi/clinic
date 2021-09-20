@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 8.5
+     * @version 8.6
      */
 
     // database handle
@@ -95,7 +95,7 @@ class Table
         try {
             $this->limit = $limit;
             $this->generate_sql();
-            $this->total_pages = ceil($this->db->query($this->sql)->rowCount() / $this->limit);
+            if ($this->limit) $this->total_pages = ceil($this->db->query($this->sql)->rowCount() / $this->limit);
             return $this;
         } catch (\Throwable $th) {
             //throw $th;

@@ -2,16 +2,12 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-
-function is_parent()
-{
-    return $_GET['is_parent'];
-}
+$is_parent = $_GET['is_parent'];
 
 $tb = new Table($db, "warehouse_applications wa");
 $search = $tb->get_serch();
 $tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.item_supplier_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
-if (is_parent()) {
+if ($is_parent) {
 	$where_search = array(
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3", 
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
@@ -32,7 +28,7 @@ $tb->set_self(viv('warehouse/application'));
         <thead>
             <tr class="<?= $classes['table-thead'] ?>">
                 <th style="width: 50px">#</th>
-                <?php if(is_parent()): ?>
+                <?php if($is_parent): ?>
                     <th style="width:200px">Заявитель</th>
                 <?php endif; ?>
                 <th>Наименование</th>
@@ -48,7 +44,7 @@ $tb->set_self(viv('warehouse/application'));
             <?php foreach ($tb->get_table(1) as $row): ?>
                 <tr id="TR_item_<?= $row->count ?>">
                     <td><?= $row->count ?></td>
-                    <?php if(is_parent()): ?>
+                    <?php if($is_parent): ?>
                         <td><?= get_full_name($row->parent_id) ?></td>
                     <?php endif; ?>
                     <td><?= $row->name ?></td>
@@ -81,10 +77,10 @@ $tb->set_self(viv('warehouse/application'));
                     </td>
                     <td class="text-right"s>
                         <div class="list-icons">
-                            <?php if ( (is_parent() or $row->status == 1) and $row->status != 2 ): ?>
+                            <?php if ( ($is_parent or $row->status == 1) and $row->status != 2 ): ?>
                                 <a href="<?= del_url($row->id, 'WarehouseApplicationsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                             <?php endif; ?>
-                            <?php if (is_parent()): ?>
+                            <?php if ($is_parent): ?>
                                 <?php if ( $row->status == 2 ): ?>
                                     <span class="list-icons-item text-success ml-1"><i class="icon-checkmark-circle"></i></span>
                                 <?php else: ?>

@@ -85,48 +85,63 @@ class VisitBypassModel extends Model
                 
                 </div>
 
-                
-                <div class="form-group-feedback form-group-feedback-right row">
+                <?php if(module('pharmacy')): ?>
+                    <div class="form-group-feedback form-group-feedback-right row">
 
-                    <div class="col-md-8">
-                        <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
-                        <div class="form-control-feedback">
-                            <i class="icon-search4 font-size-base text-muted"></i>
+                        <div class="col-md-8">
+                            <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
+                            <div class="form-control-feedback">
+                                <i class="icon-search4 font-size-base text-muted"></i>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="text-right">
-                            <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
-                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                                <span class="ladda-label">Сохранить</span>
-                                <span class="ladda-spinner"></span>
-                            </button>
+                        <div class="col-md-4">
+                            <div class="text-right">
+                                <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
+                                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                    <span class="ladda-label">Сохранить</span>
+                                    <span class="ladda-spinner"></span>
+                                </button>
+                            </div>
                         </div>
+
                     </div>
 
-                </div>
+                    <div class="form-group">
 
-                <div class="form-group">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr class="bg-dark">
+                                        <th>Наименование</th>
+                                        <th style="width:370px">Производитель</th>
+                                        <th style="width:370px">Поставщик</th>
+                                        <th class="text-center" style="width:150px">На складе</th>
+                                        <th style="width:100px">Кол-во</th>
+                                        <th class="text-center" style="width:50px">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table_form">
 
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm">
-                            <thead>
-                                <tr class="bg-dark">
-                                    <th>Наименование</th>
-                                    <th style="width:370px">Производитель</th>
-                                    <th style="width:370px">Поставщик</th>
-                                    <th class="text-center" style="width:150px">На складе</th>
-                                    <th style="width:100px">Кол-во</th>
-                                    <th class="text-center" style="width:50px">#</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table_form">
+                                </tbody>
+                            </table>
+                        </div>
 
-                            </tbody>
-                        </table>
                     </div>
+                <?php else: ?>
+                    <div class="form-group-feedback form-group-feedback-right row">
 
-                </div>
+                        <div class="col-md-12">
+                            <div class="text-right">
+                                <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
+                                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                    <span class="ladda-label">Сохранить</span>
+                                    <span class="ladda-spinner"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                <?php endif; ?>
 
             </div>
 

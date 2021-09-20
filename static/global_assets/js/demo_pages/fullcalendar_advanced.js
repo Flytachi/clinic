@@ -36,25 +36,30 @@ var FullCalendarAdvanced = (function () {
         $.ajax({
             type: "GET",
             url: url,
-            dataType: 'json',
+            dataType: "json",
             success: function (bypassEventData) {
-
                 // Initialize the calendar
                 $(".fullcalendar-external").fullCalendar({
                     header: {
                         left: "prev,next today",
                         center: "title",
-                        right: "month,agendaWeek,agendaDay",
+                        right: "month,agendaWeek,agendaDay,listWeek",
                     },
-                    // timeZone: "UTC",
-                    timeZone: "Asia/Samarkand",
+                    timezone: "local",
                     editable: true,
                     defaultDate: new Date(),
                     events: bypassEventData,
                     locale: "ru",
+                    allDaySlot: true,
                     droppable: droppable_status, // this allows things to be dropped onto the calendar
-                    drop: function (info) {
-                        CalendarDrop(info, this);
+                    drop: function (info, allDay) {
+                        CalendarDrop(info, this, allDay);
+                    },
+                    eventReceive: function (info) {
+                        $(".fullcalendar-external").fullCalendar(
+                            "removeEvents",
+                            info._id
+                        );
                     },
                     eventDrop: function (info) {
                         CalendarEventDropAndResize(info, this);
@@ -70,7 +75,6 @@ var FullCalendarAdvanced = (function () {
                     },
                     isRTL: $("html").attr("dir") == "rtl" ? true : false,
                 });
-
             },
         });
 
@@ -95,6 +99,25 @@ var FullCalendarAdvanced = (function () {
                 revert: true, // will cause the event to go back to its
                 revertDuration: 0, // original position after the drag
             });
+
+            // Tolltip
+            var item = this;
+
+            $.ajax({
+                type: "GET",
+                url: bypassDataUrl,
+                data: { pk: item.dataset.id },
+                success: function (result) {
+                    $(item).popover({
+                        trigger: "hover",
+                        popup: "popover",
+                        placement: "top",
+                        html: true,
+                        title: item.innerHTML,
+                        content: result,
+                    });
+                },
+            });
         });
     };
 
@@ -108,6 +131,6 @@ var FullCalendarAdvanced = (function () {
         },
         block: function (url) {
             _componentFullCalendarEvents(url, false);
-        }
+        },
     };
 })();

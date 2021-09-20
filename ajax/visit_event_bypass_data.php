@@ -8,9 +8,9 @@ $bypass = (new Table($db, "visit_bypass"))->where("id = {$_GET['pk']}")->get_row
         <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
             <li><?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?></li>
         <?php else: ?>
-            <li><?= $item->item_name ?></li>
+            <li><?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
         <?php endif; ?>
     <?php endforeach; ?>
 </ol>
 <b><em>Метод:</em></b> <?= $methods[$bypass->method] ?><br>
-<b><em>Описание:</em></b> <br> <?= $bypass->description ?>
+<b><em>Описание:</em></b> <br> <?= preg_replace("#\r?\n#", "<br />", $bypass->description) ?>

@@ -59,41 +59,10 @@ class BypassPanel extends Model
         $tb->where("visit_id = $pk AND parent_id = $session->session_id")->order_by("name ASC");
         foreach ($tb->get_table() as $row) {
             ?>
-            <div class="fc-event fc-item" title="" onmouseup="PackDefault(this)" onmousedown="CheckPack(this)" data-id="<?= $row->id ?>"><?= $row->name ?></div>
+            <div class="fc-event fc-item" data-id="<?= $row->id ?>"><?= $row->name ?></div>
             <?php
         }
         ?>
-
-        <!-- <div class="fc-event" data-color="#26A69A" onmousedown="CheckPack(this)">Капельница</div> -->
-        <!-- <div class="fc-event" data-color="#5C6BC0" onmousedown="CheckPack(this)">Препарат с собой</div> -->
-        <!-- <div class="fc-event" data-color="#546E7A" onmouseup="PackDefault(this)" onmousedown="CheckPack(this)">Sauna and stuff</div> -->
-
-        <script type="text/javascript">
-            $(".fc-item").on('mouseover', function() {
-                if ($("#item-information").is(":checked")) {
-                    var item = this;
-
-                    $.ajax({
-                        type: "GET",
-                        url: "<?= ajax('visit_event_bypass_data') ?>",
-                        data: {pk: item.dataset.id},
-                        success: function (result) {
-                            $(item).popover({
-                                trigger: "hover",
-                                popup: "popover",
-                                placement: "top",
-                                html: true,
-                                title: item.innerHTML,
-                                content: result,
-                            });
-                            $(item).popover('show');
-                        },
-                    });
-                }
-                
-            });
-        </script>
-
         <hr>
         <button onclick="Update('<?= up_url($pk, 'VisitBypassModel') ?>')" class="btn btn-success btn-block btn-sm legitRipple" type="button"><i class="icon-plus22 mr-1"></i>Добавить</button>
         <?php
