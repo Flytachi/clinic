@@ -83,9 +83,7 @@
 		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 
 	</script>
-	<?php if( empty($session->status) or $session->status != "master" ): ?>
-		<script src="<?= stack("assets/js/sessions.js") ?>"></script>
-	<?php endif; ?>
+	<script src="<?= stack("assets/js/sessions.js") ?>"></script>
 
 	<script src="<?= stack("assets/js/socket.js") ?>"></script>
 
@@ -93,42 +91,39 @@
 	<script src="<?= node("@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor.js") ?>"></script>
 </head>
 
+<!-- Timeout modal -->
+<div id="modal_timeout_auto_logout" class="modal fade" tabindex="-1" style="z-index:9999 !important;">
+	<div class="modal-dialog">
+		<div class="<?= $classes['modal-session_content'] ?>">
+			<div class="<?= $classes['modal-session_header'] ?>">
+				<h5 class="modal-title">Confirm login password</h5>
+			</div>
 
-<?php if( empty($session->status) or $session->status != "master" ): ?>
-	<!-- Timeout modal -->
-	<div id="modal_timeout_auto_logout" class="modal fade" tabindex="-1" style="z-index:9999 !important;">
-		<div class="modal-dialog">
-			<div class="<?= $classes['modal-session_content'] ?>">
-				<div class="<?= $classes['modal-session_header'] ?>">
-					<h5 class="modal-title">Confirm login password</h5>
+			<form method="post" action="<?= $session->confirm_password_link() ?>" onsubmit="TimeoutAutoLogout(this)">
+			
+				<div class="modal-body">
+					<h5 class="font-weight-semibold">Подтвердите пароль от <b class="text-primary"><?= $session->session_login ?></b>: </h5>
+
+					<div class="form-group">
+						<input type="password" class="form-control" name="password" placeholder="Введите пароль">
+					</div>
+					<em>
+						У вас есть 3 попытки ввести код!<br>
+						Осталось: <span id="sessionErrorCounts"></span><br>
+					</em>
+					<hr>
+
 				</div>
 
-				<form method="post" action="<?= $session->confirm_password_link() ?>" onsubmit="TimeoutAutoLogout(this)">
-				
-					<div class="modal-body">
-						<h5 class="font-weight-semibold">Подтвердите пароль от <b class="text-primary"><?= $session->session_login ?></b>: </h5>
+				<div class="modal-footer">
+					<a href="<?= $session->logout_link() ?>" type="button" class="<?= $classes['modal-session_btn_logout'] ?>">Выйти</a>
+					<button type="submit" class="<?= $classes['modal-session_btn_confirm'] ?>" name="button_submit">Подтвердить</button>
+				</div>
 
-						<div class="form-group">
-							<input type="password" class="form-control" name="password" placeholder="Введите пароль">
-						</div>
-						<em>
-							У вас есть 3 попытки ввести код!<br>
-							Осталось: <span id="sessionErrorCounts"></span><br>
-						</em>
-						<hr>
+			</form>
 
-					</div>
-
-					<div class="modal-footer">
-						<a href="<?= $session->logout_link() ?>" type="button" class="<?= $classes['modal-session_btn_logout'] ?>">Выйти</a>
-						<button type="submit" class="<?= $classes['modal-session_btn_confirm'] ?>" name="button_submit">Подтвердить</button>
-					</div>
-
-				</form>
-
-			</div>
 		</div>
 	</div>
-	<!-- /Timeout modal -->
-<?php endif; ?>
+</div>
+<!-- /Timeout modal -->
 

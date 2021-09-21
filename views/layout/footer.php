@@ -8,7 +8,8 @@
 
     <div class="navbar-collapse collapse" id="navbar-footer">
         <span class="navbar-text">
-            &copy; 2020 - 2021. <span class="text-primary">Автор проекта Я.Фарход. +998 91 247 43 53</span>
+            &copy; 2021. <span class="text-primary">Version 2</span>
+            <!-- &copy; 2021. <span class="text-primary">Автор проекта Я.Фарход. +998 91 247 43 53</span> -->
         </span>
 
         <ul class="navbar-nav ml-lg-auto">

@@ -85,6 +85,12 @@ $header = "Заявки";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
     <script type="text/javascript">
 
 		function ChangeWare(params) {
@@ -93,10 +99,25 @@ $header = "Заявки";
 				type: "GET",
 				url: "<?= up_url(null, "WarehouseApplicationsPanel") ?>",
 				data: { id: params },
-				// url: "<?= ajax('pharmacy/application-change_ware.php') ?>",
-				// data: { pk: params },
 				success: function (result) {
 					document.querySelector('#display_items').innerHTML = result;
+				},
+			});
+		}
+
+		function ApplicationShow(Ware, appId, appManufacturerId = null, appSupplierId = null) {
+			$.ajax({
+				type: "GET",
+				url: "<?= up_url(null, "WarehouseApplicationsPanel", "application") ?>",
+				data: { 
+					id: Ware,
+					item_name_id: appId,
+					item_manufacturer_id: appManufacturerId,
+					item_supplier_id: appSupplierId
+				},
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
 		}

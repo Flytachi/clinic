@@ -3,6 +3,7 @@
 class WarehouseApplicationsPanel extends Model
 {
     public $table = 'warehouses';
+    public $_common = 'warehouse_common';
     public $_item_names = 'warehouse_item_names';
     public $_applications = 'warehouse_applications';
     public $_item_suppliers = 'warehouse_item_suppliers';
@@ -40,9 +41,8 @@ class WarehouseApplicationsPanel extends Model
 
                 <?php
                 $tb = new Table($db, $this->_applications);
-                $search = $tb->get_serch();
                 $tb->set_data('DISTINCT  item_name_id, item_manufacturer_id, item_supplier_id');
-                $tb->where("warehouse_id = $pk AND status = 2")->order_by("item_manufacturer_id DESC, item_supplier_id DESC")->set_limit();
+                $tb->where("warehouse_id = $pk AND status = 2")->order_by("item_manufacturer_id DESC, item_supplier_id DESC");
                 ?>
                 
                 <div class="table-responsive card">
@@ -54,25 +54,21 @@ class WarehouseApplicationsPanel extends Model
                                 <th style="width:250px">Производитель</th>
                                 <th style="width:250px">Поставщик</th>
                                 <th class="text-right" style="width:100px">Кол-во</th>
-                                <th class="text-right" style="width: 100px">Действия</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($tb->get_table(1) as $row): ?>
-                                <tr>
+                                <tr onclick="ApplicationShow(<?= $pk ?>, <?= $row->item_name_id ?>, <?= ($row->item_manufacturer_id) ? $row->item_manufacturer_id : '\'\''; ?>, <?= ($row->item_supplier_id) ? $row->item_supplier_id : '\'\''; ?>)">
                                     <td><?= $row->count ?></td>
                                     <td><?= $db->query("SELECT name FROM $this->_item_names WHERE id = $row->item_name_id")->fetchColumn() ?></td>
                                     <td><?= ($row->item_manufacturer_id) ? $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = $row->item_manufacturer_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
                                     <td><?= ($row->item_supplier_id) ? $db->query("SELECT supplier FROM $this->_item_suppliers WHERE id = $row->item_supplier_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
                                     <td class="text-right"> 
                                         <?php
-                                        $m = ($row->item_manufacturer_id) ? "AND item_manufacturer_id = $row->item_manufacturer_id" : null;
-                                        $s = ($row->item_supplier_id) ? "AND item_supplier_id = $row->item_supplier_id" : null;
-                                        echo $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = $row->item_name_id $m $s")->fetchColumn();
+                                        $m = ($row->item_manufacturer_id) ? "AND item_manufacturer_id = $row->item_manufacturer_id" : "AND item_manufacturer_id IS NULL";
+                                        $s = ($row->item_supplier_id) ? "AND item_supplier_id = $row->item_supplier_id" : "AND item_supplier_id IS NULL";
+                                        echo number_format($db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = $row->item_name_id $m $s")->fetchColumn());
                                         ?>
-                                    </td>
-                                    <td>
-                                        
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -84,6 +80,133 @@ class WarehouseApplicationsPanel extends Model
 
         </div>
         <?php
+    }
+
+    public function application($pk = null)
+    {
+        global $db, $classes;
+
+        if ($_GET['item_manufacturer_id']) {
+            $m_first = "AND item_manufacturer_id = {$_GET['item_manufacturer_id']}";
+            $m_second = "AND item_manufacturer_id = {$_GET['item_manufacturer_id']}";
+        }else {
+            $m_first = "AND item_manufacturer_id IS NULL";
+            $m_second = null;
+        }
+        if ($_GET['item_supplier_id']) {
+            $s_first = "AND item_supplier_id = {$_GET['item_supplier_id']}";
+            $s_second = "AND item_supplier_id = {$_GET['item_supplier_id']}";
+        }else {
+            $s_first = "AND item_supplier_id IS NULL";
+            $s_second = null;
+        }
+
+        $tb = new Table($db, $this->_common);
+        $tb->where("item_name_id = {$_GET['item_name_id']} $m_second $s_second")->order_by("item_die_date ASC");
+        if ($products = $tb->get_table()) {
+            $indicator = "secondary";
+            $indicator_feed = "success";
+        }else {
+            $indicator = "danger";
+            $indicator_feed = "danger";
+        }
+
+        ?>
+        <div class="<?= $classes['modal-global_header'] ?>">
+            <h6 class="modal-title">Обработать заявку</h6>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="card card-body border-top-1 border-top-<?= $indicator ?>" id="indicator-card">
+                <div class="list-feed list-feed-rhombus list-feed-solid">
+                    <div class="list-feed-item border-<?= $indicator_feed ?>">
+                        <strong>Препарат: </strong>
+                        <span><?= $name = $db->query("SELECT name FROM $this->_item_names WHERE id = {$_GET['item_name_id']}")->fetchColumn() ?></span>
+                    </div>
+
+                    <div class="list-feed-item border-<?= $indicator_feed ?>">
+                        <strong>Данные: </strong><br>
+                        Производитель - <?= ($_GET['item_manufacturer_id']) ? $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = {$_GET['item_manufacturer_id']}")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?><br>
+                        Поставщик - <?= ($_GET['item_supplier_id']) ? $db->query("SELECT supplier FROM $this->_item_suppliers WHERE id = {$_GET['item_supplier_id']}")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?>
+                    </div>
+
+                    <div class="list-feed-item border-<?= $indicator ?>" id="indicator-feed">
+                        <strong>Требуемое кол-во: </strong>
+                        <span id="item_qty_required" style="font-size:15px;" class="ml-1">
+                            <?= number_format($db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = {$_GET['item_name_id']} $m_first $s_first")->fetchColumn());
+                            ?>
+                        </span> / <span id="item_qty_count">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <?php if($products): ?>
+                <h4 class="text-center"><?= $name ?></h4>
+    
+                <div class="table-responsive card">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr class="<?= $classes['table-thead'] ?>">
+                                <th style="width:150px">Срок годности</th>
+                                <th>Производитель</th>
+                                <th>Поставщик</th>
+                                <th class="text-right" style="width:100px">Кол-во</th>
+                                <th class="text-right" style="width:100px">Расход</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($products as $row): ?>
+                                <tr>
+                                    <td><?= ($row->item_die_date) ? date_f($row->item_die_date) : '<span class="text-muted">Нет данных</span>' ?></td>
+                                    <td><?= ($row->item_manufacturer_id) ? $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = $row->item_manufacturer_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
+                                    <td><?= ($row->item_supplier_id) ? $db->query("SELECT supplier FROM $this->_item_suppliers WHERE id = $row->item_supplier_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
+                                    <td class="text-right"><?= number_format($row->item_qty) ?></td>
+                                    <td>
+                                        <input type="number" class="form-control text-right input_count-qty" name="item[<?= $row->id ?>]" min="0" max="<?= $row->item_qty ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+
+        </div>
+        <script  type="text/javascript">
+
+            var qty_required = document.querySelector("#item_qty_required");
+            var inputs = document.querySelectorAll(".input_count-qty");
+            
+            $(".input_count-qty").on("input", function (event) {
+                var qty_count = document.querySelector("#item_qty_count");
+                var qty = 0;
+
+                for (let i = 0; i < inputs.length; i++) {
+                    qty += Number(inputs[i].value);
+                }
+
+                if ( Number(qty_required.innerHTML) == qty ) {
+                    qty_count.className = "text-success";
+                    document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-success";
+                    document.querySelector("#indicator-feed").className = "list-feed-item border-success";
+                }else if ( Number(qty_required.innerHTML) < qty) {
+                    qty_count.className = "text-danger";
+                    document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-danger";
+                    document.querySelector("#indicator-feed").className = "list-feed-item border-danger";
+                } else {
+                    qty_count.className = "";
+                    document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-secondary";
+                    document.querySelector("#indicator-feed").className = "list-feed-item border-secondary";
+                }
+
+                qty_count.innerHTML = qty;
+
+            });
+
+        </script>
+        <?php 
     }
 
     public function clean()
