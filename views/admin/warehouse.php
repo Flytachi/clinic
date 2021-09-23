@@ -105,6 +105,7 @@ $header = "Склады";
 															</a>
 														</div>
 													</div>
+													<a onclick="ShowConf('<?= up_url($row->id, 'WarehouseSettingsModel') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
 													<a onclick="Update('<?= up_url($row->id, 'WarehouseModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_warehouses")): ?>										
                                                         <a href="<?= del_url($row->id, 'WarehouseModel') ?>" onclick="return confirm('Вы уверены что хотите удалить склад?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
@@ -128,6 +129,12 @@ $header = "Склады";
 
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="modal_default_card"></div>
+		</div>
+	</div>
 
 	<script type="text/javascript">
 
@@ -161,6 +168,17 @@ $header = "Склады";
 				success: function (result) {
 					$('#form_card').html(result);
                     BootstrapMultiselect.init();
+				},
+			});
+		};
+
+		function ShowConf(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#modal_default_card').html(result);
 				},
 			});
 		};

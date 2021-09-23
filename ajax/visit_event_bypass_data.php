@@ -6,9 +6,9 @@ $bypass = (new Table($db, "visit_bypass"))->where("id = {$_GET['pk']}")->get_row
 <ol>
     <?php foreach (json_decode($bypass->items) as $item): ?>
         <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-            <li><?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?></li>
+            <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?></li>
         <?php else: ?>
-            <li><?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
+            <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
         <?php endif; ?>
     <?php endforeach; ?>
 </ol>

@@ -159,7 +159,7 @@ function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
     }
 }
 
-function update($tb, $post, $pk)
+function update(string $tb, array $post, $pk)
 {
     global $db;
     foreach (array_keys($post) as $key) {
@@ -171,10 +171,18 @@ function update($tb, $post, $pk)
     }
     if (is_array($pk)) {
         foreach ($pk as $key => $value) {
-            if (isset($filter)) {
-                $filter .= " AND ".$key."=".$value;
-            }else{
-                $filter = $key."=".$value;
+            if (is_array($value)) {
+                if (isset($filter)) {
+                    $filter .= " AND ".$key." IN (".implode(',', $value).")";
+                }else{
+                    $filter = $key." IN (".implode(',', $value).")";
+                }
+            } else {
+                if (isset($filter)) {
+                    $filter .= " AND ".$key."=".$value;
+                }else{
+                    $filter = $key."=".$value;
+                }
             }
         }
         $sql = "UPDATE $tb SET $col WHERE $filter";

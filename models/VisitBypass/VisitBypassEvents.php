@@ -4,7 +4,7 @@ class VisitBypassEventsModel extends Model
 {
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';
-    public $_warehouse_applications = 'warehouse_applications';
+    public $_basket = 'visit_baskets';
 
     public function clean()
     {
@@ -40,18 +40,20 @@ class VisitBypassEventsModel extends Model
             foreach (json_decode($bypass->items) as $item) {
                 if( isset($item->item_name_id) ){
                     $post = array(
-                        'warehouse_id' => 4,
-                        'parent_id' => $this->post['parent_id'],
+                        'visit_id' => $this->post['visit_id'],
                         'user_id' => $this->post['user_id'],
                         'event_id' => $object,
+                        'warehouse_id' => 4,
                         'item_name_id' => $item->item_name_id,
                         'item_manufacturer_id' => ($item->item_manufacturer_id) ? $item->item_manufacturer_id : null,
                         'item_supplier_id' => ($item->item_supplier_id) ? $item->item_supplier_id : null,
                         'item_qty' => $item->item_qty,
-                        'status' => 2,
+                        'item_price' => null,
+                        'item_shtrih' => null,
+                        'item_die_date' => null,
                     );
 
-                    Mixin\insert($this->_warehouse_applications, $post);
+                    Mixin\insert($this->_basket, $post);
                     unset($post);
                 }
             } 

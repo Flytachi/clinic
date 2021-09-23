@@ -36,6 +36,13 @@ $header = "Заявки";
 
 					<div class="card-body">
 
+						<?php
+						if( isset($_SESSION['message']) ){
+							echo $_SESSION['message'];
+							unset($_SESSION['message']);
+						}
+						?>
+
 						<div class="table-responsive card">
 							<table class="table table-hover">
 								<thead>
