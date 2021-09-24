@@ -50,8 +50,7 @@ function to_null($post){
     return $post;
 }
 
-function insert($tb, $post)
-{
+function insert($tb, $post){
     global $db;
     $col = implode(",", array_keys($post));
     $val = ":".implode(", :", array_keys($post));
@@ -65,8 +64,7 @@ function insert($tb, $post)
     }
 }
 
-function insert_or_update($tb, $post, $name_pk = null, $defwhere = null)
-{
+function insert_or_update($tb, $post, $name_pk = null, $defwhere = null){
     global $db;
 
     $table_an_exception = array(

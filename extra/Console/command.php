@@ -442,9 +442,10 @@ class __Db
         require_once dirname(__DIR__).'/functions/connection.php';
 
         $json = array();
+        $i = 0;
 
         foreach ($db->query("SHOW TABlES") as $table) {
-
+            $i++;
             $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
             $column = "";
             $keys = "";
@@ -495,16 +496,18 @@ class __Db
             $json[] = $sql;
             unset($column);
             unset($keys);
+
+            echo "\033[32m"." Таблица {$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
         }
 
-        return $this->create_file(json_encode($json));
+        return $this->create_file(json_encode($json), $i);
     }
 
-    public function create_file($code = "")
+    public function create_file($code = "", $qty)
     {
         $file = fopen("$this->path/$this->file_name.$this->format", "w");
         fwrite($file, $code);
-        echo "\033[32m"." Генерация прошла успешно!\n";
+        echo "\033[32m"." Генерация ($qty) таблиц прошла успешно!\n";
         return fclose($file);
     }
 
@@ -521,9 +524,12 @@ class __Db
                 $table = pathinfo($file_name)['filename'];
                 $data = json_decode(file_get_contents($file_name), true);
     
+                $i = 0;
                 foreach ($data as $row) {
+                    $i++;
                     Mixin\insert($table, $row);
                 }
+                echo "\033[32m"." Таблица $table ($i).\n";
             }
 
         }else{
