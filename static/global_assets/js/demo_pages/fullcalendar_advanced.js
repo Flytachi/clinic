@@ -46,7 +46,7 @@ var FullCalendarAdvanced = (function () {
                         right: "month,agendaWeek,agendaDay,listWeek",
                     },
                     timezone: "local",
-                    editable: true,
+                    editable: droppable_status,
                     defaultDate: new Date(),
                     events: bypassEventData,
                     locale: "ru",

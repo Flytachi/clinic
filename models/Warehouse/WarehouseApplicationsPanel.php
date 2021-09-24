@@ -12,8 +12,7 @@ class WarehouseApplicationsPanel extends Model
     public function get_or_404(int $pk)
     {
         /**
-         * Данные о записи!
-         * если не найдёт запись то выдаст 404 
+         * Дополнить
          */
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);

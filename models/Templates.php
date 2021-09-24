@@ -21,7 +21,7 @@ class TemplateModel extends Model
 
                 <div class="col-md-8 offset-md-2 mb-3">
                     <label class="col-form-label">Название шаблона:</label>
-                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $this->value('name') ?>">
+                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $this->value('name') ?>" required>
                 </div>
 
                 <div class="col-md-12">
@@ -105,7 +105,7 @@ class TemplateModel extends Model
         $_SESSION['message'] = '
         <div class="alert alert-danger" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
+            Ошибка при создании шаблона!
         </div>
         ';
         render();

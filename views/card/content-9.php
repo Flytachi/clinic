@@ -55,29 +55,38 @@ is_module('module_bypass');
 
 						<!-- External events -->
 						<div class="card">
+
 							
 							<div class="card-body">
-
+								
 								<div class="row">
-									<div class="col-md-4">
-										<div class="mb-3" id="external-events">
-											<h6>Пакеты назначений</h6>
-
-											<?php (new BypassPanel)->TabPanel($patient->visit_id) ?>
-
-											<!-- <div class="form-check form-check-right form-check-switchery">
-												<label class="form-check-label">
-													<input type="checkbox" class="form-check-input-switchery" id="drop-remove">
-													Удалить после использования
-												</label>
-											</div> -->
+									<?php if(is_grant()): ?>
+										<div class="col-md-4">
+											<div class="mb-3" id="external-events">
+												<h6>Пакеты назначений</h6>
+	
+												<?php (new BypassPanel)->TabPanel($patient->visit_id) ?>
+	
+												<!-- <div class="form-check form-check-right form-check-switchery">
+													<label class="form-check-label">
+														<input type="checkbox" class="form-check-input-switchery" id="drop-remove">
+														Удалить после использования
+													</label>
+												</div> -->
+											</div>
 										</div>
-									</div>
+	
+										<div class="col-md-8">
+											<div class="fullcalendar-external"></div>
+										</div>
+									<?php else: ?>
+										<div class="col-md-12">
+											<div class="fullcalendar-external"></div>
+										</div>
+									<?php endif; ?>
 
-									<div class="col-md-8">
-										<div class="fullcalendar-external"></div>
-									</div>
 								</div>
+
 							</div>
 						</div>
 						<!-- /external events -->
@@ -103,7 +112,7 @@ is_module('module_bypass');
 
 	<div id="modal_event_card" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="event_card_body">
+			<div class="<?= $classes['modal-global_content'] ?>" id="event_card_body">
 
 			</div>
 		</div>
@@ -137,111 +146,147 @@ is_module('module_bypass');
 			))();
         }
 
+		<?php if(is_grant()): ?>
 
-		function CalendarDrop(info, element, allDay) {
+			function CalendarDrop(info, element, allDay) {
 
-			// if ($("#drop-remove").is(":checked")) {
-			// 	// is the "remove after drop" checkbox checked?
-			// 	$(element).remove(); // if so, remove the element from the "Draggable Events" list
-			// }
+				// if ($("#drop-remove").is(":checked")) {
+				// 	// is the "remove after drop" checkbox checked?
+				// 	$(element).remove(); // if so, remove the element from the "Draggable Events" list
+				// }
 
-			// Проверка
-			$.ajax({
-				type: "GET",
-				url: "<?= ajax('visit_event_bypass_change') ?>",
-				data: {pk:element.dataset.id},
-				success: function (bypassEventStatus) {
-					if(bypassEventStatus == "success"){
-						// выполнение
-						var originalEventObject = $(element).data("event");
-						var copiedEventObject = $.extend(
-							{},
-							originalEventObject
-						);
-						
-						if (Array.isArray(info._i)) {
-							var d_date = toDataformat(info._i)
-							var is_time = true;
-						} else {
-							var d_date = info._d;
-							var is_time = null;
+				// Проверка
+				$.ajax({
+					type: "GET",
+					url: "<?= ajax('visit_event_bypass_change') ?>",
+					data: {pk:element.dataset.id},
+					success: function (bypassEventStatus) {
+						if(bypassEventStatus == "success"){
+							// выполнение
+							var originalEventObject = $(element).data("event");
+							var copiedEventObject = $.extend(
+								{},
+								originalEventObject
+							);
+							
+							if (Array.isArray(info._i)) {
+								var d_date = toDataformat(info._i)
+								var is_time = true;
+							} else {
+								var d_date = info._d;
+								var is_time = null;
+							}
+
+							$.ajax({
+								type: "POST",
+								url: "<?= add_url() ?>",
+								data: {
+									model: "VisitBypassEventsModel",
+									visit_id: "<?= $patient->visit_id ?>",
+									visit_bypass_id: element.dataset.id,
+									responsible_id: "<?= $session->session_id ?>",
+									user_id: "<?= $patient->id ?>",
+									event_title: element.innerHTML,
+									event_start: toTimestamp(d_date),
+									is_time: is_time,
+								},
+								success: function (id) {
+
+									copiedEventObject.start = info;
+									copiedEventObject.allDay = allDay;
+									copiedEventObject.id = Number(id);
+									$(".fullcalendar-external").fullCalendar(
+										"renderEvent",
+										copiedEventObject,
+										true
+									);
+
+								},
+							});
+
+						}else{
+
+							new Noty({
+								text: '<strong>Внимание!</strong><br>'+bypassEventStatus,
+								type: 'error'
+							}).show();
+
 						}
+					},
+				});
+				
+			};
 
-						$.ajax({
-							type: "POST",
-							url: "<?= add_url() ?>",
-							data: {
-								model: "VisitBypassEventsModel",
-								visit_id: "<?= $patient->visit_id ?>",
-								visit_bypass_id: element.dataset.id,
-								parent_id: "<?= $session->session_id ?>",
-								user_id: "<?= $patient->id ?>",
-								event_title: element.innerHTML,
-								event_start: toTimestamp(d_date),
-								is_time: is_time,
-							},
-							success: function (id) {
+			function CalendarEventDropAndResize(info, element) {
+				var start_time = toTimestamp(info.start._d);
+				var end_time = null;
+				if (info.end) {
+					end_time = toTimestamp(info.end._d);
+				}
+				$.ajax({
+					type: "POST",
+					url: "<?= add_url() ?>",
+					data: {
+						model: "VisitBypassEventsModel",
+						id: info.id,
+						event_start: start_time,
+						event_end: end_time,
+					},
+					success: function (result) {
 
-								copiedEventObject.start = info;
-								copiedEventObject.allDay = allDay;
-								copiedEventObject.id = Number(id);
-								$(".fullcalendar-external").fullCalendar(
-									"renderEvent",
-									copiedEventObject,
-									true
-								);
-
-							},
-						});
-
-					}else{
-
-						new Noty({
-							text: '<strong>Внимание!</strong><br>'+bypassEventStatus,
-							type: 'error'
-						}).show();
-
-					}
-				},
-			});
+					},
+				});
+			};
 			
-		};
+			function CalendarEventDelete(params, calendar_ID) {
+				$.ajax({
+					type: "GET",
+					url: "<?= del_url(null, 'VisitBypassEventsModel') ?>",
+					data: {id: params},
+					success: function (result) {
+						if (result == 'success') {
 
-		function CalendarEventDropAndResize(info, element) {
-			var start_time = toTimestamp(info.start._d);
-			var end_time = null;
-			if (info.end) {
-				end_time = toTimestamp(info.end._d);
-			}
-			$.ajax({
-				type: "POST",
-				url: "<?= add_url() ?>",
-				data: {
-					model: "VisitBypassEventsModel",
-					id: info.id,
-					event_start: start_time,
-					event_end: end_time,
-				},
-				success: function (result) {
+							$("#modal_event_card").modal("hide");
+							// delete
+							$(".fullcalendar-external").fullCalendar(
+								"removeEvents",
+								function (ev) {
+									return ev._id == calendar_ID;
+								}
+							);
 
-				},
-			});
-		};
+						}else{
+
+							new Noty({
+								text: result,
+								type: 'error'
+							}).show();
+
+						}
+					},
+				});
+			};
+
+		<?php endif; ?>
 
 		function CalendarEventClick(info, element) {
 			$("#modal_event_card").modal("show");
-			// $('#modal_event_card').html(data);
-			// delete
-			// $(".fullcalendar-external").fullCalendar(
-			//     "removeEvents",
-			//     function (ev) {
-			//         return ev._id == info._id;
-			//     }
-			// );
+			$.ajax({
+				type: "GET",
+				url: "<?= up_url(null, 'VisitBypassEventsPanel', 'card') ?>",
+				data: {id: info.id, calendar_ID: info._id},
+				success: function (result) {
+					$('#event_card_body').html(result);
+				},
+			});
 		};
 
 		document.addEventListener("DOMContentLoaded", function () {
-			FullCalendarAdvanced.init(bypassEventUrl);
+			<?php if(is_grant()): ?>
+				FullCalendarAdvanced.init(bypassEventUrl);
+			<?php else: ?>
+				FullCalendarAdvanced.block(bypassEventUrl);
+			<?php endif; ?>
 		});
 
 	</script>

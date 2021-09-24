@@ -4,7 +4,7 @@ class VisitBypassEventsModel extends Model
 {
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';
-    public $_basket = 'visit_baskets';
+    public $_event_applications = 'visit_bypass_event_applications';
 
     public function clean()
     {
@@ -41,19 +41,16 @@ class VisitBypassEventsModel extends Model
                 if( isset($item->item_name_id) ){
                     $post = array(
                         'visit_id' => $this->post['visit_id'],
+                        'visit_bypass_event_id' => $object,
                         'user_id' => $this->post['user_id'],
-                        'event_id' => $object,
                         'warehouse_id' => 4,
                         'item_name_id' => $item->item_name_id,
                         'item_manufacturer_id' => ($item->item_manufacturer_id) ? $item->item_manufacturer_id : null,
                         'item_supplier_id' => ($item->item_supplier_id) ? $item->item_supplier_id : null,
                         'item_qty' => $item->item_qty,
-                        'item_price' => null,
-                        'item_shtrih' => null,
-                        'item_die_date' => null,
                     );
 
-                    Mixin\insert($this->_basket, $post);
+                    Mixin\insert($this->_event_applications, $post);
                     unset($post);
                 }
             } 
@@ -77,6 +74,22 @@ class VisitBypassEventsModel extends Model
             }
             $this->success("success");
         }
+    }
+
+    public function delete(int $pk)
+    {
+        global $db;
+        $db->beginTransaction();
+        $object = Mixin\delete($this->table, $pk);
+        if ($object) {
+            Mixin\delete($this->_event_applications, $pk, "visit_bypass_event_id");
+            $db->commit();
+            $this->success("success");
+        } else {
+            $this->error("Не найден объект для удаления!");
+            exit;
+        }
+
     }
 
     public function success($pk = null)

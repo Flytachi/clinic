@@ -13,4 +13,6 @@ $bypass = (new Table($db, "visit_bypass"))->where("id = {$_GET['pk']}")->get_row
     <?php endforeach; ?>
 </ol>
 <b><em>Метод:</em></b> <?= $methods[$bypass->method] ?><br>
-<b><em>Описание:</em></b> <br> <?= preg_replace("#\r?\n#", "<br />", $bypass->description) ?>
+<?php if ( $bypass->description ): ?>
+    <b><em>Описание:</em></b> <br> <?= preg_replace("#\r?\n#", "<br />", $bypass->description) ?>
+<?php endif; ?>

@@ -164,9 +164,9 @@ function number_color(Int $int = null, Bool $type = false)
     }
 }
 
-function date_f($item = null, $type = null){
-    $item = strtotime($item) ;
-    $format = ($type) ? 'd.m.Y H:i' : 'd.m.Y';
+function date_f($item = null, $format = null){
+    $item = strtotime($item);
+    if (!is_string($format)) $format = ($format) ? 'd.m.Y H:i' : 'd.m.Y';
     return date($format, $item);
 }
 

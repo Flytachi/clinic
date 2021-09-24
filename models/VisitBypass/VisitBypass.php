@@ -152,11 +152,10 @@ class VisitBypassModel extends Model
             $("#search_input_product").keyup(function() {
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(1, 'WarehouseCommonPanel', 'change_table') ?>",
+                    url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
                     data: {
-                        warehouse_id: null, 
-                        status: 1,
-                        search: this.value, 
+                        warehouse_id: 4,
+                        search: this.value,
                     },
                     success: function (result) {
                         $('#table_form').html(result);

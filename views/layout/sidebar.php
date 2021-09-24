@@ -38,11 +38,17 @@
 
                     <?php if (config("package") and permission(5)): ?>
                         <li class="nav-item">
-                            <a href="<?= viv('doctor/package') ?>" class="nav-link legitRipple">
+                            <a href="<?= viv('doctor/package_services') ?>" class="nav-link legitRipple">
                                 <i class="icon-bag"></i>
-                                <span>Пакеты<span>
+                                <span>Пакеты (услуги)<span>
                             </a>
                         </li>
+                        <!-- <li class="nav-item">
+                            <a href="<?= viv('doctor/package_bypass') ?>" class="nav-link legitRipple">
+                                <i class="icon-bag"></i>
+                                <span>Пакеты (назначения)<span>
+                            </a>
+                        </li> -->
                     <?php endif; ?>
 
                     <?php if (config("template") and permission([5,10])): ?>

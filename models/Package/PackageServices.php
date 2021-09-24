@@ -223,7 +223,7 @@ class PackageServicesModel extends Model
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
             <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
+            <span class="font-weight-semibold">Ошибка при создании пакета услуг!</span>
         </div>
         ';
         render();

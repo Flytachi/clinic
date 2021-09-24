@@ -25,7 +25,7 @@ class BypassPanel extends Model
         <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelCustom') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Пользовательские</a></li>
             <!-- <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelPackage') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Мои</a></li> -->
-            <?php if(module('module_diet')): ?>
+            <?php if(module('diet')): ?>
                 <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'BypassPanel', 'DetailPanelDiet') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Диета</a></li>
             <?php endif; ?>
         </ul>
@@ -57,13 +57,13 @@ class BypassPanel extends Model
         global $db, $session;
         $tb = new Table($db, $this->_bypass);
         $tb->where("visit_id = $pk AND parent_id = $session->session_id")->order_by("name ASC");
-        foreach ($tb->get_table() as $row) {
+        foreach ($tb->get_table(1) as $row) {
             ?>
             <div class="fc-event fc-item" data-id="<?= $row->id ?>"><?= $row->name ?></div>
             <?php
         }
+        if ( isset($row->count) and $row->count > 0 ) echo "<hr>";
         ?>
-        <hr>
         <button onclick="Update('<?= up_url($pk, 'VisitBypassModel') ?>')" class="btn btn-success btn-block btn-sm legitRipple" type="button"><i class="icon-plus22 mr-1"></i>Добавить</button>
         <?php
         $this->jquery_init();

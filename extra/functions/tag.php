@@ -125,22 +125,17 @@ function add_url(){
     return DIR."/hook/create_to_update".EXT."?";
 }
 
-function del_url($id = null, $model = null){
-    if (!is_null($id) and !is_null($model)) {
-        return DIR."/hook/delete".EXT."?id=$id&model=$model";
-    } else {
-        return DIR."/hook/delete".EXT;
-    }
-    
+function del_url($id = null, $model = null, $arg = "?"){
+    if($id) $arg .= "id=$id";
+    if($model) $arg .= "&model=$model";
+    return DIR."/hook/delete".EXT.$arg;
 }
 
-function up_url($id = null, $model, $form = 'form'){
-    if ($form) {
-        $result = DIR."/hook/get".EXT."?id=$id&model=$model&form=$form";
-    }else {
-        $result = DIR."/hook/get".EXT."?id=$id&model=$model";
-    }
-    return $result;
+function up_url($id = null, $model, $form = 'form', $arg = "?"){
+    if($id) $arg .= "id=$id";
+    if($model) $arg .= "&model=$model";
+    if($form) $arg .= "&form=$form";
+    return DIR."/hook/get".EXT.$arg;
 }
 
 function download_url($model, $file_name, $is_null = false){

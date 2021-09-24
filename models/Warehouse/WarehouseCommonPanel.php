@@ -152,7 +152,7 @@ class WarehouseCommonPanel extends Model
                 var index = this.dataset.i;
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(2, 'WarehouseCommonPanel') ?>",
+                    url: "<?= up_url(2, __CLASS__) ?>",
                     data: { 
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: this.value,
@@ -176,7 +176,7 @@ class WarehouseCommonPanel extends Model
                 var index = this.dataset.i;
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(2, 'WarehouseCommonPanel') ?>",
+                    url: "<?= up_url(2, __CLASS__) ?>",
                     data: { 
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
@@ -286,7 +286,7 @@ class WarehouseCommonPanel extends Model
                 var index = this.dataset.i;
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(2, 'WarehouseCommonPanel') ?>",
+                    url: "<?= up_url(2, __CLASS__) ?>",
                     data: { 
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: this.value,
@@ -310,7 +310,7 @@ class WarehouseCommonPanel extends Model
                 var index = this.dataset.i;
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(2, 'WarehouseCommonPanel') ?>",
+                    url: "<?= up_url(2, __CLASS__) ?>",
                     data: { 
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
