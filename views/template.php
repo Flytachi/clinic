@@ -1,6 +1,6 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
+require_once '../tools/warframe.php';
+$session->is_auth([5,10]);
 is_config("template");
 $header = "Шаблоны";
 ?>

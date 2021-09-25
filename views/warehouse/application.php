@@ -151,6 +151,8 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 													<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Перевод</span>
 												<?php elseif ($row->status == 3): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершён</span>
+												<?php elseif ($row->status == 4): ?>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Отказано</span>
 												<?php else: ?>
 													<span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Неизвестный</span>
 												<?php endif; ?>

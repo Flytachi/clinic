@@ -64,7 +64,7 @@ $header = "Аптека / Поставки";
 	                              	<tr class="<?= $classes['table-thead'] ?>">
 									  	<th style="width:50px">№</th>
 									  	<th style="width:200px">Ключ</th>
-									  	<th style="width:35%">Препарат</th>
+									  	<th style="width:35%">Ответственный</th>
                                         <th>Дата поставки</th>
                                         <th>Дата заноса</th>
 										<th class="text-right" style="width: 100px">Действия</th>
@@ -82,9 +82,13 @@ $header = "Аптека / Поставки";
 											<td class="text-right">
 												<div class="list-icons">
 													<?php if(!$row->completed): ?>
-														<a onclick="Update('<?= up_url($row->id, 'WarehouseSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+														<?php if($session->session_id == $row->parent_id): ?>
+															<a href="" onclick="Update('<?= up_url($row->id, 'WarehouseSupplyModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+														<?php endif; ?>
+														<a href="<?= viv('pharmacy/supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
+													<?php else: ?>
+														<a href="<?= viv('pharmacy/supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-dark"><i class="icon-list"></i></a>
 													<?php endif; ?>
-													<a href="<?= viv('pharmacy/supply_items') ?>?pk=<?= $row->id ?>" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
 												</div>
 											</td>
 										</tr>
@@ -114,6 +118,7 @@ $header = "Аптека / Поставки";
 	<script type="text/javascript">
 
 		function Update(events) {
+			event.preventDefault();
 			$.ajax({
 				type: "GET",
 				url: events,

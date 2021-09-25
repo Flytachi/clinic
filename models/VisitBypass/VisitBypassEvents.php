@@ -43,7 +43,7 @@ class VisitBypassEventsModel extends Model
                         'visit_id' => $this->post['visit_id'],
                         'visit_bypass_event_id' => $object,
                         'user_id' => $this->post['user_id'],
-                        'warehouse_id' => 4,
+                        'warehouse_id' => $item->warehouse_id,
                         'item_name_id' => $item->item_name_id,
                         'item_manufacturer_id' => ($item->item_manufacturer_id) ? $item->item_manufacturer_id : null,
                         'item_supplier_id' => ($item->item_supplier_id) ? $item->item_supplier_id : null,

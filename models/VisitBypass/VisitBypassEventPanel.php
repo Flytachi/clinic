@@ -62,7 +62,7 @@ class VisitBypassEventsPanel extends Model
                         <strong>Препараты:</strong>
                         <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                             <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?></li>
+                                <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
                             <?php else: ?>
                                 <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
                             <?php endif; ?>

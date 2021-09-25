@@ -24,7 +24,7 @@ class VisitBypassModel extends Model
 
     public function form($pk = null)
     {
-        global $session, $classes, $methods;
+        global $session, $classes, $methods, $db;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -67,6 +67,10 @@ class VisitBypassModel extends Model
                     </div>
 
                     <div class="col-8">
+                        <div class="text-right">
+                            <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple mb-1" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
+                        </div>
+
                         <div class="card">
                             <div class="table-responsive">
                                 <table class="table">
@@ -81,22 +85,32 @@ class VisitBypassModel extends Model
                                 </table>
                             </div>
                         </div>
+
                     </div>
                 
                 </div>
 
-                <?php if(module('pharmacy')): ?>
+                <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = $session->session_division AND w.is_active IS NOT NULL")->get_table() ): ?>
+
+
+                    <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                        <?php foreach ($ware_sett as $ware): ?>
+                            <li class="nav-item"><a href="#" onclick="ChangeWare(<?= $ware->id ?>)" class="nav-link legitRipple" data-toggle="tab"><?= $ware->name ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+
                     <div class="form-group-feedback form-group-feedback-right row">
 
-                        <div class="col-md-8">
-                            <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
-                            <div class="form-control-feedback">
-                                <i class="icon-search4 font-size-base text-muted"></i>
+                        <div class="col-md-10">
+                            <div id="bypass_search_input" style="display:none;">
+                                <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
+                                <div class="form-control-feedback">
+                                    <i class="icon-search4 font-size-base text-muted"></i>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="text-right">
-                                <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
                                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                                     <span class="ladda-label">Сохранить</span>
                                     <span class="ladda-spinner"></span>
@@ -106,33 +120,12 @@ class VisitBypassModel extends Model
 
                     </div>
 
-                    <div class="form-group">
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm">
-                                <thead>
-                                    <tr class="bg-dark">
-                                        <th>Наименование</th>
-                                        <th style="width:370px">Производитель</th>
-                                        <th style="width:370px">Поставщик</th>
-                                        <th class="text-center" style="width:150px">На складе</th>
-                                        <th style="width:100px">Кол-во</th>
-                                        <th class="text-center" style="width:50px">#</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table_form">
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
+                    <div class="form-group" id="bypass_search_area"></div>
                 <?php else: ?>
                     <div class="form-group-feedback form-group-feedback-right row">
 
                         <div class="col-md-12">
                             <div class="text-right">
-                                <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
                                 <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                                     <span class="ladda-label">Сохранить</span>
                                     <span class="ladda-spinner"></span>
@@ -148,16 +141,51 @@ class VisitBypassModel extends Model
         </form>
         <script type="text/javascript">
             var s = 0;
+            var warehouse = null;
+
+            function ChangeWare(params) {
+                
+                if (!warehouse) {
+                    document.querySelector("#bypass_search_input").style.display = "block"; 
+                }else{
+                    document.querySelector("#search_input_product").value = ""; 
+                }
+                document.querySelector("#bypass_search_area").innerHTML = `
+                <div class="form-group" id="search_area">
+
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead>
+                                <tr class="bg-dark">
+                                    <th>Наименование</th>
+                                    <th style="width:370px">Производитель</th>
+                                    <th style="width:370px">Поставщик</th>
+                                    <th class="text-center" style="width:150px">На складе</th>
+                                    <th style="width:100px">Кол-во</th>
+                                    <th class="text-center" style="width:50px">#</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_form">
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>`;
+                warehouse = params;
+            }
 
             $("#search_input_product").keyup(function() {
+                console.log(warehouse);
                 $.ajax({
                     type: "POST",
                     url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
                     data: {
-                        warehouse_id: 4,
+                        warehouse_id: warehouse,
                         search: this.value,
                     },
                     success: function (result) {
+                        
                         $('#table_form').html(result);
                     },
                 });
@@ -169,6 +197,7 @@ class VisitBypassModel extends Model
                     <tr class="table-secondary" id="preparat_outside_tr-${s}">
                         <td>
                             <div class="form-group-feedback form-group-feedback-right">
+                                <input type="hidden" name="items[${s}][warehouse_id]" value="${data.warehouse_id}">
                                 <input type="hidden" name="items[${s}][item_name_id]" value="${data.item_name_id}">
                                 <input type="hidden" name="items[${s}][item_manufacturer_id]" value="${data.item_manufacturer_id}">
                                 <input type="hidden" name="items[${s}][item_supplier_id]" value="${data.item_supplier_id}">

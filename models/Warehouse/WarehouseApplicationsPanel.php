@@ -11,19 +11,15 @@ class WarehouseApplicationsPanel extends Model
 
     public function get_or_404(int $pk)
     {
-        /**
-         * Дополнить
-         */
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk AND is_active IS NOT NULL")->fetch(PDO::FETCH_ASSOC);
         if($object){
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('404');
+            Mixin\error('cash_permissions_false');
             exit;
         }
-
     }
 
     public function form($pk = null)
@@ -186,7 +182,8 @@ class WarehouseApplicationsPanel extends Model
             </div>
     
             <div class="modal-footer">
-                <button id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Отправить</button>
+                <input type="submit" name="rejection" value="Отказать" class="btn btn-outline-danger btn-sm legitRipple">
+                <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Принять</button>
             </div>
 
         </form>
@@ -200,31 +197,36 @@ class WarehouseApplicationsPanel extends Model
                 var qty_count = document.querySelector("#item_qty_count");
                 var qty = 0;
 
-                for (let i = 0; i < inputs.length; i++) {
-                    qty += Number(inputs[i].value);
-                }
+                if ( Number(event.target.max) >= Number(event.target.value) ) {
+                    event.target.className = "form-control text-right input_count-qty";
+                    for (let i = 0; i < inputs.length; i++) {
+                        qty += Number(inputs[i].value);
+                    }
 
-                if ( Number(qty_required.innerHTML) == qty ) {
-                    qty_count.className = "text-success";
-                    document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-success";
-                    document.querySelector("#indicator-feed").className = "list-feed-item border-success";
-                    document.querySelector("#indicator-btn").className = "btn btn-outline-success btn-sm legitRipple";
-                    document.querySelector("#indicator-btn").disabled = false;
-                }else if ( Number(qty_required.innerHTML) < qty) {
-                    qty_count.className = "text-danger";
-                    document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-danger";
-                    document.querySelector("#indicator-feed").className = "list-feed-item border-danger";
-                    document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
-                    document.querySelector("#indicator-btn").disabled = true;
-                } else {
-                    qty_count.className = "";
-                    document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-secondary";
-                    document.querySelector("#indicator-feed").className = "list-feed-item border-secondary";
-                    document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
-                    document.querySelector("#indicator-btn").disabled = true;
+                    if ( Number(qty_required.innerHTML.replace(/,/g, "")) == qty ) {
+                        qty_count.className = "text-success";
+                        document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-success";
+                        document.querySelector("#indicator-feed").className = "list-feed-item border-success";
+                        document.querySelector("#indicator-btn").className = "btn btn-outline-success btn-sm legitRipple";
+                        document.querySelector("#indicator-btn").disabled = false;
+                    }else if ( Number(qty_required.innerHTML.replace(/,/g, "")) < qty) {
+                        qty_count.className = "text-danger";
+                        document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-danger";
+                        document.querySelector("#indicator-feed").className = "list-feed-item border-danger";
+                        document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
+                        document.querySelector("#indicator-btn").disabled = true;
+                    } else {
+                        qty_count.className = "";
+                        document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-secondary";
+                        document.querySelector("#indicator-feed").className = "list-feed-item border-secondary";
+                        document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
+                        document.querySelector("#indicator-btn").disabled = true;
+                    }
+                }else{
+                    event.target.className = "form-control text-right input_count-qty text-danger";
                 }
-
-                qty_count.innerHTML = qty;
+                
+                qty_count.innerHTML = number_format(qty);
 
             });
 

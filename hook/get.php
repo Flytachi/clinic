@@ -3,7 +3,7 @@ require_once '../tools/warframe.php';
 $session->is_auth();
 
 if ( isset($_GET['model']) ) {
-    if ($_GET['id']) {
+    if ( isset($_GET['id']) ) {
         $form = new $_GET['model'];
         unset($_GET['model']);
         $form->get_or_404($_GET['id']);

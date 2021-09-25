@@ -103,6 +103,7 @@ class WarehouseCustomPanel extends Model
             function SelectProduct(btn, index) {
                 btn.disabled = true;
                 var data = {
+                    warehouse_id: <?= $this->post['warehouse_id'] ?>,
                     item_name: document.querySelector('#name_input_'+index).innerHTML,
                     item_name_id: document.querySelector('#name_id_input_'+index).value,
                     item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,

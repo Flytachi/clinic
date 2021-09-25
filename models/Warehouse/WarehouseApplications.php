@@ -122,56 +122,66 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
         if($this->clean()){
             $db->beginTransaction();
 
-            // Application complete
-            $object = Mixin\update($this->_application, array('status' => 3), array('id' => $this->post['applications']));
-            if (!intval($object)) {
-                $db->rollBack();
-            }
+            if ( isset($this->post['rejection']) ) {
+                // Application rejection
+                $object = Mixin\update($this->_application, array('status' => 4), array('id' => $this->post['applications']));
+                if (!intval($object)) {
+                    $db->rollBack();
+                }
 
-            $this->template();
-
-            foreach ($this->post['item'] as $id => $qty) {
-                if ($qty > 0) {
-                    if ( $item = $db->query("SELECT * FROM $this->_common WHERE id = $id")->fetch() ) {
-
-                        // Warehouse common delete
-                        Mixin\update($this->_common, array('item_qty' => ($item['item_qty']-$qty)), $id);
-
-                        // Create transaction
-                        $transaction_post = array(
-                            'warehouse_id' => $this->post['warehouse_id'],
-                            'item_id' => $id,
-                            'item_name' => $this->names[$item['item_name_id']],
-                            'item_manufacturer' => $this->manufacturers[$item['item_manufacturer_id']],
-                            'item_supplier' => $this->suppliers[$item['item_supplier_id']],
-                            'item_qty' => -$qty,
-                            'item_price' => $item['item_price'],
-                            'tran_status' => 1,
-                            'responsible_id' => $session->session_id,
-                            'cost' => -$qty*$item['item_price'],
-                        );
-                        Mixin\insert($this->_common_transactions, $transaction_post);
-
-                        // Warehouse common add
-                        $custom_post = array(
-                            'warehouse_id' => $this->post['warehouse_id'],
-                            'item_name_id' => $item['item_name_id'],
-                            'item_manufacturer_id' => $item['item_manufacturer_id'],
-                            'item_supplier_id' => $item['item_supplier_id'],
-                            'item_qty' => $qty,
-                            'item_price' => $item['item_price'],
-                            'item_shtrih' => $item['item_shtrih'],
-                            'item_die_date' => $item['item_die_date'],
-                        );
-                        Mixin\insert($this->_custom, $custom_post);
-
-                        unset($transaction_post);
-                        unset($custom_post);
-                        
-                    }else {
-                        $db->rollBack();
+            } else {
+                // Application complete
+                $object = Mixin\update($this->_application, array('status' => 3), array('id' => $this->post['applications']));
+                if (!intval($object)) {
+                    $db->rollBack();
+                }
+    
+                $this->template();
+    
+                foreach ($this->post['item'] as $id => $qty) {
+                    if ($qty > 0) {
+                        if ( $item = $db->query("SELECT * FROM $this->_common WHERE id = $id")->fetch() ) {
+    
+                            // Warehouse common delete
+                            Mixin\update($this->_common, array('item_qty' => ($item['item_qty']-$qty)), $id);
+    
+                            // Create transaction
+                            $transaction_post = array(
+                                'warehouse_id' => $this->post['warehouse_id'],
+                                'item_id' => $id,
+                                'item_name' => $this->names[$item['item_name_id']],
+                                'item_manufacturer' => $this->manufacturers[$item['item_manufacturer_id']],
+                                'item_supplier' => $this->suppliers[$item['item_supplier_id']],
+                                'item_qty' => -$qty,
+                                'item_price' => $item['item_price'],
+                                'tran_status' => 1,
+                                'responsible_id' => $session->session_id,
+                                'cost' => -$qty*$item['item_price'],
+                            );
+                            Mixin\insert($this->_common_transactions, $transaction_post);
+    
+                            // Warehouse common add
+                            $custom_post = array(
+                                'warehouse_id' => $this->post['warehouse_id'],
+                                'item_name_id' => $item['item_name_id'],
+                                'item_manufacturer_id' => $item['item_manufacturer_id'],
+                                'item_supplier_id' => $item['item_supplier_id'],
+                                'item_qty' => $qty,
+                                'item_price' => $item['item_price'],
+                                'item_shtrih' => $item['item_shtrih'],
+                                'item_die_date' => $item['item_die_date'],
+                            );
+                            Mixin\insert($this->_custom, $custom_post);
+    
+                            unset($transaction_post);
+                            unset($custom_post);
+                            
+                        }else {
+                            $db->rollBack();
+                        }
                     }
                 }
+                
             }
             
             $db->commit();

@@ -53,8 +53,8 @@
 
                     <?php if (config("template") and permission([5,10])): ?>
                         <li class="nav-item">
-                            <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
-                                <i class="icon-users"></i>
+                            <a href="<?= viv('template') ?>" class="nav-link legitRipple">
+                                <i class="icon-folder-check"></i>
                                 <span>Шаблоны</span>
                             </a>
                         </li>

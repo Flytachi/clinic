@@ -7,7 +7,6 @@ class WarehouseSupplyModel extends Model
     public $_warehouse_item = 'warehouse_supply_items';
     public $_item_names = 'warehouse_item_names';
 
-
     public function form($pk = null)
     {
         global $session, $classes;
@@ -61,14 +60,17 @@ class WarehouseSupplyModel extends Model
         <div class="<?= $classes['card-header'] ?>">
             <h5 class="card-title"><b>Поставка:</b> <?= date_f($this->value('supply_date')) ?></h5>
             <div class="header-elements">
-                <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('parent_id')) ?></span>
-                <div class="form-group-feedback form-group-feedback-right ml-3" style="width:70px;">
 
-                    <input type="number" class="form-control border-indigo" value="<?= config('constant_pharmacy_percent') ?>" max="999" id="percent_input" placeholder="%" title="Введите процент">
-                    <div class="form-control-feedback">
-                        <i class="icon-percent font-size-base text-muted"></i>
+                <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('parent_id')) ?></span>
+                <?php if($is_active): ?>
+                    <div class="form-group-feedback form-group-feedback-right ml-3" style="width:70px;">
+                        <input type="number" class="form-control border-indigo" value="<?= config('constant_pharmacy_percent') ?>" max="999" id="percent_input" placeholder="%" title="Введите процент">
+                        <div class="form-control-feedback">
+                            <i class="icon-percent font-size-base text-muted"></i>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+
             </div>
         </div>
 
@@ -100,9 +102,9 @@ class WarehouseSupplyModel extends Model
                         $rosh->is_active = $is_active;
                         
                         // Table
-                        $tb = new Table($db, $rosh->table);
-                        $tb->set_data("id");
-                        $tb->where("uniq_key = '{$this->value('uniq_key')}'");
+                        $tb = new Table($db, $rosh->table." wsi ");
+                        $tb->set_data("wsi.id")->additions("LEFT JOIN warehouse_item_names win ON (wsi.item_name_id=win.id)");
+                        $tb->where("wsi.uniq_key = '{$this->value('uniq_key')}'")->order_by("win.name ASC, wsi.item_manufacturer_id ASC, wsi.item_supplier_id ASC");
 
                         foreach ($tb->get_table(1) as $row) {
                             $rosh->number = $row->count;
@@ -110,6 +112,7 @@ class WarehouseSupplyModel extends Model
                             $rosh->clear_post();
                         }
                         ?>
+
                     </tbody>
                 </table>
             </div>
