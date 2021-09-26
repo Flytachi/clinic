@@ -227,8 +227,8 @@ function T_DELETE_database()
 {
     global $db, $ini;
 
-    $db->beginTransaction();
     try {
+        $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
             $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
@@ -247,8 +247,8 @@ function T_FLUSH_database()
 {
     global $db, $ini;
 
-    $db->beginTransaction();
     try {
+        $db->beginTransaction();
 
         foreach ($db->query("SHOW TABlES") as $table) {
             if ($table['Tables_in_'.$ini['DATABASE']['NAME']] != "sessions") {
@@ -268,8 +268,8 @@ function T_FLUSH_database()
 function T_INITIALIZE_database($data)
 {
     global $db;
-    $db->beginTransaction();
     try {
+        $db->beginTransaction();
         foreach ($data as $table_sql) {
             $db->exec($table_sql);
         }
