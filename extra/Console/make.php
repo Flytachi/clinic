@@ -34,13 +34,13 @@ class __Base
         $DNS = "$this->db_driver:host=$this->db_host;charset=$this->db_charset";
         
         // Site Constants
-        try {
-            $rootDB = new PDO($DNS, $this->db_user, $this->db_password);
-            $rootDB->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $rootDB->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $rootDB->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+        $rootDB = new PDO($DNS, $this->db_user, $this->db_password);
+        $rootDB->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $rootDB->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $rootDB->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
 
-            // $rootDB->beginTransaction();
+        $rootDB->beginTransaction();
+        try {
             $rootDB->exec("CREATE USER '$this->create_db_user'@'%' IDENTIFIED BY '$this->create_db_password';");
             $rootDB->exec("GRANT USAGE ON *.* TO '$this->create_db_user'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;");
             $rootDB->exec("CREATE DATABASE IF NOT EXISTS `$this->create_db_name`;GRANT ALL PRIVILEGES ON `$this->create_db_name`.* TO '$this->create_db_user'@'%';");
@@ -49,7 +49,8 @@ class __Base
             echo "\033[32m"." Пользователь и база данных успешно созданы.\n";
 
         } catch (\PDOException $e) {
-            die($e);        }
+            die($e);        
+        }
     }
 }
 
