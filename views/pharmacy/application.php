@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(4);
+is_module('pharmacy');
 $header = "Заявки";
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth();
+is_module('pharmacy');
 $header = "Рабочий стол";
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {

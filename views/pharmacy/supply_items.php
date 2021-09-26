@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(4);
-is_module('module_pharmacy');
+is_module('pharmacy');
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk'])) {
 	$supply = $db->query("SELECT parent_id, uniq_key FROM warehouse_supply WHERE id = {$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
