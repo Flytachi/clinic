@@ -11,7 +11,8 @@ $session->is_auth();
 	<title>Ошибка - 404</title>
 
 	<!-- Global stylesheets -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="<?= stack("assets/images/logo.ico") ?>" type="image/x-icon">
+	<link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">

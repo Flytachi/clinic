@@ -76,6 +76,12 @@ class WarehouseSupplyModel extends Model
 
         <div class="card-body">
 
+            <div class="text-right mb-1">
+                <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemManufacturersModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Производитель</button>
+                <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemSuppliersModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Поставщик</button>
+                <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
+            </div>
+
             <div class="table-responsive card">
                 <table class="table table-hover">
                     <thead>
@@ -86,7 +92,7 @@ class WarehouseSupplyModel extends Model
                             <th style="width:90px">Кол-во</th>
                             <th style="width:100px">Ц.приход</th>
                             <th style="width:100px">Ц.расход</th>
-                            <th style="width:100px">Счёт фактура</th>
+                            <th style="width:125px">Счёт фактура</th>
                             <th style="width:140px">Штрих код</th>
                             <th style="width: 150px">Срок годности</th>
                             <?php if($is_active): ?>
@@ -140,7 +146,6 @@ class WarehouseSupplyModel extends Model
                                 <span id="btn_text" class="ladda-label">Проверить</span>
                                 <span class="ladda-spinner"></span>
                             </button>
-                            <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
                             <button type="button" onclick="AddRowArea()" class="btn btn-sm btn-outline-success legitRipple"><i class="icon-plus22 mr-1"></i>Добавить</button>
                         </div>
                     </div>
