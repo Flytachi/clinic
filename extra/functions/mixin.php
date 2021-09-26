@@ -56,7 +56,6 @@ function insert($tb, $post){
     $val = ":".implode(", :", array_keys($post));
     $sql = "INSERT INTO $tb ($col) VALUES ($val)";
     try{
-        print_r($post);
         $stm = $db->prepare($sql)->execute($post);
         return $db->lastInsertId();
     }
