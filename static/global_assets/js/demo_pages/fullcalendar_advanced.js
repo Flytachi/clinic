@@ -61,17 +61,22 @@ var FullCalendarAdvanced = (function () {
                             info._id
                         );
                     },
-                    eventDrop: function (info) {
-                        CalendarEventDropAndResize(info, this);
+                    eventDrop: function (info, element, revertFunc) {
+                        CalendarEventDropAndResize(info, element, revertFunc);
                     },
-                    eventResize: function (info) {
-                        CalendarEventDropAndResize(info, this);
+                    eventResize: function (info, element, revertFunc) {
+                        CalendarEventDropAndResize(info, element, revertFunc);
                     },
-                    // eventRender: function (info) {
-                    //     console.log("render");
-                    // },
+                    /* eventRender: function (event, element) {
+                        if (event.id < 100) {
+
+                            // element.draggable = false;
+                            
+                        }
+                    }, */
                     eventClick: function (info) {
                         CalendarEventClick(info, this);
+                        $(".fullcalendar-external").fullCalendar('renderEvent',event ,false);
                     },
                     isRTL: $("html").attr("dir") == "rtl" ? true : false,
                 });

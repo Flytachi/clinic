@@ -21,6 +21,10 @@ class VisitBypassEventsModel extends Model
             $this->post['event_start'] = ( isset($this->post['event_start']) and $this->post['event_start'] ) ? date("Y-m-d H:i", $this->post['event_start']) : null;
         }
         $this->post['event_end'] = ( isset($this->post['event_end']) and $this->post['event_end'] ) ? date("Y-m-d H:i", $this->post['event_end']) : null;
+        
+        if ( date("Y-m-d H:i") >= $this->post['event_start'] ) {
+            $this->error("Нет доступа к этой дате.");
+        }
         return True;
     }
 
@@ -100,6 +104,7 @@ class VisitBypassEventsModel extends Model
     public function error($message)
     {
         echo $message;
+        exit;
     }
     
 }

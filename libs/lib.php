@@ -38,7 +38,7 @@ function write_excel($table, $file_name = "docs", $table_label=null, $is_null = 
         }
         $sql_select = implode(", ", $labels);
     }
-
+    
     $excel_column = array(
         0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D',
         4 => 'E', 5 => 'F', 6 => 'G', 7 => 'H',
@@ -79,7 +79,7 @@ function write_excel($table, $file_name = "docs", $table_label=null, $is_null = 
         $active_sheet->setCellValue($erch, $value);
         $active_sheet->getStyle($erch)->getFont()->setBold(true);
 
-        if (in_array($value, ['Услуга', 'Препарат'])) {
+        if (in_array($value, ['Услуга'])) {
             $active_sheet->getColumnDimension($excel_column[$key])->setWidth(70);
         } else {
             $active_sheet->getColumnDimensionByColumn($excel_column[$key])->setAutoSize(true);
@@ -104,12 +104,13 @@ function write_excel($table, $file_name = "docs", $table_label=null, $is_null = 
 
     if (!$is_null) {
 
-        if ($table == "service") {
-            $sql = "SELECT $sql_select FROM $table WHERE type != 101";
+        if ($table == "services") {
+            $sql_select = str_replace("DIS_mark", "d.mark 'DIS_mark'", $sql_select);
+            $sql = "SELECT $sql_select FROM $table s LEFT JOIN divisions d ON(d.id=s.division_id) WHERE s.type != 101";
         }else {
             $sql = "SELECT $sql_select FROM $table";
         }
-    
+        
         foreach ($db->query($sql) as $key => $row) {
             $kt = $key+2;
             foreach ($labels as $key_st => $value) {

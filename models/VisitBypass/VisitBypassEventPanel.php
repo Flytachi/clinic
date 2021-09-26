@@ -96,7 +96,7 @@ class VisitBypassEventsPanel extends Model
 
         </div>
 
-        <?php if($session->session_id == $this->post['responsible_id']): ?>
+        <?php if($session->session_id == $this->post['responsible_id'] and $color != "secondary"): ?>
             <div class="modal-footer">
                 <button onclick="CalendarEventDelete(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button>
             </div>

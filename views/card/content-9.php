@@ -150,11 +150,6 @@ is_module('module_bypass');
 
 			function CalendarDrop(info, element, allDay) {
 
-				// if ($("#drop-remove").is(":checked")) {
-				// 	// is the "remove after drop" checkbox checked?
-				// 	$(element).remove(); // if so, remove the element from the "Draggable Events" list
-				// }
-
 				// Проверка
 				$.ajax({
 					type: "GET",
@@ -162,7 +157,7 @@ is_module('module_bypass');
 					data: {pk:element.dataset.id},
 					success: function (bypassEventStatus) {
 						if(bypassEventStatus == "success"){
-							// выполнение
+							// Константы
 							var originalEventObject = $(element).data("event");
 							var copiedEventObject = $.extend(
 								{},
@@ -176,7 +171,7 @@ is_module('module_bypass');
 								var d_date = info._d;
 								var is_time = null;
 							}
-
+							
 							$.ajax({
 								type: "POST",
 								url: "<?= add_url() ?>",
@@ -191,15 +186,23 @@ is_module('module_bypass');
 									is_time: is_time,
 								},
 								success: function (id) {
-
-									copiedEventObject.start = info;
-									copiedEventObject.allDay = allDay;
-									copiedEventObject.id = Number(id);
-									$(".fullcalendar-external").fullCalendar(
-										"renderEvent",
-										copiedEventObject,
-										true
-									);
+									if (Number(id)) {
+										// Выполнение
+										copiedEventObject.start = info;
+										copiedEventObject.allDay = allDay;
+										copiedEventObject.id = Number(id);
+										$(".fullcalendar-external").fullCalendar(
+											"renderEvent",
+											copiedEventObject,
+											true
+										);
+										
+									} else {
+										new Noty({
+											text: '<strong>Внимание!</strong><br>'+id,
+											type: 'error'
+										}).show();
+									}
 
 								},
 							});
@@ -217,25 +220,38 @@ is_module('module_bypass');
 				
 			};
 
-			function CalendarEventDropAndResize(info, element) {
-				var start_time = toTimestamp(info.start._d);
-				var end_time = null;
-				if (info.end) {
-					end_time = toTimestamp(info.end._d);
+			function CalendarEventDropAndResize(info, element, revertFunc) {
+				
+				if (info.color == "#546E7A") {
+					console.log('ds');
+					revertFunc();
+				}else{
+					var start_time = toTimestamp(info.start._d);
+					var end_time = null;
+					if (info.end) {
+						end_time = toTimestamp(info.end._d);
+					}
+					$.ajax({
+						type: "POST",
+						url: "<?= add_url() ?>",
+						data: {
+							model: "VisitBypassEventsModel",
+							id: info.id,
+							event_start: start_time,
+							event_end: end_time,
+						},
+						success: function (result) {
+							if (result != "success") {
+								new Noty({
+									text: '<strong>Внимание!</strong><br>'+result,
+									type: 'error'
+								}).show();
+								revertFunc();
+							}
+						},
+					});
 				}
-				$.ajax({
-					type: "POST",
-					url: "<?= add_url() ?>",
-					data: {
-						model: "VisitBypassEventsModel",
-						id: info.id,
-						event_start: start_time,
-						event_end: end_time,
-					},
-					success: function (result) {
 
-					},
-				});
 			};
 			
 			function CalendarEventDelete(params, calendar_ID) {

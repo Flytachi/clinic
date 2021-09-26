@@ -39,7 +39,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
         		<div class="<?= $classes['card'] ?>">
 
               		<div class="<?= $classes['card-header'] ?>">
-                      	<h5 class="card-title">Добавить Разделение</h5>
+                      	<h5 class="card-title">Добавить Отдел</h5>
                       	<div class="header-elements">
                           	<div class="list-icons">
                               	<a class="list-icons-item" data-action="collapse"></a>
@@ -55,7 +55,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
                 <div class="<?= $classes['card'] ?>">
 
                     <div class="<?= $classes['card-header'] ?>">
-                        <h5 class="card-title">Список Разделений</h5>
+                        <h5 class="card-title">Список Отделов</h5>
 						<div class="header-elements">
 							<div class="form-group-feedback form-group-feedback-right mr-2">
 								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите отдел или название специолиста">
@@ -73,7 +73,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
                                 <thead>
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th style="width:7%">№</th>
-                                        <th>ID</th>
+                                        <th>Метка</th>
                                         <th>Роль</th>
                                         <th>Отдел</th>
                                         <th>Название специолиста</th>
@@ -84,7 +84,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
                                     <?php foreach($tb->get_table(1) as $row): ?>
                                         <tr>
                                             <td><?= $row->count ?></td>
-                                            <td><?= $row->id ?></td>
+                                            <td><?= $row->mark ?></td>
                                             <td><?= $PERSONAL[$row->level] ?></td>
                                             <td><?= $row->title ?></td>
                                             <td><?= $row->name ?> <?= ($row->assist == 1) ? "\"Ассистент\"" : "" ?></td>
