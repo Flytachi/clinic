@@ -112,7 +112,7 @@ is_module('module_bypass');
 
 	<div id="modal_event_card" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="<?= $classes['modal-global_content'] ?>" id="event_card_body">
+			<div class="modal-content" id="event_card_body" >
 
 			</div>
 		</div>
@@ -122,6 +122,7 @@ is_module('module_bypass');
 
  		var bypassEventUrl = "<?= ajax('visit_events').'?pk='.$patient->visit_id ?>";
 		var bypassDataUrl = "<?= ajax('visit_event_bypass_data') ?>";
+		var bypassElement = null;
 
 		function Update(events) {
 			$.ajax({
@@ -222,8 +223,7 @@ is_module('module_bypass');
 
 			function CalendarEventDropAndResize(info, element, revertFunc) {
 				
-				if (info.color == "#546E7A") {
-					console.log('ds');
+				if (info.color == "#546E7A" || info.color == "#009600") {
 					revertFunc();
 				}else{
 					var start_time = toTimestamp(info.start._d);
@@ -285,7 +285,38 @@ is_module('module_bypass');
 
 		<?php endif; ?>
 
+		function CalendarEventComplete(params, calendar_ID) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "VisitBypassEventsPanel",
+					id: params,
+					event_completed: 1,
+				},
+				success: function (result) {
+					if (result == 'success') {
+
+						$("#modal_event_card").modal("hide");
+						bypassElement.style.background = "#009600";
+						bypassElement.style.border = "#009600";
+
+					}else{
+
+						new Noty({
+							text: result,
+							type: 'error'
+						}).show();
+
+					}
+					bypassElement = null;
+				},
+			});
+		}
+
 		function CalendarEventClick(info, element) {
+			bypassElement = element
+			
 			$("#modal_event_card").modal("show");
 			$.ajax({
 				type: "GET",

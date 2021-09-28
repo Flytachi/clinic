@@ -4,6 +4,7 @@ class VisitBypassEventsPanel extends Model
 {
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';
+    public $_warehouse_custom = 'warehouse_custom';
     public $_event_applications = 'visit_bypass_event_applications';
 
     public function get_or_404(int $pk)
@@ -42,12 +43,15 @@ class VisitBypassEventsPanel extends Model
 
         }else{
             
-            if ( (isset($end) and $start <= $today && $today <= $end) || ( $start == $today ) ) $color = "danger";
-            else $color = "secondary";
+            if ($this->post['event_completed']) $color = "success";
+            else {
+                if ( (isset($end) and $start <= $today && $today <= $end) || ( $start == $today ) ) $color = "danger";
+                else $color = "secondary";
+            }
 
         }
         ?>
-        <div class="<?= $classes['modal-global_header'] ?>">
+        <div class="modal-header bg-<?= $color ?>">
             <h6 class="modal-title">Назначение <?= date_f($this->post['event_start']) ?></h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
@@ -71,9 +75,7 @@ class VisitBypassEventsPanel extends Model
 
                     <div class="list-feed-item border-<?= $color ?>">
                         <strong>Метод: </strong><?= ($this->bypass['method']) ? $methods[$this->bypass['method']] : '<span class="text-muted">Нет данных</span>' ?>
-                    </div>
-
-                    <div class="list-feed-item border-<?= $color ?>">
+                        <br>
                         <strong>Описание: </strong>
                         <?= ($this->bypass['description']) ? "<br>".preg_replace("#\r?\n#", "<br />", $this->bypass['description']) : '<span class="text-muted">Нет данных</span>' ?>
                     </div>
@@ -84,47 +86,89 @@ class VisitBypassEventsPanel extends Model
                         if ($this->post['event_end']) echo "от ".date_f($this->post['event_start'], "H:i")." до ".date_f($this->post['event_end'], "H:i");
                         else echo date_f($this->post['event_start'], "H:i");
                         ?>
+                        <?php if($this->post['event_completed']): ?>
+                            <br><strong>Выполнено:</strong> <?= date_f($this->post['completed_date'], 1) ?>
+                        <?php endif; ?>
                     </div>
 
                 </div>
 
                 <div class="text-right">
                     <strong>Назначил:</strong> <?= get_full_name($this->post['responsible_id']) ?>
+                    <?php if($this->post['event_completed']): ?>
+                        <br><strong>Исполнитель:</strong> <?= get_full_name($this->post['completed_responsible_id']) ?>
+                    <?php endif; ?>
                 </div>
 
             </div>
 
         </div>
 
-        <?php if($session->session_id == $this->post['responsible_id'] and $color != "secondary"): ?>
+        <?php if(permission(5)): ?>
+            <?php if($session->session_id == $this->post['responsible_id'] and $color != "secondary" and !$this->post['event_completed']): ?>
+                <div class="modal-footer">
+                    <button onclick="CalendarEventDelete(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button>
+                </div>
+            <?php endif; ?>
+        <?php elseif(permission(7)): ?>
             <div class="modal-footer">
-                <button onclick="CalendarEventDelete(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button>
+                <!-- <button onclick="CalendarEventFailure(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button> -->
+                <?php if($color == "danger"): ?>
+                    <button onclick="CalendarEventComplete(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-success btn-sm legitRipple">Выполнить</button>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
+
         <?php
     }
 
     public function clean()
     {
+        global $session;
+        $this->post['completed_responsible_id'] = $session->session_id;
+        $this->post['completed_date'] = date("Y-m-d H:i:s");
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
     }
 
-    // public function update()
-    // {
-    //     if($this->clean()){
-    //         $pk = $this->post['id'];
-    //         $this->post['last_update'] = date("Y-m-d H:i:s");
-    //         unset($this->post['id']);
-    //         $object = Mixin\update($this->table, $this->post, $pk);
-    //         if (!intval($object)){
-    //             $this->error($object);
-    //             exit;
-    //         }
-    //         $this->success("success");
-    //     }
-    // }
+    public function update()
+    {
+        global $db;
+        if($this->clean()){
+            $pk = $this->post['id'];
+            unset($this->post['id']);
+            $db->beginTransaction();
+
+            // Applications
+            $applications = (new Table($db, $this->_event_applications))->where("visit_bypass_event_id = $pk");
+            if ($applications->get_row()) {
+                foreach ($applications->get_table() as $app) {
+                    $where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_supplier_id = $app->item_supplier_id";
+                    $order_by = "ORDER BY item_die_date, item_price";
+                    $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $where")->fetchColumn();
+                    if ($app->item_qty <= $max_qty) {
+                        # code...
+                        dd($app);
+                        dd($max_qty);
+                    }else {
+                        echo "доработать";
+                        $this->stop();
+                    }
+                }
+                $this->stop();
+            }
+
+            $object = Mixin\update($this->table, $this->post, $pk);
+            if (!intval($object)){
+                $this->error($object);
+                $db->rollBack();
+            }
+
+            $db->commit();
+            $this->success("success");
+        }
+    }
 
     public function success($pk = null)
     {
