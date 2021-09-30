@@ -5,6 +5,7 @@ class VisitBypassEventsPanel extends Model
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';
     public $_warehouse_custom = 'warehouse_custom';
+    public $_bypass_transactions = 'visit_bypass_transactions';
     public $_event_applications = 'visit_bypass_event_applications';
 
     public function get_or_404(int $pk)
@@ -136,30 +137,32 @@ class VisitBypassEventsPanel extends Model
     {
         global $db;
         if($this->clean()){
-            $pk = $this->post['id'];
+            $this->pk = $this->post['id'];
             unset($this->post['id']);
             $db->beginTransaction();
 
             // Applications
-            $applications = (new Table($db, $this->_event_applications))->where("visit_bypass_event_id = $pk");
-            if ($applications->get_row()) {
+            $applications = (new Table($db, $this->_event_applications))->where("visit_bypass_event_id = $this->pk");
+            if ($data = $applications->get_row()) {
+
+                $this->visit = $data->visit_id;
+                $this->user = $data->user_id;
                 foreach ($applications->get_table() as $app) {
-                    $where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_supplier_id = $app->item_supplier_id";
-                    $order_by = "ORDER BY item_die_date, item_price";
-                    $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $where")->fetchColumn();
+                    $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_supplier_id = $app->item_supplier_id";
+                    $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
                     if ($app->item_qty <= $max_qty) {
-                        # code...
-                        dd($app);
-                        dd($max_qty);
+                        // Взятие со склада
+                        $this->transaction($app);
+
                     }else {
                         echo "доработать";
                         $this->stop();
                     }
                 }
-                $this->stop();
+                // $this->stop();
             }
 
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $object = Mixin\update($this->table, $this->post, $this->pk);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
@@ -168,6 +171,53 @@ class VisitBypassEventsPanel extends Model
             $db->commit();
             $this->success("success");
         }
+    }
+
+    public function transaction($app)
+    {
+        global $db, $session;
+        $item = $db->query("SELECT * FROM $this->_warehouse_custom WHERE $this->where ORDER BY item_die_date, item_price")->fetch();
+        $qty_sold = $item['item_qty'] - $app->item_qty;
+        if ($qty_sold > 0) {
+            // Update
+            Mixin\update($this->_warehouse_custom, array('item_qty' => $qty_sold), $item['id']);
+            Mixin\insert($this->_bypass_transactions, array(
+                'visit_id' => $this->visit,
+                'visit_bypass_event_id' => $this->pk,
+                'responsible_id' => $session->session_id,
+                'user_id' => $this->user,
+                'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
+                'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
+                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = $app->item_supplier_id")->fetchColumn(),
+                'item_qty' => $app->item_qty,
+                'item_cost' => $item['item_price'],
+                'price' => $item['item_price'] * $app->item_qty,
+            ));
+
+        }elseif ($qty_sold == 0) {
+            // Delete
+            Mixin\delete($this->_warehouse_custom, $item['id']);
+            Mixin\insert($this->_bypass_transactions, array(
+                'visit_id' => $this->visit,
+                'visit_bypass_event_id' => $this->pk,
+                'user_id' => $this->user,
+                'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
+                'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
+                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = $app->item_supplier_id")->fetchColumn(),
+                'item_qty' => $app->item_qty,
+                'item_cost' => $item['item_price'],
+                'price' => $item['item_price'] * $app->item_qty,
+            ));
+
+        }else{
+            // Convert
+            dd("convert");
+            exit;
+
+        }
+        // Удаляем бронь
+        Mixin\delete($this->_event_applications, $app->id);
+        
     }
 
     public function success($pk = null)

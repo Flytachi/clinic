@@ -315,7 +315,7 @@ class TransactionPanel extends Model
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelInvestments') ?>')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Инвестиции</a></li>
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelServices') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Услуги</a></li>
             <?php if(module('module_pharmacy')): ?>
-                <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Лекарства</a></li>
+                <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelPharm') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Препараты</a></li>
             <?php endif; ?>
             <li class="nav-item"><a onclick="DetailControl('<?= up_url($pk, 'TransactionPanel', 'DetailPanelTotal') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Итог</a></li>
         </ul>
@@ -441,9 +441,55 @@ class TransactionPanel extends Model
         <?php
     }
 
-    public function DetailPanelTotal($pk = null)
+    public function DetailPanelPharm($pk = null)
     {
         global $db, $classes;
+        if (!module('module_pharmacy')) Mixin\error('cash_permissions_false');
+        $tb = new Table($db, "visit_bypass_transactions");
+        $tb->set_data("DISTINCT item_name, item_cost")->where("visit_id = $pk")->order_by("item_name ASC");
+        $tpc = $tqy = 0;
+        ?>
+        <div class="table-responsive mt-3 card" id="check_detail">
+            <table class="table table-hover table-sm">
+                <thead class="<?= $classes['table_detail-thead'] ?> text-right">
+                    <tr>
+                        <th class="text-left">Наименование</th>
+                        <th>Цена(ед)</th>
+                        <th class="text-center">Кол-во</th>
+                        <th>Стоимость</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($tb->get_table(1) as $row): ?>
+                        <tr class="text-right">
+                            <td class="text-left">
+                                <?= $row->item_name ?>
+                            </td>
+                            <td><?= number_format($row->item_cost); ?></td>
+                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $pk AND item_name LiKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
+                            <td class="text-<?= number_color($row->qty * $row->item_cost, true) ?>"><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if(isset($row->count)): ?>
+                        <tr class="<?= $classes['table_detail-count_menu'] ?>">
+                            <th class="text-left" colspan="2"></th>
+                            <th class="text-center"><?= number_format($tqy) ?></th>
+                            <th class="text-right"><?= number_format($tpc) ?></th>
+                        </tr>
+                    <?php else: ?>
+                        <tr class="table-secondary">
+                            <th colspan="5" class="text-center">Нет данных</th>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+
+    public function DetailPanelTotal($pk = null)
+    {
+        global $db;
         $vps = (new VisitModel)->price_status($pk);
         $tb = new Table($db, "visit_beds");
         $tb->set_data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->where("visit_id = $pk")->order_by("start_date ASC");
@@ -480,6 +526,11 @@ class TransactionPanel extends Model
                         <td><strong style="font-size: 15px;">Услуги</strong></td>
                         <td class="text-right"><?= number_format(-$vps['cost-services']) ?></td>
                     </tr>
+                    <tr>
+                        <td><strong style="font-size: 15px;">Препараты</strong></td>
+                        <td class="text-right"><?= number_format(-$vps['cost-preparats']) ?></td>
+                    </tr>
+
                     <?php if($sale_info): ?>
                         <tr>
                             <td>
@@ -515,29 +566,6 @@ class TransactionPanel extends Model
                         </tr>
                     <?php endif; ?>
 
-                    
-
-                </tbody>
-            </table>
-        </div>
-        <?php
-    }
-
-    public function DetailPanelPharm($pk = null)
-    {
-        global $classes;
-        if (!module('module_pharmacy')) Mixin\error('cash_permissions_false');
-        ?>
-        <div class="table-responsive mt-3 card" id="check_detail">
-            <table class="table table-hover table-sm">
-                <thead>
-                    <tr class="bg-dark">
-                        <th class="text-left" colspan="2">Наименование</th>
-                        <th>Дата и время</th>
-                        <th class="text-right">Сумма</th>
-                    </tr>
-                </thead>
-                <tbody>
                     
 
                 </tbody>
