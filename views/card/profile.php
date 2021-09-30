@@ -234,7 +234,7 @@
                                                 <?= ($patient->discharge_date) ? date_f($patient->discharge_date) : "Назначить дату выписки" ?>
                                             </span>
                                         <?php else: ?>
-                                            <span class="<?= ($patient->discharge_date) ? "text-primary" : "text-danger" ?>">
+                                            <span class="<?= ($patient->discharge_date) ? "" : "text-danger" ?>">
                                                 <?= ($patient->discharge_date) ? date_f($patient->discharge_date) : "Не назначено" ?>
                                             </span>
                                         <?php endif; ?>
