@@ -29,7 +29,7 @@ class VisitModel extends Model
                 <div class="row">
                     <div class="col-md-6">
                         <label>Отдел:</label>
-                        <select data-placeholder="Выберите отдел" id="division_id" class="<?= $classes['form-select'] ?>" required>
+                        <select data-placeholder="Выберите отдел" id="division_id" name="division_id" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
                             <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
                                 <option value="<?= $row['id'] ?>" <?= (division($this->value('grant_id')) == $row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
@@ -120,6 +120,7 @@ class VisitModel extends Model
             'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
             'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
             'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
+            'division_id' => ( isset($this->post['direction']) ) ? $this->post['division_id'] : null,
         );
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
@@ -271,7 +272,7 @@ class VisitModel extends Model
 
     public function update()
     {
-        global $db;
+        global $db, $session;
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
@@ -283,11 +284,15 @@ class VisitModel extends Model
                 $db->rollBack();
             }
             if ($this->post['grant_id']) {
-                $object = Mixin\update($this->_service, array('parent_id' => $this->post['grant_id']), array('visit_id' => $pk, 'service_id' => 1));
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
-                }
+                $data = $db->query("SELECT id, user_id, level, status, service_id, service_name FROM $this->_service WHERE visit_id = $pk AND service_id = 1 AND status = 3")->fetch();
+                $data['visit_id'] = $pk;
+                $data['parent_id'] = $this->post['grant_id'];
+                $data['route_id'] = $session->session_id;
+                $data['division_id'] = $this->post['division_id'];
+                $data['status'] = 2;
+                $old = $data['id']; unset($data['id']);
+                Mixin\update($this->_service, array('status' => 6), $old);
+                Mixin\insert($this->_service, $data);
             }
 
             $db->commit();
@@ -372,7 +377,6 @@ class VisitModel extends Model
                         IFNULL( ROUND((SELECT SUM(vt.item_qty*vt.item_cost) FROM visit_bypass_transactions vt WHERE vt.visit_id = v.id AND vt.is_price IS NOT NULL) * -1), 0) 'cost-preparats',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
-                        IFNULL( vl.sale_bed_unit + vl.sale_service_unit , 0) 'sale-total',
                         -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
                         v.add_date,
                         v.is_active,
@@ -381,6 +385,7 @@ class VisitModel extends Model
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";
                 $object = $db->query($sql)->fetch();
+                $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
                 $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
                 return $object;
@@ -395,7 +400,6 @@ class VisitModel extends Model
                         IFNULL( ROUND((SELECT SUM(vt.item_qty*vt.item_cost) FROM visit_bypass_transactions vt WHERE vt.visit_id = v.id AND vt.is_price IS NULL) * -1), 0) 'cost-preparats',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
-                        IFNULL( vl.sale_bed_unit + vl.sale_service_unit , 0) 'sale-total',
                         -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
                         v.add_date,
                         v.is_active
@@ -403,6 +407,7 @@ class VisitModel extends Model
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";
                 $object = $db->query($sql)->fetch();
+                $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
                 $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
                 return $object;

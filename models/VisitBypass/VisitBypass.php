@@ -90,7 +90,7 @@ class VisitBypassModel extends Model
                 
                 </div>
 
-                <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = $session->session_division AND w.is_active IS NOT NULL")->get_table() ): ?>
+                <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = {$this->visit['division_id']} AND w.is_active IS NOT NULL")->get_table() ): ?>
 
 
                     <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">

@@ -108,5 +108,18 @@ class VisitBypassEventsModel extends Model
     }
     
 }
+
+
+class VisitBypassEventsApplication extends VisitBypassEventsModel
+{
+    public function delete(int $pk)
+    {
+        global $db;
+        Mixin\delete($this->_event_applications, $pk, "visit_bypass_event_id");
+        $this->success("success");
+
+    }
+}
+
         
 ?>

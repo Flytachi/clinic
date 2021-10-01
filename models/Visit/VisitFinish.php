@@ -30,6 +30,7 @@ class VisitFinish extends Model
                 $bed = $db->query("SELECT * FROM visit_beds WHERE visit_id = $pk AND end_date IS NULL")->fetch();
                 Mixin\update($this->_beds, array('user_id' => null), $bed['bed_id']);
                 Mixin\update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
+                Mixin\delete("visit_bypass_event_applications", $pk, "visit_id");
 
             }else {
 

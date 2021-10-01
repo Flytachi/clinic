@@ -62,34 +62,54 @@ class VisitBypassEventsPanel extends Model
             <h3 class="text-center"><?= $this->post['event_title'] ?></h3>
             <div class="card card-body border-top-1 border-top-<?= $color ?>">
 
-                <div class="list-feed list-feed-rhombus list-feed-solid">
-                    <div class="list-feed-item border-<?= $color ?>">
-                        <strong>Препараты:</strong>
-                        <?php foreach (json_decode($this->bypass['items']) as $item): ?>
-                            <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+
+                <div class="list-feed list-feed-rhombus list-feed-solid row">
+
+                    <div class="col-6">
+                        <div class="list-feed-item border-<?= $color ?>">
+                            <strong>Препараты:</strong>
+                            <?php foreach (json_decode($this->bypass['items']) as $item): ?>
+                                <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
+                                    <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                <?php else: ?>
+                                    <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div class="list-feed-item border-<?= $color ?>">
+                            <strong>Метод: </strong><?= ($this->bypass['method']) ? $methods[$this->bypass['method']] : '<span class="text-muted">Нет данных</span>' ?>
+                            <br>
+                            <strong>Описание: </strong>
+                            <?= ($this->bypass['description']) ? "<br>".preg_replace("#\r?\n#", "<br />", $this->bypass['description']) : '<span class="text-muted">Нет данных</span>' ?>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+
+                        <div class="list-feed-item border-<?= $color ?>">
+                            <strong>Статус: </strong>
+                            <?php if($db->query("SELECT id FROM visit_bypass_event_applications WHERE visit_bypass_event_id = $pk")->rowCount()): ?>
+                                <span class="text-primary">Есть забронированные препараты.</span>
+                                <?php if($color == "secondary"): ?>
+                                    <br><a onclick="CalendarEventApplicationDelete('<?= del_url($pk, 'VisitBypassEventsApplication') ?>')" class="text-danger">Отменить бронь</a>
+                                <?php endif; ?>
                             <?php else: ?>
-                                <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
+                                <span class="text-muted">Нет забронированных препаратов.</span>
                             <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
+                        </div>
 
-                    <div class="list-feed-item border-<?= $color ?>">
-                        <strong>Метод: </strong><?= ($this->bypass['method']) ? $methods[$this->bypass['method']] : '<span class="text-muted">Нет данных</span>' ?>
-                        <br>
-                        <strong>Описание: </strong>
-                        <?= ($this->bypass['description']) ? "<br>".preg_replace("#\r?\n#", "<br />", $this->bypass['description']) : '<span class="text-muted">Нет данных</span>' ?>
-                    </div>
+                        <div class="list-feed-item border-<?= $color ?>">
+                            <strong>Время: </strong>
+                            <?php
+                            if ($this->post['event_end']) echo "от ".date_f($this->post['event_start'], "H:i")." до ".date_f($this->post['event_end'], "H:i");
+                            else echo date_f($this->post['event_start'], "H:i");
+                            ?>
+                            <?php if($this->post['event_completed']): ?>
+                                <br><strong>Выполнено:</strong> <?= date_f($this->post['completed_date'], 1) ?>
+                            <?php endif; ?>
+                        </div>
 
-                    <div class="list-feed-item border-<?= $color ?>">
-                        <strong>Время: </strong>
-                        <?php
-                        if ($this->post['event_end']) echo "от ".date_f($this->post['event_start'], "H:i")." до ".date_f($this->post['event_end'], "H:i");
-                        else echo date_f($this->post['event_start'], "H:i");
-                        ?>
-                        <?php if($this->post['event_completed']): ?>
-                            <br><strong>Выполнено:</strong> <?= date_f($this->post['completed_date'], 1) ?>
-                        <?php endif; ?>
                     </div>
 
                 </div>

@@ -3,14 +3,14 @@ require_once '../../tools/warframe.php';
 $session->is_auth(7);
 $header = "Рабочий стол";
 
-$tb = new Table($db, "visit_services vs");
-$tb->set_data("v.id, v.user_id, v.add_date, v.discharge_date, v.grant_id, vs.division_id")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id)");
+$tb = new Table($db, "visits");
+$tb->set_data("id, user_id, add_date, discharge_date, grant_id, division_id");
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.service_id = 1 AND vs.division_id = $session->session_division AND vs.status = 3",
-	"vs.service_id = 1 AND vs.division_id = $session->session_division AND vs.status = 3",
+	"division_id = $session->session_division AND completed IS NULL",
+	"division_id = $session->session_division AND completed IS NULL",
 );
-$tb->where_or_serch($search_array)->order_by("v.add_date DESC")->set_limit(20);
+$tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">

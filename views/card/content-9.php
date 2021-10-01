@@ -56,11 +56,10 @@ is_module('module_bypass');
 						<!-- External events -->
 						<div class="card">
 
-							
 							<div class="card-body">
 								
 								<div class="row">
-									<?php if(is_grant()): ?>
+									<?php if($activity and is_grant()): ?>
 										<div class="col-md-4">
 											<div class="mb-3" id="external-events">
 												<h6>Пакеты назначений</h6>
@@ -112,7 +111,7 @@ is_module('module_bypass');
 
 	<div id="modal_event_card" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content" id="event_card_body" >
+			<div class="modal-content" id="event_card_body">
 
 			</div>
 		</div>
@@ -314,6 +313,17 @@ is_module('module_bypass');
 			});
 		}
 
+		function CalendarEventApplicationDelete(events) {
+			$("#modal_event_card").modal("hide");
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#event_card_body').html(result);
+				},
+			});
+		};
+
 		function CalendarEventClick(info, element) {
 			bypassElement = element
 			
@@ -329,10 +339,10 @@ is_module('module_bypass');
 		};
 
 		document.addEventListener("DOMContentLoaded", function () {
-			<?php if(is_grant()): ?>
+			<?php if($activity and is_grant()): ?>
 				FullCalendarAdvanced.init(bypassEventUrl);
 			<?php else: ?>
-				FullCalendarAdvanced.block(bypassEventUrl);
+				FullCalendarAdvanced.block(bypassEventUrl, "<?= $patient->add_date ?>");
 			<?php endif; ?>
 		});
 

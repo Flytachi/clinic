@@ -15,7 +15,11 @@ var FullCalendarAdvanced = (function () {
     //
 
     // External events
-    var _componentFullCalendarEvents = function (url, droppable_status) {
+    var _componentFullCalendarEvents = function (
+        url,
+        droppable_status,
+        default_date
+    ) {
         if (
             !$().fullCalendar ||
             typeof Switchery == "undefined" ||
@@ -47,7 +51,7 @@ var FullCalendarAdvanced = (function () {
                     },
                     timezone: "local",
                     editable: droppable_status,
-                    defaultDate: new Date(),
+                    defaultDate: default_date,
                     events: bypassEventData,
                     locale: "ru",
                     allDaySlot: true,
@@ -76,7 +80,11 @@ var FullCalendarAdvanced = (function () {
                     }, */
                     eventClick: function (info) {
                         CalendarEventClick(info, this);
-                        $(".fullcalendar-external").fullCalendar('renderEvent',event ,false);
+                        $(".fullcalendar-external").fullCalendar(
+                            "renderEvent",
+                            event,
+                            false
+                        );
                     },
                     isRTL: $("html").attr("dir") == "rtl" ? true : false,
                 });
@@ -132,10 +140,10 @@ var FullCalendarAdvanced = (function () {
 
     return {
         init: function (url) {
-            _componentFullCalendarEvents(url, true);
+            _componentFullCalendarEvents(url, true, new Date());
         },
-        block: function (url) {
-            _componentFullCalendarEvents(url, false);
+        block: function (url, default_date) {
+            _componentFullCalendarEvents(url, false, default_date);
         },
     };
 })();
