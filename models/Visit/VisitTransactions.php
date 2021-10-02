@@ -3,9 +3,10 @@
 class VisitTransactionsModel extends Model
 {
     public $table = 'visit_service_transactions';
+    public $_visits = 'visits';
     public $_services = 'visit_services';
     public $_investment = 'visit_investments';
-    public $_visits = 'visits';
+    public $_bypass_transactions = 'visit_bypass_transactions';
 
     public function form($pk = null)
     {
@@ -736,8 +737,9 @@ class VisitTransactionsModel extends Model
         }
         Mixin\update($this->_investment, array('expense' => 1, 'expense_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
         Mixin\update($this->table, array('pricer_id' => $session->session_id, 'is_price' => 1, 'price_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
-        Mixin\update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1));
         Mixin\update($this->_visits, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
+        Mixin\update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1, 'status' => 1));
+        Mixin\update($this->_bypass_transactions, array('is_price' => 1), array('visit_id' => $this->visit['id']));
         (new UserModel())->update_status($this->visit['user_id']);
         
     }

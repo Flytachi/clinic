@@ -76,16 +76,11 @@ class TemplateModel extends Model
 
     public function clean()
     {
-        if (empty($this->post['description'])) {
-            unset($this->post['description']);
-        }else {
-            $description = $this->post['description'];
-        }
+        if (empty($this->post['description'])) unset($this->post['description']);
+        else $description = $this->post['description'];
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if ($description) {
-            $this->post['description'] = $description;
-        }
+        if ($description) $this->post['description'] = $description;
         return True;
     }
 

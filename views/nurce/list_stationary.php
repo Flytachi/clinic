@@ -7,8 +7,8 @@ $tb = new Table($db, "visits");
 $tb->set_data("id, user_id, add_date, discharge_date, grant_id, division_id");
 $search = $tb->get_serch();
 $search_array = array(
-	"division_id = $session->session_division AND completed IS NULL",
-	"division_id = $session->session_division AND completed IS NULL",
+	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
+	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
 );
 $tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 ?>

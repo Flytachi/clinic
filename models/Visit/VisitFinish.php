@@ -31,7 +31,6 @@ class VisitFinish extends Model
                 Mixin\update($this->_beds, array('user_id' => null), $bed['bed_id']);
                 Mixin\update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
                 Mixin\delete("visit_bypass_event_applications", $pk, "visit_id");
-                Mixin\update("visit_bypass_transactions", array('is_price' => 1), array('visit_id' => $pk));
 
             }else {
 

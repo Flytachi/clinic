@@ -1,8 +1,6 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
+require_once 'callback.php';
 is_module('module_pharmacy');
-$header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,14 +63,13 @@ $header = "Пациент";
  								  	</thead>
  								  	<tbody>
 										<?php
-										$sql = "SELECT DISTINCT vp.item_id,
-												vp.item_name,
-												vp.item_cost,
-												vp.item_cost * (SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'price',
-												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
-												(SELECT COUNT(*) FROM visit_price WHERE visit_id = $patient->visit_id AND item_type = 3 AND item_id = vp.item_id) 'total_count_all'
-											FROM visit_price vp
-											WHERE vp.visit_id = $patient->visit_id AND vp.item_type = 3";
+										$sql = "SELECT DISTINCT vb.item_name,
+												vb.item_cost,
+												vb.item_cost * (SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND vb.visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost) 'price',
+												(SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND vb.visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
+												(SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND vb.visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost) 'total_count_all'
+											FROM visit_bypass_transactions vb
+											WHERE vb.visit_id = $patient->visit_id AND vb.visit_bypass_event_id IS NULL";
   									  	$total_total_price = $total_count_every = $total_count_all = 0;
   									  	?>
 									  	<?php $i=1; foreach ($db->query($sql) as $row): ?>
@@ -136,7 +133,7 @@ $header = "Пациент";
 		                    <button type="button" class="close" data-dismiss="modal">×</button>
 		                </div>
 
-	                	<?= (new StorageHomeForm)->form() ?>
+	                	<?php // (new StorageHomeForm)->form() ?>
 
 		            </div>
 		        </div>

@@ -750,8 +750,7 @@ class VisitRoute extends Model
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];
         
-        $count = ($this->post['direction']) ? 1 : $this->post['count'][$key];
-        for ($i=0; $i < $count; $i++) {
+        for ($i=0; $i < $this->post['count'][$key]; $i++) {
             $post = Mixin\clean_form($post);
             $post = Mixin\to_null($post);
             $object = Mixin\insert($this->table, $post);

@@ -400,7 +400,7 @@ class TransactionPanel extends Model
     {
         global $db, $classes;
         $tb = new Table($db, "visit_service_transactions");
-        $tb->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $pk AND item_type IN (1,2,3)")->order_by("item_name ASC");
+        $tb->set_data("DISTINCT item_id, item_name, item_cost, is_price")->where("visit_id = $pk AND item_type IN (1,2,3)")->order_by("item_name ASC");
         $tpc = $tqy = 0;
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
@@ -417,11 +417,20 @@ class TransactionPanel extends Model
                     <?php foreach($tb->get_table(1) as $row): ?>
                         <tr class="text-right">
                             <td class="text-left">
+                                <?php if($row->is_price): ?>
+                                    <span class="badge bg-danger">Used</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Not used</span>
+                                <?php endif; ?>
                                 <?= $row->item_name ?>
                             </td>
                             <td><?= number_format($row->item_cost); ?></td>
-                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $pk AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
-                            <td class="text-<?= number_color($row->qty * $row->item_cost, true) ?>"><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
+                            <?php
+                            if($row->is_price) $pr = "AND is_price IS NOT NULL";
+                            else $pr = "AND is_price IS NULL";
+                            ?>
+                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $pk AND item_id = $row->item_id AND item_cost = $row->item_cost $pr")->rowCount(); echo $row->qty; ?></td>
+                            <td><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if(isset($row->count)): ?>
@@ -446,7 +455,7 @@ class TransactionPanel extends Model
         global $db, $classes;
         if (!module('module_pharmacy')) Mixin\error('cash_permissions_false');
         $tb = new Table($db, "visit_bypass_transactions");
-        $tb->set_data("DISTINCT item_name, item_cost")->where("visit_id = $pk")->order_by("item_name ASC");
+        $tb->set_data("DISTINCT item_name, item_cost, is_price")->where("visit_id = $pk")->order_by("item_name ASC");
         $tpc = $tqy = 0;
         ?>
         <div class="table-responsive mt-3 card" id="check_detail">
@@ -463,11 +472,20 @@ class TransactionPanel extends Model
                     <?php foreach($tb->get_table(1) as $row): ?>
                         <tr class="text-right">
                             <td class="text-left">
+                                <?php if($row->is_price): ?>
+                                    <span class="badge bg-danger">Used</span>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Not used</span>
+                                <?php endif; ?>
                                 <?= $row->item_name ?>
                             </td>
                             <td><?= number_format($row->item_cost); ?></td>
-                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $pk AND item_name LiKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
-                            <td class="text-<?= number_color($row->qty * $row->item_cost, true) ?>"><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
+                            <?php
+                            if($row->is_price) $pr = "AND is_price IS NOT NULL";
+                            else $pr = "AND is_price IS NULL";
+                            ?>
+                            <td class="text-center"><?php $tqy += $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $pk AND item_name LiKE '$row->item_name' AND item_cost = $row->item_cost $pr")->fetchColumn(); echo $row->qty; ?></td>
+                            <td><?php $tpc += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     <?php if(isset($row->count)): ?>

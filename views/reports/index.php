@@ -7,48 +7,6 @@ $header = "Отчёты";
 <html lang="en">
 <?php include layout('head') ?>
 
-<style media="screen">
-.fade-out-siblings {
-     --gutter: 2.5rem;
-     background: #ffffff;
-     text-align: center;
-     grid-gap: 2.5rem;
-     padding: 1.5rem;
-     display: grid;
-     margin: 2rem 0;
-     pointer-events: none;
-}
-
-.fade-out-siblings > * {
-    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    background: #fff;
-    padding: 2rem 1rem;
-    cursor: pointer;
-    pointer-events: auto;
-    transition: 300ms opacity, 500ms transform;
-}
-
-.fade-out-siblings:hover > * {
-    opacity: 0.4;
-}
-
-.fade-out-siblings:hover > *:hover {
-    transform: scale(1.1);
-    opacity: 1;
-}
-
-@media (min-width: 40em) {
-    .fade-out-siblings {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .fade-out-siblings > * {
-        padding: 2rem 1rem;
-    }
-}
-</style>
-
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -71,114 +29,31 @@ $header = "Отчёты";
 			<!-- Content area -->
 			<div class="content">
 
-                <article class="fade-out-siblings">
-                    
-                    <?php if(module('module_pharmacy')): ?>
-                        <!-- Аптека -->
-                        <?php if (permission([4, 8])): ?>
-                            <a href="<?= viv('reports/pharmacy/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Аптека</a>
-                        <?php else: ?>
-                            <button class="btn btn-outline-danger" style="font-size:1rem;">Аптека</button>
-                        <?php endif; ?>
-                        <!-- end -->
-                    <?php endif; ?>
+                <div class="<?= $classes['card'] ?>">
+					<div class="<?= $classes['card-header'] ?>">
+						<h5 class="card-title">Отчёты</h5>
+					</div>
 
-                    <!-- Общий отчет -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Общий отчет</button>
-                    <?php endif; ?>
-                    <!-- end -->
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-6 col-lg-3">
+								<div class="mb-3">
+									<h6 class="font-weight-semibold">Регистратура</h6>
+									<ul class="list list-unstyled">
+										<li><a href="<?= viv('reports/registry/content_1') ?>">Отчёт по областям</a></li>
+									</ul>
+								</div>
 
-                    <!-- Регистратура -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/registry/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Регистратура</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Регистратура</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                    <!-- Касса -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Касса</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                    <!-- Врачи -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/doctor/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Врачи</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Врачи</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                    <?php if(module('module_laboratory')): ?>
-                        <!-- Лаборатория -->
-                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                            <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Лаборатория</a>
-                        <?php else: ?>
-                            <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
-                        <?php endif; ?>
-                        <!-- end -->
-                    <?php endif; ?>
-
-                    <?php if(module('module_diagnostic')): ?>
-                        <!-- Диагностика -->
-                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                            <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
-                        <?php else: ?>
-                            <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
-                        <?php endif; ?>
-                        <!-- end -->
-                    <?php endif; ?>
-
-                    <!-- Анестезия -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/anest/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Анестезия</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Анестезия</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                    <!-- Физиотерапия -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Физиотерапия</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Физиотерапия</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                    <!-- Физиотерапия -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
-                        <!-- <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</a> -->
-                        <button class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</button>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Процедурная</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                    <?php if(module('module_diet')): ?>
-                        <!-- Кухня -->
-                        <?php if (permission([9])): ?>
-                            <a href="<?= viv('reports/coock/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Кухня</a>
-                        <?php else: ?>
-                            <button class="btn btn-outline-danger" style="font-size:1rem;">Кухня</button>
-                        <?php endif; ?>
-                        <!-- end -->
-                    <?php endif; ?>
-
-                    <!-- Доход -->
-                    <?php if (permission(8)): ?>
-                        <a href="<?= viv('reports/income/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Доход</a>
-                    <?php else: ?>
-                        <button class="btn btn-outline-danger" style="font-size:1rem;">Доход</button>
-                    <?php endif; ?>
-                    <!-- end -->
-
-                </article>
+								<div class="mb-3">
+									<h6 class="font-weight-semibold">Касса</h6>
+									<ul class="list list-unstyled">
+										<li><a href="<?= viv('reports/cashbox/content_1') ?>">Отчет по платежам</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
 			</div>
             <!-- /content area -->

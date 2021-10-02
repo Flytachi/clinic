@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth(7);
 $pk = $_GET['pk'];
 
-$visit = (new Table($db, "visits"))->where("id = $pk AND is_active IS NOT NULL AND completed IS NULL")->get_row();
+$visit = (new Table($db, "visits"))->where("id = $pk AND completed IS NULL")->get_row();
 ?>
 
 <?php if($visit): ?>
@@ -171,7 +171,10 @@ $visit = (new Table($db, "visits"))->where("id = $pk AND is_active IS NOT NULL A
             </tbody>
         </table>
     </div>
-    <div class="text-right">
-        <a href="<?= viv('card/content-9') ?>?pk=<?= $pk ?>&activity=1" class="btn btn-outline-info btn-sm">Перейти к пациенту</a>
-    </div>
+
+    <?php if($visit->is_active): ?>
+        <div class="text-right">
+            <a href="<?= viv('card/content-9') ?>?pk=<?= $pk ?>&activity=1" class="btn btn-outline-info btn-sm">Перейти к пациенту</a>
+        </div>
+    <?php endif; ?>
 <?php endif; ?>

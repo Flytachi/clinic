@@ -110,7 +110,7 @@ require_once 'callback.php';
 					   	</div>
 						<!-- /Investments -->
 
-						<!-- Price -->
+						<!-- Service -->
 						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Услуги</legend>
 
 					   	<div class="card">
@@ -129,16 +129,16 @@ require_once 'callback.php';
 									   
  								  	<tbody>
 									   	<?php  
-										$price = new Table($db, "visit_service_transactions");
-										$price->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,2,3)")->order_by("item_name ASC");
+										$service = new Table($db, "visit_service_transactions");
+										$service->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,2,3)")->order_by("item_name ASC");
 										$total_ser = 0; 
 										?>
-										<?php foreach ($price->get_table(1) as $row): ?>
+										<?php foreach ($service->get_table(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->item_name ?></td>
 												<td class="text-center"><?php $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $patient->visit_id AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
-                            					<td class="text-right text-<?= number_color($row->item_cost) ?>">
+                            					<td class="text-right">
 													<?= number_format($row->item_cost); ?>
 												</td>
 												<td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
@@ -164,6 +164,7 @@ require_once 'callback.php';
 
 					   	</div>
 
+						<!-- Preparats -->
 						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Препараты</legend>
 
 						<div class="card">
@@ -182,16 +183,16 @@ require_once 'callback.php';
 									
 									<tbody>
 										<?php  
-										$price2 = new Table($db, "visit_bypass_transactions");
-										$price2->set_data("DISTINCT item_name, item_cost")->where("visit_id = $patient->visit_id")->order_by("item_name ASC");
+										$preparats = new Table($db, "visit_bypass_transactions");
+										$preparats->set_data("DISTINCT item_name, item_cost")->where("visit_id = $patient->visit_id")->order_by("item_name ASC");
 										$total_pre = 0; 
 										?>
-										<?php foreach ($price2->get_table(1) as $row): ?>
+										<?php foreach ($preparats->get_table(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->item_name ?></td>
 												<td class="text-center"><?php $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $patient->visit_id AND item_name LIKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
-												<td class="text-right text-<?= number_color($row->item_cost) ?>">
+												<td class="text-right">
 													<?= number_format($row->item_cost); ?>
 												</td>
 												<td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
@@ -286,9 +287,9 @@ require_once 'callback.php';
 										<?php if($patient->completed): ?>
 											<?php
 											if ($vps['sale-total'] > 0) {
-												$formul = number_format($vps['balance'])." + ".number_format($vps['sale-total'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
+												$formul = number_format($vps['balance'])." + ".number_format($vps['sale-total'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services'])." + ".number_format(-$vps['cost-preparats']);
 											}else {
-												$formul = number_format($vps['balance'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
+												$formul = number_format($vps['balance'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services'])." + ".number_format(-$vps['cost-preparats']);
 											}
 											?>
 											<tr class="table-secondary text-center text-<?= ($vps['result'] == 0) ? 'success' : 'danger'; ?>" data-trigger="hover" data-popup="popover" data-placement="top" title="" data-content="<?= $formul ?>" data-original-title="Формула">
@@ -302,7 +303,6 @@ require_once 'callback.php';
 
 					   	</div>
 						<!-- /Total -->
-
 
 				   	</div>
 

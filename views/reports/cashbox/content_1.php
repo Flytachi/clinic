@@ -99,12 +99,14 @@ $header = "Отчёт кассы";
 							<?php
 							$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 							$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-							$where = " AND (DATE_FORMAT(price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-							if( isset($_POST['pricer_id']) ) $where .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
+							$where1 = " AND (DATE_FORMAT(price_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+							$where2 = "(DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+							if( isset($_POST['pricer_id']) ) $where1 .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
+							if( isset($_POST['pricer_id']) ) $where2 .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
 
-							$tb = new Table($db, "visit_service_transactions");
-							$tb->where("is_visibility IS NOT NULL AND is_price IS NOT NULL $where")->order_by('price_date ASC');
-							$total_price=$total_price_cash=$total_price_card=$total_price_transfer=0;
+							$total=$total_cash=$total_card=$total_transfer=0;
+							$tb1 = $db->query("SELECT price_date 'date', pricer_id, user_id, price_cash 'cash', price_card 'card', price_transfer 'transfer' FROM visit_service_transactions WHERE is_visibility IS NOT NULL AND is_price IS NOT NULL $where1 ORDER BY price_date ASC")->fetchAll();
+							$tb2 = $db->query("SELECT add_date 'date', pricer_id, user_id, balance_cash 'cash', balance_card 'card', balance_transfer 'transfer' FROM visit_investments WHERE $where2 ORDER BY add_date ASC")->fetchAll();
 							?>
 
 							<table class="table table-hover datatable-basic table-sm" id="table">
@@ -121,48 +123,48 @@ $header = "Отчёт кассы";
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach ($tb->get_table(1) as $row): ?>
+									<?php $i=1;foreach (array_multisort_value(array_merge($tb1,$tb2), 'date', SORT_ASC) as $row): ?>
 										<tr>
-											<td><?= $row->count ?></td>
-											<td><?= date_f($row->price_date, 1) ?></td>
-											<td><?= get_full_name($row->pricer_id) ?></td>
-											<td><?= get_full_name($row->user_id)  ?></td>
-											<td class="text-right text-<?= number_color($row->price_cash) ?>">
+											<td><?= $i++ ?></td>
+											<td><?= date_f($row['date'], 1) ?></td>
+											<td><?= get_full_name($row['pricer_id']) ?></td>
+											<td><?= get_full_name($row['user_id'])  ?></td>
+											<td class="text-right text-<?= number_color($row['cash']) ?>">
 												<?php
-												$total_price_cash += $row->price_cash;
-												echo number_format($row->price_cash);
+												$total_cash += $row['cash'];
+												echo number_format($row['cash']);
 												?>
 											</td>
-											<td class="text-right text-<?= number_color($row->price_card) ?>">
+											<td class="text-right text-<?= number_color($row['card']) ?>">
 												<?php
-												$total_price_card += $row->price_card;
-												echo number_format($row->price_card);
+												$total_card += $row['card'];
+												echo number_format($row['card']);
 												?>
 											</td>
-											<td class="text-right text-<?= number_color($row->price_transfer) ?>">
+											<td class="text-right text-<?= number_color($row['transfer']) ?>">
 												<?php
-												$total_price_transfer += $row->price_transfer;
-												echo number_format($row->price_transfer);
+												$total_transfer += $row['transfer'];
+												echo number_format($row['transfer']);
 												?>
 											</td>
-											<td class="text-right text-<?= number_color($row->price_cash + $row->price_card + $row->price_transfer) ?>">
+											<td class="text-right text-<?= number_color($row['cash'] + $row['card'] + $row['transfer']) ?>">
 												<?php
-												$total_price += $row->price_cash + $row->price_card + $row->price_transfer;
-												echo number_format($row->price_cash + $row->price_card + $row->price_transfer);
+												$total += $row['cash'] + $row['card'] + $row['transfer'];
+												echo number_format($row['cash'] + $row['card'] + $row['transfer']);
 												?>
 											</td>
 										</tr>
 									<?php endforeach; ?>
 								</tbody>
-								<?php if(isset($row->count)): ?>
+								<?php if($i > 1): ?>
 									<tfooter>
 										<tr class="table-secondary">
-											<th colspan="2">Общее колличество: <?= $row->count ?></th>
+											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
 											<th colspan="2" class="text-right">Итого:</th>
-											<th class="text-right text-<?= number_color($total_price_cash) ?>"><?= number_format($total_price_cash) ?></th>
-											<th class="text-right text-<?= number_color($total_price_card) ?>"><?= number_format($total_price_card) ?></th>
-											<th class="text-right text-<?= number_color($total_price_transfer) ?>"><?= number_format($total_price_transfer) ?></th>
-											<th class="text-right text-<?= number_color($total_price) ?>"><?= number_format($total_price) ?></th>
+											<th class="text-right text-<?= number_color($total_cash) ?>"><?= number_format($total_cash) ?></th>
+											<th class="text-right text-<?= number_color($total_card) ?>"><?= number_format($total_card) ?></th>
+											<th class="text-right text-<?= number_color($total_transfer) ?>"><?= number_format($total_transfer) ?></th>
+											<th class="text-right text-<?= number_color($total) ?>"><?= number_format($total) ?></th>
 										</tr>
 									</tfooter>
 								<?php endif; ?>

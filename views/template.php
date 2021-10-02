@@ -67,18 +67,18 @@ $header = "Шаблоны";
                                         <th style="width:50px">№</th>
 										<th style="width:60%">Название</th>
 										<th style="width:20%">Дата создания</th>
-										<th style="width: 100px">Действия</th>
+										<th style="width: 100px" class="text-right">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
 	                              	<?php
-	                              	foreach($db->query("SELECT * from templates WHERE autor_id = {$_SESSION['session_id']}") as $row) {
+	                              	foreach($db->query("SELECT * from templates WHERE autor_id = $session->session_id") as $row) {
 	                                  	?>
                                   		<tr>
 											<td><?= $row['id'] ?></td>
 											<td><?= $row['name'] ?></td>
 											<td><?= date('Y.m.d H:i', strtotime($row['add_date'])) ?></td>
-	                                      	<td>
+	                                      	<td class="text-right">
 												<div class="list-icons">
 													<a onclick="Update('<?= up_url($row['id'], 'TemplateModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<a href="<?= del_url($row['id'], 'TemplateModel') ?>" onclick="return confirm('Вы уверены что хотите удалить врача оператора?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
