@@ -50,18 +50,18 @@ class WarehouseCustomPanel extends Model
                 <td>
                     <select id="manufacturer_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> manufacturers" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
                         <option value="" >Производитель будет выбран автоматически</option>
-                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_die_date, wc.item_price") as $manufacturer): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_die_date ASC, wc.item_price ASC") as $manufacturer): ?>
                             <option value="<?= $manufacturer->id ?>" ><?= $manufacturer->manufacturer ?></option>
                         <?php endforeach; ?>
                     </select>
                 </td>
 
-                <!-- Supplier -->
+                <!-- Cost -->
                 <td>
-                    <select id="supplier_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> suppliers" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
-                        <option value="" >Поставщик будет выбран автоматически</option>
-                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.supplier FROM $this->table wc LEFT JOIN $this->_suppliers wis ON (wis.id=wc.item_supplier_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_die_date, wc.item_price") as $supplier): ?>
-                            <option value="<?= $supplier->id ?>" ><?= $supplier->supplier ?></option>
+                    <select id="price_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> costs" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
+                        <option value="" >Стоимость будет выбрана автоматически</option>
+                        <?php foreach ($db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_die_date ASC, wc.item_price ASC") as $price): ?>
+                            <option value="<?= $price->item_price ?>" ><?= number_format($price->item_price) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </td>
@@ -107,7 +107,7 @@ class WarehouseCustomPanel extends Model
                     item_name: document.querySelector('#name_input_'+index).innerHTML,
                     item_name_id: document.querySelector('#name_id_input_'+index).value,
                     item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
-                    item_supplier_id: document.querySelector('#supplier_id_input_'+index).value,
+                    item_price: document.querySelector('#price_id_input_'+index).value,
                     item_qty: document.querySelector('#qty_input_'+index).value,
                 };
 
@@ -132,19 +132,19 @@ class WarehouseCustomPanel extends Model
                     },
                     success: function (result) {
                         var data = JSON.parse(result);
-                        var options = `<option value="" >Поставщик будет выбран автоматически</option>`;
+                        var options = `<option value="" >Стоимость будет выбрана автоматически</option>`;
 
-                        for (let i = 0; i < data.supplier.length; i++) {
-                            var element = data.supplier[i];
-                            options += `<option value="${element.id}" >${element.supplier}</option>`;
+                        for (let i = 0; i < data.price.length; i++) {
+                            var element = data.price[i];
+                            options += `<option value="${element.item_price}" >${number_format(element.item_price)}</option>`;
                         }
-                        document.querySelector('#supplier_id_input_'+index).innerHTML = options;
+                        document.querySelector('#price_id_input_'+index).innerHTML = options;
                         document.querySelector('#max_qty_input_'+index).innerHTML = data.max_qty;
                     },
                 });
             });
 
-            $(".suppliers").change(function() {
+            $(".costs").change(function() {
                 var index = this.dataset.i;
                 $.ajax({
                     type: "POST",
@@ -153,7 +153,7 @@ class WarehouseCustomPanel extends Model
                         warehouse_id: <?= $this->post['warehouse_id'] ?>,
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
-                        supplier_id: this.value,
+                        item_price: this.value,
                     },
                     success: function (result) {
                         var data = JSON.parse(result);
@@ -170,13 +170,13 @@ class WarehouseCustomPanel extends Model
     {
         global $db;
         $m = ( isset($data['manufacturer_id']) and $data['manufacturer_id'] ) ? " AND wc.item_manufacturer_id = ".$data['manufacturer_id'] : null;
-        $s = ( isset($data['supplier_id']) and $data['supplier_id'] ) ? " AND wc.item_supplier_id = ".$data['supplier_id'] : null;
+        $s = ( isset($data['item_price']) and $data['item_price'] ) ? " AND wc.item_price = ".$data['item_price'] : null;
 
-        $supplier_result = $db->query("SELECT DISTINCT wis.id, wis.supplier FROM $this->table wc LEFT JOIN $this->_suppliers wis ON (wis.id=wc.item_supplier_id) WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_die_date, wc.item_price")->fetchAll();
+        $price_result = $db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_die_date ASC, wc.item_price ASC")->fetchAll();
         $qty_max = $db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
         $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
         $qty = $qty_max - $qty_applications;
-        echo json_encode(array('supplier' => $supplier_result, 'max_qty' => $qty));
+        echo json_encode(array('price' => $price_result, 'max_qty' => $qty));
     }
 
     public function empty_result()

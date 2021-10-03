@@ -34,6 +34,7 @@ class VisitBypassEventsPanel extends Model
         if (permission(5)) {
 
             if ($this->post['event_completed']) $color = "success";
+            elseif ($this->post['event_fail']) $color = "secondary";
             else{
                 if ( $today <= $start ){
                     if ($this->post['responsible_id'] == $session->session_id) $color = "primary";
@@ -45,12 +46,14 @@ class VisitBypassEventsPanel extends Model
         }else{
             
             if ($this->post['event_completed']) $color = "success";
+            elseif ($this->post['event_fail']) $color = "secondary";
             else {
                 if ( (isset($end) and $start <= $today && $today <= $end) || ( $start == $today ) ) $color = "danger";
                 else $color = "secondary";
             }
 
         }
+        $status = $db->query("SELECT id FROM visit_bypass_event_applications WHERE visit_bypass_event_id = $pk")->rowCount();
         ?>
         <div class="modal-header bg-<?= $color ?>">
             <h6 class="modal-title">Назначение <?= date_f($this->post['event_start']) ?></h6>
@@ -68,13 +71,31 @@ class VisitBypassEventsPanel extends Model
                     <div class="col-6">
                         <div class="list-feed-item border-<?= $color ?>">
                             <strong>Препараты:</strong>
-                            <?php foreach (json_decode($this->bypass['items']) as $item): ?>
-                                <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                    <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
-                                <?php else: ?>
-                                    <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
+                            <?php if(permission(7)): ?>
+
+                                <?php foreach (json_decode($this->bypass['items']) as $item): ?>
+                                    <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <?php if($status): ?>
+                                            <?php $ap = $db->query("SELECT wim.manufacturer, vbea.item_price FROM visit_bypass_event_applications vbea LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=vbea.item_manufacturer_id) WHERE vbea.visit_bypass_event_id = $pk AND vbea.item_name_id = $item->item_name_id AND vbea.item_qty = $item->item_qty")->fetch() ?>
+                                            <span class="text-muted"><b>Производитель: </b><?= $ap['manufacturer'] ?> <b>Стоимость: </b><?= number_format($ap['item_price']) ?></span>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                            <?php else: ?>
+
+                                <?php foreach (json_decode($this->bypass['items']) as $item): ?>
+                                    <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                    <?php else: ?>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+
+                            <?php endif; ?>
                         </div>
 
                         <div class="list-feed-item border-<?= $color ?>">
@@ -89,9 +110,9 @@ class VisitBypassEventsPanel extends Model
 
                         <div class="list-feed-item border-<?= $color ?>">
                             <strong>Статус: </strong>
-                            <?php if($db->query("SELECT id FROM visit_bypass_event_applications WHERE visit_bypass_event_id = $pk")->rowCount()): ?>
+                            <?php if($status): ?>
                                 <span class="text-primary">Есть забронированные препараты.</span>
-                                <?php if($color == "secondary"): ?>
+                                <?php if($start < $today): ?>
                                     <br><a onclick="CalendarEventApplicationDelete('<?= del_url($pk, 'VisitBypassEventsApplication') ?>')" class="text-danger">Отменить бронь</a>
                                 <?php endif; ?>
                             <?php else: ?>
@@ -108,6 +129,9 @@ class VisitBypassEventsPanel extends Model
                             <?php if($this->post['event_completed']): ?>
                                 <br><strong>Выполнено:</strong> <?= date_f($this->post['completed_date'], 1) ?>
                             <?php endif; ?>
+                            <?php if($this->post['event_fail']): ?>
+                                <br><strong>Отменено:</strong> <?= date_f($this->post['fail_date'], 1) ?>
+                            <?php endif; ?>
                         </div>
 
                     </div>
@@ -118,6 +142,9 @@ class VisitBypassEventsPanel extends Model
                     <strong>Назначил:</strong> <?= get_full_name($this->post['responsible_id']) ?>
                     <?php if($this->post['event_completed']): ?>
                         <br><strong>Исполнитель:</strong> <?= get_full_name($this->post['completed_responsible_id']) ?>
+                    <?php endif; ?>
+                    <?php if($this->post['event_fail']): ?>
+                        <br><strong>Отменил:</strong> <?= get_full_name($this->post['fail_responsible_id']) ?>
                     <?php endif; ?>
                 </div>
 
@@ -133,8 +160,8 @@ class VisitBypassEventsPanel extends Model
             <?php endif; ?>
         <?php elseif(permission(7)): ?>
             <div class="modal-footer">
-                <!-- <button onclick="CalendarEventFailure(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button> -->
                 <?php if($color == "danger"): ?>
+                    <button onclick="CalendarEventFail(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button>
                     <button onclick="CalendarEventComplete(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-success btn-sm legitRipple">Выполнить</button>
                 <?php endif; ?>
             </div>
@@ -146,8 +173,14 @@ class VisitBypassEventsPanel extends Model
     public function clean()
     {
         global $session;
-        $this->post['completed_responsible_id'] = $session->session_id;
-        $this->post['completed_date'] = date("Y-m-d H:i:s");
+        if ( isset($this->post['event_completed']) and $this->post['event_completed']) {
+            $this->post['completed_responsible_id'] = $session->session_id;
+            $this->post['completed_date'] = date("Y-m-d H:i:s");
+        }
+        if ( isset($this->post['event_fail']) and $this->post['event_fail']) {
+            $this->post['fail_responsible_id'] = $session->session_id;
+            $this->post['fail_date'] = date("Y-m-d H:i:s");
+        }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -162,24 +195,30 @@ class VisitBypassEventsPanel extends Model
             $db->beginTransaction();
 
             // Applications
-            $applications = (new Table($db, $this->_event_applications))->where("visit_bypass_event_id = $this->pk");
-            if ($data = $applications->get_row()) {
-
-                $this->visit = $data->visit_id;
-                $this->user = $data->user_id;
-                foreach ($applications->get_table() as $app) {
-                    $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_supplier_id = $app->item_supplier_id";
-                    $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
-                    if ($app->item_qty <= $max_qty) {
-                        // Взятие со склада
-                        $this->transaction($app);
-
-                    }else {
-                        echo "доработать";
-                        $this->stop();
+            if ( isset($this->post['event_completed']) and $this->post['event_completed']) {
+                // Completed
+                $applications = (new Table($db, $this->_event_applications))->where("visit_bypass_event_id = $this->pk");
+                if ($data = $applications->get_row()) {
+    
+                    $this->visit = $data->visit_id;
+                    $this->user = $data->user_id;
+                    foreach ($applications->get_table() as $app) {
+                        $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
+                        $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
+                        if ($app->item_qty <= $max_qty) {
+                            // Взятие со склада
+                            $this->transaction($app);
+    
+                        }else {
+                            echo "доработать";
+                            $this->stop();
+                        }
                     }
                 }
-                // $this->stop();
+            }
+            if ( isset($this->post['event_fail']) and $this->post['event_fail']) {
+                // Fail
+                Mixin\delete("visit_bypass_event_applications", $this->pk, "visit_bypass_event_id");
             }
 
             $object = Mixin\update($this->table, $this->post, $this->pk);
@@ -196,7 +235,7 @@ class VisitBypassEventsPanel extends Model
     public function transaction($app)
     {
         global $db, $session;
-        $item = $db->query("SELECT * FROM $this->_warehouse_custom WHERE $this->where ORDER BY item_die_date, item_price")->fetch();
+        $item = $db->query("SELECT * FROM $this->_warehouse_custom WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
         $qty_sold = $item['item_qty'] - $app->item_qty;
         if ($qty_sold > 0) {
             // Update
@@ -208,7 +247,7 @@ class VisitBypassEventsPanel extends Model
                 'user_id' => $this->user,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = $app->item_supplier_id")->fetchColumn(),
+                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = {$item['item_supplier_id']}")->fetchColumn(),
                 'item_qty' => $app->item_qty,
                 'item_cost' => $item['item_price'],
                 'price' => $item['item_price'] * $app->item_qty,
@@ -223,7 +262,7 @@ class VisitBypassEventsPanel extends Model
                 'user_id' => $this->user,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = $app->item_supplier_id")->fetchColumn(),
+                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = {$item['item_supplier_id']}")->fetchColumn(),
                 'item_qty' => $app->item_qty,
                 'item_cost' => $item['item_price'],
                 'price' => $item['item_price'] * $app->item_qty,

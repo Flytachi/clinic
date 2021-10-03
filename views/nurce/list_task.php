@@ -42,7 +42,7 @@ $session->is_auth();
                 <?php
                 $tb = new Table($db, "visit_bypass_events vbe");
                 $tb->set_data("DISTINCT vbe.visit_id, vbe.user_id")->additions("LEFT JOIN visits v ON(vbe.visit_id=v.id)");
-                $tb->where("v.direction IS NOT NULL AND v.completed IS NULL AND v.division_id = $session->session_division AND DATE(vbe.event_start) = CURRENT_DATE() AND vbe.event_completed IS NULL");
+                $tb->where("v.direction IS NOT NULL AND v.completed IS NULL AND v.division_id = $session->session_division AND DATE(vbe.event_start) = CURRENT_DATE() AND vbe.event_completed IS NULL AND vbe.event_fail IS NULL");
                 ?>
                 <?php foreach ($tb->get_table(1) as $row): ?>
                     <tr onclick="Check('<?= viv('nurce/task_bypass') ?>?pk=<?= $row->visit_id ?>')">
@@ -68,7 +68,7 @@ $session->is_auth();
                 <?php
                 $tb = new Table($db, "visit_bypass_events vbe");
                 $tb->set_data("DISTINCT vbe.visit_id, vbe.user_id")->additions("LEFT JOIN visits v ON(vbe.visit_id=v.id)");
-                $tb->where("v.direction IS NOT NULL AND v.completed IS NULL AND v.division_id = $session->session_division AND DATE(vbe.event_start) = CURRENT_DATE() AND vbe.event_completed IS NOT NULL");
+                $tb->where("v.direction IS NOT NULL AND v.completed IS NULL AND v.division_id = $session->session_division AND DATE(vbe.event_start) = CURRENT_DATE() AND (vbe.event_completed IS NOT NULL OR vbe.event_fail IS NOT NULL)");
                 ?>
                 <?php foreach ($tb->get_table(1) as $row): ?>
                     <tr onclick="Check('<?= viv('nurce/task_bypass') ?>?pk=<?= $row->visit_id ?>')">

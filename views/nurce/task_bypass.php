@@ -39,9 +39,13 @@ $visit = (new Table($db, "visits"))->where("id = $pk AND completed IS NULL")->ge
                                             $status = "выполнено";
                                             $color = "success";
                                             $tag = "s";
+                                        }elseif ($row->event_fail) {
+                                            $status = "отменено";
+                                            $color = "secondary";
+                                            $tag = "s";
                                         }else {
                                             $status = "не выполнено";
-                                            $color = "secondary";
+                                            $color = "danger";
                                             $tag = "span";
                                         }
                                         ?>

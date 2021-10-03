@@ -159,7 +159,7 @@ class VisitBypassModel extends Model
                                 <tr class="bg-dark">
                                     <th>Наименование</th>
                                     <th style="width:370px">Производитель</th>
-                                    <th style="width:370px">Поставщик</th>
+                                    <th style="width:370px">Стоимость</th>
                                     <th class="text-center" style="width:150px">На складе</th>
                                     <th style="width:100px">Кол-во</th>
                                     <th class="text-center" style="width:50px">#</th>
@@ -176,7 +176,6 @@ class VisitBypassModel extends Model
             }
 
             $("#search_input_product").keyup(function() {
-                console.log(warehouse);
                 $.ajax({
                     type: "POST",
                     url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
@@ -200,7 +199,7 @@ class VisitBypassModel extends Model
                                 <input type="hidden" name="items[${s}][warehouse_id]" value="${data.warehouse_id}">
                                 <input type="hidden" name="items[${s}][item_name_id]" value="${data.item_name_id}">
                                 <input type="hidden" name="items[${s}][item_manufacturer_id]" value="${data.item_manufacturer_id}">
-                                <input type="hidden" name="items[${s}][item_supplier_id]" value="${data.item_supplier_id}">
+                                <input type="hidden" name="items[${s}][item_price]" value="${data.item_price}">
                                 <input class="form-control" type="text" value="${data.item_name}" readonly style="border-width: 0px 0; padding: 0.2rem 0;">
                                 <div class="form-control-feedback text-danger">
                                     <i class="icon-minus-circle2" onclick="$('#preparat_outside_tr-${s}').remove();"></i>

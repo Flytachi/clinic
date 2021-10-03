@@ -313,6 +313,35 @@ is_module('module_bypass');
 			});
 		}
 
+		function CalendarEventFail(params, calendar_ID) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "VisitBypassEventsPanel",
+					id: params,
+					event_fail: 1,
+				},
+				success: function (result) {
+					if (result == 'success') {
+
+						$("#modal_event_card").modal("hide");
+						bypassElement.style.background = "#546E7A";
+						bypassElement.style.border = "#546E7A";
+
+					}else{
+
+						new Noty({
+							text: result,
+							type: 'error'
+						}).show();
+
+					}
+					bypassElement = null;
+				},
+			});
+		}
+
 		function CalendarEventApplicationDelete(events) {
 			$("#modal_event_card").modal("hide");
 			$.ajax({

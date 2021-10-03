@@ -33,6 +33,7 @@ foreach ($tb->get_table() as $row) {
     if (permission(5)) {
 
         if ($row->event_completed) $arr['color'] = "#009600";
+        elseif ($row->event_fail) $arr['color'] = "#546E7A";
         else{
             if ( $today <= $start ){
                 if ($row->responsible_id == $session->session_id) $arr['color'] = "#039be5";
@@ -44,6 +45,7 @@ foreach ($tb->get_table() as $row) {
     }else{
 
         if ($row->event_completed) $arr['color'] = "#009600";
+        elseif ($row->event_fail) $arr['color'] = "#546E7A";
         else {
             if ( (isset($end) and $start <= $today && $today <= $end) || ( $start == $today ) ) $arr['color'] = "#FF4430";
             else $arr['color'] = "#546E7A";
