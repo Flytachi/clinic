@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth([2,32]);
+$session->is_auth();
 $header = "Отчёт регистратуры по регистрации";
 ?>
 <!DOCTYPE html>
