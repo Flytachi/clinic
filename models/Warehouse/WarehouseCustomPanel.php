@@ -18,7 +18,6 @@ class WarehouseCustomPanel extends Model
             $this->set_post($_POST);
             unset($_POST);
             if ( isset($this->post['search']) and $this->post['search'] ) {
-                if($_GET['form'] == "form") $_GET['form'] = "table";
                 $this->{$_GET['form']}();
 
             }else {
@@ -28,6 +27,11 @@ class WarehouseCustomPanel extends Model
             $this->ajax_control($_POST);
         }
 
+    }
+
+    public function form($pk = null)
+    {
+        dd($this);
     }
 
     public function change_table()

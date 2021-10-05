@@ -41,7 +41,7 @@ is_module('module_pharmacy');
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-puzzle3 mr-2"></i>Расходные материалы
 							<?php if ($activity and permission(7)): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
+								<a onclick='Route(`<?= up_url(null, "WarehouseCustomPanel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -65,9 +65,9 @@ is_module('module_pharmacy');
 										<?php
 										$sql = "SELECT DISTINCT vb.item_name,
 												vb.item_cost,
-												vb.item_cost * (SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND vb.visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost) 'price',
-												(SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND vb.visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
-												(SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND vb.visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost) 'total_count_all'
+												vb.item_cost * (SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost) 'price',
+												(SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()) 'count_every',
+												(SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = vb.visit_id AND visit_bypass_event_id IS NULL AND item_name = vb.item_name AND item_cost = vb.item_cost) 'total_count_all'
 											FROM visit_bypass_transactions vb
 											WHERE vb.visit_id = $patient->visit_id AND vb.visit_bypass_event_id IS NULL";
   									  	$total_total_price = $total_count_every = $total_count_all = 0;
@@ -125,21 +125,28 @@ is_module('module_pharmacy');
 
     <?php if ($activity): ?>
 		<?php if (permission([7])): ?>
-			<div id="modal_add" class="modal fade" tabindex="-1">
-		        <div class="modal-dialog modal-lg">
-		            <div class="modal-content border-3 border-info">
-		                <div class="modal-header bg-info">
-		                    <h5 class="modal-title">Добавить расходный материал</h5>
-		                    <button type="button" class="close" data-dismiss="modal">×</button>
-		                </div>
-
-	                	<?php // (new StorageHomeForm)->form() ?>
-
-		            </div>
-		        </div>
-		    </div>
+			<div id="modal_default" class="modal fade" tabindex="-1">
+				<div class="modal-dialog modal-lg">
+					<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+				</div>
+			</div>
 	    <?php endif; ?>
     <?php endif; ?>
+
+	<script type="text/javascript">
+
+		function Route(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
+
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
