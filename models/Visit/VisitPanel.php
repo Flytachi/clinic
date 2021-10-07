@@ -376,8 +376,9 @@ class VisitPanel extends VisitModel
 
                 <div class="form-group row mb-3">
 
-                    <div class="col-md-6">
-                        <div class="table-responsive">
+                    <div class="col-md-7">
+
+                        <div class="table-responsive mb-2">
                             <table class="table table-hover table-sm table-bordered">
                                 <tbody class="bg-secondary">
                                     <tr>
@@ -397,39 +398,121 @@ class VisitPanel extends VisitModel
                                 </tbody>
                             </table>
                         </div>
+
+                        <div class="form-group">
+                            <label>Направитель:</label>
+                            <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
+                                <option></option>
+                                <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                                    <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Отдел:</label>
+                            <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
+                                <option></option>
+                                <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
+                                    <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Специалиста:</label>
+                            <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
+                                <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
                     </div>
 
-                    <div class="col-md-6">
-                        <label>Направитель:</label>
-                        <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
-                            <option></option>
-                            <?php foreach ($db->query("SELECT * from guides") as $row): ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                    <div class="col-md-5">
 
-                </div>
+                        <?php if( isset($this->order_data) and $this->order_data ): ?>
+                            <div class="<?= $classes['card'] ?>">
 
-                <div class="form-group row">
+                                <div class="<?= $classes['card-header'] ?>">
+                                    <h6 class="card-title">Ордер</h6>
+                                </div>
 
-                    <div class="col-md-6">
-                        <label>Отдел:</label>
-                        <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
-                            <option></option>
-                            <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                                <div class="card-body">
 
-                    <div class="col-md-6">
-                        <label>Специалиста:</label>
-                        <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                            <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                                    <div class="form-group row">
+
+                                        <div class="col-md-6">
+                                            <label>Дата выдачи:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                                </span>
+                                                <input type="date" value="<?= $this->order_data['order_date'] ?>" class="form-control daterange-single" readonly>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label>Номер ордера:</label>
+                                            <input type="number" value="<?= $this->order_data['order_number'] ?>" class="form-control" placeholder="Введите номер ордера" readonly>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Кем выдан:</label>
+                                        <input type="text" value="<?= $this->order_data['order_author'] ?>" class="form-control" placeholder="Введите имя" readonly>
+                                    </div>
+
+                                </div>
+
+                            </div> 
+                        <?php else: ?>
+                            <div class="form-check form-check-switchery form-check-switchery-double">
+                                <label class="form-check-label">
+                                    <input type="checkbox" name="order_status" class="swit" onclick="Checkert(this)">
+                                    Ордер
+                                </label>
+                            </div>
+
+                            <div class="<?= $classes['card'] ?>" id="order_card" style="display:none;">
+
+                                <div class="<?= $classes['card-header'] ?>">
+                                    <h6 class="card-title">Ордер</h6>
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="form-group row">
+
+                                        <div class="col-md-6">
+                                            <label>Дата выдачи:</label>
+                                            <div class="input-group">
+                                                <span class="input-group-prepend">
+                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                                </span>
+                                                <input type="date" name="order[order_date]" class="form-control daterange-single order_inputs" disambled>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label>Номер ордера:</label>
+                                            <input type="number" name="order[order_number]" class="form-control order_inputs" placeholder="Введите номер ордера" disambled>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Кем выдан:</label>
+                                        <input type="text" name="order[order_author]" class="form-control order_inputs" placeholder="Введите имя" disambled>
+                                    </div>
+
+                                </div>
+
+                            </div> 
+                        <?php endif; ?>
+
                     </div>
 
                 </div>
@@ -438,7 +521,7 @@ class VisitPanel extends VisitModel
 
                 <div class="form-group row">
 
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <label>Выбирите здание:</label>
                         <select data-placeholder="Выбрать здание" id="building_id" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
@@ -452,7 +535,7 @@ class VisitPanel extends VisitModel
                         </select>
                     </div>
 
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <label>Выбирите этаж:</label>
                         <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
@@ -468,7 +551,7 @@ class VisitPanel extends VisitModel
                         </select>
                     </div>
 
-                    <div class="col-3">
+                    <div class="col-md-3">
                         <label>Выбирите палату:</label>
                         <select data-placeholder="Выбрать палату" id="ward_id" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
@@ -562,6 +645,7 @@ class VisitPanel extends VisitModel
 
             </script>
         <?php endif; ?>
+        <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <script type="text/javascript">
             $(function(){
                 $("#bed").chained("#ward_id");
@@ -574,6 +658,19 @@ class VisitPanel extends VisitModel
                     document.querySelector("#floor").value = "";
                 }
             });
+
+            function Checkert(event) {
+                if (event.checked) {
+                    $('#order_card').show();
+                    $('.order_inputs').attr("required", true);
+                    $('.order_inputs').attr("disambled", false);
+                } else {
+                    $('#order_card').hide();
+                    $('.order_inputs').attr("required", false);
+                    $('.order_inputs').attr("disambled", true);
+                }
+                $('.order_inputs').val("");
+            }
 
             $('#floor').change(function(){
                 var params = this;

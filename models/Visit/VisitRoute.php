@@ -14,6 +14,7 @@ class VisitRoute extends Model
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
+        $is_order = ($patient->direction) ? null : $patient->order;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -97,7 +98,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         search: this.value,
                         selected: service,
                         types: "1,2",
@@ -118,7 +119,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         selected: service,
                         types: "1,2",
                         cols: 1
@@ -139,6 +140,7 @@ class VisitRoute extends Model
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
+        $is_order = ($patient->direction) ? null : $patient->order;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -221,7 +223,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -242,7 +244,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -263,6 +265,7 @@ class VisitRoute extends Model
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
+        $is_order = ($patient->direction) ? null : $patient->order;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -345,7 +348,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -366,7 +369,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -387,6 +390,7 @@ class VisitRoute extends Model
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
+        $is_order = ($patient->direction) ? null : $patient->order;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -469,7 +473,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -490,7 +494,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -511,6 +515,7 @@ class VisitRoute extends Model
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
+        $is_order = ($patient->direction) ? null : $patient->order;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -585,7 +590,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -607,7 +612,7 @@ class VisitRoute extends Model
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                         selected: service,
                         types: "1",
                         cols: 3,
@@ -628,6 +633,7 @@ class VisitRoute extends Model
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
+        $is_order = ($patient->direction) ? null : $patient->order;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -667,7 +673,7 @@ class VisitRoute extends Model
                     data: { 
                         pk:params.value,
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $patient->order ?>",
+                        is_order: "<?= $is_order ?>",
                     },
                     success: function (result) {
                         $('#div_form').html(result);
@@ -722,8 +728,10 @@ class VisitRoute extends Model
     public function chek_order()
     {
         global $db;
-        if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
-            $this->is_order = True;
+        if(!$this->post['direction']){
+            if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
+                $this->is_order = True;
+            }
         }
     }
 

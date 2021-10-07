@@ -370,6 +370,8 @@ class VisitModel extends Model
                 $sql = "SELECT
                         v.id,
                         v.grant_id,
+                        v.direction,
+                        IFNULL( (SELECT vr.id FROM visit_orders vr WHERE vr.visit_id=v.id), NULL) 'order',
                         IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NOT NULL)), 0) 'balance',
                         IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
                         IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
@@ -385,6 +387,7 @@ class VisitModel extends Model
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";
                 $object = $db->query($sql)->fetch();
+                if ($object['direction'] and $object['order']) $object['cost-beds'] = 0;
                 $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
                 $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
@@ -393,6 +396,8 @@ class VisitModel extends Model
                 $sql = "SELECT
                         v.id,
                         v.grant_id,
+                        v.direction,
+                        IFNULL( (SELECT vr.id FROM visit_orders vr WHERE vr.visit_id=v.id), NULL) 'order',
                         IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL)), 0) 'balance',
                         IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
                         IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
@@ -407,6 +412,7 @@ class VisitModel extends Model
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";
                 $object = $db->query($sql)->fetch();
+                if ($object['direction'] and $object['order']) $object['cost-beds'] = 0;
                 $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
                 $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
