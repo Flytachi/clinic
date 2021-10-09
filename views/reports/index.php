@@ -50,6 +50,13 @@ $header = "Отчёты";
 										<li><a href="<?= viv('reports/cashbox/content_1') ?>">Отчет по платежам</a></li>
 									</ul>
 								</div>
+
+								<div class="mb-3">
+									<h6 class="font-weight-semibold">Врачи</h6>
+									<ul class="list list-unstyled">
+										<li><a href="<?= viv('reports/doctor/content_1') ?>">Отчет по услугам</a></li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>

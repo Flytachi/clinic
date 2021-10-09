@@ -57,7 +57,7 @@ $classes = array(
     "card-header" => "card-header text-dark header-elements-inline alpha-primary",
     "card-filter" => "card border-1 border-violet",
     "card-filter_header" => "card-header text-dark header-elements-inline alpha-violet",
-    "card-filter_btn" => "btn bg-violet btn-sm legitRipple",
+    "card-filter_btn" => "btn btn-outline bg-violet text-violet border-violet btn-sm legitRipple",
     
     // Forms
     "form-select" => "form-control form-control-select2",

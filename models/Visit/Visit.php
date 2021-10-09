@@ -421,9 +421,6 @@ class VisitModel extends Model
         } else {
             return array();
         }
-        
-        
-
     }
 
     public function status_update($user)
