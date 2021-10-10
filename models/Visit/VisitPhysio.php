@@ -172,7 +172,7 @@ class VisitPhysioModel extends Model
     {
         global $db, $session;
         $VisitFinish = new VisitFinish();
-        $VisitFinish->set_post(array('parent_id' => $session->session_id, 'status' => 7, 'completed' => date('Y-m-d H:i:s')));
+        $VisitFinish->set_post(array('parent_id' => $session->session_id, 'status' => 7, 'accept_date' => date('Y-m-d H:i:s'), 'completed' => date('Y-m-d H:i:s')));
         $VisitFinish->update_service($pk);
         $VisitFinish->status_update($db->query("SELECT visit_id FROM $this->_visit_service WHERE id = {$pk}")->fetchColumn());
         $this->success();
