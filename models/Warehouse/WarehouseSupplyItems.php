@@ -5,7 +5,7 @@ class WarehouseSupplyItemsModel extends Model
     public $table = 'warehouse_supply_items';
     public $number = 0;
     public $not_tr = false;
-    public $uniq_key, $is_active;
+    public $uniq_key, $is_order, $is_active;
 
     public function form($pk = null)
     {
@@ -57,17 +57,16 @@ class WarehouseSupplyItemsModel extends Model
             <td>
                 <input type="number" name="item_qty" <?= $status ?> class="form-control verification_input" min="1" placeholder="№" value="<?= $this->value('item_qty') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
-            <td>
-                <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
-            </td>
-            <td>
-                <input id="item_price-<?= $this->number ?>" type="text" name="item_price" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_price')) ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
-            </td>
+            <?php if(!$this->is_order): ?>
+                <td>
+                    <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
+                </td>
+                <td>
+                    <input id="item_price-<?= $this->number ?>" type="text" name="item_price" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_price')) ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
+                </td>
+            <?php endif; ?>
             <td>
                 <input type="text" name="item_faktura" <?= $status ?> class="form-control verification_input" placeholder="Введите № фактуры" value="<?= $this->value('item_faktura') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
-            </td>
-            <td>
-                <input type="text" name="item_shtrih" <?= $status ?> class="form-control verification_input" placeholder="Введите штрих" value="<?= $this->value('item_shtrih') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
             <td>
                 <input type="date" name="item_die_date" <?= $status ?> class="form-control daterange-single verification_input" value="<?= $this->value('item_die_date') ?>" onchange="UpBtn('btn_save-<?= $this->number ?>')">

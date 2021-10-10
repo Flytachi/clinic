@@ -71,7 +71,7 @@ class WarehouseCommonPanel extends Model
                         <?php
                         $max_qty = $applications = 0;
                         $max_qty += $db->query("SELECT SUM(item_qty) FROM $this->table WHERE item_die_date > CURRENT_DATE() AND item_name_id = $row->item_name_id")->fetchColumn();
-                        $applications += $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE item_name_id = $row->item_name_id AND status != 3")->fetchColumn();
+                        $applications += $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE item_name_id = $row->item_name_id AND status IN(1,2)")->fetchColumn();
                         echo $max_qty - $applications;
                         ?>
                     </span>
@@ -235,7 +235,7 @@ class WarehouseCommonPanel extends Model
                         <?php
                         $max_qty = $applications = 0;
                         $max_qty += $db->query("SELECT SUM(item_qty) FROM $this->table WHERE item_die_date > CURRENT_DATE() AND item_name_id = $row->item_name_id")->fetchColumn();
-                        $applications += $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE item_name_id = $row->item_name_id AND status != 3")->fetchColumn();
+                        $applications += $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE item_name_id = $row->item_name_id AND IN(1,2)")->fetchColumn();
                         echo $max_qty - $applications;
                         ?>
                     </span>
@@ -335,7 +335,7 @@ class WarehouseCommonPanel extends Model
 
         $supplier_result = $db->query("SELECT DISTINCT wis.id, wis.supplier FROM $this->table wc LEFT JOIN $this->_suppliers wis ON (wis.id=wc.item_supplier_id) WHERE wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_die_date, wc.item_price")->fetchAll();
         $qty_max = $db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
-        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.item_name_id = {$data['item_name_id']} AND wc.status != 3 $m $s")->fetchColumn();
+        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.item_name_id = {$data['item_name_id']} AND wc.status IN(1,2) $m $s")->fetchColumn();
         $qty = $qty_max - $qty_applications;
         echo json_encode(array('supplier' => $supplier_result, 'max_qty' => $qty));
     }

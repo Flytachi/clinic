@@ -126,6 +126,7 @@ class VisitBypassEventsPanel extends Model
                             if ($this->post['event_end']) echo "от ".date_f($this->post['event_start'], "H:i")." до ".date_f($this->post['event_end'], "H:i");
                             else echo date_f($this->post['event_start'], "H:i");
                             ?>
+                            <br><strong>Назначено:</strong> <?= ($this->post['last_update']) ? date_f($this->post['last_update'], 1) : date_f($this->post['add_date'], 1) ?>
                             <?php if($this->post['event_completed']): ?>
                                 <br><strong>Выполнено:</strong> <?= date_f($this->post['completed_date'], 1) ?>
                             <?php endif; ?>

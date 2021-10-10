@@ -54,7 +54,7 @@ class WarehouseCustomPanel extends Model
                 <td>
                     <select id="manufacturer_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> manufacturers" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
                         <option value="" >Производитель будет выбран автоматически</option>
-                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_die_date ASC, wc.item_price ASC") as $manufacturer): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ") as $manufacturer): ?>
                             <option value="<?= $manufacturer->id ?>" ><?= $manufacturer->manufacturer ?></option>
                         <?php endforeach; ?>
                     </select>

@@ -38,33 +38,34 @@ class WarehouseModel extends Model
 
             <div class="form-group row" id="div_level_change">
 
-            <?php if( $this->value('division') ): ?>
-                <?php if($this->value('level')) $division = json_decode($this->value('division')); ?>
-                <div class="col-md-6">
-                    <label>Отделы:</label>
-                    <select data-placeholder="Выбрать отделы" multiple="multiple" name="division[]" class="<?= $classes['form-multiselect'] ?>">
-                        <?php if(in_array(7, $level)): ?>
-                            <?php $sql = "SELECT * from divisions WHERE level IN (5)"; ?>
-                        <?php else: ?>
-                            <?php $sql = "SELECT * from divisions WHERE level IN ($level_imp)"; ?>
-                        <?php endif; ?>
+                <?php if( $this->value('division') ): ?>
+                    <?php if($this->value('level')) $division = json_decode($this->value('division')); ?>
+                    <div class="col-md-6">
+                        <label>Отделы:</label>
+                        <select data-placeholder="Выбрать отделы" multiple="multiple" name="division[]" class="<?= $classes['form-multiselect'] ?>">
+                            <?php if(in_array(7, $level)): ?>
+                                <?php $sql = "SELECT * from divisions WHERE level IN (5)"; ?>
+                            <?php else: ?>
+                                <?php $sql = "SELECT * from divisions WHERE level IN ($level_imp)"; ?>
+                            <?php endif; ?>
 
-                        <?php foreach($db->query($sql) as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($this->value('division') and in_array($row['id'], $division)) ? 'selected': '' ?>><?= $row['title'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            <?php endif; ?>
-            <?php if( $this->value('parent_id') ): ?>
-                <div class="col-md-6">
-                    <label>Ответственное лицо:</label>
-                    <select data-placeholder="Выберите ответственное лицо" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                        <?php foreach($db->query("SELECT * from users WHERE is_active IS NOT NULL AND user_level IN ($level_imp)") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($this->value('parent_id') == $row['id']) ? 'selected': '' ?>><?= get_full_name($row['id']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            <?php endif; ?>
+                            <?php foreach($db->query($sql) as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ($this->value('division') and in_array($row['id'], $division)) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if( $this->value('parent_id') ): ?>
+                    <div class="col-md-6">
+                        <label>Ответственное лицо:</label>
+                        <select data-placeholder="Выберите ответственное лицо" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
+                            <?php foreach($db->query("SELECT * from users WHERE is_active IS NOT NULL AND user_level IN ($level_imp)") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ($this->value('parent_id') == $row['id']) ? 'selected': '' ?>><?= get_full_name($row['id']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
 
             </div>
 

@@ -3,7 +3,8 @@
 class WarehouseSupplyModel extends Model
 {
     public $table = 'warehouse_supply';
-    public $_warehouse = 'warehouse_common';
+    public $_order = 'warehouse_order';
+    public $_common = 'warehouse_common';
     public $_warehouse_item = 'warehouse_supply_items';
     public $_item_names = 'warehouse_item_names';
 
@@ -35,6 +36,13 @@ class WarehouseSupplyModel extends Model
                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
                         </span>
                         <input type="date" name="supply_date" class="form-control daterange-single" value="<?= $this->value('supply_date') ?>" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="custo" name="is_order" <?= ($this->value('is_order')) ? "checked" : "" ?>>
+                        <label class="custom-control-label" for="custo">Скдлад бесплатных препаратов</label>
                     </div>
                 </div>
 
@@ -76,11 +84,13 @@ class WarehouseSupplyModel extends Model
 
         <div class="card-body">
 
-            <div class="text-right mb-1">
-                <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemManufacturersModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Производитель</button>
-                <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemSuppliersModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Поставщик</button>
-                <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
-            </div>
+            <?php if($is_active): ?>
+                <div class="text-right mb-1">
+                    <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemManufacturersModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Производитель</button>
+                    <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemSuppliersModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Поставщик</button>
+                    <button type="button" onclick="AddItemName('<?= up_url(null, 'WarehouseItemNamesModel') ?>')" class="btn btn-sm btn-outline-primary legitRipple"><i class="icon-plus22 mr-1"></i>Препарат</button>
+                </div>
+            <?php endif; ?>
 
             <div class="table-responsive card">
                 <table class="table table-hover">
@@ -90,10 +100,11 @@ class WarehouseSupplyModel extends Model
                             <th>Производитель</th>
                             <th style="width:200px">Поставщик</th>
                             <th style="width:90px">Кол-во</th>
-                            <th style="width:100px">Ц.приход</th>
-                            <th style="width:100px">Ц.расход</th>
+                            <?php if(!$this->value('is_order')): ?>
+                                <th style="width:100px">Ц.приход</th>
+                                <th style="width:100px">Ц.расход</th>
+                            <?php endif; ?>
                             <th style="width:125px">Счёт фактура</th>
-                            <th style="width:140px">Штрих код</th>
                             <th style="width: 150px">Срок годности</th>
                             <?php if($is_active): ?>
                                 <th class="text-center" style="width: 10px">Действия</th>
@@ -105,6 +116,7 @@ class WarehouseSupplyModel extends Model
                         <?php
                         $rosh = new WarehouseSupplyItemsModel();
                         $rosh->uniq_key = $this->value('uniq_key');
+                        $rosh->is_order = $this->value('is_order');
                         $rosh->is_active = $is_active;
                         
                         // Table
@@ -125,6 +137,8 @@ class WarehouseSupplyModel extends Model
 
             <?php if($this->value('completed')): ?>
                 <div class="text-left">
+                    <span style="font-size: 14px"><b>Склад:</b></span>
+                    <span class="text-primary"><?= ( $this->value('is_order') ) ? "Бесплатный" : "Главный" ?></span><br>
                     <span style="font-size: 14px"><b>Внесено:</b></span>
                     <span class="text-primary"><?= date_f($this->value('completed_date'), 1) ?></span>
                 </div>
@@ -222,7 +236,7 @@ class WarehouseSupplyModel extends Model
                     $.ajax({
                         type: "GET",
                         url: "<?= ajax("warehouse_add") ?>",
-                        data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>" },
+                        data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>", is_order: "<?= $this->value('is_order') ?>" },
                         success: function (result) {
                             $('#table_body').append(result);
                             FormLayouts.init();
@@ -459,9 +473,9 @@ class WarehouseSupplyModel extends Model
 
     public function clean()
     {
-        if (!$this->post['id']) {
-            $this->post['uniq_key'] = uniqid('supply-');
-        }
+        if (!$this->post['id']) $this->post['uniq_key'] = uniqid('supply-');
+        if ( isset($this->post['is_order']) and $this->post['is_order'] == 'on' ) $this->post['is_order'] = 1;
+        else $this->post['is_order'] = null;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -509,12 +523,27 @@ class WarehouseSupplyModel extends Model
     public function warehouse_change($pk)
     {
         global $db;
-        $uniq = $db->query("SELECT uniq_key FROM $this->table WHERE id = $pk")->fetchColumn();
-        foreach ($db->query("SELECT * FROM $this->_warehouse_item WHERE uniq_key = '$uniq'") as $item) {
+        unset($this->post['is_order']);
+        $data = $db->query("SELECT uniq_key, is_order FROM $this->table WHERE id = $pk")->fetch();
+        foreach ($db->query("SELECT * FROM $this->_warehouse_item WHERE uniq_key = '{$data['uniq_key']}'") as $item) {
+            $where = "item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']} AND item_supplier_id = {$item['item_supplier_id']}";
+            unset($item['id']);
             unset($item['uniq_key']);
             unset($item['item_cost']);
             unset($item['item_faktura']);
-            $object = Mixin\insert($this->_warehouse, $item);
+            if ($data['is_order']) {
+                unset($item['item_price']);
+                $where .= " AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
+                $obj = $db->query("SELECT id, item_qty FROM $this->_order WHERE $where")->fetch();
+                if ($obj) $object = Mixin\update($this->_order, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
+                else $object = Mixin\insert($this->_order, $item);
+            } else {
+                $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
+                $obj = $db->query("SELECT id, item_qty FROM $this->_common WHERE $where")->fetch();
+                if ($obj) $object = Mixin\update($this->_common, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
+                else $object = Mixin\insert($this->_common, $item);
+            }
+            
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();

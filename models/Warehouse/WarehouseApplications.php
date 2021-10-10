@@ -160,21 +160,25 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
                             );
                             Mixin\insert($this->_common_transactions, $transaction_post);
     
-                            // Warehouse common add
-                            $custom_post = array(
-                                'warehouse_id' => $this->post['warehouse_id'],
-                                'item_name_id' => $item['item_name_id'],
-                                'item_manufacturer_id' => $item['item_manufacturer_id'],
-                                'item_supplier_id' => $item['item_supplier_id'],
-                                'item_qty' => $qty,
-                                'item_price' => $item['item_price'],
-                                'item_shtrih' => $item['item_shtrih'],
-                                'item_die_date' => $item['item_die_date'],
-                            );
-                            Mixin\insert($this->_custom, $custom_post);
-    
+                            // Warehouse custom add
+                            $where = "warehouse_id = {$this->post['warehouse_id']} AND item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']} AND item_supplier_id = {$item['item_supplier_id']}";
+                            $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
+                            $obj = $db->query("SELECT id, item_qty FROM $this->_custom WHERE $where")->fetch();
+                            if ($obj) Mixin\update($this->_custom, array('item_qty' => $obj['item_qty']+$qty), $obj['id']);
+                            else{
+                                $custom_post = array(
+                                    'warehouse_id' => $this->post['warehouse_id'],
+                                    'item_name_id' => $item['item_name_id'],
+                                    'item_manufacturer_id' => $item['item_manufacturer_id'],
+                                    'item_supplier_id' => $item['item_supplier_id'],
+                                    'item_qty' => $qty,
+                                    'item_price' => $item['item_price'],
+                                    'item_die_date' => $item['item_die_date'],
+                                );
+                                Mixin\insert($this->_custom, $custom_post);
+                                unset($custom_post);
+                            }
                             unset($transaction_post);
-                            unset($custom_post);
                             
                         }else {
                             $db->rollBack();

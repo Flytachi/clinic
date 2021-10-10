@@ -5,6 +5,7 @@ $session->is_auth();
 $form = new WarehouseSupplyItemsModel();
 $form->number = $_GET['number'];
 $form->uniq_key = $_GET['uniq_key'];
+$form->is_order = $_GET['is_order'];
 $form->is_active = true;
 
 if (isset($_GET['id'])) {
