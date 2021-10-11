@@ -57,7 +57,7 @@ class __Base
 class __Seed
 {
     protected String $name;
-    private String $path = "extra/Data/ci"; 
+    private String $path = "tools/ci"; 
     private String $format = "json"; 
     private Array $json = array();
 

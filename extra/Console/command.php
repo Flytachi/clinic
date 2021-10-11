@@ -3,7 +3,7 @@ require_once 'make.php';
 
 /**
  * CMD
- */
+ **/
 class __Make
 {
     private $argument;
@@ -47,23 +47,16 @@ class __Make
 
     public function create_storage()
     {
-        // $result = exec("mkdir storage && mkdir storage/documents && chmod -R 777 storage && echo 1");
-        if (exec("mkdir storage && echo 1")) {
-            echo "\033[32m"." => Директория storage создана.\n";
+        require_once dirname(__DIR__, 2).'/tools/variables.php';
+        if (exec("mkdir storage && echo 1")) echo "\033[32m"." => Директория storage создана.\n";
+        // storage
+        if ( isset($storage) ) {
+            foreach ($storage as $folder) {
+                if (exec("mkdir storage/$folder && echo 1")) echo "\033[32m"." => Директория storage/$folder создана.\n";
+            }
         }
-        if (exec("mkdir storage/documents && echo 1")) {
-            echo "\033[32m"." => Директория storage/documents создана.\n";
-        }
-        if (exec("mkdir storage/avatars && echo 1")) {
-            echo "\033[32m"." => Директория storage/avatars создана.\n";
-        }
-        if (exec("mkdir storage/images && echo 1")) {
-            echo "\033[32m"." => Директория storage/images создана.\n";
-        }
-        if (exec("chmod -R 777 storage && echo 1")) {
-            echo "\033[32m"." Права на запись установлены.\n";
-        }
-        
+
+        if (exec("chmod -R 777 storage && echo 1")) echo "\033[32m"." Права на запись установлены.\n";
         return 1;
     }
 
@@ -135,7 +128,7 @@ class __Cfg
     private $cfg_name = ".cfg";
     private $default_configuratuons = array(
         'MASTER_IPS' => array(
-            "127.0.0.1"
+            ""
         ),
         'SECURITY' => array(
             'SERIA' => null,
@@ -283,10 +276,7 @@ class __Install
 {
     private $argument;
     private $name;
-    private $git_links = array(
-        "https://github.com/PHPOffice/PHPExcel.git" => "libs/PHPExcel",
-        "https://github.com/t0k4rt/phpqrcode.git" => "libs/QRcode",
-    );
+    private $path = "libs";
 
     function __construct($value = null, $name = null)
     {
@@ -312,8 +302,9 @@ class __Install
             if ($this->argument == "npm") {
                 echo exec("npm install");
             }elseif($this->argument == "git") {
-                foreach ($this->git_links as $link => $path) {
-                    echo exec("git clone $link $path");
+                require_once dirname(__DIR__, 2).'/tools/variables.php';
+                foreach ($git_links as $link => $folder) {
+                    echo exec("git clone $link $this->path/$folder");
                 }
             }
 
@@ -333,17 +324,13 @@ class __Install
 class __Db
 {
     private $argument;
-    private String $path = "extra/Data/database"; 
-    private String $path_seed = "extra/Data/ci"; 
+    private String $path = "tools/db"; 
+    private String $path_seed = "tools/ci"; 
     private String $format = "json"; 
     private String $file_name = "database";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
     private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
-    private Array $MUL = array(
-        'beds' => '`building_id` (`building_id`,`floor`,`ward_id`,`bed`)' ,
-        'wards' => '`building_id` (`building_id`,`floor`,`ward`)',
-        'international_classification_diseases' => '`code` (`code`)',
-    );
+
 
     function __construct($value = null, $name = null)
     {
@@ -440,6 +427,7 @@ class __Db
     {
         global $db, $ini;
         require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/tools/variables.php';
 
         $json = array();
         $i = 0;
@@ -481,8 +469,10 @@ class __Db
                         $keys .=",";
                         break;
                     case "MUL":
-                        $keys .= "UNIQUE KEY {$this->MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
-                        $keys .=",";
+                        if ( isset($MUL) ) {
+                            $keys .= "UNIQUE KEY {$MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
+                            $keys .=",";
+                        }
                         break;
                 }
 
