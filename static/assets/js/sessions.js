@@ -49,7 +49,6 @@ function warningInactive() {
 }
 
 function resetTimer() {
-    window.clearTimeout(timeoutTimerID);
     window.clearTimeout(warningTimerID);
     startTimer();
 }

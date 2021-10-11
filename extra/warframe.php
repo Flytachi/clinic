@@ -6,6 +6,7 @@ ini_set("session.gc_probability", ($ini['GLOBAL_SETTING']['SESSION_GC_PROBABILIT
 ini_set("session.gc_divisor", ($ini['GLOBAL_SETTING']['SESSION_GC_DIVISOR']) ? $ini['GLOBAL_SETTING']['SESSION_GC_DIVISOR'] : 1000);
 ini_set('session.gc_maxlifetime', ($ini['GLOBAL_SETTING']['SESSION_LIFE']) ? $ini['GLOBAL_SETTING']['SESSION_LIFE'] * 60 : 1800);
 ini_set('session.cookie_lifetime', ($ini['GLOBAL_SETTING']['SESSION_COOKIE_LIFETIME']) ? $ini['GLOBAL_SETTING']['SESSION_COOKIE_LIFETIME'] * 60 : 0);
+ini_set('session.save_path', dirname(__DIR__)."/sessions");
 
 if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
     define('ROOT_DIR', "/".basename(dirname(__DIR__)));

@@ -2,6 +2,7 @@ dump
 libs/*
 !libs/*.php
 node_modules
+sessions
 storage
 tests
 setting.ini

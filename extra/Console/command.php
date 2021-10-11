@@ -31,6 +31,8 @@ class __Make
             $this->create_storage();
         }elseif ($this->argument == "dump") {
             $this->create_dump();
+        }elseif ($this->argument == "sessions") {
+            $this->create_sessions();
         }else {
 
             try {
@@ -63,9 +65,14 @@ class __Make
     public function create_dump()
     {
         $result = exec("mkdir dump && chmod 777 dump && echo 1");
-        if ($result) {
-            echo "\033[32m"." Директория dump создана.\n";
-        }
+        if ($result) echo "\033[32m"." Директория dump создана.\n";
+        return 1;
+    }
+
+    public function create_sessions()
+    {
+        $result = exec("mkdir sessions && chmod 777 sessions && echo 1");
+        if ($result) echo "\033[32m"." Директория sessions создана.\n";
         return 1;
     }
 
