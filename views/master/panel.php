@@ -281,6 +281,16 @@ $header = "Панель управления";
 
 												<!-- Card -->
 												<tr>
+													<th>Card Stationar Doctor Journal Edit</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_journal_edit" <?= (isset($config->constant_card_stationar_journal_edit) and $config->constant_card_stationar_journal_edit) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Card Stationar Doctor Button (not grant)</th>
 													<td class="text-right">
 														<div class="list-icons">

@@ -18,17 +18,6 @@ function is_grant(Int $id = null)
 
 $operation = (new Table($db, "visit_operations"))->where("id = {$_GET['pk']}")->order_by('add_date ASC')->get_row();
 $patient = json_decode($_GET['patient']);
-// dd($patient);
-// dd($operation);
-// $sql = "SELECT
-//             op.id 'pk', op.user_id 'id', vs.id 'visit_id', vs.grant_id, op.oper_date,
-//             vs.accept_date, vs.direction, vs.add_date, vs.discharge_date,
-//             vs.complaint, op.completed, op.item_id, op.item_name, op.item_cost
-//         FROM visit_operations op
-//             LEFT JOIN visits vs ON (vs.id = op.visit_id)
-//         WHERE op.id = {$_GET['pk']}";
-
-// $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
 $total_opetrator_price = $total_service_price = $total_preparats_price = $total_other_price = 0;
 $get_data = "&visit_id=$operation->visit_id";

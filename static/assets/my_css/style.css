@@ -10,6 +10,15 @@
     filter: blur(15px);
 } */
 
+
+.listbock {
+    overflow-y: scroll; /* Добавляем полосы прокрутки */
+    width: 100%; /* Ширина блока */
+    height: 550px; /* Высота блока */
+    padding: 7px; /* Поля вокруг текста */
+    border: solid 1.7px black; /* Параметры рамки */
+}
+
 .siya {
     animation: pulsate 3.5s linear infinite;
     text-align: center;
