@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Ошибка - 505</title>
     <!-- Global stylesheets -->
-    <link rel="shortcut icon" href="<?= stack("assets/images/logo.ico") ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
 	<link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
     <link href="/static/global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
     <link href="/static/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">

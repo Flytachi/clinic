@@ -11,7 +11,7 @@ $session->is_auth();
 	<title>Ошибка - 423</title>
 
 	<!-- Global stylesheets -->
-	<link rel="shortcut icon" href="<?= stack("assets/images/logo.ico") ?>" type="image/x-icon">
+	<link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
 	<link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">

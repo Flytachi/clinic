@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Ошибка соединения</title>
     <!-- Global stylesheets -->
-    <link rel="shortcut icon" href="/static/assets/images/logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/assets/images/logo.png" type="image/x-icon">
 	<link href="/static/assets/fonts/font.css" rel="stylesheet" type="text/css">
     <link href="/static/global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
     <link href="/static/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">

@@ -53,26 +53,10 @@ require_once dirname(__FILE__).'/functions/table.php';
 require_once dirname(__FILE__).'/functions/tag.php';
 require_once dirname(__DIR__).'/libs/lib.php';
 
-// Engineering works
 
-if ( isset($ini['GLOBAL_SETTING']['ENGINEERING_WORKS']) and $ini['GLOBAL_SETTING']['ENGINEERING_WORKS'] ) {
-
-    if ( empty($work_url) ) {
-        Mixin\error("engineering_work");
-    }
-
-}else{
-
-    if ( isset($work_url) ) {
-        index();
-    }
-
-}
-
-// END Engineering works
 function showTitle() //Функция title
 {
-    return "MedLine";
+    return "Med24Line";
 }
 
 function get_full_name($id = null) {
