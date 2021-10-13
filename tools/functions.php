@@ -156,7 +156,7 @@ function division_name($id = null) {
 function division_title($id = null) {
     global $db;
     try{
-        $stmt = $db->query("SELECT title FROM divisions WHERE id =".division($id))->fetchColumn();
+        $stmt = $db->query("SELECT title FROM divisions WHERE id =".(int) division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;
@@ -167,7 +167,7 @@ function division_title($id = null) {
 function division_assist($id = null) {
     global $db;
     try{
-        $stmt = $db->query("SELECT assist FROM divisions WHERE id =".division($id))->fetchColumn();
+        $stmt = $db->query("SELECT assist FROM divisions WHERE id =".(int) division($id))->fetchColumn();
     }
     catch (PDOException $ex) {
         $stmt = null;

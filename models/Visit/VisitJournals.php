@@ -106,7 +106,7 @@ class VisitJournalsModel extends Model
                                             <span onclick="ChangeRecord(${data.pk})" class="col-md-1 text-right"><i class="icon icon-pencil"></i></span>
                                         <?php endif; ?>
                                     </div>
-                                    <footer class="blockquote-footer"><?= get_full_name($row->responsible_id) ?>, <cite title="Source Title">${date}</cite></footer>
+                                    <footer class="blockquote-footer"><?= get_full_name($session->session_id) ?>, <cite title="Source Title">${date}</cite></footer>
                                 </blockquote>
                                 `);
                                 document.querySelector("#input_id").value = "";
