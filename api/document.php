@@ -8,6 +8,7 @@ try {
     foreach ($data['get'] as $key => $value) $_GET[$key] = $value;
     include "../prints/{$data['url']}.php";
 } catch (\Throwable $e) {
-    Mixin\error('403');
+    dd($e);
+    // Mixin\error('403');
 }
 ?>
