@@ -2,7 +2,7 @@
 include '../tools/warframe.php';
 
 try {
-    $url = sodium_hex2bin($_GET['code']);
+    $url = hex2bin($_GET['code']);
     unset($_GET['code']);
     $data = url_to_array($url);
     foreach ($data['get'] as $key => $value) $_GET[$key] = $value;
