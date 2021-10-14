@@ -110,6 +110,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         </div>
 
+        <div class="btn_panel text-center">
+            <button class="btn btn-sm" onclick="print();">Печать</button>
+        </div>
+
     </body>
 
 </html>

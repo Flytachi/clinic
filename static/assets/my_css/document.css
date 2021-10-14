@@ -10,6 +10,10 @@ body{
         height: 297mm;
         width: 210mm;
     }
+
+    .btn_panel{
+        display: none;
+    }
 }
 
 @page {
