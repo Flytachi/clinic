@@ -1,7 +1,7 @@
 <?php
 require_once '../tools/warframe.php';
 
-$code = sodium_bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
+$code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
 $qr = $_SERVER['HTTP_HOST']."/api/document?code=$code";
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
