@@ -59,8 +59,20 @@ $header = "Настройки";
 										<div class="form-group row">
 
 											<div class="col-6">
-												<label class="col-form-label font-weight-bold">Кол-во блоков:</label>
-												<input type="number" min="1" max="3" name="constant_print_document_blocks" value="<?= config("print_document_blocks") ?>" placeholder="Введите кол-во блоков" class="form-control">
+
+												<div class="form-group">
+													<label class="col-form-label font-weight-bold">Кол-во блоков:</label>
+													<input type="number" min="1" max="3" name="constant_print_document_blocks" value="<?= config("print_document_blocks") ?>" placeholder="Введите кол-во блоков" class="form-control">
+												</div>
+												<div class="form-group row">
+													<div class="col-2">
+														QRcode
+													</div>
+													<div class="col-6">
+														<input type="checkbox" class="swit" name="constant_print_document_qrcode" <?= ( config("print_document_qrcode") ) ? 'checked': '' ?>>
+													</div>
+												</div>
+
 											</div>
 
 											<div class="col-6">

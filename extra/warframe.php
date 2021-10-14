@@ -202,6 +202,28 @@ function minToStr($mins)
     return $res;
 }
 
+// GET vs URL 
+function url_to_array(string $url)
+{
+    $code = explode('?', $url);
+    $result = array('url' => $code[0], 'get' => []);
+    foreach (explode('&', $code[1]) as $param) {
+        if ($param) {
+            $value = explode('=', $param);
+            $result['get'][$value[0]] = $value[1];
+        }
+    }
+    return $result;
+}
+
+function array_to_url(array $get)
+{
+    $str = "?";
+    foreach ($get as $key => $value) $str .= "$key=$value&";
+    return substr($str,0,-1);
+}
+//
+
 // Подключение Моделей
 foreach (get_dir_contents(dirname(__DIR__)."/models/") as $filename) {
     require_once $filename;

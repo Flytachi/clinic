@@ -1,6 +1,5 @@
 <?php
 require_once '../tools/warframe.php';
-$session->is_auth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
