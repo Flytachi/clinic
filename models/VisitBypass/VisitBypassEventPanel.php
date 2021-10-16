@@ -4,6 +4,7 @@ class VisitBypassEventsPanel extends Model
 {
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';
+    public $_warehouse_order = 'warehouse_orders';
     public $_warehouse_custom = 'warehouse_custom';
     public $_bypass_transactions = 'visit_bypass_transactions';
     public $_event_applications = 'visit_bypass_event_applications';
@@ -75,7 +76,7 @@ class VisitBypassEventsPanel extends Model
 
                                 <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                                     <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= ($item->warehouse_id == "order") ? "Бесплатный склад" : (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
                                         <?php if($status): ?>
                                             <?php $ap = $db->query("SELECT wim.manufacturer, vbea.item_price FROM visit_bypass_event_applications vbea LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=vbea.item_manufacturer_id) WHERE vbea.visit_bypass_event_id = $pk AND vbea.item_name_id = $item->item_name_id AND vbea.item_qty = $item->item_qty")->fetch() ?>
                                             <span class="text-muted"><b>Производитель: </b><?= $ap['manufacturer'] ?> <b>Стоимость: </b><?= number_format($ap['item_price']) ?></span>
@@ -89,7 +90,8 @@ class VisitBypassEventsPanel extends Model
 
                                 <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                                     <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(склад <?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> 
+                                        <span class="text-muted">(склад <?= ($item->warehouse_id == "order") ? "Бесплатный склад" : (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
                                     <?php else: ?>
                                         <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
                                     <?php endif; ?>
@@ -204,8 +206,14 @@ class VisitBypassEventsPanel extends Model
                     $this->visit = $data->visit_id;
                     $this->user = $data->user_id;
                     foreach ($applications->get_table() as $app) {
-                        $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
-                        $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
+                        if ($app->warehouse_order) {
+                            $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id";
+                            $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_order WHERE $this->where")->fetchColumn();
+                        } else {
+                            $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
+                            $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
+                        }
+                        
                         if ($app->item_qty <= $max_qty) {
                             // Взятие со склада
                             $this->transaction($app);
@@ -236,8 +244,13 @@ class VisitBypassEventsPanel extends Model
     public function transaction($app)
     {
         global $db, $session;
-        $item = $db->query("SELECT * FROM $this->_warehouse_custom WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
-        $qty_sold = $item['item_qty'] - $app->item_qty;
+        if ($app->warehouse_order) {
+            $item = $db->query("SELECT * FROM $this->_warehouse_order WHERE $this->where ORDER BY item_die_date ASC")->fetch();
+            $qty_sold = $item['item_qty'] - $app->item_qty;
+        } else {
+            $item = $db->query("SELECT * FROM $this->_warehouse_custom WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
+            $qty_sold = $item['item_qty'] - $app->item_qty;
+        }
         if ($qty_sold > 0) {
             // Update
             Mixin\update($this->_warehouse_custom, array('item_qty' => $qty_sold), $item['id']);
@@ -250,8 +263,8 @@ class VisitBypassEventsPanel extends Model
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = {$item['item_supplier_id']}")->fetchColumn(),
                 'item_qty' => $app->item_qty,
-                'item_cost' => $item['item_price'],
-                'price' => $item['item_price'] * $app->item_qty,
+                'item_cost' => ($app->warehouse_order) ? 0 : $item['item_price'],
+                'price' => ($app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
             ));
 
         }elseif ($qty_sold == 0) {
@@ -265,8 +278,8 @@ class VisitBypassEventsPanel extends Model
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = {$item['item_supplier_id']}")->fetchColumn(),
                 'item_qty' => $app->item_qty,
-                'item_cost' => $item['item_price'],
-                'price' => $item['item_price'] * $app->item_qty,
+                'item_cost' => ($app->warehouse_order) ? 0 : $item['item_price'],
+                'price' => ($app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
             ));
 
         }else{

@@ -91,9 +91,11 @@ class VisitBypassModel extends Model
                 
                 </div>
 
-                <?php
-                dd($this->order);
-                ?>
+                <?php if($this->order): ?>
+                    <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                        <li class="nav-item"><a href="#" onclick="ChangeWare('order')" class="nav-link legitRipple" data-toggle="tab">Склад бесплатных препаратов</a></li>
+                    </ul>
+                <?php endif; ?>
 
                 <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = {$this->visit['division_id']} AND w.is_active IS NOT NULL")->get_table() ): ?>
 
@@ -155,44 +157,86 @@ class VisitBypassModel extends Model
                 }else{
                     document.querySelector("#search_input_product").value = ""; 
                 }
-                document.querySelector("#bypass_search_area").innerHTML = `
-                <div class="form-group" id="search_area">
 
-                    <div class="table-responsive">
-                        <table class="table table-hover table-sm">
-                            <thead>
-                                <tr class="bg-dark">
-                                    <th>Наименование</th>
-                                    <th style="width:370px">Производитель</th>
-                                    <th style="width:370px">Стоимость</th>
-                                    <th class="text-center" style="width:150px">На складе</th>
-                                    <th style="width:100px">Кол-во</th>
-                                    <th class="text-center" style="width:50px">#</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table_form">
+                if (params == "order") {
+                    var table = `
+                    <div class="form-group" id="search_area">
 
-                            </tbody>
-                        </table>
-                    </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr class="bg-dark">
+                                        <th>Наименование</th>
+                                        <th style="width:370px">Производитель</th>
+                                        <th class="text-center" style="width:150px">На складе</th>
+                                        <th style="width:100px">Кол-во</th>
+                                        <th class="text-center" style="width:50px">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table_form">
 
-                </div>`;
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>`;
+                } else {
+                    var table = `
+                    <div class="form-group" id="search_area">
+
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr class="bg-dark">
+                                        <th>Наименование</th>
+                                        <th style="width:370px">Производитель</th>
+                                        <th style="width:370px">Стоимость</th>
+                                        <th class="text-center" style="width:150px">На складе</th>
+                                        <th style="width:100px">Кол-во</th>
+                                        <th class="text-center" style="width:50px">#</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table_form">
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>`;
+                }
+                
+                document.querySelector("#bypass_search_area").innerHTML = table;
                 warehouse = params;
             }
 
             $("#search_input_product").keyup(function() {
-                $.ajax({
-                    type: "POST",
-                    url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
-                    data: {
-                        warehouse_id: warehouse,
-                        search: this.value,
-                    },
-                    success: function (result) {
-                        
-                        $('#table_form').html(result);
-                    },
-                });
+
+                if (warehouse == "order") {
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= up_url(1, 'WarehouseOrderPanel', 'change_table') ?>",
+                        data: {
+                            search: this.value,
+                        },
+                        success: function (result) {
+                            
+                            $('#table_form').html(result);
+                        },
+                    });
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
+                        data: {
+                            warehouse_id: warehouse,
+                            search: this.value,
+                        },
+                        success: function (result) {
+                            
+                            $('#table_form').html(result);
+                        },
+                    });
+                }
             });
 
             function AddPreparat(data) {

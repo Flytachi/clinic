@@ -3,7 +3,7 @@
 class WarehouseSupplyModel extends Model
 {
     public $table = 'warehouse_supply';
-    public $_order = 'warehouse_order';
+    public $_order = 'warehouse_orders';
     public $_common = 'warehouse_common';
     public $_warehouse_item = 'warehouse_supply_items';
     public $_item_names = 'warehouse_item_names';
