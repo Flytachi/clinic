@@ -76,7 +76,7 @@ class VisitBypassEventsPanel extends Model
 
                                 <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                                     <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
                                         <?php if($status): ?>
                                             <?php $ap = $db->query("SELECT wim.manufacturer, vbea.item_price FROM visit_bypass_event_applications vbea LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=vbea.item_manufacturer_id) WHERE vbea.visit_bypass_event_id = $pk AND vbea.item_name_id = $item->item_name_id AND vbea.item_qty = $item->item_qty")->fetch() ?>
                                             <span class="text-muted"><b>Производитель: </b><?= $ap['manufacturer'] ?> <b>Стоимость: </b><?= number_format($ap['item_price']) ?></span>
@@ -91,7 +91,7 @@ class VisitBypassEventsPanel extends Model
                                 <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                                     <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
                                         <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> 
-                                        <span class="text-muted">(склад <?= ($item->warehouse_id == "order") ? "Бесплатный склад" : (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
                                     <?php else: ?>
                                         <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
                                     <?php endif; ?>
