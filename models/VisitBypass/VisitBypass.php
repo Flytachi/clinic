@@ -91,57 +91,39 @@ class VisitBypassModel extends Model
                 
                 </div>
 
-                <?php if($this->order): ?>
-                    <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                    <?php if($this->order): ?>
                         <li class="nav-item"><a href="#" onclick="ChangeWare('order')" class="nav-link legitRipple" data-toggle="tab">Склад бесплатных препаратов</a></li>
-                    </ul>
-                <?php endif; ?>
-
-                <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = {$this->visit['division_id']} AND w.is_active IS NOT NULL")->get_table() ): ?>
-
-                    <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+                    <?php endif; ?>
+                    <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = {$this->visit['division_id']} AND w.is_active IS NOT NULL")->get_table() ): ?>
                         <?php foreach ($ware_sett as $ware): ?>
                             <li class="nav-item"><a href="#" onclick="ChangeWare(<?= $ware->id ?>)" class="nav-link legitRipple" data-toggle="tab"><?= $ware->name ?></a></li>
                         <?php endforeach; ?>
-                    </ul>
+                    <?php endif; ?>
+                </ul>
 
-                    <div class="form-group-feedback form-group-feedback-right row">
+                <div class="form-group-feedback form-group-feedback-right row">
 
-                        <div class="col-md-10">
-                            <div id="bypass_search_input" style="display:none;">
-                                <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
-                                <div class="form-control-feedback">
-                                    <i class="icon-search4 font-size-base text-muted"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                                    <span class="ladda-label">Сохранить</span>
-                                    <span class="ladda-spinner"></span>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group" id="bypass_search_area"></div>
-
-                <?php else: ?>
-
-                    <div class="form-group-feedback form-group-feedback-right row">
-                        <div class="col-md-12">
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                                    <span class="ladda-label">Сохранить</span>
-                                    <span class="ladda-spinner"></span>
-                                </button>
+                    <div class="col-md-10">
+                        <div id="bypass_search_input" style="display:none;">
+                            <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
+                            <div class="form-control-feedback">
+                                <i class="icon-search4 font-size-base text-muted"></i>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-2">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>
+                        </div>
+                    </div>
 
-                <?php endif; ?>
+                </div>
+
+                <div class="form-group" id="bypass_search_area"></div>
 
             </div>
 
