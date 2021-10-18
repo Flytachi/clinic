@@ -116,7 +116,7 @@
                             <?php
                             $icd_attr = "";
                             if ( $activity and (!$patient->direction or ($patient->direction and is_grant())) ) {
-                                $icd_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitModel", "form_icd")."`)' class=\"text-primary\"";
+                                $icd_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitIcdHistoryModel")."`)' class=\"text-primary\"";
                             }
                             ?>
                             <label class="col-md-3"><b>ICD (диагноз):</b></label>

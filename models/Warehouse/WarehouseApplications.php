@@ -107,7 +107,6 @@ class WarehouseApplications extends WarehouseApplicationsModel
 }
 
 
-
 class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
 {
     public $_common_transactions = 'warehouse_common_transactions';

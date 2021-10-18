@@ -216,7 +216,9 @@ class VisitBypassEventsPanel extends Model
                         
                         if ($app->item_qty <= $max_qty) {
                             // Взятие со склада
-                            $this->transaction($app);
+                            echo "Улучшить функцию брони! 19.10.2021";
+                            $this->stop();
+                            // $this->transaction($app);
     
                         }else {
                             echo "доработать";
