@@ -71,62 +71,7 @@ $header = "Визиты";
 
 								<div class="col-md-3">
 									<label>Пациент:</label>
-									<select name="user_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите пациента</option>
-										<?php foreach ($db->query("SELECT * from users WHERE user_level = 15") as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label>Отдел:</label>
-									<select id="division" name="division_id" class="<?= $classes['form-select'] ?>">
-									   <option value="">Выберите отдел</option>
-									   <optgroup label="Врачи">
-				                           <?php foreach ($db->query("SELECT * from division WHERE level = 5") as $row): ?>
-				                               <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-				                           <?php endforeach; ?>
-				                       </optgroup>
-				                       <optgroup label="Диогностика">
-										   <?php foreach ($db->query("SELECT * from division WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
-											   <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-										   <?php endforeach; ?>
-				                       </optgroup>
-				                       <optgroup label="Лаборатория">
-				                           <?php foreach ($db->query("SELECT * from division WHERE level = 6") as $row): ?>
-				                               <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-				                           <?php endforeach; ?>
-				                       </optgroup>
-				                       <optgroup label="Остальные">
-				                           <?php foreach ($db->query("SELECT * from division WHERE level IN (12, 13) AND (assist IS NULL OR assist = 1)") as $row): ?>
-				                               <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-				                           <?php endforeach; ?>
-				                       </optgroup>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label>Услуга:</label>
-									<select id="service" name="service_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите услугу</option>
-										<?php foreach ($db->query("SELECT * from service WHERE 1") as $row): ?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['service_id']) and $_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-							</div>
-
-							<div class="from-group row">
-
-								<div class="col-md-3">
-									<label>Тип визита:</label>
-									<select class="<?= $classes['form-select'] ?>" name="direction">
-				                        <option value="">Выберите тип визита</option>
-										<option value="1" <?= ( isset($_POST['direction']) and $_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
-										<option value="2" <?= ( isset($_POST['direction']) and $_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
-				                    </select>
+									<input type="number" class="form-control" name="user_id" value="<?= (isset($_POST['user_id'])) ? $_POST['user_id'] : '' ?>">
 								</div>
 
 							</div>
@@ -155,15 +100,6 @@ $header = "Визиты";
 					}
 					if ( isset($_POST['user_id']) and $_POST['user_id']) {
 						$sql .= " AND vs.user_id = {$_POST['user_id']}";
-					}
-					if ( isset($_POST['division_id']) and $_POST['division_id']) {
-						$sql .= " AND vs.division_id = {$_POST['division_id']}";
-					}
-					if ( isset($_POST['service_id']) and $_POST['service_id']) {
-						$sql .= " AND vs.service_id = {$_POST['service_id']}";
-					}
-					if ( isset($_POST['direction']) and $_POST['direction']) {
-						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
 					}
 					?>
 					<div class="<?= $classes['card'] ?>">
