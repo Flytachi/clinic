@@ -162,13 +162,13 @@
                                     <?php if($side_warehouse['parent_id'] == $session->session_id): ?>
 
                                         <div class="ml-auto">
-                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.item_supplier_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
+                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
                                             <?php if($side): ?>
                                                 <span class="badge bg-teal align-self-center"><?= $side ?></span>
                                             <?php endif; ?>
                                             <?php unset($side); ?>
     
-                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.item_supplier_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
+                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
                                             <?php if($side): ?>
                                                 <span class="badge bg-orange align-self-center"><?= $side ?></span>
                                             <?php endif; ?>
@@ -177,7 +177,7 @@
 
                                     <?php else: ?>
 
-                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.item_supplier_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
+                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
                                         <?php if($side): ?>
                                             <span class="badge bg-teal align-self-center ml-auto"><?= $side ?></span>
                                         <?php endif; ?>

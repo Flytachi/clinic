@@ -6,7 +6,7 @@ $is_parent = $_GET['is_parent'];
 
 $tb = new Table($db, "warehouse_applications wa");
 $search = $tb->get_serch();
-$tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.item_supplier_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
+$tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
 if ($is_parent) {
 	$where_search = array(
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3", 
@@ -33,7 +33,6 @@ $tb->set_self(viv('warehouse/application'));
                 <?php endif; ?>
                 <th>Наименование</th>
                 <th style="width:250px">Производитель</th>
-                <th style="width:250px">Поставщик</th>
                 <th style="width:200px">Дата заяки</th>
                 <th class="text-right" style="width:100px">Кол-во</th>
                 <th class="text-center">Статус</th>
@@ -51,13 +50,6 @@ $tb->set_self(viv('warehouse/application'));
                     <td>
                         <?php if($row->item_manufacturer_id): ?>
                             <span><?= $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $row->item_manufacturer_id")->fetchColumn() ?></span>
-                        <?php else: ?>
-                            <span class="text-muted">Нет данных</span>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if($row->item_supplier_id): ?>
-                            <span><?= $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = $row->item_supplier_id")->fetchColumn() ?></span>
                         <?php else: ?>
                             <span class="text-muted">Нет данных</span>
                         <?php endif; ?>

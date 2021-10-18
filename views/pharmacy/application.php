@@ -113,15 +113,14 @@ $header = "Заявки";
 			});
 		}
 
-		function ApplicationShow(Ware, appId, appManufacturerId = null, appSupplierId = null) {
+		function ApplicationShow(Ware, appId, appManufacturerId = null) {
 			$.ajax({
 				type: "GET",
 				url: "<?= up_url(null, "WarehouseApplicationsPanel", "application") ?>",
 				data: { 
 					id: Ware,
 					item_name_id: appId,
-					item_manufacturer_id: appManufacturerId,
-					item_supplier_id: appSupplierId
+					item_manufacturer_id: appManufacturerId
 				},
 				success: function (result) {
 					$('#modal_default').modal('show');

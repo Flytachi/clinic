@@ -29,7 +29,6 @@ class WarehouseApplicationsModel extends Model
                         <tr class="bg-dark">
                             <th>Наименование</th>
                             <th style="width:370px">Производитель</th>
-                            <th style="width:370px">Поставщик</th>
                             <th class="text-center" style="width:150px">На складе</th>
                             <th style="width:100px">Кол-во</th>
                             <th class="text-center" style="width:50px">#</th>
@@ -143,7 +142,8 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
                         if ( $item = $db->query("SELECT * FROM $this->_common WHERE id = $id")->fetch() ) {
     
                             // Warehouse common delete
-                            Mixin\update($this->_common, array('item_qty' => ($item['item_qty']-$qty)), $id);
+                            if ($item['item_qty']-$qty == 0) Mixin\delete($this->_common, $id);
+                            else Mixin\update($this->_common, array('item_qty' => ($item['item_qty']-$qty)), $id);
     
                             // Create transaction
                             $transaction_post = array(
@@ -151,7 +151,6 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
                                 'item_id' => $id,
                                 'item_name' => $this->names[$item['item_name_id']],
                                 'item_manufacturer' => $this->manufacturers[$item['item_manufacturer_id']],
-                                'item_supplier' => $this->suppliers[$item['item_supplier_id']],
                                 'item_qty' => -$qty,
                                 'item_price' => $item['item_price'],
                                 'tran_status' => 1,
@@ -161,7 +160,7 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
                             Mixin\insert($this->_common_transactions, $transaction_post);
     
                             // Warehouse custom add
-                            $where = "warehouse_id = {$this->post['warehouse_id']} AND item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']} AND item_supplier_id = {$item['item_supplier_id']}";
+                            $where = "warehouse_id = {$this->post['warehouse_id']} AND item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']}";
                             $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
                             $obj = $db->query("SELECT id, item_qty FROM $this->_custom WHERE $where")->fetch();
                             if ($obj) Mixin\update($this->_custom, array('item_qty' => $obj['item_qty']+$qty), $obj['id']);
@@ -170,7 +169,6 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
                                     'warehouse_id' => $this->post['warehouse_id'],
                                     'item_name_id' => $item['item_name_id'],
                                     'item_manufacturer_id' => $item['item_manufacturer_id'],
-                                    'item_supplier_id' => $item['item_supplier_id'],
                                     'item_qty' => $qty,
                                     'item_price' => $item['item_price'],
                                     'item_die_date' => $item['item_die_date'],
@@ -199,9 +197,8 @@ class WarehouseApplicationsCompleted extends WarehouseApplicationsModel
         $this->names = $this->manufacturers = $this->suppliers = [];
         foreach ($db->query("SELECT id, name FROM warehouse_item_names")->fetchAll() as $n) $this->names[$n['id']] = $n['name'];
         foreach ($db->query("SELECT id, manufacturer FROM warehouse_item_manufacturers")->fetchAll() as $n) $this->manufacturers[$n['id']] = $n['manufacturer'];
-        foreach ($db->query("SELECT id, supplier FROM warehouse_item_suppliers")->fetchAll() as $n) $this->suppliers[$n['id']] = $n['supplier'];
     }
 
 }
-        
+
 ?>

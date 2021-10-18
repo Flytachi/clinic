@@ -69,6 +69,7 @@ $classes = array(
     // "btn-completed" => "btn btn-outline bg-purple text-purple border-purple btn-sm legitRipple",
     "btn-icd" => "btn btn-outline bg-pink text-pink border-pink btn-sm legitRipple",
     "btn-completed" => "btn btn-outline-danger btn-sm legitRipple",
+    "btn-journal" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-price" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-viewing" => "btn btn-outline-primary btn-sm legitRipple",

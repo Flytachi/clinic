@@ -526,11 +526,12 @@ class WarehouseSupplyModel extends Model
         unset($this->post['is_order']);
         $data = $db->query("SELECT uniq_key, is_order FROM $this->table WHERE id = $pk")->fetch();
         foreach ($db->query("SELECT * FROM $this->_warehouse_item WHERE uniq_key = '{$data['uniq_key']}'") as $item) {
-            $where = "item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']} AND item_supplier_id = {$item['item_supplier_id']}";
+            $where = "item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']}";
             unset($item['id']);
             unset($item['uniq_key']);
             unset($item['item_cost']);
             unset($item['item_faktura']);
+            unset($item['item_supplier_id']);
             if ($data['is_order']) {
                 unset($item['item_price']);
                 $where .= " AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";

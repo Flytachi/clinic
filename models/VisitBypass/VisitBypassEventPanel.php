@@ -261,7 +261,6 @@ class VisitBypassEventsPanel extends Model
                 'user_id' => $this->user,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = {$item['item_supplier_id']}")->fetchColumn(),
                 'item_qty' => $app->item_qty,
                 'item_cost' => ($app->warehouse_order) ? 0 : $item['item_price'],
                 'price' => ($app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
@@ -276,7 +275,6 @@ class VisitBypassEventsPanel extends Model
                 'user_id' => $this->user,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_supplier' => $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id = {$item['item_supplier_id']}")->fetchColumn(),
                 'item_qty' => $app->item_qty,
                 'item_cost' => ($app->warehouse_order) ? 0 : $item['item_price'],
                 'price' => ($app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
@@ -284,8 +282,8 @@ class VisitBypassEventsPanel extends Model
 
         }else{
             // Convert
-            dd("convert");
-            exit;
+            echo "convert";
+            $this->stop();
 
         }
         // Удаляем бронь

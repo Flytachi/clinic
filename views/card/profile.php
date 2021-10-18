@@ -348,7 +348,8 @@
 
                 <div class="col-md-12">
                     <div class="text-right">
-                        <button onclick="Check_kwin('<?= viv('doctor/report-2') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>">Выписка</button>
+                        <button onclick="Check_kwin('<?= viv('card/journal') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-journal'] ?>"><i class="icon-book mr-1"></i> Дневник</button>
+                        <button onclick="Check_kwin('<?= viv('doctor/report-2') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>"><i class="icon-paste2 mr-1"></i> Выписка</button>
                     </div>
                 </div>
 

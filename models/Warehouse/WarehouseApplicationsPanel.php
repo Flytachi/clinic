@@ -36,8 +36,8 @@ class WarehouseApplicationsPanel extends Model
 
                 <?php
                 $tb = new Table($db, $this->_applications);
-                $tb->set_data('DISTINCT  item_name_id, item_manufacturer_id, item_supplier_id');
-                $tb->where("warehouse_id = $pk AND status = 2")->order_by("item_manufacturer_id DESC, item_supplier_id DESC");
+                $tb->set_data('DISTINCT  item_name_id, item_manufacturer_id');
+                $tb->where("warehouse_id = $pk AND status = 2")->order_by("item_manufacturer_id DESC");
                 ?>
                 
                 <div class="table-responsive card">
@@ -47,22 +47,19 @@ class WarehouseApplicationsPanel extends Model
                                 <th style="width: 50px">#</th>
                                 <th>Наименование</th>
                                 <th style="width:250px">Производитель</th>
-                                <th style="width:250px">Поставщик</th>
                                 <th class="text-right" style="width:100px">Кол-во</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($tb->get_table(1) as $row): ?>
-                                <tr onclick="ApplicationShow(<?= $pk ?>, <?= $row->item_name_id ?>, <?= ($row->item_manufacturer_id) ? $row->item_manufacturer_id : '\'\''; ?>, <?= ($row->item_supplier_id) ? $row->item_supplier_id : '\'\''; ?>)">
+                                <tr onclick="ApplicationShow(<?= $pk ?>, <?= $row->item_name_id ?>, <?= ($row->item_manufacturer_id) ? $row->item_manufacturer_id : '\'\''; ?>)">
                                     <td><?= $row->count ?></td>
                                     <td><?= $db->query("SELECT name FROM $this->_item_names WHERE id = $row->item_name_id")->fetchColumn() ?></td>
                                     <td><?= ($row->item_manufacturer_id) ? $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = $row->item_manufacturer_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
-                                    <td><?= ($row->item_supplier_id) ? $db->query("SELECT supplier FROM $this->_item_suppliers WHERE id = $row->item_supplier_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
                                     <td class="text-right"> 
                                         <?php
                                         $m = ($row->item_manufacturer_id) ? "AND item_manufacturer_id = $row->item_manufacturer_id" : "AND item_manufacturer_id IS NULL";
-                                        $s = ($row->item_supplier_id) ? "AND item_supplier_id = $row->item_supplier_id" : "AND item_supplier_id IS NULL";
-                                        echo number_format($db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = $row->item_name_id $m $s")->fetchColumn());
+                                        echo number_format($db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = $row->item_name_id $m")->fetchColumn());
                                         ?>
                                     </td>
                                 </tr>
@@ -88,16 +85,9 @@ class WarehouseApplicationsPanel extends Model
             $m_first = "AND item_manufacturer_id IS NULL";
             $m_second = null;
         }
-        if ($_GET['item_supplier_id']) {
-            $s_first = "AND item_supplier_id = {$_GET['item_supplier_id']}";
-            $s_second = "AND item_supplier_id = {$_GET['item_supplier_id']}";
-        }else {
-            $s_first = "AND item_supplier_id IS NULL";
-            $s_second = null;
-        }
 
         $tb = new Table($db, $this->_common);
-        $tb->where("item_name_id = {$_GET['item_name_id']} $m_second $s_second")->order_by("item_die_date ASC");
+        $tb->where("item_name_id = {$_GET['item_name_id']} $m_second")->order_by("item_die_date ASC");
         if ($products = $tb->get_table()) {
             $indicator = "secondary";
             $indicator_feed = "success";
@@ -129,13 +119,12 @@ class WarehouseApplicationsPanel extends Model
                         <div class="list-feed-item border-<?= $indicator_feed ?>">
                             <strong>Данные: </strong><br>
                             Производитель - <?= ($_GET['item_manufacturer_id']) ? $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = {$_GET['item_manufacturer_id']}")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?><br>
-                            Поставщик - <?= ($_GET['item_supplier_id']) ? $db->query("SELECT supplier FROM $this->_item_suppliers WHERE id = {$_GET['item_supplier_id']}")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?>
                         </div>
     
                         <div class="list-feed-item border-<?= $indicator ?>" id="indicator-feed">
                             <strong>Требуемое кол-во: </strong>
                             <span id="item_qty_required" style="font-size:15px;" class="ml-1">
-                                <?= number_format($db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = {$_GET['item_name_id']} $m_first $s_first")->fetchColumn());
+                                <?= number_format($db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = {$_GET['item_name_id']} $m_first")->fetchColumn());
                                 ?>
                             </span> / <span id="item_qty_count">0</span>
                         </div>
@@ -145,7 +134,7 @@ class WarehouseApplicationsPanel extends Model
     
                 <?php if($products): ?>
 
-                    <?php foreach ($db->query("SELECT id FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = {$_GET['item_name_id']} $m_first $s_first")->fetchAll() as $app): ?>
+                    <?php foreach ($db->query("SELECT id FROM $this->_applications WHERE warehouse_id = $pk AND status = 2 AND item_name_id = {$_GET['item_name_id']} $m_first")->fetchAll() as $app): ?>
                         <input type="hidden" name="applications[]" value="<?= $app['id'] ?>">
                     <?php endforeach; ?>
 
@@ -157,7 +146,6 @@ class WarehouseApplicationsPanel extends Model
                                 <tr class="<?= $classes['table-thead'] ?>">
                                     <th style="width:150px">Срок годности</th>
                                     <th>Производитель</th>
-                                    <th>Поставщик</th>
                                     <th class="text-right" style="width:100px">Кол-во</th>
                                     <th class="text-right" style="width:100px">Расход</th>
                                 </tr>
@@ -167,7 +155,6 @@ class WarehouseApplicationsPanel extends Model
                                     <tr>
                                         <td><?= ($row->item_die_date) ? date_f($row->item_die_date) : '<span class="text-muted">Нет данных</span>' ?></td>
                                         <td><?= ($row->item_manufacturer_id) ? $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = $row->item_manufacturer_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
-                                        <td><?= ($row->item_supplier_id) ? $db->query("SELECT supplier FROM $this->_item_suppliers WHERE id = $row->item_supplier_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
                                         <td class="text-right"><?= number_format($row->item_qty) ?></td>
                                         <td>
                                             <input type="number" class="form-control text-right input_count-qty" name="item[<?= $row->id ?>]" min="0" max="<?= $row->item_qty ?>" style="border-width: 0px 0; padding: 0.2rem 0;">
