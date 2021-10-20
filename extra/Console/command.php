@@ -31,8 +31,6 @@ class __Make
             $this->create_storage();
         }elseif ($this->argument == "dump") {
             $this->create_dump();
-        }elseif ($this->argument == "sessions") {
-            $this->create_sessions();
         }else {
 
             try {
@@ -66,13 +64,6 @@ class __Make
     {
         $result = exec("mkdir dump && chmod 777 dump && echo 1");
         if ($result) echo "\033[32m"." Директория dump создана.\n";
-        return 1;
-    }
-
-    public function create_sessions()
-    {
-        $result = exec("mkdir sessions && chmod 777 sessions && echo 1");
-        if ($result) echo "\033[32m"." Директория sessions создана.\n";
         return 1;
     }
 
@@ -276,11 +267,11 @@ class __Cfg
 
 }
 
-class __Install
+class __Session
 {
     private $argument;
     private $name;
-    private $path = "libs";
+    private $path = "sessions";
 
     function __construct($value = null, $name = null)
     {
@@ -300,22 +291,25 @@ class __Install
 
     private function resolution()
     {
-
-        try {
-
-            if ($this->argument == "npm") {
-                echo exec("npm install");
-            }elseif($this->argument == "git") {
-                require_once dirname(__DIR__, 2).'/tools/variables.php';
-                foreach ($git_links as $link => $folder) {
-                    echo exec("git clone $link $this->path/$folder");
-                }
+        if ($this->argument == "create") {
+            $result = exec("mkdir $this->path && chmod 777 $this->path && echo 1");
+            if ($result) echo "\033[32m"." Директория sessions создана.\n";
+            return 1;
+        }elseif($this->argument == "flush") {
+            $path = dirname(__DIR__,2)."/$this->path";
+            foreach (array_diff(scandir($path), array('..', '.')) as $file) {
+                unlink("$path/$file");
             }
 
-        } catch (\Error $e) {
+            require_once dirname(__DIR__).'/functions/connection.php';
+            $life_session = $ini['GLOBAL_SETTING']['SESSION_LIFE'] + 5;
+            $stmt = $db->prepare("DELETE FROM sessions WHERE last_update + INTERVAL $life_session MINUTE < CURRENT_TIMESTAMP()");
+            $stmt->execute();
+            echo "\033[32m"." Сессии успешно очищены.\n";
+
+        }else{
             echo "\033[31m"." Не такого аргумента.\n";
         }
-
     }
 
     public function help()
@@ -543,6 +537,55 @@ class __Db
     public function help()
     {
         echo "\033[33m"." Help in create.\n";
+    }
+
+}
+
+class __Install
+{
+    private $argument;
+    private $name;
+    private $path = "libs";
+
+    function __construct($value = null, $name = null)
+    {
+        $this->argument = $value;
+        $this->name = $name;
+        $this->handle();
+    }
+
+    public function handle()
+    {
+        if (!is_null($this->argument)) {
+            $this->resolution();
+        }else {
+            $this->help();
+        }
+    }
+
+    private function resolution()
+    {
+
+        try {
+
+            if ($this->argument == "npm") {
+                echo exec("npm install");
+            }elseif($this->argument == "git") {
+                require_once dirname(__DIR__, 2).'/tools/variables.php';
+                foreach ($git_links as $link => $folder) {
+                    echo exec("git clone $link $this->path/$folder");
+                }
+            }
+
+        } catch (\Error $e) {
+            echo "\033[31m"." Не такого аргумента.\n";
+        }
+
+    }
+
+    public function help()
+    {
+        echo "\033[33m"." Help in install.\n";
     }
 
 }
