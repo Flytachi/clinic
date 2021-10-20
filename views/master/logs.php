@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth('master');
+$session->is_auth();
 $header = "Логи";
 ?>
 <!DOCTYPE html>
@@ -37,6 +37,7 @@ $header = "Логи";
 				// 	Mixin\update('visit', array('report' => $report), $value['id']);
 				// 	// dd($report);
 				// }
+				dd(ini_get('session.hash_function'));
 				dd($_SERVER['HTTP_USER_AGENT']);
 				?>
 				<?php parad("_COOKIE ",$_COOKIE); ?>

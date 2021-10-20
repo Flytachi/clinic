@@ -145,11 +145,8 @@ class __Cfg
             'CHARSET' => 'utf8', 
             'TIME_ZONE' => 'Asia/Samarkand', 
 
-            'SESSION_GC_DIVISOR' => 100, 
-            'SESSION_GC_PROBABILITY' => 0, 
             'SESSION_TIMEOUT' => null, 
-            'SESSION_LIFE' => null, 
-            'SESSION_COOKIE_LIFETIME' => null, 
+            'SESSION_LIFE' => null,
 
             'ENGINEERING_WORKS' => false, 
             'HIDE_EXTENSION' => false, 

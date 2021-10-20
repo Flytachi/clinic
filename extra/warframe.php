@@ -2,10 +2,16 @@
 require_once 'functions/connection.php';
 
 // Settings mod
-ini_set("session.gc_probability", ($ini['GLOBAL_SETTING']['SESSION_GC_PROBABILITY']) ? $ini['GLOBAL_SETTING']['SESSION_GC_PROBABILITY'] : 0);
-ini_set("session.gc_divisor", ($ini['GLOBAL_SETTING']['SESSION_GC_DIVISOR']) ? $ini['GLOBAL_SETTING']['SESSION_GC_DIVISOR'] : 1000);
-ini_set('session.gc_maxlifetime', ($ini['GLOBAL_SETTING']['SESSION_LIFE']) ? $ini['GLOBAL_SETTING']['SESSION_LIFE'] * 60 : 1800);
-ini_set('session.cookie_lifetime', ($ini['GLOBAL_SETTING']['SESSION_COOKIE_LIFETIME']) ? $ini['GLOBAL_SETTING']['SESSION_COOKIE_LIFETIME'] * 60 : 0);
+ini_set('session.cookie_lifetime', 0);
+ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.cookie_samesite', "SameSite");
+ini_set('session.cache_limiter', "nocache");
+ini_set('session.use_trans_sid', 0);
+ini_set('session.sid_length', 48);
+ini_set('session.sid_bits_per_character', 7);
+ini_set('session.hash_function', "sha512");
+
 ini_set('session.save_path', dirname(__DIR__)."/sessions");
 
 if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
