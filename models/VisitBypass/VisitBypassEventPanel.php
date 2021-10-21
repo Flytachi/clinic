@@ -54,7 +54,7 @@ class VisitBypassEventsPanel extends Model
             }
 
         }
-        $status = $db->query("SELECT id FROM visit_bypass_event_applications WHERE visit_bypass_event_id = $pk")->rowCount();
+        $status = $db->query("SELECT id FROM $this->_event_applications WHERE visit_bypass_event_id = $pk")->rowCount();
         ?>
         <div class="modal-header bg-<?= $color ?>">
             <h6 class="modal-title">Назначение <?= date_f($this->post['event_start']) ?></h6>
@@ -74,17 +74,30 @@ class VisitBypassEventsPanel extends Model
                             <strong>Препараты:</strong>
                             <?php if(permission(7)): ?>
 
-                                <?php foreach (json_decode($this->bypass['items']) as $item): ?>
-                                    <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
-                                        <?php if($status): ?>
-                                            <?php $ap = $db->query("SELECT wim.manufacturer, vbea.item_price FROM visit_bypass_event_applications vbea LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=vbea.item_manufacturer_id) WHERE vbea.visit_bypass_event_id = $pk AND vbea.item_name_id = $item->item_name_id AND vbea.item_qty = $item->item_qty")->fetch() ?>
-                                            <span class="text-muted"><b>Производитель: </b><?= $ap['manufacturer'] ?> <b>Стоимость: </b><?= number_format($ap['item_price']) ?></span>
+                                <?php if($status): ?>
+
+                                    <?php foreach ($db->query("SELECT * FROM $this->_event_applications WHERE visit_bypass_event_id = $pk")->fetchAll(PDO::FETCH_OBJ) as $item): ?>
+                                        <li>
+                                            <span class="text-primary"><?= $item->item_qty ?> шт.</span> 
+                                            <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> 
+                                            <span class="text-warning"><?= (new Table($db, "warehouse_item_manufacturers"))->where("id = $item->item_manufacturer_id")->get_row()->manufacturer ?></span>
+                                            <span><?= number_format($item->item_price) ?></span> 
+                                            <span class="text-muted">(<?= ($item->warehouse_order) ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span>
+
+                                        </li>
+                                    <?php endforeach; ?>
+
+                                <?php else: ?>
+
+                                    <?php foreach (json_decode($this->bypass['items']) as $item): ?>
+                                        <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
+                                            <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <?php else: ?>
+                                            <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
                                         <?php endif; ?>
-                                    <?php else: ?>
-                                        <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
+                                    <?php endforeach; ?>
+
+                                <?php endif; ?>
 
                             <?php else: ?>
 
@@ -216,12 +229,10 @@ class VisitBypassEventsPanel extends Model
                         
                         if ($app->item_qty <= $max_qty) {
                             // Взятие со склада
-                            echo "Улучшить функцию брони! 19.10.2021";
-                            $this->stop();
-                            // $this->transaction($app);
+                            $this->transaction($app);
     
                         }else {
-                            echo "доработать";
+                            $this->error("Критическая ошибка");
                             $this->stop();
                         }
                     }
@@ -284,9 +295,8 @@ class VisitBypassEventsPanel extends Model
 
         }else{
             // Convert
-            echo "convert";
+            $this->error("Ошибка при работе со складом");
             $this->stop();
-
         }
         // Удаляем бронь
         Mixin\delete($this->_event_applications, $app->id);

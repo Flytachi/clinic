@@ -88,6 +88,28 @@ if (!isset($_GET['type'])) {
 
     </div>
 
+    <div class="col-md-5">
+
+        <legend class="font-weight-semibold text-uppercase font-size-sm">
+            <i class="icon-file-text mr-2"></i>Протокол операции
+        </legend>
+
+        <div class="card">
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <tbody>
+                        <tr onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationJournalsModel').$get_data ?>')">
+                            <td>Протокол</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
 <!-- ==> 2 Stage <== -->
 
     <!-- Service -->
