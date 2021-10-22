@@ -123,14 +123,12 @@ is_module('module_pharmacy');
 	</div>
 	<!-- /page content -->
 
-    <?php if ($activity): ?>
-		<?php if (permission([7])): ?>
-			<div id="modal_default" class="modal fade" tabindex="-1">
-				<div class="modal-dialog modal-lg">
-					<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
-				</div>
+    <?php if ($activity and permission([7])): ?>
+		<div id="modal_default" class="modal fade" tabindex="-1">
+			<div class="modal-dialog modal-full">
+				<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 			</div>
-	    <?php endif; ?>
+		</div>
     <?php endif; ?>
 
 	<script type="text/javascript">

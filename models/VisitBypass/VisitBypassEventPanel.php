@@ -223,7 +223,7 @@ class VisitBypassEventsPanel extends Model
                             $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id";
                             $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_order WHERE $this->where")->fetchColumn();
                         } else {
-                            $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
+                            $this->where = "warehouse_id = $app->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
                             $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
                         }
                         
@@ -257,16 +257,18 @@ class VisitBypassEventsPanel extends Model
     public function transaction($app)
     {
         global $db, $session;
-        if ($app->warehouse_order) {
-            $item = $db->query("SELECT * FROM $this->_warehouse_order WHERE $this->where ORDER BY item_die_date ASC")->fetch();
+        if (isset($app->warehouse_order) and $app->warehouse_order) {
+            $table = $this->_warehouse_order;
+            $item = $db->query("SELECT * FROM $table WHERE $this->where ORDER BY item_die_date ASC")->fetch();
             $qty_sold = $item['item_qty'] - $app->item_qty;
         } else {
-            $item = $db->query("SELECT * FROM $this->_warehouse_custom WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
+            $table = $this->_warehouse_custom;
+            $item = $db->query("SELECT * FROM $table WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
             $qty_sold = $item['item_qty'] - $app->item_qty;
         }
         if ($qty_sold > 0) {
             // Update
-            Mixin\update($this->_warehouse_custom, array('item_qty' => $qty_sold), $item['id']);
+            Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
@@ -275,22 +277,23 @@ class VisitBypassEventsPanel extends Model
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,
-                'item_cost' => ($app->warehouse_order) ? 0 : $item['item_price'],
-                'price' => ($app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
+                'item_cost' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : $item['item_price'],
+                'price' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
             ));
 
         }elseif ($qty_sold == 0) {
             // Delete
-            Mixin\delete($this->_warehouse_custom, $item['id']);
+            Mixin\delete($table, $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
+                'responsible_id' => $session->session_id,
                 'user_id' => $this->user,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,
-                'item_cost' => ($app->warehouse_order) ? 0 : $item['item_price'],
-                'price' => ($app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
+                'item_cost' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : $item['item_price'],
+                'price' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
             ));
 
         }else{

@@ -212,6 +212,7 @@ class VisitBypassModel extends Model
                         data: {
                             warehouse_id: warehouse,
                             search: this.value,
+                            default: 1,
                         },
                         success: function (result) {
                             
@@ -220,6 +221,38 @@ class VisitBypassModel extends Model
                     });
                 }
             });
+
+            function SelectProduct(btn, index) {
+                btn.disabled = true;
+
+                if (warehouse == "order") {
+                    var data = {
+                        warehouse_id: 'order',
+                        item_name: document.querySelector('#name_input_'+index).innerHTML,
+                        item_name_id: document.querySelector('#name_id_input_'+index).value,
+                        item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
+                        item_price: 0,
+                        item_qty: document.querySelector('#qty_input_'+index).value,
+                    };
+                } else {
+                    var data = {
+                        warehouse_id: warehouse,
+                        item_name: document.querySelector('#name_input_'+index).innerHTML,
+                        item_name_id: document.querySelector('#name_id_input_'+index).value,
+                        item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
+                        item_price: document.querySelector('#price_id_input_'+index).value,
+                        item_qty: document.querySelector('#qty_input_'+index).value,
+                    };
+                }
+
+                AddPreparat(data);
+
+                $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
+                $(`#Item_${index}`).css("color", "black");
+                $(`#Item_${index}`).fadeOut(900, function() {
+                    $(this).remove();
+                });
+            }
 
             function AddPreparat(data) {
                 if(data){
