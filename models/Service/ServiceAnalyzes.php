@@ -86,9 +86,9 @@ class ServiceAnalyzesModel extends Model
     public function error($message)
     {
         $_SESSION['message'] = '
-        <div class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
+        <div class="alert bg-danger alert-styled-left alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
+            <span class="font-weight-semibold"> Введены некорректные данные!</span>
         </div>
         ';
         render();

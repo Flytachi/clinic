@@ -226,7 +226,7 @@ class ServiceModel extends Model
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
             <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
+            <span class="font-weight-semibold"> Введены некорректные данные!</span>
         </div>
         ';
         render();
