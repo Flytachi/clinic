@@ -354,6 +354,8 @@ class __Db
                 $this->generate();
             }elseif($this->argument == "migrate") {
                 $this->migrate();
+            }elseif($this->argument == "compare"){
+                $this->compare();
             }elseif($this->argument == "clean") {
                 $this->clean_table = ($this->file_name == "database") ? null : $this->file_name;
                 $this->clean();
@@ -531,6 +533,79 @@ class __Db
 
         echo "\033[32m"." Данные успешно внесены.\n";
         return 1;
+    }
+
+    public function compare()
+    {
+        global $db, $ini;
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/tools/variables.php';
+        $i = 0;
+
+        $self_base=$migrate_base=[];
+        foreach ($db->query("SHOW TABlES") as $table) {
+            $i++;
+            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
+            $column = "";
+            $keys = "";
+
+            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
+                $column .= "`{$col['Field']}` {$col['Type']}";
+
+                if ($col['Null'] == "YES") {
+                    $column .= " DEFAULT";
+                    if (is_null($col['Default'])) {
+                        $column .= " NULL";
+                    }else {
+                        $column .= " ".$col['Default'];
+                    }
+                }else {
+                    $column .= " NOT NULL";
+                    if ($col['Default']) {
+                        $column .= " DEFAULT ".$col['Default'];
+                    }
+                }
+
+                if ($col['Extra']) {
+                    $column .= " ".strtoupper($col['Extra']);
+                }
+
+                switch ($col['Key']) {
+                    case "PRI":
+                        $keys .= "PRIMARY KEY (`{$col['Field']}`)";
+                        $keys .=",";
+                        break;
+                    case "UNI":
+                        $keys .= "UNIQUE KEY `{$col['Field']}` (`{$col['Field']}`)";
+                        $keys .=",";
+                        break;
+                    case "MUL":
+                        if ( isset($MUL) ) {
+                            $keys .= "UNIQUE KEY {$MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
+                            $keys .=",";
+                        }
+                        break;
+                }
+
+                $column .= ",";
+                unset($col);
+            }
+            $column_keys = substr($column.$keys,0,-1);
+
+            $sql .= $column_keys.")";
+            $sql .= $this->DB_FOOTER.";";
+            unset($column);
+            unset($keys);
+            $self_base[]= $sql;
+        }
+
+        foreach (glob(dirname(__DIR__, 2)."/$this->path_base/*.$this->format") as $path) {
+            $migrate_base[] = json_decode(file_get_contents($path), 1);
+        }
+
+        if ($diff = array_diff($self_base, $migrate_base)) {
+            print_r($diff);
+        }
     }
 
     public function help()
