@@ -721,6 +721,7 @@ class VisitRoute extends Model
     {
         global $db;
         $this->visit_pk = $this->post['visit_id'];
+        Mixin\update($this->_visits, array('last_update' => date("Y-m-d H:i:s")), $this->visit_pk);
         $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
         $this->chek_order();
     }

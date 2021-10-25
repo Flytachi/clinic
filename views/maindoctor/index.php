@@ -7,11 +7,6 @@ $header = "Рабочий стол";
 <html lang="en">
 <?php include layout('head') ?>
 
-<!-- Theme JS files -->
-<script src="<?= stack("global_assets/js/demo_pages/widgets_stats.js") ?>"></script>
-<script src="<?= stack("vendors/js/jquery.chained.js") ?>"></script>
-<!-- /theme JS files -->
-
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -36,9 +31,9 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-                <?php include 'bars/bar_1.php'; ?>
-
-				<?php include 'bars/bar_2.php'; ?>
+                <?php include 'bars/objects.php'; ?>
+				<?php include 'bars/patients.php'; ?>
+				<?php include 'bars/divisions.php'; ?>
 
 			</div>
             <!-- /content area -->

@@ -3,14 +3,14 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Журнал";
 
-$tb = new Table($db, "visits vs");
-$tb->set_data('vs.id, vs.user_id, vs.add_date, us.region, us.address_residence, us.phone_number, vss.service_report, vs.completed, vs.grant_id');
+$tb = new Table($db, "visits v");
+$tb->set_data('v.id, v.parad_id, v.user_id, v.icd_id, v.icd_autor, v.add_date, us.region, us.address_residence, us.phone_number, v.completed, v.grant_id');
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.direction IS NOT NULL", 
-	"vs.direction IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"v.direction IS NOT NULL", 
+	"v.direction IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions('LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_services vss ON(vss.visit_id=vs.id AND vss.service_id = 1)')->where_or_serch($search_array)->order_by('vs.add_date ASC')->set_limit(20);
+$tb->additions('LEFT JOIN users us ON(us.id=v.user_id)')->where_or_serch($search_array)->order_by('v.add_date ASC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,7 +73,6 @@ $tb->additions('LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_services
                                         <th>ФИО</th>
                                         <th>Адресс</th>
                                         <th>Телефон</th>
-                                        <th>Номер визита</th>
                                         <th>Диагноз</th>
                                         <th>Отдел</th>
                                         <th>Дата выписки</th>
@@ -82,16 +81,24 @@ $tb->additions('LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_services
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table(1) as $row): ?>
-										<tr>
-                                            <td><?= $row->count ?></td>
+									<?php foreach($tb->get_table() as $row): ?>
+										<tr>	
+                                            <td><?= $row->parad_id ?></td>
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td><?= date_f($row->add_date, 1) ?></td>
                                             <td><?= get_full_name($row->user_id) ?></td>
                                             <td>г. <?= $row->region." ".$row->address_residence ?></td>
                                             <td><?= $row->phone_number ?></td>
-                                            <td><?= $row->id ?></td>
-                                            <td><?= str_replace("Сопутствующие заболевания:", '', stristr(str_replace("Клинический диагноз:", '', stristr($row->service_report, "Клинический диагноз:")), "Сопутствующие заболевания:", true)) ?></td>
+                                            <td>
+												<?php if ( $row->icd_id ): ?>
+													<?php $icd = icd($row->icd_id) ?>
+													<span class="badge badge-flat border-pink text-pink" data-trigger="hover" data-popup="popover" data-html="true" data-placement="right" title="" 
+														data-original-title="<div class='d-flex justify-content-between'><?= $icd['code'] ?><span class='font-size-sm text-muted'><?= get_full_name($row->icd_autor) ?></span></div>"
+														data-content="<?= $icd['decryption'] ?>" style="font-size:15px;">
+														ICD <?= $icd['code'] ?>
+													</span>
+												<?php endif; ?>
+											</td>
                                             <td><?= division_title($row->grant_id) ?></td>
 											<td><?= date_f($row->completed) ?></td>
                                             <td><?= get_full_name($row->grant_id) ?></td>

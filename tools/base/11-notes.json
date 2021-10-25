@@ -1,0 +1,1 @@
+"CREATE TABLE IF NOT EXISTS `notes` (`id` int(11) NOT NULL AUTO_INCREMENT,`parent_id` int(11) DEFAULT NULL,`visit_id` int(11) DEFAULT NULL,`date_text` char(255) NOT NULL,`description` char(255) NOT NULL,`status` int(11) DEFAULT 0,`time_text` char(100) NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

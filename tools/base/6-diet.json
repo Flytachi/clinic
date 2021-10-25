@@ -1,0 +1,1 @@
+"CREATE TABLE IF NOT EXISTS `diet` (`id` tinyint(3) NOT NULL AUTO_INCREMENT,`name` varchar(500) DEFAULT NULL,`price` decimal(65,1) DEFAULT 0.0,`add_date` datetime DEFAULT current_timestamp(),`update_date` datetime DEFAULT current_timestamp(),PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

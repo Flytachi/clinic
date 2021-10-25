@@ -322,10 +322,9 @@ class __Session
 class __Db
 {
     private $argument;
-    private String $path = "tools/db"; 
-    private String $path_seed = "tools/ci"; 
-    private String $format = "json"; 
-    private String $file_name = "database";
+    private String $path_base = "tools/base"; 
+    private String $path_data = "tools/data"; 
+    private String $format = "json";
     private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
     private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
@@ -411,14 +410,20 @@ class __Db
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
 
-        $file = file_get_contents(dirname(__DIR__, 2)."/$this->path/$this->file_name.$this->format");
-        
-        $data = json_decode($file, true);
-        $_initialize = Mixin\T_INITIALIZE_database($data);
-        if ($_initialize == 200) {
-            echo "\033[32m"." Миграция прошла успешно.\n";
-            return 1;
+        try {
+            $db->beginTransaction();
+            foreach (glob(dirname(__DIR__, 2)."/$this->path_base/*.$this->format") as $path) {
+                $data = json_decode(file_get_contents($path), 1);
+                $db->exec($data);
+            }
+        } catch (\Exception $e) {
+            echo "\033[31m"." Во время миграции произошла ошибка.\n";
+            $db->rollBack();
         }
+
+        $db->commit();
+        echo "\033[32m"." Миграция прошла успешно.\n";
+        return 1;
     }
 
     public function generate()
@@ -426,8 +431,6 @@ class __Db
         global $db, $ini;
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__, 2).'/tools/variables.php';
-
-        $json = array();
         $i = 0;
 
         foreach ($db->query("SHOW TABlES") as $table) {
@@ -481,22 +484,18 @@ class __Db
 
             $sql .= $column_keys.")";
             $sql .= $this->DB_FOOTER.";";
-            $json[] = $sql;
             unset($column);
             unset($keys);
 
-            echo "\033[32m"." Таблица {$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
+            echo "\033[32m"." Table_$i-{$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
+            $this->create_file(json_encode($sql), "$i-".$table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
-
-        return $this->create_file(json_encode($json), $i);
     }
 
-    public function create_file($code = "", $qty)
+    public function create_file($code = "", $file_name)
     {
-        $file = fopen("$this->path/$this->file_name.$this->format", "w");
+        $file = fopen("$this->path_base/$file_name.$this->format", "w");
         fwrite($file, $code);
-        echo "\033[32m"." Генерация ($qty) таблиц прошла успешно!\n";
-        return fclose($file);
     }
 
     public function seed()
@@ -508,7 +507,7 @@ class __Db
 
         if (!$this->seed_table) {
 
-            foreach (glob(dirname(__DIR__, 2)."/$this->path_seed/*.$this->format") as $file_name) {
+            foreach (glob(dirname(__DIR__, 2)."/$this->path_data/*.$this->format") as $file_name) {
                 $table = pathinfo($file_name)['filename'];
                 $data = json_decode(file_get_contents($file_name), true);
     

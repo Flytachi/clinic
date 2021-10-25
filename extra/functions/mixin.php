@@ -265,20 +265,20 @@ function T_FLUSH_database()
 
 }
 
-function T_INITIALIZE_database($data)
-{
-    global $db;
-    try {
-        $db->beginTransaction();
-        foreach ($data as $table_sql) {
-            $db->exec($table_sql);
-        }
-        $db->commit();
-        return 200;
-    } catch (\Exception $e) {
-        $db->rollBack();
-        return "Ошибка: " . $e->getMessage();
-    }
-}
+// function T_INITIALIZE_database($data)
+// {
+//     global $db;
+//     try {
+//         $db->beginTransaction();
+//         foreach ($data as $table_sql) {
+//             $db->exec($table_sql);
+//         }
+//         $db->commit();
+//         return 200;
+//     } catch (\Exception $e) {
+//         $db->rollBack();
+//         return "Ошибка: " . $e->getMessage();
+//     }
+// }
 
 ?>

@@ -78,6 +78,7 @@ class VisitModel extends Model
             'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
             'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
             'division_id' => ( isset($this->post['direction']) ) ? $this->post['division_id'] : null,
+            'last_update' => date("Y-m-d H:i:s"),
         );
         $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
         if (!intval($object)) {
