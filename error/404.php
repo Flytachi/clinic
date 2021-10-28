@@ -1,6 +1,5 @@
 <?php
 require_once '../tools/warframe.php';
-$session->is_auth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +10,8 @@ $session->is_auth();
 	<title>Ошибка - 404</title>
 
 	<!-- Global stylesheets -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
+	<link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
@@ -22,12 +22,7 @@ $session->is_auth();
 </head>
 
 <body>
-
-	<!-- Main navbar -->
-
-	<!-- /main navbar -->
-
-
+	
 	<!-- Page content -->
 	<div class="page-content">
 
@@ -42,7 +37,7 @@ $session->is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title">404</h1>
+						<h1 class="error-title <?= $classes['error_page-code-color'] ?>">404</h1>
 						<h4>Страница не найдена!</h4>
 					</div>
 					<!-- /error title -->

@@ -30,7 +30,7 @@ $header = "База данных";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card">
+                <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">База данных</h5>
@@ -39,7 +39,7 @@ $header = "База данных";
 				    <div class="card-body">
 
                         <?php
-                        if($_SESSION['message']){
+                        if( isset($_SESSION['message']) ){
                             echo $_SESSION['message'];
                             unset($_SESSION['message']);
                         }
@@ -57,9 +57,9 @@ $header = "База данных";
 				                <tbody>
                                     <?php foreach ($db->query("show tables") as $row): ?>
                                         <tr>
-                                            <td><?= $row['Tables_in_clinic'] ?></td>
+                                            <td><?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?></td>
                                             <td>
-                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_clinic']}")->fetchColumn() ?>
+                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_'.$ini['DATABASE']['NAME']]}")->fetchColumn() ?>
                                                 <?php if ($rec == 0): ?>
                                                     <span class="text-success"><?= $rec ?></span>
                                                 <?php elseif ($rec <= 10000000000): ?>
@@ -68,9 +68,9 @@ $header = "База данных";
                                                     <span class="text-danger"><?= $rec ?></span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
+                                            <td class="text-right">
 												<?php if ($rec != 0): ?>
-													<a onclick="Conf('<?= viv('master/flush') ?>', '<?= $row['Tables_in_clinic'] ?>')" class="list-icons-up text-danger">flush</a>
+													<a onclick="Conf('<?= ajax('master/flush') ?>', '<?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?>')" title="Flush Database" class="list-icons-up text-danger"><i class="icon-database-refresh"></i></a>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>

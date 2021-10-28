@@ -19,7 +19,6 @@ $header = "Контроль базы данных";
 		<?php include 'sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -30,16 +29,21 @@ $header = "Контроль базы данных";
 			<!-- Content area -->
 			<div class="content">
 
-                <div class="card">
+                <div class="card border-1">
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Дамп базы данных</h5>
+						<?php if( $dir = is_dir(dirname(__DIR__, 2)."/dump") ): ?>
+							<div class="header-elements">
+								<a href="<?= ajax('master/cap').'?is_create=1' ?>" class="btn btn-sm border-1 text-dark" title="Create Dump"><i class="icon-database-add"></i></a>
+							</div>
+						<?php endif; ?>
 				    </div>
 
 				    <div class="card-body">
 
                         <?php
-                        if($_SESSION['message']){
+                        if( isset($_SESSION['message']) ){
                             echo $_SESSION['message'];
                             unset($_SESSION['message']);
                         }
@@ -55,21 +59,24 @@ $header = "Контроль базы данных";
 				                    </tr>
 				                </thead>
 				                <tbody>
-                                    <?php
-									$scanned_files = array_diff(scandir("../../dump"), array('..', '.'));
-									$i = 1;
-                                    ?>
-                                    <?php foreach ($scanned_files as $value): ?>
-                                        <tr> 
-                                            <td><?= $i++ ?></td>
-                                            <td><?= pathinfo($value, PATHINFO_FILENAME); ?></td>
-                                            <td>
-                                                <a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>')" class="list-icons-up text-success"><i class="icon-upload"></i></a>
-                                                <a href="/dump/<?= $value ?>" class="list-icons-up text-dark" download><i class="icon-download"></i></a>
-												<a onclick="Conf('<?= viv('master/cap') ?>', '<?= $value ?>', 1)" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
-											</td>
-                                        </tr>
-                                    <?php endforeach; ?>
+									<?php if( $dir ): ?>
+										<?php $i=1; foreach (array_diff(scandir(dirname(__DIR__, 2)."/dump"), array('..', '.')) as $value): ?>
+											<tr> 
+												<td><?= $i++ ?></td>
+												<td><?= pathinfo($value, PATHINFO_FILENAME); ?></td>
+												<td>
+													<a onclick="Conf('<?= ajax('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>')" title="Use Dump" class="list-icons-up text-success"><i class="icon-upload"></i></a>
+													<a href="/dump/<?= $value ?>" class="list-icons-up text-dark" title="Download Dump" download><i class="icon-download"></i></a>
+													<a onclick="Conf('<?= ajax('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>', 1)" title="Delete Dump" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+									<?php else: ?>
+										<tr class="text-center"> 
+											<td colspan="3">Dump folder not found</td>
+										</tr>
+									<?php endif; ?>
+                                    
 				                </tbody>
 				            </table>
 				        </div>

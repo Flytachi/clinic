@@ -4,13 +4,15 @@ $session->is_auth();
 
 if ($_SESSION['session_id'] == "master") {
     render('master/index');
+}elseif ($_SESSION['session_id'] == "avatar") {
+    include "views/master/avatar_panel.php";
 }else {
     switch (level()):
         case 1:
             render('admin/index');
             break;
         case 2:
-            render('registry/index');
+            render('manager/index');
             break;
         case 3:
             render('cashbox/index');
@@ -34,7 +36,11 @@ if ($_SESSION['session_id'] == "master") {
             render('coock/index');
             break;
         case 10:
-            render('diagnostic/index');
+            if (division_assist() == 2) {
+                render('diagnostic/list_outpatient');
+            }else {
+                render('diagnostic/index');
+            }
             break;
         case 11:
             render('anesthetist/index');

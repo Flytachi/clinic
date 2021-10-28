@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
-require_once 'tools/Console/core.php';
+// Версия PHP 7.4.18
+require_once 'extra/Console/core.php';
 
 new Console\Core($argc, $argv);
 
