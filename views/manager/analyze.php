@@ -1,14 +1,14 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Анализы";
 
-$tb = new Table($db, "service_analyzes sl");
+$tb = (new ServiceAnalyzeModel)->tb('sl');
 $tb->set_data("sl.*, sc.name 'service_name'")->additions("LEFT JOIN services sc ON(sc.id=sl.service_id)");
 $search = $tb->get_serch();
-$where_search = array(null, "LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(sl.code) LIKE LOWER('%$search%') OR LOWER(sl.name) LIKE LOWER('%$search%')");
+$where_search = array("sl.branch_id = $session->branch", "sl.branch_id = $session->branch AND (LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(sl.code) LIKE LOWER('%$search%') OR LOWER(sl.name) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php (new ServiceAnalyzesModel)->form(); ?>
+                      	<?php (new ServiceAnalyzeModel)->form(); ?>
                   	</div>
 
             	</div>
@@ -115,9 +115,9 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
 															</a>
 														</div>
 													</div>
-													<a onclick="Update('<?= up_url($row->id, 'ServiceAnalyzesModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'ServiceAnalyzeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_analyzes")): ?>										
-														<a href="<?= del_url($row->id, 'ServiceAnalyzesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+														<a href="<?= del_url($row->id, 'ServiceAnalyzeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить анализ?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
 				                                </div>
 	                                      	</td>
@@ -167,7 +167,7 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('admin_analyze') ?>",
+				url: "<?= ajax('manager_analyze') ?>",
 				data: { id:id, status: stat },
 				success: function (data) {
                     if (data) {

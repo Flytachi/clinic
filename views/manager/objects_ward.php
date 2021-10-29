@@ -1,14 +1,14 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Палаты";
 
-$tb = new Table($db, "wards w");
+$tb = (new WardModel)->tb('w');
 $search = $tb->get_serch();
 $tb->set_data("w.id, bg.name, ds.title, w.floor, w.ward")->additions("LEFT JOIN buildings bg ON(bg.id=w.building_id) LEFT JOIN divisions ds ON(ds.id=w.division_id)");
-$where_search = array(null, "LOWER(bg.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') OR LOWER(w.ward) LIKE LOWER('%$search%')");
+$where_search = array("w.branch_id = $session->branch", "w.branch_id = $session->branch AND (LOWER(bg.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') OR LOWER(w.ward) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +49,7 @@ $tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->se
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new WardsModel)->form(); ?>
+		    			<?php (new WardModel)->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -96,8 +96,8 @@ $tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->se
 											<?php endif; ?>
 				                            <td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'WardsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'WardsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить палату?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'WardModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row->id, 'WardModel') ?>" onclick="return confirm('Вы уверены что хотите удалить палату?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
 				                        </tr>

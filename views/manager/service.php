@@ -1,14 +1,14 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Услуги";
 
-$tb = new Table($db, "services sc");
+$tb = (new ServiceModel)->tb('sc');
 $tb->set_data("sc.*, ds.title")->additions("LEFT JOIN divisions ds ON(ds.id=sc.division_id)");
 $search = $tb->get_serch();
-$where_search = array("sc.type != 101", "sc.type != 101 AND ( sc.code LIKE '%$search%' OR LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') )");
+$where_search = array("sc.branch_id = $session->branch", "sc.branch_id = $session->branch AND ( sc.code LIKE '%$search%' OR LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') )");
 
-$tb->where_or_serch($where_search)->order_by("user_level, division_id, code, name ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("sc.level ASC, ds.title ASC, sc.code ASC, sc.name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +94,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 	                              	<?php foreach($tb->get_table(1) as $row): ?>
                                   		<tr>
 											<td><?= $row->count ?></td>
-	                                      	<td><?= $PERSONAL[$row->user_level] ?></td>
+	                                      	<td><?= $PERSONAL[$row->level] ?></td>
 	                                      	<td><?= $row->title ?></td>
 											<td><?= $row->code ?></td>
 											<td><?= $row->name ?></td>
@@ -169,7 +169,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('admin_status') ?>",
+				url: "<?= ajax('manager_status') ?>",
 				data: { table:"services", id:id, is_active: stat },
 				success: function (data) {
                     if (data) {

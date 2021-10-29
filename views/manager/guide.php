@@ -1,9 +1,9 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Направители";
 
-$tb = new Table($db, "guides");
+$tb = (new GuideModel)->tb();
 $search = $tb->get_serch();
 $where_search = array(null, "LOWER(name) LIKE LOWER('%$search%')");
 
@@ -49,7 +49,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new GuidesModel)->form(); ?>
+		    			<?php (new GuideModel)->form(); ?>
 		          	</div>
 
 	        	</div>

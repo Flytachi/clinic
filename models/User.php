@@ -261,7 +261,7 @@ class UserModel extends Model
 
                         <legend class="font-weight-semibold"><i class="icon-user mr-2"></i> Персональные данные</legend>
 
-                        <?php if( $this->value('user_level') == 1): ?>
+                        <?php if( $this->value('user_level') == 2): ?>
 
                             <div class="form-group">
                                 <label>Выбирите роль:</label>
@@ -302,7 +302,7 @@ class UserModel extends Model
                                 <label>Отдел:</label>
                                 <select data-placeholder="Выбрать отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                     <option></option>
-                                    <?php foreach ($db->query("SELECT * FROM divisions") as $row): ?>
+                                    <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch") as $row): ?>
                                         <?php if($row['level'] == 5): ?>
                                             <option value="<?= $row['id'] ?>" data-chained="7" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                         <?php endif; ?>
@@ -336,20 +336,6 @@ class UserModel extends Model
                         <legend class="font-weight-semibold"><i class="icon-user"></i> Person</legend>
 
                         <div class="row">
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Кабинет:</label>
-                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value('room') ?>">
-                                </div>
-                            </div>
-
-                            <!-- <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Доля:</label>
-                                    <input type="number" class="form-control" step="0.1" name="share" placeholder="Введите Долю" value="<?= $this->value('share') ?>">
-                                </div>
-                            </div> -->
 
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -390,7 +376,7 @@ class UserModel extends Model
 
                         </div>
 
-                        <div class="row" id="change_table_div"></div>
+                        <div class="row" id="change_div_User"></div>
 
                     </fieldset>
                 </div>
@@ -413,7 +399,7 @@ class UserModel extends Model
             });
 
             function TableChange(the) {
-                if (the.value == 5) {
+                if (the.value == 11) {
                     var div = `
                     <?php if (module('module_zetta_pacs')): ?>
                         <legend><b>ZeTTa PACS</b></legend>
@@ -432,16 +418,15 @@ class UserModel extends Model
                         </div>
                     <?php endif; ?>
                     `;
-                    document.querySelector('#change_table_div').innerHTML = div;
-                }
-                if (the.value == 6 || the.value == 12) {
+                    document.querySelector('#change_div_User').innerHTML = div;
+                }else if (the.value == 13 || the.value == 14) {
                     document.querySelector('#division_id').required = false;
                     $("#division_id").prepend(`<option value="0">Выбрать весь отдел</option>`);
                 }else{
                     if (!document.querySelector('#division_id').required) {
                         document.querySelector('#division_id').required = true;
                     }
-                    document.querySelector('#change_table_div').innerHTML = ``;
+                    document.querySelector('#change_div_User').innerHTML = ``;
                 }
             }
 
@@ -455,7 +440,7 @@ class UserModel extends Model
     public function clean()
     {
         global $db;
-        $qty = $db->query("SELECT id FROM $this->table WHERE user_level != 15")->rowCount();
+        $qty = $db->query("SELECT id FROM $this->table")->rowCount();
         $ti = module("personal_qty");
         if ( isset($this->post['id']) or (($ti and $ti > $qty) or (!$ti and 5 > $qty)) ) {
             $this->post = Mixin\clean_form($this->post);

@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Класификация персонала";
 
-$tb = new Table($db, "divisions");
+$tb = (new DivisionModel)->tb();
 $search = $tb->get_serch();
-$where_search = array(null, "LOWER(title) LIKE LOWER('%$search%') OR LOWER(name) LIKE LOWER('%$search%')");
+$where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(title) LIKE LOWER('%$search%') OR LOWER(name) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +24,6 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(15);
 		<!-- Main sidebar -->
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
-
 
 		<!-- Main content -->
 		<div class="content-wrapper">

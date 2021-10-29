@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Настройки";
 ?>
 <!DOCTYPE html>
@@ -49,7 +49,7 @@ $header = "Настройки";
 				            unset($_SESSION['message']);
 				        }
 						?>
-						<form action="<?= ajax('admin/prints') ?>" method="post" enctype="multipart/form-data">
+						<form action="<?= ajax('manager/prints') ?>" method="post" enctype="multipart/form-data">
 
 							<div class="row">
 

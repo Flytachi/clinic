@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Класификация персонала";
 
 $tb = new Table($db, "divisions");

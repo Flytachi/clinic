@@ -1,10 +1,10 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Койки";
 
-$tb = new Table($db, "bed_types");
-$tb->set_limit(15);
+$tb = (new BedTypeModel)->tb();
+$tb->where("branch_id = $session->branch")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +45,7 @@ $tb->set_limit(15);
                     </div>
 
                     <div class="card-body" id="form_card">
-		    			<?php (new BedTypesModel)->form(); ?>
+		    			<?php (new BedTypeModel)->form(); ?>
 		          	</div>
 
 
@@ -81,8 +81,8 @@ $tb->set_limit(15);
 				                            <td class="text-right"><?= number_format($row->price_foreigner) ?></td>
 				                            <td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'BedTypesModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'BedTypesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить вид коек?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'BedTypeModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row->id, 'BedTypeModel') ?>" onclick="return confirm('Вы уверены что хотите удалить вид коек?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
 				                        </tr>

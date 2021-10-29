@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Настройки";
 ?>
 <!DOCTYPE html>
@@ -49,7 +49,7 @@ $header = "Настройки";
 				        }
 						?>
 
-						<form action="<?= ajax('admin/config') ?>" method="post" enctype="multipart/form-data">
+						<form action="<?= ajax('manager/config') ?>" method="post" enctype="multipart/form-data">
 
 							<fieldset class="mb-3">
 								<legend class="text-uppercase font-size-sm font-weight-bold">Печать</legend>

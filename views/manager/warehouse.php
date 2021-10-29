@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 is_module('pharmacy');
 $header = "Склады";
 ?>
@@ -106,7 +106,7 @@ $header = "Склады";
 															</a>
 														</div>
 													</div>
-													<a onclick="ShowConf('<?= up_url($row->id, 'WarehouseSettingsModel') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
+													<a onclick="ShowConf('<?= up_url($row->id, 'WarehouseSettingModel') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
 													<a onclick="Update('<?= up_url($row->id, 'WarehouseModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_warehouses")): ?>										
                                                         <a href="<?= del_url($row->id, 'WarehouseModel') ?>" onclick="return confirm('Вы уверены что хотите удалить склад?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
@@ -143,7 +143,7 @@ $header = "Склады";
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('admin_status') ?>",
+				url: "<?= ajax('manager_status') ?>",
 				data: { table:"warehouses", id:id, is_active: stat },
 				success: function (data) {
                     if (data) {

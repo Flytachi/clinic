@@ -8,7 +8,7 @@ class Model
      * Model + PDO
      * 
      * 
-     * @version 9.2
+     * @version 10.0
      */
 
     protected $post;
@@ -258,10 +258,10 @@ class Model
 
     }
 
-    public function Table()
+    public function tb($index = null)
     {
         global $db;
-        return new Table($db, $this->table);
+        return new Table($db, "$this->table $index");
     }
 
     protected function stop()

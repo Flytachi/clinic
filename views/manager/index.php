@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth(2);
 $header = "Персонал";
 
-$tb = (new UserModel)->Table();
+$tb = (new UserModel)->tb();
 $search = $tb->get_serch();
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
@@ -77,7 +77,6 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 				                        <th>Логин</th>
 				                        <th>ФИО</th>
 				                        <th>Роль</th>
-										<th>Кабинет</th>
 				                        <th style="width: 100px">Действия</th>
 				                    </tr>
 				                </thead>
@@ -95,7 +94,6 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 				                                }
 				                                ?>
 				                            </td>
-											<td><?= $row->room ?></td>
 				                            <td>
 				                                <div class="list-icons">
 

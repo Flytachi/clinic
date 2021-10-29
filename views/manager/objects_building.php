@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Палаты";
 
-$tb = new Table($db, "buildings");
+$tb = (new BuildingModel)->tb();
 $search = $tb->get_serch();
-$where_search = array(null, "LOWER(name) LIKE LOWER('%$search%')");
+$where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(name) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->set_limit(15);
+$tb->where_or_serch($where_search)->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@ $tb->where_or_serch($where_search)->set_limit(15);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new BuildingsModel)->form(); ?>
+		    			<?php (new BuildingModel)->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -85,8 +85,8 @@ $tb->where_or_serch($where_search)->set_limit(15);
 				                            <td><?= $row->floors ?> этажей</td>
 				                            <td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'BuildingsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'BuildingsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить объект?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'BuildingModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row->id, 'BuildingModel') ?>" onclick="return confirm('Вы уверены что хотите удалить объект?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
 				                        </tr>

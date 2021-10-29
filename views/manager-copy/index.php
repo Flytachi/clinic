@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Персонал";
 
-$tb = new Table($db, "users");
+$tb = (new UserModel)->Table();
 $search = $tb->get_serch();
-$where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+$where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php (new UserModel)->form(); ?>
+				        <?php (new UserModel)->form_manager(); ?>
 				    </div>
 
 				</div>
@@ -99,7 +99,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 				                            <td>
 				                                <div class="list-icons">
 
-													<?php if ($row->user_level != 1): ?>
+													<?php if ($row->user_level != 2): ?>
 														<div class="dropdown">                      
 															<?php if ($row->is_active): ?>
 																<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
@@ -120,9 +120,9 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 														</div>
 													<?php endif; ?>
 
-													<a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'UserModel', 'form_manager') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_users")): ?>
-														<?php if ($row->user_level != 1): ?>
+														<?php if ($row->user_level != 2): ?>
 															<a href="<?= del_url($row->id, 'UserModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 														<?php endif; ?>													
 													<?php endif; ?>
@@ -159,7 +159,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('admin_status') ?>",
+				url: "<?= ajax('manager_status') ?>",
 				data: { table:"users", id:id, is_active: stat },
 				success: function (data) {
                     if (data) {

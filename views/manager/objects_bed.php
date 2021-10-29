@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
+$session->is_auth(2);
 $header = "Койки";
 
-$tb = new Table($db, "beds");
+$tb = (new BedModel)->tb();
 $search = $tb->get_serch();
-$where_search = array(null, "LOWER(building) LIKE LOWER('%$search%') OR LOWER(ward) LIKE LOWER('%$search%')");
+$where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(building) LIKE LOWER('%$search%') OR LOWER(ward) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@ $tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->
                     </div>
 
                     <div class="card-body" id="form_card">
-		    			<?php (new BedsModel)->form(); ?>
+		    			<?php (new BedModel)->form(); ?>
 		          	</div>
 
                 </div>
@@ -91,8 +91,8 @@ $tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->
 				                            <td><?= $row->types ?></td>
 				                            <td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'BedsModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'BedsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'BedModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row->id, 'BedModel') ?>" onclick="return confirm('Вы уверены что хотите удалить койку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
 				                        </tr>

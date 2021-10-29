@@ -11,9 +11,9 @@ function module($value = null)
     try {
         if ($value) {
             $value = str_replace($mark, '', $value);
-            return $db->query("SELECT const_value FROM company_constants WHERE const_label = '$mark$value'")->fetchColumn();
+            return $db->query("SELECT const_value FROM corp_constants WHERE const_label = '$mark$value'")->fetchColumn();
         } else {
-            foreach ($db->query("SELECT * FROM company_constants WHERE const_label LIKE '$mark%'") as $row) {
+            foreach ($db->query("SELECT * FROM corp_constants WHERE const_label LIKE '$mark%'") as $row) {
                 $modules[$row['const_label']] = $row['const_value'];
             }
             return $modules;
@@ -32,16 +32,16 @@ function config($value = null, $group = null)
         if ($value) {
             $value = str_replace($mark, '', $value);
             if ($group) {
-                foreach ($db->query("SELECT * FROM company_constants WHERE const_label LIKE '$mark$value%'") as $row) {
+                foreach ($db->query("SELECT * FROM corp_constants WHERE const_label LIKE '$mark$value%'") as $row) {
                     $modules[$row['const_label']] = $row['const_value'];
                 }
                 return $modules;
             } else {
-                return $db->query("SELECT const_value FROM company_constants WHERE const_label = '$mark$value'")->fetchColumn();
+                return $db->query("SELECT const_value FROM corp_constants WHERE const_label = '$mark$value'")->fetchColumn();
             }
             
         } else {
-            foreach ($db->query("SELECT * FROM company_constants WHERE const_label LIKE '$mark%'") as $row) {
+            foreach ($db->query("SELECT * FROM corp_constants WHERE const_label LIKE '$mark%'") as $row) {
                 $modules[$row['const_label']] = $row['const_value'];
             }
             return $modules;
@@ -112,7 +112,7 @@ function zeTTa_data()
     $company = new stdClass();
     $data = new stdClass();
     $stmt = $db->query("SELECT pacs_login, pacs_password from users where id = $session->session_id")->fetch(PDO::FETCH_OBJ);
-    $comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_zetta_pacs_%'")->fetchAll(PDO::FETCH_OBJ);
+    $comp = $db->query("SELECT * FROM corp_constants WHERE const_label LIKE 'constant_zetta_pacs_%'")->fetchAll(PDO::FETCH_OBJ);
     foreach ($comp as $value) {
         $company->{$value->const_label} = $value->const_value;
     }

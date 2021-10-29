@@ -140,7 +140,7 @@
                 <?php endforeach; ?>
                 <!-- /Main -->
 
-                <?php if(module('module_pharmacy')): ?>
+                <?php /*if(module('module_pharmacy')): ?>
                     <!-- Warehouse -->
                     <?php foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $side_warehouse): ?>
 
@@ -191,7 +191,7 @@
 
                     <?php endforeach; ?>
                     <!-- /Warehouse -->
-                <?php endif; ?>
+                <?php endif;*/ ?>
                 
             </ul>
 
