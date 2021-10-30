@@ -3,13 +3,13 @@
 class VisitPanel extends VisitModel
 {
     public $table = 'visits';
-    public $_user = 'users';
+    public $_client = 'clients';
 
     public function get_or_404(int $pk)
     {
         global $db;
-        if (permission([2,32])) {
-            $object = $db->query("SELECT * FROM $this->_user WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        if (permission(21)) {
+            $object = $db->query("SELECT * FROM $this->_client WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
             if($object){
 
                 if ($_GET['form'] == "stationar") {
@@ -21,11 +21,11 @@ class VisitPanel extends VisitModel
 
                 }else {
 
-                    if ($object['status'] and $db->query("SELECT id FROM $this->table WHERE user_id = $pk AND completed IS NULL AND direction IS NOT NULL")->fetchColumn()) {
+                    if ($object['status'] and $db->query("SELECT id FROM $this->table WHERE client_id = $pk AND completed IS NULL AND direction IS NOT NULL")->fetchColumn()) {
                         Mixin\error('report_permissions_false');
                         exit;
                     }
-                    $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE user_id = $pk AND completed IS NULL")->fetchColumn();
+                    $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE client_id = $pk AND completed IS NULL")->fetchColumn();
                     if ( $this->visit_pk ) {
                         $this->order_data = $db->query("SELECT * FROM visit_orders WHERE visit_id = $this->visit_pk")->fetch();
                     }
@@ -50,7 +50,7 @@ class VisitPanel extends VisitModel
 
     public function ambulator($pk = null)
     {
-        global $db, $classes, $PERSONAL, $session;
+        global $db, $classes, $session;
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h5 class="modal-title">Назначить амбулаторное лечение</h5>
@@ -59,11 +59,11 @@ class VisitPanel extends VisitModel
 
         <form method="post" action="<?= add_url() ?>">
         
-            <div class="modal-body">
+            <div class="modal-body">responsible_id
 
                 <input type="hidden" name="model" value="<?= get_parent_class($this) ?>">
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-                <input type="hidden" name="user_id" value="<?= $pk ?>">
+                <input type="hidden" name="client_id" value="<?= $pk ?>">
 
                 <div class="form-group row">
 
@@ -108,7 +108,7 @@ class VisitPanel extends VisitModel
                             <label>Направитель:</label>
                             <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                                 <option></option>
-                                <?php foreach ($db->query("SELECT * from guides ORDER BY name") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM guides ORDER BY name") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -207,38 +207,31 @@ class VisitPanel extends VisitModel
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
                         <optgroup label="Врачи">
-                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5") as $row): ?>
+                            <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 11") as $row): ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                             <?php endforeach; ?>
                         </optgroup>
                         <?php if(module('module_diagnostic')): ?>
                             <optgroup label="Диогностика">
-                                <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 12 AND (assist IS NULL OR assist = 1)") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         <?php endif; ?>
                         <?php if(module('module_laboratory')): ?>
                             <optgroup label="Лаборатория">
-                                <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 13") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         <?php endif; ?>
                         <?php if(module('module_physio')): ?>
                             <optgroup label="Физиотерапия">
-                                <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 12") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 14") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </optgroup>
                         <?php endif; ?>
-                        <optgroup label="Остальные">
-                            <?php /* foreach ($PERSONAL as $key => $value): ?>
-                                <?php if(in_array($key, [13])): ?>
-                                    <option value="other_<?= $key ?>"><?= $value ?></option>
-                                <?php endif; ?>
-                            <?php endforeach;*/ ?>
-                        </optgroup>
                     </select>
                 </div>
 
@@ -317,6 +310,7 @@ class VisitPanel extends VisitModel
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $this->value('is_foreigner') ?>",
                         search: this.value,
@@ -337,6 +331,7 @@ class VisitPanel extends VisitModel
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $(params).val(),
                         is_foreigner: "<?= $this->value('is_foreigner') ?>",
                         selected: service,
@@ -403,7 +398,7 @@ class VisitPanel extends VisitModel
                             <label>Направитель:</label>
                             <select data-placeholder="Выберите направителя" name="guide_id" class="<?= $classes['form-select'] ?>">
                                 <option></option>
-                                <?php foreach ($db->query("SELECT * from guides") as $row): ?>
+                                <?php foreach ($db->query("SELECT * FROM guides") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -413,7 +408,7 @@ class VisitPanel extends VisitModel
                             <label>Отдел:</label>
                             <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
+                                <?php foreach($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 11") as $row): ?>
                                     <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -421,8 +416,8 @@ class VisitPanel extends VisitModel
 
                         <div class="form-group">
                             <label>Специалиста:</label>
-                            <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                                <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
+                            <select data-placeholder="Выберите специалиста" name="responsible_id" id="responsible_id" class="<?= $classes['form-select'] ?>" required>
+                                <?php foreach($db->query("SELECT * FROM users WHERE branch_id = $session->branch AND user_level = 11 AND is_active IS NOT NULL") as $row): ?>
                                     <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -525,10 +520,10 @@ class VisitPanel extends VisitModel
                         <label>Выбирите здание:</label>
                         <select data-placeholder="Выбрать здание" id="building_id" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
-                            <?php foreach ($db->query("SELECT DISTINCT bg.id, bg.name FROM wards w LEFT JOIN buildings bg ON(bg.id=w.building_id)") as $row): ?>
+                            <?php foreach ($db->query("SELECT DISTINCT bg.id, bg.name FROM wards w LEFT JOIN buildings bg ON(bg.id=w.building_id) WHERE w.branch_id = $session->branch") as $row): ?>
                                 <?php
                                 $result = [];
-                                foreach ($db->query("SELECT division_id FROM wards WHERE building_id = {$row['id']}") as $value) if(!in_array($value['division_id'], $result)) $result[] = $value['division_id'];
+                                foreach ($db->query("SELECT division_id FROM wards WHERE branch_id = $session->branch AND building_id = {$row['id']}") as $value) if(!in_array($value['division_id'], $result)) $result[] = $value['division_id'];
                                 ?>
                                 <option value="<?= $row['id'] ?>" data-divisions="<?= json_encode($result) ?>"><?= $row['name'] ?></option>
                             <?php endforeach; ?>
@@ -539,13 +534,13 @@ class VisitPanel extends VisitModel
                         <label>Выбирите этаж:</label>
                         <select data-placeholder="Выбрать этаж" id="floor" class="<?= $classes['form-select'] ?>" required>
                             <option></option>
-                            <?php foreach ($db->query("SELECT DISTINCT bg.id, bg.floors FROM wards w LEFT JOIN buildings bg ON(bg.id=w.building_id)") as $row): ?>
+                            <?php foreach ($db->query("SELECT DISTINCT bg.id, bg.floors FROM wards w LEFT JOIN buildings bg ON(bg.id=w.building_id) WHERE w.branch_id = $session->branch") as $row): ?>
                                 <?php for ($i=1; $i <= $row['floors']; $i++): ?>
                                     <?php
                                     $result = [];
-                                    foreach ($db->query("SELECT division_id FROM wards WHERE building_id = {$row['id']} AND floor = $i") as $value) if(!in_array($value['division_id'], $result)) $result[] = $value['division_id'];
+                                    foreach ($db->query("SELECT division_id FROM wards WHERE branch_id = $session->branch AND building_id = {$row['id']} AND floor = $i") as $value) if(!in_array($value['division_id'], $result)) $result[] = $value['division_id'];
                                     ?>
-                                    <option value="<?= $i ?>" data-chained="<?= $row['id'] ?>" data-divisions="<?= json_encode($result) ?>" data-ward_qty="<?= $db->query("SELECT * FROM wards WHERE building_id = {$row['id']} AND floor = $i")->rowCount() ?>"><?= $i ?> этаж</option>
+                                    <option value="<?= $i ?>" data-chained="<?= $row['id'] ?>" data-divisions="<?= json_encode($result) ?>" data-ward_qty="<?= $db->query("SELECT * FROM wards WHERE branch_id = $session->branch AND building_id = {$row['id']} AND floor = $i")->rowCount() ?>"><?= $i ?> этаж</option>
                                 <?php endfor; ?>
                             <?php endforeach; ?>
                         </select>
@@ -562,7 +557,7 @@ class VisitPanel extends VisitModel
                         <label>Койка:</label>
                         <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
-                            <?php foreach ($db->query("SELECT bd.*, bdt.price FROM beds bd LEFT JOIN bed_types bdt ON(bd.type_id=bdt.id)") as $row): ?>
+                            <?php foreach ($db->query("SELECT bd.*, bdt.price FROM beds bd LEFT JOIN bed_types bdt ON(bd.type_id=bdt.id) WHERE bd.branch_id = $session->branch") as $row): ?>
                                 <?php if ($row['user_id']): ?>
                                     <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-name="<?= $row['types'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
                                 <?php else: ?>
@@ -650,7 +645,7 @@ class VisitPanel extends VisitModel
             $(function(){
                 $("#bed").chained("#ward_id");
                 $("#floor").chained("#building_id");
-                $("#parent_id").chained("#division_id");
+                $("#responsible_id").chained("#division_id");
             });
 
             $('#building_id').change(function(){
@@ -679,6 +674,7 @@ class VisitPanel extends VisitModel
                         type: "GET",
                         url: "<?= ajax('options_wards') ?>",
                         data: {
+                            branch_id: <?= $session->branch ?>,
                             building_id: params.selectedOptions[0].dataset.chained,
                             division_id: document.querySelector("#division_id").value,
                             floor: params.selectedOptions[0].value,
@@ -698,7 +694,7 @@ class VisitPanel extends VisitModel
             });
 
             function submitAlert() {
-                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val(), message: "У вас новый стационарный пациент!" });
+                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#responsible_id").val(), message: "У вас новый стационарный пациент!" });
                 conn.send(obj);
             }
         </script>

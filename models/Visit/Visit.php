@@ -264,6 +264,7 @@ class VisitModel extends Model
         if (isset($this->post['division_id']) and is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
+        $this->dd();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -383,7 +384,7 @@ class VisitModel extends Model
 
     public function status_update($user)
     {
-        return (new UserModel())->update_status($user);
+        return (new ClientModel())->update_status($user);
     }
 
     public function success($stat=null)

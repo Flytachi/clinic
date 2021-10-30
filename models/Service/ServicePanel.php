@@ -19,6 +19,8 @@ class ServicePanel extends Model
                 if (isset($this->post['is_requared']) and $this->post['is_requared']) $this->requared = "required";
                 $this->divisions = implode(',', $this->post['divisions']);
                 $this->types = $this->post['types'];
+                $this->branch = $this->post['branch_id'];
+                
 
                 $this->table();
 
@@ -33,15 +35,15 @@ class ServicePanel extends Model
     {
         global $db, $classes;
         if ( isset($this->post['is_foreigner']) and $this->post['is_foreigner']) {
-            $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
+            $data = "dv.id 'division_id', sc.id, sc.level, dv.title, sc.name, sc.type, sc.price_foreigner 'price'";
         } else {
-            $data = "dv.id 'division_id', sc.id, sc.user_level, dv.title, sc.name, sc.type, sc.price";
+            $data = "dv.id 'division_id', sc.id, sc.level, dv.title, sc.name, sc.type, sc.price";
         }
         if ( isset($this->post['search']) ){
             $ser = $this->post['search'];
-            $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.is_active IS NOT NULL AND sc.division_id IN($this->divisions) AND sc.type IN ($this->types) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )";
+            $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.branch_id = $this->branch AND sc.is_active IS NOT NULL AND sc.division_id IN($this->divisions) AND sc.type IN ($this->types) AND (LOWER(dv.title) LIKE LOWER('%$ser%') OR LOWER(sc.name) LIKE LOWER('%$ser%') )";
         }else{
-            $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.is_active IS NOT NULL AND sc.division_id IN($this->divisions) AND sc.type IN ($this->types)";
+            $sql = "SELECT $data FROM services sc LEFT JOIN divisions dv ON(dv.id=sc.division_id) WHERE sc.branch_id = $this->branch AND sc.is_active IS NOT NULL AND sc.division_id IN($this->divisions) AND sc.type IN ($this->types)";
         }
 
         foreach ($db->query($sql) as $row){
@@ -84,20 +86,20 @@ class ServicePanel extends Model
                         </td>
                     <?php endif; ?>
 
-                    <!-- Parent -->
+                    <!-- Responsible -->
                     <?php if (empty($this->post['head'])): ?>
                         <td>
-                            <select name="parent_id[<?= $this->i ?>]" id="parent_input_<?= $row->id ?>" class="<?= $classes['form-select'] ?> parents" data-id="<?= $row->id ?>" <?= $this->requared ?>>
+                            <select name="responsible_id[<?= $this->i ?>]" id="responsible_input_<?= $row->id ?>" class="<?= $classes['form-select'] ?> responsibles" data-id="<?= $row->id ?>" <?= $this->requared ?>>
                                 <?php if ($this->result == ""): ?>
                                     <option value="">Выбран весь отдел</option>
                                 <?php endif; ?>
-                                <?php if ($row->user_level == 6): ?>
-                                    <?php foreach ($db->query("SELECT id FROM users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
-                                        <option value="<?= $parent->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['parent']) and  $this->post['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>
+                                <?php if ($row->level == 6): ?>
+                                    <?php foreach ($db->query("SELECT id FROM users WHERE branch_id = $this->branch AND user_level = 6 AND is_active IS NOT NULL") as $responsible): ?>
+                                        <option value="<?= $responsible->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['responsible']) and  $this->post['selected'][$row->id]['responsible'] == $responsible->id ) ? "selected" : "" ?>><?= get_full_name($responsible->id) ?></option>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <?php foreach ($db->query("SELECT id FROM users WHERE division_id = $row->division_id AND user_level != 7 AND is_active IS NOT NULL") as $parent): ?>
-                                        <option value="<?= $parent->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['parent']) and  $this->post['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>
+                                    <?php foreach ($db->query("SELECT id FROM users WHERE branch_id = $this->branch AND division_id = $row->division_id AND is_active IS NOT NULL") as $responsible): ?>
+                                        <option value="<?= $responsible->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['responsible']) and  $this->post['selected'][$row->id]['responsible'] == $responsible->id ) ? "selected" : "" ?>><?= get_full_name($responsible->id) ?></option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
@@ -147,7 +149,7 @@ class ServicePanel extends Model
 
                 if (the.checked) {
                     service[the.value] = {};
-                    service[the.value]['parent'] = $("#parent_input_"+the.value).val();
+                    service[the.value]['responsible'] = $("#responsible_input_"+the.value).val();
                     service[the.value]['count'] = $("#count_input_"+the.value).val();
                     if (order) {
                         total.text( number_format(Number(cost) + (Number(price) * service[the.value]['count']), '.', ',') );
@@ -162,9 +164,9 @@ class ServicePanel extends Model
                 
             }
 
-            $(".parents").change(function() {
+            $(".responsibles").change(function() {
                 if (typeof service[this.dataset.id] !== "undefined") {
-                    service[this.dataset.id]['parent'] = this.value;
+                    service[this.dataset.id]['responsible'] = this.value;
                 }
             });
 
