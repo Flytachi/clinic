@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(1);
-$header = "Направители";
+$session->is_auth(21);
+$header = "Врачи операторы";
 
-$tb = new Table($db, "guides");
+$tb = (new GuideModel)->tb();
 $search = $tb->get_serch();
 $where_search = array(null, "LOWER(name) LIKE LOWER('%$search%')");
 
-$tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +40,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
 				<div class="<?= $classes['card'] ?>">
 
           			<div class="<?= $classes['card-header'] ?>">
-		              	<h5 class="card-title">Добавить Направителя</h5>
+		              	<h5 class="card-title">Добавить врача оператора</h5>
 		              	<div class="header-elements">
 	                  		<div class="list-icons">
 		                      	<a class="list-icons-item" data-action="collapse"></a>
@@ -49,7 +49,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new GuidesModel)->form(); ?>
+		    			<?php (new GuideModel)->form_regy(); ?>
 		          	</div>
 
 	        	</div>
@@ -57,23 +57,23 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
         		<div class="<?= $classes['card'] ?>">
 
 	          		<div class="<?= $classes['card-header'] ?>">
-	                  	<h5 class="card-title">Список Направителей</h5>
-	                  	<div class="header-elements">
+	                  	<h5 class="card-title">Список Врачей Операторов</h5>
+						<div class="header-elements">
 							<div class="form-group-feedback form-group-feedback-right mr-2">
 								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите имя">
 								<div class="form-control-feedback">
 									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
 							</div>
-				        </div>
+						</div>
 	              	</div>
 
               		<div class="card-body" id="search_display">
 
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
-	                          	<thead>
-	                              	<tr class="<?= $classes['table-thead'] ?>">
+	                          	<thead class="<?= $classes['table-thead'] ?>">
+	                              	<tr>
                                         <th style="width:50px">№</th>
 										<th style="width:50%">ФИО</th>
 										<th>Сумма</th>
@@ -82,7 +82,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php foreach($tb->get_table(1) as $row): ?>
+								  	<?php foreach($tb->get_table(1) as $row): ?>
                                   		<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->name ?></td>
@@ -120,12 +120,13 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
     <!-- /footer -->
 
 	<script type="text/javascript">
+
 		$("#search_input").keyup(function() {
 			var input = document.querySelector('#search_input');
 			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('admin/search_guide') ?>",
+				url: "<?= ajax('search/registry-guide') ?>",
 				data: {
 					table_search: input.value,
 				},

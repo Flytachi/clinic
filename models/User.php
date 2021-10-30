@@ -466,12 +466,6 @@ class UserModel extends Model
         }
     }
 
-    public function update_status(int $pk)
-    {
-        Mixin\update($this->table, array('status' => null), $pk);
-        return true;
-    }
-
     public function success()
     {
         $_SESSION['message'] = '

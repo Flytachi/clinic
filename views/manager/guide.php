@@ -7,7 +7,7 @@ $tb = (new GuideModel)->tb();
 $search = $tb->get_serch();
 $where_search = array(null, "LOWER(name) LIKE LOWER('%$search%')");
 
-$tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(15);
+$tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">

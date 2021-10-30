@@ -76,6 +76,7 @@ class MySession extends Session
 	        $_SESSION['session_division'] = "avatar";   
         }else {
             $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+            unset($this->data->password);
             $_SESSION['session_id'] = $pk;
             $_SESSION['session_branch'] = $this->data->branch_id;
             $_SESSION['session_login'] = $this->data->username;

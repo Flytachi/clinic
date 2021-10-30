@@ -172,6 +172,7 @@ class Session
             
         }else {
             $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
+            unset($this->data->password);
             $_SESSION['session_id'] = $pk;
             $_SESSION['session_login'] = $this->data->username;
             $_SESSION['session_get_full_name'] = ucwords($this->data->last_name." ".$this->data->first_name." ".$this->data->father_name);
