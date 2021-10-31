@@ -1,6 +1,6 @@
 <?php
 
-class VisitTransactionsModel extends Model
+class VisitTransactionModel extends Model
 {
     public $table = 'visit_service_transactions';
     public $_visits = 'visits';
@@ -182,6 +182,7 @@ class VisitTransactionsModel extends Model
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
+                        console.log(result);
                         var result = JSON.parse(result);
                         
                         if (result.status == "success") {
@@ -200,10 +201,11 @@ class VisitTransactionsModel extends Model
                             // conn.send(obj1);
 
                             // Печать:
-                            Print(result.val);
+                            console.log("ged");
+                            /* Print(result.val);
                             setTimeout( function() {
                                 location.reload();
-                            }, 1000)
+                            }, 1000) */
 
                         }else{
                             new Noty({
@@ -485,50 +487,6 @@ class VisitTransactionsModel extends Model
             
         }
 
-        // $this->user_pk = $this->post['user_id'];
-        // unset($this->post['user_id']);
-        // if (isset($this->post['bed_cost'])) {
-
-        //     $this->bed_cost = $this->post['bed_cost'];
-        //     unset($this->post['bed_cost']);
-        //     $this->status = null;
-        //     return True;
-
-        // }elseif (module('module_pharmacy') and isset($this->post['pharm_cost'])) {
-
-        //     $result = round(round($this->post['pharm_cost']) - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']));
-        //     if ($result < 0) {
-        //         echo "Есть остаток ".$result;
-        //         exit;
-        //     }elseif ($result > 0) {
-        //         echo "Недостаточно средств! ". $result;
-        //         exit;
-        //     }else {
-        //         $this->pharm_cost = $this->post['pharm_cost'];
-        //         unset($this->post['pharm_cost']);
-        //         $this->status = null;
-        //         return True;
-        //     }
-
-        // } else {
-
-        //     $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->_visits vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
-        //     if ($this->post['sale'] > 0) {
-        //         $tot['total_price'] = $tot['total_price'] - ($tot['total_price'] * ($this->post['sale'] / 100));
-        //     }
-        //     $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
-        //     if ($result < 0) {
-        //         $this->error("Есть остаток ".$result);
-        //     }elseif ($result > 0) {
-        //         $this->error("Недостаточно средств! ". $result);
-        //     }else {
-        //         $this->post = Mixin\clean_form($this->post);
-        //         $this->post = Mixin\to_null($this->post);
-        //         $this->status = 1;
-        //         return True;
-        //     }
-
-        // }
     }
 
     public function price($row)
@@ -620,7 +578,7 @@ class VisitTransactionsModel extends Model
         $post = array(
             'visit_id' => $row['visit_id'],
             'visit_service_id' => $row['visit_service_id'],
-            'user_id' => $row['user_id'],
+            'client_id' => $row['client_id'],
             'pricer_id' => $this->post['pricer_id'],
             'item_type' => $row['item_type'],
             'item_id' => $row['item_id'],
@@ -788,7 +746,7 @@ class VisitTransactionsModel extends Model
             echo json_encode(array(
                 'status' => "success" ,
                 'message' => $value,
-                'val' => prints('check')."?pk=".$this->visit['user_id']."&items=".json_encode($this->visit_service_transactions_items)
+                'val' => prints('check')."?pk=".$this->visit['client_id']."&items=".json_encode($this->visit_service_transactions_items)
             ));
         }
     }

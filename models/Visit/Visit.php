@@ -4,7 +4,7 @@ class VisitModel extends Model
 {
     public $table = 'visits';
     public $table2 = 'beds';
-    public $_user = 'users';
+    public $_client = 'clients';
     public $_beds = 'visit_beds';
     public $_orders = 'visit_orders';
     public $_bed_types = 'bed_types';
@@ -73,20 +73,21 @@ class VisitModel extends Model
     {
         global $db;
         $post = array(
-            'parad_id' => ( isset($this->post['direction']) ) ? $db->query("SELECT IFNULL(MAX(parad_id), 0) FROM $this->table WHERE direction IS NOT NULL")->fetchColumn() + 1 : null,
-            'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['parent_id'] : null,
-            'user_id' => ($this->post['user_id']) ? $this->post['user_id'] : null,
+            'branch_id' => $this->post['branch_id'],
+            'parad_id' => ( isset($this->post['direction']) ) ? $db->query("SELECT IFNULL(MAX(parad_id), 0) FROM $this->table WHERE branch_id = {$this->post['branch_id']} AND direction IS NOT NULL")->fetchColumn() + 1 : null,
+            'grant_id' => ( isset($this->post['direction']) and $this->post['direction'] ) ? $this->post['responsible_id'] : null,
+            'client_id' => ($this->post['client_id']) ? $this->post['client_id'] : null,
             'direction' => ( isset($this->post['direction']) ) ? $this->post['direction'] : null,
             'division_id' => ( isset($this->post['direction']) ) ? $this->post['division_id'] : null,
             'last_update' => date("Y-m-d H:i:s"),
         );
-        $object = Mixin\insert_or_update($this->table, $post, 'user_id', "completed IS NULL");
+        $object = Mixin\insert_or_update($this->table, $post, 'client_id', "completed IS NULL");
         if (!intval($object)) {
             $this->error("Ошибка создании или обновлении визита!");
             $db->rollBack();
         }else{
             $this->visit_pk = $object;
-            $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+            $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_client WHERE id = {$this->post['client_id']}")->fetchColumn();
             $this->chek_order();
         }
     }
@@ -103,9 +104,10 @@ class VisitModel extends Model
             }
         }
 
+        $post['branch_id'] = $this->post['branch_id'];
         $post['visit_id'] = $this->visit_pk;
-        $post['user_id'] = $this->post['user_id'];
-        $post['parent_id'] = (isset($this->post['direction']) and $this->post['direction']) ? $this->post['parent_id'] : $this->post['parent_id'][$key];
+        $post['client_id'] = $this->post['client_id'];
+        $post['responsible_id'] = (isset($this->post['direction']) and $this->post['direction']) ? $this->post['responsible_id'] : $this->post['responsible_id'][$key];
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
         $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
@@ -125,9 +127,10 @@ class VisitModel extends Model
             
             if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
                 if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
+                    $post_price['branch_id'] = $this->post['branch_id'];
                     $post_price['visit_id'] = $this->visit_pk;
                     $post_price['visit_service_id'] = $object;
-                    $post_price['user_id'] = $this->post['user_id'];
+                    $post_price['client_id'] = $this->post['client_id'];
                     $post_price['item_type'] = $data['type'];
                     $post_price['item_id'] = $data['id'];
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
@@ -152,8 +155,8 @@ class VisitModel extends Model
 
         $post = array(
             'visit_id' => $this->visit_pk,
-            'parent_id' => $session->session_id,
-            'user_id' => $this->post['user_id'],
+            'responsible_id' => $session->session_id,
+            'client_id' => $this->post['client_id'],
             'bed_id' => $this->post['bed'],
             'location' => "{$bed_data['building']} {$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка",
             'type' => $bed_data['types'],
@@ -166,7 +169,7 @@ class VisitModel extends Model
             $db->rollBack();
         }
 
-        $object2 = Mixin\update($this->table2, array('user_id' => $this->post['user_id']), $this->post['bed']);
+        $object2 = Mixin\update($this->table2, array('client_id' => $this->post['client_id']), $this->post['bed']);
         if (!intval($object2)){
             $this->error("Ошибка при бронировании пациентом койки!");
             $db->rollBack();
@@ -176,19 +179,18 @@ class VisitModel extends Model
     public function chek_order()
     {
         global $db, $session;
-        if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
+        if ($db->query("SELECT id FROM $this->_orders WHERE branch_id = {$this->post['branch_id']} AND visit_id = $this->visit_pk")->fetchColumn()) {
             $this->is_order = True;
         }else if (isset($this->post['order_status'])) {
             $post = Mixin\clean_form($this->post['order']);
             $post = Mixin\to_null($post);
             $post['visit_id'] = $this->visit_pk;
-            $post['parent_id'] = $session->session_id;
-            $post['user_id'] = $this->post['user_id'];
+            $post['responsible_id'] = $session->session_id;
+            $post['client_id'] = $this->post['client_id'];
             $object = Mixin\insert($this->_orders, $post);
             if (!intval($object)) {
-                $this->error($object);
-                $db->rollBack();
                 $this->error("Ошибка при создании ордера!");
+                $db->rollBack();
             }
             $this->is_order = True;
         }
@@ -202,6 +204,7 @@ class VisitModel extends Model
             $db->beginTransaction();
 
             $this->create_or_update_visit();
+            
             if (isset($this->post['service']) and is_array($this->post['service'])) {
                 
                 foreach ($this->post['service'] as $key => $value) {
@@ -214,9 +217,8 @@ class VisitModel extends Model
                 $this->add_visit_bed();
                 
             }
-
             // Обновление статуса у пациента
-            $object1 = Mixin\update($this->_user, array('status' => True), $this->post['user_id']);
+            $object1 = Mixin\update($this->_client, array('status' => True), $this->post['client_id']);
             if (!intval($object1)){
                 $this->error("Ошибка в обновление статуса пациента!");
                 $db->rollBack();
@@ -264,7 +266,6 @@ class VisitModel extends Model
         if (isset($this->post['division_id']) and is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
-        $this->dd();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
@@ -273,7 +274,7 @@ class VisitModel extends Model
     public function is_update(int $pk)
     {
         global $db;
-        $user = $db->query("SELECT user_id FROM $this->table WHERE id = $pk")->fetchColumn();
+        $client = $db->query("SELECT client_id FROM $this->table WHERE id = $pk")->fetchColumn();
         $data = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk AND status NOT IN(6,7)")->rowCount();
 
         if ($data == 0) {
@@ -282,7 +283,7 @@ class VisitModel extends Model
             if(!intval($object)){
                 return $object;
             }
-            $this->status_update($user);
+            $this->status_update($client);
             return null;
 
         } else {
@@ -294,7 +295,7 @@ class VisitModel extends Model
     public function is_delete(int $pk)
     {
         global $db;
-        $user = $db->query("SELECT user_id FROM $this->table WHERE id = $pk")->fetchColumn();
+        $client = $db->query("SELECT client_id FROM $this->table WHERE id = $pk")->fetchColumn();
         $data = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk")->rowCount();
         $data_update = $db->query("SELECT * FROM $this->_service WHERE visit_id = $pk AND status IN(1,2,3,5)")->rowCount();
 
@@ -304,7 +305,7 @@ class VisitModel extends Model
             if(!intval($object)){
                 return $object;
             }
-            $this->status_update($user);
+            $this->status_update($client);
             return null;
 
         } else {
@@ -314,7 +315,7 @@ class VisitModel extends Model
                 if(!intval($object)){
                     return $object;
                 }
-                $this->status_update($user);
+                $this->status_update($client);
             }
             return $data;
         }
@@ -382,9 +383,9 @@ class VisitModel extends Model
         }
     }
 
-    public function status_update($user)
+    public function status_update($client)
     {
-        return (new ClientModel())->update_status($user);
+        return (new ClientModel())->update_status($client);
     }
 
     public function success($stat=null)

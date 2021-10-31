@@ -11,7 +11,6 @@ ini_set('session.use_trans_sid', 0);
 ini_set('session.sid_length', 48);
 ini_set('session.sid_bits_per_character', 7);
 ini_set('session.hash_function', "sha512");
-
 ini_set('session.save_path', dirname(__DIR__)."/sessions");
 
 if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
@@ -59,6 +58,7 @@ require_once dirname(__FILE__).'/functions/table.php';
 require_once dirname(__FILE__).'/functions/tag.php';
 require_once dirname(__DIR__).'/libs/lib.php';
 
+if (!is_dir(dirname(__DIR__)."/sessions")) Mixin\error('403');
 
 function showTitle() //Функция title
 {
@@ -68,7 +68,7 @@ function showTitle() //Функция title
 function get_full_name($id = null) {
     global $db, $session;
     if($id){
-        $stmt = $db->query("SELECT first_name, last_name, father_name from users where id = $id")->fetch(PDO::FETCH_OBJ);
+        $stmt = $db->query("SELECT first_name, last_name, father_name FROM users WHERE id = $id")->fetch(PDO::FETCH_OBJ);
         return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
     }else{
         return $session->get_full_name();

@@ -59,9 +59,10 @@ class VisitPanel extends VisitModel
 
         <form method="post" action="<?= add_url() ?>">
         
-            <div class="modal-body">responsible_id
+            <div class="modal-body">
 
                 <input type="hidden" name="model" value="<?= get_parent_class($this) ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
                 <input type="hidden" name="client_id" value="<?= $pk ?>">
 
@@ -364,10 +365,10 @@ class VisitPanel extends VisitModel
             <div class="modal-body">
 
                 <input type="hidden" name="model" value="<?= get_parent_class($this) ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
                 <input type="hidden" name="user_id" value="<?= $pk ?>">
                 <input type="hidden" name="direction" value="1">
-                <input type="hidden" name="status" value="1">
 
                 <div class="form-group row mb-3">
 

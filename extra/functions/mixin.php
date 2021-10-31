@@ -207,8 +207,10 @@ function delete($tb, $pk, $name_pk = null){
 }
 
 function error($url){
-    header("location:".DIR."/error/$url".EXT);
-    exit;
+    if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error'){
+        header("location:".DIR."/error/$url".EXT);
+        exit;
+    }
 }
 
 function T_create($sql)
