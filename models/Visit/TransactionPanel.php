@@ -232,7 +232,7 @@ class TransactionPanel extends Model
         <div class="card border-1 border-dark" id="card_info">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($this->value('client_id')) ?> - <em><?= client_name($this->value('client_id')) ?></em></b></h5>
             </div>
 
             <div class="card-body">
@@ -252,7 +252,7 @@ class TransactionPanel extends Model
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($db->query("SELECT vss.id, vss.parent_id, vss.add_date, vss.service_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'item_cost', vp.price_date FROM visit_services vss LEFT JOIN visit_service_transactions vp ON(vp.visit_service_id=vss.id) WHERE vss.visit_id = $pk AND vss.status = 5") as $row): ?>
+                            <?php foreach ($db->query("SELECT vs.id, vs.responsible_id, vs.add_date, vs.service_name, (vst.price_cash + vst.price_card + vst.price_transfer) 'item_cost', vst.price_date FROM visit_services vs LEFT JOIN visit_service_transactions vst ON(vst.visit_service_id=vs.id) WHERE vs.visit_id = $pk AND vs.status = 5") as $row): ?>
                                 <tr id="tr_VisitServicesModel_<?= $row['id'] ?>">
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
                                     <td><?= date_f($row['add_date'], 1) ?></td>

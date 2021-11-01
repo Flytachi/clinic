@@ -1,15 +1,15 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth([3, 32]);
+$session->is_auth(22);
 $header = "Рабочий стол";
 
-$tb = new Table($db, "visits vs");
+$tb = (new VisitModel)->tb('v');
 $search = $tb->get_serch();
-$tb->set_data("DISTINCT vss.visit_id, vs.user_id")->additions("LEFT JOIN visit_services vss ON(vss.visit_id=vs.id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("DISTINCT vs.visit_id, v.client_id")->additions("LEFT JOIN visit_services vs ON(vs.visit_id=v.id) LEFT JOIN clients c ON(c.id=v.client_id)");
 
 $where_search = array(
-	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 5", 
-	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 5 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"v.branch_id = $session->branch AND v.direction IS NULL AND v.completed IS NULL AND vs.status = 5", 
+	"v.branch_id = $session->branch AND v.direction IS NULL AND v.completed IS NULL AND vs.status = 5 AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($where_search);
 ?>
@@ -74,9 +74,9 @@ $tb->where_or_serch($where_search);
 				                        <tbody id="search_display">
 				                            <?php foreach($tb->get_table(1) as $row): ?>
 				                                <tr onclick="Check('<?= up_url($row->visit_id, 'TransactionPanel') ?>')">
-				                                    <td><?= addZero($row->user_id) ?></td>
+				                                    <td><?= addZero($row->client_id) ?></td>
 				                                    <td class="text-center">
-				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+				                                        <div class="font-weight-semibold"><?= client_name($row->client_id) ?></div>
 				                                    </td>
 				                                </tr>
 				                            <?php endforeach; ?>

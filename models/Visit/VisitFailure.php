@@ -126,7 +126,7 @@ class VisitFailure extends Model
             } else {
                 
                 // Проверка прав
-                if ( in_array($data['status'], [2,3]) and ($data['parent_id'] == $session->session_id or $data['route_id'] == $session->session_id)) {
+                if ( in_array($data['status'], [2,3]) and ($data['responsible_id'] == $session->session_id or $data['route_id'] == $session->session_id)) {
                     
                     $db->beginTransaction();
                     // Visit prices 
@@ -158,7 +158,7 @@ class VisitFailure extends Model
         } else {
 
             // Абулатор
-            if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or ( ($data['level'] == 12 and permission(12)) ) or permission([3, 32]) ) {
+            if ( ( $session->session_id == $data['responsible_id'] ) or ( ($data['level'] == 13 and permission(13)) ) or ( ($data['level'] == 14 and permission(14)) ) or permission([22]) ) {
             
                 // Is order
                 if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {

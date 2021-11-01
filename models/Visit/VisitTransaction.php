@@ -30,6 +30,7 @@ class VisitTransactionModel extends Model
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
+                <input type="hidden" name="branch_id" value="<?= $_GET['branch_id'] ?>">
                 <input type="hidden" name="visit_id" value="<?= $_GET['visit_pk'] ?>">
                 <?php if( isset($_GET['refund']) and $_GET['refund'] ): ?>
                     <input type="hidden" name="is_refund" value="<?= $_GET['refund'] ?>">
@@ -201,11 +202,10 @@ class VisitTransactionModel extends Model
                             // conn.send(obj1);
 
                             // Печать:
-                            console.log("ged");
-                            /* Print(result.val);
+                            Print(result.val);
                             setTimeout( function() {
                                 location.reload();
-                            }, 1000) */
+                            }, 1000) 
 
                         }else{
                             new Noty({
@@ -576,6 +576,7 @@ class VisitTransactionModel extends Model
     {
         global $db;
         $post = array(
+            'branch_id' => $this->post['branch_id'],
             'visit_id' => $row['visit_id'],
             'visit_service_id' => $row['visit_service_id'],
             'client_id' => $row['client_id'],

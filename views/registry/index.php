@@ -79,7 +79,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 										<tr>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= client_name($row->id) ?></div>
 												<div class="text-muted">
 													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
