@@ -1,0 +1,1 @@
+"CREATE TABLE IF NOT EXISTS `warehouse_item_suppliers` (`id` smallint(5) NOT NULL AUTO_INCREMENT,`supplier` char(255) DEFAULT NULL,`address` varchar(500) DEFAULT NULL,`contacts` char(200) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

@@ -81,7 +81,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 											<td>
 												<div class="font-weight-semibold"><?= client_name($row->id) ?></div>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE client_id = $row->id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
 													<?php endif; ?>
 												</div>

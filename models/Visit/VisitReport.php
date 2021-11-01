@@ -24,7 +24,7 @@ class VisitReport extends Model
                     <div class="col-md-4 offset-md-8">
                         <select data-placeholder="Выбрать пациента" class="<?= $classes['form-select'] ?>" onchange="ChangePack(this)">
                             <option value="0">Шаблоны</option>
-                            <?php foreach ($db->query("SELECT * FROM templates WHERE autor_id = {$_SESSION['session_id']} ORDER BY name DESC") as $row): ?>
+                            <?php foreach ($db->query("SELECT * FROM templates WHERE autor_id = $session->session_id ORDER BY name DESC") as $row): ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -70,9 +70,9 @@ class VisitReport extends Model
             </div>
 
             <div class="modal-footer">
-                <?php if (permission(10)): ?>
+                <?php if (permission(12)): ?>
                     <?php if (division_assist() == 2): ?>
-                        <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+                        <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
                     <?php endif; ?>
                     <input style="display:none;" id="btn_end_submit" type="submit" value="Завершить" name="end"></input>
                     <button class="btn btn-outline-danger btn-sm" type="button" onclick="Verification()">Завершить</button>
@@ -106,7 +106,7 @@ class VisitReport extends Model
                         }
                     </script>
                 <?php endif; ?>
-                <?php if (permission([12, 13])): ?>
+                <?php if (permission([14])): ?>
                     <input class="btn btn-outline-danger btn-sm" type="submit" value="Завершить" name="end"></input>
                 <?php else: ?>
                     <?php if(!config('document_autosave')): ?>
@@ -167,7 +167,7 @@ class VisitReport extends Model
                         type: "POST",
                         url: "<?= add_url() ?>",
                         data: {
-                            model: "VisitServicesModel",
+                            model: "VisitServiceModel",
                             id: "<?= $pk ?>",
                             service_title: this.value,
                         },
@@ -208,12 +208,12 @@ class VisitReport extends Model
                     const Indicator = document.querySelector( '#document-editor__footer-status' );
 
                     var data_ajax = {
-                        model: "VisitServicesModel",
+                        model: "VisitServiceModel",
                         id: "<?= $pk ?>",
                         service_report: params,
                     };                    
                     if ("<?= division_assist() == 2 ?>" && document.querySelector(`#service_title`).dataset.is_new) {
-                        data_ajax.parent_id = "<?= $session->session_id ?>";
+                        data_ajax.responsible_id = "<?= $session->session_id ?>";
                     }
 
                     Textarea.value = params;
@@ -233,7 +233,7 @@ class VisitReport extends Model
                                 Indicator.classList.add( 'text-success' );
                                 Indicator.innerHTML = "&#10004 Saved!";
 
-                                if (document.querySelector(`<?= (permission(10)) ? '#service_title' : '#VisitService_tr_${data.pk}' ?>`).dataset.is_new) {
+                                if (document.querySelector(`<?= (permission(12)) ? '#service_title' : '#VisitService_tr_${data.pk}' ?>`).dataset.is_new) {
                                     $("#service_title").keyup();
                                 }
                                 
@@ -361,7 +361,7 @@ class VisitReport extends Model
                     const Indicator = document.querySelector( '#document-editor__footer-status' );
 
                     var data_ajax = {
-                        model: "VisitServicesModel",
+                        model: "VisitServiceModel",
                         id: "<?= $pk ?>",
                         service_title: "<?= $this->post['service_name'] ?>",
                         service_report: params,
@@ -412,14 +412,14 @@ class VisitReport extends Model
 
     public function get_or_404($pk)
     {
-        global $db;
+        global $db, $session;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk AND status = 3")->fetch();
 
         if($object){
             
             if (division_assist() == 2) {
                 // Diagnostic
-                if (is_null($object['parent_id']) or $object['parent_id'] == $_SESSION['session_id']) {
+                if (is_null($object['responsible_id']) or $object['responsible_id'] == $session->session_id) {
                     $this->set_post($object);
                     return $this->form($object['id']);
                 }else {

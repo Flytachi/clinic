@@ -4,7 +4,7 @@ class VisitFinish extends Model
 {
     public $table = 'visit_services';
     public $_visits = 'visits';
-    public $_users = 'users';
+    public $_client = 'clients';
     public $_beds = 'beds';
 
     public function get_or_404($pk)
@@ -35,7 +35,7 @@ class VisitFinish extends Model
             }else {
 
                 // Завершение
-                foreach($db->query("SELECT * FROM $this->table WHERE visit_id = $pk AND completed IS NULL AND status = 3 AND parent_id = $session->session_id") as $row){
+                foreach($db->query("SELECT * FROM $this->table WHERE visit_id = $pk AND completed IS NULL AND status = 3 AND responsible_id = $session->session_id") as $row){
                     $this->update_service($row['id']);
                 }
 

@@ -3,7 +3,7 @@
 class VisitRoute extends Model
 {
     public $table = 'visit_services';
-    public $_user = 'users';
+    public $_client = 'clients';
     public $table2 = 'beds';
     public $_visits = 'visits';
     public $_beds = 'visit_beds';
@@ -27,13 +27,14 @@ class VisitRoute extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5 AND id != $session->session_division") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 11 AND id != $session->session_division") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -96,6 +97,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -117,6 +119,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -153,13 +156,14 @@ class VisitRoute extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 6") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 13") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -221,6 +225,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -242,6 +247,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -278,13 +284,14 @@ class VisitRoute extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 10 AND (assist IS NULL OR assist = 1)") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 12 AND (assist IS NULL OR assist = 1)") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -346,6 +353,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -367,6 +375,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -403,13 +412,14 @@ class VisitRoute extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
                     <select data-placeholder="Выбрать отдел" multiple="multiple" id="division_selector" class="<?= $classes['form-multiselect'] ?>" onchange="TableChangeServices(this)" required>
-                        <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 12") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $session->branch AND level = 14") as $row): ?>
                             <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -471,6 +481,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -492,6 +503,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -528,9 +540,10 @@ class VisitRoute extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
                 <input type="hidden" name="status" value="3">
                 
                 <!-- <input type="hidden" name="status" value="2">
@@ -588,6 +601,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -610,6 +624,7 @@ class VisitRoute extends Model
                     type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
+                        branch_id: <?= $session->branch ?>,
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
                         is_order: "<?= $is_order ?>",
@@ -646,8 +661,9 @@ class VisitRoute extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Пакеты:</label>
@@ -722,7 +738,7 @@ class VisitRoute extends Model
         global $db;
         $this->visit_pk = $this->post['visit_id'];
         Mixin\update($this->_visits, array('last_update' => date("Y-m-d H:i:s")), $this->visit_pk);
-        $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+        $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_client WHERE id = {$this->post['client_id']}")->fetchColumn();
         $this->chek_order();
     }
 
@@ -750,10 +766,11 @@ class VisitRoute extends Model
         } else {
             $post['status'] = ($this->post['direction'] or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
         }
+        $post['branch_id'] = $this->post['branch_id'];
         $post['visit_id'] = $this->visit_pk;
-        $post['user_id'] = $this->post['user_id'];
+        $post['client_id'] = $this->post['client_id'];
         $post['route_id'] = $session->session_id;
-        $post['parent_id'] = (is_array($this->post['parent_id'])) ? $this->post['parent_id'][$key] : $this->post['parent_id'];
+        $post['responsible_id'] = (is_array($this->post['responsible_id'])) ? $this->post['responsible_id'][$key] : $this->post['responsible_id'];
         $post['guide_id'] = (isset($this->post['guide_id'])) ? $this->post['guide_id'] : null;
         $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
         $post['service_id'] = $data['id'];
@@ -770,9 +787,10 @@ class VisitRoute extends Model
 
             if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
                 if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
+                    $post_price['branch_id'] = $this->post['branch_id'];
                     $post_price['visit_id'] = $this->visit_pk;
                     $post_price['visit_service_id'] = $object;
-                    $post_price['user_id'] = $this->post['user_id'];
+                    $post_price['client_id'] = $this->post['client_id'];
                     $post_price['item_type'] = $data['type'];
                     $post_price['item_id'] = $data['id'];
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];

@@ -10,7 +10,7 @@ class VisitTransactionModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $classes;
+        global $db, $classes, $session;
         if ( isset($_GET['refund']) and $_GET['refund'] ) {
             $amount = $db->query("SELECT SUM(price_cash + price_card + price_transfer) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
             $price_cash = $db->query("SELECT SUM(price_cash) FROM $this->table WHERE price_date IS NOT NULL AND visit_id = {$_GET['visit_pk']} AND visit_service_id IN (".implode(",", $_GET['service_pks']).")")->fetchColumn();
@@ -29,8 +29,8 @@ class VisitTransactionModel extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
-                <input type="hidden" name="branch_id" value="<?= $_GET['branch_id'] ?>">
+                <input type="hidden" name="pricer_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="visit_id" value="<?= $_GET['visit_pk'] ?>">
                 <?php if( isset($_GET['refund']) and $_GET['refund'] ): ?>
                     <input type="hidden" name="is_refund" value="<?= $_GET['refund'] ?>">
