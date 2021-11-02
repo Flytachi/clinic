@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth();
+$session->is_auth([6, 8]);
 is_module('module_laboratory');
 $header = "Отчёт лаборатории по услугам";
 ?>

@@ -92,7 +92,7 @@ $header = "Отчёты";
                     <!-- end -->
 
                     <!-- Регистратура -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([2, 32])): ?>
                         <a href="<?= viv('reports/registry/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Регистратура</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Регистратура</button>
@@ -100,7 +100,7 @@ $header = "Отчёты";
                     <!-- end -->
 
                     <!-- Касса -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([3, 32, 8])): ?>
                         <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Касса</button>
@@ -108,7 +108,7 @@ $header = "Отчёты";
                     <!-- end -->
 
                     <!-- Врачи -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([5, 8])): ?>
                         <a href="<?= viv('reports/doctor/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Врачи</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Врачи</button>
@@ -117,7 +117,7 @@ $header = "Отчёты";
 
                     <?php if(module('module_laboratory')): ?>
                         <!-- Лаборатория -->
-                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                        <?php if (permission([6, 8])): ?>
                             <a href="<?= viv('reports/laboratory/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Лаборатория</a>
                         <?php else: ?>
                             <button class="btn btn-outline-danger" style="font-size:1rem;">Лаборатория</button>
@@ -127,7 +127,7 @@ $header = "Отчёты";
 
                     <?php if(module('module_diagnostic')): ?>
                         <!-- Диагностика -->
-                        <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                        <?php if (permission([8, 10])): ?>
                             <a href="<?= viv('reports/diagnostic/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Диагностика</a>
                         <?php else: ?>
                             <button class="btn btn-outline-danger" style="font-size:1rem;">Диагностика</button>
