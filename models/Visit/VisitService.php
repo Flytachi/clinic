@@ -55,7 +55,7 @@ class VisitServiceModel extends Model
             
             // --------------------------------
             // Права амбулаторного удаления
-            $permission_amb = $data['status'] == 1 && permission(22) | (permission(11) && $data['route_id'] == $session->session_id);
+            $permission_amb = $data['status'] == 1 && permission([22,23]) | (permission(11) && $data['route_id'] == $session->session_id);
             // Права стационарного удаления
             $permission_sta = $data['status'] == 2 && ($visit['grant_id'] == $session->session_id | $data['route_id'] == $session->session_id);
             // --------------------------------

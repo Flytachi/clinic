@@ -66,7 +66,7 @@ require_once 'callback.php';
 							<i class="icon-clipboard2 mr-2"></i>Состояние
 							
 							<?php if ( $activity and ( permission(7) or (config('constant_card_stationar_condition_button') and is_grant()) ) ): ?>
-								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitStatsModel") ?>`)' class="float-right text-primary">
+								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitStatModel") ?>`)' class="float-right text-primary">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -109,7 +109,7 @@ require_once 'callback.php';
 											?>
 											<tr class="<?= $class_tr ?> tolltip" data-popup="tooltip" title="<?= $row->description ?>">
 												<td class="chart_date"><?= date_f($row->add_date, 1) ?></td>
-												<td><?= get_full_name($row->parent_id) ?></td>
+												<td><?= get_full_name($row->responsible_id) ?></td>
 												<td><?= $stat ?></td>
 												<td class="chart_pressure"><?= $row->pressure ?></td>
 												<td class="chart_pulse"><?= $row->pulse ?></td>

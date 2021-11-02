@@ -1,10 +1,10 @@
 <?php
 
-class VisitAnalyzesModel extends Model
+class VisitAnalyzeModel extends Model
 {
     public $table = 'visit_analyzes';
-    public $_user = 'users';
     public $_visit = 'visits';
+    public $_client = 'clients';
     public $_visit_service = 'visit_services';
     public $_service_analyze = 'service_analyzes';
 
@@ -19,7 +19,7 @@ class VisitAnalyzesModel extends Model
         if($object){
 
             foreach (json_decode($_GET['items']) as $key) {
-                if ($item = $db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = $key AND level = 6 AND status = 3")->fetch()) {
+                if ($item = $db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = $key AND level = 13 AND status = 3")->fetch()) {
                     $this->items[] = $item['id'];
                     $this->divisions[$item['division_id']] = $db->query("SELECT title FROM divisions WHERE id = {$item['division_id']}")->fetchColumn();
                 }
@@ -43,11 +43,12 @@ class VisitAnalyzesModel extends Model
 
     public function form($pk = null)
     {
-        global $db, $classes;
-        $user = $db->query("SELECT id, birth_date, gender FROM $this->_user WHERE id = {$this->post['user_id']}")->fetch();
+        global $db, $classes, $session;
+        $client = $db->query("SELECT id, birth_date, gender FROM $this->_client WHERE id = {$this->post['client_id']}")->fetch();
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form" onsubmit="SubmitSave(this)">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
             <input type="hidden" name="visit_id" value="<?= $pk ?>">
             <input type="hidden" name="action" id="inputs_action">
 
@@ -68,17 +69,17 @@ class VisitAnalyzesModel extends Model
                                 <tbody class="bg-secondary">
                                     <tr>
                                         <th style="width:150px">ID:</th>
-                                        <td><?= addZero($user['id']) ?></td>
+                                        <td><?= addZero($client['id']) ?></td>
 
                                         <th style="width:150px">Пол:</th>
-                                        <td><?= ($user['gender']) ? "Мужской" : "Женский" ?></td>
+                                        <td><?= ($client['gender']) ? "Мужской" : "Женский" ?></td>
                                     </tr>
                                     <tr>
                                         <th style="width:150px">FIO:</th>
-                                        <td><?= get_full_name($user['id']) ?></td>
+                                        <td><?= client_name($client['id']) ?></td>
 
                                         <th style="width:150px">Дата рождения:</th>
-                                        <td><?= date_f($user['birth_date']) ?></td>
+                                        <td><?= date_f($client['birth_date']) ?></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -124,7 +125,7 @@ class VisitAnalyzesModel extends Model
                                         </tr>
                                     </thead>
                                     <!-- Services -->
-                                    <?php foreach ($db->query("SELECT id, service_id, service_name FROM $this->_visit_service WHERE level = 6 AND status = 3 AND division_id = $key AND id IN (".implode(',', $this->items).")") as $service_row): ?>
+                                    <?php foreach ($db->query("SELECT id, service_id, service_name FROM $this->_visit_service WHERE level = 13 AND status = 3 AND division_id = $key AND id IN (".implode(',', $this->items).")") as $service_row): ?>
                                         
                                         <?php $submit_division_items[] = $service_row['id']; ?>
                                         <tbody id="VisitService_tr_<?= $service_row['id'] ?>" class="changer_tab-services">
@@ -142,7 +143,7 @@ class VisitAnalyzesModel extends Model
                                                 </th>
                                             </tr>
                                             <!-- Analyzes -->
-                                            <?php $p=1; foreach ($db->query("SELECT sa.id, sa.name, sa.standart, va.id 'pk', va.result, va.deviation FROM $this->_service_analyze sa LEFT JOIN $this->table va ON(va.visit_service_id = {$service_row['id']} AND va.service_id = {$service_row['service_id']} AND va.service_analyze_id = sa.id) WHERE sa.service_id = {$service_row['service_id']} AND sa.status IS NOT NULL") as $row): ?>
+                                            <?php $p=1; foreach ($db->query("SELECT sa.id, sa.name, sa.standart, va.id 'pk', va.result, va.deviation FROM $this->_service_analyze sa LEFT JOIN $this->table va ON(va.visit_service_id = {$service_row['id']} AND va.service_id = {$service_row['service_id']} AND va.service_analyze_id = sa.id) WHERE sa.service_id = {$service_row['service_id']} AND sa.is_active IS NOT NULL") as $row): ?>
                                                 <tr id="TR_<?= $row['id'] ?>" class="<?= ($row['deviation']) ? "table-danger" : "" ?>">
                                                     <td><?= $p++ ?></td>
                                                     <td><?= $row['name'] ?></td>
@@ -450,14 +451,15 @@ class VisitAnalyzesModel extends Model
         foreach ($this->post['items'] as $service_pk => $analyzes) {
 
             // Confirm status
-            if ($db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = $service_pk AND level = 6 AND status = 3")->fetchColumn()) {
+            if ($db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = $service_pk AND level = 13 AND status = 3")->fetchColumn()) {
                 
                 // Save
                 foreach ($analyzes as $key => $post) {
                     $post = Mixin\clean_form($post);
                     $post = Mixin\to_null($post);
+                    $post['branch_id'] = $this->post['branch_id'];
                     $post['visit_id'] = $this->post['visit_id'];
-                    $post['user_id'] = $db->query("SELECT user_id FROM $this->_visit WHERE id = {$this->post['visit_id']}")->fetchColumn();
+                    $post['client_id'] = $db->query("SELECT client_id FROM $this->_visit WHERE id = {$this->post['visit_id']}")->fetchColumn();
                     $post['service_id'] = $db->query("SELECT service_id FROM $this->_visit_service WHERE id = {$post['visit_service_id']}")->fetchColumn();
                     $post['service_name'] = $db->query("SELECT service_name FROM $this->_visit_service WHERE id = {$post['visit_service_id']}")->fetchColumn();
                     $post['analyze_name'] = $db->query("SELECT name FROM $this->_service_analyze WHERE id = {$post['service_analyze_id']}")->fetchColumn();
@@ -481,11 +483,11 @@ class VisitAnalyzesModel extends Model
             if ( is_array($this->post['finish_service']) ) {
                
                 $VisitFinish = new VisitFinish();
-                $VisitFinish->set_post(array('parent_id' => $session->session_id, 'status' => 7, 'completed' => date('Y-m-d H:i:s')));
+                $VisitFinish->set_post(array('responsible_id' => $session->session_id, 'status' => 7, 'completed' => date('Y-m-d H:i:s')));
                 foreach ($this->post['finish_service'] as $key) {
 
                     // Confirm status
-                    if ($db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = $key AND level = 6 AND status = 3")->fetchColumn()) {
+                    if ($db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = $key AND level = 13 AND status = 3")->fetchColumn()) {
                         
                         # Finish
                         $VisitFinish->update_service($key);
@@ -498,11 +500,11 @@ class VisitAnalyzesModel extends Model
             } else {
 
                 // Confirm status
-                if ($db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = {$this->post['finish_service']} AND level = 6 AND status = 3")->fetchColumn()) {
+                if ($db->query("SELECT id, division_id FROM $this->_visit_service WHERE id = {$this->post['finish_service']} AND level = 13 AND status = 3")->fetchColumn()) {
 
                     # Finish
                     $VisitFinish = new VisitFinish();
-                    $VisitFinish->set_post(array('parent_id' => $session->session_id, 'status' => 7, 'completed' => date('Y-m-d H:i:s')));
+                    $VisitFinish->set_post(array('responsible_id' => $session->session_id, 'status' => 7, 'completed' => date('Y-m-d H:i:s')));
                     $VisitFinish->update_service($this->post['finish_service']);
                     $VisitFinish->status_update($db->query("SELECT visit_id FROM $this->_visit_service WHERE id = {$this->post['finish_service']}")->fetchColumn());
 

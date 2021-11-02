@@ -3,9 +3,9 @@ require_once '../tools/warframe.php';
 is_module('module_laboratory');
 
 if ( isset($_GET['pk']) ) {
-    $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT vs.client_id, vs.responsible_id, vs.service_id, c.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN clients c ON(c.id=vs.client_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
 }else {
-    $docs = $db->query("SELECT us.id, us.birth_date, v.add_date, v.completed FROM users us LEFT JOIN visits v ON(v.user_id=us.id) WHERE v.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT c.id, c.birth_date, v.add_date, v.completed FROM clients c LEFT JOIN visits v ON(v.client_id=c.id) WHERE v.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 }
 ?>
 
@@ -58,12 +58,12 @@ if ( isset($_GET['pk']) ) {
         
         <div class="text-left h3">
             <?php if ( isset($_GET['pk']) ): ?>
-                <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-                <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
+                <b>Ф.И.О.: </b><?= client_name($docs->client_id) ?><br>
+                <b>ID Пациента: </b><?= addZero($docs->client_id) ?><br>
                 <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
                 <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?>
             <?php else: ?>
-                <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
+                <b>Ф.И.О.: </b><?= client_name($docs->id) ?><br>
                 <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
                 <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
                 <b>Дата начала визита: </b><?= date('d.m.Y H:i', strtotime($docs->add_date)) ?><br>

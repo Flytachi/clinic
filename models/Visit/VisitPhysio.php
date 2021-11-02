@@ -3,8 +3,8 @@
 class VisitPhysioModel extends Model
 {
     public $table = 'visits';
-    public $_user = 'users';
     public $_visit = 'visits';
+    public $_client = 'clients';
     public $_visit_service = 'visit_services';
 
     public function get_or_404(int $pk)
@@ -26,7 +26,7 @@ class VisitPhysioModel extends Model
     public function form($pk = null)
     {
         global $db, $classes, $session;
-        $user = $db->query("SELECT id, birth_date, gender FROM $this->_user WHERE id = {$this->post['user_id']}")->fetch();
+        $client = $db->query("SELECT id, birth_date, gender FROM $this->_client WHERE id = {$this->post['client_id']}")->fetch();
         $is_division = (division()) ? "AND division_id = ".division() : null;
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
@@ -43,17 +43,17 @@ class VisitPhysioModel extends Model
                         <tbody class="bg-secondary">
                             <tr>
                                 <th style="width:150px">ID:</th>
-                                <td><?= addZero($user['id']) ?></td>
+                                <td><?= addZero($client['id']) ?></td>
 
                                 <th style="width:150px">Пол:</th>
-                                <td><?= ($user['gender']) ? "Мужской" : "Женский" ?></td>
+                                <td><?= ($client['gender']) ? "Мужской" : "Женский" ?></td>
                             </tr>
                             <tr>
                                 <th style="width:150px">FIO:</th>
-                                <td><?= get_full_name($user['id']) ?></td>
+                                <td><?= get_full_name($client['id']) ?></td>
 
                                 <th style="width:150px">Дата рождения:</th>
-                                <td><?= date_f($user['birth_date']) ?></td>
+                                <td><?= date_f($client['birth_date']) ?></td>
                             </tr>
                         </tbody>
                     </table>
@@ -73,8 +73,8 @@ class VisitPhysioModel extends Model
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($db->query("SELECT DISTINCT service_id, service_name FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division") as $row): ?>
-                            <?php $value = $db->query("SELECT id, COUNT(id) 'count' FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND service_id = {$row['service_id']} AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division")->fetch(); ?>
+                        <?php foreach ($db->query("SELECT DISTINCT service_id, service_name FROM $this->_visit_service WHERE visit_id = $pk AND level = 14 AND status = 2 AND (responsible_id IS NULL OR responsible_id = $session->session_id) $is_division") as $row): ?>
+                            <?php $value = $db->query("SELECT id, COUNT(id) 'count' FROM $this->_visit_service WHERE visit_id = $pk AND level = 14 AND status = 2 AND service_id = {$row['service_id']} AND (responsible_id IS NULL OR responsible_id = $session->session_id) $is_division")->fetch(); ?>
                             <tr class="changer_tab-services">
                                 <td><?= $row['service_name'] ?></td>
                                 <td class="text-center changer_tab-service_qty"><?= $value['count'] ?></td>
@@ -172,7 +172,7 @@ class VisitPhysioModel extends Model
     {
         global $db, $session;
         $VisitFinish = new VisitFinish();
-        $VisitFinish->set_post(array('parent_id' => $session->session_id, 'status' => 7, 'accept_date' => date('Y-m-d H:i:s'), 'completed' => date('Y-m-d H:i:s')));
+        $VisitFinish->set_post(array('responsible_id' => $session->session_id, 'status' => 7, 'accept_date' => date('Y-m-d H:i:s'), 'completed' => date('Y-m-d H:i:s')));
         $VisitFinish->update_service($pk);
         $VisitFinish->status_update($db->query("SELECT visit_id FROM $this->_visit_service WHERE id = {$pk}")->fetchColumn());
         $this->success();

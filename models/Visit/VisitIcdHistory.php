@@ -16,6 +16,7 @@ class VisitIcdHistoryModel extends VisitModel
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
             <input type="hidden" name="icd_autor" value="<?= $session->session_id ?>">
 
             <div class="modal-body">
@@ -55,7 +56,7 @@ class VisitIcdHistoryModel extends VisitModel
             unset($this->post['id']);
             $db->beginTransaction();
 
-            $history = Mixin\insert($this->_icd_history,  array('visit_id' => $pk, 'icd_id' => $this->post['icd_id'], 'parent_id' => $session->session_id));
+            $history = Mixin\insert($this->_icd_history,  array('branch_id' => $this->post['branch_id'], 'visit_id' => $pk, 'icd_id' => $this->post['icd_id'], 'responsible_id' => $session->session_id));
             $object = Mixin\update($this->table, $this->post, $pk);
             if (!intval($history) or !intval($object)){
                 $this->error("Ошибка при назначении диагноза!");

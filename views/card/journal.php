@@ -17,7 +17,7 @@ $object = $db->query("SELECT * FROM visits WHERE id = $pk AND completed IS NULL 
         <h5 class="text-center text-muted mt-3">Начало</h5>
         <div class="content" id="listbock">
 
-            <?php $tb = (new Table($db, "visit_journals"))->where("visit_id = $pk")->order_by("add_date ASC"); ?>
+            <?php $tb = (new VisitJournalModel)->tb()->where("visit_id = $pk")->order_by("add_date ASC"); ?>
             <?php foreach ($tb->get_table() as $row): ?>
                 <?php 
                 if ($row->last_update) $dt = date_f($row->last_update, 1);

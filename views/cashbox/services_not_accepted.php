@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(22);
+$session->is_auth([22,23]);
 $header = "Не принятые услуги";
 
 $tb = (new VisitServiceModel)->tb('vs');

@@ -58,8 +58,8 @@ require_once 'callback.php';
 				                    </thead>
 				                    <tbody>
 										<?php
-										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, service_name, route_id, accept_date, completed, status")->where("visit_id = $patient->visit_id AND parent_id = $session->session_id AND service_id != 1")->order_by('add_date DESC');
+										$tb = (new VisitServiceModel)->tb();
+										$tb->set_data("id, service_name, route_id, accept_date, completed, status")->where("visit_id = $patient->visit_id AND responsible_id = $session->session_id AND service_id != 1")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr>

@@ -1,6 +1,6 @@
 <?php
 
-class VisitJournalsModel extends Model
+class VisitJournalModel extends Model
 {
     public $table = 'visit_journals';
     public $_visit = 'visits';
@@ -9,7 +9,7 @@ class VisitJournalsModel extends Model
     {
         global $db;
         $object = $db->query("SELECT * FROM $this->_visit WHERE id = $pk AND completed IS NULL AND is_active IS NOT NULL")->fetch(PDO::FETCH_ASSOC);
-        if($object and permission(5)){
+        if($object and permission(11)){
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
         }else{
@@ -69,6 +69,7 @@ class VisitJournalsModel extends Model
                 <div class="modal-footer">
                     <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                     <input type="hidden" name="id" id="input_id">
+                    <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                     <input type="hidden" name="visit_id" value="<?= $pk ?>">
                     <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
 

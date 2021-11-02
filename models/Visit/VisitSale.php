@@ -1,6 +1,6 @@
 <?php
 
-class VisitSalesModel extends Model
+class VisitSaleModel extends Model
 {
     public $table = 'visit_sales';
     public $_visits = 'visits';
@@ -30,8 +30,9 @@ class VisitSalesModel extends Model
         <form method="post" action="<?= add_url() ?>" onsubmit="Subi_Sales()">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $this->value('id') ?>">
+            <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
             <input type="hidden" name="visit_id" value="<?= $pk ?>">
-            <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
+            <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
 
             <div class="modal-body">
 

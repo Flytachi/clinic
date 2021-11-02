@@ -1,10 +1,10 @@
 <?php
 
-class VisitDocumentsModel extends Model
+class VisitDocumentModel extends Model
 {
     public $table = 'visit_documents';
     protected $file_directory = "/storage/documents/";
-    protected $file_format = array('pdf', 'mp4', 'jpg', 'png', 'dox', 'doxc', 'xlsx', 'csv', 'txt');
+    protected $file_format = array('pdf', 'mp4', 'jpeg', 'png', 'dox', 'doxc', 'xlsx', 'csv', 'txt');
 
     public function form($pk = null)
     {

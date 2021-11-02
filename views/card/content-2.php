@@ -59,16 +59,16 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = new Table($db, "visit_services");
-										$tb->set_data("id, route_id, division_id, parent_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 5 AND service_id != 1")->order_by('add_date DESC');
+										$tb = (new VisitServiceModel)->tb();
+										$tb->set_data("id, route_id, division_id, responsible_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 11 AND service_id != 1")->order_by('add_date DESC');
 										?>
 										<?php foreach ($tb->get_table(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
 												<td>
-													<?php if($row->parent_id): ?>
+													<?php if($row->responsible_id): ?>
 														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
-														<div class="text-muted"><?= get_full_name($row->parent_id) ?></div>
+														<div class="text-muted"><?= get_full_name($row->responsible_id) ?></div>
 													<?php else: ?>
 														<?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
 													<?php endif; ?>

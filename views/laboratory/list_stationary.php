@@ -1,16 +1,16 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(6);
+$session->is_auth(13);
 is_module('module_laboratory');
 $header = "Стационарные пациенты";
 
-$tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)  LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb = (new VisitServiceModel)->tb('vs');
+$tb->set_data("DISTINCT v.id, vs.client_id, c.birth_date, vs.route_id, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $search_array = array(
-	"vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL $is_division",
-	"vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL $is_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.branch_id = $session->branch AND vs.status = 3 AND vs.level = 13 AND v.direction IS NOT NULL $is_division",
+	"vs.branch_id = $session->branch AND vs.status = 3 AND vs.level = 13 AND v.direction IS NOT NULL $is_division AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
 ?>
@@ -75,9 +75,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                 <tbody>
 									<?php foreach($tb->get_table(1) as $row): ?>
 										<tr id="VisitService_tr_<?= $row->count ?>">
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->client_id) ?></td>
                                             <td>
-												<span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+												<span class="font-weight-semibold"><?= client_name($row->client_id) ?></span>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
@@ -85,7 +85,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT vs.id, vs.service_name FROM visit_services vs WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.level = 6 AND vs.route_id = $row->route_id $is_division") as $serv): ?>
+												<?php foreach($db->query("SELECT vs.id, vs.service_name FROM visit_services vs WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.level = 13 AND vs.route_id = $row->route_id $is_division") as $serv): ?>
 													<?php $services[] = $serv['id'] ?>
 													<span><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>
@@ -97,8 +97,8 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                             <td class="text-center">
                                                 <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-                                                    <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzesModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Добавить результ</a>
-													<a onclick="Print('<?= prints('test_tube') ?>?pk=<?= $row->user_id ?>')" class="dropdown-item"><i class="icon-unlink2"></i> Пробирка</a>
+                                                    <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzeModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Добавить результ</a>
+													<a onclick="Print('<?= prints('test_tube') ?>?pk=<?= $row->client_id ?>')" class="dropdown-item"><i class="icon-unlink2"></i> Пробирка</a>
                                                 </div>
                                             </td>
                                         </tr>

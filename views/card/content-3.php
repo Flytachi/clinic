@@ -59,9 +59,9 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = new Table($db, "visits v");
+										$tb = (new VisitModel)->tb('v');
 										$tb->set_data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-										$tb->where("v.user_id = $patient->id AND v.id != $patient->visit_id")->order_by('v.add_date DESC');
+										$tb->where("v.client_id = $patient->id AND v.id != $patient->visit_id")->order_by('v.add_date DESC');
 										?>
 										<?php foreach($tb->get_table(1) as $row): ?>
 											<tr>
@@ -89,15 +89,15 @@ require_once 'callback.php';
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<?php if(permission([5])): ?>
+													<?php if(permission([11])): ?>
 														<a href="<?= viv('card/content-6') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
-													<?php elseif(permission([2,32])): ?>
+													<?php elseif(permission([21,23])): ?>
 														<a href="<?= viv('card/content-5') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
-													<?php elseif(permission(6)): ?>
+													<?php elseif(permission(13)): ?>
 														<a href="<?= viv('card/content-7') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
-													<?php elseif(permission(10)): ?>
-														<a href="<?= viv('card/content-8') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 													<?php elseif(permission(12)): ?>
+														<a href="<?= viv('card/content-8') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
+													<?php elseif(permission(14)): ?>
 														<a href="<?= viv('card/content-10') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>
 													<?php else: ?>
 														<a href="<?= viv('card/content-4') ?>?pk=<?= $row->id ?>" type="button" class="<?= $classes['btn-viewing'] ?>">Просмотр</a>

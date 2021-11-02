@@ -158,7 +158,7 @@ class VisitFailure extends Model
         } else {
 
             // Абулатор
-            if ( ( $session->session_id == $data['responsible_id'] ) or ( ($data['level'] == 13 and permission(13)) ) or ( ($data['level'] == 14 and permission(14)) ) or permission([22]) ) {
+            if ( ( $session->session_id == $data['responsible_id'] ) or ( ($data['level'] == 13 and permission(13)) ) or ( ($data['level'] == 14 and permission(14)) ) or permission([22,23]) ) {
             
                 // Is order
                 if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {

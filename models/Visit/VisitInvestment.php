@@ -1,6 +1,6 @@
 <?php
 
-class VisitInvestmentsModel extends Model
+class VisitInvestmentModel extends Model
 {
     public $table = 'visit_investments';
     public $_visits = 'visits';
@@ -25,7 +25,7 @@ class VisitInvestmentsModel extends Model
         $vps = (new VisitModel)->price_status($pk);
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
-            <h6 class="modal-title"><?= ($this->value('type')) ? "Возврат": "Предоплата" ?>: <?= get_full_name($this->value('user_id')) ?></h6>
+            <h6 class="modal-title"><?= ($this->value('type')) ? "Возврат": "Предоплата" ?>: <?= client_name($this->value('client_id')) ?></h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
@@ -33,8 +33,9 @@ class VisitInvestmentsModel extends Model
 
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="visit_id" value="<?= $pk ?>">
-                <input type="hidden" name="user_id" value="<?= $this->value('user_id') ?>">
+                <input type="hidden" name="client_id" value="<?= $this->value('client_id') ?>">
                 <input type="hidden" name="pricer_id" value="<?= $session->session_id ?>">
                 <input type="hidden" name="price_type" value="<?= $this->value('type') ?>">
 

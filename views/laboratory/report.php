@@ -31,7 +31,7 @@ is_module('module_laboratory');
 
                 <?php if(isset($_GET['visit_pk'])): ?>
 
-                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = {$_GET['visit_pk']} AND level = 6 AND status = 7") as $parent): ?>
+                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = {$_GET['visit_pk']} AND level = 13 AND status = 7") as $parent): ?>
                         <tr class="table-primary text-center">
                             <th colspan="5"><b><?= $parent['service_name'] ?></b></th>
                         </tr>
@@ -47,7 +47,7 @@ is_module('module_laboratory');
 
                 <?php else: ?>
 
-                    <?php $data = $db->query("SELECT visit_id, service_name FROM visit_services WHERE id = {$_GET['pk']} AND level = 6 AND status IN (3,7)")->fetch(); ?>
+                    <?php $data = $db->query("SELECT visit_id, service_name FROM visit_services WHERE id = {$_GET['pk']} AND level = 13 AND status IN (3,7)")->fetch(); ?>
                     <tr class="table-primary text-center">
                         <th colspan="5"><b><?= $data['service_name'] ?></b></th>
                     </tr>

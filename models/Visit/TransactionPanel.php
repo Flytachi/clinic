@@ -38,7 +38,7 @@ class TransactionPanel extends Model
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($this->value('client_id')) ?> - <em><?= client_name($this->value('client_id')) ?></em></b></h5>
                 <div class="header-elements">
                     <div class="list-icons">
                         <a href="<?= viv('card/content-2')."?pk=$pk" ?>" class="<?= $classes['btn-render'] ?>">Перейти к визиту № <?= $this->value('parad_id') ?></a>
@@ -129,7 +129,7 @@ class TransactionPanel extends Model
                                     <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
                                     <th class="text-center">
                                         <div class="list-icons">
-                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitServicesModel') ?>', 'tr_VisitServicesModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
+                                            <button onclick="Delete('<?= del_url($row['id'], 'VisitServiceModel') ?>', 'tr_VisitServicesModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
                                         </div>
                                     </th>
                                 </tr>

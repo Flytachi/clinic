@@ -104,7 +104,8 @@ class VisitRoute extends Model
                         search: this.value,
                         selected: service,
                         types: "1,2",
-                        cols: 1
+                        cols: 1,
+                        is_requared:1,
                     },
                     success: function (result) {
                         var service = {};
@@ -125,7 +126,8 @@ class VisitRoute extends Model
                         is_order: "<?= $is_order ?>",
                         selected: service,
                         types: "1,2",
-                        cols: 1
+                        cols: 1,
+                        is_requared:1,
                     },
                     success: function (result) {
                         var service = {};

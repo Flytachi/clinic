@@ -311,7 +311,7 @@
 
                     <input type="hidden" id="verification_url" value="<?= viv('card/verificaton') ?>">
 
-                <?php elseif (permission(7)): ?>
+                <?php elseif (permission(25)): ?>
 
                     <div class="col-md-12">
                         <div class="text-right">

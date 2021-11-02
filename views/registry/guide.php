@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(21);
+$session->is_auth([21,23]);
 $header = "Врачи операторы";
 
 $tb = (new GuideModel)->tb();

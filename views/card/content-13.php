@@ -42,7 +42,7 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-bed2 mr-2"></i>Операционный блок
 							<?php if ($activity and $patient->direction and is_grant()): ?>
-								<a onclick='Update(`<?= up_url(null, "VisitOperationsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
+								<a onclick='Update(`<?= up_url(null, "VisitOperationModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -71,7 +71,7 @@ require_once 'callback.php';
 												<td><?= $row->operation_name ?></td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<?php if (!$row->completed and is_grant()): ?>
-													<td class="text-primary" onclick='Update(`<?= up_url($row->id, "VisitOperationsModel", "form_operation_date") ?>`)'>
+													<td class="text-primary" onclick='Update(`<?= up_url($row->id, "VisitOperationModel", "form_operation_date") ?>`)'>
 														<?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1) : '<span class="text-muted">Нет данных</span>' ?>
 													</td>
 												<?php else: ?>

@@ -8,7 +8,7 @@ class VisitPanel extends VisitModel
     public function get_or_404(int $pk)
     {
         global $db;
-        if (permission(21)) {
+        if (permission([21,23])) {
             $object = $db->query("SELECT * FROM $this->_client WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
             if($object){
 
@@ -367,7 +367,7 @@ class VisitPanel extends VisitModel
                 <input type="hidden" name="model" value="<?= get_parent_class($this) ?>">
                 <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-                <input type="hidden" name="user_id" value="<?= $pk ?>">
+                <input type="hidden" name="client_id" value="<?= $pk ?>">
                 <input type="hidden" name="direction" value="1">
 
                 <div class="form-group row mb-3">

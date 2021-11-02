@@ -98,7 +98,7 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
 	                                      	<td>
 												<div class="list-icons">
 													<div class="dropdown">                      
-														<?php if ($row->status): ?>
+														<?php if ($row->is_active): ?>
 															<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
 														<?php else: ?>
 															<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
@@ -167,8 +167,8 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('manager_analyze') ?>",
-				data: { id:id, status: stat },
+				url: "<?= ajax('manager_status') ?>",
+				data: { table:"service_analyzes", id:id, is_active: stat },
 				success: function (data) {
                     if (data) {
 						var badge = document.getElementById(`status_change_${id}`);

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(22);
+$session->is_auth([22,23]);
 $header = "История платежей ". addZero($_GET['pk']);
 
 if (!is_numeric($_GET['pk'])) {
