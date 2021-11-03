@@ -489,8 +489,8 @@ class __Db
             unset($column);
             unset($keys);
 
-            echo "\033[32m"." Table_$i-{$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
-            $this->create_file(json_encode($sql), "$i-".$table['Tables_in_'.$ini['DATABASE']['NAME']]);
+            echo "\033[32m"." Table_{$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
+            $this->create_file(json_encode($sql), $table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
     }
 
