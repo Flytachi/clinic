@@ -36,7 +36,7 @@
                         </li>
                     <?php endif; ?>
 
-                    <?php if (config("package") and permission(5)): ?>
+                    <?php if (config("package") and permission(11)): ?>
                         <li class="nav-item">
                             <a href="<?= viv('doctor/package_services') ?>" class="nav-link legitRipple">
                                 <i class="icon-bag"></i>
@@ -51,7 +51,7 @@
                         </li> -->
                     <?php endif; ?>
 
-                    <?php if (config("template") and permission([5,10])): ?>
+                    <?php if (config("template") and permission([11,12])): ?>
                         <li class="nav-item">
                             <a href="<?= viv('template') ?>" class="nav-link legitRipple">
                                 <i class="icon-folder-check"></i>
@@ -140,11 +140,11 @@
                 <?php endforeach; ?>
                 <!-- /Main -->
 
-                <?php /*if(module('module_pharmacy')): ?>
+                <?php if(module('module_pharmacy')): ?>
                     <!-- Warehouse -->
                     <?php foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $side_warehouse): ?>
 
-                        <?php if( permission(json_decode($side_warehouse['level'])) and ( !$session->get_division() or in_array($session->get_division(), json_decode($side_warehouse['division'])) ) ): ?>
+                        <?php if( permission(json_decode($side_warehouse['level'])) and ( !$session->session_division or in_array($session->session_division, json_decode($side_warehouse['division'])) ) ): ?>
                             <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['name'] ?></div> <i class="icon-menu" title="Main"></i></li>
                         
                             <li class="nav-item">
@@ -159,16 +159,16 @@
                                     <i class="icon-file-text3"></i>
                                     <span>Заявки</span>
 
-                                    <?php if($side_warehouse['parent_id'] == $session->session_id): ?>
+                                    <?php if($side_warehouse['responsible_id'] == $session->session_id): ?>
 
                                         <div class="ml-auto">
-                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
+                                            <?php $side = $db->query("SELECT wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
                                             <?php if($side): ?>
                                                 <span class="badge bg-teal align-self-center"><?= $side ?></span>
                                             <?php endif; ?>
                                             <?php unset($side); ?>
     
-                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
+                                            <?php $side = $db->query("SELECT wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
                                             <?php if($side): ?>
                                                 <span class="badge bg-orange align-self-center"><?= $side ?></span>
                                             <?php endif; ?>
@@ -177,7 +177,7 @@
 
                                     <?php else: ?>
 
-                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
+                                        <?php $side = $db->query("SELECT wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
                                         <?php if($side): ?>
                                             <span class="badge bg-teal align-self-center ml-auto"><?= $side ?></span>
                                         <?php endif; ?>
@@ -191,7 +191,7 @@
 
                     <?php endforeach; ?>
                     <!-- /Warehouse -->
-                <?php endif;*/ ?>
+                <?php endif; ?>
                 
             </ul>
 

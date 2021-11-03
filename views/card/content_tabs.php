@@ -60,7 +60,7 @@
             <a href="<?= viv('card/content-10').$agr ?>" class="nav-link <?= viv_link('card/content-10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-googleplus5 mr-1"></i>Физиотерапия</a>
         </li>
     <?php endif; ?>
-    <?php if( !permission(11) ): ?>
+    <?php if( !permission(15) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-11').$agr ?>" class="nav-link <?= viv_link('card/content-11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-files-empty mr-1"></i>Документы</a>
         </li>
@@ -74,7 +74,7 @@
         </li>
     <?php endif; ?>
 
-    <?php if( module('module_pharmacy') and permission(7) ): ?>
+    <?php if( module('module_pharmacy') and permission(25) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-15').$agr ?>" class="nav-link <?= viv_link('card/content-15') ?> legitRipple" style="white-space:nowrap;"><i class="icon-puzzle3 mr-1"></i>Расходные материалы</a>
         </li>

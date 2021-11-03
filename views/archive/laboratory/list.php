@@ -3,14 +3,14 @@ require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Мои пациенты";
 
-$tb = new Table($db, "users us");
+$tb = (new ClientModel)->tb('c');
 $search = $tb->get_serch();
 $where_search = array(
-	"us.user_level = 15 AND vs.level = 6", 
-	"us.user_level = 15 AND vs.level = 6 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.responsible_id = $session->session_id AND vs.level = 13", 
+	"vs.responsible_id = $session->session_id AND vs.level = 13 AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
 
-$tb->set_data("DISTINCT us.id, us.birth_date, us.phone_number, us.region, us.add_date")->additions("LEFT JOIN visit_services vs ON(vs.user_id=us.id)")->where_or_serch($where_search)->order_by("us.add_date DESC")->set_limit(20);
+$tb->set_data("DISTINCT c.id, c.birth_date, c.phone_number, c.region, c.add_date")->additions("LEFT JOIN visit_services vs ON(vs.client_id=c.id)")->where_or_serch($where_search)->order_by("c.add_date DESC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +72,7 @@ $tb->set_data("DISTINCT us.id, us.birth_date, us.phone_number, us.region, us.add
 										<tr>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= client_name($row->id) ?></div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= $row->phone_number ?></td>

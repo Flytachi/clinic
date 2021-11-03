@@ -190,8 +190,8 @@
 
                                 <?php
                                 $loc_attr = "";
-                                if ($activity and permission(7)) {
-                                    $loc_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitBedsModel")."`)' class=\"text-primary\"";
+                                if ($activity and permission(25)) {
+                                    $loc_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitBedModel")."`)' class=\"text-primary\"";
                                 }
                                 ?>
                                 <label class="col-md-4"><b>Размещён:</b></label>

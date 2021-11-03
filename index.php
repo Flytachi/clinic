@@ -20,6 +20,9 @@ if ($_SESSION['session_id'] == "master") {
         case 21: render('registry/index'); break;
         case 22: render('cashbox/index'); break;
         case 23: render('registry/index'); break;
+        case 24: render('pharmacy/index'); break;
+        case 25: render('nurce/index'); break;
+        
     endswitch;
 }
 ?>

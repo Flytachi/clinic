@@ -65,7 +65,7 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-clipboard2 mr-2"></i>Состояние
 							
-							<?php if ( $activity and ( permission(7) or (config('constant_card_stationar_condition_button') and is_grant()) ) ): ?>
+							<?php if ( $activity and ( permission(25) or (config('constant_card_stationar_condition_button') and is_grant()) ) ): ?>
 								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitStatModel") ?>`)' class="float-right text-primary">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>

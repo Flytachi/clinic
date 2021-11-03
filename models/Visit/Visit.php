@@ -126,7 +126,7 @@ class VisitModel extends Model
             }
             
             if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
-                if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
+                if (empty($this->post['direction']) or (!permission([22, 23]) and isset($this->post['direction']) and $this->post['direction'])) {
                     $post_price['branch_id'] = $this->post['branch_id'];
                     $post_price['visit_id'] = $this->visit_pk;
                     $post_price['visit_service_id'] = $object;
@@ -154,6 +154,7 @@ class VisitModel extends Model
         $bed_types = $db->query("SELECT * FROM  $this->_bed_types WHERE id = {$bed_data['type_id']}")->fetch();
 
         $post = array(
+            'branch_id' => $this->post['branch_id'],
             'visit_id' => $this->visit_pk,
             'responsible_id' => $session->session_id,
             'client_id' => $this->post['client_id'],
@@ -244,9 +245,9 @@ class VisitModel extends Model
                 $db->rollBack();
             }
             if ($this->post['grant_id']) {
-                $data = $db->query("SELECT id, user_id, level, status, service_id, service_name FROM $this->_service WHERE visit_id = $pk AND service_id = 1 AND status = 3")->fetch();
+                $data = $db->query("SELECT id, client_id, level, status, service_id, service_name FROM $this->_service WHERE visit_id = $pk AND service_id = 1 AND status = 3")->fetch();
                 $data['visit_id'] = $pk;
-                $data['parent_id'] = $this->post['grant_id'];
+                $data['responsible_id'] = $this->post['grant_id'];
                 $data['route_id'] = $session->session_id;
                 $data['division_id'] = $this->post['division_id'];
                 $data['status'] = 2;

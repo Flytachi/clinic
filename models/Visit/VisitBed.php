@@ -1,6 +1,6 @@
 <?php
 
-class VisitBedsModel extends Model
+class VisitBedModel extends Model
 {
     public $table = 'visit_beds';
     public $_visits = 'visits';
@@ -13,7 +13,7 @@ class VisitBedsModel extends Model
     {
         global $db;
         $object = $db->query("SELECT * FROM $this->_visits WHERE id = $pk AND direction IS NOT NULL AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-        if($object and permission(7)){
+        if($object and permission(25)){
             $this->set_post($db->query("SELECT * FROM $this->table WHERE visit_id = $pk AND end_date IS NULL")->fetch(PDO::FETCH_ASSOC));
             return $this->{$_GET['form']}($object['id']);
         }else{

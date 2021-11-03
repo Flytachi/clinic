@@ -37,9 +37,10 @@ class VisitBypassModel extends Model
             <div class="modal-body">
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="visit_id" value="<?= $pk ?>">
-                <input type="hidden" name="user_id" value="<?= $this->visit['user_id'] ?>">
-                <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="client_id" value="<?= $this->visit['user_id'] ?>">
+                <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
 
                 <div class="row">
 

@@ -71,7 +71,7 @@ $header = "Склады";
 										<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->name ?></td>
-											<td><?= get_full_name($row->parent_id) ?></td>
+											<td><?= get_full_name($row->responsible_id) ?></td>
 											<td>
                                                 <?php foreach (json_decode($row->level) as $key): ?>
                                                     <li><?= $PERSONAL[$key] ?></li>

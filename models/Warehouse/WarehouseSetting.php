@@ -108,7 +108,7 @@ class WarehouseSettingModel extends Model
             
             if (isset($this->post['division'])) {
                 foreach ($this->post['division'] as $divis) {
-                    $object = Mixin\insert($this->table, array('warehouse_id' => $this->post['warehouse_id'], 'division_id' => $divis));
+                    $object = Mixin\insert($this->table, array('branch_id' => $this->post['branch_id'], 'warehouse_id' => $this->post['warehouse_id'], 'division_id' => $divis));
                     if (!intval($object)){
                         $this->error($object);
                         $db->rollBack();

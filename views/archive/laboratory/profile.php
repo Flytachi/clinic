@@ -1,7 +1,7 @@
 <div class="<?= $classes['card'] ?>">
 
     <div class="<?= $classes['card-header'] ?>">
-        <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
+        <h5 class="card-title"><b><?= client_name($patient->id) ?></b></h5>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>

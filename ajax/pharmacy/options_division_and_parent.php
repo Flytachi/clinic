@@ -15,7 +15,7 @@ $session->is_auth();
 
     <div class="col-md-6">
         <label>Ответственное лицо:</label>
-        <select data-placeholder="Выберите ответственное лицо" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
+        <select data-placeholder="Выберите ответственное лицо" name="responsible_id" id="responsible_id" class="<?= $classes['form-select'] ?>" required>
             <?php foreach($db->query("SELECT * from users WHERE branch_id = $session->branch AND is_active IS NOT NULL AND user_level IN ($level)") as $row): ?>
                 <option value="<?= $row['id'] ?>"><?= get_full_name($row['id']) ?></option>
             <?php endforeach; ?>

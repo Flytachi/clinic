@@ -56,7 +56,7 @@ class BypassPanel extends Model
     {
         global $db, $session;
         $tb = new Table($db, $this->_bypass);
-        $tb->where("visit_id = $pk AND parent_id = $session->session_id")->order_by("name ASC");
+        $tb->where("visit_id = $pk AND responsible_id = $session->session_id")->order_by("name ASC");
         foreach ($tb->get_table(1) as $row) {
             ?>
             <div class="fc-event fc-item" data-id="<?= $row->id ?>"><?= $row->name ?></div>

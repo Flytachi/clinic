@@ -4,7 +4,7 @@ $session->is_auth();
 
 if (is_numeric($_GET['id'])) {
 	$header = "Пациент ".addZero($_GET['id']);
-	$patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+	$patient = $db->query("SELECT * FROM clients WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 } else {
 	$patient = False;
 	echo "err";
@@ -13,9 +13,9 @@ if (!$patient) {
 	Mixin\error('404');
 }
 
-$tb = new Table($db, "visit_services");
+$tb = (new VisitServiceModel)->tb();
 $tb->set_data("id, service_name, route_id, accept_date, completed, status, visit_id");
-$tb->where("user_id = $patient->id AND level = 6")->order_by('add_date DESC');
+$tb->where("client_id = $patient->id AND level = 13")->order_by('add_date DESC');
 ?>
 <!DOCTYPE html>
 <html lang="en">
