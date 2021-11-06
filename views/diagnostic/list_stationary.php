@@ -7,8 +7,8 @@ if (division_assist() == 1) {
 }
 $header = "Стационарные пациенты";
 
-$tb = (new VisitServiceModel)->tb('vs');
-$tb->set_data("vs.id, vs.client_id, c.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.responsible_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb = (new VisitServiceModel)->tb('vs')->show_error(1);
+$tb->set_data("vs.id, vs.client_id, c.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.responsible_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
 $search_array = array(

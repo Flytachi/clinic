@@ -39,7 +39,7 @@ class VisitBypassModel extends Model
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="visit_id" value="<?= $pk ?>">
-                <input type="hidden" name="client_id" value="<?= $this->visit['user_id'] ?>">
+                <input type="hidden" name="client_id" value="<?= $this->visit['client_id'] ?>">
                 <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
 
                 <div class="row">
@@ -199,6 +199,7 @@ class VisitBypassModel extends Model
                         type: "POST",
                         url: "<?= up_url(1, 'WarehouseOrderPanel', 'change_table') ?>",
                         data: {
+                            branch_id: <?= $session->branch ?>,
                             search: this.value,
                         },
                         success: function (result) {
@@ -211,6 +212,7 @@ class VisitBypassModel extends Model
                         type: "POST",
                         url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
                         data: {
+                            branch_id: <?= $session->branch ?>,
                             warehouse_id: warehouse,
                             search: this.value,
                             default: 1,

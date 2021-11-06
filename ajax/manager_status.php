@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-$session->is_auth(2);
+$session->is_auth(3);
 
 if ( isset($_GET) ) {
     $post = Mixin\clean_form($_GET);

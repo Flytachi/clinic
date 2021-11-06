@@ -237,9 +237,9 @@ class VisitTransactionModel extends Model
                     <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>
                 <?php endif; ?>
             <?php endif;*/ ?>
-            <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitSalesModel') ?>')" type="button" class="<?= $classes['price_btn-sale'] ?>">Скидка</button>
-            <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentsModel') ?>&type=0')" type="button" class="<?= $classes['price_btn-prepayment'] ?>">Предоплата</button>
-            <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentsModel') ?>&type=1')" type="button" class="<?= $classes['price_btn-refund'] ?>">Возврат</button>
+            <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitSaleModel') ?>')" type="button" class="<?= $classes['price_btn-sale'] ?>">Скидка</button>
+            <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentModel') ?>&type=0')" type="button" class="<?= $classes['price_btn-prepayment'] ?>">Предоплата</button>
+            <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentModel') ?>&type=1')" type="button" class="<?= $classes['price_btn-refund'] ?>">Возврат</button>
             <?php if(!$vps['is_active']): ?>
                 <button onclick="CardFuncFinish('<?= $vps['id'] ?>')" type="button" class="<?= $classes['price_btn-finish'] ?>">Расщёт</button>
             <?php endif; ?>
@@ -303,6 +303,7 @@ class VisitTransactionModel extends Model
                         url: $('#<?= __CLASS__ ?>_form').attr("action"),
                         data: $('#<?= __CLASS__ ?>_form').serializeArray(),
                         success: function (result) {
+                            console.log(result);
                             var result = JSON.parse(result);
 
                             if (result.status == "success") {
@@ -495,7 +496,7 @@ class VisitTransactionModel extends Model
         $post = array(
             'pricer_id' => $this->post['pricer_id'],
             'sale' => (isset($this->post['sale'])) ? $this->post['sale'] : 0,
-            'is_visibility' => 1,
+            'is_visibility' => true,
             'is_price' => true,
             'price_date' => date("Y-m-d H:i:s"),
         );
@@ -566,7 +567,7 @@ class VisitTransactionModel extends Model
         $this->visit_service_transactions_items[] = $row['id'];
 
         // Update visit_services 
-        $object = Mixin\update($this->_services, array('status' => ($this->visit['direction']) ? 1 : 2), $row['visit_service_id']);
+        $object = Mixin\update($this->_services, array('status' => 2), $row['visit_service_id']);
         if (!intval($object)){
             $this->error($object);
         }
@@ -699,7 +700,7 @@ class VisitTransactionModel extends Model
         Mixin\update($this->_visits, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
         Mixin\update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1, 'status' => 1));
         Mixin\update($this->_bypass_transactions, array('is_price' => 1), array('visit_id' => $this->visit['id']));
-        (new UserModel())->update_status($this->visit['user_id']);
+        (new ClientModel())->update_status($this->visit['client_id']);
         
     }
 

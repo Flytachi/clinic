@@ -1,6 +1,5 @@
 <?php
 
-use function Mixin\error;
 
 class VisitBypassEventsModel extends Model
 {
@@ -48,15 +47,16 @@ class VisitBypassEventsModel extends Model
             foreach (json_decode($bypass->items) as $item) {
                 if( isset($item->item_name_id) ){
                     $post = array(
+                        'branch_id' => $this->post['branch_id'],
                         'visit_id' => $this->post['visit_id'],
                         'visit_bypass_event_id' => $object,
-                        'user_id' => $this->post['user_id'],
+                        'client_id' => $this->post['client_id'],
                         'item_name_id' => $item->item_name_id,
                     );
 
                     if ($item->warehouse_id == "order") {
                         // Orders
-                        $where = "item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id";
+                        $where = "branch_id = {$this->post['branch_id']} AND item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id";
                         $order = "item_die_date ASC";
                         if($item->item_manufacturer_id) $where .= " AND item_manufacturer_id = $item->item_manufacturer_id";
                         $qty = $item->item_qty;

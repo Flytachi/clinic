@@ -28,7 +28,7 @@ class VisitFinish extends Model
                 Mixin\update($this->_visits, array('is_active' => null), $data['id']);
                 Mixin\update($this->table, array('status' => 1, 'completed' => date('Y-m-d H:i:s')), $vis_service);
                 $bed = $db->query("SELECT * FROM visit_beds WHERE visit_id = $pk AND end_date IS NULL")->fetch();
-                Mixin\update($this->_beds, array('user_id' => null), $bed['bed_id']);
+                Mixin\update($this->_beds, array('client_id' => null), $bed['bed_id']);
                 Mixin\update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
                 Mixin\delete("visit_bypass_event_applications", $pk, "visit_id");
 

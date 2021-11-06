@@ -32,7 +32,7 @@ class VisitBypassEventsPanel extends Model
         $today = date('Ymd');
         $start = date_f($this->post['event_start'], 'Ymd');
         if ($this->post['event_end']) $end = date_f($this->post['event_end'], 'Ymd');
-        if (permission(5)) {
+        if (permission(11)) {
 
             if ($this->post['event_completed']) $color = "success";
             elseif ($this->post['event_fail']) $color = "secondary";
@@ -72,7 +72,7 @@ class VisitBypassEventsPanel extends Model
                     <div class="col-6">
                         <div class="list-feed-item border-<?= $color ?>">
                             <strong>Препараты:</strong>
-                            <?php if(permission(7)): ?>
+                            <?php if(permission(25)): ?>
 
                                 <?php if($status): ?>
 
@@ -168,13 +168,13 @@ class VisitBypassEventsPanel extends Model
 
         </div>
 
-        <?php if(permission(5)): ?>
+        <?php if(permission(11)): ?>
             <?php if($session->session_id == $this->post['responsible_id'] and $color != "secondary" and !$this->post['event_completed']): ?>
                 <div class="modal-footer">
                     <button onclick="CalendarEventDelete(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button>
                 </div>
             <?php endif; ?>
-        <?php elseif(permission(7)): ?>
+        <?php elseif(permission(25)): ?>
             <div class="modal-footer">
                 <?php if($color == "danger"): ?>
                     <button onclick="CalendarEventFail(<?= $pk ?>, '<?= $_GET['calendar_ID'] ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отменить</button>
@@ -217,13 +217,13 @@ class VisitBypassEventsPanel extends Model
                 if ($data = $applications->get_row()) {
     
                     $this->visit = $data->visit_id;
-                    $this->user = $data->user_id;
+                    $this->client = $data->client_id;
                     foreach ($applications->get_table() as $app) {
                         if ($app->warehouse_order) {
-                            $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id";
+                            $this->where = "branch_id = $app->branch_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id";
                             $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_order WHERE $this->where")->fetchColumn();
                         } else {
-                            $this->where = "warehouse_id = $app->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
+                            $this->where = "branch_id = $app->branch_id AND warehouse_id = $app->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
                             $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
                         }
                         
@@ -270,10 +270,11 @@ class VisitBypassEventsPanel extends Model
             // Update
             Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
+                'branch_id' => $app->branch_id,
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
                 'responsible_id' => $session->session_id,
-                'user_id' => $this->user,
+                'client_id' => $this->client,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,
@@ -285,10 +286,11 @@ class VisitBypassEventsPanel extends Model
             // Delete
             Mixin\delete($table, $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
+                'branch_id' => $app->branch_id,
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
                 'responsible_id' => $session->session_id,
-                'user_id' => $this->user,
+                'client_id' => $this->client,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,

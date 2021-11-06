@@ -9,7 +9,7 @@ if ($_GET['main']) {
     } else if($_GET['stage'] == 2) {
         $sql = "SELECT id FROM visit_operations WHERE visit_id = {$_GET['pk']} AND completed IS NULL";
     } else if($_GET['stage'] == 3) {
-        $sql = "SELECT * FROM visit_bypass_events WHERE visit_id = {$_GET['pk']} AND event_start >= CURRENT_DATE() AND event_completed IS NULL AND event_event_fail IS NULL";
+        $sql = "SELECT * FROM visit_bypass_events WHERE visit_id = {$_GET['pk']} AND event_start >= CURRENT_DATE() AND event_completed IS NULL AND event_fail IS NULL";
     } else if($_GET['stage'] == 4) {
         $sql = "SELECT ROUND(DATE_FORMAT(TIMEDIFF(CURRENT_DATE(), discharge_date), '%H') / 24) 'result' FROM visits WHERE id = {$_GET['pk']} AND grant_id = $session->session_id";
         echo $db->query($sql)->fetchColumn();

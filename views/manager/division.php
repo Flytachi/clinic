@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(2);
+$session->is_auth(3);
 $header = "Класификация персонала";
 
 $tb = (new DivisionModel)->tb();

@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 8.6
+     * @version 9.7
      */
 
     // database handle
@@ -76,6 +76,7 @@ class Table
     private $order_by;
     private $php_self;
     private $search;
+    private $errors = false;
     
     public $search_get_name = "table_search=";
     public $params = "?";
@@ -92,15 +93,25 @@ class Table
         /*
             Установка Лимита строк на странице
         */
+        
         try {
             $this->limit = $limit;
             $this->generate_sql();
             if ($this->limit) $this->total_pages = ceil($this->db->query($this->sql)->rowCount() / $this->limit);
             return $this;
         } catch (\Throwable $th) {
-            //throw $th;
-            die("Ошибка в генерации скрипта!");
+            if ($this->errors) throw $th;
+            else die("Ошибка в генерации скрипта!");
         }
+    }
+
+    public function show_error(bool $status = null)
+    {
+        /*
+            Установка столбцов которые хотим вытащить, по умолчаню все!
+        */
+        $this->errors = $status;
+        return $this;
     }
 
     public function set_data(String $data = null)
@@ -169,8 +180,8 @@ class Table
             if($this->order_by) $this->sql .= " ORDER BY ".$this->order_by;
             $this->search = (isset($_GET['table_search']) and $_GET['table_search']) ? $this->search_get_name.$_GET['table_search'] : "";
         } catch (\Throwable $th) {
-            //throw $th;
-            die("Ошибка в генерации скрипта!");
+            if ($this->errors) throw $th;
+            else die("Ошибка в генерации скрипта!");
         }
         
     }
@@ -316,8 +327,8 @@ class Table
             }
             return $get;
         } catch (\Throwable $th) {
-            //throw $th;
-            die("Ошибка в генерации скрипта!");
+            if ($this->errors) throw $th;
+            else die("Ошибка в генерации скрипта!");
         }
         
     }
@@ -334,14 +345,19 @@ class Table
             $offset = $this->limit * ($page - 1);
             $this->sql .= " LIMIT $this->limit OFFSET $offset";
         }
-        $get = $this->db->query($this->sql)->fetch(PDO::FETCH_OBJ);
-        if ($count_status) {
-            $off_count = (($this->limit) ? $offset : 0) + 1;
-            foreach ($get as $key => $value) {
-                $get[$key]->{'count'} = $off_count++;
+        try {
+            $get = $this->db->query($this->sql)->fetch(PDO::FETCH_OBJ);
+            if ($count_status) {
+                $off_count = (($this->limit) ? $offset : 0) + 1;
+                foreach ($get as $key => $value) {
+                    $get[$key]->{'count'} = $off_count++;
+                }
             }
+            return $get;
+        } catch (\Throwable $th) {
+            if ($this->errors) throw $th;
+            else die("Ошибка в генерации скрипта!");
         }
-        return $get;
     }
 
     public function get_panel()

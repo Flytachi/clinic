@@ -3,16 +3,16 @@ require_once '../../tools/warframe.php';
 $session->is_auth(25);
 $pk = $_GET['pk'];
 
-$visit = $tb = (new Table($db, "visits"))->where("id = $pk AND is_active IS NOT NULL AND completed IS NULL")->get_row();
+$visit = $tb = (new VisitModel)->tb()->where("id = $pk AND is_active IS NOT NULL AND completed IS NULL")->get_row();
 ?>
 
 <?php if($visit): ?>
     <?php
-    $services = (new Table($db, "visit_services"))->set_data("DISTINCT level")->where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2")->order_by("level ASC");
+    $services = (new VisitServiceModel)->tb()->set_data("DISTINCT level")->where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2")->order_by("level ASC");
     ?>
     <div class="row">
         <div class="col-md-12 text-center">
-            <h3> <b>ID <?= addZero($visit->user_id) ?>:</b> <?= get_full_name($visit->user_id) ?></h3>
+            <h3> <b>ID <?= addZero($visit->client_id) ?>:</b> <?= client_name($visit->client_id) ?></h3>
         </div>
     </div>
     
@@ -30,13 +30,12 @@ $visit = $tb = (new Table($db, "visits"))->where("id = $pk AND is_active IS NOT 
                             <strong><?= $PERSONAL[$service->level] ?></strong>
                             <ul>
                                 <?php
-                                $serv = (new Table($db, "visit_services"))->set_data("service_name")->where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2 AND level = $service->level")->order_by("service_name ASC");
+                                $serv = (new VisitServiceModel)->tb()->set_data("service_name")->where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2 AND level = $service->level")->order_by("service_name ASC");
                                 ?>
                                 <?php foreach ($serv->get_table() as $row): ?>
                                     <li><?= $row->service_name ?></li>
                                 <?php endforeach; ?>
                             </ul>
-                            
                         </td>
                     </tr>
                 <?php endforeach; ?>

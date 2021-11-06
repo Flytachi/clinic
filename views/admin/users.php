@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(3);
+$session->is_auth(1);
 $header = "Персонал";
 
 $tb = (new UserModel)->tb();
 $search = $tb->get_serch();
-$where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+$where_search = array("", "(username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, last_name ASC")->set_limit(20);
+$tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +48,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php (new UserModel)->form(); ?>
+				        <?php (new UserModel)->SForm(); ?>
 				    </div>
 
 				</div>
@@ -74,6 +74,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				                <thead>
 				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th>#</th>
+				                        <th>Филиал</th>
 				                        <th>Логин</th>
 				                        <th>ФИО</th>
 				                        <th>Роль</th>
@@ -84,6 +85,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
+				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->tb()->get_row()->name : '<span class="text-muted">Нет данных</span>' ?></td>
 				                            <td><?= $row->username ?></td>
 				                            <td><?= get_full_name($row->id); ?></td>
 				                            <td>
@@ -157,7 +159,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
             event.preventDefault();
             $.ajax({
 				type: "GET",
-				url: "<?= ajax('manager_status') ?>",
+				url: "<?= ajax('admin_status') ?>",
 				data: { table:"users", id:id, is_active: stat },
 				success: function (data) {
                     if (data) {

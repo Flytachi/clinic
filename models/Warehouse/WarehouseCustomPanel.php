@@ -48,15 +48,16 @@ class WarehouseCustomPanel extends Model
             <div class="modal-body">
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="client_id" value="<?= $patient->id ?>">
 
                 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
                     <?php if($is_order): ?>
                         <li class="nav-item"><a href="#" onclick="ChangeWare('order')" class="nav-link legitRipple" data-toggle="tab">Склад бесплатных препаратов</a></li>
                     <?php endif; ?>
-                    <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = $session->session_division AND w.is_active IS NOT NULL")->get_table() ): ?>
+                    <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.branch_id = $session->branch AND ws.division_id = $session->session_division AND w.is_active IS NOT NULL")->get_table() ): ?>
                         <?php foreach ($ware_sett as $ware): ?>
                             <li class="nav-item"><a href="#" onclick="ChangeWare(<?= $ware->id ?>)" class="nav-link legitRipple" data-toggle="tab"><?= $ware->name ?></a></li>
                         <?php endforeach; ?>
@@ -149,6 +150,7 @@ class WarehouseCustomPanel extends Model
                         type: "POST",
                         url: "<?= up_url(1, 'WarehouseOrderPanel', 'change_table') ?>",
                         data: {
+                            branch_id: <?= $session->branch ?>,
                             search: this.value,
                         },
                         success: function (result) {
@@ -161,6 +163,7 @@ class WarehouseCustomPanel extends Model
                         type: "POST",
                         url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
                         data: {
+                            branch_id: <?= $session->branch ?>,
                             warehouse_id: warehouse,
                             search: this.value,
                             default: 1,
@@ -178,8 +181,9 @@ class WarehouseCustomPanel extends Model
 
                 if (warehouse == "order") {
                     var data = {
+                        branch_id: <?= $session->branch ?>,
                         visit_id: <?= $patient->visit_id ?>,
-                        user_id: <?= $patient->id ?>,
+                        client_id: <?= $patient->id ?>,
                         warehouse_id: warehouse,
                         item_name_id: document.querySelector('#name_id_input_'+index).value,
                         item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
@@ -188,8 +192,9 @@ class WarehouseCustomPanel extends Model
                     };
                 } else {
                     var data = {
+                        branch_id: <?= $session->branch ?>,
                         visit_id: <?= $patient->visit_id ?>,
-                        user_id: <?= $patient->id ?>,
+                        client_id: <?= $patient->id ?>,
                         warehouse_id: warehouse,
                         item_name_id: document.querySelector('#name_id_input_'+index).value,
                         item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
@@ -231,7 +236,7 @@ class WarehouseCustomPanel extends Model
         global $db, $classes;
         $search = Mixin\clean($this->post['search']);
 
-        foreach ($db->query("SELECT DISTINCT wc.item_name_id, win.name FROM $this->table wc LEFT JOIN $this->_name win ON (win.id=wc.item_name_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND LOWER(win.name) LIKE LOWER('%$search%')") as $row){
+        foreach ($db->query("SELECT DISTINCT wc.item_name_id, win.name FROM $this->table wc LEFT JOIN $this->_name win ON (win.id=wc.item_name_id) WHERE wc.branch_id = {$this->post['branch_id']} AND wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND LOWER(win.name) LIKE LOWER('%$search%')") as $row){
             $this->i++;
             ?>
             <tr id="Item_<?= $this->i ?>">
@@ -248,7 +253,7 @@ class WarehouseCustomPanel extends Model
                         <?php if($this->post['default']): ?>
                             <option value="" >Производитель будет выбран автоматически</option>
                         <?php endif; ?>
-                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wis.manufacturer ASC") as $manufacturer): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.branch_id = {$this->post['branch_id']} AND wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wis.manufacturer ASC") as $manufacturer): ?>
                             <?php // if(empty($the_manufacturer)) $the_manufacturer = $manufacturer->id; ?>
                             <option value="<?= $manufacturer->id ?>" ><?= $manufacturer->manufacturer ?></option>
                         <?php endforeach; ?>
@@ -261,7 +266,7 @@ class WarehouseCustomPanel extends Model
                         <?php if($this->post['default']): ?>
                             <option value="" >Стоимость будет выбрана автоматически</option>
                         <?php endif; ?>
-                        <?php foreach ($db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_price ASC") as $price): ?>
+                        <?php foreach ($db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.branch_id = {$this->post['branch_id']} AND wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_price ASC") as $price): ?>
                             <?php // if(empty($the_cost)) $the_cost = $price->item_price; ?>
                             <option value="<?= $price->item_price ?>" ><?= number_format($price->item_price) ?></option>
                         <?php endforeach; ?>
@@ -273,8 +278,8 @@ class WarehouseCustomPanel extends Model
                     <span id="max_qty_input_<?= $this->i ?>">
                         <?php
                         $the_where = "item_name_id = $row->item_name_id";
-                        $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->table WHERE warehouse_id = {$this->post['warehouse_id']} AND item_die_date > CURRENT_DATE() AND $the_where")->fetchColumn();
-                        $applications = $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE $the_where")->fetchColumn();
+                        $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->table WHERE branch_id = {$this->post['branch_id']} AND warehouse_id = {$this->post['warehouse_id']} AND item_die_date > CURRENT_DATE() AND $the_where")->fetchColumn();
+                        $applications = $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE branch_id = {$this->post['branch_id']} AND $the_where")->fetchColumn();
                         echo $max_qty - $applications;
                         ?>
                     </span>
@@ -307,7 +312,8 @@ class WarehouseCustomPanel extends Model
                 $.ajax({
                     type: "POST",
                     url: "<?= up_url(2, __CLASS__) ?>",
-                    data: { 
+                    data: {
+                        branch_id: <?= $this->post['branch_id'] ?>,
                         warehouse_id: <?= $this->post['warehouse_id'] ?>,
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: this.value,
@@ -335,7 +341,8 @@ class WarehouseCustomPanel extends Model
                 $.ajax({
                     type: "POST",
                     url: "<?= up_url(2, __CLASS__) ?>",
-                    data: { 
+                    data: {
+                        branch_id: <?= $this->post['branch_id'] ?>,
                         warehouse_id: <?= $this->post['warehouse_id'] ?>,
                         item_name_id: this.dataset.item_name,
                         manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
@@ -358,9 +365,9 @@ class WarehouseCustomPanel extends Model
         $m = ( isset($data['manufacturer_id']) and $data['manufacturer_id'] ) ? " AND wc.item_manufacturer_id = ".$data['manufacturer_id'] : null;
         $s = ( isset($data['item_price']) and $data['item_price'] ) ? " AND wc.item_price = ".$data['item_price'] : null;
 
-        $price_result = $db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_price ASC")->fetchAll();
-        $qty_max = $db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
-        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
+        $price_result = $db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.branch_id = {$data['branch_id']} AND wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_price ASC")->fetchAll();
+        $qty_max = $db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.branch_id = {$data['branch_id']} AND wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
+        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.branch_id = {$data['branch_id']} AND wc.warehouse_id = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
         $qty = $qty_max - $qty_applications;
         echo json_encode(array('price' => $price_result, 'max_qty' => $qty));
     }
@@ -370,7 +377,7 @@ class WarehouseCustomPanel extends Model
         global $db, $session;
         if (!$app->item_manufacturer_id) $this->error("Выберите производителя!");
 
-        $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id";
+        $this->where = "branch_id = $app->branch_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id";
         if ($app->warehouse_id == "order") {
             $table = $this->_oreders;
             $this->where .= " AND item_manufacturer_id = $app->item_manufacturer_id";
@@ -388,9 +395,10 @@ class WarehouseCustomPanel extends Model
             // Update
             Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
+                'branch_id' => $app->branch_id,
                 'visit_id' => $app->visit_id,
                 'responsible_id' => $session->session_id,
-                'user_id' => $app->user_id,
+                'client_id' => $app->client_id,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,
@@ -402,9 +410,10 @@ class WarehouseCustomPanel extends Model
             // Delete
             Mixin\delete($table, $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
+                'branch_id' => $app->branch_id,
                 'visit_id' => $app->visit_id,
                 'responsible_id' => $session->session_id,
-                'user_id' => $app->user_id,
+                'client_id' => $app->client_id,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,

@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Персонал";
 
-$tb = (new CorpBranchModel)->Table();
+$tb = (new CorpBranchModel)->tb();
 $search = $tb->get_serch();
 $tb->order_by("add_date ASC")->set_limit(15);
 ?>

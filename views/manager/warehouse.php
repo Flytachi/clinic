@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(2);
+$session->is_auth(3);
 is_module('pharmacy');
 $header = "Склады";
 ?>
@@ -65,7 +65,7 @@ $header = "Склады";
 	                          	</thead>
 	                          	<tbody>
 									<?php
-									$tb = new Table($db, "warehouses");
+									$tb = (new WarehouseModel)->tb()->where("branch_id = $session->branch");
 									?>
                                     <?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>

@@ -10,7 +10,7 @@ if ($_SESSION['session_id'] == "master") {
 
     switch (level()):
         case 1: render('admin/index'); break;
-        case 2: render('manager/index'); break;
+        case 3: render('manager/index'); break;
 
         case 11: render('doctor/index'); break;
         case 12: render('diagnostic/index'); break;
