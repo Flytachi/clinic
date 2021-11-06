@@ -14,9 +14,11 @@ class ServiceModel extends Model
 
     public function form_template($pk = null)
     {
+        global $session;
         ?>
         <form method="post" action="<?= add_url() ?>" enctype="multipart/form-data">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
 
             <div class="form-group">
                 <label>Шаблон:</label>
@@ -180,7 +182,7 @@ class ServiceModel extends Model
         
         $post['price'] = preg_replace("/,+/", "", $post['price']);
         $post['price_foreigner'] = preg_replace("/,+/", "", $post['price_foreigner']);
-        $dis = $db->query("SELECT id, level FROM divisions WHERE mark = '{$post['division_id']}'")->fetch();
+        $dis = $db->query("SELECT id, level FROM divisions WHERE branch_id = {$this->post['branch_id']} AND mark = '{$post['division_id']}'")->fetch();
         $post['level'] = $dis['level'];
         $post['division_id'] = $dis['id'];
         return $post;
@@ -195,18 +197,24 @@ class ServiceModel extends Model
 
         foreach ($this->post['template'] as $value) {
             $post = [];
+            
             foreach ($keys as $k => $key) {
                 $post[$key] = $value[$k];
             }
+            
             if ($post = $this->clean_excel($post)) {
-                $object = Mixin\insert_or_update($this->table, $post, "code");
+                $post['branch_id'] = $this->post['branch_id'];
+                $select = $this->tb()->where("branch_id = {$this->post['branch_id']} AND code = '{$post['code']}'")->get_row();
+                if ($select) $object = Mixin\update($this->table, $post, $select->id);
+                else $object = Mixin\insert($this->table, $post);
+                
                 if (!intval($object)){
                     $this->error($object);
                     $db->rollBack();
                 }
             }
         }
-
+        // $this->dd();
         $db->commit();
         $this->success();
     }

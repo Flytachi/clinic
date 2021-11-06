@@ -4,7 +4,7 @@ class VisitDocumentModel extends Model
 {
     public $table = 'visit_documents';
     protected $file_directory = "/storage/documents/";
-    protected $file_format = array('pdf', 'mp4', 'jpeg', 'png', 'dox', 'doxc', 'xlsx', 'csv', 'txt');
+    protected $file_format = array('pdf', 'mp4', 'jpg', 'png', 'dox', 'doxc', 'xlsx', 'csv', 'txt');
 
     public function form($pk = null)
     {
@@ -22,8 +22,9 @@ class VisitDocumentModel extends Model
 
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="id" value="<?= $pk ?>">
+                <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
-                <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
 
                 <div class="form-group row">
 

@@ -18,6 +18,7 @@ $git_links = array(
 // Настроки для миграции базы даных
 $MUL = array(
     'beds' => '`branch_id` (`branch_id`,`building_id`,`floor`,`ward_id`,`bed`)' ,
+    'divisions' => '`branch_id` (`branch_id`,`mark`)',
     'services' => '`branch_id` (`branch_id`,`code`)',
     'wards' => '`branch_id` (`branch_id`,`building_id`,`floor`,`ward`)',
 );

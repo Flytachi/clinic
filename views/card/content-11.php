@@ -40,7 +40,7 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-files-empty mr-2"></i>Документы
 							<?php if ($activity and (!$patient->direction or ($patient->direction and permission(5))) ): ?>
-								<a onclick='Update(`<?= up_url(null, "VisitDocumentsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right text-primary">
+								<a onclick='Update(`<?= up_url(null, "VisitDocumentModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right text-primary">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
@@ -99,15 +99,15 @@ require_once 'callback.php';
 													<?php endif; ?>
 												</td>
 												<td><?= $row->mark ?></td>
-												<td><?= get_full_name($row->parent_id) ?></td>
+												<td><?= get_full_name($row->responsible_id) ?></td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td class="text-right">
 													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 													<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
 														<a onclick="Check('<?= ajax('document_view') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
-														<?php if( $activity and $session->session_id == $row->parent_id ): ?>
-															<a onclick='Update(`<?= up_url($row->id, "VisitDocumentsModel") ?>&patient=<?= json_encode($patient) ?>`)' class="dropdown-item"><i class="icon-pencil7"></i>Редактировать</a>
-															<a href="<?= del_url($row->id, 'VisitDocumentsModel') ?>" class="dropdown-item"><i class="icon-x"></i>Удалить</a>
+														<?php if( $activity and $session->session_id == $row->responsible_id ): ?>
+															<a onclick='Update(`<?= up_url($row->id, "VisitDocumentModel") ?>&patient=<?= json_encode($patient) ?>`)' class="dropdown-item"><i class="icon-pencil7"></i>Редактировать</a>
+															<a href="<?= del_url($row->id, 'VisitDocumentModel') ?>" class="dropdown-item"><i class="icon-x"></i>Удалить</a>
 														<?php endif; ?>
 													</div>
 												</td>
