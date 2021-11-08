@@ -54,7 +54,7 @@ if (!isset($_GET['type'])) {
         <legend class="font-weight-semibold text-uppercase font-size-sm">
             <i class="icon-pulse2 mr-2"></i>Динамика показателей
             <?php if ($activity and permission(15) and (!$patient->completed or ($patient->completed and $_GET['type'] == 1))): ?>
-                <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationStatsModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
+                <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationStatModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
         			<i class="icon-plus22"></i>Добавить
         		</a>
             <?php endif; ?>
@@ -71,7 +71,7 @@ if (!isset($_GET['type'])) {
                         if (!isset($_GET['type'])) $stats_where = "operation_id=$operation->id";
                         elseif ($_GET['type'] == 1) $stats_where = "operation_id=$operation->id AND \"$operation->completed\" >= CURRENT_DATE()";
                         else $stats_where = "operation_id=$operation->id AND \"$operation->completed\" < CURRENT_DATE()";
-                        $operation_stats = (new VisitOperationStatModel)->tb()->set_data("pressure, pulse, temperature, saturation, time")->where($stats_where)->order_by('add_date DESC');
+                        $operation_stats = (new VisitOperationStatModel)->tb()->set_data("pressure, pulse, temperature, saturation, time")->where($stats_where)->order_by('time DESC');
                         ?>
                         <?php foreach ($operation_stats->get_table() as $row): ?>
                             <span class="chart_date"><?= date('H:i', strtotime($row->time)) ?></span>
@@ -117,7 +117,7 @@ if (!isset($_GET['type'])) {
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
             <i class="icon-bag mr-2"></i>Услуги анестезиолога
-            <?php if ($activity and !$operation->completed and (is_grant() or permission([15]))): ?>
+            <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
                 <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationServiceModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
                     <i class="icon-plus22"></i>Добавить
                 </a>
@@ -132,7 +132,7 @@ if (!isset($_GET['type'])) {
                         <tr class="bg-<?= $color ?>">
                             <th style="width:84%">Услуга</th>
                             <th class="text-right">Сумма</th>
-                            <?php if ($activity and !$operation->completed and (is_grant() or permission([8,11]))): ?>
+                            <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
                                 <th class="text-right" style="width:50px">Действия</th>
                             <?php endif; ?>
                         </tr>
@@ -148,7 +148,7 @@ if (!isset($_GET['type'])) {
                                     echo number_format($row->item_cost, 1);   
                                     ?>
                                 </td>
-                                <?php if ($activity and !$operation->completed and (is_grant() or permission([8,15]))): ?>
+                                <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
                                     <td class="text-right">
                                         <div class="list-icons">
                                             <button onclick="Delete('<?= del_url($row->id, 'VisitOperationServiceModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
@@ -160,7 +160,7 @@ if (!isset($_GET['type'])) {
                         <tr class="table-secondary">
                             <th colspan="1" class="text-right">Итого:</th>
                             <th class="text-right"><?= number_format($total_service_price, 1) ?></th>
-                            <?php if ($activity and !$operation->completed and (is_grant() or permission([8,15]))): ?>
+                            <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
                                 <th></th>
                             <?php endif; ?>
                         </tr>

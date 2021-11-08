@@ -225,11 +225,6 @@ class Session
         return $this->logout_url;
     }
 
-    public function logout_avatar_link($status)
-    {
-        return DIR."/auth/avatar_logout".EXT."?pk=$status";
-    }
-
     public function timeout_mark_link()
     {
         return $this->timeout_mark_url;

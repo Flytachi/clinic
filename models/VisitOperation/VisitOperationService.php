@@ -141,12 +141,13 @@ class VisitOperationServiceModel extends Model
 
             $("#search_input").keyup(function() {
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         branch_id: <?= $session->branch ?>,
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $this->is_foreigner ?>",
+                        is_order: null,
                         search: $("#search_input").val(),
                         selected: service,
                         types: "3",
@@ -163,12 +164,13 @@ class VisitOperationServiceModel extends Model
             function TableChangeServices(params) {
 
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: "<?= up_url(1, 'ServicePanel') ?>",
                     data: {
                         branch_id: <?= $session->branch ?>,
                         divisions: $(params).val(),
                         is_foreigner: "<?= $this->is_foreigner ?>",
+                        is_order: null,
                         selected: service,
                         types: "3",
                         cols: 1,

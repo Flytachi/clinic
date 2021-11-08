@@ -2,9 +2,8 @@
 require_once '../tools/warframe.php';
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
-    $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT v.id, v.client_id, v.grant_id, v.parad_id, c.birth_date, v.add_date, v.completed FROM visits v LEFT JOIN clients c ON(c.id=v.client_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
     $docs->report = $db->query("SELECT service_report FROM visit_services WHERE visit_id = $docs->id AND service_id = 1")->fetchColumn();
-    // dd($docs);
 }else{
     Mixin\error('404');
 }
@@ -58,8 +57,8 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         <?php if (config("print_document_hr-2")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-2-color").'"></div>' ; ?>
 
         <div class="text-left h3">
-            <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-            <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
+            <b>Ф.И.О.: </b><?= client_name($docs->client_id) ?><br>
+            <b>ID Пациента: </b><?= addZero($docs->client_id) ?><br>
             <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
             <b>Дата поступления: </b><?= ($docs->add_date) ? date_f($docs->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
             <b>Дата выписки: </b><?= ($docs->completed) ? date_f($docs->completed, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
@@ -68,7 +67,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>
         <?php if (config("print_document_hr-4")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-4-color").'"></div>' ; ?>
 
-        <h3 class="text-center h1"><b>Выписка <?= $docs->user_id ?> № <?= $docs->parad_id ?></b></h3>
+        <h3 class="text-center h1"><b>Выписка <?= $docs->client_id ?> № <?= $docs->parad_id ?></b></h3>
 
         <div class="text-left h3">
 
@@ -79,10 +78,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
             <h4 class="text-center"><strong>Результаты визитов:</strong></h4>
             <p>
                 <!-- Результаты визитов -->
-                <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit_services vs LEFT JOIN divisions ds ON(ds.id=vs.division_id) WHERE vs.visit_id = $docs->id AND vs.level IN (5,10) AND vs.completed IS NOT NULL AND vs.service_id != 1 ") as $div): ?>
+                <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit_services vs LEFT JOIN divisions ds ON(ds.id=vs.division_id) WHERE vs.visit_id = $docs->id AND vs.level IN (11,12) AND vs.completed IS NOT NULL AND vs.service_id != 1 ") as $div): ?>
                     <strong><?= $div['title'] ?>: </strong>
                     <ul>
-                        <?php foreach ($db->query("SELECT * FROM visit_services WHERE visit_id = $docs->id AND level IN (5,10) AND completed IS NOT NULL AND service_id != 1 AND division_id = {$div['division_id']}") as $row): ?>
+                        <?php foreach ($db->query("SELECT * FROM visit_services WHERE visit_id = $docs->id AND level IN (11,12) AND completed IS NOT NULL AND service_id != 1 AND division_id = {$div['division_id']}") as $row): ?>
                             <li>
                                 <strong><?= $row['service_title'] ?>:</strong>
                                 <?= str_replace("Рекомендация:", '', stristr($row['service_report'], "Рекомендация:")); ?>
@@ -96,7 +95,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 <h4 class="text-center"><strong>Результаты лабораторных и инструментальных исследований:</strong></h4>
                 <p>
                     <!-- Результаты лабораторных и инструментальных исследований -->
-                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $docs->id AND completed IS NOT NULL AND level IN (6)") as $any): ?>
+                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $docs->id AND completed IS NOT NULL AND level IN (13)") as $any): ?>
                         <li>
                             <strong><?= $any['service_name'] ?>:</strong>
                             <?php foreach ($db->query("SELECT analyze_name, result FROM visit_analyzes WHERE visit_id = $docs->id AND visit_service_id = {$any['id']}") as $row): ?>
@@ -152,7 +151,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 <strong>Глав.врач</strong>
             </div>
             <div class="col-4 h5 text-right">
-                <em><strong><?= get_full_name($db->query("SELECT id FROM users WHERE user_level = 8")->fetch()['id']) ?></strong></em>
+                <em><strong>XXXXX XXXX</strong></em>
             </div>
         </div>
 

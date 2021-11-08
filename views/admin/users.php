@@ -118,8 +118,8 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 																</a>
 															</div>
 														</div>
+														<a href="<?= ajax("master/avatar") ?>?pk=<?= $row->id ?>" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>
 													<?php endif; ?>
-
 													<a onclick="Update('<?= up_url($row->id, 'UserModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_users")): ?>
 														<?php if ($row->user_level != $session->session_level): ?>

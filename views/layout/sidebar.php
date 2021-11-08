@@ -29,9 +29,9 @@
 
                     <?php if ( isset($session->status) ): ?>
                         <li class="nav-item">
-                            <a href="<?= $session->logout_avatar_link($session->status) ?>" class="nav-link">
+                            <a href="<?= ajax('master/avatar')."?pk=$session->status" ?>" class="nav-link">
                                 <i class="icon-arrow-down16"></i>
-                                <span>Logout in avatar</span>
+                                <span>Avatar</span>
                             </a>
                         </li>
                     <?php endif; ?>
