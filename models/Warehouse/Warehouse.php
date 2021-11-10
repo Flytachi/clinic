@@ -6,67 +6,47 @@ class WarehouseModel extends Model
 
     public function form($pk = null)
     {
-        global $PERSONAL, $classes, $db;
+        global $classes;
         if( isset($_SESSION['message']) ){
             echo $_SESSION['message'];
             unset($_SESSION['message']);
         }
-        if($this->value('level')) $level = json_decode($this->value('level'));
-        if($this->value('level')) $level_imp = implode(',', $level);
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
-
+            <input type="hidden" name="is_active" value="1">
 
             <div class="form-group">
-                <label>Наименование:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите наименование" required value="<?= $this->value('name') ?>">
+                <label>Наименование</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите наименование" value="<?= $this->value('name') ?>">
             </div>
 
             <div class="form-group">
-                <label>Выбирите роль:</label>
-                <select data-placeholder="Выбрать роль" multiple="multiple" name="level[]" class="<?= $classes['form-multiselect'] ?>" onchange="ChangeLevel(this)" required>
-                    <?php foreach ($PERSONAL as $key => $value): ?>
-                        <!-- [5,6,7,10,11,12,13] -->
-                        <?php if(in_array($key, [7])): ?>
-                            <option value="<?= $key ?>" <?= ($this->value('level') and in_array($key, $level)) ? 'selected': '' ?>><?= $value ?></option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+                <label>Статус склада:</label>
+                <select class="<?= $classes['form-select'] ?>" name="status" data-placeholder="Выберите статус" required>
+                    <option></option>
+                    <option value="0" <?= ($this->value('is_payment')) ? 'selected' : ''; ?>>Платный</option>
+                    <option value="1" <?= ($this->value('is_free')) ? 'selected' : ''; ?>>Бесплатный</option>
                 </select>
             </div>
 
-            <div class="form-group row" id="div_level_change">
-
-                <?php if( $this->value('division') ): ?>
-                    <?php if($this->value('level')) $division = json_decode($this->value('division')); ?>
-                    <div class="col-md-6">
-                        <label>Отделы:</label>
-                        <select data-placeholder="Выбрать отделы" multiple="multiple" name="division[]" class="<?= $classes['form-multiselect'] ?>">
-                            <?php if(in_array(7, $level)): ?>
-                                <?php $sql = "SELECT * from divisions WHERE level IN (5)"; ?>
-                            <?php else: ?>
-                                <?php $sql = "SELECT * from divisions WHERE level IN ($level_imp)"; ?>
-                            <?php endif; ?>
-
-                            <?php foreach($db->query($sql) as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= ($this->value('division') and in_array($row['id'], $division)) ? 'selected': '' ?>><?= $row['title'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                <?php endif; ?>
+            <div class="form-group">
+                <label class="d-block font-weight-semibold">Тип склада</label>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="iternal" name="is_internal" value="1" <?= ($this->value('is_internal')) ? 'checked' : ''; ?>>
+                    <label class="custom-control-label" for="iternal">Внутренний</label>
+                </div>
                 
-                <?php if( $this->value('parent_id') ): ?>
-                    <div class="col-md-6">
-                        <label>Ответственное лицо:</label>
-                        <select data-placeholder="Выберите ответственное лицо" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                            <?php foreach($db->query("SELECT * from users WHERE is_active IS NOT NULL AND user_level IN ($level_imp)") as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= ($this->value('parent_id') == $row['id']) ? 'selected': '' ?>><?= get_full_name($row['id']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                <?php endif; ?>
-
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="external" name="is_external" value="1" <?= ($this->value('is_external')) ? 'checked' : ''; ?>>
+                    <label class="custom-control-label" for="external">Внешний</label>
+                </div>
+                
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="operation" name="is_operation" value="1" <?= ($this->value('is_operation')) ? 'checked' : ''; ?>>
+                    <label class="custom-control-label" for="operation">Операционный</label>
+                </div>
             </div>
 
             <div class="text-right">
@@ -77,40 +57,27 @@ class WarehouseModel extends Model
             </div>
 
         </form>
-        <script type="text/javascript">
-
-            function ChangeLevel(params) {
-                var options = params.selectedOptions;
-                var data = [];
-
-                for (let i = 0; i < (options).length; i++) {
-                    data[i] = options[i].value;
-                }
-
-                $.ajax({
-                    type: "GET",
-                    url: "<?= ajax("pharmacy/options_division_and_parent") ?>",
-                    data: { level: data },
-                    success: function (result) {
-                        $("#div_level_change").html(result);
-                        FormLayouts.init();
-                    },
-                });
-            }
-
-        </script>
         <?php
-        if ($pk) {
-            $this->jquery_init();
-        }
+        $this->jquery_init();
     }
 
     public function clean()
     {
+        if (isset($this->post['status'])) {
+            if ($this->post['status']) {
+                $this->post['is_payment'] = false;
+                $this->post['is_free'] = true;
+            } else {
+                $this->post['is_payment'] = true;
+                $this->post['is_free'] = false;
+            }
+            unset($this->post['status']);
+        }
+        if (empty($this->post['is_internal'])) $this->post['is_internal'] = null;
+        if (empty($this->post['is_external'])) $this->post['is_external'] = null;
+        if (empty($this->post['is_operation'])) $this->post['is_operation'] = null;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        $this->post['level'] = ( isset($this->post['level']) ) ? json_encode($this->post['level']) : null;
-        $this->post['division'] = ( isset($this->post['division']) ) ? json_encode($this->post['division']) : null;
         return True;
     }
 
@@ -136,5 +103,5 @@ class WarehouseModel extends Model
         render();
     }
 }
-
+        
 ?>

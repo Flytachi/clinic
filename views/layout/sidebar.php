@@ -142,7 +142,7 @@
 
                 <?php if(module('module_pharmacy')): ?>
                     <!-- Warehouse -->
-                    <?php foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $side_warehouse): ?>
+                    <?php /*foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $side_warehouse): ?>
 
                         <?php if( permission(json_decode($side_warehouse['level'])) and ( !$session->get_division() or in_array($session->get_division(), json_decode($side_warehouse['division'])) ) ): ?>
                             <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['name'] ?></div> <i class="icon-menu" title="Main"></i></li>
@@ -189,7 +189,7 @@
                             </li>
                         <?php endif; ?>
 
-                    <?php endforeach; ?>
+                    <?php endforeach;*/ ?>
                     <!-- /Warehouse -->
                 <?php endif; ?>
                 

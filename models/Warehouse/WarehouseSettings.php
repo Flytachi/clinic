@@ -2,13 +2,14 @@
 
 class WarehouseSettingsModel extends Model
 {
-    public $table = 'warehouse_settings';
-    public $_warehouse = 'warehouses';
+    public $table = 'warehouses';
+    public $_application = 'warehouse_setting_applications';
+    public $_permission = 'warehouses';
 
     public function get_or_404(int $pk)
     {
         global $db;
-        $object = $db->query("SELECT * FROM $this->_warehouse WHERE id = $pk AND is_active IS NOT NULL")->fetch(PDO::FETCH_ASSOC);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk AND is_active IS NOT NULL")->fetch(PDO::FETCH_ASSOC);
         if($object){
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
@@ -21,10 +22,10 @@ class WarehouseSettingsModel extends Model
 
     public function form($pk = null)
     {
-        global $classes, $db;
-        $division =[];
-        $div_s = $db->query("SELECT division_id FROM warehouse_settings WHERE warehouse_id = {$this->value('id')}")->fetchAll();
-        foreach ($div_s as $val) $division[] = $val['division_id'];
+        global $classes, $db, $PERSONAL;
+        $appl =[];
+        $q_appl = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')}")->fetchAll();
+        foreach ($q_appl as $val) $appl[] = $val['division_id'];
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title">Настройки склада <?= $this->value('name') ?></h6>
@@ -36,13 +37,31 @@ class WarehouseSettingsModel extends Model
             <input type="hidden" name="warehouse_id" value="<?= $this->value('id') ?>">
             
             <div class="modal-body">
+
+                <fieldset>
+                    <legend><b>Доступ</b></legend>
+                    
+                    <div class="form-group">
+                        <label>Роль</label>
+                        <select data-placeholder="Выбрать роль" name="application" class="<?= $classes['form-select'] ?>">
+                            <option value="5"><?= $PERSONAL[5] ?></option>
+                            <option value="7"><?= $PERSONAL[7] ?></option>
+                        </select>
+                    </div>
+
+                </fieldset>
                 
-                <label>Доступ отделам на заявки(пациентам)</label>
-                <select data-placeholder="Выбрать отдел" multiple="multiple" name="division[]" id="division_sett" class="<?= $classes['form-multiselect'] ?>">
-                    <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $division)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <fieldset>
+                    <legend><b>Заявки</b></legend>
+                    <div class="form-group">
+                        <label>Доступ к заявкам</label>
+                        <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[]" class="settin <?= $classes['form-multiselect'] ?>">
+                            <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </fieldset>
                 
             </div>
             
@@ -88,7 +107,8 @@ class WarehouseSettingsModel extends Model
         ?>
         <script type="text/javascript">
             $( document ).ready(function() {
-                $("#division_sett").multiselect({
+                FormLayouts.init();
+                $(".settin").multiselect({
                     includeSelectAllOption: true,
                     enableFiltering: true
                 });
@@ -103,11 +123,11 @@ class WarehouseSettingsModel extends Model
         if($this->clean()){
             $db->beginTransaction();
             
-            Mixin\delete($this->table, $this->post['warehouse_id'], "warehouse_id");
+            Mixin\delete($this->_application, $this->post['warehouse_id'], "warehouse_id");
             
-            if (isset($this->post['division'])) {
-                foreach ($this->post['division'] as $divis) {
-                    $object = Mixin\insert($this->table, array('warehouse_id' => $this->post['warehouse_id'], 'division_id' => $divis));
+            if (isset($this->post['application'])) {
+                foreach ($this->post['application'] as $division) {
+                    $object = Mixin\insert($this->_application, array('warehouse_id' => $this->post['warehouse_id'], 'division_id' => $division));
                     if (!intval($object)){
                         $this->error($object);
                         $db->rollBack();

@@ -57,9 +57,8 @@ $header = "Склады";
 	                              	<tr>
 									  	<th style="width:50px">№</th>
 									  	<th>Наименование</th>
-									  	<th style="width:35%">Ответственное лицо</th>
-									  	<th>Роли</th>
-                                        <th>Отделы</th>
+									  	<th>Статус</th>
+									  	<th>Тип</th>
                                         <th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
@@ -71,21 +70,30 @@ $header = "Склады";
 										<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->name ?></td>
-											<td><?= get_full_name($row->parent_id) ?></td>
 											<td>
-                                                <?php foreach (json_decode($row->level) as $key): ?>
-                                                    <li><?= $PERSONAL[$key] ?></li>
-                                                <?php endforeach; ?>
-                                            </td>
-                                            <td>
-                                                <?php if ( isset($row->division) ): ?>
-                                                    <?php foreach (json_decode($row->division) as $key): ?>
-                                                        <li><?= $db->query("SELECT title FROM divisions WHERE id = $key")->fetchColumn() ?></li>
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <span class="text-muted">Нет данных</span>
-                                                <?php endif; ?>
-                                            </td>
+												<?php 
+													if($row->is_payment){
+														echo "Платный";
+													}elseif ($row->is_free) {
+														echo "Бесплатный";
+													}else{
+														echo "<span class=\"text-muted\">Нет данных</span>";
+													}
+												?>
+											</td>
+											<td>
+												<?php 
+													if($row->is_internal){
+														echo "Внутренний<br>";
+													}if ($row->is_external) {
+														echo "Внешний<br>";
+													}if ($row->is_operation) {
+														echo "Операционный<br>";
+													}if(!$row->is_internal and !$row->is_external and !$row->is_operation){
+														echo "<span class=\"text-muted\">Нет данных</span>";
+													}
+												?>
+											</td>
                                             <td>
 												<div class="list-icons">
                                                     <div class="dropdown">                      
