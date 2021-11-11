@@ -5,7 +5,7 @@ class WarehouseSupplyItemsModel extends Model
     public $table = 'warehouse_supply_items';
     public $number = 0;
     public $not_tr = false;
-    public $uniq_key, $is_order, $is_active;
+    public $uniq_key, $is_free, $is_active;
 
     public function form($pk = null)
     {
@@ -57,7 +57,7 @@ class WarehouseSupplyItemsModel extends Model
             <td>
                 <input type="number" name="item_qty" <?= $status ?> class="form-control verification_input" min="1" placeholder="№" value="<?= $this->value('item_qty') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
-            <?php if(!$this->is_order): ?>
+            <?php if(!$this->is_free): ?>
                 <td>
                     <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
                 </td>
