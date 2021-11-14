@@ -142,54 +142,51 @@
 
                 <?php if(module('module_pharmacy')): ?>
                     <!-- Warehouse -->
-                    <?php /*foreach ($db->query("SELECT * FROM warehouses WHERE is_active IS NOT NULL") as $side_warehouse): ?>
+                    <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.level = $session->session_level AND wsp.division_id = $session->session_division") as $side_warehouse): ?>
 
-                        <?php if( permission(json_decode($side_warehouse['level'])) and ( !$session->get_division() or in_array($session->get_division(), json_decode($side_warehouse['division'])) ) ): ?>
-                            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['name'] ?></div> <i class="icon-menu" title="Main"></i></li>
-                        
-                            <li class="nav-item">
-                                <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['id'] ?>" class="nav-link legitRipple">
-                                    <i class="icon-store"></i>
-                                    <span>Склад</span>
-                                </a>
-                            </li>
+                        <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['warehouse_name'] ?></div> <i class="icon-menu" title="Main"></i></li>
+                    
+                        <li class="nav-item">
+                            <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                                <i class="icon-store"></i>
+                                <span>Склад</span>
+                            </a>
+                        </li>
 
-                            <li class="nav-item">
-                                <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['id'] ?>" class="nav-link legitRipple">
-                                    <i class="icon-file-text3"></i>
-                                    <span>Заявки</span>
+                        <li class="nav-item">
+                            <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                                <i class="icon-file-text3"></i>
+                                <span>Заявки</span>
+                                <?php if($db->query("SELECT responsible_id FROM warehouse_setting_permissions WHERE warehouse_id = {$side_warehouse['warehouse_id']} AND is_grant IS NOT NULL")->fetchColumn() == $session->session_id): ?>
 
-                                    <?php if($side_warehouse['parent_id'] == $session->session_id): ?>
-
-                                        <div class="ml-auto">
-                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
-                                            <?php if($side): ?>
-                                                <span class="badge bg-teal align-self-center"><?= $side ?></span>
-                                            <?php endif; ?>
-                                            <?php unset($side); ?>
-    
-                                            <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
-                                            <?php if($side): ?>
-                                                <span class="badge bg-orange align-self-center"><?= $side ?></span>
-                                            <?php endif; ?>
-                                            <?php unset($side); ?>
-                                        </div>
-
-                                    <?php else: ?>
-
-                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
+                                    <div class="ml-auto">
+                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['warehouse_id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
                                         <?php if($side): ?>
-                                            <span class="badge bg-teal align-self-center ml-auto"><?= $side ?></span>
+                                            <span class="badge bg-teal align-self-center"><?= $side ?></span>
                                         <?php endif; ?>
                                         <?php unset($side); ?>
 
-                                    <?php endif; ?>
-                                    
-                                </a>
-                            </li>
-                        <?php endif; ?>
+                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['warehouse_id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
+                                        <?php if($side): ?>
+                                            <span class="badge bg-orange align-self-center"><?= $side ?></span>
+                                        <?php endif; ?>
+                                        <?php unset($side); ?>
+                                    </div>
 
-                    <?php endforeach;*/ ?>
+                                <?php else: ?>
+
+                                    <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['warehouse_id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
+                                    <?php if($side): ?>
+                                        <span class="badge bg-teal align-self-center ml-auto"><?= $side ?></span>
+                                    <?php endif; ?>
+                                    <?php unset($side); ?>
+
+                                <?php endif; ?>
+                                
+                            </a>
+                        </li>
+
+                    <?php endforeach; ?>
                     <!-- /Warehouse -->
                 <?php endif; ?>
                 
