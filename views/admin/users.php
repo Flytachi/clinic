@@ -7,7 +7,7 @@ $tb = (new UserModel)->tb();
 $search = $tb->get_serch();
 $tb->set_data("id, is_active, branch_id, username, first_name, last_name, father_name, user_level, division_id");
 $where_search = array("", "(username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
-$tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_limit(20);
+$tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, last_name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -85,7 +85,11 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
+<<<<<<< HEAD
 				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->tb()->by_id($row->branch_id)->get_row()->name : '<span class="text-muted">Нет данных</span>' ?></td>
+=======
+				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->tb()->where("id = $row->branch_id")->get_row()->name : '<span class="text-muted">Нет данных</span>' ?></td>
+>>>>>>> 25ab617203296816caed5adb4d1410bbdb4cf885
 				                            <td><?= $row->username ?></td>
 				                            <td><?= get_full_name($row); ?></td>
 				                            <td>
