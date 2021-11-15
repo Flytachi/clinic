@@ -85,11 +85,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
-<<<<<<< HEAD
 				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->tb()->by_id($row->branch_id)->get_row()->name : '<span class="text-muted">Нет данных</span>' ?></td>
-=======
-				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->tb()->where("id = $row->branch_id")->get_row()->name : '<span class="text-muted">Нет данных</span>' ?></td>
->>>>>>> 25ab617203296816caed5adb4d1410bbdb4cf885
 				                            <td><?= $row->username ?></td>
 				                            <td><?= get_full_name($row); ?></td>
 				                            <td>
