@@ -69,7 +69,7 @@ class WarehouseSettingsModel extends Model
                         <?php endif; ?>
                     </div>
                     <div id="result_user">
-                        <?php if($q_perm): ?>
+                        <?php if( isset($q_perm) and $q_perm): ?>
                             <?php $grant = $db->query("SELECT responsible_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NOT NULL")->fetchColumn(); ?>
                             <div class="form-group">
                                 <label>Пользователь</label>
