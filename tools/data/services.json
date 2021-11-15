@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "branch_id": null,
+        "is_active": 1,
+        "level": 1,
+        "division_id": null,
+        "code": null,
+        "name": "\u0421\u0442\u0430\u0446\u0438\u043e\u043d\u0430\u0440\u043d\u044b\u0439 \u041e\u0441\u043c\u043e\u0442\u0440",
+        "price": null,
+        "price_foreigner": null,
+        "type": 101
+    }
+]

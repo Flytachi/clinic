@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "branch_id": null,
+        "username": "admin",
+        "password": "d033e22ae348aeb5660fc2140aec35850c4da997",
+        "is_active": 1,
+        "first_name": "admin",
+        "last_name": "admin",
+        "father_name": "admin",
+        "user_level": 1,
+        "division_id": null,
+        "pacs_login": null,
+        "pacs_password": null,
+        "add_date": null
+    }
+]

@@ -57,7 +57,7 @@ class __Base
 class __Seed
 {
     protected String $name;
-    private String $path = "tools/ci"; 
+    private String $path = "tools/data"; 
     private String $format = "json"; 
     private Array $json = array();
 
@@ -81,16 +81,21 @@ class __Seed
     {
         global $db;
         require_once dirname(__DIR__).'/functions/connection.php';
-        foreach ($db->query("SELECT * FROM $this->name") as $value) {
-            $this->json[] = $value;
+        if ($db->query("SHOW TABLES LIKE '$this->name';")->rowCount()) {
+            foreach ($db->query("SELECT * FROM $this->name") as $value) {
+                $this->json[] = $value;
+            }
+            return $this->create_file();
+        } else {
+            echo "\033[31m"." Таблица $this->name не найдена.\n";
+            exit;
         }
-        return $this->create_file();
     }
 
     public function create_file()
     {
         $file = fopen("$this->path/$this->name.$this->format", "w");
-        fwrite($file, json_encode($this->json));
+        fwrite($file, json_encode($this->json, JSON_PRETTY_PRINT));
         return fclose($file);
     }
 }

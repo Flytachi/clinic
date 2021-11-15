@@ -494,7 +494,7 @@ class __Db
         }
     }
 
-    public function create_file($code = "", $file_name)
+    public function create_file($code, $file_name)
     {
         $file = fopen("$this->path_base/$file_name.$this->format", "w");
         fwrite($file, $code);
