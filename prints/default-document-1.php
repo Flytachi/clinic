@@ -2,8 +2,7 @@
 require_once '../tools/warframe.php';
 
 $code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
-$qr = $_SERVER['HTTP_HOST']."/api/document?code=$code";
-
+$qr = "http://".$_SERVER['HTTP_HOST']."/api/document?code=$code";
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.birth_date, vs.service_title, vs.service_report, vs.accept_date FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
     if (!$docs) Mixin\error('404');
@@ -97,7 +96,6 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 <?php endif; ?>
             </div>
         </div>
-        
 
         <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>
         <?php if (config("print_document_hr-4")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-4-color").'"></div>' ; ?>

@@ -2,6 +2,8 @@
 require_once '../tools/warframe.php';
 is_module('module_laboratory');
 
+$code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
+$qr = "http://".$_SERVER['HTTP_HOST']."/api/document?code=$code";
 if ( isset($_GET['pk']) ) {
     $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
 }else {
@@ -22,8 +24,7 @@ if ( isset($_GET['pk']) ) {
             <?php $block = (config('print_document_blocks') < 5) ? 12 / config('print_document_blocks') : 3; ?>
 
             <?php for ($i=1; $i <= config('print_document_blocks'); $i++): ?>
-                
-                <div class="col-<?= $block ?> text-<?= config("print_document_$i-aligin") ?>">
+                <div class="col-md-<?= $block ?> text-<?= config("print_document_$i-aligin") ?>">
                     
                     <?php if ( config("print_document_$i-type") ): ?>
                         <img
@@ -56,19 +57,26 @@ if ( isset($_GET['pk']) ) {
         <?php if (config("print_document_hr-1")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-1-color").'"></div>' ; ?>
         <?php if (config("print_document_hr-2")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-2-color").'"></div>' ; ?>
         
-        <div class="text-left h3">
-            <?php if ( isset($_GET['pk']) ): ?>
-                <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-                <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
-                <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
-                <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?>
-            <?php else: ?>
-                <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
-                <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
-                <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
-                <b>Дата начала визита: </b><?= date('d.m.Y H:i', strtotime($docs->add_date)) ?><br>
-                <b>Дата конца визита: </b><?= date('d.m.Y H:i', strtotime($docs->completed)) ?>
-            <?php endif; ?>
+        <div class="row">
+            <div class="col-md-8 text-left h3">
+                <?php if ( isset($_GET['pk']) ): ?>
+                    <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
+                    <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
+                    <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
+                    <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?>
+                <?php else: ?>
+                    <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
+                    <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
+                    <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
+                    <b>Дата начала визита: </b><?= date('d.m.Y H:i', strtotime($docs->add_date)) ?><br>
+                    <b>Дата конца визита: </b><?= date('d.m.Y H:i', strtotime($docs->completed)) ?>
+                <?php endif; ?>
+            </div>
+            <div class="col-md-4 text-right">
+                <?php if (config("print_document_qrcode")): ?>
+                    <img src="<?= api('QRcode', $qr); ?>" width="150" height="150">
+                <?php endif; ?>
+            </div>
         </div>
 
         <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>

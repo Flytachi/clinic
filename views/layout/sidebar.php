@@ -140,7 +140,7 @@
                 <?php endforeach; ?>
                 <!-- /Main -->
 
-                <?php if(module('module_pharmacy')): ?>
+                <?php if(module('module_pharmacy') and permission([5,7])): ?>
                     <!-- Warehouse -->
                     <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.level = $session->session_level AND wsp.division_id = $session->session_division") as $side_warehouse): ?>
 

@@ -11,16 +11,11 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 		$is_level = level() == $db->query("SELECT level FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']}")->fetchColumn();
 		$is_division = $db->query("SELECT * FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division")->rowCount();
 		$is_grant = $db->query("SELECT is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division AND responsible_id = $session->session_id")->rowCount();
-		if (!$is_level and !$is_division) {
-			Mixin\error('404');
-		}
-	} else {
-		Mixin\error('404');
-	}
+		
+		if (!$is_level and !$is_division) Mixin\error('404');
+	} else Mixin\error('404');
     
-} else {
-    Mixin\error('404');
-}
+} else Mixin\error('404');
 
 $tb = new Table($db, "warehouse_custom wc");
 $search = $tb->get_serch();

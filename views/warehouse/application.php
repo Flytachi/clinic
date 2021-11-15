@@ -4,34 +4,24 @@ $session->is_auth();
 is_module('pharmacy');
 $header = "Рабочий стол";
 
+
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
     $warehouse = $db->query("SELECT * FROM warehouses WHERE id = {$_GET['pk']} AND is_active IS NOT NULL")->fetch();
 	if ($warehouse) {
-		$level = ($warehouse['level']) ? json_decode($warehouse['level']) : null;
-		$division = ($warehouse['division']) ? json_decode($warehouse['division']) : null;
-		$is_parent = ($warehouse['parent_id'] == $session->session_id) ? true : false;
-
-		if ($level) {
-			if (permission($level)) {
-				if ($division and !( !$session->get_division() or in_array($session->get_division(), $division) )) Mixin\error('423');
-			}else {
-				Mixin\error('423');
-			}
-		}
-
-	} else {
-		Mixin\error('404');
-	}
+		$is_level = level() == $db->query("SELECT level FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']}")->fetchColumn();
+		$is_division = $db->query("SELECT * FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division")->rowCount();
+		$is_grant = $db->query("SELECT is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division AND responsible_id = $session->session_id")->rowCount();
+		
+		if (!$is_level and !$is_division) Mixin\error('404');
+	} else Mixin\error('404');
     
-} else {
-    Mixin\error('404');
-}
+} else Mixin\error('404');
 
 $tb = new Table($db, "warehouse_applications wa");
 $search = $tb->get_serch();
 $tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
-if ($is_parent) {
+if ($is_grant) {
 	$where_search = array(
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3", 
 		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
