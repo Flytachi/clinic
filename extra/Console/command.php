@@ -357,12 +357,12 @@ class __Db
             }elseif($this->argument == "compare"){
                 $this->compare();
             }elseif($this->argument == "clean") {
-                $this->clean_table = ($this->file_name == "database") ? null : $this->file_name;
+                $this->clean_table = ($this->file_name) ? $this->file_name : null;
                 $this->clean();
             }elseif($this->argument == "delete") {
                 $this->delete();
             }elseif($this->argument == "seed") {
-                $this->seed_table = ($this->file_name == "database") ? null : $this->file_name;
+                $this->seed_table = ($this->file_name) ? $this->file_name : null;
                 $this->seed();
             }else{
                 echo "\033[31m"." Нет такого аргумента.\n";
