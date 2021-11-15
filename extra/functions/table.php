@@ -62,7 +62,7 @@ class Table
       
      * -----------------------------------------------------------------------
      * 
-     * @version 9.7
+     * @version 9.9
      */
 
     // database handle
@@ -149,6 +149,15 @@ class Table
             Установка зависимостей!
         */
         $this->where = $where;
+        return $this;
+    }
+
+    public function by_id($pk)
+    {
+        /*
+            Установка id!
+        */
+        $this->where = "id = $pk";
         return $this;
     }
 

@@ -191,5 +191,6 @@ function client_name($id = null) {
     global $db;
     $stmt = $db->query("SELECT first_name, last_name, father_name FROM clients WHERE id = $id")->fetch(PDO::FETCH_OBJ);
     return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
+    
 }
 ?>

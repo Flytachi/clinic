@@ -5,7 +5,7 @@ $session->is_auth("master");
 $tb = (new UserModel)->tb('us');
 $search = $tb->get_serch();
 $where_search = array(null, "us.username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%')");
-$tb->set_data('cb.name, us.id, us.user_level, us.username')->additions("LEFT JOIN corp_branchs cb ON(cb.id=us.branch_id)");
+$tb->set_data('cb.name, us.id, us.first_name, us.last_name, us.father_name, us.user_level, us.username')->additions("LEFT JOIN corp_branchs cb ON(cb.id=us.branch_id)");
 $tb->where_or_serch($where_search)->order_by("cb.name ASC, us.user_level ASC, us.last_name ASC")->set_limit(20);
 $tb->set_self(viv('master/index'));  
 ?>
@@ -47,7 +47,7 @@ $tb->set_self(viv('master/index'));
                         ?>
                     </td>
                     <td><?= $row->username ?></td>
-                    <td><?= get_full_name($row->id); ?></td>
+                    <td><?= get_full_name($row); ?></td>
                     <td class="text-right">
                         <div class="list-icons">
                             <a href="<?= ajax("master/avatar") ?>?pk=<?= $row->id ?>" class="list-icons-up text-success"><i class="icon-arrow-up16"></i></a>

@@ -5,8 +5,8 @@ $header = "Персонал";
 
 $tb = (new UserModel)->tb();
 $search = $tb->get_serch();
+$tb->set_data("id, is_active, username, first_name, last_name, father_name, user_level");
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
-
 $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, last_name ASC")->set_limit(20);
 ?>
 <!DOCTYPE html>
@@ -85,7 +85,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 										<tr>
 				                            <td><?= $row->count ?></td>
 				                            <td><?= $row->username ?></td>
-				                            <td><?= get_full_name($row->id); ?></td>
+				                            <td><?= get_full_name($row); ?></td>
 				                            <td>
 												<?php
 				                                echo $PERSONAL[$row->user_level];
@@ -191,7 +191,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('admin/search_users') ?>",
+				url: "<?= ajax('manager/search-index') ?>",
 				data: {
 					table_search: input.value,
 				},

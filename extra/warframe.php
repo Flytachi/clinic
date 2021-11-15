@@ -25,16 +25,16 @@ if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
 }else {
     define('DIR', "");
 }
-
 // END Settings mod
+
 
 // Settings debugger
 if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) {
     ini_set('error_reporting', E_ALL);
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
+    $DEBUG_time_start = microtime(true);
 }
-
 // END Settings debugger
 
 
@@ -65,13 +65,15 @@ function showTitle() //Функция title
     return "Med24Line";
 }
 
-function get_full_name($id = null) {
+function get_full_name($obj = null) {
     global $db, $session;
-    if($id){
-        $stmt = $db->query("SELECT first_name, last_name, father_name FROM users WHERE id = $id")->fetch(PDO::FETCH_OBJ);
-        return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
-    }else{
-        return $session->get_full_name();
+    if (is_object($obj)) return ucwords($obj->last_name." ".$obj->first_name." ".$obj->father_name);
+    if (is_array($obj)) return ucwords($obj['last_name']." ".$obj['first_name']." ".$obj['father_name']);
+    else {
+        if($obj){
+            $stmt = $db->query("SELECT first_name, last_name, father_name FROM users WHERE id = $obj")->fetch(PDO::FETCH_OBJ);
+            return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
+        }else return $session->get_full_name();
     }
 }
 
