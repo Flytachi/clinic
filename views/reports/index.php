@@ -100,7 +100,7 @@ $header = "Отчёты";
                     <!-- end -->
 
                     <!-- Касса -->
-                    <?php if (permission([3, 32])): ?>
+                    <?php if (permission([3, 32, 8])): ?>
                         <a href="<?= viv('reports/cashbox/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Касса</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Касса</button>

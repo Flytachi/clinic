@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth([3, 32]);
+$session->is_auth([3, 32, 8]);
 $header = "Отчёт кассы";
 ?>
 <!DOCTYPE html>
