@@ -70,8 +70,9 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 					<div class="card-body" id="form_card">
 
                         <?php
-						if ($is_parent) (new WarehouseApplicationsModel)->store(2); 
-						else (new WarehouseApplicationsModel)->store();
+						(new WarehouseApplication)->panel(null, $warehouse['id']);
+						// if ($is_parent) (new WarehouseApplicationsModel)->store(2); 
+						// else (new WarehouseApplicationsModel)->store();
 						?>
 
 					</div>
@@ -185,7 +186,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				url: "<?= ajax('warehouse/search-application') ?>",
 				data: {
                     pk: "<?= $_GET['pk'] ?>",
-					is_parent: "<?= $is_parent ?>",
+					is_parent: "<?php // echo $is_parent ?>",
 					table_search: input.value,
 				},
 				success: function (result) {
@@ -199,7 +200,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				type: "POST",
 				url: "<?= add_url() ?>",
 				data: { 
-					model: "WarehouseApplications",
+					model: "WarehouseApplication",
 					id: params,
 					status: 2,
 				},

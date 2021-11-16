@@ -65,6 +65,7 @@ $header = "Аптека / Поставки";
 									  	<th style="width:50px">№</th>
 									  	<th style="width:200px">Ключ</th>
 									  	<th style="width:35%">Ответственный</th>
+                                        <th>Склад</th>
                                         <th>Дата поставки</th>
                                         <th>Дата заноса</th>
 										<th class="text-right" style="width: 100px">Действия</th>
@@ -77,6 +78,7 @@ $header = "Аптека / Поставки";
 											<td><?= $row->count ?></td>
 											<td><?= $row->uniq_key ?></td>
 											<td><?= get_full_name($row->parent_id) ?></td>
+											<td><?= (new Table($db, "warehouses"))->where("id = $row->warehouse_id")->get_row()->name ?></td>
 											<td><?= date_f($row->supply_date) ?></td>
 											<td><?= ($row->completed) ? date_f($row->completed_date, 1) : '<span class="text-muted">Нет данных</span>'; ?></td>
 											<td class="text-right">
