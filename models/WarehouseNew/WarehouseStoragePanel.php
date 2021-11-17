@@ -19,8 +19,6 @@ class WarehouseStoragePanel extends Model
             unset($_POST);
             if ( isset($this->post['search']) and $this->post['search'] ) {
                 $this->select_items();
-            }else {
-                $this->empty_result();
             }
         }elseif (isset($_GET) and $_GET['id'] == 2 and isset($_POST)) {
             $this->ajax_control($_POST);
@@ -170,15 +168,7 @@ class WarehouseStoragePanel extends Model
         $qty = $qty_max - $qty_applications;
         echo json_encode(array('price' => $price_result, 'max_qty' => $qty));
     }
-
-    public function empty_result()
-    {
-        ?>
-        <tr class="table-secondary">
-            <th class="text-center" colspan="6">Нет данных</th>
-        </tr>
-        <?php
-    }
+    
 }
         
 ?>

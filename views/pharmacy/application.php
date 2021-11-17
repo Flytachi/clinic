@@ -48,29 +48,21 @@ $header = "Заявки";
 							<table class="table table-hover">
 								<thead>
 									<tr class="bg-dark">
-										<th>Склад</th>
-										<th>Ответственный</th>
-										<th>Отдел</th>
+										<th>Информация</th>
 										<th class="text-right">Кол-во заявок</th>
 									</tr>
 								</thead>
 								<tbody>
-									<?php $tb_ware = (new Table($db, "warehouse_applications wa"))->set_data("DISTINCT w.id, w.name, w.parent_id, w.division")->additions("LEFT JOIN warehouses w ON (w.id=wa.warehouse_id)")->where("wa.status = 2"); ?>
+									<?php $tb_ware = (new Table($db, "warehouse_storage_applications"))->set_data("DISTINCT warehouse_id_from, warehouse_id_in")->where("status = 2"); ?>
 									<?php foreach ($tb_ware->get_table() as $row): ?>
-										<tr onclick="ChangeWare(<?= $row->id ?>)">
-											<td><?= $row->name ?></td>
-											<td><?= get_full_name($row->parent_id) ?></td>
+										<tr onclick="ChangeWare(<?= $row->warehouse_id_from ?>, <?= $row->warehouse_id_in ?>)">
 											<td>
-												<?php if ( isset($row->division) ): ?>
-                                                    <?php foreach (json_decode($row->division) as $key): ?>
-                                                        <li><?= $db->query("SELECT title FROM divisions WHERE id = $key")->fetchColumn() ?></li>
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <span class="text-muted">Нет данных</span>
-                                                <?php endif; ?>
+												<?= $db->query("SELECT name FROM warehouses WHERE id = $row->warehouse_id_from")->fetchColumn() ?>
+												<span class="text-muted"> -- Перевод --></span>
+												<?= $db->query("SELECT name FROM warehouses WHERE id = $row->warehouse_id_in")->fetchColumn() ?>
 											</td>
 											<td class="text-right">
-												<?= $db->query("SELECT * FROM warehouse_applications WHERE warehouse_id = $row->id AND status = 2")->rowCount(); ?>
+												<?= $db->query("SELECT * FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id_from AND warehouse_id_in = $row->warehouse_id_in AND status = 2")->rowCount(); ?>
 											</td>
 										</tr>
 									<?php endforeach; ?>
@@ -101,26 +93,28 @@ $header = "Заявки";
 
     <script type="text/javascript">
 
-		function ChangeWare(params) {
+		function ChangeWare(wFrom, wIn) {
 			
 			$.ajax({
-				type: "GET",
-				url: "<?= up_url(null, "WarehouseApplicationsPanel") ?>",
-				data: { id: params },
+				type: "POST",
+				url: "<?= up_url(2, "WarehouseApplication") ?>",
+				data: { warehouse_id_from: wFrom, warehouse_id_in: wIn},
 				success: function (result) {
 					document.querySelector('#display_items').innerHTML = result;
 				},
 			});
 		}
 
-		function ApplicationShow(Ware, appId, appManufacturerId = null) {
+		function ApplicationShow(wareFrom, wareIn, appId, appManufacturer, appPrice) {
 			$.ajax({
-				type: "GET",
-				url: "<?= up_url(null, "WarehouseApplicationsPanel", "application") ?>",
+				type: "POST",
+				url: "<?= up_url(3, "WarehouseApplication") ?>",
 				data: { 
-					id: Ware,
+					warehouse_id_from: wareFrom,
+					warehouse_id_in: wareIn,
 					item_name_id: appId,
-					item_manufacturer_id: appManufacturerId
+					item_manufacturer_id: appManufacturer,
+					item_price: appPrice,
 				},
 				success: function (result) {
 					$('#modal_default').modal('show');

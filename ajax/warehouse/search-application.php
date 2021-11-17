@@ -2,20 +2,20 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$is_parent = $_GET['is_parent'];
+$is_grant = $_GET['is_grant'];
 
-$tb = new Table($db, "warehouse_applications wa");
+$tb = new Table($db, "warehouse_storage_applications wa");
 $search = $tb->get_serch();
-$tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
-if ($is_parent) {
+$tb->set_data('wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.item_qty, wa.status, wa.add_date')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
+if ($is_grant) {
 	$where_search = array(
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3", 
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3", 
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 	);
 } else {
 	$where_search = array(
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND wa.parent_id = $session->session_id", 
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND wa.parent_id = $session->session_id AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND wa.responsible_id = $session->session_id", 
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND wa.responsible_id = $session->session_id AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 	);
 }
 
@@ -28,7 +28,7 @@ $tb->set_self(viv('warehouse/application'));
         <thead>
             <tr class="<?= $classes['table-thead'] ?>">
                 <th style="width: 50px">#</th>
-                <?php if($is_parent): ?>
+                <?php if($is_grant): ?>
                     <th style="width:200px">Заявитель</th>
                 <?php endif; ?>
                 <th>Наименование</th>
@@ -43,8 +43,8 @@ $tb->set_self(viv('warehouse/application'));
             <?php foreach ($tb->get_table(1) as $row): ?>
                 <tr id="TR_item_<?= $row->count ?>">
                     <td><?= $row->count ?></td>
-                    <?php if($is_parent): ?>
-                        <td><?= get_full_name($row->parent_id) ?></td>
+                    <?php if($is_grant): ?>
+                        <td><?= get_full_name($row->responsible_id) ?></td>
                     <?php endif; ?>
                     <td><?= $row->name ?></td>
                     <td>
@@ -63,16 +63,18 @@ $tb->set_self(viv('warehouse/application'));
                             <span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Перевод</span>
                         <?php elseif ($row->status == 3): ?>
                             <span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершён</span>
+                        <?php elseif ($row->status == 4): ?>
+                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Отказано</span>
                         <?php else: ?>
                             <span style="font-size:15px;" class="badge badge-flat border-secondary text-secondary">Неизвестный</span>
                         <?php endif; ?>
                     </td>
                     <td class="text-right"s>
                         <div class="list-icons">
-                            <?php if ( ($is_parent or $row->status == 1) and $row->status != 2 ): ?>
-                                <a href="<?= del_url($row->id, 'WarehouseApplicationsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php if ( ($is_grant or $row->status == 1) and $row->status != 2 ): ?>
+                                <a href="#" onclick="Delete(<?= $row->count ?>, '<?= del_url($row->id, 'WarehouseApplication') ?>')" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                             <?php endif; ?>
-                            <?php if ($is_parent): ?>
+                            <?php if ($is_grant): ?>
                                 <?php if ( $row->status == 2 ): ?>
                                     <span class="list-icons-item text-success ml-1"><i class="icon-checkmark-circle"></i></span>
                                 <?php else: ?>
