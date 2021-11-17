@@ -18,18 +18,18 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     
 } else Mixin\error('404');
 
-$tb = new Table($db, "warehouse_applications wa");
+$tb = new Table($db, "warehouse_storage_applications wa");
 $search = $tb->get_serch();
-$tb->set_data('wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
+$tb->set_data('wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.item_qty, wa.status, wa.add_date')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
 if ($is_grant) {
 	$where_search = array(
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3", 
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3", 
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 	);
 } else {
 	$where_search = array(
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND wa.parent_id = $session->session_id", 
-		"wa.warehouse_id = {$_GET['pk']} AND wa.status != 3 AND wa.parent_id = $session->session_id AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND wa.responsible_id = $session->session_id", 
+		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND wa.responsible_id = $session->session_id AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 	);
 }
 
@@ -70,9 +70,8 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 					<div class="card-body" id="form_card">
 
                         <?php
-						(new WarehouseApplication)->panel(null, $warehouse['id']);
-						// if ($is_parent) (new WarehouseApplicationsModel)->store(2); 
-						// else (new WarehouseApplicationsModel)->store();
+						if ($is_grant) (new WarehouseApplication)->panel(null, $warehouse['id'], 2);
+						else (new WarehouseApplication)->panel(null, $warehouse['id']);;
 						?>
 
 					</div>
@@ -82,7 +81,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
                 <div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h5 class="card-title"><?= ($is_parent) ? "Все Заявки" : "Мои Заявки"; ?></h5>
+						<h5 class="card-title"><?= ($is_grant) ? "Все Заявки" : "Мои Заявки"; ?></h5>
                         <div class="header-elements">
 							<div class="form-group-feedback form-group-feedback-right mr-2">
 								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите наименование препарата">
@@ -100,7 +99,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				                <thead>
 				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th style="width: 50px">#</th>
-										<?php if($is_parent): ?>
+										<?php if($is_grant): ?>
                                             <th style="width:200px">Заявитель</th>
 										<?php endif; ?>
 				                        <th>Наименование</th>
@@ -115,8 +114,8 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 									<?php foreach ($tb->get_table(1) as $row): ?>
 										<tr id="TR_item_<?= $row->count ?>">
 				                            <td><?= $row->count ?></td>
-											<?php if($is_parent): ?>
-												<td><?= get_full_name($row->parent_id) ?></td>
+											<?php if($is_grant): ?>
+												<td><?= get_full_name($row->responsible_id) ?></td>
 											<?php endif; ?>
 				                            <td><?= $row->name ?></td>
 				                            <td>
@@ -143,10 +142,10 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 											</td>
 				                            <td class="text-right"s>
 				                                <div class="list-icons">
-													<?php if ( ($is_parent or $row->status == 1) and $row->status != 2 ): ?>
-														<a href="<?= del_url($row->id, 'WarehouseApplicationsModel') ?>" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<?php if ( ($is_grant or $row->status == 1) and $row->status != 2 ): ?>
+														<a href="#" onclick="Delete(<?= $row->count ?>, '<?= del_url($row->id, 'WarehouseApplication') ?>')" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
-                                                    <?php if ($is_parent): ?>
+                                                    <?php if ($is_grant): ?>
 														<?php if ( $row->status == 2 ): ?>
 															<span class="list-icons-item text-success ml-1"><i class="icon-checkmark-circle"></i></span>
 														<?php else: ?>
@@ -185,8 +184,8 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				type: "GET",
 				url: "<?= ajax('warehouse/search-application') ?>",
 				data: {
-                    pk: "<?= $_GET['pk'] ?>",
-					is_parent: "<?php // echo $is_parent ?>",
+                    pk: <?= $_GET['pk'] ?>,
+					is_grant: <?= $is_grant ?>,
 					table_search: input.value,
 				},
 				success: function (result) {
@@ -194,6 +193,37 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				},
 			});
 		});
+
+		function Delete(index, url){
+			$.ajax({
+				type: "POST",
+				url: url,
+				success: function (data) {
+					data = JSON.parse(data);
+					if (data.status == "success") {
+						
+						new Noty({
+							text: "Успешно удаленно!",
+							type: "success",
+						}).show();
+
+						$(`#TR_item_${index}`).css("background-color", "rgb(244, 67, 54)");
+						$(`#TR_item_${index}`).css("color", "white");
+						$(`#TR_item_${index}`).fadeOut(900, function() {
+							$(this).remove();
+						});
+
+					} else {
+
+						new Noty({
+							text: data.message,
+							type: "error",
+						}).show();
+
+					}
+				},
+			});
+		}
 
 		function ConfirmApplication(params, index) {
 			$.ajax({
@@ -205,8 +235,8 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 					status: 2,
 				},
 				success: function (data) {
-
-					if (data == "success") {
+					data = JSON.parse(data);
+					if (data.status == "success") {
 						
 						new Noty({
 							text: "Успешно подтверждено!",
@@ -223,7 +253,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 					} else {
 
 						new Noty({
-							text: data,
+							text: data.message,
 							type: "error",
 						}).show();
 
