@@ -4,8 +4,7 @@ class VisitBypassEventsPanel extends Model
 {
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';
-    public $_warehouse_order = 'warehouse_orders';
-    public $_warehouse_custom = 'warehouse_custom';
+    public $_storage = 'warehouse_storage';
     public $_bypass_transactions = 'visit_bypass_transactions';
     public $_event_applications = 'visit_bypass_event_applications';
 
@@ -82,7 +81,7 @@ class VisitBypassEventsPanel extends Model
                                             <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> 
                                             <span class="text-warning"><?= (new Table($db, "warehouse_item_manufacturers"))->where("id = $item->item_manufacturer_id")->get_row()->manufacturer ?></span>
                                             <span><?= number_format($item->item_price) ?></span> 
-                                            <span class="text-muted">(<?= ($item->warehouse_order) ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span>
+                                            <span class="text-muted">(Склад "<?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>")</span>
 
                                         </li>
                                     <?php endforeach; ?>
@@ -91,7 +90,7 @@ class VisitBypassEventsPanel extends Model
 
                                     <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                                         <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
-                                            <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                            <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> <span class="text-muted">(Cклад "<?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>")</span></li>
                                         <?php else: ?>
                                             <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
                                         <?php endif; ?>
@@ -104,7 +103,7 @@ class VisitBypassEventsPanel extends Model
                                 <?php foreach (json_decode($this->bypass['items']) as $item): ?>
                                     <?php if ( isset($item->item_name_id) and $item->item_name_id ): ?>
                                         <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name ?> 
-                                        <span class="text-muted">(<?= ($item->warehouse_id == "order") ? "Бесплатный склад" : "склад ".(new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>)</span></li>
+                                        <span class="text-muted">(Склад "<?= (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name ?>")</span></li>
                                     <?php else: ?>
                                         <li><span class="text-primary"><?= $item->item_qty ?> шт.</span> <?= $item->item_name ?> <span class="text-warning">(Сторонний)</span></li>
                                     <?php endif; ?>
@@ -219,13 +218,8 @@ class VisitBypassEventsPanel extends Model
                     $this->visit = $data->visit_id;
                     $this->user = $data->user_id;
                     foreach ($applications->get_table() as $app) {
-                        if ($app->warehouse_order) {
-                            $this->where = "item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id";
-                            $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_order WHERE $this->where")->fetchColumn();
-                        } else {
-                            $this->where = "warehouse_id = $app->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
-                            $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_warehouse_custom WHERE $this->where")->fetchColumn();
-                        }
+                        $this->where = "warehouse_id = $app->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
+                        $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_storage WHERE $this->where")->fetchColumn();
                         
                         if ($app->item_qty <= $max_qty) {
                             // Взятие со склада
@@ -257,18 +251,12 @@ class VisitBypassEventsPanel extends Model
     public function transaction($app)
     {
         global $db, $session;
-        if (isset($app->warehouse_order) and $app->warehouse_order) {
-            $table = $this->_warehouse_order;
-            $item = $db->query("SELECT * FROM $table WHERE $this->where ORDER BY item_die_date ASC")->fetch();
-            $qty_sold = $item['item_qty'] - $app->item_qty;
-        } else {
-            $table = $this->_warehouse_custom;
-            $item = $db->query("SELECT * FROM $table WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
-            $qty_sold = $item['item_qty'] - $app->item_qty;
-        }
+        $item = $db->query("SELECT * FROM $this->_storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
+        $qty_sold = $item['item_qty'] - $app->item_qty;
+
         if ($qty_sold > 0) {
             // Update
-            Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
+            Mixin\update($this->_storage, array('item_qty' => $qty_sold), $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
@@ -283,7 +271,7 @@ class VisitBypassEventsPanel extends Model
 
         }elseif ($qty_sold == 0) {
             // Delete
-            Mixin\delete($table, $item['id']);
+            Mixin\delete($this->_storage, $item['id']);
             Mixin\insert($this->_bypass_transactions, array(
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,

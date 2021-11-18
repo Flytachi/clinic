@@ -92,11 +92,11 @@ class VisitBypassModel extends Model
                 </div>
 
                 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-                    <?php if($this->order): ?>
-                        <li class="nav-item"><a href="#" onclick="ChangeWare('order')" class="nav-link legitRipple" data-toggle="tab">Склад бесплатных препаратов</a></li>
-                    <?php endif; ?>
-                    <?php if( module('pharmacy') and $ware_sett = (new Table($db, "warehouse_settings ws"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=ws.warehouse_id)")->where("ws.division_id = {$this->visit['division_id']} AND w.is_active IS NOT NULL")->get_table() ): ?>
-                        <?php foreach ($ware_sett as $ware): ?>
+                    <?php if( module('pharmacy') ): ?>
+                        <?php
+                        $warehouses = (new Table($db, "warehouse_setting_applications wsa"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=wsa.warehouse_id)")->where("wsa.division_id = {$this->visit['division_id']} AND w.is_active IS NOT NULL");
+                        ?>
+                        <?php foreach ($warehouses->get_table() as $ware): ?>
                             <li class="nav-item"><a href="#" onclick="ChangeWare(<?= $ware->id ?>)" class="nav-link legitRipple" data-toggle="tab"><?= $ware->name ?></a></li>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -104,14 +104,14 @@ class VisitBypassModel extends Model
 
                 <div class="form-group-feedback form-group-feedback-right row">
 
-                    <div class="col-md-10">
+                    <!-- <div class="col-md-10">
                         <div id="bypass_search_input" style="display:none;">
                             <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
                             <div class="form-control-feedback">
                                 <i class="icon-search4 font-size-base text-muted"></i>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-md-2">
                         <div class="text-right">
                             <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
@@ -123,7 +123,7 @@ class VisitBypassModel extends Model
 
                 </div>
 
-                <div class="form-group" id="bypass_search_area"></div>
+                <div class="form-group" id="panel-frame"></div>
 
             </div>
 
@@ -134,117 +134,49 @@ class VisitBypassModel extends Model
 
             function ChangeWare(params) {
                 
-                if (!warehouse) {
-                    document.querySelector("#bypass_search_input").style.display = "block"; 
-                }else{
-                    document.querySelector("#search_input_product").value = ""; 
-                }
-
-                if (params == "order") {
-                    var table = `
-                    <div class="form-group" id="search_area">
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm">
-                                <thead>
-                                    <tr class="bg-dark">
-                                        <th>Наименование</th>
-                                        <th style="width:370px">Производитель</th>
-                                        <th class="text-center" style="width:150px">На складе</th>
-                                        <th style="width:100px">Кол-во</th>
-                                        <th class="text-center" style="width:50px">#</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table_form">
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>`;
-                } else {
-                    var table = `
-                    <div class="form-group" id="search_area">
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-sm">
-                                <thead>
-                                    <tr class="bg-dark">
-                                        <th>Наименование</th>
-                                        <th style="width:370px">Производитель</th>
-                                        <th style="width:370px">Стоимость</th>
-                                        <th class="text-center" style="width:150px">На складе</th>
-                                        <th style="width:100px">Кол-во</th>
-                                        <th class="text-center" style="width:50px">#</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table_form">
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>`;
+                if (params) {
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= up_url(1, 'WarehouseApplication') ?>",
+                        data: {
+                            warehouse_id_from: params,
+                            status: 1,
+                        },
+                        success: function (result) {
+                            document.querySelector("#panel-frame").innerHTML = result;
+                        },
+                    });
                 }
                 
-                document.querySelector("#bypass_search_area").innerHTML = table;
                 warehouse = params;
             }
 
-            $("#search_input_product").keyup(function() {
+            function __WarehouseApplication__search(input){
+                $.ajax({
+                    type: "POST",
+                    url: "<?= up_url(1, 'WarehouseStoragePanel') ?>",
+                    data: {
+                        warehouse_id_from: warehouse,
+                        default: true,
+                        search: input.value, 
+                    },
+                    success: function (result) {
+                        $('#panel-items').html(result);
+                    },
+                });
+            }
 
-                if (warehouse == "order") {
-                    $.ajax({
-                        type: "POST",
-                        url: "<?= up_url(1, 'WarehouseOrderPanel', 'change_table') ?>",
-                        data: {
-                            search: this.value,
-                        },
-                        success: function (result) {
-                            
-                            $('#table_form').html(result);
-                        },
-                    });
-                }else{
-                    $.ajax({
-                        type: "POST",
-                        url: "<?= up_url(1, 'WarehouseCustomPanel', 'change_table') ?>",
-                        data: {
-                            warehouse_id: warehouse,
-                            search: this.value,
-                            default: 1,
-                        },
-                        success: function (result) {
-                            
-                            $('#table_form').html(result);
-                        },
-                    });
-                }
-            });
-
-            function SelectProduct(btn, index) {
+            function __WarehouseStoragePanel__select(btn, index) {
                 btn.disabled = true;
 
-                if (warehouse == "order") {
-                    var data = {
-                        warehouse_id: 'order',
-                        item_name: document.querySelector('#name_input_'+index).innerHTML,
-                        item_name_id: document.querySelector('#name_id_input_'+index).value,
-                        item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
-                        item_price: 0,
-                        item_qty: document.querySelector('#qty_input_'+index).value,
-                    };
-                } else {
-                    var data = {
-                        warehouse_id: warehouse,
-                        item_name: document.querySelector('#name_input_'+index).innerHTML,
-                        item_name_id: document.querySelector('#name_id_input_'+index).value,
-                        item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
-                        item_price: document.querySelector('#price_id_input_'+index).value,
-                        item_qty: document.querySelector('#qty_input_'+index).value,
-                    };
-                }
-
+                var data = {
+                    warehouse_id: warehouse,
+                    item_name: document.querySelector('#name_input_'+index).innerHTML,
+                    item_name_id: document.querySelector('#name_id_input_'+index).value,
+                    item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
+                    item_price: document.querySelector('#price_id_input_'+index).value,
+                    item_qty: document.querySelector('#qty_input_'+index).value,
+                };
                 AddPreparat(data);
 
                 $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");

@@ -1,14 +1,11 @@
 <?php
 
-use function Mixin\error;
-
 class VisitBypassEventsModel extends Model
 {
     public $table = 'visit_bypass_events';
-    public $_visit_bypass = 'visit_bypass';
-    public $_ware_custom = 'warehouse_custom';
-    public $_ware_orders = 'warehouse_orders';
     public $_event_applications = 'visit_bypass_event_applications';
+    public $_visit_bypass = 'visit_bypass';
+    public $_storage = 'warehouse_storage';
 
     public function clean()
     {
@@ -54,52 +51,29 @@ class VisitBypassEventsModel extends Model
                         'item_name_id' => $item->item_name_id,
                     );
 
-                    if ($item->warehouse_id == "order") {
-                        // Orders
-                        $where = "item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id";
-                        $order = "item_die_date ASC";
-                        if($item->item_manufacturer_id) $where .= " AND item_manufacturer_id = $item->item_manufacturer_id";
-                        $qty = $item->item_qty;
+                    
+                    // Storage
+                    $where = "warehouse_id = $item->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id";
+                    $order = "item_die_date ASC, item_price ASC";
+                    if($item->item_manufacturer_id) $where .= " AND item_manufacturer_id = $item->item_manufacturer_id";
+                    if($item->item_price) $where .= " AND item_price = $item->item_price";
+                    $qty = $item->item_qty;
 
-                        foreach ((new Table($db, $this->_ware_orders))->where($where)->order_by($order)->get_table() as $source) {
-                            $status = $source->item_qty >= $qty;
-                            //
-                            $post['warehouse_order'] = true;
-                            $post['item_qty'] = ($status) ? $qty : $source->item_qty;
-                            $post['item_manufacturer_id'] = $source->item_manufacturer_id;
-
-                            Mixin\insert($this->_event_applications, $post);
-                            unset($post['item_manufacturer_id']);
-                            unset($post['item_qty']);
-                            //
-                            if(!$status) $qty -= $source->item_qty;
-                            if($status) break;
-                        }
-
-                    } else {
-                        // Custom
-                        $where = "warehouse_id = $item->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id";
-                        $order = "item_die_date ASC, item_price ASC";
-                        if($item->item_manufacturer_id) $where .= " AND item_manufacturer_id = $item->item_manufacturer_id";
-                        if($item->item_price) $where .= " AND item_price = $item->item_price";
-                        $qty = $item->item_qty;
-
-                        foreach ((new Table($db, $this->_ware_custom))->where($where)->order_by($order)->get_table() as $source) {
-                            $status = $source->item_qty >= $qty;
-                            //
-                            $post['warehouse_id'] = $item->warehouse_id;
-                            $post['item_qty'] = ($status) ? $qty : $source->item_qty;
-                            $post['item_manufacturer_id'] = $source->item_manufacturer_id;
-                            $post['item_price'] = $source->item_price;
-                            
-                            Mixin\insert($this->_event_applications, $post);
-                            unset($post['item_manufacturer_id']);
-                            unset($post['item_price']);
-                            unset($post['item_qty']);
-                            //
-                            if(!$status) $qty -= $source->item_qty;
-                            if($status) break;
-                        }
+                    foreach ((new Table($db, $this->_storage))->where($where)->order_by($order)->get_table() as $source) {
+                        $status = $source->item_qty >= $qty;
+                        //
+                        $post['warehouse_id'] = $item->warehouse_id;
+                        $post['item_qty'] = ($status) ? $qty : $source->item_qty;
+                        $post['item_manufacturer_id'] = $source->item_manufacturer_id;
+                        $post['item_price'] = $source->item_price;
+                        
+                        Mixin\insert($this->_event_applications, $post);
+                        unset($post['item_manufacturer_id']);
+                        unset($post['item_price']);
+                        unset($post['item_qty']);
+                        //
+                        if(!$status) $qty -= $source->item_qty;
+                        if($status) break;
 
                     }
                     unset($post);

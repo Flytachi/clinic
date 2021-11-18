@@ -41,7 +41,7 @@ is_module('module_pharmacy');
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-puzzle3 mr-2"></i>Расходные материалы
 							<?php if ($activity and permission(7)): ?>
-								<a onclick='Route(`<?= up_url(null, "WarehouseCustomPanel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
+								<a onclick='Route(`<?= up_url(null, "VisitBypassEventTransactionModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
 							<?php endif; ?>
