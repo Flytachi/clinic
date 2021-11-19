@@ -1,8 +1,9 @@
 <?php
 
-class VisitBypassEventTransactionModel extends Model
+class VisitBypassTransactionModel extends Model
 {
-    public $table = 'visit_bypass_event_transactions';
+    public $table = 'visit_bypass_transactions';
+    public $storage = 'warehouse_storage';
 
     public function form($pk = null)
     {
@@ -119,48 +120,75 @@ class VisitBypassEventTransactionModel extends Model
 
     public function save()
     {
-        $this->error("Требуемое доработка!");
-        //
+        global $db, $session;
         $this->where = "warehouse_id = {$this->post['warehouse_id']} AND item_die_date > CURRENT_DATE() AND item_name_id = {$this->post['item_name_id']}";
-        $table = $this->table;
-        $this->where .= " AND warehouse_id = $app->warehouse_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
-        if (!$app->item_price) $this->error("Выберите стоимость!");
-        $item = $db->query("SELECT * FROM $table WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
-        $qty_sold = $item['item_qty'] - $app->item_qty;
+        
+        if ($this->post['item_manufacturer_id']) {
+            // $item = $db->query("SELECT * FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
+            $this->where .= " AND item_manufacturer_id = {$this->post['item_manufacturer_id']}";
+        }
+        if ($this->post['item_price']) {
+            // $item = $db->query("SELECT * FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
+            $this->where .= " AND item_price = {$this->post['item_price']}";
+        }
+        $qty = $db->query("SELECT SUM(item_qty) FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetchColumn();
+        
+        if ($qty >= $this->post['item_qty']) {
+            $change_qty = $this->post['item_qty'];
 
-        if ($qty_sold > 0) {
-
-            // Update
-            Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
-                'visit_id' => $app->visit_id,
-                'responsible_id' => $session->session_id,
-                'user_id' => $app->user_id,
-                'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
-                'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_qty' => $app->item_qty,
-                'item_cost' => ($app->warehouse_id == "order") ? 0 : $item['item_price'],
-                'price' => ($app->warehouse_id == "order") ? 0 : ($item['item_price'] * $app->item_qty),
-            ));
-
-        }elseif ($qty_sold == 0) {
-            // Delete
-            Mixin\delete($table, $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
-                'visit_id' => $app->visit_id,
-                'responsible_id' => $session->session_id,
-                'user_id' => $app->user_id,
-                'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
-                'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_qty' => $app->item_qty,
-                'item_cost' => ($app->warehouse_id == "order") ? 0 : $item['item_price'],
-                'price' => ($app->warehouse_id == "order") ? 0 : ($item['item_price'] * $app->item_qty),
-            ));
-
+            foreach ($db->query("SELECT * FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC") as $item) {
+                $temp_qty = $item['item_qty'] - $change_qty;
+                if ($temp_qty == 0) {
+                    // Delete
+                    Mixin\delete($this->storage, $item['id']);
+                    Mixin\insert($this->table, array(
+                        'visit_id' => $this->post['visit_id'],
+                        'responsible_id' => $session->session_id,
+                        'user_id' => $this->post['user_id'],
+                        'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
+                        'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = {$item['item_manufacturer_id']}")->fetchColumn(),
+                        'item_qty' => $change_qty,
+                        'item_cost' => $item['item_price'],
+                        'price' => ($item['item_price'] * $change_qty),
+                    ));
+                    break;
+                }else{
+                    // Update
+                    if ($temp_qty > 0) {
+                        Mixin\update($this->storage, array('item_qty' => $temp_qty), $item['id']);
+                        Mixin\insert($this->table, array(
+                            'visit_id' => $this->post['visit_id'],
+                            'responsible_id' => $session->session_id,
+                            'user_id' => $this->post['user_id'],
+                            'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
+                            'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = {$item['item_manufacturer_id']}")->fetchColumn(),
+                            'item_qty' => $change_qty,
+                            'item_cost' => $item['item_price'],
+                            'price' => ($item['item_price'] * $change_qty),
+                        ));
+                        break;
+                    }else {
+                        // Delete
+                        Mixin\delete($this->storage, $item['id']);
+                        Mixin\insert($this->table, array(
+                            'visit_id' => $this->post['visit_id'],
+                            'responsible_id' => $session->session_id,
+                            'user_id' => $this->post['user_id'],
+                            'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
+                            'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = {$item['item_manufacturer_id']}")->fetchColumn(),
+                            'item_qty' => $item['item_qty'],
+                            'item_cost' => $item['item_price'],
+                            'price' => ($item['item_price'] * $item['item_qty']),
+                        ));
+                        $change_qty = -$temp_qty;
+                    }
+                }
+            }
+            
         }else{
-            // Convert
             $this->error("Требуемое количество превышает имеющиеся!");
         }
+
         $this->success();
     }
 

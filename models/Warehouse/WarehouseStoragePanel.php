@@ -79,7 +79,7 @@ class WarehouseStoragePanel extends Model
                         <?php
                         $the_where = "item_name_id = $row->item_name_id";
                         $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->table WHERE warehouse_id = $ware_pk AND item_die_date > CURRENT_DATE() AND $the_where")->fetchColumn();
-                        $applications = $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE warehouse_id_from = $ware_pk AND $the_where")->fetchColumn();
+                        $applications = $db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE status IN (1,2) AND warehouse_id_from = $ware_pk AND $the_where")->fetchColumn();
                         $applications += $db->query("SELECT SUM(item_qty) FROM $this->_event_applications WHERE warehouse_id = $ware_pk AND $the_where")->fetchColumn();
                         echo $max_qty - $applications;
                         ?>
@@ -166,7 +166,7 @@ class WarehouseStoragePanel extends Model
 
         $price_result = $db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_price ASC")->fetchAll();
         $qty_max = $db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
-        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.warehouse_id_from = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
+        $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.status IN (1,2) AND wc.warehouse_id_from = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
         $qty_applications += $db->query("SELECT SUM(wc.item_qty) FROM $this->_event_applications wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
         $qty = $qty_max - $qty_applications;
         echo json_encode(array('price' => $price_result, 'max_qty' => $qty));

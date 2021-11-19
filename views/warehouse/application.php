@@ -142,7 +142,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 											</td>
 				                            <td class="text-right"s>
 				                                <div class="list-icons">
-													<?php if ( ($is_grant or $row->status == 1) and $row->status != 2 ): ?>
+													<?php if ( ($row->responsible_id == $session->session_id and $row->status == 1) or ($is_grant and in_array($row->status, [1,2,4])) ): ?>
 														<a href="#" onclick="Delete(<?= $row->count ?>, '<?= del_url($row->id, 'WarehouseApplication') ?>')" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 													<?php endif; ?>
                                                     <?php if ($is_grant): ?>

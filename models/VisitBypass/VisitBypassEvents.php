@@ -50,7 +50,6 @@ class VisitBypassEventsModel extends Model
                         'user_id' => $this->post['user_id'],
                         'item_name_id' => $item->item_name_id,
                     );
-
                     
                     // Storage
                     $where = "warehouse_id = $item->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id";

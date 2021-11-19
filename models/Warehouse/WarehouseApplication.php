@@ -162,7 +162,6 @@ class WarehouseApplication extends Model
 
             </script>
         <?php endif; ?>
-
         <?php
     }
 
@@ -308,8 +307,8 @@ class WarehouseApplication extends Model
             </div>
     
             <div class="modal-footer">
-                <input type="submit" name="rejection" value="Отказать" class="btn btn-outline-danger btn-sm legitRipple">
                 <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Принять</button>
+                <input type="submit" name="rejection" value="Отказать" class="btn btn-outline-danger btn-sm legitRipple">
             </div>
 
         </form>
@@ -364,11 +363,13 @@ class WarehouseApplication extends Model
     {
         global $db;
         if (empty($this->post['id']) and (!$this->post['item_manufacturer_id'] or !$this->post['item_price'])) {
-            $m = ($this->post['item_manufacturer_id']) ? "AND item_manufacturer_id = {$this->post['item_manufacturer_id']}" : null;
-            $s = ($this->post['item_price']) ? "AND item_price = {$this->post['item_price']}" : null;
-            $result = $db->query("SELECT item_manufacturer_id, item_price FROM warehouse_storage WHERE warehouse_id = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_die_date > CURRENT_DATE() $m $s ORDER BY item_die_date ASC, item_price ASC")->fetch();
-            $this->post['item_manufacturer_id'] = $result['item_manufacturer_id'];
-            $this->post['item_price'] = $result['item_price'];
+            $this->error("Новая функция");
+            
+            // $m = ($this->post['item_manufacturer_id']) ? "AND item_manufacturer_id = {$this->post['item_manufacturer_id']}" : null;
+            // $s = ($this->post['item_price']) ? "AND item_price = {$this->post['item_price']}" : null;
+            // $result = $db->query("SELECT item_manufacturer_id, item_price FROM warehouse_storage WHERE warehouse_id = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_die_date > CURRENT_DATE() $m $s ORDER BY item_die_date ASC, item_price ASC")->fetch();
+            // $this->post['item_manufacturer_id'] = $result['item_manufacturer_id'];
+            // $this->post['item_price'] = $result['item_price'];
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
@@ -478,7 +479,7 @@ class WarehouseApplicationComplete extends WarehouseApplication
                 
             }
             
-            $db->commit();
+            // $db->commit();
             $this->success();
         }
     }
