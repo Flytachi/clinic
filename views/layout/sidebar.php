@@ -119,7 +119,6 @@
                                                 }
                                                 $new_script = str_replace(array_keys($srt), $val, $row['script']);
                                                 unset($val);
-                                                // dd($new_script);
                                             }
                                             ?>
                                             <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
@@ -160,26 +159,26 @@
                                 <?php if($db->query("SELECT responsible_id FROM warehouse_setting_permissions WHERE warehouse_id = {$side_warehouse['warehouse_id']} AND is_grant IS NOT NULL")->fetchColumn() == $session->session_id): ?>
 
                                     <div class="ml-auto">
-                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['warehouse_id']} AND wa.status = 1 ORDER BY win.name ASC")->rowCount(); ?>
-                                        <?php if($side): ?>
-                                            <span class="badge bg-teal align-self-center"><?= $side ?></span>
+                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 1")->rowCount(); ?>
+                                        <?php if($si_ware): ?>
+                                            <span class="badge bg-teal align-self-center"><?= $si_ware ?></span>
                                         <?php endif; ?>
-                                        <?php unset($side); ?>
+                                        <?php unset($si_ware); ?>
 
-                                        <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['warehouse_id']} AND wa.status = 2 ORDER BY win.name ASC")->rowCount(); ?>
-                                        <?php if($side): ?>
-                                            <span class="badge bg-orange align-self-center"><?= $side ?></span>
+                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 2")->rowCount(); ?>
+                                        <?php if($si_ware): ?>
+                                            <span class="badge bg-orange align-self-center"><?= $si_ware ?></span>
                                         <?php endif; ?>
-                                        <?php unset($side); ?>
+                                        <?php unset($si_ware); ?>
                                     </div>
 
                                 <?php else: ?>
 
-                                    <?php $side = $db->query("SELECT wa.id, wa.parent_id, win.name, wa.item_manufacturer_id, wa.add_date, wa.item_qty, wa.status FROM warehouse_applications wa LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id) WHERE wa.warehouse_id = {$side_warehouse['warehouse_id']} AND wa.status != 3 AND wa.parent_id = $session->session_id ORDER BY win.name ASC")->rowCount(); ?>
-                                    <?php if($side): ?>
-                                        <span class="badge bg-teal align-self-center ml-auto"><?= $side ?></span>
+                                    <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status != 3 AND responsible_id = $session->session_id")->rowCount(); ?>
+                                    <?php if($si_ware): ?>
+                                        <span class="badge bg-teal align-self-center ml-auto"><?= $si_ware ?></span>
                                     <?php endif; ?>
-                                    <?php unset($side); ?>
+                                    <?php unset($si_ware); ?>
 
                                 <?php endif; ?>
                                 

@@ -3,6 +3,7 @@
 class WarehouseApplication extends Model
 {
     public $table = 'warehouse_storage_applications';
+    public $_event_applications = 'visit_bypass_event_applications';
     public $_item_manufacturers = 'warehouse_item_manufacturers';
     public $_item_names = 'warehouse_item_names';
     public $storage = 'warehouse_storage';
@@ -123,41 +124,50 @@ class WarehouseApplication extends Model
 
                 function __WarehouseStoragePanel__select(btn, index) {
                     btn.disabled = true;
+                    
+                    if (Number(document.querySelector('#max_qty_input_'+index).innerHTML) < Number(document.querySelector('#qty_input_'+index).value)) {
+                        new Noty({
+                            text: "Введено недопустимое количество!",
+                            type: "error"
+                        }).show();
+                        btn.disabled = false;
+                    }else{
+                        var data = {
+                            model: "<?= __CLASS__ ?>",
+                            warehouse_id_from: <?= $this->post['warehouse_id_from'] ?>,
+                            warehouse_id_in: <?= $this->post['warehouse_id_in'] ?>,
+                            responsible_id: <?= $session->session_id ?>,
+                            item_name_id: document.querySelector('#name_id_input_'+index).value,
+                            item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
+                            item_price: document.querySelector('#price_id_input_'+index).value,
+                            item_qty: document.querySelector('#qty_input_'+index).value,
+                            status: <?= $this->post['status'] ?>,
+                        };
 
-                    var data = {
-                        model: "<?= __CLASS__ ?>",
-                        warehouse_id_from: <?= $this->post['warehouse_id_from'] ?>,
-                        warehouse_id_in: <?= $this->post['warehouse_id_in'] ?>,
-                        responsible_id: <?= $session->session_id ?>,
-                        item_name_id: document.querySelector('#name_id_input_'+index).value,
-                        item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
-                        item_price: document.querySelector('#price_id_input_'+index).value,
-                        item_qty: document.querySelector('#qty_input_'+index).value,
-                        status: <?= $this->post['status'] ?>,
-                    };
+                        $.ajax({
+                            type: "POST",
+                            url: "<?= add_url() ?>",
+                            data: data,
+                            success: function (result) {
+                                var data = JSON.parse(result);
+                                if (data.status == "success") {
+                                    $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
+                                    $(`#Item_${index}`).css("color", "black");
+                                    $(`#Item_${index}`).fadeOut(900, function() {
+                                        $(this).remove();
+                                    });
+                                    $("#search_input").keyup();
+                                } else {
+                                    new Noty({
+                                        text: data.message,
+                                        type: data.status
+                                    }).show();
+                                    btn.disabled = false;
+                                }
+                            },
+                        });
+                    }
 
-                    $.ajax({
-                        type: "POST",
-                        url: "<?= add_url() ?>",
-                        data: data,
-                        success: function (result) {
-                            var data = JSON.parse(result);
-                            if (data.status == "success") {
-                                $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
-                                $(`#Item_${index}`).css("color", "black");
-                                $(`#Item_${index}`).fadeOut(900, function() {
-                                    $(this).remove();
-                                });
-                                $("#search_input").keyup();
-                            } else {
-                                new Noty({
-                                    text: data.message,
-                                    type: data.status
-                                }).show();
-                                btn.disabled = false;
-                            }
-                        },
-                    });
                 }
 
             </script>
@@ -362,14 +372,43 @@ class WarehouseApplication extends Model
     public function clean()
     {
         global $db;
-        if (empty($this->post['id']) and (!$this->post['item_manufacturer_id'] or !$this->post['item_price'])) {
-            $this->error("Новая функция");
+        if ( empty($this->post['id']) ) {
+            $db->beginTransaction();
+            $m = ($this->post['item_manufacturer_id']) ? "AND item_manufacturer_id = {$this->post['item_manufacturer_id']}" : null;
+            $s = ($this->post['item_price']) ? "AND item_price = {$this->post['item_price']}" : null;
+            $qty = $this->post['item_qty'];
+            foreach ($db->query("SELECT DISTINCT item_manufacturer_id, item_price FROM warehouse_storage WHERE warehouse_id = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_die_date > CURRENT_DATE() $m $s ORDER BY item_die_date ASC, item_price ASC") as $param) {
+                $item_qty = $db->query("SELECT SUM(item_qty) FROM warehouse_storage WHERE warehouse_id = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_die_date > CURRENT_DATE() AND item_manufacturer_id = {$param['item_manufacturer_id']} AND item_price = {$param['item_price']} ORDER BY item_die_date ASC, item_price ASC")->fetchColumn();
+                $item_qty -= $db->query("SELECT SUM(item_qty) FROM $this->table WHERE status IN (1,2) AND warehouse_id_from = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_manufacturer_id = {$param['item_manufacturer_id']} AND item_price = {$param['item_price']}")->fetchColumn();
+                $item_qty -= $db->query("SELECT SUM(item_qty) FROM $this->_event_applications WHERE warehouse_id = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_manufacturer_id = {$param['item_manufacturer_id']} AND item_price = {$param['item_price']}")->fetchColumn();
+
+                if ($item_qty > 0) {
+                    $post = array(
+                        'warehouse_id_from' => $this->post['warehouse_id_from'],
+                        'warehouse_id_in' => $this->post['warehouse_id_in'],
+                        'responsible_id' => $this->post['responsible_id'],
+                        'item_name_id' => $this->post['item_name_id'],
+                        'item_manufacturer_id' => $param['item_manufacturer_id'],
+                        'item_price' => $param['item_price'],
+                        'item_qty' => ($qty > $item_qty) ? $item_qty : $qty,
+                        'status' => $this->post['status']
+                    );
+                    
+                    $object = Mixin\insert($this->table, $post);
+                    if (!intval($object)){
+                        $this->error($object);
+                        exit;
+                    }
+    
+                    if ($qty > $item_qty) {
+                        $qty -= $item_qty;
+                    }else break;
+                }
+
+            }
+            $db->commit();
+            $this->success();
             
-            // $m = ($this->post['item_manufacturer_id']) ? "AND item_manufacturer_id = {$this->post['item_manufacturer_id']}" : null;
-            // $s = ($this->post['item_price']) ? "AND item_price = {$this->post['item_price']}" : null;
-            // $result = $db->query("SELECT item_manufacturer_id, item_price FROM warehouse_storage WHERE warehouse_id = {$this->post['warehouse_id_from']} AND item_name_id = {$this->post['item_name_id']} AND item_die_date > CURRENT_DATE() $m $s ORDER BY item_die_date ASC, item_price ASC")->fetch();
-            // $this->post['item_manufacturer_id'] = $result['item_manufacturer_id'];
-            // $this->post['item_price'] = $result['item_price'];
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
@@ -479,7 +518,7 @@ class WarehouseApplicationComplete extends WarehouseApplication
                 
             }
             
-            // $db->commit();
+            $db->commit();
             $this->success();
         }
     }
