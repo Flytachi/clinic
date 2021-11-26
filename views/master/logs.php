@@ -19,7 +19,6 @@ $header = "Логи";
 		<?php include 'sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -31,12 +30,16 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
-				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
-				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
-				// 	// dd($value);
-				// 	Mixin\update('visit', array('report' => $report), $value['id']);
-				// 	// dd($report);
-				// }
+				$trig = $db->query("SHOW TRIGGERS")->fetch();
+				// $query_start = "DROP TRIGGER IF EXISTS  {$trig['Trigger']}; DELIMITER $";
+				// $query_body = "CREATE TRIGGER {$trig['Trigger']} {$trig['Timing']} {$trig['Event']} ON {$trig['Table']} FOR EACH ROW {$trig['Statement']}";
+				// $query_end = "$ DELIMITER ;";
+				// $query = "$query_start $query_body $query_end";
+				
+				$index = $db->query("SHOW INDEX FROM beds FROM clinic_v3;")->fetchAll();
+				dd( $index );
+				// $db->exec($query);
+
 				dd(ini_get('session.hash_function'));
 				dd($_SERVER['HTTP_USER_AGENT']);
 				?>

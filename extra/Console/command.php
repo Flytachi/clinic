@@ -357,7 +357,6 @@ class __Db
             }elseif($this->argument == "compare"){
                 $this->compare();
             }elseif($this->argument == "clean") {
-                $this->clean_table = ($this->file_name) ? $this->file_name : null;
                 $this->clean();
             }elseif($this->argument == "delete") {
                 $this->delete();
@@ -392,16 +391,16 @@ class __Db
         global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
-        if (!$this->clean_table) {
+        if (isset($this->file_name) and $this->file_name) {
+            $_clean = Mixin\T_flush($this->file_name);
+            echo "\033[32m"." Таблица '$this->file_name' успешно очищена.\n";
+            return 1;
+        }else {
             $_clean = Mixin\T_FLUSH_database();
             if ($_clean == 200) {
                 echo "\033[32m"." База данных успешно очищена.\n";
                 return 1;
             }
-        }else {
-            $_clean = Mixin\T_flush($this->clean_table);
-            echo "\033[32m"." Таблица '$this->clean_table' успешно очищена.\n";
-            return 1;
         }
        
     }
@@ -413,21 +412,25 @@ class __Db
         require_once dirname(__DIR__).'/functions/mixin.php';
 
         try {
-            $db->beginTransaction();
-            foreach (glob(dirname(__DIR__, 2)."/$this->path_base/*.$this->format") as $path) {
-                $data = json_decode(file_get_contents($path), 1);
-                $db->exec($data);
+            foreach (json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_base/Index_Tables.$this->format"), 1) as $table) {
+                $db->exec($table);
             }
+            echo "\033[32m"." -- Таблицы успешно мигрированы.\n";
+            //
+            // foreach (json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_base/Triggers.$this->format"), 1) as $trigger) {
+            //     $db->exec("DROP TRIGGER IF EXISTS {$trigger['Trigger']}; DELIMITER $ CREATE TRIGGER {$trigger['Trigger']} {$trigger['Timing']} {$trigger['Event']} ON {$trigger['Table']} FOR EACH ROW {$trigger['Statement']} $ DELIMITER ;");
+            // }
+            // echo "\033[32m"." -- Триггеры успешно мигрированы.\n";
+
+            $this->clean();
+            echo "\033[32m"." Миграция прошла успешно.\n";
+            return 1;
         } catch (\Exception $e) {
             echo "\033[31m"." Во время миграции произошла ошибка.\n";
-            $db->rollBack();
         }
-
-        $db->commit();
-        echo "\033[32m"." Миграция прошла успешно.\n";
-        return 1;
     }
 
+    /*
     public function generate()
     {
         global $db, $ini;
@@ -492,6 +495,24 @@ class __Db
             echo "\033[32m"." Table_{$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
             $this->create_file(json_encode($sql), $table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
+    }
+    */
+
+    public function generate()
+    {
+        global $db, $ini;
+        require_once dirname(__DIR__).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/tools/variables.php';
+        $tables = $triggers = [];
+        //
+        // foreach ($db->query("SHOW TRIGGERS") as $trig) $triggers[] = $trig;
+        // $this->create_file(json_encode($triggers, JSON_PRETTY_PRINT), "Triggers");
+        // echo "\033[32m"." Генерация триггеров прошла успешно.\n";
+        // 
+        foreach ($db->query("SHOW TABLES") as $table) $tables[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+        $this->create_file(json_encode($tables, JSON_PRETTY_PRINT), "Index_Tables");
+        echo "\033[32m"." Генерация таблиц и индексов прошла успешно.\n";
+
     }
 
     public function create_file($code, $file_name)

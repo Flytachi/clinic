@@ -228,43 +228,20 @@ function T_flush($table)
 function T_DELETE_database()
 {
     global $db, $ini;
-
-    try {
-        $db->beginTransaction();
-
-        foreach ($db->query("SHOW TABlES") as $table) {
-            $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
-        }
-
-        $db->commit();
-        return 200;
-    } catch (\Exception $e) {
-        $db->rollBack();
-        return "Ошибка: " . $e->getMessage();
-    }
-
+    foreach ($db->query("SHOW TABlES") as $table) $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
+    return 200;
 }
 
 function T_FLUSH_database()
 {
     global $db, $ini;
 
-    try {
-        $db->beginTransaction();
-
-        foreach ($db->query("SHOW TABlES") as $table) {
-            if ($table['Tables_in_'.$ini['DATABASE']['NAME']] != "sessions") {
-                T_flush($table['Tables_in_'.$ini['DATABASE']['NAME']]);
-            }
+    foreach ($db->query("SHOW TABlES") as $table) {
+        if ($table['Tables_in_'.$ini['DATABASE']['NAME']] != "sessions") {
+            T_flush($table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
-
-        $db->commit();
-        return 200;
-    } catch (\Exception $e) {
-        $db->rollBack();
-        return "Ошибка: " . $e->getMessage();
     }
-
+    return 200;
 }
 
 // function T_INITIALIZE_database($data)
