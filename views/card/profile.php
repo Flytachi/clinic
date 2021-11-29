@@ -19,41 +19,7 @@
                 </div>
                 <fieldset class="mb-3 row">
 
-                    <?php if($activity and permission(7) and !$patient->completed): ?>
-                        <?php if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-md-4"><b>Вес:</b></label>
-                                    <div class="col-md-8 text-right">
-                                        <?= $initial->weight ?>
-                                    </div>
-                                </div>
-                                <div class="form-group row" style="margin-top: -25px;">
-                                    <label class="col-md-8"><b>Температура:</b></label>
-                                    <div class="col-md-4 text-right">
-                                        <?= $initial->temperature ?>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <label class="col-md-4"><b>Рост:</b></label>
-                                    <div class="col-md-8 text-right">
-                                        <?= $initial->height ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 text-center" style="margin-top: -25px;">
-                                <span onclick="UpdateProfile('<?= up_url($initial->id, 'VisitInitialModel') ?>&visit_id=<?= $patient->visit_id ?>')" class="text-primary">Изменить параметры</span>
-                            </div>
-                        <?php else: ?>
-                            <div class="col-md-12 text-center" style="margin-top: -15px;">
-                                <span onclick="UpdateProfile('<?= up_url(null, 'VisitInitialModel') ?>&visit_id=<?= $patient->visit_id ?>')" class="text-primary">Задать параметры</span>
-                            </div>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <?php $initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row() ?>
+                    <?php if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label class="col-md-4"><b>Вес:</b></label>
@@ -77,6 +43,17 @@
                                 </div>
                             </div>
                         </div>
+                        <?php if($activity and permission(7) and !$patient->completed): ?>
+                            <div class="col-md-12 text-center" style="margin-top: -25px;">
+                                <span onclick="UpdateProfile('<?= up_url($initial->id, 'VisitInitialModel') ?>&visit_id=<?= $patient->visit_id ?>')" class="text-primary">Изменить параметры</span>
+                            </div>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <?php if($activity and permission(7) and !$patient->completed): ?>
+                            <div class="col-md-12 text-center" style="margin-top: -15px;">
+                                <span onclick="UpdateProfile('<?= up_url(null, 'VisitInitialModel') ?>&visit_id=<?= $patient->visit_id ?>')" class="text-primary">Задать параметры</span>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
 
                 </fieldset>

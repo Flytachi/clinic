@@ -6,9 +6,9 @@ require_once '../tools/warframe.php';
 
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
-    $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
     $docs->report = $db->query("SELECT service_report FROM visit_services WHERE visit_id = $docs->id AND service_id = 1")->fetchColumn();
-    // dd($docs);
+    $data = (new Table($db, 'users'))->where("id = $docs->user_id")->get_row();
 }else{
     Mixin\error('404');
 }
@@ -60,103 +60,138 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         <?php if (config("print_document_hr-1")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-1-color").'"></div>' ; ?>
         <?php if (config("print_document_hr-2")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-2-color").'"></div>' ; ?>
+        
+        <h3 class="text-center h1"><b>История № <?= $docs->parad_id ?></b></h3>
 
-        <div class="text-left h3">
-            <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-            <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
-            <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
-            <b>Дата поступления: </b><?= ($docs->add_date) ? date_f($docs->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
-            <b>Дата выписки: </b><?= ($docs->completed) ? date_f($docs->completed, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
+        <div class="table-responsive card">
+            <table class="minimalistBlack">
+                <tbody>
+                    <tr>
+                        <td class="text-left"><b>ID/ФИО</b></td>
+                        <td class="text-center"><?= addZero($docs->user_id) ?> / <?= get_full_name($docs->user_id) ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Дата рождения</b></td>
+                        <td class="text-center"><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Пол/Вес/Рост/Температура</b></td>
+                        <td class="text-center">
+                            <?= ($data->gender) ? "Муж" : "Жен" ?> /
+                            <?= (isset($initial->weight) and $initial->weight) ? $initial->weight : '<span class="text-muted">Нет данных</span>' ?> /
+                            <?= (isset($initial->height) and $initial->height) ? $initial->height : '<span class="text-muted">Нет данных</span>' ?> /
+                            <?= (isset($initial->temperature) and $initial->temperature) ? $initial->temperature : '<span class="text-muted">Нет данных</span>' ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Город/Район</b></td>
+                        <td class="text-center">
+                            <?= ($data->province) ? $data->province : '<span class="text-muted">Нет данных</span>' ?> /
+                            <?= ($data->region) ? $data->region : '<span class="text-muted">Нет данных</span>' ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Адрес проживания/прописки</b></td>
+                        <td class="text-center">
+                            <?= ($data->address_residence) ? $data->address_residence : '<span class="text-muted">Нет данных</span>' ?> /
+                            <?= ($data->address_registration) ? $data->address_registration : '<span class="text-muted">Нет данных</span>' ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-left"><b>Группа крови</b></td>
+                        <td class="text-center"></td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
 
-        <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>
-        <?php if (config("print_document_hr-4")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-4-color").'"></div>' ; ?>
+        <div class="table-responsive card">
+            <table class="minimalistBlack">
+                <tbody>
+                    <tr>
+                        <td class="text-left"><b>Дата поступления/выписки</b></td>
+                        <td class="text-center">
+                            <?= ($docs->add_date) ? date_f($docs->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?> / 
+                            <?= ($docs->completed) ? date_f($docs->completed, 1) : '<span class="text-muted">Нет данных</span>' ?>
+                        </td>
+                    </tr>
 
-        <h3 class="text-center h1"><b>Выписка <?= $docs->user_id ?> № <?= $docs->parad_id ?></b></h3>
+                    <tr>
+                        <td class="text-left"><b>Приёмный диагноз</b></td>
+                        <td class="text-center">
+                            
+                        </td>
+                    </tr>
 
-        <div class="text-left h3">
-
-            <p>
-                <?= stristr($docs->report, "Рекомендация:", true) ?>
-            </p>
-
-            <h4 class="text-center"><strong>Результаты визитов:</strong></h4>
-            <p>
-                <!-- Результаты визитов -->
-                <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit_services vs LEFT JOIN divisions ds ON(ds.id=vs.division_id) WHERE vs.visit_id = $docs->id AND vs.level IN (5,10) AND vs.completed IS NOT NULL AND vs.service_id != 1 ") as $div): ?>
-                    <strong><?= $div['title'] ?>: </strong>
-                    <ul>
-                        <?php foreach ($db->query("SELECT * FROM visit_services WHERE visit_id = $docs->id AND level IN (5,10) AND completed IS NOT NULL AND service_id != 1 AND division_id = {$div['division_id']}") as $row): ?>
-                            <li>
-                                <strong><?= $row['service_title'] ?>:</strong>
-                                <?= str_replace("Рекомендация:", '', stristr($row['service_report'], "Рекомендация:")); ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endforeach; ?>
-            </p>
-
-            <?php if(module('module_laboratory')): ?>
-                <h4 class="text-center"><strong>Результаты лабораторных и инструментальных исследований:</strong></h4>
-                <p>
-                    <!-- Результаты лабораторных и инструментальных исследований -->
-                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $docs->id AND completed IS NOT NULL AND level IN (6)") as $any): ?>
-                        <li>
-                            <strong><?= $any['service_name'] ?>:</strong>
-                            <?php foreach ($db->query("SELECT analyze_name, result FROM visit_analyzes WHERE visit_id = $docs->id AND visit_service_id = {$any['id']}") as $row): ?>
-                                <?= $row['analyze_name'] ?> - <?= $row['result'] ?>;
-                            <?php endforeach; ?>
-                        </li>
+                </tbody>
+            </table>
+            <table class="minimalistBlack">
+                <thead>
+                    <tr>
+                        <th class="text-left">Врач</th>
+                        <th class="text-center">Диагноз</th>
+                        <th class="text-center">Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach( (new Table($db, 'visit_icd_history'))->where("visit_id = $docs->id")->get_table() as $diagnos ): ?>
+                        <tr>
+                            <td><?= get_full_name($diagnos->parent_id) ?></td>
+                            <td><?= icd($diagnos->icd_id)['decryption'] ?></td>
+                            <td><?= date_f($diagnos->add_date, 1) ?></td>
+                        </tr>
                     <?php endforeach; ?>
-                </p>
-            <?php endif; ?>
-
-            <div class="table-responsive card">
-                <table class="table table-bordered table-sm">
-                    <tbody>
-
-                        <!-- Результаты лечения -->
-                        <!-- <tr>
-                            <td colspan="2">
-                                <strong>Лечение: </strong><br>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                            </td>
-                        </tr> -->
-
-                        <!-- Рекомендация -->
-                        <td>
-                            <strong>Рекомендация:</strong>
+                </tbody>
+            </table>
+            <table class="minimalistBlack">
+                <tbody>
+                    <tr>
+                        <td class="text-left"><b>Код последнего диагноза</b></td>
+                        <td class="text-center">
+                            <?= icd($docs->icd_id)['code'] ?>
                         </td>
-                        <td>
-                            <?= str_replace("Рекомендация:", '', stristr($docs->report, "Рекомендация:")) ?>
-                        </td>
-
-                    </tbody>
-                </table>
-            </div>
-
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="row">
-            <div class="col-4"></div>
-            <div class="col-4 h5 text-left">
-                <strong>Лечащий врач</strong>
-            </div>
-            <div class="col-4 h6 text-right">
-                <em><strong><?= get_full_name($docs->grant_id) ?></strong></em>
-            </div>
+        <div class="table-responsive card">
+            <table class="minimalistBlack">
+                <thead>
+                    <tr>
+                        <th class="text-left" style="width: 50px;">№</th>
+                        <th class="text-left">Оперция</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $opI=1; foreach( (new Table($db, 'visit_operations'))->where("visit_id = $docs->id")->get_table() as $oper ): ?>
+                        <tr>
+                            <td><?= $opI++ ?></td>
+                            <td><?= $oper->operation_name ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="font-size: 20px;">
+            <?= $docs->report ?>
         </div>
 
+        <div class="table-responsive card">
+            <table class="minimalistBlack">
+                <tbody>
+                    <tr>
+                        <td class="text-left"><b>Лечащий Врач</b></td>
+                        <td class="text-center"><?= get_full_name($docs->grant_id) ?> ___________</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div class="row">
-            <div class="col-4"></div>
-            <div class="col-4 h4 text-left">
-                <strong>Глав.врач</strong>
-            </div>
-            <div class="col-4 h5 text-right">
-                <em><strong><?= get_full_name($db->query("SELECT id FROM users WHERE user_level = 8")->fetch()['id']) ?></strong></em>
+            <div class="col-12 text-center">
+                <em class="font-weight-bold" style="font-size: 16px;">Дата печати: <?= date("d.m.Y H:i") ?></em>
             </div>
         </div>
 
