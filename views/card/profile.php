@@ -14,9 +14,72 @@
         <div class="row">
 
             <div class="col-md-3">
-                <div class="card-img-actions">
-                    <img class="card-img-top img-fluid" src="<?= stack("assets/images/background_card.jpg")?>" alt="">
+                <div class="card-img-actions text-center">
+                    <img class="card-img-top img-fluid" src="<?= stack("assets/images/background_card.jpg")?>" alt="" style="width:80% !important;">
                 </div>
+                <fieldset class="mb-3 row">
+
+                    <?php if($activity and permission(7) and !$patient->completed): ?>
+                        <?php if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-md-4"><b>Вес:</b></label>
+                                    <div class="col-md-8 text-right">
+                                        <?= $initial->weight ?>
+                                    </div>
+                                </div>
+                                <div class="form-group row" style="margin-top: -25px;">
+                                    <label class="col-md-8"><b>Температура:</b></label>
+                                    <div class="col-md-4 text-right">
+                                        <?= $initial->temperature ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <label class="col-md-4"><b>Рост:</b></label>
+                                    <div class="col-md-8 text-right">
+                                        <?= $initial->height ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-center" style="margin-top: -25px;">
+                                <span onclick="UpdateProfile('<?= up_url($initial->id, 'VisitInitialModel') ?>&visit_id=<?= $patient->visit_id ?>')" class="text-primary">Изменить параметры</span>
+                            </div>
+                        <?php else: ?>
+                            <div class="col-md-12 text-center" style="margin-top: -15px;">
+                                <span onclick="UpdateProfile('<?= up_url(null, 'VisitInitialModel') ?>&visit_id=<?= $patient->visit_id ?>')" class="text-primary">Задать параметры</span>
+                            </div>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <?php $initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row() ?>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4"><b>Вес:</b></label>
+                                <div class="col-md-8 text-right">
+                                    <?= $initial->weight ?>
+                                </div>
+                            </div>
+                            <div class="form-group row" style="margin-top: -25px;">
+                                <label class="col-md-8"><b>Температура:</b></label>
+                                <div class="col-md-4 text-right">
+                                    <?= $initial->temperature ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-md-4"><b>Рост:</b></label>
+                                <div class="col-md-8 text-right">
+                                    <?= $initial->height ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                </fieldset>
             </div>
 
             <div class="col-md-9" style="font-size: 0.9rem">
@@ -349,6 +412,7 @@
                 <div class="col-md-12">
                     <div class="text-right">
                         <button onclick="Check_kwin('<?= viv('card/journal') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-journal'] ?>"><i class="icon-book mr-1"></i> Дневник</button>
+                        <button onclick="Print('<?= prints('document-5').'?pk='.$patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>"><i class="icon-paste2 mr-1"></i> АКТ</button>
                         <button onclick="Check_kwin('<?= viv('doctor/report-2') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>"><i class="icon-paste2 mr-1"></i> Выписка</button>
                     </div>
                 </div>
