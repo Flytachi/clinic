@@ -23,10 +23,12 @@ class WarehouseSettingsModel extends Model
     public function form($pk = null)
     {
         global $classes, $db, $PERSONAL;
-        $appl =[]; ; $perm = [];
-        $q_appl = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')}")->fetchAll();
-        foreach ($q_appl as $val) $appl[] = $val['division_id'];
-        $p_level = $db->query("SELECT level FROM $this->_permission WHERE warehouse_id = {$this->value('id')}")->fetchColumn();
+        $appl = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')}")->fetchAll();
+        $grants = $db->query("SELECT user_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NOT NULL")->fetchAll();
+        $users = $db->query("SELECT user_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NULL")->fetchAll();
+        for ($i=0; $i < count($grants); $i++) $grants[$i] = $grants[$i]['user_id'];
+        for ($i=0; $i < count($users); $i++) $users[$i] = $users[$i]['user_id'];
+        for ($i=0; $i < count($appl); $i++) $appl[$i] = $appl[$i]['division_id'];
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title">Настройки склада <?= $this->value('name') ?></h6>
@@ -43,52 +45,54 @@ class WarehouseSettingsModel extends Model
                     <legend><b>Доступ</b></legend>
 
                     <div class="form-group">
-                        <label>Роль</label>
-                        <select data-placeholder="Выбрать роль" id="appl_level" name="permission[level]" class="<?= $classes['form-select'] ?>" onchange="ChangeLevel(this)">
-                            <option></option>
-                            <option value="5" <?= (5 == $p_level) ? 'selected' : "" ?>><?= $PERSONAL[5] ?></option>
-                            <option value="7" <?= (7 == $p_level) ? 'selected' : "" ?>><?= $PERSONAL[7] ?></option>
+                        <label>Полный доступ:</label>
+                        <select data-placeholder="Выбрать пользователя" name="permission[grants][]" multiple="multiple" class="settin <?= $classes['form-multiselect'] ?>">
+                            <?php foreach ($PERSONAL as $key => $value): ?>
+                                <?php if(in_array($key, [5,6,7,10])): ?>
+                                    <optgroup label="<?= $value ?>">
+                                        <?php $level = ($key == 7) ? 5 : $key; ?>
+                                        <?php foreach ((new Table($db, "divisions"))->where("level = $level")->get_table() as $item): ?>
+                                            <optgroup label="<?= $item->title ?>">
+                                                <?php foreach ((new Table($db, "users"))->where("user_level = $key AND division_id = $item->id")->get_table() as $user): ?>
+                                                    <option value="<?= $user->id ?>" <?= (in_array($user->id, $grants)) ? 'selected' : "" ?>><?= get_full_name($user->id) ?></option>
+                                                <?php endforeach; ?>
+                                            </optgroup>
+                                            <option data-role="divider"></option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <div id="result_division">
-                        <?php if($p_level): ?>
-                            <?php 
-                            $lev = ($p_level == 7) ? 5 : $p_level;
-                            $q_perm = $db->query("SELECT division_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NULL")->fetchAll();
-                            foreach ($q_perm as $val) $perm[] = $val['division_id'];
-                            ?>
-                            <div class="form-group">
-                                <label>Отделы</label>
-                                <select data-placeholder="Выбрать отдел" multiple="multiple" name="permission[division][]" required class="settin <?= $classes['form-multiselect'] ?>" onchange="ChangeDivision(this)">
-                                    <?php foreach($db->query("SELECT * from divisions WHERE level = $lev") as $row): ?>
-                                        <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $perm)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        <?php endif; ?>
+                    <div class="form-group">
+                        <label>Доступ на переводы:</label>
+                        <select data-placeholder="Выбрать пользователя" name="permission[users][]" multiple="multiple" class="settin <?= $classes['form-multiselect'] ?>">
+                            <?php foreach ($PERSONAL as $key => $value): ?>
+                                <?php if(in_array($key, [5,6,7,10])): ?>
+                                    <optgroup label="<?= $value ?>">
+                                        <?php $level = ($key == 7) ? 5 : $key; ?>
+                                        <?php foreach ((new Table($db, "divisions"))->where("level = $level")->get_table() as $item): ?>
+                                            <optgroup label="<?= $item->title ?>">
+                                                <?php foreach ((new Table($db, "users"))->where("user_level = $key AND division_id = $item->id")->get_table() as $user): ?>
+                                                    <option value="<?= $user->id ?>" <?= (in_array($user->id, $users)) ? 'selected' : "" ?>><?= get_full_name($user->id) ?></option>
+                                                <?php endforeach; ?>
+                                            </optgroup>
+                                            <option data-role="divider"></option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                    <div id="result_user">
-                        <?php if( isset($q_perm) and $q_perm): ?>
-                            <?php $grant = $db->query("SELECT responsible_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NOT NULL")->fetchColumn(); ?>
-                            <div class="form-group">
-                                <label>Пользователь</label>
-                                <select data-placeholder="Выбрать пользователя" name="permission[responsible_id]" required class="<?= $classes['form-select'] ?>">
-                                    <option></option>
-                                    <?php foreach($db->query("SELECT * from users WHERE user_level = $p_level AND division_id IN (". implode(',', $perm) .")") as $row): ?>
-                                        <option value="<?= $row['id'] ?>" <?= ($row['id'] == $grant) ? 'selected' : "" ?>><?= get_full_name($row['id']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+
 
                 </fieldset>
                 
                 <fieldset>
                     <legend><b>Заявки</b></legend>
                     <div class="form-group">
-                        <label>Доступ к заявкам</label>
+                        <label>Видимость склада</label>
                         <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[]" class="settin <?= $classes['form-multiselect'] ?>">
                             <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
                                 <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
@@ -109,36 +113,6 @@ class WarehouseSettingsModel extends Model
 
         </form>
         <script>
-
-            function ChangeDivision(params) {
-                var dis = []
-                for (let index = 0; index < params.selectedOptions.length; index++) dis[index] = params.selectedOptions[index].value;
-                $.ajax({
-                    type: "POST",
-                    url: "<?= ajax('warehouse/setting_user') ?>",
-                    data: { level: document.querySelector("#appl_level").value, division: dis },
-                    success: function (result) {
-                        document.querySelector("#result_user").innerHTML = result;
-                        FormLayouts.init();
-                    },
-                });
-            }
-
-            function ChangeLevel(params) {
-                $.ajax({
-                    type: "POST",
-                    url: "<?= ajax('warehouse/setting_division') ?>",
-                    data: { level: params.value },
-                    success: function (result) {
-                        document.querySelector("#result_division").innerHTML = result;
-                        $(".settin").multiselect({
-                            includeSelectAllOption: true,
-                            enableFiltering: true
-                        });
-                    },
-                }); 
-            }
-
             function SubmitBp() {
                 event.preventDefault();
                 $.ajax({
@@ -173,8 +147,8 @@ class WarehouseSettingsModel extends Model
             $( document ).ready(function() {
                 FormLayouts.init();
                 $(".settin").multiselect({
-                    includeSelectAllOption: true,
-                    enableFiltering: true
+                    includeSelectAllOption: false,
+                    enableFiltering: true,
                 });
             });
         </script>
@@ -201,23 +175,22 @@ class WarehouseSettingsModel extends Model
         Mixin\delete($this->_permission, $this->post['warehouse_id'], "warehouse_id");
             
         if (isset($this->post['permission'])) {
-            foreach ($this->post['permission']['division'] as $division) {
-                $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'level' => $this->post['permission']['level'], 'division_id' => $division));
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
+            if (isset($this->post['permission']['grants'])) {
+                foreach ($this->post['permission']['grants'] as $user) {
+                    $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'is_grant' => true, 'user_id' => $user));
+                    if (!intval($object)){
+                        $this->error($object);
+                        $db->rollBack();
+                    }
                 }
             }
-            if ($this->post['permission']['responsible_id']) {
-                $object = Mixin\insert($this->_permission, array(
-                    'warehouse_id' => $this->post['warehouse_id'],
-                    'is_grant' => true,
-                    'level' => $this->post['permission']['level'],
-                    'division_id' => division($this->post['permission']['responsible_id']),
-                    'responsible_id' => $this->post['permission']['responsible_id']));
-                if (!intval($object)){
-                    $this->error($object);
-                    $db->rollBack();
+            if (isset($this->post['permission']['users'])) {
+                foreach ($this->post['permission']['users'] as $user) {
+                    $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'user_id' => $user));
+                    if (!intval($object)){
+                        $this->error($object);
+                        $db->rollBack();
+                    }
                 }
             }
         }

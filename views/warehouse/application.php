@@ -9,11 +9,9 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
     $warehouse = $db->query("SELECT * FROM warehouses WHERE id = {$_GET['pk']} AND is_active IS NOT NULL")->fetch();
 	if ($warehouse) {
-		$is_level = level() == $db->query("SELECT level FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']}")->fetchColumn();
-		$is_division = $db->query("SELECT * FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division")->rowCount();
-		$is_grant = $db->query("SELECT is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division AND responsible_id = $session->session_id")->rowCount();
-		
-		if (!$is_level and !$is_division) Mixin\error('404');
+		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND user_id = $session->session_id")->fetch();
+		$is_grant = $data['is_grant'];
+		if(!$data) Mixin\error('404');
 	} else Mixin\error('404');
     
 } else Mixin\error('404');
@@ -185,7 +183,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 				url: "<?= ajax('warehouse/search-application') ?>",
 				data: {
                     pk: <?= $_GET['pk'] ?>,
-					is_grant: <?= $is_grant ?>,
+					is_grant: <?= ($is_grant) ? 1 : 0 ?>,
 					table_search: input.value,
 				},
 				success: function (result) {

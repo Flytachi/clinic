@@ -3,6 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $is_grant = $_GET['is_grant'];
+$is_payment = $_GET['is_payment'];
 
 $tb = new Table($db, "warehouse_storage wc");
 $search = $tb->get_serch();
@@ -20,7 +21,9 @@ $tb->set_self(viv('warehouse/index'));
             <tr class="<?= $classes['table-thead'] ?>">
                 <th>Наименование</th>
                 <th style="width:250px">Производитель</th>
-                <th class="text-right" style="width:200px">Стоимость</th>
+                <?php if($is_payment): ?>
+                    <th class="text-right" style="width:200px">Стоимость</th>
+                <?php endif; ?>
                 <th class="text-center" style="width:2s00px">Кол-во доступно/бронь</th>
                 <th class="text-center">Срок годности</th>
                 <!-- <th class="text-right" style="width: 100px">Действия</th> -->
@@ -31,11 +34,14 @@ $tb->set_self(viv('warehouse/index'));
                 <tr>
                     <td><?= $row->name ?></td>
                     <td><?= $row->manufacturer ?></td>
-                    <td class="text-right"><?= number_format($row->item_price) ?></td>
+                    <?php if($is_payment): ?>
+                        <td class="text-right"><?= number_format($row->item_price) ?></td>
+                    <?php endif; ?>
                     <td class="text-center">
                         <?php
-                        $row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id AND item_price = $row->item_price")->fetchColumn();
-                        $row->reservation += $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id AND item_price = $row->item_price")->fetchColumn();
+                        $price = ($is_payment) ? "AND item_price = $row->item_price" : null;
+                        $row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
+                        $row->reservation += $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
                         ?>
                         <?= number_format($row->item_qty - $row->reservation) ?> /
                         <span class="<?= ($row->reservation) ? "text-danger" : "text-muted" ?>"> <?= number_format($row->reservation) ?></span>

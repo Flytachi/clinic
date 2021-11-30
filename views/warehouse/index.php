@@ -7,12 +7,11 @@ $header = "Рабочий стол";
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
     $warehouse = $db->query("SELECT * FROM warehouses WHERE id = {$_GET['pk']} AND is_active IS NOT NULL")->fetch();
+	$is_payment = $warehouse['is_payment'];
 	if ($warehouse) {
-		$is_level = level() == $db->query("SELECT level FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']}")->fetchColumn();
-		$is_division = $db->query("SELECT * FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division")->rowCount();
-		$is_grant = $db->query("SELECT is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND level = $session->session_level AND division_id = $session->session_division AND responsible_id = $session->session_id")->rowCount();
-		
-		if (!$is_level and !$is_division) Mixin\error('404');
+		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND user_id = $session->session_id")->fetch();
+		$is_grant = $data['is_grant'];
+		if(!$data) Mixin\error('404');
 	} else Mixin\error('404');
     
 } else Mixin\error('404');
@@ -73,8 +72,10 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th>Наименование</th>
                                         <th style="width:250px">Производитель</th>
-                                        <th class="text-right" style="width:200px">Стоимость</th>
-                                        <th class="text-center" style="width:2s00px">Кол-во доступно/бронь</th>
+										<?php if($is_payment): ?>
+                                        	<th class="text-right" style="width:200px">Стоимость</th>
+                                        <?php endif; ?>
+										<th class="text-center" style="width:2s00px">Кол-во доступно/бронь</th>
                                         <th class="text-center">Срок годности</th>
 				                        <!-- <th class="text-right" style="width: 100px">Действия</th> -->
 				                    </tr>
@@ -84,11 +85,14 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
                                         <tr>
                                             <td><?= $row->name ?></td>
                                             <td><?= $row->manufacturer ?></td>
-                                            <td class="text-right"><?= number_format($row->item_price) ?></td>
+											<?php if($is_payment): ?>
+												<td class="text-right"><?= number_format($row->item_price) ?></td>
+											<?php endif; ?>
                                             <td class="text-center">
 												<?php
-												$row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id AND item_price = $row->item_price")->fetchColumn();
-												$row->reservation += $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id AND item_price = $row->item_price")->fetchColumn();
+												$price = ($is_payment) ? "AND item_price = $row->item_price" : null;
+												$row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
+												$row->reservation += $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
 												?>
                                                 <?= number_format($row->item_qty - $row->reservation) ?> /
                                                 <span class="<?= ($row->reservation) ? "text-danger" : "text-muted" ?>"> <?= number_format($row->reservation) ?></span>
@@ -125,7 +129,8 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 				url: "<?= ajax('warehouse/search-index') ?>",
 				data: {
                     pk: <?= $_GET['pk'] ?>,
-					is_grant: <?= $is_grant ?>,
+					is_payment: <?= ($is_payment) ? 1 : 0 ?>,
+					is_grant: <?= ($is_grant) ? 1 : 0 ?>,
 					table_search: input.value,
 				},
 				success: function (result) {
