@@ -18,7 +18,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
 $tb = new Table($db, "warehouse_storage wc");
 $search = $tb->get_serch();
-$tb->set_data("wc.warehouse_id, wc.item_name_id, wc.item_manufacturer_id, wc.item_price, win.name, wim.manufacturer, wc.item_qty, wc.item_die_date")->additions("LEFT JOIN warehouse_item_names win ON(win.id=wc.item_name_id) LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=wc.item_manufacturer_id)");
+$tb->set_data("wc.id, wc.warehouse_id, wc.item_name_id, wc.item_manufacturer_id, wc.item_price, win.name, wim.manufacturer, wc.item_qty, wc.item_die_date")->additions("LEFT JOIN warehouse_item_names win ON(win.id=wc.item_name_id) LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=wc.item_manufacturer_id)");
 $where_search = array(
     "wc.warehouse_id = {$_GET['pk']}", 
     "wc.warehouse_id = {$_GET['pk']} AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
@@ -77,7 +77,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
                                         <?php endif; ?>
 										<th class="text-center" style="width:2s00px">Кол-во доступно/бронь</th>
                                         <th class="text-center">Срок годности</th>
-				                        <!-- <th class="text-right" style="width: 100px">Действия</th> -->
+				                        <th class="text-right" style="width: 100px">Действия</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
@@ -98,6 +98,11 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
                                                 <span class="<?= ($row->reservation) ? "text-danger" : "text-muted" ?>"> <?= number_format($row->reservation) ?></span>
                                             </td>
                                             <td class="text-center"><?= $row->item_die_date ?></td>
+											<td class="text-right"s>
+				                                <div class="list-icons">
+													<a href="#" onclick="Check('<?= up_url($row->id, 'WarehouseStorageTransactionModel') ?>')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+				                                </div>
+				                            </td>
                                         </tr>
 									<?php endforeach; ?>
 				                </tbody>
@@ -119,7 +124,25 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
     <script type="text/javascript">
+
+		function Check(events) {
+			event.preventDefault();
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
 
 		$("#search_input").keyup(function() {
 			var input = document.querySelector('#search_input');

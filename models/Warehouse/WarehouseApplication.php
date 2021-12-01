@@ -24,19 +24,19 @@ class WarehouseApplication extends Model
         <div class="row">
             <div class="col-md-4 offset-md-2">
                 <label>Склад (с):</label>
-                <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required>
+                <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_from) ? 'disabled': ''; ?>>
                     <option></option>
                     <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE is_active IS NOT NULL") as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?= ($storage_from and $storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?= ($storage_in == $row['id']) ? 'disabled' : '' ?> <?= ($storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-md-4">
                 <label>Склад (на):</label>
-                <select data-placeholder="Выберите склад" id="storege_in" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required>
+                <select data-placeholder="Выберите склад" id="storege_in" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_in) ? 'disabled': ''; ?>>
                     <option></option>
                     <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE is_active IS NOT NULL") as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?= ($storage_in and $storage_in == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
+                        <option value="<?= $row['id'] ?>" <?= ($storage_from == $row['id']) ? 'disabled' : '' ?> <?= ($storage_in == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -45,15 +45,30 @@ class WarehouseApplication extends Model
         <script type="text/javascript">
 
             function CheckPks(){
-                var sFrom = document.querySelector("#storege_from").value;
-                var sIn = document.querySelector("#storege_in").value;
-                if (sFrom && sIn) {
+                var sFrom = document.querySelector("#storege_from");
+                var sIn = document.querySelector("#storege_in");
+
+                if(sFrom.value && !sIn.disabled){
+                    for (let i = 0; i < sIn.options.length; i++) {
+                        if(sIn.options[i].value == sFrom.value) sIn.options[i].disabled = true;
+                        else if(sIn.options[i].disabled) sIn.options[i].disabled = false;
+                    }
+                }
+                if(sIn.value && !sFrom.disabled){
+                    for (let i = 0; i < sFrom.options.length; i++) {
+                        if(sFrom.options[i].value == sIn.value) sFrom.options[i].disabled = true;
+                        else if(sFrom.options[i].disabled) sFrom.options[i].disabled = false;
+                    }
+                }
+                FormLayouts.init();
+
+                if (sFrom.value && sIn.value) {
                     $.ajax({
                         type: "POST",
                         url: "<?= up_url(1, __CLASS__) ?>",
                         data: {
-                            warehouse_id_from: sFrom, 
-                            warehouse_id_in: sIn,
+                            warehouse_id_from: sFrom.value,
+                            warehouse_id_in: sIn.value,
                             status: <?= $status ?>,
                             scripts: true,
                         },
@@ -485,7 +500,7 @@ class WarehouseApplicationComplete extends WarehouseApplication
                                 'item_manufacturer' => $this->manufacturers[$item['item_manufacturer_id']],
                                 'item_qty' => $qty,
                                 'item_price' => $item['item_price'],
-                                'tran_status' => 1,
+                                'is_moving' => 1,
                                 'responsible_id' => $session->session_id,
                                 'cost' => $qty*$item['item_price'],
                             );
