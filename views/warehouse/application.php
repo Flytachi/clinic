@@ -145,9 +145,9 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
 													<?php endif; ?>
                                                     <?php if ($is_grant): ?>
 														<?php if ( $row->status == 2 ): ?>
-															<span class="list-icons-item text-success ml-1"><i class="icon-checkmark-circle"></i></span>
+															<span class="list-icons-item text-success ml-1"><i class="icon-clipboard2"></i></span>
 														<?php else: ?>
-															<a href="#" onclick="ConfirmApplication(<?= $row->id ?>, <?= $row->count ?>)" class="list-icons-item ml-1"><i class="icon-radio-unchecked"></i></a>
+															<a href="#" onclick="ConfirmApplication(<?= $row->id ?>, <?= $row->count ?>)" class="list-icons-item ml-1"><i class="icon-clipboard"></i></a>
 														<?php endif; ?>
 													<?php endif; ?>
 				                                </div>

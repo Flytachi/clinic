@@ -77,7 +77,9 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
                                         <?php endif; ?>
 										<th class="text-center" style="width:2s00px">Кол-во доступно/бронь</th>
                                         <th class="text-center">Срок годности</th>
-				                        <th class="text-right" style="width: 100px">Действия</th>
+										<?php if($is_grant): ?>
+											<th class="text-right" style="width: 100px">Действия</th>
+										<?php endif; ?>
 				                    </tr>
 				                </thead>
 				                <tbody>
@@ -98,11 +100,13 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
                                                 <span class="<?= ($row->reservation) ? "text-danger" : "text-muted" ?>"> <?= number_format($row->reservation) ?></span>
                                             </td>
                                             <td class="text-center"><?= $row->item_die_date ?></td>
-											<td class="text-right"s>
-				                                <div class="list-icons">
-													<a href="#" onclick="Check('<?= up_url($row->id, 'WarehouseStorageTransactionModel') ?>')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-				                                </div>
-				                            </td>
+											<?php if($is_grant): ?>
+												<td class="text-right"s>
+				                                	<div class="list-icons">
+														<a href="#" onclick="Check('<?= up_url($row->id, 'WarehouseStorageTransactionModel') ?>')" class="list-icons-item text-danger-600"><i class="icon-clipboard6"></i></a>
+													</div>
+												</td>
+											<?php endif; ?>
                                         </tr>
 									<?php endforeach; ?>
 				                </tbody>
