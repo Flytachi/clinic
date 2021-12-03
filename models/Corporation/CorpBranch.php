@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class CorpBranchModel extends Model
 {
     public $table = 'corp_branchs';

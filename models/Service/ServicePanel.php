@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class ServicePanel extends Model
 {
     public $table = 'services';

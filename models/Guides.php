@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class GuideModel extends Model
 {
     public $table = 'guides';

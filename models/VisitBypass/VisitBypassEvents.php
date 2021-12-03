@@ -1,5 +1,6 @@
 <?php
 
+use Warframe\Model;
 
 class VisitBypassEventsModel extends Model
 {

@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitModel extends Model
 {
     public $table = 'visits';

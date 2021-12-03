@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitFinish extends Model
 {
     public $table = 'visit_services';

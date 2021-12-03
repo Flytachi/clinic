@@ -2,64 +2,6 @@
 
 namespace Warframe;
 
-use Mixin;
-
-interface CredoInterface
-{
-    public function byId(int $id);
-    public function panel();
-    public function list(Bool $counter = false);
-    public function showError(Bool $status = false);
-    public function returnPath(String $uri = null);
-    public function Limit(Int $limit = 0);
-    public function Data(String $context = "*");
-    public function Join(String $context = null);
-    public function Where(Mixed $context = null);
-    public function Order(String $context = null);
-
-    public function get();
-    public function getId();
-    public function getSql();
-    public function getSearch();
-}
-
-trait Querys
-{
-    private function pageAddon(String $url, int $value = 0)
-    {
-        $local = $this->urlToArray($url);
-        $local['CRD_page'] += $value;
-        return $this->arrayToUrl($local);
-    }
-
-    private function pageSet(String $url, int $value = 0)
-    {
-        $local = $this->urlToArray($url);
-        $local['CRD_page'] = $value;
-        return $this->arrayToUrl($local);
-    }
-
-    private function urlToArray(string $url)
-    {
-        $code = explode('?', $url);
-        $result = [];
-        foreach (explode('&', $code[1]) as $param) {
-            if ($param) {
-                $value = explode('=', $param);
-                $result[$value[0]] = $value[1];
-            }
-        }
-        return $result;
-    }
-
-    private function arrayToUrl(array $get)
-    {
-        $str = "?";
-        foreach ($get as $key => $value) $str .= "$key=$value&";
-        return substr($str,0,-1);
-    }
-}
-
 abstract class Credo implements CredoInterface
 {
     /**
@@ -477,10 +419,9 @@ abstract class Credo implements CredoInterface
         */
         $this->CRD_search = (isset($_GET['CRD_search']) and $_GET['CRD_search']) ? $this->CRD_searchGetName.$_GET['CRD_search'] : "";
         $search = str_replace($this->CRD_searchGetName, "", $this->CRD_search);
-        return Mixin\clean($search);
+        return $this->clsDta($search);
     }
 
 }
-
 
 ?>

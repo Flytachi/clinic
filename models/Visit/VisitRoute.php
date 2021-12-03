@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitRoute extends Model
 {
     public $table = 'visit_services';

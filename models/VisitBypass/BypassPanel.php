@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class BypassPanel extends Model
 {
     public $_package = 'package_bypass';

@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitDocumentModel extends Model
 {
     public $table = 'visit_documents';

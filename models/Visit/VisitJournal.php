@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitJournalModel extends Model
 {
     public $table = 'visit_journals';

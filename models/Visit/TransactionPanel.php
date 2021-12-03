@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class TransactionPanel extends Model
 {
     public $table = 'visits';

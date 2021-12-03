@@ -53,7 +53,8 @@ if ( isset($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) and $ini['GLOBAL_SETTING'][
 // END File extension
 
 require_once dirname(__FILE__).'/functions/session.php';
-require_once dirname(__FILE__).'/functions/model.php';
+require_once dirname(__FILE__).'/functions/Credo/__load__.php';
+require_once dirname(__FILE__).'/functions/Model/__load__.php';
 require_once dirname(__FILE__).'/functions/table.php';
 require_once dirname(__FILE__).'/functions/tag.php';
 require_once dirname(__DIR__).'/libs/lib.php';

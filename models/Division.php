@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class DivisionModel extends Model
 {
     public $table = 'divisions';

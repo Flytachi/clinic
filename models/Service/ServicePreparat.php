@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class ServicePreparatModel extends Model
 {
     public $table = 'service_preparat';

@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class MultiAccountModel extends Model
 {
     public $table = 'multi_accounts';

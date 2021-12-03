@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class UserModel extends Model
 {
     public $table = 'users';

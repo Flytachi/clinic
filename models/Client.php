@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class ClientModel extends Model
 {
     public $table = 'clients';

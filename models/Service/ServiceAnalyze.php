@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class ServiceAnalyzeModel extends Model
 {
     public $table = 'service_analyzes';

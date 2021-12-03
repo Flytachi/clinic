@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitBypassEventsPanel extends Model
 {
     public $table = 'visit_bypass_events';

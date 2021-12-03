@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitOperationConsumableModel extends Model
 {
     public $table = 'visit_operation_consumables';

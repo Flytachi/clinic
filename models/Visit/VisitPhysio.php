@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class VisitPhysioModel extends Model
 {
     public $table = 'visits';

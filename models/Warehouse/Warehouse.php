@@ -1,5 +1,7 @@
 <?php
 
+use Warframe\Model;
+
 class WarehouseModel extends Model
 {
     public $table = 'warehouses';

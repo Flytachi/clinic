@@ -1,69 +1,8 @@
 <?php
-require_once 'mixin.php';
 
+namespace Warframe;
 
-interface ModelInterface
-{
-    public function set_post($post);
-    public function set_table($table);
-    public function get(Int $pk);
-    public function get_post();
-    public function get_table();
-    public function get_or_404(Int $pk);
-    public function clear_post();
-    public function save();
-    public function update();
-    public function delete(Int $pk);
-    public function file_download();
-    public function file_clean(String $row_name, $pk = null);
-}
-
-trait ModelTraitResponce
-{
-
-    protected function success()
-    {
-        /**
-         * Действие в случае успеха операции!
-         */
-        echo 1;
-    }
-
-    protected function error($message)
-    {
-        /**
-         * Действие в случае ошибки операции!
-         * Возвращает ошибку!
-         */
-        echo $message;
-    }
-}
-
-trait ModelTrait
-{
-    protected $post;
-    protected $table = '';
-    protected $file_directory = "/storage/";
-    protected $file_format = null;
-    protected $dinamic_delete = true;
-    
-    protected function stop()
-    {
-        /**
-         * Остановка операции!
-         */
-        exit;
-    }
-
-    protected function dd()
-    {
-        /**
-         * Мод для тестов!
-         */
-        dd($this);
-        exit;
-    }
-}
+use Mixin;
 
 abstract class Model implements ModelInterface
 {
@@ -148,7 +87,7 @@ abstract class Model implements ModelInterface
          * Данные о записи!
          */
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(\PDO::FETCH_ASSOC);
         // dd($object);
         $this->set_post($object);
         return $this->form($object['id']);
@@ -161,7 +100,7 @@ abstract class Model implements ModelInterface
          * если не найдёт запись то выдаст 404 
          */
         global $db;
-        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(\PDO::FETCH_ASSOC);
         if($object){
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
@@ -319,7 +258,7 @@ abstract class Model implements ModelInterface
     public function tb($index = null)
     {
         global $db;
-        return new Table($db, "$this->table $index");
+        return new \Table($db, "$this->table $index");
     }
 
 }
