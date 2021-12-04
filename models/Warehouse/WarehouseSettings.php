@@ -48,9 +48,12 @@ class WarehouseSettingsModel extends Model
                         <label>Полный доступ:</label>
                         <select data-placeholder="Выбрать пользователя" name="permission[grants][]" multiple="multiple" class="settin <?= $classes['form-multiselect'] ?>">
                             <?php foreach ($PERSONAL as $key => $value): ?>
-                                <?php if(in_array($key, [5,6,7,10])): ?>
+                                <?php if(in_array($key, [4,5,6,7,10])): ?>
                                     <optgroup label="<?= $value ?>">
                                         <?php $level = ($key == 7) ? 5 : $key; ?>
+                                        <?php foreach ((new Table($db, "users"))->where("user_level = $key AND division_id IS NULL")->get_table() as $user): ?>
+                                            <option value="<?= $user->id ?>" <?= (in_array($user->id, $grants)) ? 'selected' : "" ?>><?= get_full_name($user->id) ?></option>
+                                        <?php endforeach; ?>
                                         <?php foreach ((new Table($db, "divisions"))->where("level = $level")->get_table() as $item): ?>
                                             <optgroup label="<?= $item->title ?>">
                                                 <?php foreach ((new Table($db, "users"))->where("user_level = $key AND division_id = $item->id")->get_table() as $user): ?>
@@ -69,9 +72,12 @@ class WarehouseSettingsModel extends Model
                         <label>Доступ на переводы:</label>
                         <select data-placeholder="Выбрать пользователя" name="permission[users][]" multiple="multiple" class="settin <?= $classes['form-multiselect'] ?>">
                             <?php foreach ($PERSONAL as $key => $value): ?>
-                                <?php if(in_array($key, [5,6,7,10])): ?>
+                                <?php if(in_array($key, [4,5,6,7,10])): ?>
                                     <optgroup label="<?= $value ?>">
                                         <?php $level = ($key == 7) ? 5 : $key; ?>
+                                        <?php foreach ((new Table($db, "users"))->where("user_level = $key AND division_id IS NULL")->get_table() as $user): ?>
+                                            <option value="<?= $user->id ?>" <?= (in_array($user->id, $grants)) ? 'selected' : "" ?>><?= get_full_name($user->id) ?></option>
+                                        <?php endforeach; ?>
                                         <?php foreach ((new Table($db, "divisions"))->where("level = $level")->get_table() as $item): ?>
                                             <optgroup label="<?= $item->title ?>">
                                                 <?php foreach ((new Table($db, "users"))->where("user_level = $key AND division_id = $item->id")->get_table() as $user): ?>

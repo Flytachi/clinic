@@ -12,7 +12,7 @@ class WarehouseStorageTransactionModel extends Model
         global $db;
         $object = $db->query("SELECT * FROM $this->storage WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         $price = ($object['item_price']) ? "AND item_price = {$object['item_price']}" : null;
-        $object['item_qty'] -= $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE warehouse_id_from = {$object['warehouse_id']} AND item_name_id = {$object['item_name_id']} AND item_manufacturer_id = {$object['item_manufacturer_id']} $price")->fetchColumn();
+        $object['item_qty'] -= $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE status IN(1,2) AND warehouse_id_from = {$object['warehouse_id']} AND item_name_id = {$object['item_name_id']} AND item_manufacturer_id = {$object['item_manufacturer_id']} $price")->fetchColumn();
 		$object['item_qty'] -= $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = {$object['warehouse_id']} AND item_name_id = {$object['item_name_id']} AND item_manufacturer_id = {$object['item_name_id']} $price")->fetchColumn();
         if($object){
             $this->set_post($object);

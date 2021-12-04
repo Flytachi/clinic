@@ -2,11 +2,19 @@
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 is_module('module_pharmacy');
-$header = "Отчёт аптеки по расходам";
+$header = "Отчёт аптеки внешним расходам";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
+<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
+
+<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -29,11 +37,9 @@ $header = "Отчёт аптеки по расходам";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "content_tabs.php"; ?>
+                <div class="<?= $classes['card-filter'] ?>">
 
-                <div class="<?= $classes['card'] ?>">
-
-                    <div class="<?= $classes['card-header'] ?>">
+                    <div class="<?= $classes['card-filter_header'] ?>">
                         <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
@@ -48,7 +54,17 @@ $header = "Отчёт аптеки по расходам";
 
 							<div class="form-group row">
 
-								<div class="col-md-3">
+								<div class="col-md-6">
+									<label>Склад:</label>
+									<select class="<?= $classes['form-select'] ?>" name="warehouse_id" required data-placeholder="Выберите склад">
+				                        <option></option>
+										<?php foreach ($db->query("SELECT * FROM warehouses") as $ware): ?>
+											<option value="<?= $ware['id'] ?>" <?= (isset($_POST['warehouse_id']) and $_POST['warehouse_id'] == $ware['id']) ? 'selected' : '' ?>><?= $ware['name'] ?></option>
+										<?php endforeach; ?>
+				                    </select>
+								</div>
+
+								<div class="col-md-6">
 									<label>Дата:</label>
 									<div class="input-group">
 										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
@@ -58,40 +74,11 @@ $header = "Отчёт аптеки по расходам";
 									</div>
 								</div>
 
-								<div class="col-md-3">
-									<label>Специалист:</label>
-									<select id="parent_id" name="parent_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите специалиста</option>
-										<?php foreach($db->query("SELECT * from users WHERE user_level IN(7)") as $row):?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['parent_id']) and $_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label class="d-block font-weight-semibold">Тип расхода</label>
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="type_1" <?= (empty($_POST) or isset($_POST['type_1'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Внешний</label>
-									</div>
-
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="type_2" <?= (empty($_POST) or isset($_POST['type_2'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Операционный</label>
-									</div>
-
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked2" name="type_3" <?= (empty($_POST) or isset($_POST['type_3'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_checked2">Внутренний</label>
-									</div>
-								</div>
-
 							</div>
 
 							<div class="text-right">
-								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
+								<button type="submit" class="<?= $classes['card-filter_btn'] ?>"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
-
 
 						</form>
 
@@ -103,37 +90,12 @@ $header = "Отчёт аптеки по расходам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT *, ( amount + amount_cash + amount_card + amount_transfer ) 'amount_total' FROM storage_sales WHERE add_date IS NOT NULL";
+					$sql = "SELECT * FROM warehouse_storage_transactions WHERE warehouse_id_from = {$_POST['warehouse_id']}";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					if ( isset($_POST['parent_id']) and $_POST['parent_id']) {
-						$sql .= " AND parent_id = {$_POST['parent_id']}";
-					}
-					if (empty($_POST['type_1']) or empty($_POST['type_2']) or empty($_POST['type_3'])) {
-						if (isset($_POST['type_1'])) {
-							if (empty($_POST['type_2']) and empty($_POST['type_3'])) {
-								$sql .= " AND operation_id IS NULL AND parent_id IS NULL";
-							}elseif (isset($_POST['type_2'])) {
-								$sql .= " AND parent_id IS NULL";
-							}elseif (isset($_POST['type_3'])) {
-								$sql .= " AND operation_id IS NULL";
-							}
-						}
-						elseif (isset($_POST['type_2'])) {
-							if (isset($_POST['type_3'])) {
-								$sql .= " AND (operation_id IS NOT NULL OR parent_id IS NOT NULL)";
-							}else {
-								$sql .= " AND operation_id IS NOT NULL";
-							}
-						}
-						elseif (isset($_POST['type_3'])) {
-							$sql .= " AND parent_id IS NOT NULL";
-						}
-					}
-					$i=1;
-					$total_qty = $total_amount_cash = $total_amount_card = $total_amount_transfer = $total_amount = 0;
+					$total_cash = $total_card = $total_transfer = $total_cost = 0;
 					?>
 
 					<div class="<?= $classes['card'] ?>">
@@ -153,14 +115,13 @@ $header = "Отчёт аптеки по расходам";
 								<table class="table table-hover table-sm" id="table">
 									<thead>
 										<tr class="<?= $classes['table-thead'] ?>">
-											<th>Тип расхода</th>
-											<th>Получатель</th>
 											<th>Препарат</th>
 											<th>Поставщик</th>
-											<th>Код</th>
 											<th>Дата</th>
-											<th class="text-center">Кол-во</th>
-											<th class="text-center">Скидка</th>
+											<th>Ответственный</th>
+											<th class="text-center">Тип расхода</th>
+											<th class="text-right">Кол-во</th>
+											<th class="text-right">Стоимость ед.</th>
 											<th class="text-right">Наличные</th>
 											<th class="text-right">Терминал</th>
 											<th class="text-right">Перечисление</th>
@@ -170,65 +131,59 @@ $header = "Отчёт аптеки по расходам";
 									<tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
-												<td>
-													<?php if (!$row['operation_id'] AND !$row['parent_id']): ?>
-														Внешний
-													<?php elseif($row['operation_id']): ?>
-														Операционный
-													<?php else: ?>
-														Внутренний
-													<?php endif; ?>
-												</td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= $row['name'] ?></td>
-												<td><?= $row['supplier'] ?></td>
-												<td><?= $row['code'] ?></td>
+												<td><?= $row['item_name'] ?></td>
+												<td><?= $row['item_manufacturer'] ?></td>
 												<td><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></td>
+												<td><?= get_full_name($row['responsible_id']) ?></td>
 												<td class="text-center">
-													<?php
-													$total_qty += -$row['qty'];
-													echo -$row['qty'];
-													?>
+													<?php if ($row['is_moving']): ?>
+														<span class="badge badge-primary">Перевод</span>
+													<?php endif; ?>
+													<?php if ($row['is_written_off']): ?>
+														<span class="badge badge-danger">Списание</span>
+													<?php endif; ?>
+													<?php if ($row['is_sold']): ?>
+														<span class="badge badge-success">Продажа</span>
+													<?php endif; ?>
 												</td>
-												<td class="text-center"><?= $row['sale'] ?>%</td>
+												<td class="text-right"><?= number_format($row['item_qty']) ?></td>
+												<td class="text-right"><?= number_format($row['item_price']) ?></td>
 												<td class="text-right">
-													<?php $total_amount_cash += -$row['amount_cash']; if (-$row['amount_cash'] > 0): ?>
-														<span class="text-success"><?= number_format(-$row['amount_cash'], 1) ?></span>
+													<?php $total_cash += -$row['price_cash']; if (-$row['price_cash'] > 0): ?>
+														<span class="text-success"><?= number_format(-$row['price_cash'], 1) ?></span>
 													<?php else: ?>
-														<span class="text-danger"><?= number_format(-$row['amount_cash'], 1) ?></span>
+														<span class="text-danger"><?= number_format(-$row['price_cash'], 1) ?></span>
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<?php $total_amount_card += -$row['amount_card']; if (-$row['amount_card'] > 0): ?>
-														<span class="text-success"><?= number_format(-$row['amount_card'], 1) ?></span>
+													<?php $total_card += -$row['price_card']; if (-$row['price_card'] > 0): ?>
+														<span class="text-success"><?= number_format(-$row['price_card'], 1) ?></span>
 													<?php else: ?>
-														<span class="text-danger"><?= number_format(-$row['amount_card'], 1) ?></span>
+														<span class="text-danger"><?= number_format(-$row['price_card'], 1) ?></span>
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<?php $total_amount_transfer += -$row['amount_transfer']; if (-$row['amount_transfer'] > 0): ?>
-														<span class="text-success"><?= number_format(-$row['amount_transfer'], 1) ?></span>
+													<?php $total_transfer += -$row['price_transfer']; if (-$row['price_transfer'] > 0): ?>
+														<span class="text-success"><?= number_format(-$row['price_transfer'], 1) ?></span>
 													<?php else: ?>
-														<span class="text-danger"><?= number_format(-$row['amount_transfer'], 1) ?></span>
+														<span class="text-danger"><?= number_format(-$row['price_transfer'], 1) ?></span>
 													<?php endif; ?>
 												</td>
 												<td class="text-right">
-													<?php $total_amount += -$row['amount_total']; if (-$row['amount_total'] > 0): ?>
-														<span class="text-success"><?= number_format(-$row['amount_total'], 1) ?></span>
+													<?php $total_cost += -$row['cost']; if (-$row['cost'] > 0): ?>
+														<span class="text-success"><?= number_format(-$row['cost'], 1) ?></span>
 													<?php else: ?>
-														<span class="text-danger"><?= number_format(-$row['amount_total'], 1) ?></span>
+														<span class="text-danger"><?= number_format(-$row['cost'], 1) ?></span>
 													<?php endif; ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary text-right">
-											<th colspan="6">Итого:</th>
-											<th class="text-center"><?= $total_qty ?></th>
-											<th></th>
-											<th><?= number_format($total_amount_cash, 1) ?></th>
-											<th><?= number_format($total_amount_card, 1) ?></th>
-											<th><?= number_format($total_amount_transfer, 1) ?></th>
-											<th><?= number_format($total_amount, 1) ?></th>
+											<th colspan="7">Итого:</th>
+											<th><?= number_format($total_cash, 1) ?></th>
+											<th><?= number_format($total_card, 1) ?></th>
+											<th><?= number_format($total_transfer, 1) ?></th>
+											<th><?= number_format($total_cost, 1) ?></th>
 										</tr>
 									</tbody>
 								</table>

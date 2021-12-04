@@ -15,6 +15,13 @@ $where_search = array(
 $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC")->set_limit(20);
 $tb->set_self(viv('warehouse/index'));  
 ?>
+<?php
+if( isset($_SESSION['message']) ){
+    echo $_SESSION['message'];
+    unset($_SESSION['message']);
+}
+?>
+
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
@@ -42,7 +49,7 @@ $tb->set_self(viv('warehouse/index'));
                     <td class="text-center">
                         <?php
                         $price = ($is_payment) ? "AND item_price = $row->item_price" : null;
-                        $row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
+                        $row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE status IN(1,2) AND warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
                         $row->reservation += $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
                         ?>
                         <?= number_format($row->item_qty - $row->reservation) ?> /
