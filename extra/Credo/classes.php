@@ -691,7 +691,7 @@ abstract class Model extends Credo implements ModelInterface
 
 // Session
 
-class Session
+abstract class Session
 {
     /**
      * 

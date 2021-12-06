@@ -5,10 +5,12 @@ use Mixin\Model;
 
 class CorpBranchModel extends Model
 {
+    use ResponceRender;
     public $table = 'corp_branchs';
 
     public function form($pk = null)
     {
+        is_message();
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -37,15 +39,6 @@ class CorpBranchModel extends Model
         return True;
     }
 
-    public function success()
-    {
-        echo "Успешно";
-    }
-
-    public function error($message)
-    {
-        echo $message;
-    }
 }
     
 ?>

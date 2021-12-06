@@ -231,6 +231,13 @@ function array_to_url(array $get)
 }
 //
 
+function is_message(){
+    if( isset($_SESSION['message']) ){
+        echo $_SESSION['message'];
+        unset($_SESSION['message']);
+    }
+}
+
 // Подключение Моделей
 foreach (get_dir_contents(dirname(__DIR__)."/models/") as $filename) {
     require_once $filename;

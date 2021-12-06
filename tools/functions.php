@@ -4,6 +4,8 @@
     My Functions
 */
 
+use Mixin\Hell;
+
 function module($value = null)
 {
     global $db;
@@ -54,13 +56,13 @@ function config($value = null, $group = null)
 
 function is_config($value = null){
     if (!config($value)) {
-        Mixin\error('404');
+        Hell::error('404');
     }
 }
 
 function is_module($value = null){
     if (!module($value)) {
-        Mixin\error('404');
+        Hell::error('404');
     }
 }
 

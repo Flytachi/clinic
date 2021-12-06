@@ -1,5 +1,6 @@
 <?php
 
+require_once dirname(__FILE__).'/temp.php';
 require_once dirname(__DIR__).'/extra/warframe.php';
 require_once dirname(__FILE__).'/constant.php';
 require_once dirname(__FILE__).'/functions.php';

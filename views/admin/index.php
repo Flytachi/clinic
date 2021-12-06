@@ -3,9 +3,8 @@ require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Персонал";
 
-$tb = (new CorpBranchModel)->tb();
-$search = $tb->get_serch();
-$tb->order_by("add_date ASC")->set_limit(15);
+$tb = (new CorpBranchModel)->Order("add_date ASC")->Limit(15);
+$search = $tb->getSearch();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,7 +70,7 @@ $tb->order_by("add_date ASC")->set_limit(15);
 				                    </tr>
 				                </thead>
 				                <tbody>
-									<?php foreach ($tb->get_table(1) as $row): ?>
+									<?php foreach ($tb->list(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
 				                            <td><?= $row->name ?></td>
@@ -111,7 +110,7 @@ $tb->order_by("add_date ASC")->set_limit(15);
 				            </table>
 				        </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 				    </div>
 

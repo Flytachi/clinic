@@ -1,11 +1,14 @@
 <?php
+
+use Mixin\HellTable;
+
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
 if ($session->session_level == "master") {
     
     if ($_GET['tb_name']) {
-        Mixin\T_flush($_GET['tb_name']);
+        HellTable::T_flush($_GET['tb_name']);
         $_SESSION['message'] = '
         <div class="alert alert-primary" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>

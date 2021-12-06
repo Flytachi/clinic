@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Персонал";
 
-$tb = (new UserModel)->tb();
-$search = $tb->get_serch();
-$tb->set_data("id, is_active, branch_id, username, first_name, last_name, father_name, user_level, division_id");
+$tb = (new UserModel)->Data("id, is_active, branch_id, username, first_name, last_name, father_name, user_level, division_id");
+$search = $tb->getSearch();
 $where_search = array("", "(username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
-$tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, last_name ASC")->set_limit(20);
+$tb->Where($where_search)->Order("branch_id ASC, user_level ASC, last_name ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,10 +81,10 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				                    </tr>
 				                </thead>
 				                <tbody>
-									<?php foreach ($tb->get_table(1) as $row): ?>
+									<?php foreach ($tb->list(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
-				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->tb()->by_id($row->branch_id)->get_row()->name : '<span class="text-muted">Нет данных</span>' ?></td>
+				                            <td><?= ($row->branch_id) ? (new CorpBranchModel)->byId($row->branch_id)->name : '<span class="text-muted">Нет данных</span>' ?></td>
 				                            <td><?= $row->username ?></td>
 				                            <td><?= get_full_name($row); ?></td>
 				                            <td>
@@ -134,7 +133,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				            </table>
 				        </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 				    </div>
 
