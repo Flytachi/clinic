@@ -79,7 +79,8 @@ $header = "Отчёты";
 									<div class="mb-3">
 										<h6 class="font-weight-semibold">Аптека</h6>
 										<ul class="list list-unstyled">
-											<li><a href="<?= viv('reports/pharmacy/content_1') ?>">Отчет по внешним действиям</a></li>
+											<li><a href="<?= viv('reports/pharmacy/content_1') ?>">Отчет по складам</a></li>
+											<li><a href="<?= viv('reports/pharmacy/content_2') ?>">Отчет по внутренним продажам (пациенты)</a></li>
 										</ul>
 									</div>
 								<?php endif; ?>

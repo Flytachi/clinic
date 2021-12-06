@@ -30,29 +30,8 @@ $header = "Препараты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="<?= $classes['card'] ?>">
-
-					<div class="<?= $classes['card-header'] ?>">
-						<h6 class="card-title">Препараты</h6>
-						<div class="header-elements">
-							<div class="list-icons">
-								<div class="header-elements">
-									<div class="list-icons">
-										<a href="<?= viv("pharmacy/storage") ?>" class="list-icons-item text-success">
-											<i class="icon-plus22"></i>Склад
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="card-body">
-
-
-
-					</div>
-
+				<div class="alert bg-warning alert-styled-left alert-dismissible">
+					<span class="font-weight-semibold">Технические работы</span>
 				</div>
 
 			</div>

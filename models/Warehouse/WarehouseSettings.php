@@ -95,17 +95,19 @@ class WarehouseSettingsModel extends Model
 
                 </fieldset>
                 
-                <fieldset>
-                    <legend><b>Заявки</b></legend>
-                    <div class="form-group">
-                        <label>Видимость склада</label>
-                        <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[]" class="settin <?= $classes['form-multiselect'] ?>">
-                            <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
-                                <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </fieldset>
+                <?php if($this->value('is_internal')): ?>
+                    <fieldset>
+                        <legend><b>Заявки</b></legend>
+                        <div class="form-group">
+                            <label>Видимость склада</label>
+                            <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[]" class="settin <?= $classes['form-multiselect'] ?>">
+                                <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
+                                    <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </fieldset>
+                <?php endif; ?>
                 
             </div>
             

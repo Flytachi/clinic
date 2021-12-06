@@ -20,9 +20,7 @@ $header = "Аптека / Поставки";
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
-
 		<div class="content-wrapper">
 
 			<!-- Page header -->
@@ -41,7 +39,7 @@ $header = "Аптека / Поставки";
 								<div class="header-elements">
 									<div class="list-icons">
 										<a onclick="Update('<?= up_url(null, 'WarehouseSupplyModel') ?>')" class="list-icons-item text-success">
-											<i class="icon-plus22"></i>Приход
+											<i class="icon-plus22"></i>Добавить
 										</a>
 									</div>
 								</div>

@@ -198,7 +198,7 @@ class VisitJournalsModel extends Model
     {
         echo json_encode(array(
             'status' => 'error',
-            'message' => $message
+            'message' => "Ошибка!"
         ));
         exit;
     }
