@@ -38,7 +38,12 @@ class TransactionPanel extends Model
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
+                <h5 class="card-title">
+                    <b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b>
+                    <?php if($vps['order']): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер №<?= $db->query("SELECT order_number FROM visit_orders WHERE id = {$vps['order']}")->fetchColumn() ?></span>
+                    <?php endif; ?>
+                </h5>
                 <div class="header-elements">
                     <div class="list-icons">
                         <a href="<?= viv('card/content-2')."?pk=$pk" ?>" class="<?= $classes['btn-render'] ?>">Перейти к визиту № <?= $this->value('parad_id') ?></a>
@@ -522,7 +527,6 @@ class TransactionPanel extends Model
                     </tr>
                 </thead>
                 <tbody>
-                    
                     <tr>
                         <td>
                             <strong style="font-size: 15px;">Прибывание:</strong><br>
@@ -538,7 +542,7 @@ class TransactionPanel extends Model
                                 <?php endforeach; ?>
                             </ul>
                         </td>
-                        <td class="text-right"><?= number_format(-$vps['cost-beds']) ?></td>
+                        <td class="text-right <?= ($vps['order']) ? "" : "text-secondary" ; ?>"><?= number_format(-$vps['cost-beds']) ?></td>
                     </tr>
                     <tr>
                         <td><strong style="font-size: 15px;">Услуги</strong></td>

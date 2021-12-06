@@ -95,7 +95,7 @@ if (!$patient) {
 													</span>
 												<?php endif; ?>
 												<?php if ( $row->order ): ?>
-													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер №<?= $db->query("SELECT order_number FROM visit_orders WHERE id = $row->order")->fetchColumn() ?></span>
 												<?php endif; ?>
 											</td>
                                             <td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
