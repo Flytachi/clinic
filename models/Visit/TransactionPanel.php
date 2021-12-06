@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\Model;
+use Mixin\HellCrud;
 
 class TransactionPanel extends Model
 {
@@ -28,7 +30,7 @@ class TransactionPanel extends Model
             }
 
         }else{
-            Mixin\error('cash_permissions_false');
+            Hell::error('cash_permissions_false');
         }
 
     }
@@ -455,7 +457,7 @@ class TransactionPanel extends Model
     public function DetailPanelPharm($pk = null)
     {
         global $db, $classes;
-        if (!module('module_pharmacy')) Mixin\error('cash_permissions_false');
+        if (!module('module_pharmacy')) Hell::error('cash_permissions_false');
         $tb = new Table($db, "visit_bypass_transactions");
         $tb->set_data("DISTINCT item_name, item_cost, is_price")->where("visit_id = $pk")->order_by("item_name ASC");
         $tpc = $tqy = 0;

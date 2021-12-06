@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
+use Mixin\HellCrud;
 
 class WardModel extends Model
 {
@@ -87,8 +88,8 @@ class WardModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

@@ -4,7 +4,9 @@
     My Classes
 */
 
-class MySession extends Session
+use Mixin\HellCrud;
+
+class MySession extends Mixin\Session
 {
 
     protected function init()
@@ -32,8 +34,8 @@ class MySession extends Session
 
     protected function auth(string $login = null, string $password = null)
     {
-        $username = Mixin\clean($login);
-        $password = sha1(Mixin\clean($password));
+        $username = HellCrud::clean($login);
+        $password = sha1(HellCrud::clean($password));
 
         if ($this->master_confirm($username, $password)) {
             $this->set_data("master");
@@ -46,7 +48,7 @@ class MySession extends Session
                 $this->set_data($stmt->id);
                 $slot = $this->db->query("SELECT slot FROM multi_accounts WHERE user_id = $stmt->id")->fetchColumn();
                 if ($slot) {
-                    $_SESSION['session_slot'] = Mixin\clean($slot);
+                    $_SESSION['session_slot'] = HellCrud::clean($slot);
                 }
                 $this->login_success();
             }else{

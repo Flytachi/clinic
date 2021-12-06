@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseSupplyItemModel extends Model
 {
@@ -118,7 +119,7 @@ class WarehouseSupplyItemModel extends Model
          * Операция создания записи в базе!
          */
         if($this->clean()){
-            $object = Mixin\insert($this->table, $this->post);
+            $object = HellCrud::insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
                 exit;
@@ -136,7 +137,7 @@ class WarehouseSupplyItemModel extends Model
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $object = HellCrud::update($this->table, $this->post, $pk);
             if (!intval($object)){
                 $this->error($object);
                 exit;
@@ -150,8 +151,8 @@ class WarehouseSupplyItemModel extends Model
     {
         $this->post['item_cost'] = (isset($this->post['item_cost'])) ? str_replace(',', '', $this->post['item_cost']) : 0;
         $this->post['item_price'] = (isset($this->post['item_price'])) ? str_replace(',', '', $this->post['item_price']) : 0;
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class BedTypeModel extends Model
 {
@@ -76,8 +77,8 @@ class BedTypeModel extends Model
     {
         $this->post['price'] = (isset($this->post['price'])) ? str_replace(',', '', $this->post['price']) : 0;
         $this->post['price_foreigner'] = (isset($this->post['price_foreigner'])) ? str_replace(',', '', $this->post['price_foreigner']) : 0;
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitBypassEventsPanel extends Model
 {
@@ -21,7 +23,7 @@ class VisitBypassEventsPanel extends Model
             
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
             exit;
         }
 
@@ -199,8 +201,8 @@ class VisitBypassEventsPanel extends Model
             $this->post['fail_responsible_id'] = $session->session_id;
             $this->post['fail_date'] = date("Y-m-d H:i:s");
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -242,10 +244,10 @@ class VisitBypassEventsPanel extends Model
             }
             if ( isset($this->post['event_fail']) and $this->post['event_fail']) {
                 // Fail
-                Mixin\delete("visit_bypass_event_applications", $this->pk, "visit_bypass_event_id");
+                HellCrud::delete("visit_bypass_event_applications", $this->pk, "visit_bypass_event_id");
             }
 
-            $object = Mixin\update($this->table, $this->post, $this->pk);
+            $object = HellCrud::update($this->table, $this->post, $this->pk);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
@@ -270,8 +272,8 @@ class VisitBypassEventsPanel extends Model
         }
         if ($qty_sold > 0) {
             // Update
-            Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
+            HellCrud::update($table, array('item_qty' => $qty_sold), $item['id']);
+            HellCrud::insert($this->_bypass_transactions, array(
                 'branch_id' => $app->branch_id,
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
@@ -286,8 +288,8 @@ class VisitBypassEventsPanel extends Model
 
         }elseif ($qty_sold == 0) {
             // Delete
-            Mixin\delete($table, $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
+            HellCrud::delete($table, $item['id']);
+            HellCrud::insert($this->_bypass_transactions, array(
                 'branch_id' => $app->branch_id,
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
@@ -306,7 +308,7 @@ class VisitBypassEventsPanel extends Model
             $this->stop();
         }
         // Удаляем бронь
-        Mixin\delete($this->_event_applications, $app->id);
+        HellCrud::delete($this->_event_applications, $app->id);
         
     }
 

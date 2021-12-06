@@ -1,6 +1,6 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
 
 class ServicePreparatModel extends Model
 {

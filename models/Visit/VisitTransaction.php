@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitTransactionModel extends Model
 {
@@ -463,8 +464,8 @@ class VisitTransactionModel extends Model
         if ($this->visit['direction']) {
             # Stationar
 
-            $this->post = Mixin\clean_form($this->post);
-            $this->post = Mixin\to_null($this->post);
+            $this->post = HellCrud::clean_form($this->post);
+            $this->post = HellCrud::to_null($this->post);
             return True;
 
         }else{
@@ -481,8 +482,8 @@ class VisitTransactionModel extends Model
             $result = $amount - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
             //
             if ($result == 0) {
-                $this->post = Mixin\clean_form($this->post);
-                $this->post = Mixin\to_null($this->post);
+                $this->post = HellCrud::clean_form($this->post);
+                $this->post = HellCrud::to_null($this->post);
                 return True;
             }else {
                 $this->error("В транзакции отказано!");
@@ -562,14 +563,14 @@ class VisitTransactionModel extends Model
         // End
 
         // Price visit_price
-        $object = Mixin\update($this->table, $post, $row['id']);
+        $object = HellCrud::update($this->table, $post, $row['id']);
         if (!intval($object)){
             $this->error($object);
         }
         $this->visit_service_transactions_items[] = $row['id'];
 
         // Update visit_services 
-        $object = Mixin\update($this->_services, array('status' => 2), $row['visit_service_id']);
+        $object = HellCrud::update($this->_services, array('status' => 2), $row['visit_service_id']);
         if (!intval($object)){
             $this->error($object);
         }
@@ -656,14 +657,14 @@ class VisitTransactionModel extends Model
         if(isset($post['price_card'])) $post['price_card'] = -$post['price_card'];
         if(isset($post['price_transfer'])) $post['price_transfer'] = -$post['price_transfer'];
 
-        $object = Mixin\insert($this->table, $post);
+        $object = HellCrud::insert($this->table, $post);
         if (!intval($object)){
             $this->error($object);
         }
         $this->visit_service_transactions_items[] = $object;
 
         // Update visit_services 
-        $object = Mixin\update($this->_services, array('status' => 6, 'completed' => date("Y-m-d H:i:s")), $row['visit_service_id']);
+        $object = HellCrud::update($this->_services, array('status' => 6, 'completed' => date("Y-m-d H:i:s")), $row['visit_service_id']);
         if (!intval($object)){
             $this->error($object);
         }
@@ -697,11 +698,11 @@ class VisitTransactionModel extends Model
         if ($vps['result'] != 0) {
             $this->error("В транзакции отказано!");
         }
-        Mixin\update($this->_investment, array('expense' => 1, 'expense_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
-        Mixin\update($this->table, array('pricer_id' => $session->session_id, 'is_price' => 1, 'price_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
-        Mixin\update($this->_visits, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
-        Mixin\update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1, 'status' => 1));
-        Mixin\update($this->_bypass_transactions, array('is_price' => 1), array('visit_id' => $this->visit['id']));
+        HellCrud::update($this->_investment, array('expense' => 1, 'expense_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
+        HellCrud::update($this->table, array('pricer_id' => $session->session_id, 'is_price' => 1, 'price_date' => date("Y-m-d H:i:s")), array('visit_id' => $this->visit['id']));
+        HellCrud::update($this->_visits, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
+        HellCrud::update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1, 'status' => 1));
+        HellCrud::update($this->_bypass_transactions, array('is_price' => 1), array('visit_id' => $this->visit['id']));
         (new ClientModel())->update_status($this->visit['client_id']);
         
     }

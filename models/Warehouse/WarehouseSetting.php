@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseSettingModel extends Model
 {
@@ -15,7 +17,7 @@ class WarehouseSettingModel extends Model
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
             exit;
         }
 
@@ -106,11 +108,11 @@ class WarehouseSettingModel extends Model
         if($this->clean()){
             $db->beginTransaction();
             
-            Mixin\delete($this->table, $this->post['warehouse_id'], "warehouse_id");
+            HellCrud::delete($this->table, $this->post['warehouse_id'], "warehouse_id");
             
             if (isset($this->post['division'])) {
                 foreach ($this->post['division'] as $divis) {
-                    $object = Mixin\insert($this->table, array('branch_id' => $this->post['branch_id'], 'warehouse_id' => $this->post['warehouse_id'], 'division_id' => $divis));
+                    $object = HellCrud::insert($this->table, array('branch_id' => $this->post['branch_id'], 'warehouse_id' => $this->post['warehouse_id'], 'division_id' => $divis));
                     if (!intval($object)){
                         $this->error($object);
                         $db->rollBack();

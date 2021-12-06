@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitBedModel extends Model
 {
@@ -19,7 +21,7 @@ class VisitBedModel extends Model
             $this->set_post($db->query("SELECT * FROM $this->table WHERE visit_id = $pk AND end_date IS NULL")->fetch(PDO::FETCH_ASSOC));
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
     }
 
@@ -225,8 +227,8 @@ class VisitBedModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -252,20 +254,20 @@ class VisitBedModel extends Model
                 $db->beginTransaction();
 
                 // Остановка предыдущей койки
-                $object = Mixin\update($this->table, array('end_date' => date("Y-m-d H:i:s")), $data['id']);
-                $object2 = Mixin\update($this->_beds, array('user_id' => null), $data['bed_id']);
+                $object = HellCrud::update($this->table, array('end_date' => date("Y-m-d H:i:s")), $data['id']);
+                $object2 = HellCrud::update($this->_beds, array('user_id' => null), $data['bed_id']);
                 if (!intval($object) and !intval($object2)){
                     $this->error("Ошибка на сервере!");
                     exit;
                 }
 
                 // Создание новой койки
-                $object3 = Mixin\insert($this->table, $this->post);
+                $object3 = HellCrud::insert($this->table, $this->post);
                 if (!intval($object3)) {
                     $this->error("Ошибка на сервере!");
                     $db->rollBack();
                 }
-                $object4 = Mixin\update($this->_beds, array('user_id' => $this->post['user_id']), $bed_data['id']);
+                $object4 = HellCrud::update($this->_beds, array('user_id' => $this->post['user_id']), $bed_data['id']);
                 if (!intval($object4)){
                     $this->error("Ошибка на сервере!");
                     $db->rollBack();

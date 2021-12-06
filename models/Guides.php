@@ -1,6 +1,6 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
 
 class GuideModel extends Model
 {
@@ -73,7 +73,6 @@ class GuideModel extends Model
         </form>
         <?php
     }
-
 
     public function success()
     {

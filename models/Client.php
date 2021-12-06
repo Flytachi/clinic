@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
+use Mixin\HellCrud;
 
 class ClientModel extends Model
 {
@@ -190,8 +191,8 @@ class ClientModel extends Model
         //
         if ( isset($this->post['province_id']) ) $this->post['province'] = $db->query("SELECT name FROM $this->_province WHERE id = {$this->post['province_id']}")->fetchColumn();
         if ( isset($this->post['region_id']) ) $this->post['region'] = $db->query("SELECT name FROM $this->_region WHERE id = {$this->post['region_id']}")->fetchColumn();
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -231,7 +232,7 @@ class ClientModel extends Model
 
     public function update_status(int $pk)
     {
-        Mixin\update($this->table, array('status' => null), $pk);
+        HellCrud::update($this->table, array('status' => null), $pk);
         return true;
     }
 }

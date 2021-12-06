@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseSupplyModel extends Model
 {
@@ -472,8 +473,8 @@ class WarehouseSupplyModel extends Model
         if (!$this->post['id']) $this->post['uniq_key'] = uniqid('supply-');
         if ( isset($this->post['is_order']) and $this->post['is_order'] == 'on' ) $this->post['is_order'] = 1;
         else $this->post['is_order'] = null;
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -493,7 +494,7 @@ class WarehouseSupplyModel extends Model
 
                 $this->warehouse_change($pk);
 
-                $object = Mixin\update($this->table, $this->post, $pk);
+                $object = HellCrud::update($this->table, $this->post, $pk);
                 if (!intval($object)){
                     $this->error($object);
                     exit;
@@ -505,7 +506,7 @@ class WarehouseSupplyModel extends Model
             } else {
 
                 // Default Update
-                $object = Mixin\update($this->table, $this->post, $pk);
+                $object = HellCrud::update($this->table, $this->post, $pk);
                 if (!intval($object)){
                     $this->error($object);
                     exit;
@@ -532,13 +533,13 @@ class WarehouseSupplyModel extends Model
                 unset($item['item_price']);
                 $where .= " AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
                 $obj = $db->query("SELECT id, item_qty FROM $this->_order WHERE $where")->fetch();
-                if ($obj) $object = Mixin\update($this->_order, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
-                else $object = Mixin\insert($this->_order, $item);
+                if ($obj) $object = HellCrud::update($this->_order, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
+                else $object = HellCrud::insert($this->_order, $item);
             } else {
                 $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
                 $obj = $db->query("SELECT id, item_qty FROM $this->_common WHERE $where")->fetch();
-                if ($obj) $object = Mixin\update($this->_common, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
-                else $object = Mixin\insert($this->_common, $item);
+                if ($obj) $object = HellCrud::update($this->_common, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
+                else $object = HellCrud::insert($this->_common, $item);
             }
             
             if (!intval($object)){

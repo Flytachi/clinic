@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
+use Mixin\HellCrud;
 
 class VisitModel extends Model
 {
@@ -83,7 +84,7 @@ class VisitModel extends Model
             'division_id' => ( isset($this->post['direction']) ) ? $this->post['division_id'] : null,
             'last_update' => date("Y-m-d H:i:s"),
         );
-        $object = Mixin\insert_or_update($this->table, $post, 'client_id', "completed IS NULL");
+        $object = HellCrud::insert_or_update($this->table, $post, 'client_id', "completed IS NULL");
         if (!intval($object)) {
             $this->error("Ошибка создании или обновлении визита!");
             $db->rollBack();
@@ -119,9 +120,9 @@ class VisitModel extends Model
    
         $count = (isset($this->post['direction']) and $this->post['direction']) ? 1 : $this->post['count'][$key];
         for ($i=0; $i < $count; $i++) {
-            $post = Mixin\clean_form($post);
-            $post = Mixin\to_null($post);
-            $object = Mixin\insert($this->_service, $post);
+            $post = HellCrud::clean_form($post);
+            $post = HellCrud::to_null($post);
+            $object = HellCrud::insert($this->_service, $post);
             if (!intval($object)){
                 $this->error("Ошибка при создании услуги!");
                 $db->rollBack();
@@ -138,7 +139,7 @@ class VisitModel extends Model
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                     $post_price['item_name'] = $data['name'];
                     $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
-                    $object = Mixin\insert($this->_transactions, $post_price);
+                    $object = HellCrud::insert($this->_transactions, $post_price);
                     if (!intval($object)){
                         $this->error("Ошибка при создании платежа услуги!");
                         $db->rollBack();
@@ -166,13 +167,13 @@ class VisitModel extends Model
             'cost' => ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'],
         );
 
-        $object = Mixin\insert($this->_beds, $post);
+        $object = HellCrud::insert($this->_beds, $post);
         if (!intval($object)) {
             $this->error("Ошибка при создании платежа для койки!");
             $db->rollBack();
         }
 
-        $object2 = Mixin\update($this->table2, array('client_id' => $this->post['client_id']), $this->post['bed']);
+        $object2 = HellCrud::update($this->table2, array('client_id' => $this->post['client_id']), $this->post['bed']);
         if (!intval($object2)){
             $this->error("Ошибка при бронировании пациентом койки!");
             $db->rollBack();
@@ -185,12 +186,12 @@ class VisitModel extends Model
         if ($db->query("SELECT id FROM $this->_orders WHERE branch_id = {$this->post['branch_id']} AND visit_id = $this->visit_pk")->fetchColumn()) {
             $this->is_order = True;
         }else if (isset($this->post['order_status'])) {
-            $post = Mixin\clean_form($this->post['order']);
-            $post = Mixin\to_null($post);
+            $post = HellCrud::clean_form($this->post['order']);
+            $post = HellCrud::to_null($post);
             $post['visit_id'] = $this->visit_pk;
             $post['responsible_id'] = $session->session_id;
             $post['client_id'] = $this->post['client_id'];
-            $object = Mixin\insert($this->_orders, $post);
+            $object = HellCrud::insert($this->_orders, $post);
             if (!intval($object)) {
                 $this->error("Ошибка при создании ордера!");
                 $db->rollBack();
@@ -221,7 +222,7 @@ class VisitModel extends Model
                 
             }
             // Обновление статуса у пациента
-            $object1 = Mixin\update($this->_client, array('status' => True), $this->post['client_id']);
+            $object1 = HellCrud::update($this->_client, array('status' => True), $this->post['client_id']);
             if (!intval($object1)){
                 $this->error("Ошибка в обновление статуса пациента!");
                 $db->rollBack();
@@ -241,7 +242,7 @@ class VisitModel extends Model
             unset($this->post['id']);
 
             $db->beginTransaction();
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $object = HellCrud::update($this->table, $this->post, $pk);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
@@ -254,8 +255,8 @@ class VisitModel extends Model
                 $data['division_id'] = $this->post['division_id'];
                 $data['status'] = 2;
                 $old = $data['id']; unset($data['id']);
-                Mixin\update($this->_service, array('status' => 6), $old);
-                Mixin\insert($this->_service, $data);
+                HellCrud::update($this->_service, array('status' => 6), $old);
+                HellCrud::insert($this->_service, $data);
             }
 
             $db->commit();
@@ -269,8 +270,8 @@ class VisitModel extends Model
         if (isset($this->post['division_id']) and is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
             $this->error("Не назначены услуги!");
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -282,7 +283,7 @@ class VisitModel extends Model
 
         if ($data == 0) {
 
-            $object = Mixin\update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
+            $object = HellCrud::update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
             if(!intval($object)){
                 return $object;
             }
@@ -304,7 +305,7 @@ class VisitModel extends Model
 
         if ($data == 0) {
 
-            $object = Mixin\delete($this->table, $pk);
+            $object = HellCrud::delete($this->table, $pk);
             if(!intval($object)){
                 return $object;
             }
@@ -314,7 +315,7 @@ class VisitModel extends Model
         } else {
 
             if ($data_update == 0) {
-                $object = Mixin\update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
+                $object = HellCrud::update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
                 if(!intval($object)){
                     return $object;
                 }

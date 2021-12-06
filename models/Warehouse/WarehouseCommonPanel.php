@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseCommonPanel extends Model
 {
@@ -34,7 +35,7 @@ class WarehouseCommonPanel extends Model
     public function table()
     {
         global $db, $classes, $session;
-        $search = Mixin\clean($this->post['search']);
+        $search = HellCrud::clean($this->post['search']);
         foreach ($db->query("SELECT DISTINCT wc.item_name_id, win.name FROM $this->table wc LEFT JOIN $this->_name win ON (win.id=wc.item_name_id) WHERE wc.branch_id = {$this->post['branch_id']} AND wc.item_die_date > CURRENT_DATE() AND LOWER(win.name) LIKE LOWER('%$search%')") as $row){
             $this->i++;
             ?>
@@ -163,7 +164,7 @@ class WarehouseCommonPanel extends Model
     public function change_table()
     {
         global $db, $classes, $session;
-        $search = Mixin\clean($this->post['search']);
+        $search = HellCrud::clean($this->post['search']);
         /*
         foreach ($db->query("SELECT DISTINCT wc.item_name_id, win.name FROM $this->table wc LEFT JOIN $this->_name win ON (win.id=wc.item_name_id) WHERE wc.item_die_date > CURRENT_DATE() AND LOWER(win.name) LIKE LOWER('%$search%')") as $row){
             $this->i++;

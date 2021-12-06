@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitBypassModel extends Model
 {
@@ -20,7 +22,7 @@ class VisitBypassModel extends Model
             return $this->{$_GET['form']}($pk);
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
 
     }
@@ -305,8 +307,8 @@ class VisitBypassModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         if ($this->post['items']) $this->post['items'] = json_encode($this->post['items']);
         return True;
     }

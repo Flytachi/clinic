@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class BedModel extends Model
 {
@@ -140,7 +142,7 @@ class BedModel extends Model
             }
             return $this->form($object['id']);
         }else{
-            Mixin\error('404');
+            Hell::error('404');
             exit;
         }
 
@@ -158,8 +160,8 @@ class BedModel extends Model
         if ($this->post['type_id']) {
             $this->post['types'] = $db->query("SELECT name FROM $this->_types WHERE id = {$this->post['type_id']}")->fetchColumn();
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

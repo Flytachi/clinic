@@ -1,5 +1,7 @@
 <?php
 
+use Mixin\HellCrud;
+
 class VisitIcdHistoryModel extends VisitModel
 {
     public $_icd_history = 'visit_icd_history';
@@ -56,8 +58,8 @@ class VisitIcdHistoryModel extends VisitModel
             unset($this->post['id']);
             $db->beginTransaction();
 
-            $history = Mixin\insert($this->_icd_history,  array('branch_id' => $this->post['branch_id'], 'visit_id' => $pk, 'icd_id' => $this->post['icd_id'], 'responsible_id' => $session->session_id));
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $history = HellCrud::insert($this->_icd_history,  array('branch_id' => $this->post['branch_id'], 'visit_id' => $pk, 'icd_id' => $this->post['icd_id'], 'responsible_id' => $session->session_id));
+            $object = HellCrud::update($this->table, $this->post, $pk);
             if (!intval($history) or !intval($object)){
                 $this->error("Ошибка при назначении диагноза!");
                 $db->rollBack();

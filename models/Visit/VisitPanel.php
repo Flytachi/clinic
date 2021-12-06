@@ -1,5 +1,7 @@
 <?php
 
+use Mixin\Hell;
+
 class VisitPanel extends VisitModel
 {
     public $table = 'visits';
@@ -15,14 +17,14 @@ class VisitPanel extends VisitModel
                 if ($_GET['form'] == "stationar") {
                     
                     if ($object['status']) {
-                        Mixin\error('report_permissions_false');
+                        Hell::error('report_permissions_false');
                         exit;
                     }
 
                 }else {
 
                     if ($object['status'] and $db->query("SELECT id FROM $this->table WHERE client_id = $pk AND completed IS NULL AND direction IS NOT NULL")->fetchColumn()) {
-                        Mixin\error('report_permissions_false');
+                        Hell::error('report_permissions_false');
                         exit;
                     }
                     $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE client_id = $pk AND completed IS NULL")->fetchColumn();
@@ -36,11 +38,11 @@ class VisitPanel extends VisitModel
                 return $this->{$_GET['form']}($object['id']);
                 
             }else{
-                Mixin\error('report_permissions_false');
+                Hell::error('report_permissions_false');
                 exit;
             }
         } else {
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
             exit;
         }
         

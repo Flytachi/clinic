@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitSaleModel extends Model
 {
@@ -15,7 +17,7 @@ class VisitSaleModel extends Model
             $this->set_post($db->query("SELECT * FROM visit_sales WHERE visit_id = $pk")->fetch());
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
     }
 
@@ -218,8 +220,8 @@ class VisitSaleModel extends Model
     {
         if( isset($this->post['sale_bed_unit']) ) $this->post['sale_bed_unit'] = str_replace(',', '', $this->post['sale_bed_unit']);
         if( isset($this->post['sale_service_unit']) ) $this->post['sale_service_unit'] = str_replace(',', '', $this->post['sale_service_unit']);
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

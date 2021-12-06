@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitOperationModel extends Model
 {
@@ -17,7 +19,7 @@ class VisitOperationModel extends Model
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
             exit;
         }
 
@@ -188,8 +190,8 @@ class VisitOperationModel extends Model
         if (isset($this->post['completed']) and $this->post['completed']) {
             $this->post['completed_date'] = date('Y-m-d H:i:s');
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -204,7 +206,7 @@ class VisitOperationModel extends Model
             $service = $db->query("SELECT * FROM $this->_services WHERE id = {$this->post['operation_id']}")->fetch();
             $this->post['operation_name'] = $service['name'];
             $this->post['operation_cost'] = ($this->is_foreigner) ? $service['price_foreigner'] : $service['price'];
-            $object = Mixin\insert($this->table, $this->post);
+            $object = HellCrud::insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
                 exit;
@@ -220,7 +222,7 @@ class VisitOperationModel extends Model
             $post_price['item_cost'] = ($this->is_foreigner) ? $service['price_foreigner'] : $service['price'];
             $post_price['item_name'] = $service['name'];
             $post_price['is_visibility'] =  null;
-            $object = Mixin\insert($this->_transactions, $post_price);
+            $object = HellCrud::insert($this->_transactions, $post_price);
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
@@ -245,13 +247,13 @@ class VisitOperationModel extends Model
             // preparats $price += $db->query("SELECT SUM(member_price) FROM visit_operation_members WHERE operation_id = $pk")->fetchColumn(); 
             $price += $db->query("SELECT SUM(item_cost) FROM visit_operation_consumables WHERE operation_id = $pk")->fetchColumn(); 
             
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $object = HellCrud::update($this->table, $this->post, $pk);
             if (!intval($object)){
                 $this->error("Ошибка при завершении операции!");
                 exit;
             }
 
-            $object2 = Mixin\update($this->_transactions, array('item_cost' => $price), array('visit_service_id' => $pk, 'item_type' => 3));
+            $object2 = HellCrud::update($this->_transactions, array('item_cost' => $price), array('visit_service_id' => $pk, 'item_type' => 3));
             if (!intval($object2)){
                 $this->error("Ошибка при записи новой цены!");
                 exit;

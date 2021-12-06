@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseModel extends Model
 {
@@ -102,8 +103,8 @@ class WarehouseModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         $this->post['level'] = ( isset($this->post['level']) ) ? json_encode($this->post['level']) : null;
         $this->post['division'] = ( isset($this->post['division']) ) ? json_encode($this->post['division']) : null;
         return True;

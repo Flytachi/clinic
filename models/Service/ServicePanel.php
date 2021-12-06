@@ -1,6 +1,6 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
 
 class ServicePanel extends Model
 {
@@ -23,7 +23,6 @@ class ServicePanel extends Model
                 $this->types = $this->post['types'];
                 $this->branch = $this->post['branch_id'];
                 
-
                 $this->table();
 
             }else {

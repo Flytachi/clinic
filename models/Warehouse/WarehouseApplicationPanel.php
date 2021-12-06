@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseApplicationPanel extends Model
 {
@@ -19,7 +21,7 @@ class WarehouseApplicationPanel extends Model
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('cash_permissions_false');
+            Hell::error('cash_permissions_false');
             exit;
         }
     }
@@ -226,8 +228,8 @@ class WarehouseApplicationPanel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

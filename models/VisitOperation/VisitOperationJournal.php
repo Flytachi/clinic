@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitOperationJournalModel extends Model
 {
@@ -28,7 +30,7 @@ class VisitOperationJournalModel extends Model
                         $this->set_post($data);
                         return $this->{$_GET['form']}($data['id']);
                     } else {
-                        Mixin\error('report_permissions_false');
+                        Hell::error('report_permissions_false');
                         exit;
                     }
                 }else{
@@ -36,12 +38,12 @@ class VisitOperationJournalModel extends Model
                 }
                 
             }else{
-                Mixin\error('report_permissions_false');
+                Hell::error('report_permissions_false');
                 exit;
             }
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
 
     }
@@ -175,15 +177,15 @@ class VisitOperationJournalModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
     public function save()
     {
         if($this->clean()){
-            $object = Mixin\insert($this->table, $this->post);
+            $object = HellCrud::insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
                 exit;
@@ -199,7 +201,7 @@ class VisitOperationJournalModel extends Model
             $pk = $this->post['id'];
             unset($this->post['id']);
             $this->post['last_update'] = date("Y-m-d H:i:s");
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $object = HellCrud::update($this->table, $this->post, $pk);
             if (!intval($object)){
                 $this->error($object);
                 exit;

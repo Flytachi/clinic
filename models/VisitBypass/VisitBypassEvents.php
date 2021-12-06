@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitBypassEventsModel extends Model
 {
@@ -16,8 +17,8 @@ class VisitBypassEventsModel extends Model
             $is_time = $this->post['is_time']; 
             unset($this->post['is_time']);
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
 
         if ( isset($is_time) ) {
             $this->post['event_start'] = ($is_time) ? date("Y-m-d H:i", $this->post['event_start']) : date("Y-m-d", $this->post['event_start']);
@@ -38,7 +39,7 @@ class VisitBypassEventsModel extends Model
         if($this->clean()){
 
             $db->beginTransaction();
-            $object = Mixin\insert($this->table, $this->post);
+            $object = HellCrud::insert($this->table, $this->post);
             if (!intval($object)){
                 $this->error($object);
                 exit;
@@ -69,7 +70,7 @@ class VisitBypassEventsModel extends Model
                             $post['item_qty'] = ($status) ? $qty : $source->item_qty;
                             $post['item_manufacturer_id'] = $source->item_manufacturer_id;
 
-                            Mixin\insert($this->_event_applications, $post);
+                            HellCrud::insert($this->_event_applications, $post);
                             unset($post['item_manufacturer_id']);
                             unset($post['item_qty']);
                             //
@@ -93,7 +94,7 @@ class VisitBypassEventsModel extends Model
                             $post['item_manufacturer_id'] = $source->item_manufacturer_id;
                             $post['item_price'] = $source->item_price;
                             
-                            Mixin\insert($this->_event_applications, $post);
+                            HellCrud::insert($this->_event_applications, $post);
                             unset($post['item_manufacturer_id']);
                             unset($post['item_price']);
                             unset($post['item_qty']);
@@ -119,7 +120,7 @@ class VisitBypassEventsModel extends Model
             $pk = $this->post['id'];
             $this->post['last_update'] = date("Y-m-d H:i:s");
             unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
+            $object = HellCrud::update($this->table, $this->post, $pk);
             if (!intval($object)){
                 $this->error($object);
                 exit;
@@ -132,9 +133,9 @@ class VisitBypassEventsModel extends Model
     {
         global $db;
         $db->beginTransaction();
-        $object = Mixin\delete($this->table, $pk);
+        $object = HellCrud::delete($this->table, $pk);
         if ($object) {
-            Mixin\delete($this->_event_applications, $pk, "visit_bypass_event_id");
+            HellCrud::delete($this->_event_applications, $pk, "visit_bypass_event_id");
             $db->commit();
             $this->success("success");
         } else {
@@ -163,7 +164,7 @@ class VisitBypassEventsApplication extends VisitBypassEventsModel
     public function delete(int $pk)
     {
         global $db;
-        Mixin\delete($this->_event_applications, $pk, "visit_bypass_event_id");
+        HellCrud::delete($this->_event_applications, $pk, "visit_bypass_event_id");
         $this->success("success");
 
     }

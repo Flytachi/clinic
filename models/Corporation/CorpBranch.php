@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class CorpBranchModel extends Model
 {
@@ -31,8 +32,8 @@ class CorpBranchModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -46,5 +47,5 @@ class CorpBranchModel extends Model
         echo $message;
     }
 }
-        
+    
 ?>

@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitOperationStatModel extends Model
 {
@@ -22,12 +24,12 @@ class VisitOperationStatModel extends Model
                 $this->operation_id = $pk;
                 return $this->{$_GET['form']}();
             }else{
-                Mixin\error('report_permissions_false');
+                Hell::error('report_permissions_false');
                 exit;
             }
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
 
     }
@@ -128,8 +130,8 @@ class VisitOperationStatModel extends Model
     {
         global $session;
         $this->post['creater_id'] = $session->session_id;
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

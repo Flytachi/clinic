@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseApplicationModel extends Model
 {
@@ -67,8 +68,8 @@ class WarehouseApplicationModel extends Model
 
     public function clean()
     {
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
@@ -125,14 +126,14 @@ class WarehouseApplicationCompleted extends WarehouseApplicationModel
 
             if ( isset($this->post['rejection']) ) {
                 // Application rejection
-                $object = Mixin\update($this->_application, array('status' => 4), array('id' => $this->post['applications']));
+                $object = HellCrud::update($this->_application, array('status' => 4), array('id' => $this->post['applications']));
                 if (!intval($object)) {
                     $db->rollBack();
                 }
 
             } else {
                 // Application complete
-                $object = Mixin\update($this->_application, array('status' => 3), array('id' => $this->post['applications']));
+                $object = HellCrud::update($this->_application, array('status' => 3), array('id' => $this->post['applications']));
                 if (!intval($object)) {
                     $db->rollBack();
                 }
@@ -144,8 +145,8 @@ class WarehouseApplicationCompleted extends WarehouseApplicationModel
                         if ( $item = $db->query("SELECT * FROM $this->_common WHERE id = $id")->fetch() ) {
     
                             // Warehouse common delete
-                            if ($item['item_qty']-$qty == 0) Mixin\delete($this->_common, $id);
-                            else Mixin\update($this->_common, array('item_qty' => ($item['item_qty']-$qty)), $id);
+                            if ($item['item_qty']-$qty == 0) HellCrud::delete($this->_common, $id);
+                            else HellCrud::update($this->_common, array('item_qty' => ($item['item_qty']-$qty)), $id);
     
                             // Create transaction
                             $transaction_post = array(
@@ -160,13 +161,13 @@ class WarehouseApplicationCompleted extends WarehouseApplicationModel
                                 'responsible_id' => $session->session_id,
                                 'cost' => -$qty*$item['item_price'],
                             );
-                            Mixin\insert($this->_common_transactions, $transaction_post);
+                            HellCrud::insert($this->_common_transactions, $transaction_post);
     
                             // Warehouse custom add
                             $where = "branch_id = {$this->post['branch_id']} AND warehouse_id = {$this->post['warehouse_id']} AND item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']}";
                             $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
                             $obj = $db->query("SELECT id, item_qty FROM $this->_custom WHERE $where")->fetch();
-                            if ($obj) Mixin\update($this->_custom, array('item_qty' => $obj['item_qty']+$qty), $obj['id']);
+                            if ($obj) HellCrud::update($this->_custom, array('item_qty' => $obj['item_qty']+$qty), $obj['id']);
                             else{
                                 $custom_post = array(
                                     'branch_id' => $this->post['branch_id'],
@@ -177,7 +178,7 @@ class WarehouseApplicationCompleted extends WarehouseApplicationModel
                                     'item_price' => $item['item_price'],
                                     'item_die_date' => $item['item_die_date'],
                                 );
-                                Mixin\insert($this->_custom, $custom_post);
+                                HellCrud::insert($this->_custom, $custom_post);
                                 unset($custom_post);
                             }
                             unset($transaction_post);

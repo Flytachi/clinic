@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitFinish extends Model
 {
@@ -27,12 +28,12 @@ class VisitFinish extends Model
 
                 // Выписка
                 $vis_service = $db->query("SELECT id FROM $this->table WHERE visit_id = $pk AND completed IS NULL AND status = 3 AND service_id = 1")->fetchColumn();
-                Mixin\update($this->_visits, array('is_active' => null), $data['id']);
-                Mixin\update($this->table, array('status' => 1, 'completed' => date('Y-m-d H:i:s')), $vis_service);
+                HellCrud::update($this->_visits, array('is_active' => null), $data['id']);
+                HellCrud::update($this->table, array('status' => 1, 'completed' => date('Y-m-d H:i:s')), $vis_service);
                 $bed = $db->query("SELECT * FROM visit_beds WHERE visit_id = $pk AND end_date IS NULL")->fetch();
-                Mixin\update($this->_beds, array('client_id' => null), $bed['bed_id']);
-                Mixin\update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
-                Mixin\delete("visit_bypass_event_applications", $pk, "visit_id");
+                HellCrud::update($this->_beds, array('client_id' => null), $bed['bed_id']);
+                HellCrud::update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
+                HellCrud::delete("visit_bypass_event_applications", $pk, "visit_id");
 
             }else {
 
@@ -57,7 +58,7 @@ class VisitFinish extends Model
 
     public function update_service($pk)
     {
-        $object = Mixin\update($this->table, $this->post, $pk);
+        $object = HellCrud::update($this->table, $this->post, $pk);
         if ($object != 1){
             $this->error($object);
         }

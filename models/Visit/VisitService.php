@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitServiceModel extends Model
 {
@@ -13,8 +14,8 @@ class VisitServiceModel extends Model
         if ( isset($this->post['service_report']) ) {
             $report = $this->post['service_report'];
         }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         if ( isset($report) ) {
             $this->post['service_report'] = $report;
         }
@@ -28,14 +29,14 @@ class VisitServiceModel extends Model
             unset($this->post['id']);
             if (is_array($pk)) {
                 foreach ($pk as $pkis) {
-                    $object = Mixin\update($this->table, $this->post, $pkis);
+                    $object = HellCrud::update($this->table, $this->post, $pkis);
                     if (!intval($object)){
                         $this->error($object);
                         exit;
                     }
                 }
             } else {
-                $object = Mixin\update($this->table, $this->post, $pk);
+                $object = HellCrud::update($this->table, $this->post, $pk);
                 if (!intval($object)){
                     $this->error($object);
                     exit;
@@ -71,14 +72,14 @@ class VisitServiceModel extends Model
                 // Начало Транкзации
                 $db->beginTransaction();
                 // Visit prices 
-                $object = Mixin\delete($this->_transactions, $pk, "visit_service_id");
+                $object = HellCrud::delete($this->_transactions, $pk, "visit_service_id");
                 if(!intval($object)){
                     $this->error("Произошла ошибка на сервере!");
                     $db->rollBack();
                     exit;
                 }
                 // Visit service 
-                $object = Mixin\delete($this->table, $pk);
+                $object = HellCrud::delete($this->table, $pk);
                 if(!intval($object)){
                     $this->error("Произошла ошибка на сервере!");
                     $db->rollBack();

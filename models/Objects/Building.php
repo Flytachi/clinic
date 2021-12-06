@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
+use Mixin\HellCrud;
 
 class BuildingModel extends Model
 {
@@ -47,8 +48,8 @@ class BuildingModel extends Model
     public function clean()
     {
         $this->post['name'] = "Здание ".$this->post['name'];
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitRoute extends Model
 {
@@ -741,7 +742,7 @@ class VisitRoute extends Model
     {
         global $db;
         $this->visit_pk = $this->post['visit_id'];
-        Mixin\update($this->_visits, array('last_update' => date("Y-m-d H:i:s")), $this->visit_pk);
+        HellCrud::update($this->_visits, array('last_update' => date("Y-m-d H:i:s")), $this->visit_pk);
         $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_client WHERE id = {$this->post['client_id']}")->fetchColumn();
         $this->chek_order();
     }
@@ -781,9 +782,9 @@ class VisitRoute extends Model
         $post['service_name'] = $data['name'];
         
         for ($i=0; $i < $this->post['count'][$key]; $i++) {
-            $post = Mixin\clean_form($post);
-            $post = Mixin\to_null($post);
-            $object = Mixin\insert($this->table, $post);
+            $post = HellCrud::clean_form($post);
+            $post = HellCrud::to_null($post);
+            $object = HellCrud::insert($this->table, $post);
             if (!intval($object)){
                 $this->error("Ошибка при создании услуги!");
                 $db->rollBack();
@@ -800,7 +801,7 @@ class VisitRoute extends Model
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
                     $post_price['item_name'] = $data['name'];
                     $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
-                    $object = Mixin\insert($this->_transactions, $post_price);
+                    $object = HellCrud::insert($this->_transactions, $post_price);
                     if (!intval($object)){
                         $this->error("Ошибка при создании платежа услуги!");
                         $db->rollBack();

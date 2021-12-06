@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class UserModel extends Model
 {
@@ -265,8 +266,8 @@ class UserModel extends Model
         $qty = $db->query("SELECT id FROM $this->table")->rowCount();
         $ti = module("personal_qty");
         if ( isset($this->post['id']) or (($ti and $ti > $qty) or (!$ti and 5 > $qty)) ) {
-            $this->post = Mixin\clean_form($this->post);
-            $this->post = Mixin\to_null($this->post);
+            $this->post = HellCrud::clean_form($this->post);
+            $this->post = HellCrud::to_null($this->post);
             if ($this->post['password'] and $this->post['password2']){
                 if ($this->post['password'] == $this->post['password2']){
                     unset($this->post['password2']);

@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Model;
+use Mixin\HellCrud;
 
 class ServiceModel extends Model
 {
@@ -162,8 +163,8 @@ class ServiceModel extends Model
         }
         $this->post['price'] = (isset($this->post['price'])) ? str_replace(',', '', $this->post['price']) : 0;
         $this->post['price_foreigner'] = (isset($this->post['price_foreigner'])) ? str_replace(',', '', $this->post['price_foreigner']) : 0;
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         if($this->post['user_level'] and !$this->post['division_id']){
             $this->post['division_id'] = null;
         }
@@ -207,8 +208,8 @@ class ServiceModel extends Model
             if ($post = $this->clean_excel($post)) {
                 $post['branch_id'] = $this->post['branch_id'];
                 $select = $this->tb()->where("branch_id = {$this->post['branch_id']} AND code = '{$post['code']}'")->get_row();
-                if ($select) $object = Mixin\update($this->table, $post, $select->id);
-                else $object = Mixin\insert($this->table, $post);
+                if ($select) $object = HellCrud::update($this->table, $post, $select->id);
+                else $object = HellCrud::insert($this->table, $post);
                 
                 if (!intval($object)){
                     $this->error($object);
@@ -216,7 +217,6 @@ class ServiceModel extends Model
                 }
             }
         }
-        // $this->dd();
         $db->commit();
         $this->success();
     }

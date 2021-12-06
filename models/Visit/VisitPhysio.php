@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\Model;
 
 class VisitPhysioModel extends Model
 {
@@ -19,7 +20,7 @@ class VisitPhysioModel extends Model
             return $this->form($object['id']);
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
             exit;
         }
 

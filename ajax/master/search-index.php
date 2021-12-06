@@ -2,12 +2,12 @@
 require_once '../../tools/warframe.php';
 $session->is_auth("master");
 
-$tb = (new UserModel)->tb('us');
-$search = $tb->get_serch();
+$tb = (new UserModel)->as('us');
+$search = $tb->getSearch();
 $where_search = array(null, "us.username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%')");
-$tb->set_data('cb.name, us.id, us.first_name, us.last_name, us.father_name, us.user_level, us.username')->additions("LEFT JOIN corp_branchs cb ON(cb.id=us.branch_id)");
-$tb->where_or_serch($where_search)->order_by("cb.name ASC, us.user_level ASC, us.last_name ASC")->set_limit(20);
-$tb->set_self(viv('master/index'));  
+$tb->Data('cb.name, us.id, us.first_name, us.last_name, us.father_name, us.user_level, us.username')->Join("LEFT JOIN corp_branchs cb ON(cb.id=us.branch_id)");
+$tb->Where($where_search)->Order("cb.name ASC, us.user_level ASC, us.last_name ASC")->Limit(20);
+$tb->returnPath(viv('master/index'));  
 ?>
 <div class="table-responsive">
     <table class="table table-hover">
@@ -22,7 +22,7 @@ $tb->set_self(viv('master/index'));
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($tb->get_table(1) as $row): ?>
+            <?php foreach ($tb->list(1) as $row): ?>
                 <tr 
                 <?php if ($row->user_level == 1): ?>
                     class="table-dark text-danger"
@@ -59,4 +59,4 @@ $tb->set_self(viv('master/index'));
     </table>
 </div>
 
-<?php $tb->get_panel(); ?>
+<?php $tb->panel(); ?>

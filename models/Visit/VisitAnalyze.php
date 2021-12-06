@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitAnalyzeModel extends Model
 {
@@ -31,13 +33,13 @@ class VisitAnalyzeModel extends Model
                 $this->set_post($object);
                 return $this->form($object['id']);
             }else {
-                Mixin\error('report_permissions_false');
+                Hell::error('report_permissions_false');
                 exit;
             }
             
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
             exit;
         }
 
@@ -457,8 +459,8 @@ class VisitAnalyzeModel extends Model
                 
                 // Save
                 foreach ($analyzes as $key => $post) {
-                    $post = Mixin\clean_form($post);
-                    $post = Mixin\to_null($post);
+                    $post = HellCrud::clean_form($post);
+                    $post = HellCrud::to_null($post);
                     $post['branch_id'] = $this->post['branch_id'];
                     $post['visit_id'] = $this->post['visit_id'];
                     $post['client_id'] = $db->query("SELECT client_id FROM $this->_visit WHERE id = {$this->post['visit_id']}")->fetchColumn();
@@ -466,7 +468,7 @@ class VisitAnalyzeModel extends Model
                     $post['service_name'] = $db->query("SELECT service_name FROM $this->_visit_service WHERE id = {$post['visit_service_id']}")->fetchColumn();
                     $post['analyze_name'] = $db->query("SELECT name FROM $this->_service_analyze WHERE id = {$post['service_analyze_id']}")->fetchColumn();
                     $post['deviation'] = ( isset($post['deviation']) and $post['deviation'] ) ? 1 : null;
-                    $object = Mixin\insert_or_update($this->table, $post);
+                    $object = HellCrud::insert_or_update($this->table, $post);
                     if (!intval($object)){
                         $this->error($object);
                     }

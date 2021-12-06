@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitOperationServiceModel extends Model
 {
@@ -26,12 +28,12 @@ class VisitOperationServiceModel extends Model
                 return $this->{$_GET['form']}();
                 
             }else{
-                Mixin\error('report_permissions_false');
+                Hell::error('report_permissions_false');
                 exit;
             }
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
 
     }
@@ -212,7 +214,7 @@ class VisitOperationServiceModel extends Model
                 $post['item_cost'] = (isset($this->is_foreigner) and $this->is_foreigner) ? $serv['price_foreigner'] : $serv['price'];
     
                 for ($i=0; $i < $this->post['count'][$key]; $i++) {
-                    $object = Mixin\insert($this->table, $post);
+                    $object = HellCrud::insert($this->table, $post);
                     if (!intval($object)){
                         $this->error($object);
                         $db->rollBack();
@@ -231,8 +233,8 @@ class VisitOperationServiceModel extends Model
         // if (isset($this->post['division_id']) and is_array($this->post['division_id']) and empty($this->post['direction']) and !$this->post['service']) {
         //     $this->error("Не назначены услуги!");
         // }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

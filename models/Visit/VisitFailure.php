@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitFailure extends Model
 {
@@ -132,13 +133,13 @@ class VisitFailure extends Model
                     
                     $db->beginTransaction();
                     // Visit prices 
-                    $object = Mixin\delete($this->_transactions, $pk, "visit_service_id");
+                    $object = HellCrud::delete($this->_transactions, $pk, "visit_service_id");
                     if(!intval($object)){
                         $this->error("Произошла ошибка на сервере!");
                         $db->rollBack();
                     }
                     // Visit service 
-                    $object = Mixin\delete($this->table, $pk);
+                    $object = HellCrud::delete($this->table, $pk);
                     if(!intval($object)){
                         $this->error("Произошла ошибка на сервере!");
                         $db->rollBack();
@@ -166,7 +167,7 @@ class VisitFailure extends Model
                 if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
                     
                     // Visit service 
-                    $object = Mixin\delete($this->table, $pk);
+                    $object = HellCrud::delete($this->table, $pk);
                     if(!intval($object)){
                         $this->error("Произошла ошибка на сервере!");
                         $db->rollBack();
@@ -177,7 +178,7 @@ class VisitFailure extends Model
 
                 }else{
 
-                    $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
+                    $object = HellCrud::update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
                     if (!intval($object)){
                         $this->error($object);
                     }

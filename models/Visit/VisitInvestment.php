@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitInvestmentModel extends Model
 {
@@ -16,7 +18,7 @@ class VisitInvestmentModel extends Model
             $this->post['type'] = $_GET['type'];
             return $this->{$_GET['form']}($object['id']);
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
 
     }
@@ -180,8 +182,8 @@ class VisitInvestmentModel extends Model
             }
         }
         unset($this->post['price_type']);
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

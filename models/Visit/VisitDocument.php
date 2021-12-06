@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitDocumentModel extends Model
 {
@@ -77,19 +79,19 @@ class VisitDocumentModel extends Model
         if ( isset($this->file['extension']) ) $this->post['file_extension'] = $this->file['extension'];
         if ( isset($this->file['size']) ) $this->post['file_size'] = $this->file['size'];
         if ( isset($this->file['type']) ) $this->post['file_format'] = $this->file['type'];
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 
     public function delete(int $pk)
     {
         $this->file_clean('location', $pk);
-        $object = Mixin\delete($this->table, $pk);
+        $object = HellCrud::delete($this->table, $pk);
         if ($object) {
             $this->success();
         } else {
-            Mixin\error('404');
+            Hell::error('404');
             exit;
         }
 

@@ -1,6 +1,8 @@
 <?php
 
-use Warframe\Model;
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class VisitOperationMemberModel extends Model
 {
@@ -28,7 +30,7 @@ class VisitOperationMemberModel extends Model
                         $this->set_post($data);
                         return $this->{$_GET['form']}($data['id']);
                     } else {
-                        Mixin\error('report_permissions_false');
+                        Hell::error('report_permissions_false');
                         exit;
                     }
                 }else{
@@ -36,12 +38,12 @@ class VisitOperationMemberModel extends Model
                 }
                 
             }else{
-                Mixin\error('report_permissions_false');
+                Hell::error('report_permissions_false');
                 exit;
             }
 
         }else{
-            Mixin\error('report_permissions_false');
+            Hell::error('report_permissions_false');
         }
 
     }
@@ -183,8 +185,8 @@ class VisitOperationMemberModel extends Model
         if (isset($this->post['member_operator']) and $this->post['member_operator']) $this->post['member_operator'] = 1;
         else $this->post['member_operator'] = null;
         $this->post['member_price'] = (isset($this->post['member_price'])) ? str_replace(',', '', $this->post['member_price']) : 0;
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
         return True;
     }
 

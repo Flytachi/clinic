@@ -1,6 +1,7 @@
 <?php
 
-use Warframe\Model;
+use Mixin\HellCrud;
+use Mixin\Model;
 
 class WarehouseCustomPanel extends Model
 {
@@ -236,7 +237,7 @@ class WarehouseCustomPanel extends Model
     public function change_table()
     {
         global $db, $classes;
-        $search = Mixin\clean($this->post['search']);
+        $search = HellCrud::clean($this->post['search']);
 
         foreach ($db->query("SELECT DISTINCT wc.item_name_id, win.name FROM $this->table wc LEFT JOIN $this->_name win ON (win.id=wc.item_name_id) WHERE wc.branch_id = {$this->post['branch_id']} AND wc.warehouse_id = {$this->post['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND LOWER(win.name) LIKE LOWER('%$search%')") as $row){
             $this->i++;
@@ -395,8 +396,8 @@ class WarehouseCustomPanel extends Model
         if ($qty_sold > 0) {
 
             // Update
-            Mixin\update($table, array('item_qty' => $qty_sold), $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
+            HellCrud::update($table, array('item_qty' => $qty_sold), $item['id']);
+            HellCrud::insert($this->_bypass_transactions, array(
                 'branch_id' => $app->branch_id,
                 'visit_id' => $app->visit_id,
                 'responsible_id' => $session->session_id,
@@ -410,8 +411,8 @@ class WarehouseCustomPanel extends Model
 
         }elseif ($qty_sold == 0) {
             // Delete
-            Mixin\delete($table, $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
+            HellCrud::delete($table, $item['id']);
+            HellCrud::insert($this->_bypass_transactions, array(
                 'branch_id' => $app->branch_id,
                 'visit_id' => $app->visit_id,
                 'responsible_id' => $session->session_id,
