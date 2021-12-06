@@ -1,4 +1,9 @@
 <?php
+
+use Mixin\Hell;
+use Mixin\HellCrud;
+use Mixin\HellTable;
+
 require_once 'make.php';
 
 /**
@@ -190,11 +195,11 @@ class __Cfg
 
     public function create_setting()
     {
-        require_once dirname(__DIR__).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/Credo/__load__.php';
 
         if (!file_exists(dirname(__DIR__, 2)."/$this->setting_name")) {
             $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
-            fwrite($fp, Mixin\array_to_ini($this->default_configuratuons));
+            fwrite($fp, Hell::array_to_ini($this->default_configuratuons));
             echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
             return fclose($fp);
         }
@@ -204,14 +209,14 @@ class __Cfg
 
     public function edit_key()
     {
-        require_once dirname(__DIR__).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/Credo/__load__.php';
         
         if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
             $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
             $code = json_decode(zlib_decode(hex2bin($cfg)), true);
 
             $fp = fopen(dirname(__DIR__, 2)."/$this->setting_name", "x");
-            fwrite($fp, Mixin\array_to_ini($code));
+            fwrite($fp, Hell::array_to_ini($code));
             fclose($fp);
             unlink(dirname(__DIR__, 2)."/$this->cfg_name");
             echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
@@ -223,12 +228,12 @@ class __Cfg
 
     public function setting_show()
     {
-        require_once dirname(__DIR__).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/Credo/__load__.php';
 
         if (file_exists(dirname(__DIR__, 2)."/$this->cfg_name")) {
             $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/$this->cfg_name") );
             $code = json_decode(zlib_decode(hex2bin($cfg)), true);
-            print_r(Mixin\array_to_ini($code));
+            print_r(Hell::array_to_ini($code));
             return 1;
         }
         echo "\033[33m". " $this->cfg_name не существует!\n";
@@ -325,8 +330,6 @@ class __Db
     private String $path_base = "tools/base"; 
     private String $path_data = "tools/data"; 
     private String $format = "json";
-    private String $DB_HEADER = "CREATE TABLE IF NOT EXISTS";
-    private String $DB_FOOTER = " ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
 
     function __construct($value = null, $name = null)
@@ -361,7 +364,6 @@ class __Db
             }elseif($this->argument == "delete") {
                 $this->delete();
             }elseif($this->argument == "seed") {
-                $this->seed_table = ($this->file_name) ? $this->file_name : null;
                 $this->seed();
             }else{
                 echo "\033[31m"." Нет такого аргумента.\n";
@@ -377,9 +379,9 @@ class __Db
     {
         global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
-        require_once dirname(__DIR__).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/Credo/__load__.php';
         
-        $_delete = Mixin\T_DELETE_database();
+        $_delete = HellTable::T_DELETE_database();
         if ($_delete == 200) {
             echo "\033[32m"." База данных успешно удалена.\n";
             return 1;
@@ -390,13 +392,13 @@ class __Db
     {
         global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
-        require_once dirname(__DIR__).'/functions/mixin.php';
-        if (isset($this->file_name) and $this->file_name) {
-            $_clean = Mixin\T_flush($this->file_name);
+        require_once dirname(__DIR__).'/Credo/__load__.php';
+        if (isset($this->file_name)) {
+            $_clean = HellTable::T_flush($this->file_name);
             echo "\033[32m"." Таблица '$this->file_name' успешно очищена.\n";
             return 1;
         }else {
-            $_clean = Mixin\T_FLUSH_database();
+            $_clean = HellTable::T_FLUSH_database();
             if ($_clean == 200) {
                 echo "\033[32m"." База данных успешно очищена.\n";
                 return 1;
@@ -409,7 +411,7 @@ class __Db
     {
         global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
-        require_once dirname(__DIR__).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/Credo/__load__.php';
 
         try {
             foreach (json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_base/Index_Tables.$this->format"), 1) as $table) {
@@ -429,74 +431,6 @@ class __Db
             echo "\033[31m"." Во время миграции произошла ошибка.\n";
         }
     }
-
-    /*
-    public function generate()
-    {
-        global $db, $ini;
-        require_once dirname(__DIR__).'/functions/connection.php';
-        require_once dirname(__DIR__, 2).'/tools/variables.php';
-        $i = 0;
-
-        foreach ($db->query("SHOW TABlES") as $table) {
-            $i++;
-            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
-            $column = "";
-            $keys = "";
-
-            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
-                $column .= "`{$col['Field']}` {$col['Type']}";
-
-                if ($col['Null'] == "YES") {
-                    $column .= " DEFAULT";
-                    if (is_null($col['Default'])) {
-                        $column .= " NULL";
-                    }else {
-                        $column .= " ".$col['Default'];
-                    }
-                }else {
-                    $column .= " NOT NULL";
-                    if ($col['Default']) {
-                        $column .= " DEFAULT ".$col['Default'];
-                    }
-                }
-
-                if ($col['Extra']) {
-                    $column .= " ".strtoupper($col['Extra']);
-                }
-
-                switch ($col['Key']) {
-                    case "PRI":
-                        $keys .= "PRIMARY KEY (`{$col['Field']}`)";
-                        $keys .=",";
-                        break;
-                    case "UNI":
-                        $keys .= "UNIQUE KEY `{$col['Field']}` (`{$col['Field']}`)";
-                        $keys .=",";
-                        break;
-                    case "MUL":
-                        if ( isset($MUL) ) {
-                            $keys .= "UNIQUE KEY {$MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
-                            $keys .=",";
-                        }
-                        break;
-                }
-
-                $column .= ",";
-                unset($col);
-            }
-            $column_keys = substr($column.$keys,0,-1);
-
-            $sql .= $column_keys.")";
-            $sql .= $this->DB_FOOTER.";";
-            unset($column);
-            unset($keys);
-
-            echo "\033[32m"." Table_{$table['Tables_in_'.$ini['DATABASE']['NAME']]}.\n";
-            $this->create_file(json_encode($sql), $table['Tables_in_'.$ini['DATABASE']['NAME']]);
-        }
-    }
-    */
 
     public function generate()
     {
@@ -526,28 +460,26 @@ class __Db
         global $db; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/tag.php';
-        require_once dirname(__DIR__).'/functions/mixin.php';
+        require_once dirname(__DIR__).'/Credo/__load__.php';
 
-        if (!$this->seed_table) {
+        if (isset($this->file_name)) {
 
-            foreach (glob(dirname(__DIR__, 2)."/$this->path_data/*.$this->format") as $file_name) {
-                $table = pathinfo($file_name)['filename'];
-                $data = json_decode(file_get_contents($file_name), true);
-    
-                $i = 0;
-                foreach ($data as $row) {
-                    $i++;
-                    Mixin\insert($table, $row);
-                }
-                echo "\033[32m"." Таблица $table ($i).\n";
+            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_data/$this->file_name.$this->format"), true);
+            foreach ($data as $row) {
+                HellCrud::insert($this->file_name, $row);
             }
 
         }else{
 
-            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_seed/$this->seed_table.$this->format"), true);
-    
-            foreach ($data as $row) {
-                Mixin\insert($this->seed_table, $row);
+            foreach (glob(dirname(__DIR__, 2)."/$this->path_data/*.$this->format") as $file_name) {
+                $table = pathinfo($file_name)['filename'];
+                $data = json_decode(file_get_contents($file_name), true);
+                $i = 0;
+                foreach ($data as $row) {
+                    $i++;
+                    HellCrud::insert($table, $row);
+                }
+                echo "\033[32m"." Таблица $table ($i).\n";
             }
 
         }
@@ -561,72 +493,14 @@ class __Db
         global $db, $ini;
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__, 2).'/tools/variables.php';
-        $i = 0;
 
         $self_base=$migrate_base=[];
-        foreach ($db->query("SHOW TABlES") as $table) {
-            $i++;
-            $sql = $this->DB_HEADER." `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}` (";
-            $column = "";
-            $keys = "";
+        foreach ($db->query("SHOW TABLES") as $table) $self_base[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+        $migrate_base[] = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_base/Index_Tables.$this->format"), 1);
 
-            foreach ($db->query("DESCRIBE {$table['Tables_in_'.$ini['DATABASE']['NAME']]}") as $col) {
-                $column .= "`{$col['Field']}` {$col['Type']}";
-
-                if ($col['Null'] == "YES") {
-                    $column .= " DEFAULT";
-                    if (is_null($col['Default'])) {
-                        $column .= " NULL";
-                    }else {
-                        $column .= " ".$col['Default'];
-                    }
-                }else {
-                    $column .= " NOT NULL";
-                    if ($col['Default']) {
-                        $column .= " DEFAULT ".$col['Default'];
-                    }
-                }
-
-                if ($col['Extra']) {
-                    $column .= " ".strtoupper($col['Extra']);
-                }
-
-                switch ($col['Key']) {
-                    case "PRI":
-                        $keys .= "PRIMARY KEY (`{$col['Field']}`)";
-                        $keys .=",";
-                        break;
-                    case "UNI":
-                        $keys .= "UNIQUE KEY `{$col['Field']}` (`{$col['Field']}`)";
-                        $keys .=",";
-                        break;
-                    case "MUL":
-                        if ( isset($MUL) ) {
-                            $keys .= "UNIQUE KEY {$MUL[$table['Tables_in_'.$ini['DATABASE']['NAME']]]} USING BTREE";
-                            $keys .=",";
-                        }
-                        break;
-                }
-
-                $column .= ",";
-                unset($col);
-            }
-            $column_keys = substr($column.$keys,0,-1);
-
-            $sql .= $column_keys.")";
-            $sql .= $this->DB_FOOTER.";";
-            unset($column);
-            unset($keys);
-            $self_base[]= $sql;
-        }
-
-        foreach (glob(dirname(__DIR__, 2)."/$this->path_base/*.$this->format") as $path) {
-            $migrate_base[] = json_decode(file_get_contents($path), 1);
-        }
-
-        if ($diff = array_diff($self_base, $migrate_base)) {
-            print_r($diff);
-        }
+        // if ($diff = array_diff($self_base, $migrate_base)) {
+        //     print_r($diff);
+        // }
     }
 
     public function help()
