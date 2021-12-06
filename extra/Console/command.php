@@ -507,7 +507,7 @@ class __Db
 
         if ($this->file_name) {
 
-            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_seed/$this->file_name.$this->format"), true);
+            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_data/$this->file_name.$this->format"), true);
     
             foreach ($data as $row) {
                 Mixin\insert($this->file_name, $row);
