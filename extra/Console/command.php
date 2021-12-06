@@ -357,12 +357,10 @@ class __Db
             }elseif($this->argument == "compare"){
                 $this->compare();
             }elseif($this->argument == "clean") {
-                $this->clean_table = ($this->file_name) ? $this->file_name : null;
                 $this->clean();
             }elseif($this->argument == "delete") {
                 $this->delete();
             }elseif($this->argument == "seed") {
-                $this->seed_table = ($this->file_name) ? $this->file_name : null;
                 $this->seed();
             }else{
                 echo "\033[31m"." Нет такого аргумента.\n";
@@ -392,16 +390,16 @@ class __Db
         global $db, $ini; 
         require_once dirname(__DIR__).'/functions/connection.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
-        if (!$this->clean_table) {
+        if ($this->file_name) {
+            $_clean = Mixin\T_flush($this->file_name);
+            echo "\033[32m"." Таблица '$this->file_name' успешно очищена.\n";
+            return 1;
+        }else {
             $_clean = Mixin\T_FLUSH_database();
             if ($_clean == 200) {
                 echo "\033[32m"." База данных успешно очищена.\n";
                 return 1;
             }
-        }else {
-            $_clean = Mixin\T_flush($this->clean_table);
-            echo "\033[32m"." Таблица '$this->clean_table' успешно очищена.\n";
-            return 1;
         }
        
     }
@@ -507,8 +505,16 @@ class __Db
         require_once dirname(__DIR__).'/functions/tag.php';
         require_once dirname(__DIR__).'/functions/mixin.php';
 
-        if (!$this->seed_table) {
+        if ($this->file_name) {
 
+            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_seed/$this->file_name.$this->format"), true);
+    
+            foreach ($data as $row) {
+                Mixin\insert($this->file_name, $row);
+            }
+            
+        }else{
+            
             foreach (glob(dirname(__DIR__, 2)."/$this->path_data/*.$this->format") as $file_name) {
                 $table = pathinfo($file_name)['filename'];
                 $data = json_decode(file_get_contents($file_name), true);
@@ -520,15 +526,7 @@ class __Db
                 }
                 echo "\033[32m"." Таблица $table ($i).\n";
             }
-
-        }else{
-
-            $data = json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_seed/$this->seed_table.$this->format"), true);
-    
-            foreach ($data as $row) {
-                Mixin\insert($this->seed_table, $row);
-            }
-
+            
         }
 
         echo "\033[32m"." Данные успешно внесены.\n";
