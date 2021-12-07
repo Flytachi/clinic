@@ -451,7 +451,7 @@ class VisitPriceModel extends Model
                 $post['sale'] = $this->sale_bed;
             }
         }
-        if ($this->post['price_cash'])
+        if ($this->post['price_cash'] > 0)
         {
             if ($this->post['price_cash'] >= $row['item_cost']) {
                 $this->post['price_cash'] -= $row['item_cost'];
@@ -478,7 +478,7 @@ class VisitPriceModel extends Model
                 }
             }
         }
-        elseif ($this->post['price_card'])
+        elseif ($this->post['price_card'] > 0)
         {
             if ($this->post['price_card'] >= $row['item_cost']) {
                 $this->post['price_card'] -= $row['item_cost'];
@@ -503,7 +503,7 @@ class VisitPriceModel extends Model
                 $this->post['price_transfer'] -= $row['item_cost'];
                 $post['price_transfer'] = $row['item_cost'];
             }else {
-                $this->error("Ошибка в price {$this->post['price_transfer']} => {$row['item_cost']}");
+                $this->error("Ошибка в price transfer => transfer");
             }
         }
         if (empty($this->pharm_cost)) {
