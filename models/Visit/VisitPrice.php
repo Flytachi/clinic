@@ -503,7 +503,7 @@ class VisitPriceModel extends Model
                 $this->post['price_transfer'] -= $row['item_cost'];
                 $post['price_transfer'] = $row['item_cost'];
             }else {
-                $this->error("Ошибка в price transfer => transfer");
+                $this->error("Ошибка в price {$this->post['price_transfer']} => {$row['item_cost']}");
             }
         }
         if (empty($this->pharm_cost)) {
