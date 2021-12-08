@@ -3,7 +3,6 @@
 namespace Mixin;
 
 // Credo
-
 abstract class Credo implements CredoInterface
 {
     /**
@@ -441,7 +440,6 @@ abstract class Credo implements CredoInterface
 }
 
 // Model
-
 abstract class Model extends Credo implements ModelInterface
 {
     use ModelTrait, ModelTraitResponce;
@@ -690,7 +688,6 @@ abstract class Model extends Credo implements ModelInterface
 }
 
 // Session
-
 abstract class Session
 {
     /**

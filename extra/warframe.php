@@ -162,7 +162,6 @@ function date_f($item = null, $format = null){
     return date($format, $item);
 }
 
-
 function num_word($value, $words, $show = true) 
 {
     $num = $value % 100;
@@ -177,7 +176,6 @@ function num_word($value, $words, $show = true)
     }
     return $out;
 }
-
 
 function array_multisort_value(){
     $args = func_get_args();
@@ -195,7 +193,6 @@ function array_multisort_value(){
     call_user_func_array('array_multisort', $args);
     return array_pop($args);
 }
-
 
 function minToStr($mins)
 {

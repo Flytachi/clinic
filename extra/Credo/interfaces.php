@@ -33,7 +33,6 @@ interface CredoInterface
     public function Join(String $context = null);
     public function Where(Mixed $context = null);
     public function Order(String $context = null);
-
     public function get();
     public function getId();
     public function getSql();
