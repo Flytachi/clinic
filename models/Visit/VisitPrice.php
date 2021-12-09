@@ -467,7 +467,7 @@ class VisitPriceModel extends Model
                     $post['price_card'] = $this->post['price_card'];
                     $this->post['price_card'] = 0;
                     $temp = round($temp - $post['price_card']);
-                    if ($this->post['price_transfer'] >= $temp) {
+                    if ($this->post['price_transfer']+1 >= $temp) {
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
                     }else {
@@ -487,7 +487,7 @@ class VisitPriceModel extends Model
                 $post['price_card'] = $this->post['price_card'];
                 $this->post['price_card'] = 0;
                 $temp = round($row['item_cost'] - $post['price_card']);
-                if ($this->post['price_transfer'] >= $temp) {
+                if ($this->post['price_transfer']+1 >= $temp) {
                     $this->post['price_transfer'] -= $temp;
                     $post['price_transfer'] = $temp;
                 }else {
@@ -499,7 +499,7 @@ class VisitPriceModel extends Model
         }
         else
         {
-            if ($this->post['price_transfer'] >= $row['item_cost']) {
+            if ($this->post['price_transfer']+1 >= $row['item_cost']) {
                 $this->post['price_transfer'] -= $row['item_cost'];
                 $post['price_transfer'] = $row['item_cost'];
             }else {
