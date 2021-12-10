@@ -6,6 +6,7 @@ use Mixin\Model;
 
 class BedModel extends Model
 {
+    use ResponceRender;
     public $table = 'beds';
     public $_buildings = 'buildings';
     public $_wards = 'wards';
@@ -14,10 +15,7 @@ class BedModel extends Model
     public function form($pk = null)
     {
         global $db, $classes, $session;
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
+        is_message();
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -62,10 +60,12 @@ class BedModel extends Model
 
             <div class="form-group row">
 
-                <div class="col-6">
-                    <label>Койка:</label>
-                    <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $this->value('bed') ?>">
-                </div>
+                <?php if(!$pk): ?>
+                    <div class="col-6">
+                        <label>Кол-во коек:</label>
+                        <input type="text" class="form-control" name="bed" placeholder="Введите кол-во" required value="<?= $this->value('bed') ?>">
+                    </div>
+                <?php endif; ?>
     
                 <div class="col-6">
                     <label>Тип:</label>
@@ -134,18 +134,34 @@ class BedModel extends Model
         global $db;
         $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         if($object){
-            $this->set_post($object);
-            if ( isset($_GET['type']) ) {
-                $object['user_id'] = null;
+            if (is_null($object['client_id'])) {
                 $this->set_post($object);
-                return $this->update();
+                return $this->{$_GET['form']}($object['id']);
             }
-            return $this->form($object['id']);
         }else{
             Hell::error('404');
             exit;
         }
 
+    }
+
+    public function save()
+    {
+        /**
+         * Операция создания записи в базе!
+         */
+        if($this->clean()){
+            $counts = $this->post['bed'];
+            for ($i=1; $i <= $counts; $i++) {
+                $this->post['bed'] = $i;
+                $object = HellCrud::insert($this->table, $this->post);
+                if (!intval($object)){
+                    $this->error($object);
+                    exit;
+                }
+            }
+            $this->success();
+        }
     }
 
     public function clean()
@@ -165,27 +181,6 @@ class BedModel extends Model
         return True;
     }
 
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
-    }
 }
 
 ?>

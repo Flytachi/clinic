@@ -3,12 +3,11 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Услуги";
 
-$tb = (new ServiceModel)->tb('sc');
-$tb->set_data("sc.*, ds.title")->additions("LEFT JOIN divisions ds ON(ds.id=sc.division_id)");
-$search = $tb->get_serch();
+$tb = (new ServiceModel)->as('sc')->Data("sc.*, ds.title");
+$tb->Join("LEFT JOIN divisions ds ON(ds.id=sc.division_id)");
+$search = $tb->getSearch();
 $where_search = array("sc.branch_id = $session->branch", "sc.branch_id = $session->branch AND ( sc.code LIKE '%$search%' OR LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') )");
-
-$tb->where_or_serch($where_search)->order_by("sc.level ASC, ds.title ASC, sc.code ASC, sc.name ASC")->set_limit(20);
+$tb->Where($where_search)->Order("sc.level ASC, ds.title ASC, sc.code ASC, sc.name ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,9 +46,9 @@ $tb->where_or_serch($where_search)->order_by("sc.level ASC, ds.title ASC, sc.cod
 
 						<div class="row">
 
-							<div class="col-md-9" id="form_card"><?php (new ServiceModel)->form(); ?></div>
+							<div class="col-md-9" id="form_card"><?php $tb->form(); ?></div>
 
-							<div class="col-md-3"><?php (new ServiceModel)->form_template(); ?></div>
+							<div class="col-md-3"><?php $tb->form_template(); ?></div>
 
 						</div>
 
@@ -91,7 +90,7 @@ $tb->where_or_serch($where_search)->order_by("sc.level ASC, ds.title ASC, sc.cod
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php foreach($tb->get_table(1) as $row): ?>
+	                              	<?php foreach($tb->list(1) as $row): ?>
                                   		<tr>
 											<td><?= $row->count ?></td>
 	                                      	<td><?= $PERSONAL[$row->level] ?></td>
@@ -144,7 +143,7 @@ $tb->where_or_serch($where_search)->order_by("sc.level ASC, ds.title ASC, sc.cod
 	                      	</table>
 	                  	</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 						
 	              	</div>
 

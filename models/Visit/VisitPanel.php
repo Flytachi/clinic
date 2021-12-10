@@ -284,9 +284,6 @@ class VisitPanel extends VisitModel
 
         </form>
 
-        <div class="modal-footer">
-            <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
-        </div>
         <?php
         $this->jquery_init();
         ?>

@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Койки";
 
-$tb = (new BedModel)->tb();
-$search = $tb->get_serch();
+$tb = (new BedModel);
+$search = $tb->getSearch();
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(building) LIKE LOWER('%$search%') OR LOWER(ward) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->set_limit(20);
+$tb->Where($where_search)->Order("building, floor, ward, bed ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +47,7 @@ $tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->
                     </div>
 
                     <div class="card-body" id="form_card">
-		    			<?php (new BedModel)->form(); ?>
+		    			<?php $tb->form(); ?>
 		          	</div>
 
                 </div>
@@ -82,7 +81,7 @@ $tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($tb->get_table() as $row): ?>
+                                    <?php foreach ($tb->list() as $row): ?>
 										<tr>
 				                            <td><?= $row->building ?></td>
 				                            <td><?= $row->floor ?> этаж</td>
@@ -101,7 +100,7 @@ $tb->where_or_serch($where_search)->order_by("building, floor, ward, bed ASC")->
                             </table>
                         </div>
 
-                        <?php $tb->get_panel(); ?>
+                        <?php $tb->panel(); ?>
 
                     </div>
 

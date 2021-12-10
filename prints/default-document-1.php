@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../tools/warframe.php';
 
 $code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
@@ -6,10 +9,13 @@ $qr = $_SERVER['HTTP_HOST']."/api/document?code=$code";
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT vs.client_id, vs.responsible_id, c.birth_date, vs.service_title, vs.service_report, vs.accept_date FROM visit_services vs LEFT JOIN clients c ON(c.id=vs.client_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
-    if (!$docs) Mixin\error('404');
+    if (!$docs) Hell::error('404');
 }elseif (isset($_GET['pk']) and $_GET['pk'] == "template" ) {
     $docs = new stdClass();
     $docs->client_id = 1;
+    $docs->first_name = "Temp";
+    $docs->last_name = "Temp";
+    $docs->father_name = "Temp";
     $docs->birth_date = date("Y-m-d");
     $docs->accept_date = date("Y-m-d H-i-s");
     $docs->responsible_id = 1;
@@ -33,7 +39,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         nobis, libero aliquam deserunt nam maxime ipsa quos quas unde cupiditate.
         ";
 }else{
-    Mixin\error('404');
+    Hell::error('404');
 }
 ?>
 <!DOCTYPE html>
@@ -85,7 +91,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         <div class="row">
             <div class="col-8 text-left h3">
-                <b>Ф.И.О.: </b><?= client_name($docs->client_id) ?><br>
+                <b>Ф.И.О.: </b><?= ($_GET['pk'] == "template") ? client_name($docs) : client_name($docs->client_id) ?><br>
                 <b>ID Пациента: </b><?= addZero($docs->client_id) ?><br>
                 <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
                 <b>Дата исследования: </b><?= ($docs->accept_date) ? date_f($docs->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>

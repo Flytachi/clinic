@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth([21,23]);
 $header = "Врачи операторы";
 
-$tb = (new GuideModel)->tb();
-$search = $tb->get_serch();
+$tb = (new GuideModel);
+$search = $tb->getSearch();
 $where_search = array(null, "LOWER(name) LIKE LOWER('%$search%')");
-
-$tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
+$tb->Where($where_search)->Order("name ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +48,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new GuideModel)->form_regy(); ?>
+		    			<?php $tb->form_regy(); ?>
 		          	</div>
 
 	        	</div>
@@ -82,7 +81,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-								  	<?php foreach($tb->get_table(1) as $row): ?>
+								  	<?php foreach($tb->list(1) as $row): ?>
                                   		<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->name ?></td>
@@ -100,7 +99,7 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
 	                      	</table>
 	                  	</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 	              	</div>
 

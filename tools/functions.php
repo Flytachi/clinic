@@ -189,10 +189,13 @@ function icd($pk = null, $title = 'code,decryption')
     return $stmt;
 }
 
-function client_name($id = null) {
+function client_name($obj = null) {
     global $db;
-    $stmt = $db->query("SELECT first_name, last_name, father_name FROM clients WHERE id = $id")->fetch(PDO::FETCH_OBJ);
-    return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
-    
+    if (is_object($obj)) return ucwords($obj->last_name." ".$obj->first_name." ".$obj->father_name);
+    if (is_array($obj)) return ucwords($obj['last_name']." ".$obj['first_name']." ".$obj['father_name']);
+    else {
+        $stmt = $db->query("SELECT first_name, last_name, father_name FROM clients WHERE id = $obj")->fetch(PDO::FETCH_OBJ);
+        return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
+    }   
 }
 ?>

@@ -3,8 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Койки";
 
-$tb = (new BedTypeModel)->tb();
-$tb->where("branch_id = $session->branch")->set_limit(20);
+$tb = (new BedTypeModel)->Where("branch_id = $session->branch");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +44,7 @@ $tb->where("branch_id = $session->branch")->set_limit(20);
                     </div>
 
                     <div class="card-body" id="form_card">
-		    			<?php (new BedTypeModel)->form(); ?>
+		    			<?php $tb->form(); ?>
 		          	</div>
 
 
@@ -74,7 +73,7 @@ $tb->where("branch_id = $session->branch")->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($tb->get_table() as $row): ?>
+                                    <?php foreach ($tb->list() as $row): ?>
 										<tr>
 				                            <td><?= $row->name ?></td>
 				                            <td class="text-right"><?= number_format($row->price) ?></td>

@@ -5,6 +5,7 @@ use Mixin\HellCrud;
 
 class ServiceModel extends Model
 {
+    use ResponceRender;
     public $table = 'services';
     public $table_label = array(
         'DIS_mark' => 'Отдел',
@@ -42,10 +43,7 @@ class ServiceModel extends Model
     public function form($pk = null)
     {
         global $db, $PERSONAL, $classes, $session;
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
+        is_message();
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -207,7 +205,7 @@ class ServiceModel extends Model
             
             if ($post = $this->clean_excel($post)) {
                 $post['branch_id'] = $this->post['branch_id'];
-                $select = $this->tb()->where("branch_id = {$this->post['branch_id']} AND code = '{$post['code']}'")->get_row();
+                $select = $this->Where("branch_id = {$this->post['branch_id']} AND code = '{$post['code']}'")->get();
                 if ($select) $object = HellCrud::update($this->table, $post, $select->id);
                 else $object = HellCrud::insert($this->table, $post);
                 
@@ -221,27 +219,6 @@ class ServiceModel extends Model
         $this->success();
     }
 
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> Введены некорректные данные!</span>
-        </div>
-        ';
-        render();
-    }
 }
 
 ?>

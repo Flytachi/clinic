@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Палаты";
 
-$tb = (new BuildingModel)->tb();
-$search = $tb->get_serch();
+$tb = (new BuildingModel);
+$search = $tb->getSearch();
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(name) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->set_limit(20);
+$tb->Where($where_search)->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +47,7 @@ $tb->where_or_serch($where_search)->set_limit(20);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new BuildingModel)->form(); ?>
+		    			<?php $tb->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -79,7 +78,7 @@ $tb->where_or_serch($where_search)->set_limit(20);
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-                                    <?php foreach ($tb->get_table() as $row): ?>
+                                    <?php foreach ($tb->list() as $row): ?>
 										<tr>
 				                            <td><?= $row->name ?></td>
 				                            <td><?= $row->floors ?> этажей</td>
@@ -95,7 +94,7 @@ $tb->where_or_serch($where_search)->set_limit(20);
 	                      	</table>
 	                  	</div>
 
-                        <?php $tb->get_panel(); ?>
+                        <?php $tb->panel(); ?>
 
 	              	</div>
 

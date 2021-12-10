@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Класификация персонала";
 
-$tb = (new DivisionModel)->tb();
-$search = $tb->get_serch();
+$tb = (new DivisionModel);
+$search = $tb->getSearch();
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(title) LIKE LOWER('%$search%') OR LOWER(name) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(20);
+$tb->Where($where_search)->Order("level, title ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,7 +45,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(20);
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php (new DivisionModel)->form(); ?>
+                      	<?php $tb->form(); ?>
                   	</div>
 
             	</div>
@@ -80,7 +79,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($tb->get_table(1) as $row): ?>
+                                    <?php foreach($tb->list(1) as $row): ?>
                                         <tr>
                                             <td><?= $row->count ?></td>
                                             <td><?= $row->mark ?></td>
@@ -99,7 +98,7 @@ $tb->where_or_serch($where_search)->order_by("level, title ASC")->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
                     </div>
 

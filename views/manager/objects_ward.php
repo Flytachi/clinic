@@ -3,12 +3,11 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Палаты";
 
-$tb = (new WardModel)->tb('w');
-$search = $tb->get_serch();
-$tb->set_data("w.id, bg.name, ds.title, w.floor, w.ward")->additions("LEFT JOIN buildings bg ON(bg.id=w.building_id) LEFT JOIN divisions ds ON(ds.id=w.division_id)");
+$tb = (new WardModel)->as('w')->Data("w.id, bg.name, ds.title, w.floor, w.ward");
+$search = $tb->getSearch();
+$tb->Join("LEFT JOIN buildings bg ON(bg.id=w.building_id) LEFT JOIN divisions ds ON(ds.id=w.division_id)");
 $where_search = array("w.branch_id = $session->branch", "w.branch_id = $session->branch AND (LOWER(bg.name) LIKE LOWER('%$search%') OR LOWER(ds.title) LIKE LOWER('%$search%') OR LOWER(w.ward) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->set_limit(20);
+$tb->Where($where_search)->Order("bg.name, w.floor, w.ward ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +48,7 @@ $tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->se
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new WardModel)->form(); ?>
+		    			<?php $tb->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -85,7 +84,7 @@ $tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->se
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-								  	<?php foreach ($tb->get_table(1) as $row): ?>
+								  	<?php foreach ($tb->list(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
 				                            <td><?= $row->name ?></td>
@@ -106,7 +105,7 @@ $tb->where_or_serch($where_search)->order_by("bg.name, w.floor, w.ward ASC")->se
 	                      	</table>
 	                  	</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 	              	</div>
 

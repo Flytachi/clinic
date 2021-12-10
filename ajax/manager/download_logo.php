@@ -1,5 +1,7 @@
 <?php
 
+use Mixin\HellCrud;
+
 foreach ($_FILES as $KEY => $FILE) {
 
     if ( $FILE['name'] ) {
@@ -23,7 +25,7 @@ foreach ($_FILES as $KEY => $FILE) {
                 if ($select) {
                     unlink($_SERVER['DOCUMENT_ROOT'].DIR.$select);
                 }
-                $logo = Mixin\insert_or_update("corp_constants", array('const_label' => $KEY, 'const_value' => "/storage/images/".$newFileName), "const_label");
+                $logo = HellCrud::insert_or_update("corp_constants", array('const_label' => $KEY, 'const_value' => "/storage/images/".$newFileName), "const_label");
                 if(!(intval($logo) >= 0)){
                     $_SESSION['message'] = '
                     <div class="alert alert-danger" role="alert">

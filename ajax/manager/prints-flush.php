@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\HellCrud;
+
 require_once '../../tools/warframe.php';
 $session->is_auth(3);
 
@@ -8,7 +11,7 @@ if ( isset($_GET['flush']) and $_GET['flush'] == true ) {
         if ( preg_match('/\blogotype\b/', $key) and preg_match('/\bstorage\b/', $value) ) {
             unlink($_SERVER['DOCUMENT_ROOT'].DIR.$value);
         }
-        Mixin\delete("company_constants", $key, "const_label");
+        HellCrud::delete("company_constants", $key, "const_label");
     }
     $_SESSION['message'] .= '
     <div class="alert alert-primary" role="alert">

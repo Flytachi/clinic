@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Мульти-аккаунт";
 
-$tb = (new MultiAccountModel)->tb();
-$search = $tb->get_serch();
+$tb = (new MultiAccountModel);
+$search = $tb->getSearch();
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (LOWER(slot) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->order_by("slot ASC")->set_limit(20);
+$tb->Where($where_search)->Order("slot ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +46,7 @@ $tb->where_or_serch($where_search)->order_by("slot ASC")->set_limit(20);
 		          	</div>
 
 		          	<div class="card-body" id="form_card">
-		    			<?php (new MultiAccountModel)->form(); ?>
+		    			<?php $tb->form(); ?>
 		          	</div>
 
 	        	</div>
@@ -73,16 +72,14 @@ $tb->where_or_serch($where_search)->order_by("slot ASC")->set_limit(20);
 	                          	<thead>
 	                              	<tr class="<?= $classes['table-thead'] ?>">
 										<th>Slot</th>
-                                        <th>id</th>
                                         <th>Пользователь</th>
 										<th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-	                              	<?php foreach($tb->get_table() as $row): ?>
+	                              	<?php foreach($tb->list() as $row): ?>
                                   		<tr>
 											<td><?= $row->slot ?></td>
-											<td><?= $row->user_id ?></td>
 											<td><?= get_full_name($row->user_id) ?></td>
 	                                      	<td>
 												<div class="list-icons">
@@ -96,7 +93,7 @@ $tb->where_or_serch($where_search)->order_by("slot ASC")->set_limit(20);
 	                      	</table>
 	                  	</div>
 						
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 	              	</div>
 

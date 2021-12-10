@@ -4,14 +4,12 @@ use Mixin\Model;
 
 class GuideModel extends Model
 {
+    use ResponceRender;
     public $table = 'guides';
 
     public function form($pk = null)
     {
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
+        is_message();
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -49,10 +47,7 @@ class GuideModel extends Model
 
     public function form_regy($pk = null)
     {
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
+        is_message();
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -74,27 +69,6 @@ class GuideModel extends Model
         <?php
     }
 
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
-        </div>
-        ';
-        render();
-    }
 }
         
 ?>

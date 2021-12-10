@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Персонал";
 
-$tb = (new UserModel)->tb();
-$search = $tb->get_serch();
-$tb->set_data("id, is_active, username, first_name, last_name, father_name, user_level");
+$tb = (new UserModel)->Data("id, is_active, username, first_name, last_name, father_name, user_level");
+$search = $tb->getSearch();
 $where_search = array("branch_id = $session->branch", "branch_id = $session->branch AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
-$tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, last_name ASC")->set_limit(20);
+$tb->Where($where_search)->Order("branch_id ASC, user_level ASC, last_name ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +47,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php (new UserModel)->form(); ?>
+				        <?php $tb->form(); ?>
 				    </div>
 
 				</div>
@@ -81,7 +80,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				                    </tr>
 				                </thead>
 				                <tbody>
-									<?php foreach ($tb->get_table(1) as $row): ?>
+									<?php foreach ($tb->list(1) as $row): ?>
 										<tr>
 				                            <td><?= $row->count ?></td>
 				                            <td><?= $row->username ?></td>
@@ -132,7 +131,7 @@ $tb->where_or_serch($where_search)->order_by("branch_id ASC, user_level ASC, las
 				            </table>
 				        </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 				    </div>
 

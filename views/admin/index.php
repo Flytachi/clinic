@@ -45,7 +45,7 @@ $search = $tb->getSearch();
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php (new CorpBranchModel)->form(); ?>
+				        <?php $tb->form(); ?>
 				    </div>
 
 				</div>

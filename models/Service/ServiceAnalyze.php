@@ -4,15 +4,13 @@ use Mixin\Model;
 
 class ServiceAnalyzeModel extends Model
 {
+    use ResponceRender;
     public $table = 'service_analyzes';
 
     public function form($pk = null)
     {
         global $db, $classes, $session;
-        if( isset($_SESSION['message']) ){
-            echo $_SESSION['message'];
-            unset($_SESSION['message']);
-        }
+        is_message();
         ?>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -75,27 +73,6 @@ class ServiceAnalyzeModel extends Model
         }
     }
 
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-primary" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> Введены некорректные данные!</span>
-        </div>
-        ';
-        render();
-    }
 }
 
 ?>

@@ -47,7 +47,7 @@ $tb->Where($where_search)->Order("branch_id ASC, user_level ASC, last_name ASC")
 				    </div>
 
 				    <div class="card-body" id="form_card">
-				        <?php (new UserModel)->SForm(); ?>
+				        <?php $tb->SForm(); ?>
 				    </div>
 
 				</div>
