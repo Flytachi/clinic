@@ -60,14 +60,6 @@ $header = "Панель управления";
 												}
 												?>
 												<tr>
-													<th style="width:90%">Personal Qty</th>
-													<td class="text-right">
-														<div class="form-group">
-															<input onkeyup="ConstChange(this)" type="number" min="2" max="1000" class="form-control" name="module_personal_qty" value="<?= (isset($company->module_personal_qty)) ? $company->module_personal_qty : 5 ?>" style="height:25.5px">
-														</div>
-													</td>
-												</tr>
-												<tr>
 													<th>Laboratory</th>
 													<td class="text-right">
 														<div class="list-icons">
@@ -103,6 +95,16 @@ $header = "Панель управления";
 														<div class="list-icons">
 															<label class="form-check-label">
 																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_pharmacy) and $company->module_pharmacy) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Anesthesia</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_anesthesia) and $company->module_anesthesia) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

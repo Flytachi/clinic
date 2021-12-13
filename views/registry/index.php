@@ -77,8 +77,8 @@ $tb->Where($where_search)->Order("add_date DESC")->Limit(20);
 											<td>
 												<div class="font-weight-semibold"><?= client_name($row) ?></div>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE client_id = $row->id")->fetch()): ?>
-														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+													<?php if($stm = (new BedModel())->Where("client_id = $row->id")->get()): ?>
+														<?= $stm->building ?>  <?= $stm->floor ?> этаж <?= $stm->ward ?> палата <?= $stm->bed ?> койка
 													<?php endif; ?>
 												</div>
 											</td>

@@ -3,12 +3,11 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 $header = "Анализы";
 
-$tb = (new ServiceAnalyzeModel)->tb('sl');
-$tb->set_data("sl.*, sc.name 'service_name'")->additions("LEFT JOIN services sc ON(sc.id=sl.service_id)");
-$search = $tb->get_serch();
+$tb = (new ServiceAnalyzeModel)->as('sl');
+$tb->Data("sl.*, sc.name 'service_name'")->Join("LEFT JOIN services sc ON(sc.id=sl.service_id)");
+$search = $tb->getSearch();
 $where_search = array("sl.branch_id = $session->branch", "sl.branch_id = $session->branch AND (LOWER(sc.name) LIKE LOWER('%$search%') OR LOWER(sl.code) LIKE LOWER('%$search%') OR LOWER(sl.name) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->set_limit(20);
+$tb->Where($where_search)->Order("sc.name, sl.code, sl.name ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +47,7 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
                       	</div>
                   	</div>
                   	<div class="card-body" id="form_card">
-                      	<?php (new ServiceAnalyzeModel)->form(); ?>
+                      	<?php $tb->form(); ?>
                   	</div>
 
             	</div>
@@ -83,7 +82,7 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
                                     </tr>
 	                          	</thead>
 	                          	<tbody>
-								  	<?php foreach($tb->get_table(1) as $row): ?>
+								  	<?php foreach($tb->list(1) as $row): ?>
                                   		<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->service_name ?></td>
@@ -127,7 +126,7 @@ $tb->where_or_serch($where_search)->order_by("sc.name, sl.code, sl.name ASC")->s
 	                      	</table>
 	                  	</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 	              	</div>
 

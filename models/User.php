@@ -54,24 +54,26 @@ class UserModel extends Model
             <?php endif; ?>
 
             <?php if( permission(1) ): ?>
-                <?php $branch = (isset($_GET['branch_id']) and $_GET['branch_id']) ? $_GET['branch_id'] : $this->value('branch_id'); ?>
-                <div class="form-group">
-                    <label>Филиал:</label>
-                    <select data-placeholder="Выбрать филиал" name="branch_id" id="branch_id" class="<?= $classes['form-select'] ?>" required>
-                        <option></option>
-                        <?php foreach ($db->query("SELECT * FROM corp_branchs WHERE is_active IS NOT NULL") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($branch == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                <?php if( !in_array($this->value('user_level'), [1,2]) ): ?>
+                    <?php $branch = (isset($_GET['branch_id']) and $_GET['branch_id']) ? $_GET['branch_id'] : $this->value('branch_id'); ?>
+                    <div class="form-group">
+                        <label>Филиал:</label>
+                        <select data-placeholder="Выбрать филиал" name="branch_id" id="branch_id" class="<?= $classes['form-select'] ?>" required>
+                            <option></option>
+                            <?php foreach ($db->query("SELECT * FROM corp_branchs WHERE is_active IS NOT NULL") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ($branch == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-                <script type="text/javascript">
+                    <script type="text/javascript">
 
-                    $('#branch_id').on("change",function(){
-                        Update('<?= up_url($pk, 'UserModel') ?>&branch_id='+this.value);
-                    });
+                        $('#branch_id').on("change",function(){
+                            Update('<?= up_url($pk, 'UserModel') ?>&branch_id='+this.value);
+                        });
 
-                </script>
+                    </script>
+                <?php endif; ?>
             <?php else: ?>
                 <?php $branch = (isset($_GET['branch_id']) and $_GET['branch_id']) ? $_GET['branch_id'] : $session->branch; ?>
                 <input type="hidden" name="branch_id" value="<?= $branch ?>">
@@ -84,7 +86,7 @@ class UserModel extends Model
 
                         <legend class="font-weight-semibold"><i class="icon-user mr-2"></i> Персональные данные</legend>
 
-                        <?php if( $this->value('user_level') == $session->session_level): ?>
+                        <?php if( $this->value('user_level') == $session->session_level or $this->value('user_level') == 2 ): ?>
 
                             <div class="form-group">
                                 <label>Выбирите роль:</label>
@@ -261,30 +263,24 @@ class UserModel extends Model
     public function clean()
     {
         global $db;
-        $qty = $db->query("SELECT id FROM $this->table")->rowCount();
-        $ti = module("personal_qty");
-        if ( isset($this->post['id']) or (($ti and $ti > $qty) or (!$ti and 5 > $qty)) ) {
-            $this->post = HellCrud::clean_form($this->post);
-            $this->post = HellCrud::to_null($this->post);
-            if ($this->post['password'] and $this->post['password2']){
-                if ($this->post['password'] == $this->post['password2']){
-                    unset($this->post['password2']);
-                }else{
-                    $_SESSION['message_post']= $this->post;
-                    $this->error("Пароли не совпадают!");
-                }
-                $this->post['password'] = sha1($this->post['password']);
-            }else{
-                unset($this->post['password']);
+        $this->post = HellCrud::clean_form($this->post);
+        $this->post = HellCrud::to_null($this->post);
+        if ($this->post['password'] and $this->post['password2']){
+            if ($this->post['password'] == $this->post['password2']){
                 unset($this->post['password2']);
+            }else{
+                $_SESSION['message_post']= $this->post;
+                $this->error("Пароли не совпадают!");
             }
-            if($this->post['user_level'] and !$this->post['division_id']){
-                $this->post['division_id'] = null;
-            }
-            return True;
-        } else {
-            $this->error("Достигнут предел создания пользователей!");
+            $this->post['password'] = sha1($this->post['password']);
+        }else{
+            unset($this->post['password']);
+            unset($this->post['password2']);
         }
+        if($this->post['user_level'] and !$this->post['division_id']){
+            $this->post['division_id'] = null;
+        }
+        return True;
     }
 
 }

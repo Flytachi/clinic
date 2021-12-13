@@ -3,14 +3,14 @@ require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Мои пациенты";
 
-$tb = (new ClientModel)->tb('c');
-$search = $tb->get_serch();
+$tb = (new ClientModel)->as('c')->Data("DISTINCT c.id, c.first_name, c.last_name, c.father_name, c.birth_date, c.phone_number, c.region, c.add_date");
+$search = $tb->getSearch();
 $where_search = array(
 	"vs.responsible_id = $session->session_id AND vs.level = 13", 
 	"vs.responsible_id = $session->session_id AND vs.level = 13 AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
 
-$tb->set_data("DISTINCT c.id, c.birth_date, c.phone_number, c.region, c.add_date")->additions("LEFT JOIN visit_services vs ON(vs.client_id=c.id)")->where_or_serch($where_search)->order_by("c.add_date DESC")->set_limit(20);
+$tb->Join("LEFT JOIN visit_services vs ON(vs.client_id=c.id)")->Where($where_search)->Order("c.add_date DESC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,11 +68,11 @@ $tb->set_data("DISTINCT c.id, c.birth_date, c.phone_number, c.region, c.add_date
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach ($tb->get_table() as $row): ?>
+									<?php foreach ($tb->list() as $row): ?>
 										<tr>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= client_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= client_name($row) ?></div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= $row->phone_number ?></td>
@@ -87,7 +87,7 @@ $tb->set_data("DISTINCT c.id, c.birth_date, c.phone_number, c.region, c.add_date
 							</table>
 						</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

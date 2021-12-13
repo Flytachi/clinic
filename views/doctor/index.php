@@ -78,8 +78,8 @@ $tb->Where($search_array)->Order('vs.id ASC')->Limit(20);
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE client_id = $row->client_id")->fetch()): ?>
-														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+													<?php if($stm = (new BedModel())->Where("client_id = $row->client_id")->get()): ?>
+														<?= $stm->building ?>  <?= $stm->floor ?> этаж <?= $stm->ward ?> палата <?= $stm->bed ?> койка
 													<?php endif; ?>
 												</div>
 											</td>

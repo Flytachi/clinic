@@ -63,10 +63,9 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = new Table($db, "visit_documents");
-										$tb->where("visit_id = $patient->visit_id")->order_by('add_date ASC');
+										$tb = (new VisitDocumentModel)->Where("visit_id = $patient->visit_id")->Order("add_date ASC");
 										?>
-										<?php foreach ($tb->get_table(1) as $row): ?>
+										<?php foreach ($tb->list(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
 												<td class="text-primary">

@@ -59,10 +59,10 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = (new VisitServiceModel)->tb();
-										$tb->set_data("id, route_id, division_id, responsible_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 11 AND service_id != 1")->order_by('add_date DESC');
+										$tb = (new VisitServiceModel)->Data("id, route_id, division_id, responsible_id, accept_date, completed, service_name, status");
+										$tb->Where("visit_id = $patient->visit_id AND level = 11 AND service_id != 1")->Order('add_date DESC');
 										?>
-										<?php foreach ($tb->get_table(1) as $row): ?>
+										<?php foreach ($tb->list(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
 												<td>
@@ -77,14 +77,7 @@ require_once 'callback.php';
 												<td><?= ($row->completed) ? date_f($row->completed, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row->service_name ?></td>
 												<td>
-													<?php
-													if ($title = division_title($row->route_id)) {
-														echo $title;
-													}else {
-														echo level_name($row->route_id);
-													}
-													unset($title);
-													?>
+													<?= division_title($row->route_id) ?? level_name($row->route_id); ?>
 													<div class="text-muted"><?= get_full_name($row->route_id) ?></div>
 												</td>
 												<td>

@@ -188,6 +188,7 @@ class VisitModel extends Model
         }else if (isset($this->post['order_status'])) {
             $post = HellCrud::clean_form($this->post['order']);
             $post = HellCrud::to_null($post);
+            $post['branch_id'] = $this->post['branch_id'];
             $post['visit_id'] = $this->visit_pk;
             $post['responsible_id'] = $session->session_id;
             $post['client_id'] = $this->post['client_id'];

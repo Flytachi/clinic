@@ -63,10 +63,10 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = (new VisitServiceModel)->tb();
-										$tb->set_data("id, division_id, route_id, responsible_id, accept_date, completed, service_name, status")->where("visit_id = $patient->visit_id AND level = 11 AND route_id = $session->session_id AND ( responsible_id IS NULL OR (responsible_id IS NOT NULL AND responsible_id != $session->session_id) )")->order_by('add_date DESC');
+										$tb = (new VisitServiceModel)->Data("id, division_id, route_id, responsible_id, accept_date, completed, service_name, status");
+										$tb->Where("visit_id = $patient->visit_id AND level = 11 AND route_id = $session->session_id AND ( responsible_id IS NULL OR (responsible_id IS NOT NULL AND responsible_id != $session->session_id) )")->Order('add_date DESC');
 										?>
-										<?php foreach ($tb->get_table(1) as $row): ?>
+										<?php foreach ($tb->list(1) as $row): ?>
 											<tr id="TR_<?= $row->id ?>">
 												<td><?= $row->count ?></td>
 												<td>

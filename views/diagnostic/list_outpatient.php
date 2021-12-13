@@ -1,21 +1,22 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth(12);
 is_module('module_diagnostic');
-if (division_assist() == 1) {
-	Mixin\error('423');
-}
+if (division_assist() == 1) Hell::error('423');
 $header = "Амбулаторные пациенты";
 
-$tb = (new VisitServiceModel)->tb('vs');
-$tb->set_data("vs.id, vs.client_id, c.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.responsible_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-$search = $tb->get_serch();
+$tb = (new VisitServiceModel)->as('vs')->Data("vs.id, vs.client_id, c.first_name, c.last_name, c.father_name, c.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.responsible_id, vr.id 'order'");
+$tb->Join("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$search = $tb->getSearch();
 $is_division = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
 $search_array = array(
 	"vs.branch_id = $session->branch AND vs.status = 3 AND vs.level = 12 AND v.direction IS NULL AND ( vs.responsible_id = $session->session_id $is_division )",
 	"vs.branch_id = $session->branch AND vs.status = 3 AND vs.level = 12 AND v.direction IS NULL AND ( vs.responsible_id = $session->session_id $is_division ) AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
-$tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
+$tb->Where($search_array)->Order('vs.accept_date DESC')->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,10 +62,7 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 					<div class="card-body" id="search_display">
 
 						<?php
-						if( isset($_SESSION['message']) ){
-							echo $_SESSION['message'];
-							unset($_SESSION['message']);
-						}
+						is_message();
 						?>
 
 						<div class="table-responsive">
@@ -81,22 +79,17 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
+									<?php foreach($tb->list() as $row): ?>
 										<?php
 											if (division_assist() == 2 and !is_null($row->responsible_id)) {
-												if ($row->responsible_id == $session->session_id) {
-													$tr = "table-success";
-												}elseif ($row->responsible_id != $session->session_id) {
-													$tr = "table-danger";
-												}
-											}else {
-												$tr = "";
-											}
+												if ($row->responsible_id == $session->session_id) $tr = "table-success";
+												elseif ($row->responsible_id != $session->session_id) $tr = "table-danger";
+											}else $tr = "";
 										?>
 										<tr class="<?= $tr ?>">
                                             <td><?= addZero($row->client_id) ?></td>
                                             <td>
-												<span class="font-weight-semibold"><?= client_name($row->client_id) ?></span>
+												<span class="font-weight-semibold"><?= client_name($row) ?></span>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
@@ -121,7 +114,7 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

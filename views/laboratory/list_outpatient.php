@@ -4,15 +4,15 @@ $session->is_auth(13);
 is_module('module_laboratory');
 $header = "Амбулаторные пациенты";
 
-$tb = (new VisitServiceModel)->tb('vs');
-$tb->set_data("DISTINCT v.id, vs.client_id, c.birth_date, vs.route_id, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-$search = $tb->get_serch();
+$tb = (new VisitServiceModel)->as('vs');
+$tb->Data("DISTINCT v.id, vs.client_id, c.first_name, c.last_name, c.father_name, c.birth_date, vs.route_id, v.add_date, vr.id 'order'")->Join("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$search = $tb->getSearch();
 $is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $search_array = array(
 	"vs.branch_id = $session->branch AND vs.status = 3 AND vs.level = 13 AND v.direction IS NULL $is_division",
 	"vs.branch_id = $session->branch AND vs.status = 3 AND vs.level = 13 AND v.direction IS NULL $is_division AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->set_limit(20);
+$tb->Where($search_array)->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,7 +74,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table(1) as $row): ?>
+									<?php foreach($tb->list(1) as $row): ?>
 										<tr id="VisitService_tr_<?= $row->count ?>">
                                             <td><?= addZero($row->client_id) ?></td>
                                             <td>
@@ -108,7 +108,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

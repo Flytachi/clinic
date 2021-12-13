@@ -4,14 +4,14 @@ $session->is_auth(13);
 is_module('module_laboratory');
 $header = "Приём пациетов";
 
-$tb = (new VisitServiceModel)->tb('vs');
-$tb->set_data("DISTINCT v.id, vs.client_id, c.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-$search = $tb->get_serch();
+$tb = (new VisitServiceModel)->as('vs');
+$tb->Data("DISTINCT v.id, vs.client_id, c.first_name, c.last_name, c.father_name, c.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->Join("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$search = $tb->getSearch();
 $search_array = array(
 	"vs.branch_id = $session->branch AND vs.status = 2 AND vs.level = 13",
 	"vs.branch_id = $session->branch AND vs.status = 2 AND vs.level = 13 AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->set_limit(20);
+$tb->Where($search_array)->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,17 +70,17 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table(1) as $row): ?>
+									<?php foreach($tb->list(1) as $row): ?>
 										<tr id="VisitService_tr_<?= $row->count ?>">
                                             <td><?= addZero($row->client_id) ?></td>
                                             <td>
-												<span class="font-weight-semibold"><?= client_name($row->client_id) ?></span>
+												<span class="font-weight-semibold"><?= client_name($row) ?></span>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE client_id = $row->client_id")->fetch()): ?>
-														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
+													<?php if($stm = (new BedModel())->Where("client_id = $row->client_id")->get()): ?>
+														<?= $stm->building ?>  <?= $stm->floor ?> этаж <?= $stm->ward ?> палата <?= $stm->bed ?> койка
 													<?php endif; ?>
 												</div>
 											</td>
@@ -112,7 +112,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

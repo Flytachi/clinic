@@ -108,7 +108,7 @@ class VisitRoute extends Model
                         selected: service,
                         types: "1,2",
                         cols: 1,
-                        is_requared:1,
+                        is_requared:0,
                     },
                     success: function (result) {
                         var service = {};
@@ -130,7 +130,7 @@ class VisitRoute extends Model
                         selected: service,
                         types: "1,2",
                         cols: 1,
-                        is_requared:1,
+                        is_requared:0,
                     },
                     success: function (result) {
                         var service = {};

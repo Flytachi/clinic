@@ -13,5 +13,20 @@
         "pacs_login": null,
         "pacs_password": null,
         "add_date": null
+    },
+    {
+        "id": 2,
+        "branch_id": null,
+        "username": "warden",
+        "password": "646cc3c142a63bd77d2166ca69684cbaba9dfbe7",
+        "is_active": 1,
+        "first_name": "warden",
+        "last_name": "warden",
+        "father_name": "warden",
+        "user_level": 2,
+        "division_id": null,
+        "pacs_login": null,
+        "pacs_password": null,
+        "add_date": null
     }
 ]

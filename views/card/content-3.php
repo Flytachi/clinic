@@ -59,17 +59,17 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = (new VisitModel)->tb('v');
-										$tb->set_data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-										$tb->where("v.client_id = $patient->id AND v.id != $patient->visit_id")->order_by('v.add_date DESC');
+										$tb = (new VisitModel)->as('v');
+										$tb->Data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->Join("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+										$tb->Where("v.client_id = $patient->id AND v.id != $patient->visit_id")->Order('v.add_date DESC');
 										?>
-										<?php foreach($tb->get_table(1) as $row): ?>
+										<?php foreach($tb->list(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->id ?></td>
 												<td>
 													<?php if ( $row->order ): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер №<?= (new VisitOrder)->byId($row->order)->order_number ?></span>
 													<?php endif; ?>
 												</td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>

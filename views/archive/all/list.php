@@ -3,11 +3,10 @@ require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Все пациенты";
 
-$tb = (new ClientModel)->tb();
-$search = $tb->get_serch();
+$tb = (new ClientModel);
+$search = $tb->getSearch();
 $where_search = array(null, "id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%')");
-
-$tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(30);
+$tb->Where($where_search)->Order("add_date DESC")->Limit(30);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,11 +66,11 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(30);
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach ($tb->get_table() as $row): ?>
+									<?php foreach ($tb->list() as $row): ?>
 										<tr>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= client_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= client_name($row) ?></div>
 												<div class="text-muted">
 													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE client_id = $row->id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
@@ -110,7 +109,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(30);
 							</table>
 						</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

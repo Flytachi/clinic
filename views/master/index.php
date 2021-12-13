@@ -70,13 +70,15 @@ $tb->Where($where_search)->Order("cb.name ASC, us.user_level ASC, us.last_name A
 										<?php if ($row->user_level == 1): ?>
                                             class="table-dark text-danger"
                                         <?php elseif ($row->user_level == 2): ?>
-                                            class="table-dark text-dark"
+                                            class="table-dark text-primary"
                                         <?php endif; ?>
 										>
 											<td><?= $row->count ?></td>
 											<td><?= ($row->name) ? "<span class=\"text-primary\">$row->name</span>" : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td>
-                                                <?php if ($row->user_level < 10): ?>
+                                                <?php if (in_array($row->user_level, [1,2])): ?>
+													<span class="text-primary siya"><?= $PERSONAL[$row->user_level] ?></span>
+												<?php elseif ($row->user_level < 10): ?>
 													<span class="text-danger"><?= $PERSONAL[$row->user_level] ?></span>
                                                 <?php elseif (10 < $row->user_level && $row->user_level < 20): ?>
                                                     <span class="text-brown"><?= $PERSONAL[$row->user_level] ?></span>

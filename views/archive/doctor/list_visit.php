@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 
@@ -9,13 +12,10 @@ if (is_numeric($_GET['id'])) {
 	$patient = False;
 	echo "err";
 }
-if (!$patient) {
-	Mixin\error('404');
-}
+if (!$patient) Hell::error('404');
 
-$tb = (new VisitServiceModel)->tb();
-$tb->set_data("id, service_id, service_name, route_id, accept_date, completed, status, visit_id");
-$tb->where("client_id = $patient->id AND responsible_id = $session->session_id")->order_by('add_date DESC');
+$tb = (new VisitServiceModel)->Data("id, service_id, service_name, route_id, accept_date, completed, status, visit_id");
+$tb->Where("client_id = $patient->id AND responsible_id = $session->session_id")->Order('add_date DESC');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +75,7 @@ $tb->where("client_id = $patient->id AND responsible_id = $session->session_id")
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach ($tb->get_table(1) as $row): ?>
+									<?php foreach ($tb->list(1) as $row): ?>
 										<tr>
 											<td><?= $row->count ?></td>
 											<td>

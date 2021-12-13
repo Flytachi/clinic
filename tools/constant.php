@@ -100,5 +100,6 @@ $classes = array(
     "table_detail-thead" => "bg-dark",
     "table_detail-count_menu" => "table-secondary",
 
-)
+);
+
 ?>

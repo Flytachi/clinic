@@ -136,6 +136,22 @@ class VisitReport extends Model
                     },
                     success: function (result) {
                         $('#document_<?= __CLASS__ ?>').html(result);
+                        DecoupledEditor
+                            .create( document.querySelector( '.document-editor__editable' ))
+                            .then( editor => {
+                                const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+
+                                toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+                                window.editor = editor;
+                                editor.model.document.on( 'change:data', ( evt, data ) => {
+                                    SaveData(data, editor.getData());
+                                } );
+
+                            } )
+                            .catch( err => {
+                                console.error( err );
+                            } 
+                        );
                     },
                 });
 
@@ -258,7 +274,6 @@ class VisitReport extends Model
 
                 function SaveData(data, params) {
                     const Textarea = document.querySelector('#document-editor__area');
-
                     Textarea.value = params;
                 }
 

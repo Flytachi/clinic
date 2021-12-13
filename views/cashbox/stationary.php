@@ -3,14 +3,13 @@ require_once '../../tools/warframe.php';
 $session->is_auth([22,23]);
 $header = "Приём платежей";
 
-$tb = new Table($db, "visits vs");
-$search = $tb->get_serch();
-$tb->set_data("vs.id, vs.client_id, vs.is_active")->additions("LEFT JOIN clients c ON(c.id=vs.client_id)");
+$tb = (new VisitModel)->as("v")->Data("v.id, v.client_id, c.first_name, c.last_name, c.father_name, v.is_active")->Join("LEFT JOIN clients c ON(c.id=v.client_id)");
+$search = $tb->getSearch();
 $where_search = array(
-	"vs.branch_id = $session->branch AND vs.direction IS NOT NULL AND vs.completed IS NULL", 
-	"vs.branch_id = $session->branch AND vs.direction IS NOT NULL AND vs.completed IS NULL AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
+	"v.branch_id = $session->branch AND v.direction IS NOT NULL AND v.completed IS NULL", 
+	"v.branch_id = $session->branch AND v.direction IS NOT NULL AND v.completed IS NULL AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($where_search);
+$tb->Where($where_search);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,11 +72,11 @@ $tb->where_or_serch($where_search);
                                             </tr>
                                         </thead>
                                         <tbody>
-											<?php foreach($tb->get_table(1) as $row): ?>
+											<?php foreach($tb->list(1) as $row): ?>
 				                                <tr class="<?= ($row->is_active) ? "" : "table-warning" ?>" onclick="Check('<?= up_url($row->id, 'TransactionPanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
 				                                    <td><?= addZero($row->client_id) ?></td>
 				                                    <td class="text-center">
-				                                        <div class="font-weight-semibold"><?= client_name($row->client_id) ?></div>
+				                                        <div class="font-weight-semibold"><?= client_name($row) ?></div>
 				                                    </td>
 				                                </tr>
 				                            <?php endforeach; ?>

@@ -4,16 +4,16 @@ $session->is_auth(14);
 is_module('module_physio');
 $header = "Стационарные пациенты";
 
-$tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.client_id, c.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-$search = $tb->get_serch();
+$tb = (new VisitServiceModel)->as('vs');
+$tb->Data("DISTINCT v.id, vs.client_id, c.first_name, c.last_name, c.father_name, c.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->Join("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$search = $tb->getSearch();
 $is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $is_division2 = (division()) ? "AND division_id = ".division() : null;
 $search_array = array(
 	"vs.branch_id = $session->branch AND vs.status = 2 AND vs.level = 14 AND v.direction IS NOT NULL AND (vs.responsible_id IS NULL OR vs.responsible_id = $session->session_id) $is_division",
 	"vs.branch_id = $session->branch AND vs.status = 2 AND vs.level = 14 AND v.direction IS NOT NULL AND (vs.responsible_id IS NULL OR vs.responsible_id = $session->session_id) $is_division AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->set_limit(20);
+$tb->Where($search_array)->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,11 +71,11 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
+									<?php foreach($tb->list() as $row): ?>
 										<tr id="VisitService_tr_<?= $row->id ?>">
 											<td><?= addZero($row->client_id) ?></td>
 											<td>
-												<span class="font-weight-semibold"><?= client_name($row->client_id) ?></span>
+												<span class="font-weight-semibold"><?= client_name($row) ?></span>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
@@ -96,7 +96,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

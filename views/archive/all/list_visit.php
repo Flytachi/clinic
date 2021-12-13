@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 
@@ -9,9 +12,7 @@ if (is_numeric($_GET['id'])) {
 	$patient = False;
 	echo "err";
 }
-if (!$patient) {
-	Mixin\error('404');
-}
+if (!$patient) Hell::error('404');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -70,16 +71,16 @@ if (!$patient) {
                                 </thead>
                                 <tbody>
 									<?php
-									$tb = (new VisitModel)->tb('v');
-									$tb->set_data("v.id, v.parad_id, v.icd_id, v.icd_autor, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-									$search = $tb->get_serch();
+									$tb = (new VisitModel)->as('v')->Data("v.id, v.parad_id, v.icd_id, v.icd_autor, vr.id 'order', v.add_date, v.completed, v.direction");
+									$tb->Join("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+									$search = $tb->getSearch();
 									$search_array = array(
 										"v.client_id = $patient->id", 
 										"v.client_id = $patient->id"
 									);
-									$tb->where_or_serch($search_array)->order_by('v.add_date DESC')->set_limit(20);
+									$tb->Where($search_array)->Order('v.add_date DESC');
 									?>
-									<?php foreach($tb->get_table(1) as $row): ?>
+									<?php foreach($tb->list(1) as $row): ?>
 										<tr>
                                             <td><?= $row->count ?></td>
                                             <td>
@@ -95,7 +96,7 @@ if (!$patient) {
 													</span>
 												<?php endif; ?>
 												<?php if ( $row->order ): ?>
-													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер №<?= (new VisitOrder)->byId($row->order)->order_number ?></span>
 												<?php endif; ?>
 											</td>
                                             <td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>

@@ -16,9 +16,9 @@
             </span>
 
             <ul class="navbar-nav ml-lg-auto">
-                <li class="nav-item navbar-nav-link" style="color: #ff0000;"><em><?= $session->browser ?></em></li>
-                <li class="nav-item navbar-nav-link text-white"><b>Level: </b><?= $session->session_level ?></li>
-                <li class="nav-item navbar-nav-link text-white"><b>Division: </b><?= $session->session_division ?></li>
+                <li class="nav-item navbar-nav-link" style="color: #ff0000;"><em><?= $session->browser ?? "None" ?></em></li>
+                <li class="nav-item navbar-nav-link text-white"><b>Level: </b><?= $session->session_level ?? "None" ?></li>
+                <li class="nav-item navbar-nav-link text-white"><b>Division: </b><?= $session->session_division ?? "None" ?></li>
             </ul>
         </div>
 

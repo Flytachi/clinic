@@ -181,6 +181,7 @@ if (!module('diagnostic')) unset($PERSONAL[12]);
 if (!module('laboratory')) unset($PERSONAL[13]);
 if (!module('physio')) unset($PERSONAL[14]);
 if (!module('pharmacy')) unset($PERSONAL[24]);
+if (!module('anesthesia')) unset($PERSONAL[15]);
 
 // if (!module('module_diet')) {
 //     unset($PERSONAL[9]);

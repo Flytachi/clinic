@@ -579,43 +579,49 @@ abstract class Model extends Credo implements ModelInterface
             foreach ($_FILES as $key => $file) {
 
                 if ( $file['name'] ) {
-                    // Upload File
-                    if ($file['error'] === UPLOAD_ERR_OK) {
-                        $fileTmpPath = $file['tmp_name'];
-                        $this->file['name'] = $file['name'];
-                        $this->file['size'] = $file['size'];
-                        $this->file['type'] = $file['type'];
-                
-                        $fileNameCmps = explode(".", $this->file['name']);
-                        $this->file['extension'] = strtolower(end($fileNameCmps));
-                        $newFileName = sha1(time() . $this->file['name']) . '.' . $this->file['extension'];
-                
-                        // File format
-                        if (empty($this->file_format) or isset($this->file_format) and (is_array($this->file_format) and in_array($this->file['extension'], $this->file_format) or $this->file_format == $this->file['extension']) ) {
-                            $uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR.$this->file_directory;
-                            $dest_path = $uploadFileDir . $newFileName;
-                
-                            // Check update
-                            if( isset($this->post['id']) and $this->post['id'] ){
-                                // Delete old file
-                                $this->file_clean($key);
-                            }
-                            
-                            if(move_uploaded_file($fileTmpPath, $dest_path)){
-                                // File is successfully uploaded.
-                                $this->post[$key] = $this->file_directory.$newFileName;
+                    // Check size
+                    if($file['size'] != 0 and ($file['size'] / 1024 / 1024) <= 10) {
+                        // Upload File
+                        if ($file['error'] === UPLOAD_ERR_OK) {
+                            $fileTmpPath = $file['tmp_name'];
+                            $this->file['name'] = $file['name'];
+                            $this->file['size'] = $file['size'];
+                            $this->file['type'] = $file['type'];
+                    
+                            $fileNameCmps = explode(".", $this->file['name']);
+                            $this->file['extension'] = strtolower(end($fileNameCmps));
+                            $newFileName = sha1(time() . $this->file['name']) . '.' . $this->file['extension'];
+                    
+                            // File format
+                            if (empty($this->file_format) or isset($this->file_format) and (is_array($this->file_format) and in_array($this->file['extension'], $this->file_format) or $this->file_format == $this->file['extension']) ) {
+                                $uploadFileDir = $_SERVER['DOCUMENT_ROOT'].DIR.$this->file_directory;
+                                $dest_path = $uploadFileDir . $newFileName;
+                    
+                                // Check update
+                                if( isset($this->post['id']) and $this->post['id'] ){
+                                    // Delete old file
+                                    $this->file_clean($key);
+                                }
                                 
-                            }else{
-                                $this->error("Ошибка записи в базу данных или сохранения файла!");
+                                if(move_uploaded_file($fileTmpPath, $dest_path)){
+                                    // File is successfully uploaded.
+                                    $this->post[$key] = $this->file_directory.$newFileName;
+                                    
+                                }else{
+                                    $this->error("Ошибка записи в базу данных или сохранения файла!");
+                                }
+                    
+                            }else {
+                                $this->error("Формат фыйла не поддерживается!");
                             }
-                
-                        }else {
-                            $this->error("Формат фыйла не поддерживается!");
-                        }
 
+                        }else {
+                            $this->error("Ошибка загрузки во временную папку!");
+                        }
                     }else {
-                        $this->error("Ошибка загрузки во временную папку!");
-                    }   
+                        $this->error("Размер загружаемого файла слишком велик!");
+                    }
+                    
                 }
 
             }

@@ -96,7 +96,7 @@ class VisitPanel extends VisitModel
                                         </tr>
                                         <tr>
                                             <th style="width:150px">FIO:</th>
-                                            <td><?= get_full_name($pk) ?></td>
+                                            <td><?= client_name($pk) ?></td>
 
                                             <th style="width:150px">Дата рождения:</th>
                                             <td><?= date_f($this->value('birth_date')) ?></td>
@@ -385,7 +385,7 @@ class VisitPanel extends VisitModel
                                     </tr>
                                     <tr>
                                         <th style="width:150px">FIO:</th>
-                                        <td><?= get_full_name($pk) ?></td>
+                                        <td><?= client_name($pk) ?></td>
 
                                         <th style="width:150px">Дата рождения:</th>
                                         <td><?= date_f($this->value('birth_date')) ?></td>
