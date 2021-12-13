@@ -75,10 +75,10 @@ require_once 'callback.php';
 									</thead>
 									<tbody>
 										<?php
-										$tb = (new VisitServiceModel)->tb();
-										$tb->set_data("id, service_id, service_name, service_title, status")->where("visit_id = $patient->visit_id AND responsible_id = $session->session_id AND status IN (3,7)")->order_by('id ASC');
+										$tb = (new VisitServiceModel)->Data("id, service_id, service_name, service_title, status");
+										$tb->Where("visit_id = $patient->visit_id AND responsible_id = $session->session_id AND status IN (3,7)")->Order('id ASC');
 										?>
-										<?php foreach ($tb->get_table() as $row): ?>
+										<?php foreach ($tb->list() as $row): ?>
 											<tr id="TR_<?= $row->id ?>" class="list_services <?= ( isset($row->service_id) and $row->service_id == 1) ? "table-warning" :$table_tr ?>">
 												<td><?= $row->service_name ?></td>
 												<td class="text-right" id="VisitService_tr_<?= $row->id ?>" data-is_new="<?= ($row->service_title) ? '' : 1 ?>">

@@ -1,19 +1,19 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth([22,23]);
 $header = "История платежей ". addZero($_GET['pk']);
+if (!is_numeric($_GET['pk'])) Hell::error('404');
 
-if (!is_numeric($_GET['pk'])) {
-	Mixin\error('404');
-}
-
-$tb = (new VisitTransactionModel)->tb();
-$search = $tb->get_serch();
+$tb = (new VisitTransactionModel);
+$search = $tb->getSearch();
 $search_array = array(
 	"branch_id = $session->branch AND is_visibility IS NOT NULL AND client_id = {$_GET['pk']} AND is_price IS NOT NULL", 
 	"branch_id = $session->branch AND is_visibility IS NOT NULL AND client_id = {$_GET['pk']} AND is_price IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
+$tb->Where($search_array)->Order('price_date DESC')->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,7 +81,7 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table(1) as $row): ?>
+									<?php foreach($tb->list(1) as $row): ?>
                                         <?php
 										if ( empty($mas) ) $mas = '';
 										if (empty($temp_old)) {
@@ -93,25 +93,21 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 													$color = "";
 													$staus = 0;
 												}else {
-
 													$color = "table-secondary";
-
 													$staus = 1;
-
 												}
 											}
 											$temp_old = $row->price_date;
 										}
-
 										$mas .=  $row->id . ",";
 										?>
                                         <tr class="<?= $color ?>" onclick="addArray(this)" data-color="<?= $color ?>" data-status="true" data-id="<?= $row->id ?>">
                                             <td><?= $row->count ?></td>
                                             <td><?= date_f($row->price_date, 1) ?></td>
                                             <td><?= $row->item_name ?></td>
-                                            <td><?= $row->price_cash ?></td>
-                                            <td><?= $row->price_card ?></td>
-                                            <td><?= $row->price_transfer ?></td>
+                                            <td><?= number_format($row->price_cash) ?></td>
+                                            <td><?= number_format($row->price_card) ?></td>
+                                            <td><?= number_format($row->price_transfer) ?></td>
 											<td><?= ($row->sale) ? $row->sale : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td><?= get_full_name($row->pricer_id) ?></td>
                                         </tr>
@@ -120,7 +116,7 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

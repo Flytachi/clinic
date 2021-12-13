@@ -3,15 +3,13 @@ require_once '../../tools/warframe.php';
 $session->is_auth([22,23]);
 $header = "Рабочий стол";
 
-$tb = (new VisitModel)->tb('v');
-$search = $tb->get_serch();
-$tb->set_data("DISTINCT vs.visit_id, v.client_id")->additions("LEFT JOIN visit_services vs ON(vs.visit_id=v.id) LEFT JOIN clients c ON(c.id=v.client_id)");
-
+$tb = (new VisitModel)->as('v')->Data("DISTINCT vs.visit_id, v.client_id")->Join("LEFT JOIN visit_services vs ON(vs.visit_id=v.id) LEFT JOIN clients c ON(c.id=v.client_id)");
+$search = $tb->getSearch();
 $where_search = array(
 	"v.branch_id = $session->branch AND v.direction IS NULL AND v.completed IS NULL AND vs.status = 5", 
 	"v.branch_id = $session->branch AND v.direction IS NULL AND v.completed IS NULL AND vs.status = 5 AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($where_search);
+$tb->Where($where_search);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +70,7 @@ $tb->where_or_serch($where_search);
 				                            </tr>
 				                        </thead>
 				                        <tbody id="search_display">
-				                            <?php foreach($tb->get_table(1) as $row): ?>
+				                            <?php foreach($tb->list(1) as $row): ?>
 				                                <tr onclick="Check('<?= up_url($row->visit_id, 'TransactionPanel') ?>')">
 				                                    <td><?= addZero($row->client_id) ?></td>
 				                                    <td class="text-center">
@@ -101,12 +99,7 @@ $tb->where_or_serch($where_search);
 				    <div class="col-md-7">
 
 				        <div id="message_ses">
-				            <?php
-				            if( isset($_SESSION['message']) ){
-				                echo $_SESSION['message'];
-				                unset($_SESSION['message']);
-				            }
-				            ?>
+				            <?php is_message(); ?>
 				        </div>
 
 				        <div id="check_div">
@@ -169,10 +162,8 @@ $tb->where_or_serch($where_search);
 
 		function sumTo(arr) {
 			var total = 0;
-			for (value of arr) {
-				total += Number($(value).text());
-			}
-			$('#total_title').html(total);
+			for (value of arr) total += Number(value.innerHTML.replace(/,/g, ""));
+			$('#total_title').html(number_format(total));
 		}
 
 		

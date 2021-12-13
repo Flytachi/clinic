@@ -3,14 +3,14 @@ require_once '../../tools/warframe.php';
 $session->is_auth([22,23]);
 $header = "Не принятые услуги";
 
-$tb = (new VisitServiceModel)->tb('vs');
-$tb->set_data("vs.id, vs.client_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.responsible_id, vs.level")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id)");
-$search = $tb->get_serch();
+$tb = (new VisitServiceModel)->as('vs');
+$tb->Data("vs.id, vs.client_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.responsible_id, vs.level, c.first_name, c.last_name, c.father_name")->Join("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN clients c ON(c.id=vs.client_id)");
+$search = $tb->getSearch();
 $search_array = array(
 	"vs.branch_id = $session->branch AND vs.status = 2 AND v.direction IS NULL", 
 	"vs.branch_id = $session->branch AND vs.status = 2 AND v.direction IS NULL AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
-$tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
+$tb->Where($search_array)->Order('vs.id ASC')->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,11 +71,11 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
+									<?php foreach($tb->list() as $row): ?>
 										<tr id="PatientFailure_tr_<?= $row->id ?>">
                                             <td><?= addZero($row->client_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= client_name($row->client_id) ?></div>
+												<div class="font-weight-semibold"><?= client_name($row) ?></div>
 											</td>
                                             <td><?= $row->service_name ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
@@ -109,7 +109,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
                     </div>
 

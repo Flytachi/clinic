@@ -55,36 +55,12 @@ function config($value = null, $group = null)
 }
 
 function is_config($value = null){
-    if (!config($value)) {
-        Hell::error('404');
-    }
+    if (!config($value)) Hell::error('404');
 }
 
 function is_module($value = null){
-    if (!module($value)) {
-        Hell::error('404');
-    }
+    if (!module($value)) Hell::error('404');
 }
-
-// if (!module('module_pharmacy')) {
-//     unset($PERSONAL[4]);
-// }
-
-// if (!module('module_laboratory')) {
-//     unset($PERSONAL[6]);
-// }
-
-// if (!module('module_diet')) {
-//     unset($PERSONAL[9]);
-// }
-
-// if (!module('module_diagnostic')) {
-//     unset($PERSONAL[10]);
-// }
-
-// if (!module('module_physio')) {
-//     unset($PERSONAL[12]);
-// }
 
 // Добавляет нули к числам, чьи значаения меньше пятизначных
 function addZero($number){
@@ -198,4 +174,15 @@ function client_name($obj = null) {
         return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
     }   
 }
+
+// Module 
+
+if (!module('diagnostic')) unset($PERSONAL[12]);
+if (!module('laboratory')) unset($PERSONAL[13]);
+if (!module('physio')) unset($PERSONAL[14]);
+if (!module('pharmacy')) unset($PERSONAL[24]);
+
+// if (!module('module_diet')) {
+//     unset($PERSONAL[9]);
+// }
 ?>

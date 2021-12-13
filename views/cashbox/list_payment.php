@@ -3,14 +3,14 @@ require_once '../../tools/warframe.php';
 $session->is_auth([22,23]);
 $header = "История платежей";
 
-$tb = (new VisitTransactionModel)->tb('vt');
-$tb->set_data('DISTINCT vt.client_id')->additions('LEFT JOIN clients c ON(c.id=vt.client_id)');
-$search = $tb->get_serch();
+$tb = (new VisitTransactionModel)->as('vt')->Data('DISTINCT vt.client_id');
+$tb->Join('LEFT JOIN clients c ON(c.id=vt.client_id)');
+$search = $tb->getSearch();
 $search_array = array(
 	"vt.branch_id = $session->branch AND vt.is_visibility IS NOT NULL", 
 	"vt.branch_id = $session->branch AND vt.is_visibility IS NOT NULL AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->order_by('vt.add_date DESC')->set_limit(20);
+$tb->Where($search_array)->Order('vt.add_date DESC')->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +63,7 @@ $tb->where_or_serch($search_array)->order_by('vt.add_date DESC')->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach($tb->get_table() as $row): ?>
+                                    <?php foreach($tb->list() as $row): ?>
                                         <tr>
                                             <td><?= addZero($row->client_id) ?></td>
                                             <td><div class="font-weight-semibold"><?= client_name($row->client_id) ?></div></td>
@@ -76,7 +76,7 @@ $tb->where_or_serch($search_array)->order_by('vt.add_date DESC')->set_limit(20);
                             </table>
                         </div>
 
-                        <?php $tb->get_panel(); ?>
+                        <?php $tb->panel(); ?>
 
 					</div>
 				</div>

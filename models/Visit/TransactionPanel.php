@@ -16,23 +16,14 @@ class TransactionPanel extends Model
             $this->set_post($object);
 
             if ($object['direction']) {
-                if ($_GET['form'] != "form") {
-                    return $this->{$_GET['form']}($object['id']);
-                } else {
-                    return $this->FirstPanel($object['id']);
-                }
+                if ($_GET['form'] != "form") return $this->{$_GET['form']}($object['id']);
+                else return $this->FirstPanel($object['id']);
             } else {
-                if (!(isset($_GET['refund']) and $_GET['refund'])) {
-                    return $this->SecondPanel($object['id']);
-                } else {
-                    return $this->ThirdPanel($object['id']);
-                }
+                if (!(isset($_GET['refund']) and $_GET['refund'])) return $this->SecondPanel($object['id']);
+                else return $this->ThirdPanel($object['id']);
             }
 
-        }else{
-            Hell::error('cash_permissions_false');
-        }
-
+        }else Hell::error('cash_permissions_false');
     }
 
     public function FirstPanel($pk = null)
@@ -130,7 +121,7 @@ class TransactionPanel extends Model
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
                                     <td><?= date($row['add_date'], 1) ?></td>
                                     <td><?= $row['service_name'] ?></td>
-                                    <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
+                                    <td class="text-right total_cost"><?= number_format($row['item_cost']) ?></td>
                                     <th class="text-center">
                                         <div class="list-icons">
                                             <button onclick="Delete('<?= del_url($row['id'], 'VisitServiceModel') ?>', 'tr_VisitServicesModel_<?= $row['id'] ?>')" class="btn btn-outline-danger btn-sm"><i class="icon-minus2"></i></button>
@@ -142,11 +133,13 @@ class TransactionPanel extends Model
                     </table>
                 </div>
 
-                <div class="text-left">
-                    <strong>Итого: </strong><strong id="total_title"></strong>
-                </div>
-                <div class="text-right">
-                    <button onclick="CardFuncCheck('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                <div class="row">
+                    <div class="col-6 text-left" style="font-size: 15.5px;">
+                        <strong>Итого: </strong><strong id="total_title"></strong>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button onclick="CardFuncCheck('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    </div>
                 </div>
 
             </div>
@@ -261,7 +254,7 @@ class TransactionPanel extends Model
                                     <input type="hidden" class="prices_class" value="<?= $row['id'] ?>">
                                     <td><?= date_f($row['add_date'], 1) ?></td>
                                     <td><?= $row['service_name'] ?></td>
-                                    <td class="text-right total_cost"><?= $row['item_cost'] ?></td>
+                                    <td class="text-right total_cost"><?= number_format($row['item_cost']) ?></td>
                                     <td><?= date_f($row['price_date'], 1) ?></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -269,13 +262,15 @@ class TransactionPanel extends Model
                     </table>
                 </div>
 
-                <div class="text-left">
-                    <strong>Итого: </strong><strong id="total_title"></strong>
+                <div class="row">
+                    <div class="col-6 text-left" style="font-size: 15.5px;">
+                        <strong>Итого: </strong><strong id="total_title"></strong>
+                    </div>
+                    <div class="col-6 text-right">
+                        <button onclick="CardFuncCheck('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <button onclick="CardFuncCheck('<?= $pk ?>')" type="button" class="<?= $classes['btn-price'] ?>" data-toggle="modal" data-target="#modal_default">Оплата</button>
-                </div>
-
+                
             </div>
 
         </div>
