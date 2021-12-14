@@ -1,4 +1,4 @@
-dump
+backup
 libs/*
 !libs/*.php
 node_modules

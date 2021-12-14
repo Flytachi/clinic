@@ -1,7 +1,18 @@
 <?php
 namespace Console;
 
-require_once 'command.php';
+function get_dir_contents($dir, $filter = '', &$results = array()) {
+    $files = scandir($dir);
+    foreach($files as $key => $value){
+        $path = realpath($dir.DIRECTORY_SEPARATOR.$value); 
+        if(!is_dir($path)) {
+            if(empty($filter) || preg_match($filter, $path)) $results[] = $path;
+        } elseif($value != "." && $value != "..") get_dir_contents($path, $filter, $results);
+    }
+    return $results;
+}
+
+foreach (get_dir_contents(dirname(__FILE__)."/command/") as $filename) require_once $filename;
 
 /**
  *  Ядро консоли
@@ -15,17 +26,13 @@ class Core
     {
         $this->argument_count = $arg1;
         $this->arguments = $arg2;
-
         $this->handle();
     }
 
-    public function handle()
+    private function handle()
     {
-        if ($this->argument_count > 1) {
-            $this->resolution();
-        }else {
-            $this->help();
-        }
+        if ($this->argument_count > 1) $this->resolution();
+        else $this->help();
     }
 
     private function resolution()
@@ -49,11 +56,9 @@ class Core
 
     public function help()
     {
-        echo "\033[33m"."Help.\n";
+        echo "\033[33m"."Console helper.\n";
     }
 
-
 }
-
 
 ?>

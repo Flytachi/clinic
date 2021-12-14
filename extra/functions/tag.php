@@ -14,7 +14,7 @@ function get_dir_contents($dir, $filter = '', &$results = array()) {
     }
 
     return $results;
-} 
+}
 
 function parad($title, $value) {
     echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
