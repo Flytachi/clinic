@@ -19,15 +19,14 @@ class __Make
 
     private function resolution()
     {
-        if ($this->name) {
-            $file = dirname(__DIR__)."/template/$this->argument";
-            if (file_exists($file)) {
+        $file = dirname(__DIR__)."/template/$this->argument";
+        if (file_exists($file)) {
+            if ($this->name) {
                 $template = str_replace("_ModelIndex_", $this->UC_word($this->name), file_get_contents($file));
                 $template = str_replace("_TableIndex_", $this->name, $template);
                 $this->create_file($template);
-            } else echo "\033[33m". " Шаблона '$this->argument' не существует!\n";
-        } else echo "\033[33m". " Укажите имя для шаблона!\n";
-
+            } else echo "\033[33m". " Укажите имя для шаблона!\n";
+        } else echo "\033[33m". " Шаблона '$this->argument' не существует!\n";
     }
 
     private function create_file($code = "")

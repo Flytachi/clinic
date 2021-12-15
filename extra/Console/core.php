@@ -1,19 +1,6 @@
 <?php
 namespace Console;
 
-function get_dir_contents($dir, $filter = '', &$results = array()) {
-    $files = scandir($dir);
-    foreach($files as $key => $value){
-        $path = realpath($dir.DIRECTORY_SEPARATOR.$value); 
-        if(!is_dir($path)) {
-            if(empty($filter) || preg_match($filter, $path)) $results[] = $path;
-        } elseif($value != "." && $value != "..") get_dir_contents($path, $filter, $results);
-    }
-    return $results;
-}
-
-foreach (get_dir_contents(dirname(__FILE__)."/command/") as $filename) require_once $filename;
-
 /**
  *  Ядро консоли
  */
@@ -37,6 +24,8 @@ class Core
 
     private function resolution()
     {
+        foreach ($this->get_dir_contents(dirname(__FILE__)."/command/") as $filename) require_once $filename;
+
         try {
             if ($Class = stristr($this->arguments[1], ":", true)) {
                 $Class_construct = "\__".$Class;
@@ -54,7 +43,18 @@ class Core
 
     }
 
-    public function help()
+    private function get_dir_contents($dir, $filter = '', &$results = array()) {
+        $files = scandir($dir);
+        foreach($files as $key => $value){
+            $path = realpath($dir.DIRECTORY_SEPARATOR.$value); 
+            if(!is_dir($path)) {
+                if(empty($filter) || preg_match($filter, $path)) $results[] = $path;
+            } elseif($value != "." && $value != "..") get_dir_contents($path, $filter, $results);
+        }
+        return $results;
+    }
+
+    private function help()
     {
         echo "\033[33m"."Console helper.\n";
     }
