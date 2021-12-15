@@ -24,7 +24,7 @@ class Core
 
     private function resolution()
     {
-        foreach ($this->get_dir_contents(dirname(__FILE__)."/command/") as $filename) require_once $filename;
+        foreach ($this->get_dir_contents(dirname(__FILE__)."/Command/") as $filename) require_once $filename;
 
         try {
             if ($Class = stristr($this->arguments[1], ":", true)) {

@@ -19,7 +19,7 @@ class __Make
 
     private function resolution()
     {
-        $file = dirname(__DIR__)."/template/$this->argument";
+        $file = dirname(__DIR__)."/Template/$this->argument";
         if (file_exists($file)) {
             if ($this->name) {
                 $template = str_replace("_ModelIndex_", $this->UC_word($this->name), file_get_contents($file));

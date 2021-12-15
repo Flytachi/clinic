@@ -3,7 +3,7 @@
 // Версия PHP 7.4
 if (version_compare(PHP_VERSION, '7.4') >= 0) {
     
-    require_once 'extra/Console/core.php';
+    require_once 'extra/Core/__load__.php';
     new Console\Core($argc, $argv);
 
 }else {
