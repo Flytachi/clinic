@@ -3,14 +3,13 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Журнал";
 
-$tb = (new VisitModel)->tb('v');
-$tb->set_data('v.id, v.parad_id, v.client_id, v.icd_id, v.icd_autor, v.add_date, c.region, c.address_residence, c.phone_number, v.completed, v.grant_id');
-$search = $tb->get_serch();
+$tb = (new VisitModel)->as('v')->Data('v.id, v.parad_id, v.client_id, v.icd_id, v.icd_autor, v.add_date, c.first_name, c.last_name, c.father_name, c.region, c.address_residence, c.phone_number, v.completed, v.grant_id');
+$search = $tb->getSearch();
 $search_array = array(
 	"v.direction IS NOT NULL", 
 	"v.direction IS NOT NULL AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions('LEFT JOIN clients c ON(c.id=v.client_id)')->where_or_serch($search_array)->order_by('v.add_date ASC')->set_limit(20);
+$tb->Join('LEFT JOIN clients c ON(c.id=v.client_id)')->Where($search_array)->Order('v.add_date ASC')->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,12 +55,7 @@ $tb->additions('LEFT JOIN clients c ON(c.id=v.client_id)')->where_or_serch($sear
 
 					<div class="card-body" id="search_display">
 
-						<?php
-						if( isset($_SESSION['message']) ){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
+						<?php is_message(); ?>
 
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
@@ -81,12 +75,12 @@ $tb->additions('LEFT JOIN clients c ON(c.id=v.client_id)')->where_or_serch($sear
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
+									<?php foreach($tb->list() as $row): ?>
 										<tr>	
                                             <td><?= $row->parad_id ?></td>
                                             <td><?= addZero($row->client_id) ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date) : '<span class="text-muted">Нет данных</span>' ?></td>
-                                            <td><?= client_name($row->client_id) ?></td>
+                                            <td><?= client_name($row) ?></td>
                                             <td>г. <?= $row->region." ".$row->address_residence ?></td>
                                             <td><?= $row->phone_number ?></td>
                                             <td>
@@ -115,7 +109,7 @@ $tb->additions('LEFT JOIN clients c ON(c.id=v.client_id)')->where_or_serch($sear
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

@@ -1,16 +1,17 @@
 <?php
 require_once '../../tools/warframe.php';
+is_module('anesthesia');
 $session->is_auth(15);
 $header = "Стационарные пациенты";
 
-$tb = (new VisitOperationModel)->tb('vo');
-$tb->set_data("DISTINCT v.id, vo.client_id, c.birth_date, vo.grant_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vo.visit_id) LEFT JOIN clients c ON(c.id=vo.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-$search = $tb->get_serch();
+$tb = (new VisitOperationModel)->as('vo');
+$tb->Data("DISTINCT v.id, vo.client_id, c.first_name, c.last_name, c.father_name, c.birth_date, vo.grant_id, vr.id 'order'")->Join("LEFT JOIN visits v ON(v.id=vo.visit_id) LEFT JOIN clients c ON(c.id=vo.client_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$search = $tb->getSearch();
 $search_array = array(
 	"v.branch_id = $session->branch AND v.completed IS NULL AND v.is_active IS NOT NULL",
 	"v.branch_id = $session->branch AND v.completed IS NULL AND v.is_active IS NOT NULL AND (c.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', c.last_name, c.first_name, c.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->set_limit(20);
+$tb->Where($search_array)->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,24 +64,24 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
+									<?php foreach($tb->list() as $row): ?>
 										<tr>
                                             <td><?= addZero($row->client_id) ?></td>
                                             <td>
-												<span class="font-weight-semibold"><?= client_name($row->client_id) ?></span>
+												<span class="font-weight-semibold"><?= client_name($row) ?></span>
 												<?php if ( $row->order ): ?>
-													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер</span>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер №<?= (new VisitOrder)->byId($row->order)->order_number ?></span>
 												<?php endif; ?>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE client_id = $row->client_id")->fetch()): ?>
-														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка.
+													<?php if($stm = (new BedModel())->Where("client_id = $row->client_id")->get()): ?>
+														<?= $stm->building ?>  <?= $stm->floor ?> этаж <?= $stm->ward ?> палата <?= $stm->bed ?> койка
 													<?php endif; ?>
 												</div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT operation_name, completed FROM visit_operations WHERE visit_id = $row->id") as $serv): ?>
-													<span class="<?= ($serv['completed']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['operation_name'] ?></span><br>
+												<?php foreach((new VisitOperationModel())->Data("operation_name, completed")->Where("visit_id = $row->id")->list() as $serv): ?>
+													<span class="<?= ($serv->completed) ? 'text-primary' : 'text-danger' ?>"><?= $serv->operation_name ?></span><br>
 												<?php endforeach; ?>
 											</td>
                                             <td class="text-center">
@@ -102,7 +103,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 

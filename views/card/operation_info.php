@@ -16,7 +16,7 @@ function is_grant(Int $id = null)
     }
 }
 
-$operation = (new Table($db, "visit_operations"))->where("id = {$_GET['pk']}")->order_by('add_date ASC')->get_row();
+$operation = (new VisitOperationModel)->byId($_GET['pk']);
 $patient = json_decode($_GET['patient']);
 
 $total_opetrator_price = $total_service_price = $total_preparats_price = $total_other_price = 0;
@@ -68,12 +68,11 @@ if (!isset($_GET['type'])) {
 
                     <div style="display:none;" id="content_dinamic">
                         <?php
-                        if (!isset($_GET['type'])) $stats_where = "operation_id=$operation->id";
-                        elseif ($_GET['type'] == 1) $stats_where = "operation_id=$operation->id AND \"$operation->completed\" >= CURRENT_DATE()";
-                        else $stats_where = "operation_id=$operation->id AND \"$operation->completed\" < CURRENT_DATE()";
-                        $operation_stats = (new VisitOperationStatModel)->tb()->set_data("pressure, pulse, temperature, saturation, time")->where($stats_where)->order_by('time DESC');
+                        if (!isset($_GET['type'])) $stats_where = "operation_id = $operation->id";
+                        elseif ($_GET['type'] == 1) $stats_where = "operation_id = $operation->id AND \"$operation->completed_date\" >= CURRENT_DATE()";
+                        else $stats_where = "operation_id = $operation->id AND \"$operation->completed_date\" < CURRENT_DATE()";
                         ?>
-                        <?php foreach ($operation_stats->get_table() as $row): ?>
+                        <?php foreach ((new VisitOperationStatModel)->Data("pressure, pulse, temperature, saturation, time")->Where($stats_where)->Order('time DESC')->list() as $row): ?>
                             <span class="chart_date"><?= date('H:i', strtotime($row->time)) ?></span>
                             <span class="chart_pressure"><?= $row->pressure ?></span>
                             <span class="chart_pulse"><?= $row->pulse ?></span>
@@ -113,67 +112,68 @@ if (!isset($_GET['type'])) {
 <!-- ==> 2 Stage <== -->
 
     <!-- Service -->
-    <div class="col-md-7">
+    <?php if(module('anesthesia')): ?>
+        <div class="col-md-6">
 
-        <legend class="font-weight-semibold text-uppercase font-size-sm">
-            <i class="icon-bag mr-2"></i>Услуги анестезиолога
-            <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
-                <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationServiceModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
-                    <i class="icon-plus22"></i>Добавить
-                </a>
-            <?php endif; ?>
-        </legend>
+            <legend class="font-weight-semibold text-uppercase font-size-sm">
+                <i class="icon-bag mr-2"></i>Услуги анестезиолога
+                <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
+                    <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationServiceModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
+                        <i class="icon-plus22"></i>Добавить
+                    </a>
+                <?php endif; ?>
+            </legend>
 
-        <div class="card border-1 border-<?= $color ?>">
+            <div class="card border-1 border-<?= $color ?>">
 
-            <div class="table-responsive">
-                <table class="table table-hover table-sm">
-                    <thead>
-                        <tr class="bg-<?= $color ?>">
-                            <th style="width:84%">Услуга</th>
-                            <th class="text-right">Сумма</th>
-                            <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
-                                <th class="text-right" style="width:50px">Действия</th>
-                            <?php endif; ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $operation_sesrvices = (new VisitOperationServiceModel)->tb()->where("operation_id = $operation->id")->order_by('item_name ASC'); ?>
-                        <?php foreach ($operation_sesrvices->get_table() as $row): ?>
-                            <tr>
-                                <td><?= $row->item_name ?></td>
-                                <td class="text-right text-success">
-                                    <?php
-                                    $total_service_price += $row->item_cost;
-                                    echo number_format($row->item_cost, 1);   
-                                    ?>
-                                </td>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="bg-<?= $color ?>">
+                                <th style="width:84%">Услуга</th>
+                                <th class="text-right">Сумма</th>
                                 <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
-                                    <td class="text-right">
-                                        <div class="list-icons">
-                                            <button onclick="Delete('<?= del_url($row->id, 'VisitOperationServiceModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
-                                        </div>
-                                    </td>
+                                    <th class="text-right" style="width:50px">Действия</th>
                                 <?php endif; ?>
                             </tr>
-                        <?php endforeach; ?>
-                        <tr class="table-secondary">
-                            <th colspan="1" class="text-right">Итого:</th>
-                            <th class="text-right"><?= number_format($total_service_price, 1) ?></th>
-                            <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
-                                <th></th>
-                            <?php endif; ?>
-                        </tr>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ((new VisitOperationServiceModel)->Where("operation_id = $operation->id")->Order('item_name ASC')->list() as $row): ?>
+                                <tr>
+                                    <td><?= $row->item_name ?></td>
+                                    <td class="text-right text-success">
+                                        <?php
+                                        $total_service_price += $row->item_cost;
+                                        echo number_format($row->item_cost, 1);   
+                                        ?>
+                                    </td>
+                                    <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
+                                        <td class="text-right">
+                                            <div class="list-icons">
+                                                <button onclick="Delete('<?= del_url($row->id, 'VisitOperationServiceModel') ?>')" class="btn btn-sm list-icons-item text-danger"><i class="icon-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    <?php endif; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                            <tr class="table-secondary">
+                                <th colspan="1" class="text-right">Итого:</th>
+                                <th class="text-right"><?= number_format($total_service_price, 1) ?></th>
+                                <?php if ($activity and !$operation->completed and (is_grant() or permission(15))): ?>
+                                    <th></th>
+                                <?php endif; ?>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
         </div>
-
-    </div>
+    <?php endif; ?>
 
     <!-- Member -->
-    <div class="col-md-5">
+    <div class="col-md-6">
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
     		<i class="icon-reading mr-2"></i>Персонал
@@ -198,8 +198,7 @@ if (!isset($_GET['type'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $operation_members = (new VisitOperationMemberModel)->tb()->where("operation_id = $operation->id")->order_by('member_name ASC'); ?>
-                        <?php foreach ($operation_members->get_table() as $row): ?>
+                        <?php foreach ((new VisitOperationMemberModel)->Where("operation_id = $operation->id")->Order('member_name ASC')->list() as $row): ?>
                             <tr>
                                 <td><?= $row->member_name ?><?= ($row->member_operator) ? " <span class=\"text-$color\">(Оператор)</span>" : "" ?></td>
                                 <td class="text-right text-success">
@@ -235,7 +234,7 @@ if (!isset($_GET['type'])) {
 
     <?php /*if(module('module_pharmacy')): ?>
         <!-- Preparasts -->
-        <div class="col-md-5">
+        <div class="col-md-6">
 
             <legend class="font-weight-semibold text-uppercase font-size-sm">
                 <i class="icon-reading mr-2"></i>Персонал
@@ -297,7 +296,7 @@ if (!isset($_GET['type'])) {
     <?php endif;*/ ?>
 
     <!-- Сonsumables -->
-    <div class="col-md-5">
+    <div class="col-md-6">
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
     		<i class="icon-puzzle3 mr-2"></i>Расходы
@@ -322,8 +321,7 @@ if (!isset($_GET['type'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $operation_consumables = (new VisitOperationConsumableModel)->tb()->where("operation_id = $operation->id")->order_by('item_name ASC'); ?>
-                        <?php foreach ($operation_consumables->get_table() as $row): ?>
+                        <?php foreach ((new VisitOperationConsumableModel)->Where("operation_id = $operation->id")->Order('item_name ASC')->list() as $row): ?>
                             <tr>
                                 <td><?= $row->item_name ?></td>
                                 <td class="text-right text-success">
@@ -377,10 +375,12 @@ if (!isset($_GET['type'])) {
                         <td>Стоимость персонала операции</td>
                         <td class="text-right text-success"><?= number_format($total_opetrator_price, 1) ?></td>
                     </tr>
-                    <tr class="table-secondary">
-                        <td>Стоимость услуг анестезиолога</td>
-                        <td class="text-right text-success"><?= number_format($total_service_price, 1) ?></td>
-                    </tr>
+                    <?php if(module('anesthesia')): ?>
+                        <tr class="table-secondary">
+                            <td>Стоимость услуг анестезиолога</td>
+                            <td class="text-right text-success"><?= number_format($total_service_price, 1) ?></td>
+                        </tr>
+                    <?php endif; ?>
                     <?php if(module('module_pharmacy')): ?>    
                         <tr class="table-secondary">
                             <td>Стоимость препаратов</td>

@@ -60,8 +60,8 @@ require_once 'callback.php';
  									  	</tr>
  								  	</thead>
  								  	<tbody>
-									   	<?php  $total_inv=[]; $invest = (new Table($db, "visit_investments"))->where("visit_id = $patient->visit_id")->order_by('add_date ASC'); ?>
-										<?php foreach ($invest->get_table(1) as $row): ?>
+									   	<?php  $total_inv=[]; ?>
+										<?php foreach ((new VisitInvestmentModel())->Where("visit_id = $patient->visit_id")->Order('add_date ASC')->list(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= get_full_name($row->pricer_id) ?></td>
@@ -128,12 +128,8 @@ require_once 'callback.php';
  								  	</thead>
 									   
  								  	<tbody>
-									   	<?php  
-										$service = new Table($db, "visit_service_transactions");
-										$service->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,2,3)")->order_by("item_name ASC");
-										$total_ser = 0; 
-										?>
-										<?php foreach ($service->get_table(1) as $row): ?>
+									   	<?php $total_ser = 0; ?>
+										<?php foreach ((new VisitTransactionModel())->Data("DISTINCT item_id, item_name, item_cost")->Where("visit_id = $patient->visit_id AND item_type IN (1,2,3)")->Order("item_name ASC")->list(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->item_name ?></td>
@@ -163,61 +159,64 @@ require_once 'callback.php';
 					  		</div>
 
 					   	</div>
+						<!-- /Service -->
 
-						<!-- Preparats -->
-						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Препараты</legend>
+						<?php if(module('pharmacy')): ?>
+							<!-- Preparats -->
+							<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Препараты</legend>
 
-						<div class="card">
+							<div class="card">
 
-							<div class="table-responsive">
-								<table class="table table-hover table-sm table-bordered">
-									<thead class="<?= $classes['table-thead'] ?>">
-										<tr>
-											<th style="width: 40px !important;">№</th>
-											<th>Наименование</th>
-											<th class="text-center" style="width: 100px;">Кол-во</th>
-											<th class="text-right" style="width: 200px;">Цена</th>
-											<th class="text-right" style="width: 200px;">Сумма</th>
-										</tr>
-									</thead>
-									
-									<tbody>
-										<?php  
-										$preparats = new Table($db, "visit_bypass_transactions");
-										$preparats->set_data("DISTINCT item_name, item_cost")->where("visit_id = $patient->visit_id")->order_by("item_name ASC");
-										$total_pre = 0; 
-										?>
-										<?php foreach ($preparats->get_table(1) as $row): ?>
+								<div class="table-responsive">
+									<table class="table table-hover table-sm table-bordered">
+										<thead class="<?= $classes['table-thead'] ?>">
 											<tr>
-												<td><?= $row->count ?></td>
-												<td><?= $row->item_name ?></td>
-												<td class="text-center"><?php $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $patient->visit_id AND item_name LIKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
-												<td class="text-right">
-													<?= number_format($row->item_cost); ?>
-												</td>
-												<td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
-													<?php $total_pre += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?>
-												</td>
+												<th style="width: 40px !important;">№</th>
+												<th>Наименование</th>
+												<th class="text-center" style="width: 100px;">Кол-во</th>
+												<th class="text-right" style="width: 200px;">Цена</th>
+												<th class="text-right" style="width: 200px;">Сумма</th>
 											</tr>
-										<?php endforeach; ?>
-									</tbody>
-									<tfooter>
-										<?php if(isset($row->count)): ?>
-											<tr class="table-secondary">
-												<th colspan="4" class="text-right">Итог:</th>
-												<th class="text-right <?php if($vps['cost-preparats'] == -$total_pre) echo 'text-primary'; ?>"><?= number_format($total_pre) ?></th>
-											</tr>
-										<?php else: ?>
-											<tr class="table-secondary text-center">
-												<th colspan="6">Нет данных</th>
-											</tr>
-										<?php endif; ?>
-									</tfooter>
-								</table>
-							</div>
+										</thead>
+										
+										<tbody>
+											<?php  
+											$preparats = new Table($db, "visit_bypass_transactions");
+											$preparats->set_data("DISTINCT item_name, item_cost")->where("visit_id = $patient->visit_id")->order_by("item_name ASC");
+											$total_pre = 0; 
+											?>
+											<?php foreach ($preparats->get_table(1) as $row): ?>
+												<tr>
+													<td><?= $row->count ?></td>
+													<td><?= $row->item_name ?></td>
+													<td class="text-center"><?php $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $patient->visit_id AND item_name LIKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
+													<td class="text-right">
+														<?= number_format($row->item_cost); ?>
+													</td>
+													<td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
+														<?php $total_pre += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?>
+													</td>
+												</tr>
+											<?php endforeach; ?>
+										</tbody>
+										<tfooter>
+											<?php if(isset($row->count)): ?>
+												<tr class="table-secondary">
+													<th colspan="4" class="text-right">Итог:</th>
+													<th class="text-right <?php if($vps['cost-preparats'] == -$total_pre) echo 'text-primary'; ?>"><?= number_format($total_pre) ?></th>
+												</tr>
+											<?php else: ?>
+												<tr class="table-secondary text-center">
+													<th colspan="6">Нет данных</th>
+												</tr>
+											<?php endif; ?>
+										</tfooter>
+									</table>
+								</div>
 
-						</div>
-						<!-- /Price -->
+							</div>
+							<!-- /Preparats -->
+						<?php endif; ?>
 
 						<!-- Total -->
 						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Итог</legend>
@@ -235,16 +234,15 @@ require_once 'callback.php';
 									   
  								  	<tbody>
 									   	<?php  
-										$bed = new Table($db, "visit_beds");
-										$bed->set_data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->where("visit_id = $patient->visit_id")->order_by("start_date ASC");
-										$sale_info = (new Table($db, "visit_sales"))->where("visit_id = $patient->visit_id")->get_row();
+										$bed = (new VisitBedModel())->Data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->Where("visit_id = $patient->visit_id")->Order("start_date ASC");
+										$sale_info = (new VisitSaleModel())->Where("visit_id = $patient->visit_id")->get();
 										$total_bed = 0;
 										?>
 										<tr>
 											<td>
 												<strong style="font-size: 15px;">Прибывание:</strong><br>
 												<ul class="list-unstyled">
-													<?php foreach($bed->get_table() as $row): ?>
+													<?php foreach($bed->list() as $row): ?>
 														<li>
 															<span class="text-success"><?php $total_bed += $row->time * ($row->cost / 24); echo number_format( $row->time * ($row->cost / 24) ) ?> -</span>
 															<?= $row->location ?> 
@@ -261,10 +259,12 @@ require_once 'callback.php';
 											<td><strong style="font-size: 15px;">Услуги</strong></td>
 											<td class="text-right text-<?= number_color($total_ser, true) ?>"><?= number_format($total_ser) ?></td>
 										</tr>
-										<tr>
-											<td><strong style="font-size: 15px;">Препараты</strong></td>
-											<td class="text-right text-<?= number_color($total_pre, true) ?>"><?= number_format($total_pre) ?></td>
-										</tr>
+										<?php if(module('pharmacy')): ?>
+											<tr>
+												<td><strong style="font-size: 15px;">Препараты</strong></td>
+												<td class="text-right text-<?= number_color($total_pre, true) ?>"><?= number_format($total_pre) ?></td>
+											</tr>
+										<?php endif; ?>
 										<?php if($sale_info): ?>
 											<tr>
 												<td>

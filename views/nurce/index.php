@@ -41,8 +41,10 @@ $header = "Рабочий стол";
 
 							<ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
 								<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=1')" href="#" class="nav-link legitRipple active show" data-toggle="tab">Услуги</a></li>
-								<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=2')" href="#" class="nav-link legitRipple" data-toggle="tab">Назначения</a></li>
-								<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=3')" href="#" class="nav-link legitRipple" data-toggle="tab">Назначения (завершёные)</a></li>
+								<?php if(module('pharmacy')): ?>
+									<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=2')" href="#" class="nav-link legitRipple" data-toggle="tab">Назначения</a></li>
+									<li class="nav-item"><a onclick="Tabs('<?= viv('nurce/list_task') ?>?type=3')" href="#" class="nav-link legitRipple" data-toggle="tab">Назначения (завершёные)</a></li>
+								<?php endif; ?>
 							</ul>
 
 							<div id="tab_div">

@@ -18,7 +18,7 @@ class VisitOperationStatModel extends Model
         if($object){
 
             // Operation
-            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
+            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
             if($object2 and permission(15)){
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;

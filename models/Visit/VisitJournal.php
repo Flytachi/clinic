@@ -41,8 +41,7 @@ class VisitJournalModel extends Model
                 <?php if ($by == "ASC") echo '<h5 class="text-center text-muted mt-3">Начало</h5>'; ?>
                 <div class="content" id="listbock">
 
-                    <?php $tb = (new Table($db, $this->table))->where("visit_id = $pk")->order_by("add_date $by"); ?>
-                    <?php foreach ($tb->get_table() as $row): ?>
+                    <?php foreach ($this->Where("visit_id = $pk")->Order("add_date $by")->list() as $row): ?>
                         <?php 
                         if (date_f($row->add_date, 'Ymd') == date('Ymd')) $color = ($session->session_id == $row->responsible_id) ? "border-success" : "border-primary";
                         else $color = "";

@@ -19,8 +19,8 @@ class VisitOperationJournalModel extends Model
         if($object){
 
             // Operation
-            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk AND completed IS NULL")->fetch(PDO::FETCH_ASSOC);
-            if($object2 and $session->session_id == $object2['grant_id']){
+            $object2 = $db->query("SELECT * FROM $this->_visit_operations WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+            if($object2 and ($session->session_id == $object2['grant_id'] or permission(15))){
 
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;
@@ -63,9 +63,8 @@ class VisitOperationJournalModel extends Model
                 <h5 class="text-center text-muted">Начало</h5>
                 <div class="content" id="listbock">
 
-                    <?php $tb = (new Table($db, $this->table))->where("operation_id = $this->operation_id")->order_by("add_date ASC"); ?>
-                    <?php foreach ($tb->get_table() as $row): ?>
-                        <?php 
+                    <?php foreach ($this->Where("operation_id = $this->operation_id")->Order("add_date ASC")->list() as $row): ?>
+                        <?php
                         if (date_f($row->add_date, 'Ymd') == date('Ymd')) $color = ($session->session_id == $row->responsible_id) ? "border-success" : "border-primary";
                         else $color = "";
                         if ($row->last_update) $dt = date_f($row->last_update, 1);

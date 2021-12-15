@@ -152,7 +152,7 @@ class VisitOperationServiceModel extends Model
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $this->is_foreigner ?>",
                         is_order: null,
-                        search: $("#search_input").val(),
+                        search: this.value,
                         selected: service,
                         types: "3",
                         cols: 1,

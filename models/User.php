@@ -129,7 +129,7 @@ class UserModel extends Model
                                     <option></option>
                                     <?php foreach ($db->query("SELECT * FROM divisions WHERE branch_id = $branch") as $row): ?>
                                         <?php if($row['level'] == 11): ?>
-                                            <option value="<?= $row['id'] ?>" data-chained="7" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                            <option value="<?= $row['id'] ?>" data-chained="25" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                         <?php endif; ?>
                                         <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                     <?php endforeach; ?>

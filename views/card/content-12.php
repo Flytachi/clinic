@@ -90,11 +90,7 @@ require_once 'callback.php';
 										</tr>
 									</thead>
 									<tbody>
-									<?php
-										$tb = new Table($db, "visit_stats");
-										$tb->where("visit_id = $patient->visit_id")->order_by('add_date DESC');
-										?>
-										<?php foreach ($tb->get_table() as $row): ?>
+										<?php foreach ((new VisitStatModel)->Where("visit_id = $patient->visit_id")->Order('add_date DESC')->list() as $row): ?>
 											<?php
 											switch ($row->stat):
 												case 1:

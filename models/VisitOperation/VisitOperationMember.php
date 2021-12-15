@@ -24,6 +24,7 @@ class VisitOperationMemberModel extends Model
 
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;
+                $this->operation_division = $object2['division_id'];
                 if (isset($_GET['item']) and $_GET['item']) {
                     $data = $db->query("SELECT * FROM $this->table WHERE id = {$_GET['item']}")->fetch(PDO::FETCH_ASSOC);
                     if ($data) {
@@ -75,7 +76,7 @@ class VisitOperationMemberModel extends Model
                         <label>Член персонала:</label>
                         <select placeholder="Введите члена персонала" class="<?= $classes['form-select'] ?>" onchange="$('#member_name').val(this.value)">
                             <option>Введите члена персонала</option>
-                            <?php foreach ($db->query("SELECT id FROM users WHERE branch_id = $session->branch AND user_level = 11 AND id != $session->session_id") as $row): ?>
+                            <?php foreach ($db->query("SELECT id FROM users WHERE branch_id = $session->branch AND user_level = 11 AND division_id = $this->operation_division") as $row): ?>
                                 <option value="<?= get_full_name($row['id']) ?>"><?= get_full_name($row['id']) ?></option>
                             <?php endforeach; ?>
                         </select>

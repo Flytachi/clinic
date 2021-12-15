@@ -104,7 +104,7 @@ $header = "Панель управления";
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_pharmacy" <?= (isset($company->module_anesthesia) and $company->module_anesthesia) ? "checked" : "" ?>>
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_anesthesia" <?= (isset($company->module_anesthesia) and $company->module_anesthesia) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

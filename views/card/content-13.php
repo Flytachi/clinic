@@ -62,16 +62,13 @@ require_once 'callback.php';
 										</tr>
 									</thead>
 									<tbody>
-									<?php
-										$tb = new Table($db, "visit_operations");
-										$tb->where("visit_id = $patient->visit_id")->order_by('add_date ASC');
-										?>
-										<?php foreach ($tb->get_table() as $row): ?>
+										<?php foreach ((new VisitOperationModel)->Where("visit_id = $patient->visit_id")->Order('add_date ASC')->list() as $row): ?>
+											<?php $is_ = (strtotime("$row->operation_date $row->operation_time") <= strtotime(date('Y-m-d H:i:s'))) ? true : false; ?>
 											<tr>
 												<td><?= $row->operation_name ?></td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<?php if (!$row->completed and is_grant()): ?>
-													<td class="text-primary" onclick='Update(`<?= up_url($row->id, "VisitOperationModel", "form_operation_date") ?>`)'>
+													<td class="<?= ($is_) ? 'text-success' : 'text-primary'; ?>" onclick='Update(`<?= up_url($row->id, "VisitOperationModel", "form_operation_date") ?>`)'>
 														<?= ($row->operation_date) ? date_f("$row->operation_date $row->operation_time", 1) : '<span class="text-muted">Нет данных</span>' ?>
 													</td>
 												<?php else: ?>
@@ -83,7 +80,7 @@ require_once 'callback.php';
 														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>&type=0`)' class="btn btn-outline-warning btn-sm">До</button>
 														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>&type=1`)' class="btn btn-outline-success btn-sm">После</button>
 													<?php else: ?>
-														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="btn btn-outline-primary btn-sm">Информация</button>
+														<button type="button" onclick='Show_info(`<?= viv("card/operation_info") ?>?pk=<?= $row->id ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="btn btn-outline-<?= ($is_) ? 'success' : 'primary'; ?> btn-sm">Информация</button>
 													<?php endif; ?>
 												</td>
 											</tr>

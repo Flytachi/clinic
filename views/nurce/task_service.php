@@ -3,13 +3,11 @@ require_once '../../tools/warframe.php';
 $session->is_auth(25);
 $pk = $_GET['pk'];
 
-$visit = $tb = (new VisitModel)->tb()->where("id = $pk AND is_active IS NOT NULL AND completed IS NULL")->get_row();
+$visit = $tb = (new VisitModel)->Where("id = $pk AND is_active IS NOT NULL AND completed IS NULL")->get();
 ?>
 
 <?php if($visit): ?>
-    <?php
-    $services = (new VisitServiceModel)->tb()->set_data("DISTINCT level")->where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2")->order_by("level ASC");
-    ?>
+    <?php $services = (new VisitServiceModel)->Data("DISTINCT level")->Where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2")->Order("level ASC"); ?>
     <div class="row">
         <div class="col-md-12 text-center">
             <h3> <b>ID <?= addZero($visit->client_id) ?>:</b> <?= client_name($visit->client_id) ?></h3>
@@ -24,15 +22,13 @@ $visit = $tb = (new VisitModel)->tb()->where("id = $pk AND is_active IS NOT NULL
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($services->get_table() as $service): ?>
+                <?php foreach ($services->list() as $service): ?>
                     <tr>
                         <td>
                             <strong><?= $PERSONAL[$service->level] ?></strong>
                             <ul>
-                                <?php
-                                $serv = (new VisitServiceModel)->tb()->set_data("service_name")->where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2 AND level = $service->level")->order_by("service_name ASC");
-                                ?>
-                                <?php foreach ($serv->get_table() as $row): ?>
+                                <?php $serv = (new VisitServiceModel)->Data("service_name")->Where("visit_id = $pk AND DATE(add_date) = CURRENT_DATE() AND service_id != 1 AND status = 2 AND level = $service->level")->Order("service_name ASC"); ?>
+                                <?php foreach ($serv->list() as $row): ?>
                                     <li><?= $row->service_name ?></li>
                                 <?php endforeach; ?>
                             </ul>
@@ -43,6 +39,6 @@ $visit = $tb = (new VisitModel)->tb()->where("id = $pk AND is_active IS NOT NULL
         </table>
     </div>
     <div class="text-right">
-        <a href="<?= viv('card/content-9') ?>?pk=<?= $pk ?>&activity=1" class="btn btn-outline-info btn-sm">Перейти к пациенту</a>
+        <a href="<?= viv('card/content-7') ?>?pk=<?= $pk ?>&activity=1" class="btn btn-outline-info btn-sm">Перейти к пациенту</a>
     </div>
 <?php endif; ?>
