@@ -40,28 +40,31 @@ class __Component
             if (is_dir($item)) {
                 $c = ($c_path) ? basename($c_path)."/" : "";
                 $create_folder = dirname(__DIR__, 3)."/$c".mb_strtolower(substr(basename($item), 10, -2));
-                // $this->create_dir($create_folder);
-                echo "$create_folder \n";
+                $this->create_dir($create_folder);
                 $this->change_dir($item, $create_folder);
             }else {
-                if ($c_path) $this->create_file("$c_path/".mb_strtolower(substr(basename($item), 2, -2)).".php", file_get_contents($item));
-                else $this->create_file(dirname(__DIR__, 3)."/".mb_strtolower(substr(basename($item), 2, -2)).".php", file_get_contents($item));
+                $extention = ( $temp = mb_strtolower(strstr(basename($item), '_', true)) ) ? ".$temp" : "";
+                $name = mb_strtolower(substr(strstr(basename($item), '_'), 2, -2));
+                if ($c_path) $this->create_file("$c_path/$name$extention", file_get_contents($item));
+                else $this->create_file(dirname(__DIR__, 3)."/$name$extention", file_get_contents($item));
             }
         }
     }
 
     private function create_dir(String $path)
     {
-        if (!file_exists($path)) mkdir($path);
+        // if (!file_exists($path)) mkdir($path);
+        echo "$path\n";
     }
 
     private function create_file(String $path, String $code)
     {
-        if (!file_exists($path)) {
+        /* if (!file_exists($path)) {
             $fp = fopen($path, "w");
             fwrite($fp, $code);
             fclose($fp);
-        }
+        } */ 
+        echo "  $path\n";
     }
 
     private function help()
