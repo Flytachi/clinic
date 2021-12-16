@@ -3,6 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth(3);
 is_module('pharmacy');
 $header = "Склады";
+$tb = new WarehouseModel();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +39,7 @@ $header = "Склады";
 
 					<div class="card-body" id="form_card">
 
-                        <?php (new WarehouseModel)->form(); ?>
+                        <?php $tb->form(); ?>
 
 					</div>
 
@@ -56,36 +57,32 @@ $header = "Склады";
 	                          	<thead class="<?= $classes['table-thead'] ?>">
 	                              	<tr>
 									  	<th style="width:50px">№</th>
-									  	<th>Наименование</th>
-									  	<th style="width:35%">Ответственное лицо</th>
-									  	<th>Роли</th>
-                                        <th>Отделы</th>
+										<th>Наименование</th>
+									  	<th>Статус</th>
+									  	<th>Тип</th>
                                         <th style="width: 100px">Действия</th>
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-									<?php
-									$tb = (new WarehouseModel)->tb()->where("branch_id = $session->branch");
-									?>
-                                    <?php foreach ($tb->get_table(1) as $row): ?>
+                                    <?php foreach ($tb->Where("branch_id = $session->branch")->list(1) as $row): ?>
 										<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->name ?></td>
-											<td><?= get_full_name($row->responsible_id) ?></td>
 											<td>
-                                                <?php foreach (json_decode($row->level) as $key): ?>
-                                                    <li><?= $PERSONAL[$key] ?></li>
-                                                <?php endforeach; ?>
-                                            </td>
-                                            <td>
-                                                <?php if ( isset($row->division) ): ?>
-                                                    <?php foreach (json_decode($row->division) as $key): ?>
-                                                        <li><?= $db->query("SELECT title FROM divisions WHERE id = $key")->fetchColumn() ?></li>
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <span class="text-muted">Нет данных</span>
-                                                <?php endif; ?>
-                                            </td>
+												<?php 
+												if($row->is_payment) echo "Платный";
+												elseif ($row->is_free) echo "Бесплатный";
+												else echo "<span class=\"text-muted\">Нет данных</span>";
+												?>
+											</td>
+											<td>
+												<?php 
+												if($row->is_internal) echo "Внутренний<br>";
+												if ($row->is_external) echo "Внешний<br>";
+												if ($row->is_operation) echo "Операционный<br>";
+												if(!$row->is_internal and !$row->is_external and !$row->is_operation) echo "<span class=\"text-muted\">Нет данных</span>"; 
+												?>
+											</td>
                                             <td>
 												<div class="list-icons">
                                                     <div class="dropdown">                      
@@ -106,7 +103,7 @@ $header = "Склады";
 															</a>
 														</div>
 													</div>
-													<a onclick="ShowConf('<?= up_url($row->id, 'WarehouseSettingModel') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
+													<a onclick="ShowConf('<?= up_url($row->id, 'WarehouseSettingsModel') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
 													<a onclick="Update('<?= up_url($row->id, 'WarehouseModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_warehouses")): ?>										
                                                         <a href="<?= del_url($row->id, 'WarehouseModel') ?>" onclick="return confirm('Вы уверены что хотите удалить склад?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>

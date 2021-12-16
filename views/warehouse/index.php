@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth();
 is_module('pharmacy');
@@ -7,36 +10,23 @@ $header = "Рабочий стол";
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
     $warehouse = $db->query("SELECT * FROM warehouses WHERE id = {$_GET['pk']} AND is_active IS NOT NULL")->fetch();
+	$is_payment = $warehouse['is_payment'];
 	if ($warehouse) {
-		$level = ($warehouse['level']) ? json_decode($warehouse['level']) : null;
-		$division = ($warehouse['division']) ? json_decode($warehouse['division']) : null;
-		$is_parent = ($warehouse['responsible_id'] == $session->session_id) ? true : false;
-
-		if ($level) {
-			if (permission($level)) {
-				if ($division and !( !$session->session_division or in_array($session->session_division, $division) )) Mixin\error('423');
-			}else {
-				Mixin\error('423');
-			}
-		}
-
-	} else {
-		Mixin\error('404');
-	}
+		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = {$warehouse['id']} AND user_id = $session->session_id")->fetch();
+		$is_grant = $data['is_grant'];
+		if(!$data) Hell::error('404');
+	} else Hell::error('404');
     
-} else {
-    Mixin\error('404');
-}
+} else Hell::error('404');
 
-$tb = (new WarehouseCustomPanel)->tb('wc');
-$search = $tb->get_serch();
-$tb->set_data("win.name, wim.manufacturer, wc.item_qty, wc.item_price, wc.item_die_date,
-    (SELECT SUM(vbea.item_qty) FROM visit_bypass_event_applications vbea WHERE vbea.warehouse_id = wc.warehouse_id AND wc.item_name_id = vbea.item_name_id AND wc.item_manufacturer_id = vbea.item_manufacturer_id AND wc.item_price = vbea.item_price ) 'reservation'")->additions("LEFT JOIN warehouse_item_names win ON(win.id=wc.item_name_id) LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=wc.item_manufacturer_id)");
+$tb = (new WarehouseStoragePanel)->as("wc")->Data("wc.id, wc.warehouse_id, wc.item_name_id, wc.item_manufacturer_id, wc.item_price, win.name, wim.manufacturer, wc.item_qty, wc.item_die_date");
+$search = $tb->getSearch();
+$tb->Join("LEFT JOIN warehouse_item_names win ON(win.id=wc.item_name_id) LEFT JOIN warehouse_item_manufacturers wim ON(wim.id=wc.item_manufacturer_id)");
 $where_search = array(
-    "wc.branch_id = $session->branch AND wc.warehouse_id = {$_GET['pk']}", 
-    "wc.branch_id = $session->branch AND wc.warehouse_id = {$_GET['pk']} AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+    "wc.warehouse_id = {$_GET['pk']}", 
+    "wc.warehouse_id = {$_GET['pk']} AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 );
-$tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC")->set_limit(20);
+$tb->Where($where_search)->Order("win.name ASC, wim.manufacturer ASC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -79,36 +69,56 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 
 					<div class="card-body" id="search_display">
 
+						<?php is_message(); ?>
+
                         <div class="table-responsive">
 				            <table class="table table-hover">
 				                <thead>
 				                    <tr class="<?= $classes['table-thead'] ?>">
 				                        <th>Наименование</th>
                                         <th style="width:250px">Производитель</th>
-                                        <th class="text-right" style="width:200px">Стоимость</th>
-                                        <th class="text-center" style="width:2s00px">Кол-во/бронь</th>
+										<?php if($is_payment): ?>
+                                        	<th class="text-right" style="width:200px">Стоимость</th>
+                                        <?php endif; ?>
+										<th class="text-center" style="width:2s00px">Кол-во доступно/бронь</th>
                                         <th class="text-center">Срок годности</th>
-				                        <!-- <th class="text-right" style="width: 100px">Действия</th> -->
+										<?php if($is_grant): ?>
+											<th class="text-right" style="width: 100px">Действия</th>
+										<?php endif; ?>
 				                    </tr>
 				                </thead>
 				                <tbody>
-									<?php foreach ($tb->get_table() as $row): ?>
+									<?php foreach ($tb->list() as $row): ?>
                                         <tr>
                                             <td><?= $row->name ?></td>
                                             <td><?= $row->manufacturer ?></td>
-                                            <td class="text-right"><?= number_format($row->item_price) ?></td>
+											<?php if($is_payment): ?>
+												<td class="text-right"><?= number_format($row->item_price) ?></td>
+											<?php endif; ?>
                                             <td class="text-center">
-                                                <?= number_format($row->item_qty) ?>
-                                                <span class="<?= ($row->reservation) ? "text-danger" : "text-muted" ?>">/ <?= number_format($row->reservation) ?></span>
+												<?php
+												$price = ($is_payment) ? "AND item_price = $row->item_price" : null;
+												$row->reservation = $db->query("SELECT SUM(item_qty) FROM warehouse_storage_applications WHERE status IN(1,2) AND warehouse_id_from = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
+												$row->reservation += $db->query("SELECT SUM(item_qty) FROM visit_bypass_event_applications WHERE warehouse_id = $row->warehouse_id AND item_name_id = $row->item_name_id AND item_manufacturer_id = $row->item_manufacturer_id $price")->fetchColumn();
+												?>
+                                                <?= number_format($row->item_qty - $row->reservation) ?> /
+                                                <span class="<?= ($row->reservation) ? "text-danger" : "text-muted" ?>"> <?= number_format($row->reservation) ?></span>
                                             </td>
                                             <td class="text-center"><?= $row->item_die_date ?></td>
+											<?php if($is_grant): ?>
+												<td class="text-right"s>
+				                                	<div class="list-icons">
+														<a href="#" onclick="Check('<?= up_url($row->id, 'WarehouseStorageTransactionModel') ?>')" class="list-icons-item text-danger-600"><i class="icon-clipboard6"></i></a>
+													</div>
+												</td>
+											<?php endif; ?>
                                         </tr>
 									<?php endforeach; ?>
 				                </tbody>
 				            </table>
 				        </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 
@@ -123,7 +133,25 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
     <script type="text/javascript">
+
+		function Check(events) {
+			event.preventDefault();
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
+		};
 
 		$("#search_input").keyup(function() {
 			var input = document.querySelector('#search_input');
@@ -132,8 +160,9 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 				type: "GET",
 				url: "<?= ajax('warehouse/search-index') ?>",
 				data: {
-                    pk: "<?= $_GET['pk'] ?>",
-					is_parent: "<?= $is_parent ?>",
+                    pk: <?= $_GET['pk'] ?>,
+					is_payment: <?= ($is_payment) ? 1 : 0 ?>,
+					is_grant: <?= ($is_grant) ? 1 : 0 ?>,
 					table_search: input.value,
 				},
 				success: function (result) {

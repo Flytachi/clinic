@@ -32,7 +32,7 @@ class __Make
     private function create_file($code = "")
     {
         $name = $this->UC_word($this->name);
-        $file_name = "models/$name.php";
+        $file_name = "model/$name.php";
         if (!file_exists($file_name)) {
             $fp = fopen($file_name, "x");
             fwrite($fp, $code);

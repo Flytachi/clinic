@@ -8,9 +8,6 @@ class __Cfg
     private $setting_name = "setting.ini";
     private $cfg_name = ".cfg";
     private $default_configuratuons = array(
-        'MASTER_IPS' => array(
-            ""
-        ),
         'SECURITY' => array(
             'SERIA' => null,
         ),
@@ -22,21 +19,16 @@ class __Cfg
             'SESSION_TIMEOUT' => null, 
             'SESSION_LIFE' => null,
 
-            'ENGINEERING_WORKS' => false, 
             'HIDE_EXTENSION' => false, 
             'ROOT_MOD' => false, 
-            'DEBUG' => false, 
+            'DEBUG' => true, 
         ), 
         'DATABASE' => array(
             'HOST' => 'localhost',
             'NAME' => null,  
             'USER' => null,
             'PASS' => null, 
-        ), 
-        'SOCKET' => array(
-            'PORT' => 8080, 
-            'HOST' => null,
-        ), 
+        ) 
     );
 
 

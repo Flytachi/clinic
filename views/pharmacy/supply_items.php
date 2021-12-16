@@ -1,17 +1,17 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth(24);
 is_module('pharmacy');
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk'])) {
-	$supply = $db->query("SELECT responsible_id, uniq_key FROM warehouse_supply WHERE id = {$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
+	$supply = (new WarehouseSupplyModel)->Data("responsible_id, uniq_key")->byId($_GET['pk']);
 	$form = new WarehouseSupplyModel;
 	$_GET['form'] = 'table';
 	$header = "Аптека / Поставка $supply->uniq_key";
-}else{
-	Mixin\error('404');
-}
-
+}else Hell::error('404');
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -3,7 +3,7 @@
 class __Session
 {
     private $argument;
-    private $path = "sessions";
+    private $path = "session";
 
     function __construct($value = null, $name = null)
     {

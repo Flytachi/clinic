@@ -1,6 +1,5 @@
 <?php
 require_once '../../tools/warframe.php';
-require_once '../../extra/Console/command.php';
 $session->is_auth('master');
 $header = "Панель управления";
 ?>

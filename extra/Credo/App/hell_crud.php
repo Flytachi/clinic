@@ -2,38 +2,6 @@
 
 namespace Mixin;
 
-class Hell
-{
-    static function error($url){
-        if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error'){
-            header("location:".DIR."/error/$url".EXT);
-            exit;
-        }
-    }
-
-    static function array_to_ini(array $a, array $parent = array())
-    {
-        $out = '';
-        foreach ($a as $k => $v)
-        {
-            if (is_array($v))
-            {
-                //subsection case
-                $sec = array_merge((array) $parent, (array) $k);
-                $out .= PHP_EOL;
-                $out .= '[' . join('.', $sec) . ']' . PHP_EOL;
-                $out .= Hell::array_to_ini($v, $sec);
-            }
-            else
-            {
-                //plain key->value case
-                $out .= "$k=$v" . PHP_EOL;
-            }
-        }
-        return $out;
-    }
-}
-
 class HellCrud
 {
     static function clean($value = "") {
@@ -216,40 +184,6 @@ class HellCrud
         $stmt->execute();
         return $stmt->rowCount();
     
-    }
-}
-
-class HellTable
-{
-    static function T_create($sql)
-    {
-        global $db;
-        $db->exec($sql);
-    }
-
-    static function T_flush($table)
-    {
-        global $db;
-        $db->exec("TRUNCATE TABLE $table;");
-    }
-
-    static function T_DELETE_database()
-    {
-        global $db, $ini;
-        foreach ($db->query("SHOW TABlES") as $table) $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
-        return 200;
-    }
-
-    static function T_FLUSH_database()
-    {
-        global $db, $ini;
-
-        foreach ($db->query("SHOW TABlES") as $table) {
-            if ($table['Tables_in_'.$ini['DATABASE']['NAME']] != "sessions") {
-                HellTable::T_flush($table['Tables_in_'.$ini['DATABASE']['NAME']]);
-            }
-        }
-        return 200;
     }
 }
 

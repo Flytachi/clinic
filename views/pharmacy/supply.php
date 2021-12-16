@@ -50,12 +50,7 @@ $header = "Аптека / Поставки";
 
               		<div class="card-body">
 
-						<?php
-						if( isset($_SESSION['message']) ){
-							echo $_SESSION['message'];
-							unset($_SESSION['message']);
-						}
-						?>
+						<?php is_message(); ?>
 
                   		<div class="table-responsive">
 	                      	<table class="table table-hover">
@@ -70,8 +65,8 @@ $header = "Аптека / Поставки";
 	                              	</tr>
 	                          	</thead>
 	                          	<tbody>
-									<?php $tb = (new WarehouseSupplyModel)->tb()->where("branch_id = $session->branch"); ?>
-                                    <?php foreach ($tb->get_table(1) as $row): ?>
+									<?php $tb = (new WarehouseSupplyModel)->Where("branch_id = $session->branch"); ?>
+                                    <?php foreach ($tb->list(1) as $row): ?>
 										<tr>
 											<td><?= $row->count ?></td>
 											<td><?= $row->uniq_key ?></td>

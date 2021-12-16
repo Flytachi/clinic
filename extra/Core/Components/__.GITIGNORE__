@@ -2,7 +2,7 @@ backup
 libs/*
 !libs/*.php
 node_modules
-sessions
+session
 storage
 tests
 setting.ini

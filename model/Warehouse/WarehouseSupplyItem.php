@@ -8,7 +8,7 @@ class WarehouseSupplyItemModel extends Model
     public $table = 'warehouse_supply_items';
     public $number = 0;
     public $not_tr = false;
-    public $uniq_key, $is_order, $is_active;
+    public $uniq_key, $is_free, $is_active;
 
     public function form($pk = null)
     {
@@ -19,41 +19,40 @@ class WarehouseSupplyItemModel extends Model
             <tr id="table_tr-<?= $this->number ?>">
         <?php endif; ?>
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="branch_id" value="<?= $this->branch_id ?>">
             <input type="hidden" name="uniq_key" value="<?= $this->uniq_key ?>">
-            <input type="hidden" name="id" value="<?= $pk ?>" id="table_id-<?= $this->number ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
 
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT name FROM warehouse_item_names WHERE id =".$this->value('item_name_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= (new WarehouseItemNameModel)->Data("name")->byId($this->value('item_name_id'))->name ?>">
                 <?php else: ?>
                     <select name="item_name_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Препарат" onchange="UpBtn('btn_save-<?= $this->number ?>')">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM warehouse_item_names") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($this->value('item_name_id') == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
+                        <?php foreach ((new WarehouseItemNameModel)->list() as $row): ?>
+                            <option value="<?= $row->id ?>" <?= ($this->value('item_name_id') == $row->id) ? 'selected': '' ?>><?= $row->name ?></option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id =".$this->value('item_manufacturer_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= (new WarehouseItemManufacturerModel)->Data("manufacturer")->byId($this->value('item_manufacturer_id'))->manufacturer ?>">
                 <?php else: ?>
                     <select name="item_manufacturer_id" class="<?= $classes['form-select'] ?> " data-placeholder="Выберите Производителя" onchange="UpBtn('btn_save-<?= $this->number ?>')">
-                        <?php foreach ($db->query("SELECT * FROM warehouse_item_manufacturers") as $row): ?>
-                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_manufacturer_id') == $row['id']) ? 'selected': '' ?>><?= $row['manufacturer'] ?></option>
+                        <?php foreach ((new WarehouseItemManufacturerModel)->list() as $row): ?>
+                            <option value="<?= $row->id ?>"  <?= ($this->value('item_manufacturer_id') == $row->id) ? 'selected': '' ?>><?= $row->manufacturer ?></option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>
             </td>
             <td>
                 <?php if($status): ?>
-                    <input type="text" <?= $status ?> class="form-control" value="<?= $db->query("SELECT supplier FROM warehouse_item_suppliers WHERE id =".$this->value('item_supplier_id'))->fetchColumn() ?>">
+                    <input type="text" <?= $status ?> class="form-control" value="<?= (new WarehouseItemSupplierModel)->Data("supplier")->byId($this->value('item_supplier_id'))->supplier ?>">
                 <?php else: ?>
                     <select name="item_supplier_id" class="<?= $classes['form-select'] ?> verification_input" data-placeholder="Выберите Поставщика" onchange="UpBtn('btn_save-<?= $this->number ?>')">
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM warehouse_item_suppliers") as $row): ?>
-                            <option value="<?= $row['id'] ?>"  <?= ($this->value('item_supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['supplier'] ?></option>
+                        <?php foreach ((new WarehouseItemSupplierModel)->list() as $row): ?>
+                            <option value="<?= $row->id ?>"  <?= ($this->value('item_supplier_id') == $row->id) ? 'selected': '' ?>><?= $row->supplier ?></option>
                         <?php endforeach; ?>
                     </select>
                 <?php endif; ?>
@@ -61,7 +60,7 @@ class WarehouseSupplyItemModel extends Model
             <td>
                 <input type="number" name="item_qty" <?= $status ?> class="form-control verification_input" min="1" placeholder="№" value="<?= $this->value('item_qty') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
-            <?php if(!$this->is_order): ?>
+            <?php if(!$this->is_free): ?>
                 <td>
                     <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
                 </td>

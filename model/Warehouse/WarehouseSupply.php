@@ -6,14 +6,13 @@ use Mixin\Model;
 class WarehouseSupplyModel extends Model
 {
     public $table = 'warehouse_supply';
-    public $_order = 'warehouse_orders';
-    public $_common = 'warehouse_common';
+    public $_storage = 'warehouse_storage';
     public $_warehouse_item = 'warehouse_supply_items';
     public $_item_names = 'warehouse_item_names';
 
     public function form($pk = null)
     {
-        global $session, $classes;
+        global $db, $session, $classes;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -31,7 +30,18 @@ class WarehouseSupplyModel extends Model
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="id" value="<?= $pk ?>">
                 <input type="hidden" name="branch_id" value="<?= $session->branch ?>">
-                <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
+                <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
+
+                    
+                <div class="form-group">
+                    <label>Склад</label>
+                    <select data-placeholder="Выбрать склад" name="warehouse_id" class="<?= $classes['form-select'] ?>">
+                        <option value=""></option>
+                        <?php foreach($db->query("SELECT id, name FROM warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($this->value('warehouse_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
                 <div class="form-group">
                     <label>Дата поставки:</label>
@@ -40,13 +50,6 @@ class WarehouseSupplyModel extends Model
                             <span class="input-group-text"><i class="icon-calendar22"></i></span>
                         </span>
                         <input type="date" name="supply_date" class="form-control daterange-single" value="<?= $this->value('supply_date') ?>" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="custo" name="is_order" <?= ($this->value('is_order')) ? "checked" : "" ?>>
-                        <label class="custom-control-label" for="custo">Скдлад бесплатных препаратов</label>
                     </div>
                 </div>
 
@@ -62,18 +65,20 @@ class WarehouseSupplyModel extends Model
 
         </form>
         <?php
+        $this->jquery_init();
     }
 
     public function table($pk = null)
     {
         global $db, $session, $classes;
         $is_active = (!$this->value('completed') and $session->session_id == $this->value('responsible_id')) ? true : false;
+        $is_free = $db->query("SELECT is_free FROM warehouses WHERE id = ".$this->value('warehouse_id'))->fetchColumn();
         ?>
         <div class="<?= $classes['card-header'] ?>">
             <h5 class="card-title"><b>Поставка:</b> <?= date_f($this->value('supply_date')) ?></h5>
             <div class="header-elements">
 
-                <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('responsible_id')) ?></span>
+                <span class="text-right"><b>Ответственный:</b> <?= get_full_name($this->value('parent_id')) ?></span>
                 <?php if($is_active): ?>
                     <div class="form-group-feedback form-group-feedback-right ml-3" style="width:70px;">
                         <input type="number" class="form-control border-indigo" value="<?= config('constant_pharmacy_percent') ?>" max="999" id="percent_input" placeholder="%" title="Введите процент">
@@ -87,6 +92,15 @@ class WarehouseSupplyModel extends Model
         </div>
 
         <div class="card-body">
+
+            <div class="text-left mb-1">
+                <span style="font-size: 14px"><b>Склад:</b></span>
+                <span class="text-primary"><?= $db->query("SELECT name FROM warehouses WHERE id = ".$this->value('warehouse_id'))->fetchColumn() ?></span><br>
+                <?php if($this->value('completed')): ?>
+                    <span style="font-size: 14px"><b>Внесено:</b></span>
+                    <span class="text-primary"><?= date_f($this->value('completed_date'), 1) ?></span>
+                <?php endif; ?>
+            </div>
 
             <?php if($is_active): ?>
                 <div class="text-right mb-1">
@@ -104,7 +118,7 @@ class WarehouseSupplyModel extends Model
                             <th>Производитель</th>
                             <th style="width:200px">Поставщик</th>
                             <th style="width:90px">Кол-во</th>
-                            <?php if(!$this->value('is_order')): ?>
+                            <?php if(!$is_free): ?>
                                 <th style="width:100px">Ц.приход</th>
                                 <th style="width:100px">Ц.расход</th>
                             <?php endif; ?>
@@ -120,16 +134,13 @@ class WarehouseSupplyModel extends Model
                         <?php
                         $rosh = new WarehouseSupplyItemModel();
                         $rosh->uniq_key = $this->value('uniq_key');
-                        $rosh->branch_id = $session->branch;
-                        $rosh->is_order = $this->value('is_order');
+                        $rosh->is_free = $is_free;
                         $rosh->is_active = $is_active;
                         
                         // Table
-                        $tb = new Table($db, $rosh->table." wsi ");
-                        $tb->set_data("wsi.id")->additions("LEFT JOIN warehouse_item_names win ON (wsi.item_name_id=win.id)");
-                        $tb->where("wsi.uniq_key = '{$this->value('uniq_key')}'")->order_by("win.name ASC, wsi.item_manufacturer_id ASC, wsi.item_supplier_id ASC");
-
-                        foreach ($tb->get_table(1) as $row) {
+                        $tb = (new WarehouseSupplyItemModel)->as("wsi")->Data("wsi.id")->Join("LEFT JOIN warehouse_item_names win ON (wsi.item_name_id=win.id)");
+                        $tb->Where("wsi.uniq_key = '{$this->value('uniq_key')}'")->Order("win.name ASC, wsi.item_manufacturer_id ASC, wsi.item_supplier_id ASC");
+                        foreach ($tb->list(1) as $row) {
                             $rosh->number = $row->count;
                             $rosh->get_or_404($row->id);
                             $rosh->clear_post();
@@ -139,15 +150,6 @@ class WarehouseSupplyModel extends Model
                     </tbody>
                 </table>
             </div>
-
-            <?php if($this->value('completed')): ?>
-                <div class="text-left">
-                    <span style="font-size: 14px"><b>Склад:</b></span>
-                    <span class="text-primary"><?= ( $this->value('is_order') ) ? "Бесплатный" : "Главный" ?></span><br>
-                    <span style="font-size: 14px"><b>Внесено:</b></span>
-                    <span class="text-primary"><?= date_f($this->value('completed_date'), 1) ?></span>
-                </div>
-            <?php endif; ?>
 
             <?php if($is_active): ?>
                 <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form">
@@ -241,7 +243,7 @@ class WarehouseSupplyModel extends Model
                     $.ajax({
                         type: "GET",
                         url: "<?= ajax("warehouse/add_item") ?>",
-                        data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>", is_order: "<?= $this->value('is_order') ?>" },
+                        data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>", is_free: "<?= $is_free ?>" },
                         success: function (result) {
                             $('#table_body').append(result);
                             FormLayouts.init();
@@ -305,8 +307,6 @@ class WarehouseSupplyModel extends Model
                                     text: "Успешно сохранено!",
                                     type: "success",
                                 }).show();
-                                document.querySelector(`#table_id-${tr}`).value = data.pk;
-                                
 
                             } else {
 
@@ -471,8 +471,6 @@ class WarehouseSupplyModel extends Model
     public function clean()
     {
         if (!$this->post['id']) $this->post['uniq_key'] = uniqid('supply-');
-        if ( isset($this->post['is_order']) and $this->post['is_order'] == 'on' ) $this->post['is_order'] = 1;
-        else $this->post['is_order'] = null;
         $this->post = HellCrud::clean_form($this->post);
         $this->post = HellCrud::to_null($this->post);
         return True;
@@ -500,6 +498,7 @@ class WarehouseSupplyModel extends Model
                     exit;
                 }
 
+                // $this->dd();
                 $db->commit();
                 $this->success();
 
@@ -520,33 +519,25 @@ class WarehouseSupplyModel extends Model
     public function warehouse_change($pk)
     {
         global $db;
-        unset($this->post['is_order']);
-        $data = $db->query("SELECT uniq_key, is_order FROM $this->table WHERE id = $pk")->fetch();
+        $data = $db->query("SELECT uniq_key, warehouse_id FROM $this->table WHERE id = $pk")->fetch();
+        $ware = $db->query("SELECT * FROM warehouses WHERE id = {$data['warehouse_id']}")->fetch();
         foreach ($db->query("SELECT * FROM $this->_warehouse_item WHERE uniq_key = '{$data['uniq_key']}'") as $item) {
-            $where = "item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']}";
-            unset($item['id']);
-            unset($item['uniq_key']);
-            unset($item['item_cost']);
-            unset($item['item_faktura']);
-            unset($item['item_supplier_id']);
-            if ($data['is_order']) {
-                unset($item['item_price']);
-                $where .= " AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
-                $obj = $db->query("SELECT id, item_qty FROM $this->_order WHERE $where")->fetch();
-                if ($obj) $object = HellCrud::update($this->_order, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
-                else $object = HellCrud::insert($this->_order, $item);
-            } else {
-                $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
-                $obj = $db->query("SELECT id, item_qty FROM $this->_common WHERE $where")->fetch();
-                if ($obj) $object = HellCrud::update($this->_common, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
-                else $object = HellCrud::insert($this->_common, $item);
-            }
+            $where = "warehouse_id = {$ware['id']} AND item_name_id = {$item['item_name_id']} AND item_manufacturer_id = {$item['item_manufacturer_id']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
+            unset($item['id']); unset($item['uniq_key']); unset($item['item_cost']);
+            unset($item['item_faktura']); unset($item['item_supplier_id']);
+            $item['warehouse_id'] = $ware['id'];
+
+            if ($ware['is_payment']) $where .= " AND item_price = {$item['item_price']} AND DATE(item_die_date) = DATE('".$item['item_die_date']."')";
+            $obj = $db->query("SELECT id, item_qty FROM $this->_storage WHERE $where")->fetch();
+            if ($obj) $object = HellCrud::update($this->_storage, array('item_qty' => $obj['item_qty']+$item['item_qty']), $obj['id']);
+            else $object = HellCrud::insert($this->_storage, $item);
             
             if (!intval($object)){
                 $this->error($object);
                 $db->rollBack();
             }
         }
+        
     }
 
     public function success()
