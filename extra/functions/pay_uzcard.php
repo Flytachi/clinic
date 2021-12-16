@@ -3,7 +3,7 @@
     PHP Payment GATE
     Version = 1.7
 */
-class PayTach
+class PayUzcard
 {
     private $username, $password, $auth;
 
@@ -353,7 +353,7 @@ class PayTach
         };
     }
 };
-// $pay = new PayTach('shoxonasavdo', 'mYuZ3$h0x0n@!');
+// $pay = new PayUzcard('shoxonasavdo', 'mYuZ3$h0x0n@!');
 
 // if(is_array($item = $pay->createUserCard(2, "8600030475287037", "2306"))){
 //     var_dump($item);

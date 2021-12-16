@@ -1,5 +1,4 @@
 <?php
-require_once 'functions/connection.php';
 
 // Extentions
 ini_set('session.cookie_lifetime', 0);
@@ -13,31 +12,8 @@ ini_set('session.sid_bits_per_character', 7);
 ini_set('session.hash_function', "sha512");
 ini_set('session.save_path', dirname(__DIR__)."/session");
 
-
-// Settings mod
-if ( !$ini['GLOBAL_SETTING']['ROOT_MOD'] ) {
-    define('ROOT_DIR', "/".basename(dirname(__DIR__)));
-    if ("/".$_SERVER['HTTP_HOST'] == ROOT_DIR) define('DIR', "");
-    else define('DIR', ROOT_DIR);
-}else define('DIR', "");
-// END Settings mod
-
-
-// Settings debugger
-if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) {
-    ini_set('error_reporting', E_ALL);
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    $DEBUG_time_start = microtime(true);
-}
-// END Settings debugger
-
-
-// File extension
-if ( isset($ini['GLOBAL_SETTING']['HIDE_EXTENSION']) and $ini['GLOBAL_SETTING']['HIDE_EXTENSION'] ) define('EXT', "");
-else define('EXT', ".php");
-// END File extension
-
+// Extra
+require_once dirname(__FILE__).'/Connection/__load__.php';
 require_once dirname(__FILE__).'/Credo/__load__.php';
 require_once dirname(__FILE__).'/functions/tag.php';
 require_once dirname(__DIR__).'/libs/lib.php';

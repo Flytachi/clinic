@@ -9,6 +9,7 @@ class __Cfg
     private $cfg_name = ".cfg";
     private $default_configuratuons = array(
         'SECURITY' => array(
+            'GUARD' => false,
             'SERIA' => null,
         ),
         'GLOBAL_SETTING' => array(

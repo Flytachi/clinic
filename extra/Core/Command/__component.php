@@ -63,8 +63,8 @@ class __Component
             $fp = fopen($path, "w");
             fwrite($fp, $code);
             fclose($fp);
-        } */ 
-        echo "  $path\n";
+        } */
+        echo "    $path\n";
     }
 
     private function help()
