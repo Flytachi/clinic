@@ -1,5 +1,9 @@
 <?php
 
+/*
+    Temp (interfaces, traits)
+*/
+
 trait ResponceRender
 {
     public function success()

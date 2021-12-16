@@ -26,12 +26,28 @@ class __Component
 
     private function init()
     {
-        foreach (glob(dirname(__DIR__)."/$this->path/*") as $folder) {
-            $create_folder = dirname(__DIR__, 3)."/".mb_strtolower(substr(basename($folder), 10, -2));
-            $this->create_dir($create_folder);
-            foreach (glob($folder."/*") as $file) $this->create_file("$create_folder/".mb_strtolower(substr(basename($file), 2, -2)).".php", file_get_contents($file));
-        }
+        $this->init_components();        
+    }
 
+    private function init_components()
+    {
+        $this->change_dir(dirname(__DIR__)."/$this->path");
+    }
+
+    private function change_dir(String $path, String $c_path = null)
+    {
+        foreach (glob("$path/*") as $item) {
+            if (is_dir($item)) {
+                $c = ($c_path) ? basename($c_path)."/" : "";
+                $create_folder = dirname(__DIR__, 3)."/$c".mb_strtolower(substr(basename($item), 10, -2));
+                // $this->create_dir($create_folder);
+                echo "$create_folder \n";
+                $this->change_dir($item, $create_folder);
+            }else {
+                if ($c_path) $this->create_file("$c_path/".mb_strtolower(substr(basename($item), 2, -2)).".php", file_get_contents($item));
+                else $this->create_file(dirname(__DIR__, 3)."/".mb_strtolower(substr(basename($item), 2, -2)).".php", file_get_contents($item));
+            }
+        }
     }
 
     private function create_dir(String $path)
@@ -51,7 +67,7 @@ class __Component
     private function help()
     {
         echo "\033[33m"." =======> Help <======= \n";
-        echo "\033[33m"."  :init   -  создать папку для хранений персональный даных (файлы).\n";
+        echo "\033[33m"."  :init   -  Инициализация фреймфорка.\n";
         echo "\033[33m"." =======> Help <======= \n";
     }
 
