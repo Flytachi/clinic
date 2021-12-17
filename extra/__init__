@@ -4,7 +4,10 @@
 if (PHP_VERSION == 7.4) {
     
     require_once 'Core/Command/__component.php';
+    require_once 'Core/Command/__cfg.php';
     new __Component("init");
+    new __Cfg("setting");
+    new __Cfg("gen");
 
 }else {
     echo "\033[32m"." Пожалуйста используйте PHP версии => 7.4\n";
