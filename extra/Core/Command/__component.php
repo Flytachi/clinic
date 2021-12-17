@@ -36,7 +36,7 @@ class __Component
 
     private function change_dir(String $path, String $c_path = null)
     {
-        foreach (glob("$path") as $item) {
+        foreach (glob("$path/*") as $item) {
             if (is_dir($item)) {
                 $c = ($c_path) ? basename($c_path)."/" : "";
                 $create_folder = dirname(__DIR__, 3)."/$c".mb_strtolower(substr(basename($item), 10, -2));
