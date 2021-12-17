@@ -1,7 +1,3 @@
-<?php
-require_once '../tools/warframe.php';
-$session->is_auth();
-?>
 <div class="card border-1 border-dark" id="card_info">
 	<div class="card-header header-elements-inline">
 		<h5 class="card-title"><b></h5>
@@ -24,7 +20,7 @@ $session->is_auth();
 
 					<!-- Error title -->
 					<div class="text-center mb-3">
-						<h1 class="error-title <?= $classes['error_page-code-color'] ?>">423</h1>
+						<h1 class="error-title">423</h1>
 						<h3>Доступ на запись запрещён!</h3>
 					</div>
 					<!-- /error title -->

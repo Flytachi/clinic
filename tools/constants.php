@@ -46,9 +46,6 @@ $classes = array(
     "header" => "page-header page-header-light",
     "footer" => "navbar navbar-expand-lg navbar-light",
 
-    // Error
-    "error_page-code-color" => "",
-
     // Cards
     "card" => "card border-1 border-primary",
     "card-header" => "card-header text-dark header-elements-inline alpha-primary",

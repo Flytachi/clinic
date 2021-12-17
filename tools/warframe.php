@@ -6,6 +6,7 @@ require_once dirname(__FILE__).'/constants.php';
 require_once dirname(__FILE__).'/functions.php';
 require_once dirname(__FILE__).'/classes.php';
 
+new Connect;
 $session = new MySession($db, $ini['GLOBAL_SETTING']['SESSION_LIFE']);
 
 function module($value = null)

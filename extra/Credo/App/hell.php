@@ -5,10 +5,7 @@ namespace Mixin;
 class Hell
 {
     static function error($url){
-        if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error'){
-            header("location:".DIR."/error/$url".EXT);
-            exit;
-        }
+        if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error') die( include dirname(__DIR__, 3)."/error/$url.php" );
     }
 
     static function array_to_ini(array $a, array $parent = array())

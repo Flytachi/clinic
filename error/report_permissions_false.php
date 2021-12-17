@@ -1,7 +1,3 @@
-<?php
-require_once '../tools/warframe.php';
-$session->is_auth();
-?>
 <!-- Page content -->
 <div class="page-content">
 
@@ -16,7 +12,7 @@ $session->is_auth();
 
 				<!-- Error title -->
 				<div class="text-center mb-3">
-					<h1 class="error-title <?= $classes['error_page-code-color'] ?>">423</h1>
+					<h1 class="error-title">423</h1>
 					<h3>Доступ на запись запрещён!</h3>
 				</div>
 				<!-- /error title -->

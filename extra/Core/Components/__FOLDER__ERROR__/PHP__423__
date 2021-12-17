@@ -8,8 +8,9 @@
     <title>404 Locked</title>
 </head>
 <body>
-    <center style="margin-top: 30px;">
-        <strong><em>Warframe</em></strong>
+    <center>
+        <img src="../extra/Resource/img/warframe.png" alt=""><br>
+        <strong style="font-size:20px"><em>Warframe</em></strong>
         <hr width="50%">
         <h1>404 Locked</h1>
     </center>

@@ -36,7 +36,7 @@ class __Component
 
     private function change_dir(String $path, String $c_path = null)
     {
-        foreach (glob("$path/*") as $item) {
+        foreach (glob("$path") as $item) {
             if (is_dir($item)) {
                 $c = ($c_path) ? basename($c_path)."/" : "";
                 $create_folder = dirname(__DIR__, 3)."/$c".mb_strtolower(substr(basename($item), 10, -2));
@@ -53,18 +53,18 @@ class __Component
 
     private function create_dir(String $path)
     {
-        // if (!file_exists($path)) mkdir($path);
-        echo "$path\n";
+        if (!file_exists($path)) mkdir($path);
+        // echo "$path\n";
     }
 
     private function create_file(String $path, String $code)
     {
-        /* if (!file_exists($path)) {
+        if (!file_exists($path)) {
             $fp = fopen($path, "w");
             fwrite($fp, $code);
             fclose($fp);
-        } */
-        echo "    $path\n";
+        }
+        // echo "    $path\n";
     }
 
     private function help()
