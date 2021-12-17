@@ -25,6 +25,8 @@ abstract class Session
     {
         $this->db = $database;
         if ($life_session) $this->life_session = $life_session;
+        if (!is_dir(dirname(__DIR__, 3)."/session")) Hell::error('403');
+        ini_set('session.save_path', dirname(__DIR__, 3)."/session");
         session_start();
     }
 

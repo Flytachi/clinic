@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../extra/Resource/img/warframe.png" type="image/x-icon">
     <title>502 Bad Gatеway</title>
 </head>
 <body>
-    <center><h1>502 Bad Gatеway</h1></center><hr><center>phpBox</center>
+    <center style="margin-top: 30px;">
+        <strong><em>Warframe</em></strong>
+        <hr width="50%">
+        <h1>502 Bad Gatеway</h1>
+    </center>
 </body>
 </html>

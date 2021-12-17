@@ -67,7 +67,7 @@ class __Backup
     {
         global $ini;
         if ($this->is_dir()) {
-            require_once dirname(__DIR__, 2).'/functions/connection.php';
+            require_once dirname(__DIR__, 2).'/Connection/__load__.php';
             $path = dirname(__DIR__, 3)."/".$this->path;
             $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
             exec("mysqldump -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} > $path/$file_name.$this->file_format");
@@ -93,7 +93,7 @@ class __Backup
         global $ini;
         if ($this->is_dir()) {
             if ($this->name) {
-                require_once dirname(__DIR__, 2).'/functions/connection.php';
+                require_once dirname(__DIR__, 2).'/Connection/__load__.php';
                 $path = dirname(__DIR__, 3)."/".$this->path;
                 $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
                 exec("mysql -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} < $path/$file_name.$this->file_format");

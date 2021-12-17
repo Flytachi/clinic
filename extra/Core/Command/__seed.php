@@ -26,7 +26,7 @@ class __Seed
     private function generate()
     {
         global $db;
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         if ($db->query("SHOW TABLES LIKE '$this->name';")->rowCount()) {
             foreach ($db->query("SELECT * FROM $this->name") as $value) {
                 $this->json[] = $value;

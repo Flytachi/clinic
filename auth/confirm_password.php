@@ -8,12 +8,8 @@ if ( isset($_POST['password']) ) {
         $session->get_session_create_or_update();
         unset($_SESSION['session_timeout_logout']);
         echo 200;
-    }else{
-        echo "Invalid password";
-    }
+    }else echo "Invalid password";
 
-}else{
-    echo "No matching data";
-}
+}else echo "No matching data"; 
 
 ?>

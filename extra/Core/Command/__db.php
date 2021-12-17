@@ -42,7 +42,7 @@ class __Db
     private function generate()
     {
         global $db, $ini;
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
         $tables = $triggers = [];
         //
@@ -59,7 +59,7 @@ class __Db
     private function migrate()
     {
         global $db, $ini; 
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
 
         try {
@@ -90,7 +90,7 @@ class __Db
     private function clean()
     {
         global $db, $ini; 
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
         if (isset($this->file_name)) {
             $_clean = HellTable::T_flush($this->file_name);
@@ -109,7 +109,7 @@ class __Db
     private function delete()
     {
         global $db, $ini; 
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
         
         $_delete = HellTable::T_DELETE_database();
@@ -122,7 +122,7 @@ class __Db
     private function seed()
     {
         global $db; 
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/functions/tag.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
 
@@ -153,7 +153,7 @@ class __Db
     private function compare()
     {
         global $db, $ini;
-        require_once dirname(__DIR__, 2).'/functions/connection.php';
+        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
 
         $self_base=$migrate_base=[];

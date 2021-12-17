@@ -30,7 +30,7 @@ class __Session
                 unlink("$path/$file");
             }
 
-            require_once dirname(__DIR__, 2).'/functions/connection.php';
+            require_once dirname(__DIR__, 2).'/Connection/__load__.php';
             $life_session = $ini['GLOBAL_SETTING']['SESSION_LIFE'] + 5;
             $stmt = $db->prepare("DELETE FROM sessions WHERE last_update + INTERVAL $life_session MINUTE < CURRENT_TIMESTAMP()");
             $stmt->execute();
