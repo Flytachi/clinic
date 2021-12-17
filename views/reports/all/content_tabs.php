@@ -14,6 +14,9 @@
     <li class="nav-item">
         <a href="<?= viv('reports/all/content_5') ?>" class="nav-link <?= viv_link('reports/all/content_5') ?> legitRipple">Кол-во</a>
     </li>
+    <li class="nav-item">
+        <a href="<?= viv('reports/all/content_6') ?>" class="nav-link <?= viv_link('reports/all/content_6') ?> legitRipple">Операции</a>
+    </li>
 </ul>
 
 
