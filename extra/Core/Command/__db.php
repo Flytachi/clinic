@@ -44,13 +44,19 @@ class __Db
         global $db, $ini;
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
+        new Connect;
         $tables = $triggers = [];
         //
         // foreach ($db->query("SHOW TRIGGERS") as $trig) $triggers[] = $trig;
         // $this->create_file(json_encode($triggers, JSON_PRETTY_PRINT), "Triggers");
         // echo "\033[32m"." Генерация триггеров прошла успешно.\n";
         // 
-        foreach ($db->query("SHOW TABLES") as $table) $tables[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+        foreach ($db->query("SHOW TABLES") as $table) {
+            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+            $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
+            $t = str_replace( stristr(substr(strstr($t, 'AUTO_INCREMENT='), 0, -1), ' ', true), "", $t);
+            $tables[] = $t;
+        }
         $this->create_file(json_encode($tables, JSON_PRETTY_PRINT), "Index_Tables");
         echo "\033[32m"." Генерация таблиц и индексов прошла успешно.\n";
 
@@ -61,6 +67,7 @@ class __Db
         global $db, $ini; 
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        new Connect($db);
 
         try {
             foreach (json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1) as $table) {
@@ -72,8 +79,7 @@ class __Db
             //     $db->exec("DROP TRIGGER IF EXISTS {$trigger['Trigger']}; DELIMITER $ CREATE TRIGGER {$trigger['Trigger']} {$trigger['Timing']} {$trigger['Event']} ON {$trigger['Table']} FOR EACH ROW {$trigger['Statement']} $ DELIMITER ;");
             // }
             // echo "\033[32m"." -- Триггеры успешно мигрированы.\n";
-
-            $this->clean();
+            
             echo "\033[32m"." Миграция прошла успешно.\n";
             return 1;
         } catch (\Exception $e) {
@@ -89,9 +95,10 @@ class __Db
 
     private function clean()
     {
-        global $db, $ini; 
+        global $db, $ini;
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        new Connect;
         if (isset($this->file_name)) {
             $_clean = HellTable::T_flush($this->file_name);
             echo "\033[32m"." Таблица '$this->file_name' успешно очищена.\n";
@@ -111,7 +118,7 @@ class __Db
         global $db, $ini; 
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
-        
+        new Connect;
         $_delete = HellTable::T_DELETE_database();
         if ($_delete == 200) {
             echo "\033[32m"." База данных успешно удалена.\n";
@@ -121,11 +128,10 @@ class __Db
 
     private function seed()
     {
-        global $db; 
+        global $ini, $db; 
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 2).'/functions/tag.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
-
+        new Connect;
         if (isset($this->file_name)) {
 
             $data = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_data/$this->file_name.$this->format"), true);
@@ -155,7 +161,7 @@ class __Db
         global $db, $ini;
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
-
+        new Connect;
         $self_base=$migrate_base=[];
         foreach ($db->query("SHOW TABLES") as $table) $self_base[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
         $migrate_base[] = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1);
