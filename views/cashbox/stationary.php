@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth([22,23]);
+is_module('stationar');
 $header = "Приём платежей";
 
 $tb = (new VisitModel)->as("v")->Data("v.id, v.client_id, c.first_name, c.last_name, c.father_name, v.is_active")->Join("LEFT JOIN clients c ON(c.id=v.client_id)");

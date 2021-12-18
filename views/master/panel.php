@@ -59,6 +59,16 @@ $header = "Панель управления";
 												}
 												?>
 												<tr>
+													<th>Stationar</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_stationar" <?= (isset($company->module_stationar) and $company->module_stationar) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Laboratory</th>
 													<td class="text-right">
 														<div class="list-icons">

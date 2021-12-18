@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(3);
+is_module('stationar');
 $header = "Палаты";
 
 $tb = (new WardModel)->as('w')->Data("w.id, bg.name, ds.title, w.floor, w.ward");

@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(14);
-is_module('module_physio');
+is_module('physio');
 $header = "Амбулаторные пациенты";
 
 $tb = (new VisitServiceModel)->as('vs');

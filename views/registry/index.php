@@ -111,7 +111,7 @@ $tb->Where($where_search)->Order("add_date DESC")->Limit(20);
 													<?php if ( !$row->status or ($row->status and !$stm_dr['direction']) ): ?>
 														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
 													<?php endif; ?>
-													<?php if ( !$row->status ): ?>
+													<?php if ( module('stationar') and !$row->status ): ?>
 														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
 													<?php endif; ?>
 													<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>

@@ -1,7 +1,8 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(13);
-is_module('module_laboratory');
+is_module('stationar');
+is_module('laboratory');
 $header = "Стационарные пациенты";
 
 $tb = (new VisitServiceModel)->as('vs');

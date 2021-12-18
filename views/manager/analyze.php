@@ -1,6 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(3);
+is_module('laboratory');
 $header = "Анализы";
 
 $tb = (new ServiceAnalyzeModel)->as('sl');

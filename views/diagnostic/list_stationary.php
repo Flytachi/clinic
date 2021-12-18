@@ -4,7 +4,8 @@ use Mixin\Hell;
 
 require_once '../../tools/warframe.php';
 $session->is_auth(12);
-is_module('module_diagnostic');
+is_module('stationar');
+is_module('diagnostic');
 if (division_assist() == 1) Hell::error('423');
 $header = "Стационарные пациенты";
 

@@ -1,7 +1,7 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth();
-is_module('module_laboratory');
+is_module('laboratory');
 ?>
 
 <div class="<?= $classes['modal-global_header'] ?>">
