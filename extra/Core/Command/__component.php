@@ -21,12 +21,40 @@ class __Component
     private function resolution()
     {
         if ($this->argument == "init") $this->init();
+        elseif ($this->argument == "nginx") $this->nginx();
         else echo "\033[31m"." Не такого аргумента.\n";
     }
 
     private function init()
     {
         $this->init_components();        
+    }
+
+    private function nginx()
+    {
+        $file = dirname(__DIR__)."/Template/Server/nginx";
+        $errors = "";
+        if (file_exists(dirname(__DIR__, 3)."/.cfg")) {
+            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
+            $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+            $template = str_replace("__PORT__", $ini['PORT'], file_get_contents($file));
+            $template = str_replace("__ROOT__", dirname(__DIR__, 3), $template);
+            $template = str_replace("__HOSTS__", implode(' ', $ini['HOSTS']), $template);
+            foreach (glob(dirname(__DIR__)."/$this->path/__FOLDER__ERROR__/*") as $value) {
+                $extention = ( $temp = mb_strtolower(strstr(basename($value), '_', true)) ) ? ".$temp" : "";
+                $name = mb_strtolower(substr(strstr(basename($value), '_'), 2, -2));
+                $errors .= "\n\terror_page $name error/$name$extention;";
+            }
+            $template = str_replace("__ERRORS__", $errors, $template);
+            // -- www.clinic.v3 clinic.v3
+            $fp = fopen(dirname(__DIR__, 3)."/nginx.conf", "w");
+            fwrite($fp, $template);
+            fclose($fp);
+
+        } else echo "Configuration file not found.\n";
+
+        
+        
     }
 
     private function init_components()
@@ -54,17 +82,15 @@ class __Component
     private function create_dir(String $path)
     {
         if (!file_exists($path)) mkdir($path);
-        // echo "$path\n";
     }
 
-    private function create_file(String $path, String $code)
+    private function create_file(String $path, String $code, String $sufix = "w")
     {
         if (!file_exists($path)) {
-            $fp = fopen($path, "w");
+            $fp = fopen($path, $sufix);
             fwrite($fp, $code);
             fclose($fp);
         }
-        // echo "    $path\n";
     }
 
     private function help()

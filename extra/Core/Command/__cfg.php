@@ -8,6 +8,8 @@ class __Cfg
     private $setting_name = "setting.ini";
     private $cfg_name = ".cfg";
     private $default_configuratuons = array(
+        'PORT' => 80,
+        'HOSTS' => ['warframe'],
         'SECURITY' => array(
             'GUARD' => false,
             'SERIA' => null,
