@@ -24,7 +24,7 @@ class __Component
         elseif ($this->argument == "nginx") $this->nginx();
         else echo "\033[31m"." Не такого аргумента.\n";
     }
-
+    
     private function init()
     {
         $this->init_components();        
@@ -43,11 +43,11 @@ class __Component
             foreach (glob(dirname(__DIR__)."/$this->path/__FOLDER__ERROR__/*") as $value) {
                 $extention = ( $temp = mb_strtolower(strstr(basename($value), '_', true)) ) ? ".$temp" : "";
                 $name = mb_strtolower(substr(strstr(basename($value), '_'), 2, -2));
-                $errors .= "\n\terror_page $name error/$name$extention;";
+                $errors .= "\n\terror_page $name /error/$name$extention;";
             }
             $template = str_replace("__ERRORS__", $errors, $template);
             // -- www.clinic.v3 clinic.v3
-            $fp = fopen(dirname(__DIR__, 3)."/nginx.conf", "w");
+            $fp = fopen(dirname(__DIR__, 3)."/tools/nginx.conf", "w");
             fwrite($fp, $template);
             fclose($fp);
 

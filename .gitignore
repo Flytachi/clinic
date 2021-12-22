@@ -5,6 +5,7 @@ node_modules
 session
 storage
 tests
+tools/nginx.conf
 setting.ini
 core.x*
 .*
