@@ -32,7 +32,7 @@ $header = "Логи";
 
 				<?php
 
-				$DNS = "mysql:host=192.168.10.89;port=1433;dbname=OCS;charset=utf8";
+				$DNS = "mysql:host=192.168.10.89;dbname=OCS;charset=utf8";
 
 				try {
 					$pacs = new PDO($DNS, "OCS", "OCS");
