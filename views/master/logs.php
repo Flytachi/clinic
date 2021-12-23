@@ -31,6 +31,20 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
+
+				$DNS = "mysql:host=192.168.10.89;dbname=OCS;charset=utf8";
+
+				try {
+					$pacs = new PDO($DNS, "OCS", "OCS");
+					$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+					$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+					if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) $pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				} catch (\PDOException $e) {
+					die($e->getMessage());
+				}
+
+				dd($pacs->query("SELECT * FROM QueueRecord")->fetchAll());
+
 				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
 				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
 				// 	// dd($value);
