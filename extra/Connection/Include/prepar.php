@@ -1,5 +1,6 @@
 <?php
 
+date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
 function dieConection($_error = null) { die(include "error.php"); }
 
 if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
