@@ -43,7 +43,7 @@ $header = "Логи";
 					die($e->getMessage());
 				}
 
-				dd($pacs->query("SELECT * FROM QueueRecord")->fetchAll());
+				parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
 
 				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
 				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
