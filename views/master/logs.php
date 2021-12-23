@@ -32,18 +32,49 @@ $header = "Логи";
 
 				<?php
 
-				$DNS = "mysql:host=192.168.10.89;dbname=OCS;charset=utf8";
+				function insertPacs($tb, $post){
+					global $pacs;
+					$col = implode(",", array_keys($post));
+					$val = ":".implode(", :", array_keys($post));
+					$sql = "INSERT INTO $tb ($col) VALUES ($val)";
+					try{
+						$stm = $pacs->prepare($sql)->execute($post);
+						return $pacs->lastInsertId();
+					}
+					catch (\PDOException $ex) {
+						return $ex->getMessage();
+					}
+				}
+
+				dd(PDO::getAvailableDrivers());
+
+				$DNS = "sqlsrv:Server=213.230.90.9;Database=OCS;";
 
 				try {
 					$pacs = new PDO($DNS, "OCS", "OCS");
 					$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 					$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
-					if ( isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG'] ) $pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+					$pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				} catch (\PDOException $e) {
 					die($e->getMessage());
-				}
+				} 
 
 				parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
+
+				$data = array(
+					'PatientID' => '21', 
+					'FirstName' => 'Farhod', 
+					'MiddleName' => 'Yakubov', 
+					'LastName' => 'Abdurasulovich', 
+					'Sex' => 'M', 
+					'BirthDate' => '1988-04-19', 
+					'Modality' => '1', 
+					'Department' => 'МРТ', 
+				);
+				insertPacs("QueueRecord", $data);
+				/* $pacs->query("INSERT INTO QueueRecord
+					(PatientID, FirstName, MiddleName, LastName, Sex, BirthDate, Modality, Department)
+					VALUES('21', 'Farhod', 'Yakubov', 'Abdurasulovich', 'M', '1988-04-19', '1', 'МРТ');"); */
 
 				// foreach ($db->query("SELECT id, report, report_description, report_diagnostic, report_recommendation FROM visit WHERE report_title IS NOT NULL") as $value) {
 				// 	$report = "<p>".$value['report_description']."</p><span class=\"text-big\"><strong>Диагноз:</strong></span>"."<p>".$value['report_diagnostic']."</p><span class=\"text-big\"><strong>Рекомендация:</strong></span>"."<p>".$value['report_recommendation']."</p>";
