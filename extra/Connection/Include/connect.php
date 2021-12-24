@@ -3,17 +3,13 @@
 class Connect
 {
     
-    function __construct(String $_ = "db", String $driver = null, String $host = null, String $port = null, String $dbname = null, String $charset = "utf8", String $user = null, String $password = null)
+    function __construct(String $DNS = null, String $user = null, String $password = null, String $_ = "db")
     {
         global $ini, ${$_};
-        if (!$driver) $driver = $ini['DATABASE']['DRIVER'];
-        if (!$host) $host = $ini['DATABASE']['HOST'];
-        if (!$port) $port = $ini['DATABASE']['PORT'];
-        if (!$dbname) $dbname = $ini['DATABASE']['NAME'];
-        if (!$user) $user = $ini['DATABASE']['USER'];
-        if (!$password) $password = $ini['DATABASE']['PASS'];
-        $DNS = "$driver:host=$host;dbname=$dbname;charset=$charset";
-
+        if (is_null($DNS)) $DNS = $ini['DATABASE']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";port=".$ini['DATABASE']['PORT'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['DATABASE']['CHARSET'];
+        if (is_null($user)) $user = $ini['DATABASE']['USER'];
+        if (is_null($password)) $password = $ini['DATABASE']['PASS'];
+        
         try {
             ${$_} = new PDO($DNS, $user, $password);
             ${$_}->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

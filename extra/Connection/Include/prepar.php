@@ -1,11 +1,11 @@
 <?php
 
-date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
 function dieConection($_error = null) { die(include "error.php"); }
 
 if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
 $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
 $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+date_default_timezone_set($ini['GLOBAL_SETTING']['TIME_ZONE']);
 
 if (isset($ini['SECURITY']['GUARD']) and $ini['SECURITY']['GUARD']) {
     if (!file_exists(dirname(__DIR__, 3)."/.key")) dieConection("Authenticity check failed.");
