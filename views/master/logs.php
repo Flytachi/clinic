@@ -47,8 +47,8 @@ $header = "Логи";
 				}
 
 				dd(PDO::getAvailableDrivers());
-
-				$DNS = "sqlsrv:Server=213.230.90.9;Database=OCS;";
+				
+				$DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=213.230.90.9;Port:1433;Database=OCS;";
 
 				try {
 					$pacs = new PDO($DNS, "OCS", "OCS");
@@ -59,19 +59,31 @@ $header = "Логи";
 					die($e->getMessage());
 				} 
 
+
+				// $DNS = "sqlsrv:Server=213.230.90.9;Database=OCS;";
+
+				// try {
+				// 	$pacs = new PDO($DNS, "OCS", "OCS");
+				// 	$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+				// 	$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+				// 	$pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				// } catch (\PDOException $e) {
+				// 	die($e->getMessage());
+				// } 
+
 				parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
 
-				$data = array(
-					'PatientID' => '21', 
-					'FirstName' => 'Farhod', 
-					'MiddleName' => 'Yakubov', 
-					'LastName' => 'Abdurasulovich', 
-					'Sex' => 'M', 
-					'BirthDate' => '1988-04-19', 
-					'Modality' => '1', 
-					'Department' => 'МРТ', 
-				);
-				insertPacs("QueueRecord", $data);
+				// $data = array(
+				// 	'PatientID' => '21', 
+				// 	'FirstName' => 'Farhod', 
+				// 	'MiddleName' => 'Yakubov', 
+				// 	'LastName' => 'Abdurasulovich', 
+				// 	'Sex' => 'M', 
+				// 	'BirthDate' => '1988-04-19', 
+				// 	'Modality' => '1', 
+				// 	'Department' => 'МРТ', 
+				// );
+				// insertPacs("QueueRecord", $data);
 				/* $pacs->query("INSERT INTO QueueRecord
 					(PatientID, FirstName, MiddleName, LastName, Sex, BirthDate, Modality, Department)
 					VALUES('21', 'Farhod', 'Yakubov', 'Abdurasulovich', 'M', '1988-04-19', '1', 'МРТ');"); */
