@@ -117,8 +117,8 @@ class VisitModel extends Model
         for ($i=0; $i < $count; $i++) {
             $post = Mixin\clean_form($post);
             $post = Mixin\to_null($post);
-            $object = Mixin\insert($this->_service, $post);
-            if (!intval($object)){
+            $object_s = Mixin\insert($this->_service, $post);
+            if (!intval($object_s)){
                 $this->error("Ошибка при создании услуги!");
                 $db->rollBack();
             }
@@ -126,7 +126,7 @@ class VisitModel extends Model
             if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
                 if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
                     $post_price['visit_id'] = $this->visit_pk;
-                    $post_price['visit_service_id'] = $object;
+                    $post_price['visit_service_id'] = $object_s;
                     $post_price['user_id'] = $this->post['user_id'];
                     $post_price['item_type'] = $data['type'];
                     $post_price['item_id'] = $data['id'];
@@ -140,8 +140,58 @@ class VisitModel extends Model
                     }
                 } 
             }
+
+            // pacs
+            $DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=213.230.90.9;Port:1433;Database=OCS;";
+            try {
+                $pacs = new PDO($DNS, "OCS", "OCS");
+                $pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                $pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+                $pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (\PDOException $e) {
+                die($e->getMessage());
+            }
+            $pacsData = $db->query("SELECT vs.user_id, us.first_name, us.last_name, us.father_name, us.gender, us.birth_date, d.name, vs.add_date, vs.service_name FROM $this->_service vs JOIN users us ON(us.id=vs.user_id) JOIN divisions d ON(d.id=vs.division_id) WHERE vs.id = $object_s")->fetch();
+            $pdata = array(
+                'PatientID' => $pacsData['user_id'], 
+                'FirstName' => $pacsData['first_name'], 
+                'MiddleName' => $pacsData['father_name'], 
+                'LastName' => $pacsData['last_name'], 
+                'Sex' => $pacsData['gender'], 
+                'BirthDate' => $pacsData['birth_date'], 
+                'Modality' => 'MR', 
+                'Department' => $pacsData['name'],
+                'TimeDate' => $pacsData['add_date'],
+                'StudyName' => $pacsData['service_name'],
+            );
+
+            $col = implode(",", array_keys($pdata));
+            $val = ":".implode(", :", array_keys($pdata));
+            $sql = "INSERT INTO QueueRecord ($col) VALUES ($val)";
+            try{
+                $stm = $pacs->prepare($sql)->execute($pdata);
+                return $pacs->lastInsertId();
+            }
+            catch (\PDOException $ex) {
+                return $ex->getMessage();
+            }
+            // end pacs
         }
         unset($post);
+    }
+
+    public function insertPacs($tb, $post){
+        global $pacs;
+        $col = implode(",", array_keys($post));
+        $val = ":".implode(", :", array_keys($post));
+        $sql = "INSERT INTO $tb ($col) VALUES ($val)";
+        try{
+            $stm = $pacs->prepare($sql)->execute($post);
+            return $pacs->lastInsertId();
+        }
+        catch (\PDOException $ex) {
+            return $ex->getMessage();
+        }
     }
 
     public function add_visit_bed()
