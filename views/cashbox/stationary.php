@@ -5,8 +5,7 @@ $header = "Приём платежей";
 
 $tb = new Table($db, "visits vs");
 $search = $tb->get_serch();
-$tb->set_data("vs.id, vs.user_id")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");
-
+$tb->set_data("vs.id, vs.user_id, vs.is_active")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");
 $where_search = array(
 	"vs.direction IS NOT NULL AND vs.completed IS NULL", 
 	"vs.direction IS NOT NULL AND vs.completed IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
@@ -75,7 +74,7 @@ $tb->where_or_serch($where_search);
                                         </thead>
                                         <tbody>
 											<?php foreach($tb->get_table(1) as $row): ?>
-				                                <tr onclick="Check('<?= up_url($row->id, 'PricePanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
+				                                <tr class="<?= ($row->is_active) ? "" : "table-warning" ?>" onclick="Check('<?= up_url($row->id, 'TransactionPanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
 				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
@@ -128,21 +127,6 @@ $tb->where_or_serch($where_search);
 		</div>
 	</div>
 
-	<?php if(module('module_pharmacy')): ?>
-		<div id="modal_default" class="modal fade" tabindex="-1">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header bg-info">
-						<h6 class="modal-title">Оплата Препаратов</h6>
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<?php (new VisitPricesModel)->form_pharm(); ?>
-
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
 
 	<!-- Footer -->
     <?php include layout('footer') ?>

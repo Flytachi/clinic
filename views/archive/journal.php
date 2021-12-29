@@ -3,14 +3,14 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Журнал";
 
-$tb = new Table($db, "visit vs");
-$tb->set_data('vs.id, vs.user_id, vs.add_date, us.region, us.residenceAddress, us.numberPhone, vs.report, vs.completed, vs.parent_id');
+$tb = new Table($db, "visits v");
+$tb->set_data('v.id, v.parad_id, v.user_id, v.icd_id, v.icd_autor, v.add_date, us.region, us.address_residence, us.phone_number, v.completed, v.grant_id');
 $search = $tb->get_serch();
 $search_array = array(
-	"vs.direction IS NOT NULL AND vs.service_id = 1", 
-	"vs.direction IS NOT NULL AND vs.service_id = 1 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"v.direction IS NOT NULL", 
+	"v.direction IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions('LEFT JOIN users us ON(us.id=vs.user_id)')->where_or_serch($search_array)->order_by('vs.add_date ASC')->set_limit(20);
+$tb->additions('LEFT JOIN users us ON(us.id=v.user_id)')->where_or_serch($search_array)->order_by('v.add_date ASC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,7 +73,6 @@ $tb->additions('LEFT JOIN users us ON(us.id=vs.user_id)')->where_or_serch($searc
                                         <th>ФИО</th>
                                         <th>Адресс</th>
                                         <th>Телефон</th>
-                                        <th>Номер визита</th>
                                         <th>Диагноз</th>
                                         <th>Отдел</th>
                                         <th>Дата выписки</th>
@@ -82,24 +81,32 @@ $tb->additions('LEFT JOIN users us ON(us.id=vs.user_id)')->where_or_serch($searc
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table(1) as $row): ?>
-										<tr>
-                                            <td><?= $row->count ?></td>
+									<?php foreach($tb->get_table() as $row): ?>
+										<tr>	
+                                            <td><?= $row->parad_id ?></td>
                                             <td><?= addZero($row->user_id) ?></td>
                                             <td><?= date_f($row->add_date, 1) ?></td>
                                             <td><?= get_full_name($row->user_id) ?></td>
-                                            <td>г. <?= $row->region." ".$row->residenceAddress ?></td>
-                                            <td><?= $row->numberPhone ?></td>
-                                            <td><?= $row->id ?></td>
-                                            <td><?= str_replace("Сопутствующие заболевания:", '', stristr(str_replace("Клинический диагноз:", '', stristr($row->report, "Клинический диагноз:")), "Сопутствующие заболевания:", true)) ?></td>
-                                            <td><?= division_title($row->parent_id) ?></td>
+                                            <td>г. <?= $row->region." ".$row->address_residence ?></td>
+                                            <td><?= $row->phone_number ?></td>
+                                            <td>
+												<?php if ( $row->icd_id ): ?>
+													<?php $icd = icd($row->icd_id) ?>
+													<span class="badge badge-flat border-pink text-pink" data-trigger="hover" data-popup="popover" data-html="true" data-placement="right" title="" 
+														data-original-title="<div class='d-flex justify-content-between'><?= $icd['code'] ?><span class='font-size-sm text-muted'><?= get_full_name($row->icd_autor) ?></span></div>"
+														data-content="<?= $icd['decryption'] ?>" style="font-size:15px;">
+														ICD <?= $icd['code'] ?>
+													</span>
+												<?php endif; ?>
+											</td>
+                                            <td><?= division_title($row->grant_id) ?></td>
 											<td><?= date_f($row->completed) ?></td>
-                                            <td><?= get_full_name($row->parent_id) ?></td>
+                                            <td><?= get_full_name($row->grant_id) ?></td>
 											<td class="text-right">
-												<button type="button" class="<?= $classes['btn_detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
+												<button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<a href="<?= viv('card/content_1') ?>?pk=<?= $row->id ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>
-													<a <?= ($row->completed) ? 'onclick="Print(\''. viv('prints/document_3').'?id='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i>Выписка</a>
+													<a href="<?= viv('card/content-2') ?>?pk=<?= $row->id ?>" class="dropdown-item"><i class="icon-history"></i>История болезни</a>
+													<a onclick="Check('<?= viv('doctor/report-2') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
                                                 </div>
 											</td>
                                         </tr>
@@ -123,34 +130,23 @@ $tb->additions('LEFT JOIN users us ON(us.id=vs.user_id)')->where_or_serch($searc
 	</div>
 	<!-- /page content -->
 
-	<div id="modal_edit" class="modal fade" tabindex="-1">
+	<div id="modal_default" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header bg-info">
-					<h6 class="modal-title">Заказ</h6>
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-				</div>
-
-
-			</div>
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
 	</div>
-	
+
 	<script type="text/javascript">
-		$("#search_input").keyup(function() {
-			var input = document.querySelector('#search_input');
-			var display = document.querySelector('#search_display');
+		function Check(events) {
 			$.ajax({
 				type: "GET",
-				url: "<?= ajax('search/archive-journal') ?>",
-				data: {
-					table_search: input.value,
-				},
+				url: events,
 				success: function (result) {
-					display.innerHTML = result;
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
-		});
+		};
 	</script>
 
 	<!-- Footer -->

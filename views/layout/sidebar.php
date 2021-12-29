@@ -38,17 +38,23 @@
 
                     <?php if (config("package") and permission(5)): ?>
                         <li class="nav-item">
-                            <a href="<?= viv('doctor/package') ?>" class="nav-link legitRipple">
+                            <a href="<?= viv('doctor/package_services') ?>" class="nav-link legitRipple">
                                 <i class="icon-bag"></i>
-                                <span>Пакеты<span>
+                                <span>Пакеты (услуги)<span>
                             </a>
                         </li>
+                        <!-- <li class="nav-item">
+                            <a href="<?= viv('doctor/package_bypass') ?>" class="nav-link legitRipple">
+                                <i class="icon-bag"></i>
+                                <span>Пакеты (назначения)<span>
+                            </a>
+                        </li> -->
                     <?php endif; ?>
 
                     <?php if (config("template") and permission([5,10])): ?>
                         <li class="nav-item">
-                            <a href="<?= viv('doctor/template') ?>" class="nav-link legitRipple">
-                                <i class="icon-users"></i>
+                            <a href="<?= viv('template') ?>" class="nav-link legitRipple">
+                                <i class="icon-folder-check"></i>
                                 <span>Шаблоны</span>
                             </a>
                         </li>
@@ -64,7 +70,7 @@
 
             <ul class="nav nav-sidebar" data-nav-type="accordion">
                 <!-- Main -->
-                <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Рабочий стол</div> <i class="icon-menu" title="Main"></i></li>
+                <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Main</div> <i class="icon-menu" title="Main"></i></li>
 
                 <?php foreach ($db->query("SELECT * FROM sidebar WHERE parent_id IS NULL AND level = $session->session_level ORDER BY sort ASC") as $row): ?>
                     
@@ -113,7 +119,6 @@
                                                 }
                                                 $new_script = str_replace(array_keys($srt), $val, $row['script']);
                                                 unset($val);
-                                                // dd($new_script);
                                             }
                                             ?>
                                             <?php $side = $db->query(($row['script_item']) ? $new_script : $row['script'])->rowCount() ?>
@@ -132,15 +137,58 @@
                     
 
                 <?php endforeach; ?>
+                <!-- /Main -->
 
-                <!-- <li class="nav-item">
-                    <a href="test.php" class="nav-link legitRipple">
-                        <i class="icon-width"></i>
-                        <span>Tests</span>
-                        <span class="badge bg-blue-400 align-self-center ml-auto">2.0</span>
-                    </a>
-                </li> -->
-                <!-- /main -->
+                <?php if(module('module_pharmacy') and permission([4,5,7])): ?>
+                    <!-- Warehouse -->
+                    <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, wsp.is_grant, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.user_id = $session->session_id") as $side_warehouse): ?>
+
+                        <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['warehouse_name'] ?></div> <i class="icon-menu" title="Main"></i></li>
+                    
+                        <li class="nav-item">
+                            <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                                <i class="icon-store"></i>
+                                <span>Склад</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                                <i class="icon-file-text3"></i>
+                                <span>Заявки</span>
+                                <?php if($side_warehouse['is_grant']): ?>
+
+                                    <div class="ml-auto">
+                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 1")->rowCount(); ?>
+                                        <?php if($si_ware): ?>
+                                            <span class="badge bg-teal align-self-center"><?= $si_ware ?></span>
+                                        <?php endif; ?>
+                                        <?php unset($si_ware); ?>
+
+                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 2")->rowCount(); ?>
+                                        <?php if($si_ware): ?>
+                                            <span class="badge bg-orange align-self-center"><?= $si_ware ?></span>
+                                        <?php endif; ?>
+                                        <?php unset($si_ware); ?>
+                                    </div>
+
+                                <?php else: ?>
+
+                                    <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status != 3 AND responsible_id = $session->session_id")->rowCount(); ?>
+                                    <?php if($si_ware): ?>
+                                        <span class="badge bg-teal align-self-center ml-auto"><?= $si_ware ?></span>
+                                    <?php endif; ?>
+                                    <?php unset($si_ware); ?>
+
+                                <?php endif; ?>
+                                
+                            </a>
+                        </li>
+
+                    <?php endforeach; ?>
+                    <!-- /Warehouse -->
+                <?php endif; ?>
+                
             </ul>
 
         </div>

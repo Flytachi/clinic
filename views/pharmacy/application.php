@@ -1,14 +1,12 @@
 <?php
 require_once '../../tools/warframe.php';
 $session->is_auth(4);
-is_module('module_pharmacy');
+is_module('pharmacy');
 $header = "Заявки";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
-<script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -17,11 +15,9 @@ $header = "Заявки";
 
 	<!-- Page content -->
 	<div class="page-content">
-
 		<!-- Main sidebar -->
 		<?php include layout('sidebar') ?>
 		<!-- /main sidebar -->
-
 
 		<!-- Main content -->
 		<div class="content-wrapper">
@@ -33,101 +29,52 @@ $header = "Заявки";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php
-				if( isset($_SESSION['message']) ){
-					echo $_SESSION['message'];
-					unset($_SESSION['message']);
-				}
-				?>
+                <div class="<?= $classes['card-filter'] ?>">
 
-                <form method="post" action="<?= add_url() ?>">
-                    <input type="hidden" name="model" value="StorageHomeModel">
+					<div class="<?= $classes['card-filter_header'] ?>">
+						<h5 class="card-title">Фильтр</h5>
+					</div>
 
-                    <div class="<?= $classes['card'] ?>">
+					<div class="card-body">
 
-                        <div class="<?= $classes['card-header'] ?>">
-                            <h5 class="card-title">Список Заявок</h5>
-                            <div class="header-elements">
-                                <div class="list-icons">
-                                    <select data-placeholder="Выберите специалиста" name="parent_id" onchange="CallMed(this.value)" class="<?= $classes['form-select'] ?>" required>
-                                        <option></option>
-                                        <?php foreach($db->query("SELECT * from users WHERE user_level = 7") as $row): ?>
-                                            <option value="<?= $row['id'] ?>" ><?= get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+						<?php
+						if( isset($_SESSION['message']) ){
+							echo $_SESSION['message'];
+							unset($_SESSION['message']);
+						}
+						?>
 
-                        <div class="card-body">
+						<div class="table-responsive card">
+							<table class="table table-hover">
+								<thead>
+									<tr class="bg-dark">
+										<th>Информация</th>
+										<th class="text-right">Кол-во заявок</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php $tb_ware = (new Table($db, "warehouse_storage_applications"))->set_data("DISTINCT warehouse_id_from, warehouse_id_in")->where("status = 2"); ?>
+									<?php foreach ($tb_ware->get_table() as $row): ?>
+										<tr onclick="ChangeWare(<?= $row->warehouse_id_from ?>, <?= $row->warehouse_id_in ?>)">
+											<td>
+												<?= $db->query("SELECT name FROM warehouses WHERE id = $row->warehouse_id_from")->fetchColumn() ?>
+												<span class="text-muted"> -- Перевод --></span>
+												<?= $db->query("SELECT name FROM warehouses WHERE id = $row->warehouse_id_in")->fetchColumn() ?>
+											</td>
+											<td class="text-right">
+												<?= $db->query("SELECT * FROM warehouse_storage_applications WHERE warehouse_id_from = $row->warehouse_id_from AND warehouse_id_in = $row->warehouse_id_in AND status = 2")->rowCount(); ?>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
 
-                            <div class="table-responsive card">
-                                <table class="table table-hover table-sm">
-                                    <thead class="<?= $classes['table-thead'] ?>">
-                                        <tr>
-											<th>Дата</th>
-											<th>Информация</th>
-                                            <th style="width: 20%">Препарат</th>
-                                            <th class="text-center">На складе</th>
-                                            <th class="text-center">Ко-во (требуется)</th>
-                                            <th class="text-center" style="width: 100px">Ко-во</th>
-                                            <th class="text-right">Цена ед.</th>
-                                            <th class="text-right">Сумма</th>
-                                            <th class="text-right">Действия</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $i=1; foreach ($db->query("SELECT sr.id, sr.date, sr.parent_id, sr.user_id, st.name, sr.qty, st.price, sr.qty*st.price 'total_price', st.qty 'qty_have' FROM storage_orders sr LEFT JOIN storage st ON(st.id=sr.preparat_id) ORDER BY sr.preparat_id") as $row): ?>
-                                            <tr id="TR_<?= $row['id'] ?>">
-												<td><?= date('d.m.Y', strtotime($row['date'])) ?></td>
-												<td>
-													(<?= ($row['user_id']) ? "Пациент" : "Заказ" ?>)
-													<?= get_full_name($row['parent_id']) ?>
-												</td>
-                                                <td><?= $row['name'] ?></td>
-                                                <td class="text-center">
-                                                    <?php if ($row['qty_have'] > $row['qty']): ?>
-                                                        <span class="text-success"><?= $row['qty_have'] ?></span>
-                                                    <?php else: ?>
-                                                        <span class="text-danger"><?= $row['qty_have'] ?></span>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="text-center"><?= $row['qty'] ?></td>
-                                                <td class="text-center table-primary">
-                                                    <input type="number" id="input_count-<?= $row['id'] ?>"
-															data-price="<?= $row['price'] ?>" class="form-control counts"
-															min="1" max="<?= $row['qty_have'] ?>"
-															name="orders[<?= $row['id'] ?>]" value="<?= ($row['qty_have'] < $row['qty']) ? $row['qty_have'] : $row['qty'] ?>"
-															style="border-width: 0px 0; padding: 0.2rem 0;" disabled>
-                                                </td>
-                                                <td class="text-right"><?= number_format($row['price']) ?></td>
-                                                <td class="text-right"><?= $row['total_price']; ?></td>
-                                                <td class="text-right">
-                                                    <div class="list-icons">
-                                                        <a onclick="Delete('<?= del_url($row['id'], 'StorageOrdersModel') ?>', '#TR_<?= $row['id'] ?>')" href="#" class="list-icons-item text-danger-600"><i class="icon-x"></i></a>
-														<input type="checkbox" class="swit" value="input_count-<?= $row['id'] ?>" onchange="On_check(this)">
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                        <tr class="table-secondary">
-                                            <th colspan="7" class="text-right">Итого:</th>
-                                            <th class="text-right" id="total_cost">0</th>
-                                            <th></th>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+					</div>
 
-                            <div class="text-right">
-                                <button type="submit" id="btn_send" class="btn btn-sm btn-outline-success" disabled>Отправить</button>
-                            </div>
+				</div>
 
-                        </div>
-
-                    </div>
-
-                </form>
+				<div id="display_items"></div>
 
 			</div>
             <!-- /content area -->
@@ -138,97 +85,47 @@ $header = "Заявки";
 	</div>
 	<!-- /page content -->
 
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+		</div>
+	</div>
+
     <script type="text/javascript">
-		function SendVerification(){
-			var btn = document.getElementById('btn_send');
-			var total_cost = document.getElementById('total_cost');
-			var sum = Number(total_cost.textContent.replace(/,/g,''));
-			if (sum > 0) {
-				btn.disabled = false;
-			}else {
-				btn.disabled = true;
-			}
+
+		function ChangeWare(wFrom, wIn) {
+			
+			$.ajax({
+				type: "POST",
+				url: "<?= up_url(2, "WarehouseApplication") ?>",
+				data: { warehouse_id_from: wFrom, warehouse_id_in: wIn},
+				success: function (result) {
+					document.querySelector('#display_items').innerHTML = result;
+				},
+			});
 		}
 
-		$(".counts").keyup(function() {
-			var total_cost = document.getElementById('total_cost');
-			var sum = Number(total_cost.textContent.replace(/,/g,''));
-			var inputs = document.getElementsByClassName('counts');
-			var new_sum = 0;
-
-			for (var input of inputs) {
-				if (!input.disabled) {
-					new_sum += Number(input.value * input.dataset.price);
-				}
-			}
-			total_cost.textContent = number_format(new_sum, 1);
-			SendVerification();
-	    });
-
-		function On_check(check) {
-			var input = $('#'+check.value);
-			if(!input.prop('disabled')){
-				input.attr("disabled", "disabled");
-				Downsum(input);
-			}else {
-				input.removeAttr("disabled");
-				Upsum(input);
-			}
-			SendVerification();
-		}
-
-		function Downsum(input) {
-			var input_total = $('#total_cost');
-			var total = Number(input_total.text().replace(/,/g,''));
-			var new_total = number_format(total - Number(input.val() * input.data().price), 1);
-			input_total.text(new_total);
-		}
-
-		function Upsum(input) {
-			var input_total = $('#total_cost');
-			var total = Number(input_total.text().replace(/,/g,''));
-			var new_total = number_format(total + Number(input.val() * input.data().price), 1);
-			input_total.text(new_total);
-		}
-
-	    function tot_sum(the, price) {
-	        var total = $('#total_price');
-	        var cost = total.text().replace(/,/g,'');
-	        if (the.checked) {
-	            service[the.value] = $("#count_input_"+the.value).val();
-	            total.text( number_format(Number(cost) + (Number(price) * service[the.value]), '.', ',') );
-	        }else {
-	            total.text( number_format(Number(cost) - (Number(price) * service[the.value]), '.', ',') );
-	            delete service[the.value];
-	        }
-	        // console.log(service);
-	    }
-
-        function Delete(url, tr) {
-            event.preventDefault();
-            $.ajax({
-                type: "GET",
-                url: url,
-                success: function (data) {
-                    $(tr).css("background-color", "rgb(244, 67, 54)");
-                    $(tr).css("color", "white");
-                    $(tr).fadeOut(900, function() {
-                        $(tr).remove();
-                    });
-                },
-            });
-        };
-
-		function CallMed(id){
-			if (id) {
-				let obj = JSON.stringify({ type : 'alert_pharmacy_call',  id : id, message: "Забрать препараты!" });
-				conn.send(obj);
-			}
+		function ApplicationShow(wareFrom, wareIn, appId, appManufacturer, appPrice) {
+			$.ajax({
+				type: "POST",
+				url: "<?= up_url(3, "WarehouseApplication") ?>",
+				data: { 
+					warehouse_id_from: wareFrom,
+					warehouse_id_in: wareIn,
+					item_name_id: appId,
+					item_manufacturer_id: appManufacturer,
+					item_price: appPrice,
+				},
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
+				},
+			});
 		}
 
     </script>
 
-    <!-- Footer -->
+	<!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->
 </body>

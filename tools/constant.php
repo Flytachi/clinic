@@ -1,4 +1,9 @@
 <?php
+
+/* 
+    My Constants
+*/
+
 $PERSONAL = array(
     1 => "Администратор",
     2 => "Регистратура",
@@ -37,29 +42,6 @@ $methods = array(
     9 => "Поверхностное натирание",
 );
 
-// $classes = array(
-//     "navbar" => "navbar navbar-expand-md navbar-dark bg-indigo navbar-static", //fixed-top
-//     "sidebar" => "sidebar sidebar-light sidebar-main sidebar-expand-md",
-//     "header" => "page-header page-header-light",
-//     "footer" => "navbar navbar-expand-lg navbar-light",
-
-//     "card" => "card border-1 border-primary",
-//     "card-header" => "card-header text-dark header-elements-inline alpha-primary",
-//     "table-thead" => "bg-primary",
-//     "form-select" => "form-control form-control-select2",
-//     "form-select_price" => "form-control myselect",
-//     "form-multiselect" => "form-control multiselect-full-featured",
-//     "form-daterange" => "form-control daterange-locale",
-
-//     "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
-//     "btn-viewing" => "btn btn-outline-primary btn-sm legitRipple",
-//     "btn-diagnostic_аinally" => "btn btn-outline-primary btn-sm",
-
-//     "input-search" => "form-control border-info",
-
-//     "modal-global_content" => "modal-content border-3 border-info",
-//     "modal-global_header" => "modal-header bg-info",
-// )
 $classes = array(
     // Layouts
     "navbar" => "navbar navbar-expand-md navbar-dark bg-primary navbar-static", //fixed-top
@@ -75,7 +57,7 @@ $classes = array(
     "card-header" => "card-header text-dark header-elements-inline alpha-primary",
     "card-filter" => "card border-1 border-violet",
     "card-filter_header" => "card-header text-dark header-elements-inline alpha-violet",
-    "card-filter_btn" => "btn bg-violet btn-sm legitRipple",
+    "card-filter_btn" => "btn btn-outline bg-violet text-violet border-violet btn-sm legitRipple",
     
     // Forms
     "form-select" => "form-control form-control-select2",
@@ -85,14 +67,16 @@ $classes = array(
     
     // Buttons
     // "btn-completed" => "btn btn-outline bg-purple text-purple border-purple btn-sm legitRipple",
+    "btn-icd" => "btn btn-outline bg-pink text-pink border-pink btn-sm legitRipple",
     "btn-completed" => "btn btn-outline-danger btn-sm legitRipple",
+    "btn-journal" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-price" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-detail" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-viewing" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-diagnostic_finally" => "btn btn-outline-primary btn-sm legitRipple",
     "btn-table" => "btn btn-dark btn-sm legitRipple",
     "btn-render" => "btn btn-dark btn-sm legitRipple",
-        // cashbox 
+        // Cashbox 
         "price_btn-sale" => "btn btn-outline-secondary btn-sm legitRipple",
         "price_btn-prepayment" => "btn btn-outline-success btn-sm legitRipple",
         "price_btn-refund" => "btn btn-outline-danger btn-sm legitRipple",
@@ -112,6 +96,7 @@ $classes = array(
     // Others
     "input-search" => "form-control border-primary wmin-200",
     "input-service_search" => "form-control border-primary wmin-200 mb-2",
+    "input-product_search" => "form-control border-teal wmin-200 mb-2",
     "table-thead" => "bg-primary",
     "table-count_menu" => "table-primary",
 

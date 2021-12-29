@@ -14,7 +14,7 @@ if (!$patient) {
 }
 
 $tb = new Table($db, "visit_services");
-$tb->set_data("id, service_name, route_id, accept_date, completed, status, visit_id");
+$tb->set_data("id, service_id, service_name, route_id, accept_date, completed, status, visit_id");
 $tb->where("user_id = $patient->id AND parent_id = $session->session_id")->order_by('add_date DESC');
 ?>
 <!DOCTYPE html>
@@ -112,10 +112,18 @@ $tb->where("user_id = $patient->id AND parent_id = $session->session_id")->order
 											<td class="text-right">
 												<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 												<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-													<?php if ( in_array($row->status, [3,5,7]) ): ?>
-														<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+													<?php if ( $row->service_id == 1 ): ?>
+														<a href="<?= viv('card/content-2') ?>?pk=<?= $row->visit_id ?>" class="dropdown-item"><i class="icon-history"></i>История болезни</a>
+														<?php if ( in_array($row->status, [1,7]) ): ?>
+															<a onclick="Check('<?= viv('doctor/report-2') ?>?pk=<?= $row->visit_id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+														<?php endif; ?>
+														<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-3').'?pk='. $row->visit_id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+													<?php else: ?>
+														<?php if ( in_array($row->status, [3,5,7]) ): ?>
+															<a onclick="Check('<?= viv('doctor/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
+														<?php endif; ?>
+														<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 													<?php endif; ?>
-													<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-1').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 												</div>
 											</td>
 										</tr>

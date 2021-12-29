@@ -1,14 +1,18 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth();
+require_once 'callback.php';
 is_module('module_bypass');
-$header = "Пациент";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
-<script src="<?= stack("global_assets/js/demo_pages/components_popups.js") ?>"></script>
-<!-- <script src="<?= stack("vendors/js/custom.js") ?>"></script> -->
+
+<script src="<?= stack("global_assets/js/plugins/extensions/jquery_ui/interactions.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/ui/fullcalendar/fullcalendar.min.js") ?>"></script>
+<script src="<?= stack("global_assets/js/plugins/ui/fullcalendar/lang/ru.js") ?>"></script>
+
+<script src="<?= stack("global_assets/js/demo_pages/fullcalendar_advanced.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
+
 
 <body>
 	<!-- Main navbar -->
@@ -44,87 +48,47 @@ $header = "Пациент";
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-magazine mr-2"></i>Лист назначений
-							<?php if ($activity and $patient->direction and $patient->grant_id == $_SESSION['session_id']): ?>
-								<a class="float-right <?= $class_color_add ?>" data-toggle="modal" data-target="#modal_add">
-									<i class="icon-plus22 mr-1"></i>Добавить
-								</a>
-							<?php endif; ?>
 							<a onclick="Print('<?= viv('prints/sheet') ?>?id=<?= $patient->visit_id ?>')" class="float-right text-info mr-2">
 								<i class="icon-drawer3 mr-1"></i>Лист
 							</a>
 						</legend>
 
-						<?php if ($activity and empty($patient->completed)): ?>
+						<!-- External events -->
+						<div class="card">
 
-							<div class="card">
-								<div class="table-responsive">
-									<table class="table table-hover table-sm table-bordered">
-										<thead class="<?= $classes['table-thead'] ?>">
-											<tr>
-												<th style="width: 40px !important;">№</th>
-												<th style="width: 45%;">Препарат</th>
-												<th>Описание</th>
-												<th class="text-center" style="width: 150px;">Метод введения </th>
-												<th class="text-center" style="width: 100px;">Время</th>
-												<th class="text-right" style="width: 150px;">Действия</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php
-											$i=1;
-											foreach ($db->query("SELECT * FROM bypass WHERE user_id = $patient->id AND visit_id = $patient->visit_id ORDER BY diet_id DESC") as $row) {
-												?>
-												<tr>
-													<td><?= $i++ ?></td>
-													<td>
-														<?php
-														if ($row['diet_id']) {
-															echo "<b>Диета: </b>".$db->query("SELECT name FROM diet WHERE id = {$row['diet_id']}")->fetchColumn();
-														}else {
-															foreach ($db->query("SELECT preparat_id, preparat_name, preparat_supplier, preparat_die_date FROM bypass_preparat WHERE bypass_id = {$row['id']}") as $serv) {
-																if ($serv['preparat_id']) {
-																	echo $serv['preparat_name']. " | " .$serv['preparat_supplier']. " (годен до " .date("d.m.Y", strtotime($serv['preparat_die_date'])).")<br>";
-																} else {
-																	echo $serv['preparat_name']."<br>";
-																}
-															}
-														}
-														?>
-													</td>
-													<td><?= $row['description'] ?></td>
-													<td><?= ( isset($row['method']) ) ? $methods[$row['method']] : '' ?></td>
-													<td class="text-center">
-														<?php foreach ($db->query("SELECT status, completed, time FROM bypass_date WHERE bypass_id = {$row['id']} AND date = CURRENT_DATE()") as $time): ?>
-															<?php if ($time['status']): ?>
-																<?php if ($time['completed']): ?>
-																	<span class="text-success"><?= date('H:i', strtotime($time['time'])) ?></span><br>
-																<?php else: ?>
-																	<span class="text-danger"><?= date('H:i', strtotime($time['time'])) ?></span><br>
-																<?php endif; ?>
-															<?php else: ?>
-																<span class="text-muted"><?= date('H:i', strtotime($time['time'])) ?></span><br>
-															<?php endif; ?>
-														<?php endforeach; ?>
-													</td>
-													<td>
-														<button onclick="Check('<?= viv('card/bypass') ?>?pk=<?= $row['id'] ?>')" type="button" class="btn btn-outline-info btn-sm legitRipple">Подробнее</button>
-													</td>
-												</tr>
-												<?php
-											}
-											?>
-										</tbody>
-									</table>
+							<div class="card-body">
+								
+								<div class="row">
+									<?php if($activity and is_grant()): ?>
+										<div class="col-md-4">
+											<div class="mb-3" id="external-events">
+												<h6>Пакеты назначений</h6>
+	
+												<?php (new BypassPanel)->TabPanel($patient->visit_id) ?>
+	
+												<!-- <div class="form-check form-check-right form-check-switchery">
+													<label class="form-check-label">
+														<input type="checkbox" class="form-check-input-switchery" id="drop-remove">
+														Удалить после использования
+													</label>
+												</div> -->
+											</div>
+										</div>
+	
+										<div class="col-md-8">
+											<div class="fullcalendar-external"></div>
+										</div>
+									<?php else: ?>
+										<div class="col-md-12">
+											<div class="fullcalendar-external"></div>
+										</div>
+									<?php endif; ?>
+
 								</div>
+
 							</div>
-
-						<?php else: ?>
-
-							<div class="alert bg-warning alert-styled-left alert-dismissible">
-								<span class="font-weight-semibold">Технические работы</span>
-							</div>
-
-						<?php endif; ?>
+						</div>
+						<!-- /external events -->
 
 				    </div>
 
@@ -139,42 +103,278 @@ $header = "Пациент";
 	</div>
 	<!-- /page content -->
 
-	<?php if ($activity): ?>
-		<div id="modal_add" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content border-3 border-info">
-					<div class="modal-header bg-info">
-						<h5 class="modal-title">Назначить препарат</h5>
-						<button type="button" class="close" data-dismiss="modal">×</button>
-					
-					</div>
-
-					<?php (new BypassModel)->form() ?>
-
-				</div>
-			</div>
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-full">
+			<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
 		</div>
-	<?php endif; ?>
+	</div>
 
-	<div id="modal_show" class="modal fade" tabindex="-1">
+	<div id="modal_event_card" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-lg">
-			<div class="modal-content border-3 border-info" id="div_show">
+			<div class="modal-content" id="event_card_body">
 
 			</div>
 		</div>
 	</div>
 
 	<script type="text/javascript">
-		function Check(events) {
+
+ 		var bypassEventUrl = "<?= ajax('visit_events').'?pk='.$patient->visit_id ?>";
+		var bypassDataUrl = "<?= ajax('visit_event_bypass_data') ?>";
+		var bypassElement = null;
+
+		function Update(events) {
 			$.ajax({
 				type: "GET",
 				url: events,
-				success: function (data) {
-					$('#modal_show').modal('show');
-					$('#div_show').html(data);
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#form_card').html(result);
 				},
 			});
 		};
+
+		function toTimestamp(strDate) {
+            var datum = Date.parse(strDate);
+            return datum / 1000;
+        }
+
+		function toDataformat(strDate) {
+			return new (Function.prototype.bind.apply(
+				Date,
+				[null].concat(strDate)
+			))();
+        }
+
+		<?php if(is_grant()): ?>
+
+			function CalendarDrop(info, element, allDay) {
+
+				// Проверка
+				$.ajax({
+					type: "GET",
+					url: "<?= ajax('visit_event_bypass_change') ?>",
+					data: {pk:element.dataset.id},
+					success: function (bypassEventStatus) {
+						if(bypassEventStatus == "success"){
+							// Константы
+							var originalEventObject = $(element).data("event");
+							var copiedEventObject = $.extend(
+								{},
+								originalEventObject
+							);
+							
+							if (Array.isArray(info._i)) {
+								var d_date = toDataformat(info._i)
+								var is_time = true;
+							} else {
+								var d_date = info._d;
+								var is_time = null;
+							}
+							
+							$.ajax({
+								type: "POST",
+								url: "<?= add_url() ?>",
+								data: {
+									model: "VisitBypassEventsModel",
+									visit_id: "<?= $patient->visit_id ?>",
+									visit_bypass_id: element.dataset.id,
+									responsible_id: "<?= $session->session_id ?>",
+									user_id: "<?= $patient->id ?>",
+									event_title: element.innerHTML,
+									event_start: toTimestamp(d_date),
+									is_time: is_time,
+								},
+								success: function (id) {
+									if (Number(id)) {
+										// Выполнение
+										copiedEventObject.start = info;
+										copiedEventObject.allDay = allDay;
+										copiedEventObject.id = Number(id);
+										$(".fullcalendar-external").fullCalendar(
+											"renderEvent",
+											copiedEventObject,
+											true
+										);
+										
+									} else {
+										new Noty({
+											text: '<strong>Внимание!</strong><br>'+id,
+											type: 'error'
+										}).show();
+									}
+
+								},
+							});
+
+						}else{
+
+							new Noty({
+								text: '<strong>Внимание!</strong><br>'+bypassEventStatus,
+								type: 'error'
+							}).show();
+
+						}
+					},
+				});
+				
+			};
+
+			function CalendarEventDropAndResize(info, element, revertFunc) {
+				
+				if (info.color == "#546E7A" || info.color == "#009600") {
+					revertFunc();
+				}else{
+					var start_time = toTimestamp(info.start._d);
+					var end_time = null;
+					if (info.end) {
+						end_time = toTimestamp(info.end._d);
+					}
+					$.ajax({
+						type: "POST",
+						url: "<?= add_url() ?>",
+						data: {
+							model: "VisitBypassEventsModel",
+							id: info.id,
+							event_start: start_time,
+							event_end: end_time,
+						},
+						success: function (result) {
+							if (result != "success") {
+								new Noty({
+									text: '<strong>Внимание!</strong><br>'+result,
+									type: 'error'
+								}).show();
+								revertFunc();
+							}
+						},
+					});
+				}
+
+			};
+			
+			function CalendarEventDelete(params, calendar_ID) {
+				$.ajax({
+					type: "GET",
+					url: "<?= del_url(null, 'VisitBypassEventsModel') ?>",
+					data: {id: params},
+					success: function (result) {
+						if (result == 'success') {
+
+							$("#modal_event_card").modal("hide");
+							// delete
+							$(".fullcalendar-external").fullCalendar(
+								"removeEvents",
+								function (ev) {
+									return ev._id == calendar_ID;
+								}
+							);
+
+						}else{
+
+							new Noty({
+								text: result,
+								type: 'error'
+							}).show();
+
+						}
+					},
+				});
+			};
+
+		<?php endif; ?>
+
+		function CalendarEventComplete(params, calendar_ID) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "VisitBypassEventsPanel",
+					id: params,
+					event_completed: 1,
+				},
+				success: function (result) {
+					if (result == 'success') {
+
+						$("#modal_event_card").modal("hide");
+						bypassElement.style.background = "#009600";
+						bypassElement.style.border = "#009600";
+
+					}else{
+
+						new Noty({
+							text: result,
+							type: 'error'
+						}).show();
+
+					}
+					bypassElement = null;
+				},
+			});
+		}
+
+		function CalendarEventFail(params, calendar_ID) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "VisitBypassEventsPanel",
+					id: params,
+					event_fail: 1,
+				},
+				success: function (result) {
+					if (result == 'success') {
+
+						$("#modal_event_card").modal("hide");
+						bypassElement.style.background = "#546E7A";
+						bypassElement.style.border = "#546E7A";
+
+					}else{
+
+						new Noty({
+							text: result,
+							type: 'error'
+						}).show();
+
+					}
+					bypassElement = null;
+				},
+			});
+		}
+
+		function CalendarEventApplicationDelete(events) {
+			$("#modal_event_card").modal("hide");
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#event_card_body').html(result);
+				},
+			});
+		};
+
+		function CalendarEventClick(info, element) {
+			bypassElement = element
+			
+			$("#modal_event_card").modal("show");
+			$.ajax({
+				type: "GET",
+				url: "<?= up_url(null, 'VisitBypassEventsPanel', 'card') ?>",
+				data: {id: info.id, calendar_ID: info._id},
+				success: function (result) {
+					$('#event_card_body').html(result);
+				},
+			});
+		};
+
+		document.addEventListener("DOMContentLoaded", function () {
+			<?php if($activity and is_grant()): ?>
+				FullCalendarAdvanced.init(bypassEventUrl);
+			<?php else: ?>
+				FullCalendarAdvanced.block(bypassEventUrl, "<?= $patient->add_date ?>");
+			<?php endif; ?>
+		});
+
 	</script>
 
     <!-- Footer -->

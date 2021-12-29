@@ -1,14 +1,17 @@
-
-.sidebar-myuser-material-body{
-    background: url('../images/background_sidebar_default.gif') no-repeat center center !important;
-}
-
 .sidebar-master-material-body{
     background: url('../images/background_sidebar_master.gif') no-repeat center center !important;
 }
 /* .modal-open>*:not(#modal_timeout_auto_logout) {
     filter: blur(15px);
 } */
+
+.listbock {
+    overflow-y: scroll; /* Добавляем полосы прокрутки */
+    width: 100%; /* Ширина блока */
+    height: 550px; /* Высота блока */
+    padding: 7px; /* Поля вокруг текста */
+    border: solid 1.7px black; /* Параметры рамки */
+}
 
 .siya {
     animation: pulsate 3.5s linear infinite;

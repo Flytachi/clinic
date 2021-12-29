@@ -1,0 +1,1 @@
+"CREATE TABLE IF NOT EXISTS `international_classification_diseases` (`id` smallint(5) NOT NULL AUTO_INCREMENT,`code` char(20) DEFAULT NULL,`decryption` varchar(500) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `code` (`code`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

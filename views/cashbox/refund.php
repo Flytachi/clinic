@@ -73,7 +73,7 @@ $tb->where_or_serch($where_search);
 				                        </thead>
 				                        <tbody id="search_display">
 				                            <?php foreach($tb->get_table(1) as $row): ?>
-				                                <tr onclick="Check('<?= up_url($row->visit_id, 'PricePanel') ?>')">
+				                                <tr onclick="Check('<?= up_url($row->visit_id, 'TransactionPanel') ?>')">
 				                                    <td><?= addZero($row->user_id) ?></td>
 				                                    <td class="text-center">
 				                                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>

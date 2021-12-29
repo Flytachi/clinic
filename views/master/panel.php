@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-require_once '../../tools/Console/command.php';
+require_once '../../extra/Console/command.php';
 $session->is_auth('master');
 $header = "Панель управления";
 ?>
@@ -236,6 +236,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												<tr>
+													<th>Admin Delete Button (warehouses)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_admin_delete_button_warehouses" <?= (isset($config->constant_admin_delete_button_warehouses) and $config->constant_admin_delete_button_warehouses) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 
 												<!-- Laboratory -->
 												<tr>
@@ -270,6 +280,16 @@ $header = "Панель управления";
 												</tr>
 
 												<!-- Card -->
+												<tr>
+													<th>Card Stationar Doctor Journal Edit</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_journal_edit" <?= (isset($config->constant_card_stationar_journal_edit) and $config->constant_card_stationar_journal_edit) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 												<tr>
 													<th>Card Stationar Doctor Button (not grant)</th>
 													<td class="text-right">

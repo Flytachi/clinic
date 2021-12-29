@@ -110,8 +110,8 @@ require_once 'callback.php';
 					   	</div>
 						<!-- /Investments -->
 
-						<!-- Price -->
-						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Услуги/Препараты</legend>
+						<!-- Service -->
+						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Услуги</legend>
 
 					   	<div class="card">
 
@@ -129,16 +129,16 @@ require_once 'callback.php';
 									   
  								  	<tbody>
 									   	<?php  
-										$price = new Table($db, "visit_prices");
-										$price->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,3)")->order_by("item_name ASC");
+										$service = new Table($db, "visit_service_transactions");
+										$service->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $patient->visit_id AND item_type IN (1,2,3)")->order_by("item_name ASC");
 										$total_ser = 0; 
 										?>
-										<?php foreach ($price->get_table(1) as $row): ?>
+										<?php foreach ($service->get_table(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->item_name ?></td>
-												<td class="text-center"><?php $row->qty = $db->query("SELECT * FROM visit_prices WHERE visit_id = $patient->visit_id AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
-                            					<td class="text-right text-<?= number_color($row->item_cost) ?>">
+												<td class="text-center"><?php $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $patient->visit_id AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
+                            					<td class="text-right">
 													<?= number_format($row->item_cost); ?>
 												</td>
 												<td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
@@ -163,6 +163,60 @@ require_once 'callback.php';
 					  		</div>
 
 					   	</div>
+
+						<!-- Preparats -->
+						<legend class="font-weight-semibold text-uppercase font-size-sm text-center">Препараты</legend>
+
+						<div class="card">
+
+							<div class="table-responsive">
+								<table class="table table-hover table-sm table-bordered">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
+											<th style="width: 40px !important;">№</th>
+											<th>Наименование</th>
+											<th class="text-center" style="width: 100px;">Кол-во</th>
+											<th class="text-right" style="width: 200px;">Цена</th>
+											<th class="text-right" style="width: 200px;">Сумма</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<?php  
+										$preparats = new Table($db, "visit_bypass_transactions");
+										$preparats->set_data("DISTINCT item_name, item_cost")->where("visit_id = $patient->visit_id")->order_by("item_name ASC");
+										$total_pre = 0; 
+										?>
+										<?php foreach ($preparats->get_table(1) as $row): ?>
+											<tr>
+												<td><?= $row->count ?></td>
+												<td><?= $row->item_name ?></td>
+												<td class="text-center"><?php $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $patient->visit_id AND item_name LIKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
+												<td class="text-right">
+													<?= number_format($row->item_cost); ?>
+												</td>
+												<td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
+													<?php $total_pre += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+									</tbody>
+									<tfooter>
+										<?php if(isset($row->count)): ?>
+											<tr class="table-secondary">
+												<th colspan="4" class="text-right">Итог:</th>
+												<th class="text-right <?php if($vps['cost-preparats'] == -$total_pre) echo 'text-primary'; ?>"><?= number_format($total_pre) ?></th>
+											</tr>
+										<?php else: ?>
+											<tr class="table-secondary text-center">
+												<th colspan="6">Нет данных</th>
+											</tr>
+										<?php endif; ?>
+									</tfooter>
+								</table>
+							</div>
+
+						</div>
 						<!-- /Price -->
 
 						<!-- Total -->
@@ -201,11 +255,19 @@ require_once 'callback.php';
 													<?php endforeach; ?>
 												</ul>
 											</td>
-											<td class="text-right text-<?= number_color($total_bed, true) ?>"><?= number_format($total_bed) ?></td>
+											<?php if($patient->order): ?>
+												<td class="text-right text-secondary"><?= number_format($total_bed) ?></td>
+											<?php else: ?>
+												<td class="text-right text-<?= number_color($total_bed, true) ?>"><?= number_format($total_bed) ?></td>
+											<?php endif; ?>
 										</tr>
 										<tr>
-											<td><strong style="font-size: 15px;">Услуги/Препараты</strong></td>
+											<td><strong style="font-size: 15px;">Услуги</strong></td>
 											<td class="text-right text-<?= number_color($total_ser, true) ?>"><?= number_format($total_ser) ?></td>
+										</tr>
+										<tr>
+											<td><strong style="font-size: 15px;">Препараты</strong></td>
+											<td class="text-right text-<?= number_color($total_pre, true) ?>"><?= number_format($total_pre) ?></td>
 										</tr>
 										<?php if($sale_info): ?>
 											<tr>
@@ -229,12 +291,12 @@ require_once 'callback.php';
 										<?php if($patient->completed): ?>
 											<?php
 											if ($vps['sale-total'] > 0) {
-												$formul = "<strong>Формула</strong><br> ".number_format($vps['balance'])." + ".number_format($vps['sale-total'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
+												$formul = number_format($vps['balance'])." + ".number_format($vps['sale-total'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services'])." + ".number_format(-$vps['cost-preparats']);
 											}else {
-												$formul = "<strong>Формула</strong><br> ".number_format($vps['balance'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services']);
+												$formul = number_format($vps['balance'])." = ".number_format(-$vps['cost-beds'])." + ".number_format(-$vps['cost-services'])." + ".number_format(-$vps['cost-preparats']);
 											}
 											?>
-											<tr class="table-secondary text-center text-<?= ($vps['result'] == 0) ? 'success' : 'danger'; ?>" data-popup="tooltip" title="" data-html="true" data-original-title="<?= $formul ?>">
+											<tr class="table-secondary text-center text-<?= ($vps['result'] == 0) ? 'success' : 'danger'; ?>" data-trigger="hover" data-popup="popover" data-placement="top" title="" data-content="<?= $formul ?>" data-original-title="Формула">
 												<td colspan="2"><strong style="font-size: 15px;">Расчитанно</strong></td>
 											</tr>
 										<?php endif; ?>
@@ -245,7 +307,6 @@ require_once 'callback.php';
 
 					   	</div>
 						<!-- /Total -->
-
 
 				   	</div>
 

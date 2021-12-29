@@ -8,7 +8,7 @@ $session->is_auth();
     <meta charset="UTF-8">
     <title>Авторизация</title>
     <link href="<?= stack("assets/css/style.css") ?>" rel="stylesheet">
-    <link rel="shortcut icon" href="<?= stack("assets/images/logo.ico") ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
     <link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
     <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
     <link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">

@@ -24,12 +24,12 @@ class BedTypesModel extends Model
                 
                 <div class="col-6">
                     <label>Цена:</label>
-                    <input type="text" class="form-control" name="price" placeholder="Введите цену" required value="<?= $this->value('price') ?>">
+                    <input type="text" class="form-control input-price" name="price" placeholder="Введите цену" required value="<?= number_format($this->value('price')) ?>">
                 </div>
 
                 <div class="col-6">
                     <label>Цена(для иностранецев):</label>
-                    <input type="text" class="form-control" name="price_foreigner" placeholder="Введите цену" required value="<?= $this->value('price_foreigner') ?>">
+                    <input type="text" class="form-control input-price" name="price_foreigner" placeholder="Введите цену" required value="<?= number_format($this->value('price_foreigner')) ?>">
                 </div>
             
             </div>
@@ -42,11 +42,36 @@ class BedTypesModel extends Model
             </div>
 
         </form>
+        <script type="text/javascript">
+
+            $(".input-price").on("input", function (event) {
+                if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                    try {
+                        event.target.value = event.target.value.replace(
+                            new RegExp(event.originalEvent.data, "g"),
+                            ""
+                        );
+                    } catch (e) {
+                        event.target.value = event.target.value.replace(
+                            event.originalEvent.data,
+                            ""
+                        );
+                    }
+                } else {
+                    event.target.value = number_with(
+                        event.target.value.replace(/,/g, "")
+                    );
+                }
+            });
+
+        </script>
         <?php
     }
 
     public function clean()
     {
+        $this->post['price'] = (isset($this->post['price'])) ? str_replace(',', '', $this->post['price']) : 0;
+        $this->post['price_foreigner'] = (isset($this->post['price_foreigner'])) ? str_replace(',', '', $this->post['price_foreigner']) : 0;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

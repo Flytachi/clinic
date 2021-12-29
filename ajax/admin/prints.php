@@ -3,6 +3,8 @@ require_once '../../tools/warframe.php';
 $session->is_auth(1);
 
 if ( isset($_POST) ) {
+
+    Mixin\insert_or_update("company_constants", array('const_label' => "constant_print_document_qrcode", 'const_value' => null), "const_label");
     
     for ($s=1; $s <= $print_hr_count; $s++) { 
         Mixin\insert_or_update("company_constants", array('const_label' => "constant_print_document_hr-$s", 'const_value' => null), "const_label");

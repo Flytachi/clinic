@@ -45,7 +45,7 @@ $tb->set_self(viv('admin/service'));
                                 break;
                         } ?>
                     </td>
-                    <td><?= $row->price ?></td>
+                    <td><?= number_format($row->price) ?></td>
                     <td>
                         <div class="list-icons">
                             <div class="dropdown">                      

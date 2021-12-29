@@ -16,19 +16,23 @@ class MultiAccountsModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
 
-            <div class="form-group">
-                <label>Slot:</label>
-                <input type="text" class="form-control" name="slot" placeholder="Enter slot" required value="<?= $this->value('slot') ?>">
-            </div>
+            <div class="form-group row">
 
-            <div class="form-group">
-                <label>Выбирите Роль:</label>
-                <select data-placeholder="Enter user" name="user_id" class="<?= $classes['form-select'] ?>" required>
-                    <option></option>
-                    <?php foreach ($db->query("SELECT id, username FROM users WHERE user_level != 15") as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?= ($this->value('user_id') == $row['id']) ? "selected" : "" ?>><?= $row['username'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="col-4">
+                    <label>Slot:</label>
+                    <input type="text" class="form-control" name="slot" placeholder="Enter slot" required value="<?= $this->value('slot') ?>">
+                </div>
+    
+                <div class="col-8">
+                    <label>Выбирите Роль:</label>
+                    <select data-placeholder="Enter user" name="user_id" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT id, username FROM users WHERE user_level != 15") as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($this->value('user_id') == $row['id']) ? "selected" : "" ?>><?= $row['username'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
             </div>
 
             <div class="text-right">

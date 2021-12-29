@@ -128,8 +128,6 @@ $header = "Пациент";
 
 				    <div class="card-body">
 
-						<?php include "content_tabs.php"; ?>
-
 						<div class="card">
 							<div class="card-header header-elements-inline">
 								<h5 class="card-title">Заметки</h5>

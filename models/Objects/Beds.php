@@ -56,19 +56,23 @@ class BedsModel extends Model
 
             </div>
 
-            <div class="form-group">
-                <label>Койка:</label>
-                <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $this->value('bed') ?>">
-            </div>
+            <div class="form-group row">
 
-            <div class="form-group">
-                <label>Тип:</label>
-                <select data-placeholder="Выбрать тип" name="type_id" class="<?= $classes['form-select'] ?>" required>
-                    <option></option>
-                    <?php foreach($db->query('SELECT * from bed_types') as $row): ?>
-                        <option value="<?= $row['id'] ?>" <?= ($this->value('type_id') == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <div class="col-6">
+                    <label>Койка:</label>
+                    <input type="text" class="form-control" name="bed" placeholder="Введите номер" required value="<?= $this->value('bed') ?>">
+                </div>
+    
+                <div class="col-6">
+                    <label>Тип:</label>
+                    <select data-placeholder="Выбрать тип" name="type_id" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                        <?php foreach($db->query('SELECT * from bed_types') as $row): ?>
+                            <option value="<?= $row['id'] ?>" <?= ($this->value('type_id') == $row['id']) ? 'selected': '' ?>><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
             </div>
 
             <div class="text-right">

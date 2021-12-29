@@ -82,7 +82,7 @@ $session->is_auth();
                     <?php $total_price = 0; ?>
 
                     <?php foreach (json_decode($_GET['items']) as $item): ?>
-                        <?php $row = $db->query("SELECT id, item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_prices WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
+                        <?php $row = $db->query("SELECT id, item_name, (price_cash + price_card + price_transfer) 'price' FROM visit_service_transactions WHERE id = $item AND price_date IS NOT NULL")->fetch() ?>
                         <tr class="service" style="font-size:150%;">
         					<td class="tableitem"><p class="itemtext"><?= $row['item_name'] ?></p></td>
         					<td class="tableitem"><p class="itemtext">1</p></td>

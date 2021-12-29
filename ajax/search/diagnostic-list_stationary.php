@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.accept_date, vs.route_id, v.complaint, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
 $search_array = array(
@@ -69,9 +69,6 @@ if( isset($_SESSION['message']) ){
                         <div class="text-muted"><?= get_full_name($row->route_id) ?></div>
                     </td>
                     <td class="text-center">
-                        <?php if ($row->complaint): ?>
-                            <button onclick="swal('<?= $row->complaint ?>')" type="button" class="btn btn-outline-warning btn-sm legitRipple">Жалоба</button>
-                        <?php endif; ?>
                         <?php if ($tr != "table-danger"): ?>
                             <button onclick="ResultShow('<?= up_url($row->id, 'VisitReport') ?>')" class="<?= $classes['btn-diagnostic_finally'] ?>"><i class="icon-clipboard3 mr-2"></i>Заключение</button>
                         <?php endif; ?>

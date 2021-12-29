@@ -21,7 +21,7 @@ class TemplateModel extends Model
 
                 <div class="col-md-8 offset-md-2 mb-3">
                     <label class="col-form-label">Название шаблона:</label>
-                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $this->value('name') ?>">
+                    <input name="name" class="form-control" placeholder="Введите название" value="<?= $this->value('name') ?>" required>
                 </div>
 
                 <div class="col-md-12">
@@ -76,16 +76,11 @@ class TemplateModel extends Model
 
     public function clean()
     {
-        if (empty($this->post['description'])) {
-            unset($this->post['description']);
-        }else {
-            $description = $this->post['description'];
-        }
+        if (empty($this->post['description'])) unset($this->post['description']);
+        else $description = $this->post['description'];
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if ($description) {
-            $this->post['description'] = $description;
-        }
+        if ($description) $this->post['description'] = $description;
         return True;
     }
 
@@ -105,7 +100,7 @@ class TemplateModel extends Model
         $_SESSION['message'] = '
         <div class="alert alert-danger" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            '.$message.'
+            Ошибка при создании шаблона!
         </div>
         ';
         render();

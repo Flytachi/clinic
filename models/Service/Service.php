@@ -4,12 +4,12 @@ class ServiceModel extends Model
 {
     public $table = 'services';
     public $table_label = array(
-        'id' => 'id',
-        'division_id' => 'Отдел',
-        'code' => 'Код',
-        'name' => 'Услуга',
-        'price' => 'Цена',
-        'type' => 'Тип(1,2,3)',
+        'DIS_mark' => 'Отдел',
+        's.code' => 'Код',
+        's.name' => 'Услуга',
+        's.price' => 'Цена',
+        's.price_foreigner' => 'Цена для иностранцев',
+        's.type' => 'Тип(1,2,3)',
     );
 
     public function form_template($pk = null)
@@ -98,12 +98,12 @@ class ServiceModel extends Model
 
                 <div class="col-md-3">
                     <label>Цена:</label>
-                    <input type="number" class="form-control" step="0.1" name="price" placeholder="Введите цену" required value="<?= $this->value('price') ?>">
+                    <input type="text" class="form-control input-price" name="price" placeholder="Введите цену" required value="<?= number_format($this->value('price')) ?>">                    
                 </div>
 
                 <div class="col-md-3">
                     <label>Цена(для иностранецев):</label>
-                    <input type="number" class="form-control" step="0.1" name="price_foreigner" placeholder="Введите цену" required value="<?= $this->value('price_foreigner') ?>">
+                    <input type="text" class="form-control input-price" name="price_foreigner" placeholder="Введите цену" required value="<?= number_format($this->value('price_foreigner')) ?>">
                 </div>
 
             </div>
@@ -117,9 +117,31 @@ class ServiceModel extends Model
 
         </form>
         <script type="text/javascript">
+
             $(function(){
                 $("#division_id").chained("#user_level");
             });
+
+            $(".input-price").on("input", function (event) {
+                if (isNaN(Number(event.target.value.replace(/,/g, "")))) {
+                    try {
+                        event.target.value = event.target.value.replace(
+                            new RegExp(event.originalEvent.data, "g"),
+                            ""
+                        );
+                    } catch (e) {
+                        event.target.value = event.target.value.replace(
+                            event.originalEvent.data,
+                            ""
+                        );
+                    }
+                } else {
+                    event.target.value = number_with(
+                        event.target.value.replace(/,/g, "")
+                    );
+                }
+            });
+
         </script>
         <?php
         if ($pk) {
@@ -129,12 +151,12 @@ class ServiceModel extends Model
 
     public function clean()
     {
-        // parad("_FILES",$_FILES['template']);
-        if($_FILES['template']){
-            // prit('template');
+        if( isset($_FILES['template']) and $_FILES['template'] ){
             $this->post['template'] = read_excel($_FILES['template']['tmp_name']);
             $this->save_excel();
         }
+        $this->post['price'] = (isset($this->post['price'])) ? str_replace(',', '', $this->post['price']) : 0;
+        $this->post['price_foreigner'] = (isset($this->post['price_foreigner'])) ? str_replace(',', '', $this->post['price_foreigner']) : 0;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         if($this->post['user_level'] and !$this->post['division_id']){
@@ -143,44 +165,49 @@ class ServiceModel extends Model
         return True;
     }
 
-    public function clean_excel()
+    public function clean_excel($old_post)
     {
         global $db;
+        $post = [];
         if ($this->table_label) {
             foreach ($this->table_label as $key => $value) {
-                $post[$key] = $this->post[$value];
+                $key = str_replace("s.", "", $key);
+                if ($key == "DIS_mark") $key = "division_id";
+                $post[$key] = $old_post[$value];
             }
-            $this->post = $post;
         }
-        $this->post['price'] = preg_replace("/,+/", "", $this->post['price']);
-        $this->post['user_level'] = $db->query("SELECT level FROM divisions WHERE id = {$this->post['division_id']}")->fetchColumn();
-        return True;
+        
+        $post['price'] = preg_replace("/,+/", "", $post['price']);
+        $post['price_foreigner'] = preg_replace("/,+/", "", $post['price_foreigner']);
+        $dis = $db->query("SELECT id, level FROM divisions WHERE mark = '{$post['division_id']}'")->fetch();
+        $post['user_level'] = $dis['level'];
+        $post['division_id'] = $dis['id'];
+        return $post;
     }
 
     public function save_excel()
     {
-        /* global $db;
+        global $db;
         $db->beginTransaction();
-        foreach ($this->post['template'] as $key_p => $value_p) {
-            if ($key_p) {
-                foreach ($value_p as $key => $value) {
-                    $pick = $pirst[$key];
-                    $this->post[$pick] = $value;
+        $keys = $this->post['template'][0];
+        unset($this->post['template'][0]);
+
+        foreach ($this->post['template'] as $value) {
+            $post = [];
+            foreach ($keys as $k => $key) {
+                $post[$key] = $value[$k];
+            }
+            if ($post = $this->clean_excel($post)) {
+                $object = Mixin\insert_or_update($this->table, $post, "code");
+                if (!intval($object)){
+                    $this->error($object);
+                    $db->rollBack();
                 }
-                if($this->clean_excel()){
-                    $object = Mixin\insert_or_update($this->table, $this->post);
-                    if (!intval($object)){
-                        $this->error($object);
-                        $db->rollBack();
-                    }
-                }
-            }else {
-                $pirst = $value_p;
-                unset($this->post['template']);
             }
         }
+
         $db->commit();
-        $this->success(); */
+        $this->success();
     }
 
     public function success()
@@ -199,7 +226,7 @@ class ServiceModel extends Model
         $_SESSION['message'] = '
         <div class="alert bg-danger alert-styled-left alert-dismissible">
             <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-            <span class="font-weight-semibold"> '.$message.'</span>
+            <span class="font-weight-semibold"> Введены некорректные данные!</span>
         </div>
         ';
         render();

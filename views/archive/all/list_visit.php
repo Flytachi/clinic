@@ -71,7 +71,7 @@ if (!$patient) {
                                 <tbody>
 									<?php
 									$tb = new Table($db, "visits v");
-									$tb->set_data("v.id, v.parad_id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+									$tb->set_data("v.id, v.parad_id, v.icd_id, v.icd_autor, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 									$search = $tb->get_serch();
 									$search_array = array(
 										"v.user_id = $patient->id", 
@@ -86,8 +86,16 @@ if (!$patient) {
 												<?php if ( $row->parad_id ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-indigo text-indigo">Иcтория болезни №<?= $row->parad_id ?></span>
 												<?php endif; ?>
+												<?php if ( $row->icd_id ): ?>
+													<?php $icd = icd($row->icd_id) ?>
+													<span class="badge badge-flat border-pink text-pink" data-trigger="hover" data-popup="popover" data-html="true" data-placement="right" title="" 
+														data-original-title="<div class='d-flex justify-content-between'><?= $icd['code'] ?><span class='font-size-sm text-muted'><?= get_full_name($row->icd_autor) ?></span></div>"
+														data-content="<?= $icd['decryption'] ?>" style="font-size:15px;">
+														ICD <?= $icd['code'] ?>
+													</span>
+												<?php endif; ?>
 												<?php if ( $row->order ): ?>
-													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер №<?= $db->query("SELECT order_number FROM visit_orders WHERE id = $row->order")->fetchColumn() ?></span>
 												<?php endif; ?>
 											</td>
                                             <td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>

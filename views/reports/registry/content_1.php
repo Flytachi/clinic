@@ -1,6 +1,6 @@
 <?php
 require_once '../../../tools/warframe.php';
-$session->is_auth([2,32]);
+$session->is_auth();
 $header = "Отчёт регистратуры по регистрации";
 ?>
 <!DOCTYPE html>
@@ -48,22 +48,34 @@ $header = "Отчёт регистратуры по регистрации";
 							<div class="form-group row">
 
 								<div class="col-md-3">
-									<label>Дата регистрации:</label>
-									<div class="input-group">
-										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
-										<span class="input-group-append">
-											<span class="input-group-text"><i class="icon-calendar22"></i></span>
-										</span>
+									<div class="form-group">
+										<label>Дата регистрации:</label>
+										<div class="input-group">
+											<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
+											<span class="input-group-append">
+												<span class="input-group-text"><i class="icon-calendar22"></i></span>
+											</span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label>Дата рождения (от):</label>
+										<input type="number" class="form-control" name="birth_from" value="<?= ( isset($_POST['birth_from']) ) ? $_POST['birth_from'] : 1900 ?>" min="1900" max="<?= date('Y') ?>" step="1">
 									</div>
 								</div>
 								
 								<div class="col-md-3">
-									<label>Регистратор:</label>
-									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать регистратора" name="parent_id[]" multiple="multiple">
-										<?php foreach ($db->query("SELECT DISTINCT parent_id FROM users WHERE user_level = 15") as $row): ?>
-											<option value="<?= $row['parent_id'] ?>" <?= ( isset($_POST['parent_id']) and in_array($row['parent_id'], $_POST['parent_id'])) ? "selected" : "" ?>><?= get_full_name($row['parent_id']) ?></option>
-										<?php endforeach; ?>
-									</select>
+									<div class="form-group">
+										<label>Регистратор:</label>
+										<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать регистратора" name="parent_id[]" multiple="multiple">
+											<?php foreach ($db->query("SELECT DISTINCT parent_id FROM users WHERE user_level = 15") as $row): ?>
+												<option value="<?= $row['parent_id'] ?>" <?= ( isset($_POST['parent_id']) and in_array($row['parent_id'], $_POST['parent_id'])) ? "selected" : "" ?>><?= get_full_name($row['parent_id']) ?></option>
+											<?php endforeach; ?>
+										</select>
+									</div>
+									<div class="form-group">
+										<label>Дата рождения (до):</label>
+										<input type="number" class="form-control" name="birth_before" value="<?= ( isset($_POST['birth_before']) ) ? $_POST['birth_before'] : date('Y') ?>" min="1900" max="<?= date('Y') ?>" step="1">
+									</div>
 								</div>
 
 								<div class="col-md-3">
@@ -112,6 +124,7 @@ $header = "Отчёт регистратуры по регистрации";
 					if( isset($_POST['parent_id']) ) $where .= " AND parent_id IN(".implode(",", $_POST['parent_id']) .")";
 					if( isset($_POST['province_id']) ) $where .= " AND province_id IN(".implode(",", $_POST['province_id']) .")";
 					if( isset($_POST['region_id']) ) $where .= " AND region_id IN(".implode(",", $_POST['region_id']) .")";
+					if( isset($_POST['birth_from']) and isset($_POST['birth_before']) ) $where .= " AND (DATE_FORMAT(birth_date, '%Y') BETWEEN '".$_POST['birth_from']."' AND '".$_POST['birth_before']."')";
 
 					$tb = new Table($db, "users");
 					$tb->set_data("add_date, id, province, region, parent_id, birth_date");

@@ -57,7 +57,7 @@ require_once 'callback.php';
 											<th>Операция</th>
 											<th style="width: 12%;">Дата назначения</th>
 											<th style="width: 12%;">Дата операции</th>
-											<th style="width: 12%;">Дата завершения</th>
+											<th style="width: 13%;">Дата завершения</th>
 											<th class="text-right">Действия</th>
 										</tr>
 									</thead>

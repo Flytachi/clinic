@@ -4,7 +4,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title><?= ShowTitle() ?></title>
 
-	<link rel="shortcut icon" href="<?= stack("assets/images/logo.ico") ?>" type="image/x-icon">
+	<link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
 	<!-- Global stylesheets -->
 	<link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">

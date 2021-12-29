@@ -111,7 +111,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 														break;
 												} ?>
 											</td>
-											<td><?= $row->price ?></td>
+											<td><?= number_format($row->price) ?>/<?= number_format($row->price_foreigner) ?></td>
 	                                      	<td>
 												<div class="list-icons">
 													<div class="dropdown">                      

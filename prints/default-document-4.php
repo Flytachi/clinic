@@ -3,15 +3,11 @@ require_once '../tools/warframe.php';
 
 
 // Акт Сверки
-
-
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
-    $docs->report = $db->query("SELECT service_report FROM visit_services WHERE visit_id = $docs->id AND service_id = 1")->fetchColumn();
-    // dd($docs);
-}else{
-    Mixin\error('404');
-}
+    $order = $db->query("SELECT id FROM visit_orders WHERE visit_id = $docs->id")->fetchColumn();
+    $total = 0; 
+}else Mixin\error('404');
 
 ?>
 <!DOCTYPE html>
@@ -67,97 +63,108 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
             <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
             <b>Дата поступления: </b><?= ($docs->add_date) ? date_f($docs->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
             <b>Дата выписки: </b><?= ($docs->completed) ? date_f($docs->completed, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
+            <?php if($order): ?>
+                <b>Ордер №: </b><?= $order ?><br>
+            <?php endif; ?>
         </div>
 
         <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>
         <?php if (config("print_document_hr-4")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-4-color").'"></div>' ; ?>
 
-        <h3 class="text-center h1"><b>Выписка <?= $docs->user_id ?> № <?= $docs->parad_id ?></b></h3>
-
-        <div class="text-left h3">
-
-            <p>
-                <?= stristr($docs->report, "Рекомендация:", true) ?>
-            </p>
-
-            <h4 class="text-center"><strong>Результаты визитов:</strong></h4>
-            <p>
-                <!-- Результаты визитов -->
-                <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit_services vs LEFT JOIN divisions ds ON(ds.id=vs.division_id) WHERE vs.visit_id = $docs->id AND vs.level IN (5,10) AND vs.completed IS NOT NULL AND vs.service_id != 1 ") as $div): ?>
-                    <strong><?= $div['title'] ?>: </strong>
-                    <ul>
-                        <?php foreach ($db->query("SELECT * FROM visit_services WHERE visit_id = $docs->id AND level IN (5,10) AND completed IS NOT NULL AND service_id != 1 AND division_id = {$div['division_id']}") as $row): ?>
-                            <li>
-                                <strong><?= $row['service_title'] ?>:</strong>
-                                <?= str_replace("Рекомендация:", '', stristr($row['service_report'], "Рекомендация:")); ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endforeach; ?>
-            </p>
-
-            <?php if(module('module_laboratory')): ?>
-                <h4 class="text-center"><strong>Результаты лабораторных и инструментальных исследований:</strong></h4>
-                <p>
-                    <!-- Результаты лабораторных и инструментальных исследований -->
-                    <?php foreach ($db->query("SELECT id, service_name FROM visit_services WHERE visit_id = $docs->id AND completed IS NOT NULL AND level IN (6)") as $any): ?>
-                        <li>
-                            <strong><?= $any['service_name'] ?>:</strong>
-                            <?php foreach ($db->query("SELECT analyze_name, result FROM visit_analyzes WHERE visit_id = $docs->id AND visit_service_id = {$any['id']}") as $row): ?>
-                                <?= $row['analyze_name'] ?> - <?= $row['result'] ?>;
-                            <?php endforeach; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </p>
-            <?php endif; ?>
-
-            <div class="table-responsive card">
-                <table class="table table-bordered table-sm">
-                    <tbody>
-
-                        <!-- Результаты лечения -->
-                        <!-- <tr>
-                            <td colspan="2">
-                                <strong>Лечение: </strong><br>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        <h1 class="text-center"><b>АКТ сверки № <?= $docs->parad_id ?></b></h1>
+        
+        <div class="table-responsive card">
+            <table class="minimalistBlack">
+                <thead>
+                    <tr id="text-h">
+                        <th style="width: 40px !important;">№</th>
+                        <th>Наименование</th>
+                        <th class="text-center">Кол-во</th>
+                        <th class="text-right" style="width: 200px;">Цена</th>
+                        <th class="text-right" style="width: 200px;">Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php  
+                    $bed = new Table($db, "visit_beds");
+                    $bed->set_data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->where("visit_id = $docs->id")->order_by("start_date ASC");
+                    $sale_info = (new Table($db, "visit_sales"))->where("visit_id = $docs->id")->get_row();
+                    $total_bed = 0;
+                    ?>
+                    <?php foreach($bed->get_table(1) as $row): ?>
+                        <tr>
+                            <td><?= $row->count ?></td>
+                            <td>
+                                <?= $row->location ?> (<?= $row->type ?>) 
                             </td>
-                        </tr> -->
+                            <td class="text-center">
+                                <?= minToStr($row->time) ?>
+                            </td>
+                            <td class="text-right">
+                                <?= number_format($row->cost) ?>/День
+                            </td>
+                            
+                            <td class="text-right">
+                                <?php if($order): ?>
+                                    0
+                                <?php else: ?>
+                                    <?php $total += $row->time * ($row->cost / 24); echo number_format($row->time * ($row->cost / 24)); ?>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <tr class="table-warning">
+                        <td colspan="5" class="text-center"><b>Услуги</b></td>
+                    </tr>
+                    <?php  
+                    $service = new Table($db, "visit_service_transactions");
+                    $service->set_data("DISTINCT item_id, item_name, item_cost")->where("visit_id = $docs->id AND item_type IN (1,2,3)")->order_by("item_name ASC");
+                    ?>
+                    <?php foreach ($service->get_table(1) as $row): ?>
+                        <tr>
+                            <td><?= $row->count ?></td>
+                            <td><?= $row->item_name ?></td>
+                            <td class="text-center"><?php $row->qty = $db->query("SELECT * FROM visit_service_transactions WHERE visit_id = $docs->id AND item_id = $row->item_id AND item_cost = $row->item_cost")->rowCount(); echo $row->qty; ?></td>
+                            <td class="text-right">
+                                <?= number_format($row->item_cost); ?>
+                            </td>
+                            <td class="text-right text-<?= number_color($row->qty * $row->item_cost, true) ?>">
+                                <?php $total += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
 
-                        <!-- Рекомендация -->
-                        <td>
-                            <strong>Рекомендация:</strong>
-                        </td>
-                        <td>
-                            <?= str_replace("Рекомендация:", '', stristr($docs->report, "Рекомендация:")) ?>
-                        </td>
+                    <?php if(module('module_pharmacy')): ?>
+                        <tr class="table-warning">
+                            <td colspan="5" class="text-center"><b>Препараты</b></td>
+                        </tr>
+                        <?php  
+                        $preparats = new Table($db, "visit_bypass_transactions");
+                        $preparats->set_data("DISTINCT item_name, item_cost")->where("visit_id = $docs->id")->order_by("item_name ASC");
+                        ?>
+                        <?php foreach ($preparats->get_table(1) as $row): ?>
+                            <tr>
+                                <td><?= $row->count ?></td>
+                                <td><?= $row->item_name ?></td>
+                                <td class="text-center"><?php $row->qty = $db->query("SELECT SUM(item_qty) FROM visit_bypass_transactions WHERE visit_id = $docs->id AND item_name LIKE '$row->item_name' AND item_cost = $row->item_cost")->fetchColumn(); echo $row->qty; ?></td>
+                                <td class="text-right">
+                                    <?= number_format($row->item_cost); ?>
+                                </td>
+                                <td class="text-right">
+                                    <?php $total += $row->qty * $row->item_cost; echo number_format($row->qty * $row->item_cost); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
 
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-
-        <div class="row">
-            <div class="col-4"></div>
-            <div class="col-4 h5 text-left">
-                <strong>Лечащий врач</strong>
-            </div>
-            <div class="col-4 h6 text-right">
-                <em><strong><?= get_full_name($docs->grant_id) ?></strong></em>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-4"></div>
-            <div class="col-4 h4 text-left">
-                <strong>Глав.врач</strong>
-            </div>
-            <div class="col-4 h5 text-right">
-                <em><strong><?= get_full_name($db->query("SELECT id FROM users WHERE user_level = 8")->fetch()['id']) ?></strong></em>
-            </div>
+                </tbody>
+                <tfooter>
+                    <tr class="table-secondary">
+                        <td colspan="4" class="text-right"><b>Итог:</b></td>
+                        <td class="text-right"><b><?= number_format($total, 1) ?></b></td>
+                    </tr>
+                </tfooter>
+            </table>
         </div>
 
     </body>

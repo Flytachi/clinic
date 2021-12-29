@@ -14,7 +14,7 @@ $tb->set_self(viv('admin/division'));
         <thead>
             <tr class="<?= $classes['table-thead'] ?>">
                 <th style="width:7%">№</th>
-                <th>ID</th>
+                <th>Метка</th>
                 <th>Роль</th>
                 <th>Отдел</th>
                 <th>Название специолиста</th>
@@ -25,7 +25,7 @@ $tb->set_self(viv('admin/division'));
             <?php foreach($tb->get_table(1) as $row): ?>
                 <tr>
                     <td><?= $row->count ?></td>
-                    <td><?= $row->id ?></td>
+                    <td><?= $row->mark ?></td>
                     <td><?= $PERSONAL[$row->level] ?></td>
                     <td><?= $row->title ?></td>
                     <td><?= $row->name ?> <?= ($row->assist == 1) ? "\"Ассистент\"" : "" ?></td>

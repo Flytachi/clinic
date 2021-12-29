@@ -7,11 +7,11 @@ if (!is_numeric($_GET['pk'])) {
 	Mixin\error('404');
 }
 
-$tb = new Table($db, "visit_prices");
+$tb = new Table($db, "visit_service_transactions");
 $search = $tb->get_serch();
 $search_array = array(
-	"user_id = {$_GET['pk']} AND price_date IS NOT NULL", 
-	"user_id = {$_GET['pk']} AND price_date IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
+	"is_visibility IS NOT NULL AND user_id = {$_GET['pk']} AND is_price IS NOT NULL", 
+	"is_visibility IS NOT NULL AND user_id = {$_GET['pk']} AND is_price IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 ?>

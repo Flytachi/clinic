@@ -4,7 +4,7 @@ class VisitServicesModel extends Model
 {
     public $table = 'visit_services';
     public $_visits = 'visits';
-    public $_prices = 'visit_prices';
+    public $_transactions = 'visit_service_transactions';
 
     public function clean()
     {
@@ -69,7 +69,7 @@ class VisitServicesModel extends Model
                 // Начало Транкзации
                 $db->beginTransaction();
                 // Visit prices 
-                $object = Mixin\delete($this->_prices, $pk, "visit_service_id");
+                $object = Mixin\delete($this->_transactions, $pk, "visit_service_id");
                 if(!intval($object)){
                     $this->error("Произошла ошибка на сервере!");
                     $db->rollBack();

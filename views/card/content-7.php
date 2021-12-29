@@ -120,7 +120,7 @@ is_module('module_laboratory');
 														<?php if( $activity and ( (!$patient->direction and $row->status == 1) or ( $patient->direction and $row->status == 2 and ($row->route_id == $session->session_id or is_grant()) ) ) ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
-														<?php if ( in_array($row->status, [3,7]) ): ?>
+														<?php if ( in_array($row->status, [3,5,6,7]) ): ?>
 															<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row->id ?>')" class="dropdown-item"><i class="icon-eye"></i>Просмотр</a>
 															<a <?= ($row->completed) ? 'onclick="Print(\''. prints('document-2').'?pk='. $row->id. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
 														<?php endif; ?>

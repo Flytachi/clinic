@@ -3,14 +3,14 @@ require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "История платежей";
 
-$tb = new Table($db, "visit_prices vsp");
-$tb->set_data('DISTINCT vsp.user_id');
+$tb = new Table($db, "visit_service_transactions vt");
+$tb->set_data('DISTINCT vt.user_id')->additions('LEFT JOIN users us ON(us.id=vt.user_id)');
 $search = $tb->get_serch();
 $search_array = array(
-	"", 
-	"(us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vt.is_visibility IS NOT NULL", 
+	"vt.is_visibility IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions('LEFT JOIN users us ON(us.id=vsp.user_id)')->where_or_serch($search_array)->order_by('vsp.add_date DESC')->set_limit(20);
+$tb->where_or_serch($search_array)->order_by('vt.add_date DESC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">

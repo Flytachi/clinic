@@ -1,8 +1,11 @@
 <?php
 require_once '../tools/warframe.php';
 
+$code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
+$qr = "http://".$_SERVER['HTTP_HOST']."/api/document?code=$code";
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.birth_date, vs.service_title, vs.service_report, vs.accept_date FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
+    if (!$docs) Mixin\error('404');
 }elseif (isset($_GET['pk']) and $_GET['pk'] == "template" ) {
     $docs = new stdClass();
     $docs->user_id = 1;
@@ -31,7 +34,6 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 }else{
     Mixin\error('404');
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,12 +82,19 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         <?php if (config("print_document_hr-1")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-1-color").'"></div>' ; ?>
         <?php if (config("print_document_hr-2")) echo '<div class="my_hr-2" style="border-color:'.config("print_document_hr-2-color").'"></div>' ; ?>
 
-        <div class="text-left h3">
-            <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-            <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
-            <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
-            <b>Дата исследования: </b><?= ($docs->accept_date) ? date_f($docs->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
-            <b>Врач: </b><?= get_full_name($docs->parent_id) ?><br>
+        <div class="row">
+            <div class="col-8 text-left h3">
+                <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
+                <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
+                <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
+                <b>Дата исследования: </b><?= ($docs->accept_date) ? date_f($docs->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
+                <b>Врач: </b><?= get_full_name($docs->parent_id) ?><br>
+            </div>
+            <div class="col-4 text-right">
+                <?php if (config("print_document_qrcode")): ?>
+                    <img src="<?= api('QRcode', $qr); ?>" width="150" height="150">
+                <?php endif; ?>
+            </div>
         </div>
 
         <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>
@@ -98,6 +107,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 <?= $docs->service_report ?>
             </div>
 
+        </div>
+
+        <div class="btn_panel text-center">
+            <button class="btn btn-sm" onclick="print();">Печать</button>
         </div>
 
     </body>

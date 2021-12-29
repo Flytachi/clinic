@@ -18,26 +18,39 @@ class DivisionModel extends Model
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="id" value="<?= $pk ?>">
 
-            <div class="form-group">
-                <label>Выбирите Роль:</label>
-                <select data-placeholder="Выбрать роль" id="level_use" name="level" class="<?= $classes['form-select'] ?>" onchange="TableChange(this)" required>
-                    <option></option>
-                    <?php foreach ($PERSONAL as $key => $value): ?>
-                        <?php if(!in_array($key, [1,2,3,4,7,8,32])): ?>
-                            <option value="<?= $key ?>"<?= ($this->value('level') == $key) ? 'selected': '' ?>><?= $value ?></option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </select>
+            <div class="form-group row">
+                
+                <div class="col-10">
+                    <label>Выбирите Роль:</label>
+                    <select data-placeholder="Выбрать роль" id="level_use" name="level" class="<?= $classes['form-select'] ?>" onchange="TableChange(this)" required>
+                        <option></option>
+                        <?php foreach ($PERSONAL as $key => $value): ?>
+                            <?php if(!in_array($key, [1,2,3,4,7,8,32])): ?>
+                                <option value="<?= $key ?>"<?= ($this->value('level') == $key) ? 'selected': '' ?>><?= $value ?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </select>    
+                </div>
+
+                <div class="col-2">
+                    <label>Метка отдела:</label>
+                    <input type="text" class="form-control" name="mark" placeholder="Введите метку" value="<?= $this->value('mark') ?>">
+                </div>
+                
             </div>
 
-            <div class="form-group">
-                <label>Название отдела:</label>
-                <input type="text" class="form-control" name="title" placeholder="Введите название отдела" required value="<?= $this->value('title') ?>">
-            </div>
+            <div class="form-group row">
+                
+                <div class="col-6">
+                    <label>Название отдела:</label>
+                    <input type="text" class="form-control" name="title" placeholder="Введите название отдела" required value="<?= $this->value('title') ?>">
+                </div>
 
-            <div class="form-group">
-                <label>Название специалиста:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите название специалиста" required value="<?= $this->value('name') ?>">
+                <div class="col-6">
+                    <label>Название специалиста:</label>
+                    <input type="text" class="form-control" name="name" placeholder="Введите название специалиста" required value="<?= $this->value('name') ?>">
+                </div>
+
             </div>
 
             <div id="change_table_div"></div>
