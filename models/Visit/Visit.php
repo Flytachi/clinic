@@ -1,5 +1,7 @@
 <?php
 
+use function Mixin\error;
+
 class VisitModel extends Model
 {
     public $table = 'visits';
@@ -140,29 +142,34 @@ class VisitModel extends Model
                     }
                 } 
             }
-
+            /*
             // pacs
-            $DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=213.230.90.9;Port:1433;Database=OCS;";
+            $DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
             try {
                 $pacs = new PDO($DNS, "OCS", "OCS");
                 $pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
                 $pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
                 $pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (\PDOException $e) {
-                die($e->getMessage());
+                // die($e->getMessage());
+                $this->error("Ошибка при соединении с PACS!");
+                $db->rollBack();
             }
-            $pacsData = $db->query("SELECT vs.user_id, us.first_name, us.last_name, us.father_name, us.gender, us.birth_date, d.name, vs.add_date, vs.service_name FROM $this->_service vs JOIN users us ON(us.id=vs.user_id) JOIN divisions d ON(d.id=vs.division_id) WHERE vs.id = $object_s")->fetch();
+            $pacsData = $db->query("SELECT vs.user_id, us.first_name, us.last_name, us.father_name, us.gender, us.birth_date, d.name, vs.add_date, vs.service_name, vs.route_id FROM $this->_service vs JOIN users us ON(us.id=vs.user_id) JOIN divisions d ON(d.id=vs.division_id) WHERE vs.id = $object_s")->fetch();
             $pdata = array(
-                'PatientID' => $pacsData['user_id'], 
-                'FirstName' => $pacsData['first_name'], 
-                'MiddleName' => $pacsData['father_name'], 
-                'LastName' => $pacsData['last_name'], 
-                'Sex' => $pacsData['gender'], 
+                'PatientID' => $pacsData['user_id'],
+                'LastName' => $pacsData['last_name'] ." ". $pacsData['first_name'] ." ". $pacsData['father_name'], 
+                'Sex' => ($pacsData['gender']) ? 'M' : 'F', 
                 'BirthDate' => $pacsData['birth_date'], 
                 'Modality' => 'MR', 
                 'Department' => $pacsData['name'],
                 'TimeDate' => $pacsData['add_date'],
                 'StudyName' => $pacsData['service_name'],
+                'PACSOCSBridgeKey' => $object_s,
+                'Status' => 0,
+                'ReadStatus' => 0,
+                'OrderDoctor' => $pacsData['route_id'],
+                'OCSComment' => '',
             );
 
             $col = implode(",", array_keys($pdata));
@@ -170,12 +177,12 @@ class VisitModel extends Model
             $sql = "INSERT INTO QueueRecord ($col) VALUES ($val)";
             try{
                 $stm = $pacs->prepare($sql)->execute($pdata);
-                return $pacs->lastInsertId();
             }
             catch (\PDOException $ex) {
-                return $ex->getMessage();
+                $this->error($ex->getMessage());
             }
             // end pacs
+            */
         }
         unset($post);
     }

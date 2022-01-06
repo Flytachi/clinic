@@ -48,7 +48,7 @@ $header = "Логи";
 
 				dd(PDO::getAvailableDrivers());
 				
-				$DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=213.230.90.9;Port:1433;Database=OCS;";
+				$DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
 
 				try {
 					$pacs = new PDO($DNS, "OCS", "OCS");
