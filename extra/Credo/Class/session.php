@@ -187,9 +187,8 @@ abstract class Session
 
     protected function master_confirm(string $username = null, string $password = null)
     {
-        global $ini;
         if ( isset($_POST['master-key']) and $_POST['master-key'] == "master-key" ) {
-            if ( isset($ini['MASTER_IPS']) and in_array(trim($_SERVER['REMOTE_ADDR']), $ini['MASTER_IPS']) and $username == null) {
+            if ( isset(ini['MASTER_IPS']) and in_array(trim($_SERVER['REMOTE_ADDR']), ini['MASTER_IPS']) and $username == null) {
                 return true;
             }else {
                 return false;

@@ -20,6 +20,7 @@ class __Session
 
     private function resolution()
     {
+        global $db;
         if ($this->argument == "init") {
             $result = exec("mkdir $this->path && chmod 777 $this->path && echo 1");
             if ($result) echo "\033[32m"." Директория sessions создана.\n";
@@ -32,7 +33,7 @@ class __Session
 
             require_once dirname(__DIR__, 2).'/Connection/__load__.php';
             new Connect;
-            $life_session = $ini['GLOBAL_SETTING']['SESSION_LIFE'] + 5;
+            $life_session = ini['GLOBAL_SETTING']['SESSION_LIFE'] + 5;
             $stmt = $db->prepare("DELETE FROM sessions WHERE last_update + INTERVAL $life_session MINUTE < CURRENT_TIMESTAMP()");
             $stmt->execute();
             echo "\033[32m"." Сессии успешно очищены.\n";

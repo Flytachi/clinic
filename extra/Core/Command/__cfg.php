@@ -15,19 +15,18 @@ class __Cfg
             'SERIA' => null,
         ),
         'GLOBAL_SETTING' => array(
-            'DRIVER' => 'mysql', 
-            'CHARSET' => 'utf8', 
             'TIME_ZONE' => 'Asia/Samarkand', 
-
             'SESSION_TIMEOUT' => null, 
             'SESSION_LIFE' => null,
-
             'HIDE_EXTENSION' => false, 
             'ROOT_MOD' => false, 
             'DEBUG' => true, 
         ), 
         'DATABASE' => array(
+            'DRIVER' => 'mysql', 
+            'CHARSET' => 'utf8', 
             'HOST' => 'localhost',
+            'PORT' => 3306,
             'NAME' => null,  
             'USER' => null,
             'PASS' => null, 

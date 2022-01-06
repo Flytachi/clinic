@@ -65,13 +65,12 @@ class __Backup
 
     private function create()
     {
-        global $ini;
         if ($this->is_dir()) {
             require_once dirname(__DIR__, 2).'/Connection/__load__.php';
             new Connect;
             $path = dirname(__DIR__, 3)."/".$this->path;
             $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
-            exec("mysqldump -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} > $path/$file_name.$this->file_format");
+            exec("mysqldump -u {ini['DATABASE']['USER']} -p{ini['DATABASE']['PASS']} {ini['DATABASE']['NAME']} > $path/$file_name.$this->file_format");
             echo "\033[32m"." Дамп успешно создан.\n";
             return 1;
         }else echo "\033[33m"." Директория для резервного копирования не существует.\n";
@@ -91,13 +90,12 @@ class __Backup
 
     private function migrate()
     {
-        global $ini;
         if ($this->is_dir()) {
             if ($this->name) {
                 require_once dirname(__DIR__, 2).'/Connection/__load__.php';
                 $path = dirname(__DIR__, 3)."/".$this->path;
                 $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
-                exec("mysql -u {$ini['DATABASE']['USER']} -p{$ini['DATABASE']['PASS']} {$ini['DATABASE']['NAME']} < $path/$file_name.$this->file_format");
+                exec("mysql -u {ini['DATABASE']['USER']} -p{ini['DATABASE']['PASS']} {ini['DATABASE']['NAME']} < $path/$file_name.$this->file_format");
                 echo "\033[32m"." Миграция дампа прошлаа успешно.\n";
             }else echo "\033[33m"." Введите название файла дампа.\n";
             return 1;

@@ -41,7 +41,7 @@ class __Db
 
     private function generate()
     {
-        global $db, $ini;
+        global $db;
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
         new Connect;
@@ -52,7 +52,7 @@ class __Db
         // echo "\033[32m"." Генерация триггеров прошла успешно.\n";
         // 
         foreach ($db->query("SHOW TABLES") as $table) {
-            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
             $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
             $t = str_replace( stristr(substr(strstr($t, 'AUTO_INCREMENT='), 0, -1), ' ', true), "", $t);
             $tables[] = $t;
@@ -64,7 +64,7 @@ class __Db
 
     private function migrate()
     {
-        global $db, $ini; 
+        global $db; 
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
         new Connect($db);
@@ -95,7 +95,7 @@ class __Db
 
     private function clean()
     {
-        global $db, $ini;
+        global $db;
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
         new Connect;
@@ -115,7 +115,7 @@ class __Db
 
     private function delete()
     {
-        global $db, $ini; 
+        global $db; 
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
         new Connect;
@@ -128,7 +128,7 @@ class __Db
 
     private function seed()
     {
-        global $ini, $db; 
+        global $db; 
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 2).'/Credo/__load__.php';
         new Connect;
@@ -158,12 +158,12 @@ class __Db
 
     private function compare()
     {
-        global $db, $ini;
+        global $db;
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
         new Connect;
         $self_base=$migrate_base=[];
-        foreach ($db->query("SHOW TABLES") as $table) $self_base[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+        foreach ($db->query("SHOW TABLES") as $table) $self_base[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
         $migrate_base[] = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1);
 
         // if ($diff = array_diff($self_base, $migrate_base)) {

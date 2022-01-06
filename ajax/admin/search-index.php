@@ -6,7 +6,7 @@ $tb = (new UserModel)->Data("id, is_active, branch_id, username, first_name, las
 $search = $tb->getSearch();
 $where_search = array("", "(username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 $tb->Where($where_search)->Order("branch_id ASC, user_level ASC, last_name ASC")->Limit(20);
-$tb->returnPath(viv('admin/users'));  
+$tb->returnPath(viv('admin/index'));  
 ?>
 <div class="table-responsive">
     <table class="table table-hover">
