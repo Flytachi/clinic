@@ -692,6 +692,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th>Комментарий</th>
                                 <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
@@ -718,7 +719,8 @@ class VisitRoute extends Model
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1",
-                        cols: 1
+                        cols: 1,
+                        place: 1,
                     },
                     success: function (result) {
                         let service = {};
@@ -736,7 +738,8 @@ class VisitRoute extends Model
                         divisions: $(the).val(),
                         selected: service,
                         types: "1",
-                        cols: 1
+                        cols: 1,
+                        place: 1,
                     },
                     success: function (result) {
                         let service = {};
@@ -801,6 +804,7 @@ class VisitRoute extends Model
                                 <th>Услуга</th>
                                 <!-- <th>Тип</th> -->
                                 <th>Доктор</th>
+                                <th>Комментарий</th>
                                 <th style="width: 100px">Кол-во</th>
                                 <th class="text-right">Цена</th>
                             </tr>
@@ -826,7 +830,8 @@ class VisitRoute extends Model
                         search: $("#search_input").val(),
                         selected: service,
                         types: "1",
-                        cols: 1
+                        cols: 1,
+                        place: 1,
                     },
                     success: function (result) {
                         let service = {};
@@ -844,7 +849,8 @@ class VisitRoute extends Model
                         divisions: $(the).val(),
                         selected: service,
                         types: "1",
-                        cols: 1
+                        cols: 1,
+                        place: 1,
                     },
                     success: function (result) {
                         let service = {};
@@ -1144,6 +1150,7 @@ class VisitRoute extends Model
                 $post_big['parent_id'] = $this->post['parent_id'][$key];
                 $post_big['division_id'] = $this->post['division_id'][$key];
             }
+            $post_big['report'] = $this->post['report'][$key] ?? null;
             $level_divis = $db->query("SELECT level FROM division WHERE id = {$post_big['division_id']}")->fetchColumn();
             if ($level_divis == 12) {
                 $post_big['physio'] = True;
@@ -1178,7 +1185,6 @@ class VisitRoute extends Model
             }
             unset($post_big);
         }
-
         $db->commit();
         $this->success();
     }

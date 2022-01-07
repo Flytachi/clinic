@@ -15,6 +15,7 @@ $session->is_auth();
             <thead class="<?= $classes['table-thead'] ?>">
                 <tr>
                     <th>Название</th>
+                    <th>Комментарий</th>
                     <th class="text-center">Кол-во</th>
                     <th class="text-right">Действия Ед.</th>
                 </tr>
@@ -22,12 +23,13 @@ $session->is_auth();
             <tbody>
                 <?php foreach ($db->query("SELECT DISTINCT sc.id, sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL AND vs.status != 5") as $value): ?>
                     <?php
-                    $li = $db->query("SELECT vs.id, COUNT(sc.name) 'count' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL AND vs.service_id = {$value['id']} AND vs.status != 5")->fetch();
+                    $li = $db->query("SELECT vs.id, vs.report, COUNT(sc.name) 'count' FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.user_id = {$_GET['user_id']} AND vs.physio IS NOT NULL AND vs.completed IS NULL AND vs.service_id = {$value['id']} AND vs.status != 5")->fetch();
                     ?>
                     <tr>
                         <td>
                             <?= $value['name'] ?>
                         </td>
+                        <td><?= $li['report'] ?></td>
                         <td class="text-center"><?= $li['count'] ?></td>
                         <td class="text-right">
                             <a onclick="Complt('<?= up_url($li['id'], 'VisitFinish') ?>', '<?= $_GET['user_id'] ?>')" class="text-success">Завершить</a>
