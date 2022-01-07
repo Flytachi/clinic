@@ -66,9 +66,17 @@ class Storage extends Model
                     <input type="text" class="form-control" name="code" placeholder="Введите код" value="<?= $this->value('code') ?>">
                 </div>
 
-                <div class="col-md-9">
+                <div class="col-md-3">
                     <label>Поставщик:</label>
                     <input type="text" class="form-control" name="supplier" placeholder="Введите поставщик" required value="<?= $this->value('supplier') ?>">
+                </div>
+                <div class="col-md-3">
+                    <label>Производитель:</label>
+                    <input type="text" class="form-control" name="manufacturer" placeholder="Введите производителя" required value="<?= $this->value('manufacturer') ?>">
+                </div>
+                <div class="col-md-3">
+                    <label>Страна производителя:</label>
+                    <input type="text" class="form-control" name="manufacturer_country" placeholder="Введите страну производителя" required value="<?= $this->value('manufacturer_country') ?>">
                 </div>
 
             </div>
