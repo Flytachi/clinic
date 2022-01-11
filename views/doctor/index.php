@@ -137,7 +137,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 				type: "POST",
 				url: "<?= add_url() ?>",
 				data: {
-					model: "VisitServicesModel",
+					model: "VisitServiceUp",
 					id: id,
 					status: 3,
 					parent_id: "<?= $session->session_id ?>",

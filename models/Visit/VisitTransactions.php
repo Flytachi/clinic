@@ -485,50 +485,6 @@ class VisitTransactionsModel extends Model
             
         }
 
-        // $this->user_pk = $this->post['user_id'];
-        // unset($this->post['user_id']);
-        // if (isset($this->post['bed_cost'])) {
-
-        //     $this->bed_cost = $this->post['bed_cost'];
-        //     unset($this->post['bed_cost']);
-        //     $this->status = null;
-        //     return True;
-
-        // }elseif (module('module_pharmacy') and isset($this->post['pharm_cost'])) {
-
-        //     $result = round(round($this->post['pharm_cost']) - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']));
-        //     if ($result < 0) {
-        //         echo "Есть остаток ".$result;
-        //         exit;
-        //     }elseif ($result > 0) {
-        //         echo "Недостаточно средств! ". $result;
-        //         exit;
-        //     }else {
-        //         $this->pharm_cost = $this->post['pharm_cost'];
-        //         unset($this->post['pharm_cost']);
-        //         $this->status = null;
-        //         return True;
-        //     }
-
-        // } else {
-
-        //     $tot = $db->query("SELECT SUM(vp.item_cost) 'total_price' FROM $this->_visits vs LEFT JOIN $this->table vp ON(vp.visit_id=vs.id) WHERE vs.priced_date IS NULL AND vs.user_id = $this->user_pk")->fetch();
-        //     if ($this->post['sale'] > 0) {
-        //         $tot['total_price'] = $tot['total_price'] - ($tot['total_price'] * ($this->post['sale'] / 100));
-        //     }
-        //     $result = $tot['total_price'] - ($this->post['price_cash'] + $this->post['price_card'] + $this->post['price_transfer']);
-        //     if ($result < 0) {
-        //         $this->error("Есть остаток ".$result);
-        //     }elseif ($result > 0) {
-        //         $this->error("Недостаточно средств! ". $result);
-        //     }else {
-        //         $this->post = Mixin\clean_form($this->post);
-        //         $this->post = Mixin\to_null($this->post);
-        //         $this->status = 1;
-        //         return True;
-        //     }
-
-        // }
     }
 
     public function price($row)
@@ -763,10 +719,43 @@ class VisitTransactionsModel extends Model
                 $this->stationar_price();
             }else {
                 $this->ambulator_price();
+                if (module('queue')) $this->queue();
             }
             $db->commit();
             $this->success();
 
+        }
+    }
+
+    public function queue()
+    {
+        global $db;
+        foreach ($this->post['visit_services'] as $pk) {
+            $vs = $db->query("SELECT * FROM visit_services WHERE id = $pk")->fetch();
+            
+            if ($vs['parent_id']) {
+                $post = array(
+                    'room_id' => $db->query("SELECT room_id FROM users WHERE id = {$vs['parent_id']}")->fetchColumn(), 
+                    'user_id' => $this->visit['user_id'],
+                    'status' => 1, 
+                );
+                if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
+                    Mixin\insert("queue", $post);
+                }
+            }else{
+                foreach ($db->query("SELECT room_id FROM users WHERE division_id = {$vs['division_id']}") as $data) {
+                    $post = array(
+                        'room_id' => $data['room_id'], 
+                        'user_id' => $this->visit['user_id'],
+                        'status' => 1, 
+                    );
+                    if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
+                        Mixin\insert("queue", $post);
+                    }
+                }
+            }
+
+            
         }
     }
 

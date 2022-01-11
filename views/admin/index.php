@@ -95,7 +95,7 @@ $tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_l
 				                                }
 				                                ?>
 				                            </td>
-											<td><?= $row->room ?></td>
+											<td><?= ($row->room_id) ? $db->query("SELECT title FROM rooms WHERE id = $row->room_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
 				                            <td>
 				                                <div class="list-icons">
 

@@ -134,5 +134,29 @@ class VisitServicesModel extends Model
         exit;
     }
 }
+
+
+class VisitServiceUp extends VisitServicesModel
+{
+    public function clean()
+    {
+        if (module('queue')) $this->queue();
+        $this->post = Mixin\clean_form($this->post);
+        $this->post = Mixin\to_null($this->post);
+        return True;
+    }
+
+    public function queue()
+    {
+        global $db, $session;
+        if (isset($this->post['queue_user']) and $this->post['queue_user']) {
+            $user_id = $this->post['queue_user']; unset($this->post['queue_user']);
+        }else $user_id = $db->query("SELECT user_id FROM visit_services WHERE id = {$this->post['id']}")->fetchColumn();
+        if ($old = $db->query("SELECT id FROM queue WHERE room_id = {$session->data->room_id} AND status = 2 LIMIT 1")->fetchColumn()) {
+            Mixin\update("queue", array('status' => 3), $old);
+        }
+        Mixin\update("queue", array('status' => 2), array('room_id' => $session->data->room_id, 'user_id' => $user_id));
+    }
+}
         
 ?>
