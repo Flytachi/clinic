@@ -737,24 +737,23 @@ class VisitTransactionsModel extends Model
                 $post = array(
                     'room_id' => $db->query("SELECT room_id FROM users WHERE id = {$vs['parent_id']}")->fetchColumn(), 
                     'user_id' => $this->visit['user_id'],
-                    'status' => 1, 
+                    'is_queue' => true, 
                 );
                 if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
                     Mixin\insert("queue", $post);
                 }
-            }else{
-                foreach ($db->query("SELECT room_id FROM users WHERE division_id = {$vs['division_id']}") as $data) {
+            } else {
+                foreach ($db->query("SELECT room_id FROM users WHERE user_level IN (5,6,10) AND room_id IS NOT NULL AND division_id = {$vs['division_id']}") as $data) {
                     $post = array(
                         'room_id' => $data['room_id'], 
                         'user_id' => $this->visit['user_id'],
-                        'status' => 1, 
+                        'is_queue' => true, 
                     );
                     if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
                         Mixin\insert("queue", $post);
                     }
                 }
             }
-
             
         }
     }

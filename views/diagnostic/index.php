@@ -105,7 +105,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 												<?php if (!division_assist()): ?>
 													<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                             	<?php else: ?>
-													<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND status = 1")->fetch()): ?>
+													<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND is_queue IS NOT NULL")->fetch()): ?>
 														<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" 
 															<?php if (!$row->direction): ?>
 																onclick="sendQueue(this)"

@@ -77,6 +77,13 @@ is_module('queue');
                 }, 1000);
             });
 
+            function playMusic() {
+                var audio = new Audio(); // Создаём новый элемент Audio
+                audio.src = '/static/audio/music'; // Указываем путь к звуку "клика"
+                audio.muted = "";
+                audio.autoplay = true; // Автоматически запускаем
+            }
+
             function Checker(){
                 $.ajax({
                     type: "POST",
@@ -102,24 +109,26 @@ is_module('queue');
             }
 
             function Creater(element){
-                if (element.status == 3) {
+                if (element.is_delete) {
                     Delete(element);
                 }
-                if (!document.querySelector("#item_"+element.room_id+"-"+element.user_id)) {
-                    if (document.querySelector("#Troom-"+element.room_id)) {
+                if (document.querySelector("#Troom-"+element.room_id)) {
+                    
+                    if (!document.querySelector("#item_"+element.room_id+"-"+element.user_id)) {
                         var table = document.querySelector("#Troom-"+element.room_id);
                         let tr = document.createElement("tr");
                         let td = document.createElement("td");
                         td.innerHTML = element.user_id;
-                        if (element.status == 2) tr.style.backgroundColor = "rgb(0, 255, 0)";
+                        if (element.is_accept) tr.style.backgroundColor = "rgb(0, 255, 0)";
                         tr.id = "item_"+element.room_id+"-"+element.user_id;
-                        tr.dataset.status = element.status;
+                        tr.dataset.is_accept = element.is_accept;
                         tr.append(td);
                         table.append(tr);
-                    } else location.reload();
-                }else {
-                    if (element.status == 2) Update(element);
-                }
+                    }else {
+                        if (element.is_accept) Update(element);
+                    }
+
+                } else location.reload();
             }
 
             function Delete(element) {
@@ -138,9 +147,14 @@ is_module('queue');
             }
 
             function Update(element) {
-                $(`#item_${element.room_id}-${element.user_id}`).fadeIn(900, function() {
-                    $(this).css("background-color", "rgb(0, 255, 0)");
-                });
+                var item = document.querySelector(`#item_${element.room_id}-${element.user_id}`);
+                if (item.dataset.is_accept == "null") {
+                    item.dataset.is_accept = element.is_accept;
+                    playMusic();
+                    $(`#item_${element.room_id}-${element.user_id}`).fadeIn(900, function() {
+                        $(this).css("background-color", "rgb(0, 255, 0)");
+                    });
+                }
             }
         </script>
     <?php endif; ?>

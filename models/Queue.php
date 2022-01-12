@@ -31,10 +31,10 @@ class QueueUp extends Queue
     public function clean()
     {
         global $db;
-        if ($old = $db->query("SELECT id FROM queue WHERE room_id = {$this->post['room_id']} AND status = 2 LIMIT 1")->fetchColumn()) {
-            Mixin\update("queue", array('status' => 3), $old);
+        if ($old = $db->query("SELECT id FROM queue WHERE room_id = {$this->post['room_id']} AND is_accept IS NOT NULL LIMIT 1")->fetchColumn()) {
+            Mixin\update("queue", array('is_accept' => null, 'is_delete' => 1), $old);
         }
-        Mixin\update("queue", array('status' => 2), array('room_id' => $this->post['room_id'], 'user_id' => $this->post['user_id']));
+        Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1), array('room_id' => $this->post['room_id'], 'user_id' => $this->post['user_id']));
     }
 }
         
