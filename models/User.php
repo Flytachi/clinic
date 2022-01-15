@@ -109,7 +109,12 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Кабинет:</label>
-                                    <input type="number" class="form-control" step="1" name="room" placeholder="Введите кабинет" value="<?= $this->value('room') ?>">
+                                    <select data-placeholder="Выбрать кабинет" name="room_id" class="<?= $classes['form-select'] ?>" required>
+                                        <option></option>
+                                        <?php foreach ($db->query("SELECT * FROM rooms") as $row): ?>
+                                            <option value="<?= $row['id'] ?>" <?= ($this->value('room_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </div>
                             </div>
 

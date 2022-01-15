@@ -35,7 +35,7 @@ $tb->set_self(viv('admin/index'));
                         }
                         ?>
                     </td>
-                    <td><?= $row->room ?></td>
+                    <td><?= ($row->room_id) ? $db->query("SELECT title FROM rooms WHERE id = $row->room_id")->fetchColumn() : '<span class="text-muted">Нет данных</span>' ?></td>
                     <td>
                         <div class="list-icons">
 

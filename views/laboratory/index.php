@@ -104,7 +104,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
-												<button onclick="VisitUpStatus(<?= $row->count ?>, <?= json_encode($services) ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Забор</button>
+												<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->user_id ?>, <?= json_encode($services) ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Забор</button>
                                             </td>
                                         </tr>
 									<?php unset($services); endforeach; ?>
@@ -142,14 +142,15 @@ $tb->where_or_serch($search_array)->set_limit(20);
 			});
 		});
 
-		function VisitUpStatus(tr, items) {
+		function VisitUpStatus(tr, user, items) {
 			$.ajax({
 				type: "POST",
 				url: "<?= add_url() ?>",
 				data: {
-					model: "VisitServicesModel",
+					model: "VisitServiceUp",
 					id: items,
 					status: 3,
+					queue_user: user,
 					accept_date: date_format(new Date()),
 				},
 				success: function (result) {

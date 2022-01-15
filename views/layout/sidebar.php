@@ -141,7 +141,7 @@
 
                 <?php if(module('module_pharmacy') and permission([4,5,7])): ?>
                     <!-- Warehouse -->
-                    <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, wsp.is_grant, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.user_id = $session->session_id") as $side_warehouse): ?>
+                    <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, wsp.is_grant, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.responsible_id = $session->session_id") as $side_warehouse): ?>
 
                         <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['warehouse_name'] ?></div> <i class="icon-menu" title="Main"></i></li>
                     

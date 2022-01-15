@@ -118,6 +118,16 @@ $header = "Панель управления";
 													</td>
 												</tr>
 												<tr>
+													<th>Queue</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_queue" <?= (isset($company->module_queue) and $company->module_queue) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Diet</th>
 													<td class="text-right">
 														<div class="list-icons">
@@ -127,6 +137,7 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												
 												<tr>
 													<th>ZeTTa PACS</th>
 													<td class="text-right">
