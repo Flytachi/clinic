@@ -21,7 +21,6 @@ class WarehouseSettingsModel extends Model
             Hell::error('report_permissions_false');
             exit;
         }
-
     }
 
     public function form($pk = null)

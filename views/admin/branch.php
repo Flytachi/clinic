@@ -9,6 +9,9 @@ $search = $tb->getSearch();
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -97,7 +100,7 @@ $search = $tb->getSearch();
 															</a>
 														</div>
 													</div>
-
+													<a onclick="ShowConf('<?= up_url($row->id, 'Constant') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
 													<a onclick="Update('<?= up_url($row->id, 'CorpBranchModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_branch")): ?>
 														<a href="<?= del_url($row->id, 'CorpBranchModel') ?>" onclick="return confirm('Вы уверены что хотите удалить пользоватиля?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
@@ -128,6 +131,12 @@ $search = $tb->getSearch();
     <!-- Footer -->
     <?php include layout('footer') ?>
     <!-- /footer -->
+
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="modal_default_card"></div>
+		</div>
+	</div>
 
 	<script type="text/javascript">
 
@@ -163,6 +172,18 @@ $search = $tb->getSearch();
 				},
 			});
 		};
+
+		function ShowConf(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#modal_default_card').html(result);
+				},
+			});
+		};
+
 	</script>
 
 </body>

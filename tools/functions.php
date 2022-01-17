@@ -7,11 +7,13 @@
 use Mixin\Hell;
 
 function is_config($value = null){
-    if (!config($value)) Hell::error('404');
+    global $session;
+    if (!config($session->branch, $value)) Hell::error('404');
 }
 
 function is_module($value = null){
-    if (!module($value)) Hell::error('404');
+    global $session;
+    if (!module($session->branch, $value)) Hell::error('404');
 }
 
 function showTitle()

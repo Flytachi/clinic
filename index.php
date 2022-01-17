@@ -2,13 +2,12 @@
 require_once 'tools/warframe.php';
 $session->is_auth();
 
-if ($_SESSION['session_id'] == "master") {
+if ($session->session_id == "master") {
     render('master/index');
-}elseif ($_SESSION['session_id'] == "avatar") {
-    include "views/master/avatar_panel.php";
 }else {
 
     switch (level()):
+        
         case 1: render('admin/index'); break;
         case 3: render('manager/index'); break;
 
@@ -23,7 +22,7 @@ if ($_SESSION['session_id'] == "master") {
         case 23: render('registry/index'); break;
         case 24: render('pharmacy/index'); break;
         case 25: render('nurce/index'); break;
-        
+
     endswitch;
 }
 ?>

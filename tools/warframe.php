@@ -9,16 +9,16 @@ require_once dirname(__FILE__).'/classes.php';
 new Connect;
 $session = new MySession($db, ini['GLOBAL_SETTING']['SESSION_LIFE']);
 
-function module($value = null)
+function module($branch, $value = null)
 {
-    global $db;
+    global $db, $session;
     $mark = "module_";
     try {
         if ($value) {
             $value = str_replace($mark, '', $value);
-            return $db->query("SELECT const_value FROM corp_constants WHERE const_label = '$mark$value'")->fetchColumn();
+            return $db->query("SELECT const_value FROM corp_constants WHERE branch_id = $branch AND const_label = '$mark$value'")->fetchColumn();
         } else {
-            foreach ($db->query("SELECT * FROM corp_constants WHERE const_label LIKE '$mark%'") as $row) {
+            foreach ($db->query("SELECT * FROM corp_constants WHERE branch_id = $branch AND const_label LIKE '$mark%'") as $row) {
                 $modules[$row['const_label']] = $row['const_value'];
             }
             return $modules;
@@ -29,7 +29,7 @@ function module($value = null)
 
 }
 
-function config($value = null, $group = null)
+function config($branch, $value = null, $group = null)
 {
     global $db;
     $mark = "constant_";
@@ -37,16 +37,16 @@ function config($value = null, $group = null)
         if ($value) {
             $value = str_replace($mark, '', $value);
             if ($group) {
-                foreach ($db->query("SELECT * FROM corp_constants WHERE const_label LIKE '$mark$value%'") as $row) {
+                foreach ($db->query("SELECT * FROM corp_constants WHERE branch_id = $branch AND const_label LIKE '$mark$value%'") as $row) {
                     $modules[$row['const_label']] = $row['const_value'];
                 }
                 return $modules;
             } else {
-                return $db->query("SELECT const_value FROM corp_constants WHERE const_label = '$mark$value'")->fetchColumn();
+                return $db->query("SELECT const_value FROM corp_constants WHERE branch_id = $branch AND const_label = '$mark$value'")->fetchColumn();
             }
             
         } else {
-            foreach ($db->query("SELECT * FROM corp_constants WHERE const_label LIKE '$mark%'") as $row) {
+            foreach ($db->query("SELECT * FROM corp_constants WHERE branch_id = $branch AND const_label LIKE '$mark%'") as $row) {
                 $modules[$row['const_label']] = $row['const_value'];
             }
             return $modules;
@@ -58,9 +58,11 @@ function config($value = null, $group = null)
 }
 
 // Module 
-if (!module('diagnostic')) unset($PERSONAL[12]);
-if (!module('laboratory')) unset($PERSONAL[13]);
-if (!module('physio')) unset($PERSONAL[14]);
-if (!module('pharmacy')) unset($PERSONAL[24]);
-if (!module('anesthesia')) unset($PERSONAL[15]);
+if ($_SESSION and isset($_SESSION['session_branch'])) {
+    if (!module($_SESSION['session_branch'], 'diagnostic')) unset($PERSONAL[12]);
+    if (!module($_SESSION['session_branch'], 'laboratory')) unset($PERSONAL[13]);
+    if (!module($_SESSION['session_branch'], 'physio')) unset($PERSONAL[14]);
+    if (!module($_SESSION['session_branch'], 'pharmacy')) unset($PERSONAL[24]);
+    if (!module($_SESSION['session_branch'], 'anesthesia')) unset($PERSONAL[15]);
+}
 ?>

@@ -57,8 +57,16 @@ class MySession extends Mixin\Session
         } catch (\Throwable $th) {
             $_SESSION['message'] = 'Не верный логин или пароль';
         }
-
-        
+        /*
+        global $session, $PERSONAL;
+        // Module 
+        if ($_SESSION['session_level'] != 1) {
+            if (!module($session->branch, 'diagnostic')) unset($PERSONAL[12]);
+            if (!module($session->branch, 'laboratory')) unset($PERSONAL[13]);
+            if (!module($session->branch, 'physio')) unset($PERSONAL[14]);
+            if (!module($session->branch, 'pharmacy')) unset($PERSONAL[24]);
+            if (!module($session->branch, 'anesthesia')) unset($PERSONAL[15]);
+        }*/
     }
 
     public function set_data($pk) {
