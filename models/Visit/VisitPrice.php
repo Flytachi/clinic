@@ -451,7 +451,7 @@ class VisitPriceModel extends Model
                 $post['sale'] = $this->sale_bed;
             }
         }
-        if ($this->post['price_cash'])
+        if ($this->post['price_cash'] > 0)
         {
             if ($this->post['price_cash'] >= $row['item_cost']) {
                 $this->post['price_cash'] -= $row['item_cost'];
@@ -467,7 +467,7 @@ class VisitPriceModel extends Model
                     $post['price_card'] = $this->post['price_card'];
                     $this->post['price_card'] = 0;
                     $temp = round($temp - $post['price_card']);
-                    if ($this->post['price_transfer'] >= $temp) {
+                    if ($this->post['price_transfer']+1 >= $temp) {
                         $this->post['price_transfer'] -= $temp;
                         $post['price_transfer'] = $temp;
                     }else {
@@ -478,7 +478,7 @@ class VisitPriceModel extends Model
                 }
             }
         }
-        elseif ($this->post['price_card'])
+        elseif ($this->post['price_card'] > 0)
         {
             if ($this->post['price_card'] >= $row['item_cost']) {
                 $this->post['price_card'] -= $row['item_cost'];
@@ -487,7 +487,7 @@ class VisitPriceModel extends Model
                 $post['price_card'] = $this->post['price_card'];
                 $this->post['price_card'] = 0;
                 $temp = round($row['item_cost'] - $post['price_card']);
-                if ($this->post['price_transfer'] >= $temp) {
+                if ($this->post['price_transfer']+1 >= $temp) {
                     $this->post['price_transfer'] -= $temp;
                     $post['price_transfer'] = $temp;
                 }else {
@@ -499,7 +499,7 @@ class VisitPriceModel extends Model
         }
         else
         {
-            if ($this->post['price_transfer'] >= $row['item_cost']) {
+            if ($this->post['price_transfer']+1 >= $row['item_cost']) {
                 $this->post['price_transfer'] -= $row['item_cost'];
                 $post['price_transfer'] = $row['item_cost'];
             }else {
@@ -610,8 +610,11 @@ class VisitPriceModel extends Model
 
     public function err_temp(Int $temp = 0)
     {
+        global $db;
+        $throughput_from = $db->query("SELECT const_value FROM company_constants WHERE const_label LIKE 'const_throughput_from'")->fetchColumn();
+        $throughput_before = $db->query("SELECT const_value FROM company_constants WHERE const_label LIKE 'const_throughput_before'")->fetchColumn();
         if (isset($this->bed_cost)) {
-            $range = range(-3000,3000);
+            $range = range(($throughput_from) ? $throughput_from : -1 , ($throughput_before) ? $throughput_before : 1);
         } else {
             $range = range(-1,1);
         }

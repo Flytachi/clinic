@@ -392,6 +392,8 @@ class StorageHomeModel extends Model
             if($post['qty'] < $qty){
                 $this->error("В аптеке не хватает \"{$post['name']}\"!");
             }
+            unset($post['manufacturer']);
+            unset($post['manufacturer_country']);
             unset($post['add_date']);
             $post['parent_id'] = $this->post['parent_id'];
             $post['status'] = level($post['parent_id']);

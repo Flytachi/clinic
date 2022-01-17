@@ -14,6 +14,7 @@ $header = "Настройки";
 <script src="<?= stack("global_assets/js/demo_pages/form_inputs.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_layouts.js") ?>"></script>
 <script src="<?= stack("global_assets/js/demo_pages/form_select2.js") ?>"></script>
+<script src="<?= stack("vendors/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -72,8 +73,12 @@ $header = "Настройки";
 										<img class="border-1" src="<?= ( isset($company->print_header_logotype) ) ? $company->print_header_logotype : '' ?>" width="200" height="60">
 									</div>
 									<label class="col-form-label col-lg-1 font-weight-bold">Иконка печати:</label>
-									<div class="col-lg-9">
+									<div class="col-lg-5">
 										<input type="file" name="print_header_logotype" class="form-control">
+									</div>
+									<label class="col-form-label col-lg-2 font-weight-bold">По ценру:</label>
+									<div class="col-lg-2">
+										<input type="checkbox" class="swit bg-danger" name="print_type_center" <?= (isset($company->print_type_center) and $company->print_type_center) ? "checked" : "" ?>>
 									</div>
 								</div>
 
@@ -96,6 +101,22 @@ $header = "Настройки";
 									<label class="col-form-label col-lg-1 font-weight-bold">Размер чека:</label>
 									<div class="col-lg-3">
 										<input type="text" name="print_check_size" value="<?= ( isset($company->print_check_size) ) ? $company->print_check_size : '' ?>" placeholder="Введите размер в милиметрах" class="form-control">
+									</div>
+								</div>
+
+							</fieldset>
+
+							<fieldset class="mb-3">
+								<legend class="text-uppercase font-size-sm font-weight-bold">Касса</legend>
+
+								<div class="form-group row">
+									<label class="col-form-label col-lg-2 font-weight-bold">Пропускная цена(от):</label>
+									<div class="col-lg-4">
+										<input type="number" name="const_throughput_from" value="<?= ( isset($company->const_throughput_from) ) ? $company->const_throughput_from : '' ?>" placeholder="Введите заглавие" class="form-control">
+									</div>
+									<label class="col-form-label col-lg-2 font-weight-bold">Пропускная цена(до):</label>
+									<div class="col-lg-4">
+										<input type="number" name="const_throughput_before" value="<?= ( isset($company->const_throughput_before) ) ? $company->const_throughput_before : '' ?>" placeholder="Введите адрес" class="form-control">
 									</div>
 								</div>
 

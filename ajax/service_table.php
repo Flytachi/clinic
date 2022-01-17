@@ -69,6 +69,13 @@ $i = 0; $cost = 0;
                     </select>
                 </td>
             <?php endif; ?>
+
+            <?php if(isset($_GET['place']) and $_GET['place']): ?>
+                <td>
+                    <input type="text" name="report[<?= $i ?>]" class="form-control" placeholder="Введите комментарий">
+                </td>
+            <?php endif; ?>
+
             <td style="width:70px;">
                 <input type="number" id="count_input_<?= $row->id ?>" data-id="<?= $row->id ?>" data-price="<?= $row->price ?>" class="counts" name="count[<?= $i ?>]" value="<?= ( isset($_GET['selected']) and isset($_GET['selected'][$row->id]) ) ? $_GET['selected'][$row->id] : "1" ?>" min="1" max="1000000">
             </td>

@@ -62,23 +62,9 @@ $header = "Общий отчёт по операционным услугам";
 									<select id="division" name="division_id" class="form-control form-control-select2" data-fouc>
 									   <option value="">Выберите отдел</option>
 										<?php
-										foreach($db->query('SELECT * from division WHERE level = 5 OR level = 6') as $row) {
+										foreach($db->query('SELECT * from division WHERE level = 5') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" <?= ($_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-											<?php
-										}
-										?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label>Услуга:</label>
-									<select id="service" name="service_id" class="form-control form-control-select2" data-fouc>
-										<option value="">Выберите услугу</option>
-										<?php
-										foreach($db->query('SELECT * from service WHERE user_level = 5 OR user_level = 6') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
 											<?php
 										}
 										?>
@@ -90,27 +76,9 @@ $header = "Общий отчёт по операционным услугам";
 									<select id="parent_id" name="parent_id" class="form-control form-control-select2" data-fouc>
 										<option value="">Выберите специалиста</option>
 										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 5 OR user_level = 6') as $row) {
+										foreach($db->query('SELECT * from users WHERE user_level = 5') as $row) {
 											?>
 											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
-											<?php
-										}
-										?>
-									</select>
-								</div>
-
-							</div>
-
-							<div class="from-group row">
-
-								<div class="col-md-3">
-									<label>Пациент:</label>
-									<select name="user_id" class="form-control form-control-select2" data-fouc>
-										<option value="">Выберите пациента</option>
-										<?php
-										foreach($db->query('SELECT * from users WHERE user_level = 15') as $row) {
-											?>
-											<option value="<?= $row['id'] ?>" <?= ($_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
 											<?php
 										}
 										?>
@@ -150,8 +118,9 @@ $header = "Общий отчёт по операционным услугам";
 					$sql = "SELECT
 								op.oper_date,
 								(SELECT title FROM division WHERE id=op.division_id) 'division',
+								vp.item_cost,
 								vp.item_name,
-								op.parent_id,
+								op.grant_id,
 								op.user_id,
 								op.completed
 							FROM operation op
@@ -165,14 +134,8 @@ $header = "Общий отчёт по операционным услугам";
 					if ($_POST['division_id']) {
 						$sql .= " AND op.division_id = {$_POST['division_id']}";
 					}
-					if ($_POST['service_id']) {
-						$sql .= " AND op.service_id = {$_POST['service_id']}";
-					}
-					if ($_POST['parent_id']) {
-						$sql .= " AND op.parent_id = {$_POST['parent_id']}";
-					}
-					if ($_POST['user_id']) {
-						$sql .= " AND op.user_id = {$_POST['user_id']}";
+					if (isset($_POST['parent_id']) and $_POST['parent_id']) {
+						$sql .= " AND op.grant_id = {$_POST['parent_id']}";
 					}
 					if (!$_POST['compl_true'] or !$_POST['compl_false']) {
 						if ($_POST['compl_true']) {
@@ -202,35 +165,25 @@ $header = "Общий отчёт по операционным услугам";
 	                                <thead>
 	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
+											<th>Пациент</th>
 											<th style="width: 11%">Дата проведения</th>
 				                            <th>Отдел</th>
-				                            <th>Услуга</th>
 											<th>Специалист</th>
-											<th>Пациент</th>
-											<th style="width: 10%">Статус</th>
+				                            <th>Услуга</th>
+											<th style="width: 10%">Сумма</th>
 	                                    </tr>
 	                                </thead>
 	                                <tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
 												<td><?= $i++ ?></td>
+												<td><?= get_full_name($row['user_id']) ?></td>
 												<td><?= ($row['oper_date']) ? date('d.m.y H:i', strtotime($row['oper_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row['division'] ?></td>
+												<td><?= get_full_name($row['grant_id']) ?></td>
 												<td><?= $row['item_name'] ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= get_full_name($row['user_id']) ?></td>
 												<td>
-													<?php
-													if ($row['completed']) {
-														?>
-														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-														<?php
-													} else {
-														?>
-														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Не завершена</span>
-														<?php
-													}
-													?>
+													<?= number_format($row['item_cost']) ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>

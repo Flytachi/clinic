@@ -34,17 +34,36 @@ if ( isset($_GET['items']) ) {
 
         <div class="row">
 
-            <div class="col-6">
-                <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
-            </div>
+            <?php if( isset($company['print_type_center']) and $company['print_type_center'] ): ?>
+                <div class="col-4 text-center" style="font-size: 32px; color: blue;font-family: Arial, Helvetica, sans-serif;">
+                    <b>
+                        <?= $company['print_header_title'] ?><br>
+                    </b>
+                </div>
 
-            <div class="col-6 text-right h4">
-                <b>
-                    <?= $company['print_header_title'] ?><br>
-                    <?= $company['print_header_address'] ?><br>
-                    <?= $company['print_header_phones'] ?>
-                </b>
-            </div>
+                <div class="col-4 text-center">
+                    <img src="<?= $company['print_header_logotype'] ?>" width="200" height="160">
+                </div>
+
+                <div class="col-4 text-right h3">
+                    <b>
+                        <?= $company['print_header_address'] ?><br>
+                        <?= $company['print_header_phones'] ?>
+                    </b>
+                </div>
+            <?php else: ?>
+                <div class="col-6">
+                    <img src="<?= $company['print_header_logotype'] ?>" width="400" height="120">
+                </div>
+
+                <div class="col-6 text-right h3">
+                    <b>
+                        <?= $company['print_header_title'] ?><br>
+                        <?= $company['print_header_address'] ?><br>
+                        <?= $company['print_header_phones'] ?>
+                    </b>
+                </div>
+            <?php endif;?>
 
         </div>
 
@@ -79,7 +98,7 @@ if ( isset($_GET['items']) ) {
                                     <th class="text-left">Анализ</th>
                                     <th class="text-right" style="width:15%">Норма</th>
                                     <th class="text-right" style="width:10%">Ед</th>
-                                    <th class="text-right" style="width:15%">Результат</th>
+                                    <th class="text-center" style="width:15%">Результат</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,7 +117,7 @@ if ( isset($_GET['items']) ) {
                                         <td class="text-right">
                                             <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                                         </td>
-                                        <td class="text-right"><?= $row['result'] ?></td>
+                                        <td class="text-center"><?= $row['result'] ?></td>
                                     </tr>
                                     <?php
                                 }
@@ -120,7 +139,7 @@ if ( isset($_GET['items']) ) {
                                 <th class="text-left">Анализ</th>
                                 <th class="text-right" style="width:15%">Норма</th>
                                 <th class="text-right" style="width:10%">Ед</th>
-                                <th class="text-right" style="width:15%">Результат</th>
+                                <th class="text-center" style="width:15%">Результат</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -139,7 +158,7 @@ if ( isset($_GET['items']) ) {
                                     <td class="text-right">
                                         <?= preg_replace("#\r?\n#", "<br />", $row['unit']) ?>
                                     </td>
-                                    <td class="text-right"><?= $row['result'] ?></td>
+                                    <td class="text-center"><?= $row['result'] ?></td>
                                 </tr>
                                 <?php
                             }

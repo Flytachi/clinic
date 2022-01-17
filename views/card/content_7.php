@@ -141,7 +141,7 @@ $header = "Пациент";
 
 	<?php if ($activity): ?>
 		<div id="modal_add" class="modal fade" tabindex="-1">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog modal-full">
 				<div class="modal-content border-3 border-info">
 					<div class="modal-header bg-info">
 						<h5 class="modal-title">Назначить препарат</h5>

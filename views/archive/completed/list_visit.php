@@ -201,7 +201,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 									if (!permission(6)) {
 										$prefix = "(
 											vs.direction IS NULL OR
-											(vs.direction IS NOT NULL AND vs.service_id = 1)
+											(vs.direction IS NOT NULL AND vs.service_id != 1)
 										)
 										AND";
 									}
@@ -234,6 +234,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 													<?php if ($row['laboratory']): ?>
 														<a onclick="Check('<?= viv('laboratory/report') ?>?pk=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-eye"></i> Просмотр</a>
 														<a <?= ($row['completed']) ? 'onclick="Print(\''. viv('prints/document_2').'?id='. $row['id']. '\')"' : 'class="text-muted dropdown-item"' ?> class="dropdown-item"><i class="icon-printer2"></i> Печать</a>
+														<a onclick="Check('<?= viv('laboratory/result') ?>?visit=<?= $row['id'] ?>')" class="dropdown-item"><i class="icon-users4"></i> Добавить результ</a>
 													<?php else: ?>
 														<?php if ($row['direction'] and $row['service_id'] == 1): ?>
 															<a href="<?= viv('card/content_1') ?>?pk=<?= $row['id'] ?>" class="dropdown-item"><i class="icon-eye"></i>История</a>

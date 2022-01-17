@@ -154,7 +154,18 @@ class VisitAnalyzeModel extends Model
                 if (status) {
                     $('#input_end').val('Завершить');
                     $('#service_end').val(id);
-                    $('#<?= __CLASS__ ?>_form').submit();
+                    $.ajax({
+                        type: $("#<?= __CLASS__ ?>_form").attr("method"),
+                        url: $("#<?= __CLASS__ ?>_form").attr("action"),
+                        data: $("#<?= __CLASS__ ?>_form").serializeArray(),
+                        success: function (result) {
+                            $(`#PatientFailure_tr_${id}`).css("background-color", "rgb(0, 255, 0)");
+                            $(`#PatientFailure_tr_${id}`).css("color", "white");
+                            $(`#PatientFailure_tr_${id}`).fadeOut(900, function() {
+                                $(this).remove();
+                            });
+                        },
+                    });
                 }else{
                     swal({
                         position: 'top',
@@ -167,7 +178,18 @@ class VisitAnalyzeModel extends Model
                         if (ivi.value) {
                             $('#input_end').val('Завершить');
                             $('#service_end').val(id);
-                            $('#<?= __CLASS__ ?>_form').submit();
+                            $.ajax({
+                                type: $("#<?= __CLASS__ ?>_form").attr("method"),
+                                url: $("#<?= __CLASS__ ?>_form").attr("action"),
+                                data: $("#<?= __CLASS__ ?>_form").serializeArray(),
+                                success: function (result) {
+                                    $(`#PatientFailure_tr_${id}`).css("background-color", "rgb(0, 255, 0)");
+                                    $(`#PatientFailure_tr_${id}`).css("color", "white");
+                                    $(`#PatientFailure_tr_${id}`).fadeOut(900, function() {
+                                        $(this).remove();
+                                    });
+                                },
+                            });
                         }
                     });
                 }
