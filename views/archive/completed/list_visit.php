@@ -201,7 +201,7 @@ $patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO
 									if (!permission(6)) {
 										$prefix = "(
 											vs.direction IS NULL OR
-											(vs.direction IS NOT NULL AND vs.service_id = 1)
+											(vs.direction IS NOT NULL AND vs.service_id != 1)
 										)
 										AND";
 									}

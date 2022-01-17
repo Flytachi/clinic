@@ -84,7 +84,7 @@ $header = "Отчёты";
                     <?php endif; ?>
 
                     <!-- Общий отчет -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([1, 2, 3, 8, 9, 32])): ?>
                         <a href="<?= viv('reports/all/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Общий отчет</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Общий отчет</button>
@@ -136,7 +136,7 @@ $header = "Отчёты";
                     <?php endif; ?>
 
                     <!-- Анестезия -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([1, 2, 3, 8, 9, 32])): ?>
                         <a href="<?= viv('reports/anest/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Анестезия</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Анестезия</button>
@@ -144,7 +144,7 @@ $header = "Отчёты";
                     <!-- end -->
 
                     <!-- Физиотерапия -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([1, 2, 3, 8, 12, 13, 32])): ?>
                         <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Физиотерапия</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Физиотерапия</button>
@@ -152,7 +152,7 @@ $header = "Отчёты";
                     <!-- end -->
 
                     <!-- Физиотерапия -->
-                    <?php if (permission([1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 13, 32])): ?>
+                    <?php if (permission([1, 2, 3, 8, 12, 13, 32])): ?>
                         <!-- <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</a> -->
                         <button class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</button>
                     <?php else: ?>
