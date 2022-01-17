@@ -120,7 +120,7 @@ $header = "";
 					<?php
 					$sql = "SELECT bd.id,  wd.floor, wd.ward, 
                                 bd.bed, bdt.name 'bed_type', bd.user_id,
-                                (SELECT COUNT(id) FROM visit WHERE bed_id = bd.id AND add_date IS NOT NULL AND completed IS NULL) 'status'
+                                (SELECT COUNT(id) FROM visit WHERE bed_id = bd.id AND completed IS NULL) 'status'
                             FROM beds bd LEFT JOIN wards wd ON(wd.id=bd.ward_id) LEFT JOIN bed_type bdt ON(bdt.id=bd.types) 
                             WHERE bd.add_date IS NOT NULL";
 					if ( isset($_POST['floor']) and $_POST['floor']) {
@@ -173,7 +173,7 @@ $header = "";
                                                 <td><?= $FLOOR[$row['floor']] ?></td>
                                                 <td><?= $row['ward'] ?> палата</td>
                                                 <td><?= $row['bed'] ?> койка</td>
-                                                <td><?= $row['bed_type']?></td>
+                                                <td><?= $row['id']?></td>
                                                 <td>
                                                     <?php if($row['user_id']): ?>
                                                         <?= addZero($row['user_id']) ." => ". get_full_name($row['user_id']) ?>

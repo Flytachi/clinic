@@ -119,6 +119,7 @@ $header = "Общий отчёт по операционным услугам";
 								op.oper_date,
 								(SELECT title FROM division WHERE id=op.division_id) 'division',
 								vp.item_cost,
+								vp.item_name,
 								op.grant_id,
 								op.user_id,
 								op.completed
@@ -168,6 +169,7 @@ $header = "Общий отчёт по операционным услугам";
 											<th style="width: 11%">Дата проведения</th>
 				                            <th>Отдел</th>
 											<th>Специалист</th>
+				                            <th>Услуга</th>
 											<th style="width: 10%">Сумма</th>
 	                                    </tr>
 	                                </thead>
@@ -179,8 +181,9 @@ $header = "Общий отчёт по операционным услугам";
 												<td><?= ($row['oper_date']) ? date('d.m.y H:i', strtotime($row['oper_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
 												<td><?= $row['division'] ?></td>
 												<td><?= get_full_name($row['grant_id']) ?></td>
+												<td><?= $row['item_name'] ?></td>
 												<td>
-													<?php number_format($row['item_cost']) ?>
+													<?= number_format($row['item_cost']) ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
