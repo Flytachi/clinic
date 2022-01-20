@@ -109,7 +109,7 @@ class UserModel extends Model
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Кабинет:</label>
-                                    <select data-placeholder="Выбрать кабинет" name="room_id" class="<?= $classes['form-select'] ?>" required>
+                                    <select data-placeholder="Выбрать кабинет" name="room_id" class="<?= $classes['form-select'] ?>">
                                         <option></option>
                                         <?php foreach ($db->query("SELECT * FROM rooms") as $row): ?>
                                             <option value="<?= $row['id'] ?>" <?= ($this->value('room_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>

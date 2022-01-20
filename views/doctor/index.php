@@ -98,12 +98,6 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 												<?php endif; ?>
                                             </td>
                                             <td class="text-center">
-												<!-- <a href="<?= up_url($row->id, 'VisitUpStatus') ?>&user_id=<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple" data-chatid="<?= $row->user_id ?>" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
-													<?php if (!$row->direction): ?>
-														onclick="sendPatient(this)"
-													<?php endif; ?>
-													>Принять</a> -->
-
 												<button onclick="VisitUpStatus(<?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 												<?php if($session->session_id == $row->parent_id): ?>
                                                 	<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>

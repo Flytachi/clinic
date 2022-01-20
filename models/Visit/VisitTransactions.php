@@ -734,23 +734,27 @@ class VisitTransactionsModel extends Model
             $vs = $db->query("SELECT * FROM visit_services WHERE id = $pk")->fetch();
             
             if ($vs['parent_id']) {
-                $post = array(
-                    'room_id' => $db->query("SELECT room_id FROM users WHERE id = {$vs['parent_id']}")->fetchColumn(), 
-                    'user_id' => $this->visit['user_id'],
-                    'is_queue' => true, 
-                );
-                if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
-                    Mixin\insert("queue", $post);
-                }
-            } else {
-                foreach ($db->query("SELECT room_id FROM users WHERE user_level IN (5,6,10) AND room_id IS NOT NULL AND division_id = {$vs['division_id']}") as $data) {
+                if($room = $db->query("SELECT room_id FROM users WHERE id = {$vs['parent_id']}")->fetchColumn()){
                     $post = array(
-                        'room_id' => $data['room_id'], 
+                        'room_id' => $room, 
                         'user_id' => $this->visit['user_id'],
                         'is_queue' => true, 
                     );
                     if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
                         Mixin\insert("queue", $post);
+                    }
+                }
+            } else {
+                foreach ($db->query("SELECT room_id FROM users WHERE user_level IN (5,6,10) AND room_id IS NOT NULL AND division_id = {$vs['division_id']}") as $data) {
+                    if($data['room_id']) {
+                        $post = array(
+                            'room_id' => $data['room_id'], 
+                            'user_id' => $this->visit['user_id'],
+                            'is_queue' => true, 
+                        );
+                        if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
+                            Mixin\insert("queue", $post);
+                        }
                     }
                 }
             }
