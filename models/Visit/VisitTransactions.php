@@ -734,7 +734,7 @@ class VisitTransactionsModel extends Model
             $vs = $db->query("SELECT * FROM visit_services WHERE id = $pk")->fetch();
             
             if ($vs['parent_id']) {
-                if($room = $db->query("SELECT room_id FROM users WHERE id = {$vs['parent_id']}")->fetchColumn()){
+                if($room = $db->query("SELECT room_id FROM users WHERE is_active IS NOT NULL AND id = {$vs['parent_id']}")->fetchColumn()){
                     $post = array(
                         'room_id' => $room, 
                         'user_id' => $this->visit['user_id'],
@@ -745,7 +745,7 @@ class VisitTransactionsModel extends Model
                     }
                 }
             } else {
-                foreach ($db->query("SELECT room_id FROM users WHERE user_level IN (5,6,10) AND room_id IS NOT NULL AND division_id = {$vs['division_id']}") as $data) {
+                foreach ($db->query("SELECT room_id FROM users WHERE is_active IS NOT NULL AND user_level IN (5,6,10) AND room_id IS NOT NULL AND division_id = {$vs['division_id']}") as $data) {
                     if($data['room_id']) {
                         $post = array(
                             'room_id' => $data['room_id'], 
