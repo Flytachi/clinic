@@ -160,7 +160,7 @@ class VisitServiceUp extends VisitServicesModel
             }
             Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1), array('room_id' => $user['room_id'], 'user_id' => $user['id']));
         }
-        unset($this->post['queue_user']);
+        if (isset($this->post['queue_user']) and $this->post['queue_user']) unset($this->post['queue_user']);
     }
 }
         
