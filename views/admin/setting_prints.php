@@ -65,11 +65,13 @@ $header = "Настройки";
 													<input type="number" min="1" max="3" name="constant_print_document_blocks" value="<?= config("print_document_blocks") ?>" placeholder="Введите кол-во блоков" class="form-control">
 												</div>
 												<div class="form-group row">
-													<div class="col-2">
-														QRcode
-													</div>
-													<div class="col-6">
+													<div class="col-md-5">
+														<label class="col-form-label font-weight-bold">QRcode:</label>
 														<input type="checkbox" class="swit" name="constant_print_document_qrcode" <?= ( config("print_document_qrcode") ) ? 'checked': '' ?>>
+													</div>
+													<div class="col-md-7">
+														<label class="col-form-label font-weight-bold">QR IP:<label>
+														<input type="text" class="form-control ml-4" name="constant_print_document_qrcode_ip" value="<?= config("print_document_qrcode_ip") ?>" placeholder="Введите IP" class="form-control">
 													</div>
 												</div>
 

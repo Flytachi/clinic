@@ -3,7 +3,7 @@ require_once '../tools/warframe.php';
 is_module('module_laboratory');
 
 $code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
-$qr = "http://".$_SERVER['HTTP_HOST']."/api/document?code=$code";
+$qr = "http://".config("print_document_qrcode_ip")."/api/document?code=$code";
 if ( isset($_GET['pk']) ) {
     $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
 }else {
