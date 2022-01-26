@@ -185,7 +185,7 @@ class WarehouseSettingsModel extends Model
         if (isset($this->post['permission'])) {
             if (isset($this->post['permission']['grants'])) {
                 foreach ($this->post['permission']['grants'] as $user) {
-                    $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'is_grant' => true, 'user_id' => $user));
+                    $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'is_grant' => true, 'responsible_id' => $user));
                     if (!intval($object)){
                         $this->error($object);
                         $db->rollBack();
@@ -194,7 +194,7 @@ class WarehouseSettingsModel extends Model
             }
             if (isset($this->post['permission']['users'])) {
                 foreach ($this->post['permission']['users'] as $user) {
-                    $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'user_id' => $user));
+                    $object = Mixin\insert($this->_permission, array('warehouse_id' => $this->post['warehouse_id'], 'responsible_id' => $user));
                     if (!intval($object)){
                         $this->error($object);
                         $db->rollBack();
