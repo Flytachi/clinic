@@ -142,9 +142,9 @@ class VisitServiceUp extends VisitServicesModel
 {
     public function clean()
     {
-        if (module('queue')) $this->queue();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
+        if (module('queue')) $this->queue();
         return True;
     }
 
@@ -153,7 +153,8 @@ class VisitServiceUp extends VisitServicesModel
         global $db, $session;
         if($session->data->room_id) {
             if (isset($this->post['queue_user']) and $this->post['queue_user']) $user = $db->query("SELECT id, room_id FROM users us WHERE id = {$this->post['queue_user']}")->fetch();
-            else $user = $db->query("SELECT us.id, us.room_id FROM users us JOIN visit_services vs (us.id=vs.user_id) WHERE vs.id = {$this->post['id']}")->fetch();
+            // else $user = $db->query("SELECT us.id, us.room_id FROM users us JOIN visit_services vs (us.id=vs.user_id) WHERE vs.id = {$this->post['id']}")->fetch();
+            else $user = $db->query("SELECT id, room_id FROM users WHERE id = {$this->post['parent_id']}")->fetch();
 
             if ($old = $db->query("SELECT id FROM queue WHERE room_id = {$user['room_id']} AND is_accept IS NOT NULL LIMIT 1")->fetchColumn()) {
                 Mixin\update("queue", array('is_accept' => null, 'is_delete' => 1), $old);
