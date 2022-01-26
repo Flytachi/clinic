@@ -38,7 +38,7 @@ is_module('queue');
             <div class="row">
 
                 <?php foreach ($db->query("SELECT * FROM rooms WHERE id IN (".implode(",", $rooms).");") as $room): ?>
-                    <div class="col-3">
+                    <div class="col-<?= 12 / count($rooms) ?>">
                         <div class="card" style="height: 600px;">
                             <div class="card-header bg-dark">
 
@@ -118,7 +118,7 @@ is_module('queue');
                         var table = document.querySelector("#Troom-"+element.room_id);
                         let tr = document.createElement("tr");
                         let td = document.createElement("td");
-                        td.innerHTML = element.user_id;
+                        td.innerHTML = element.user_<?= $panel['title'] ?>;
                         if (element.is_accept) tr.style.backgroundColor = "rgb(0, 255, 0)";
                         tr.id = "item_"+element.room_id+"-"+element.user_id;
                         tr.dataset.is_accept = element.is_accept;
