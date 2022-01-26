@@ -24,10 +24,10 @@ class WarehouseSettingsModel extends Model
     {
         global $classes, $db, $PERSONAL;
         $appl = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')}")->fetchAll();
-        $grants = $db->query("SELECT user_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NOT NULL")->fetchAll();
-        $users = $db->query("SELECT user_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NULL")->fetchAll();
-        for ($i=0; $i < count($grants); $i++) $grants[$i] = $grants[$i]['user_id'];
-        for ($i=0; $i < count($users); $i++) $users[$i] = $users[$i]['user_id'];
+        $grants = $db->query("SELECT responsible_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NOT NULL")->fetchAll();
+        $users = $db->query("SELECT responsible_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NULL")->fetchAll();
+        for ($i=0; $i < count($grants); $i++) $grants[$i] = $grants[$i]['responsible_id'];
+        for ($i=0; $i < count($users); $i++) $users[$i] = $users[$i]['responsible_id'];
         for ($i=0; $i < count($appl); $i++) $appl[$i] = $appl[$i]['division_id'];
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
