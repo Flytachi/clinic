@@ -3,11 +3,10 @@ require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 $header = "Список пациентов";
 
-$tb = new Table($db, "users");
+$tb = new Table($db, "users u");
 $search = $tb->get_serch();
-$where_search = array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
-
-$tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
+$where_search = array("u.user_level = 15", "u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
+$tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id) 'application'")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +75,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 								</thead>
 								<tbody>
 									<?php foreach ($tb->get_table() as $row): ?>
-										<tr>
+										<tr <?php if($row->application) echo 'class="table-danger"'; ?>>
 											<td><?= addZero($row->id) ?></td>
 											<td>
 												<div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
@@ -116,7 +115,7 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
 													<?php endif; ?>
 													<?php if ( !$row->status ): ?>
-														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
+														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>&application=<?= $row->application ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
 													<?php endif; ?>
 													<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
 													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>

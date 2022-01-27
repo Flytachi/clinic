@@ -341,8 +341,15 @@
                             }else {
                                 $button_tip = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента!" data-pk="'.$patient->visit_id.'"';
                                 $button_inner = "Завершить";
+                                $button_tip2 = 'data-btn="Завершить" data-question="Вы точно хотите завершить визит пациента и назначить его на стационар!" data-pk="'.$patient->visit_id.'"';
+                                $button_inner2 = "Завершить и назначить на стационар";
                             }
                             ?>
+                            <?php if(!$patient->direction): ?>
+                                <button id="sweet_visit_finish" data-href="<?= up_url($patient->visit_id, 'VisitFinishStationar') ?>" <?= $button_tip2 ?> class="<?= $classes['btn-completed'] ?>">
+                                    <i class="icon-paste2 mr-2"></i><?= $button_inner2 ?>
+                                </button>
+                            <?php endif; ?>
                             <button id="sweet_visit_finish" data-href="<?= up_url($patient->visit_id, 'VisitFinish') ?>" <?= $button_tip ?> class="<?= $classes['btn-completed'] ?>">
                                 <i class="icon-paste2 mr-2"></i><?= $button_inner ?>
                             </button>

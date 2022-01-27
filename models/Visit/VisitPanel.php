@@ -358,6 +358,7 @@ class VisitPanel extends VisitModel
     public function stationar($pk = null)
     {
         global $db, $classes, $session;
+        if(isset($_GET['application']) and $_GET['application']) $application = $db->query("SELECT * FROM visit_applications WHERE id = {$_GET['application']}")->fetch();
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h5 class="modal-title">Назначить стационарное лечение</h5>
@@ -373,6 +374,9 @@ class VisitPanel extends VisitModel
                 <input type="hidden" name="user_id" value="<?= $pk ?>">
                 <input type="hidden" name="direction" value="1">
                 <input type="hidden" name="status" value="1">
+                <?php if(isset($application) and $application['id']): ?>
+                    <input type="hidden" name="application" value="<?= $application['id'] ?>">
+                <?php endif; ?>
 
                 <div class="form-group row mb-3">
 
@@ -414,7 +418,7 @@ class VisitPanel extends VisitModel
                             <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
                                 <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
-                                    <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
+                                    <option value="<?= $row['id'] ?>" <?php if(isset($application) and $row['id'] == $application['division_id']) echo "selected" ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -423,7 +427,7 @@ class VisitPanel extends VisitModel
                             <label>Специалиста:</label>
                             <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
                                 <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
+                                    <option value="<?= $row['id'] ?>" <?php if(isset($application) and $row['id'] == $application['responsible_id']) echo "selected" ?> data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -589,10 +593,70 @@ class VisitPanel extends VisitModel
         <?php
         $this->jquery_init();
         ?>
+        <script src="<?= stack("assets/js/custom.js") ?>"></script>
+        <script type="text/javascript">
+            $(function(){
+                $("#bed").chained("#ward_id");
+                $("#floor").chained("#building_id");
+                $("#parent_id").chained("#division_id");
+            });
+
+            $('#building_id').change(function(){
+                if(document.querySelector("#floor").value){
+                    document.querySelector("#floor").value = "";
+                }
+            });
+
+            function Checkert(event) {
+                if (event.checked) {
+                    $('#order_card').show();
+                    $('.order_inputs').attr("required", true);
+                    $('.order_inputs').attr("disambled", false);
+                } else {
+                    $('#order_card').hide();
+                    $('.order_inputs').attr("required", false);
+                    $('.order_inputs').attr("disambled", true);
+                }
+                $('.order_inputs').val("");
+            }
+
+            $('#floor').change(() => ChangeBed());
+
+            function ChangeBed(){
+                var params = document.querySelector("#floor");
+                if (params.selectedOptions[0].value) {
+                    $.ajax({
+                        type: "GET",
+                        url: "<?= ajax('options_wards') ?>",
+                        data: {
+                            building_id: params.selectedOptions[0].dataset.chained,
+                            division_id: document.querySelector("#division_id").value,
+                            floor: params.selectedOptions[0].value,
+                        },
+                        success: function (result) {
+                            if (result.trim() == "<option></option>") {
+                                document.querySelector("#ward_id").disabled = true;
+                            } else {
+                                document.querySelector("#ward_id").disabled = false;
+                                document.querySelector("#ward_id").innerHTML = result;
+                            }
+                        },
+                    });
+                }else{
+                    document.querySelector("#ward_id").disabled = true;
+                }
+            }
+
+            function submitAlert() {
+                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val(), message: "У вас новый стационарный пациент!" });
+                conn.send(obj);
+            }
+        </script>
         <?php if(config('wards_by_division')): ?>
             <script type="text/javascript">
+                $("#division_id").on("change", () => ChangeDivision());
 
-                $('#division_id').change(function(){
+                function ChangeDivision(){
                     var building_id = document.querySelector("#building_id");
                     var floor = document.querySelector("#floor");
                     var ward_id = document.querySelector("#ward_id");
@@ -640,68 +704,14 @@ class VisitPanel extends VisitModel
 
                     });
                     // FormLayouts.init();
+                }
 
-                });
-
+                <?php if(isset($application) and $application['division_id']): ?>
+                    ChangeDivision();
+                    ChangeBed();
+                <?php endif; ?>
             </script>
         <?php endif; ?>
-        <script src="<?= stack("assets/js/custom.js") ?>"></script>
-        <script type="text/javascript">
-            $(function(){
-                $("#bed").chained("#ward_id");
-                $("#floor").chained("#building_id");
-                $("#parent_id").chained("#division_id");
-            });
-
-            $('#building_id').change(function(){
-                if(document.querySelector("#floor").value){
-                    document.querySelector("#floor").value = "";
-                }
-            });
-
-            function Checkert(event) {
-                if (event.checked) {
-                    $('#order_card').show();
-                    $('.order_inputs').attr("required", true);
-                    $('.order_inputs').attr("disambled", false);
-                } else {
-                    $('#order_card').hide();
-                    $('.order_inputs').attr("required", false);
-                    $('.order_inputs').attr("disambled", true);
-                }
-                $('.order_inputs').val("");
-            }
-
-            $('#floor').change(function(){
-                var params = this;
-                if (params.selectedOptions[0].value) {
-                    $.ajax({
-                        type: "GET",
-                        url: "<?= ajax('options_wards') ?>",
-                        data: {
-                            building_id: params.selectedOptions[0].dataset.chained,
-                            division_id: document.querySelector("#division_id").value,
-                            floor: params.selectedOptions[0].value,
-                        },
-                        success: function (result) {
-                            if (result.trim() == "<option></option>") {
-                                document.querySelector("#ward_id").disabled = true;
-                            } else {
-                                document.querySelector("#ward_id").disabled = false;
-                                document.querySelector("#ward_id").innerHTML = result;
-                            }
-                        },
-                    });
-                }else{
-                    document.querySelector("#ward_id").disabled = true;
-                }
-            });
-
-            function submitAlert() {
-                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $("#parent_id").val(), message: "У вас новый стационарный пациент!" });
-                conn.send(obj);
-            }
-        </script>
         <?php
     }
 

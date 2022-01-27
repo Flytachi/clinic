@@ -34,6 +34,8 @@ class VisitFinish extends Model
 
             }else {
 
+                $this->tempFunc($pk);
+
                 // Завершение
                 foreach($db->query("SELECT * FROM $this->table WHERE visit_id = $pk AND completed IS NULL AND status = 3 AND parent_id = $session->session_id") as $row){
                     $this->update_service($row['id']);
@@ -48,6 +50,11 @@ class VisitFinish extends Model
         $this->success();
     }
 
+    public function tempFunc($pk)
+    {
+        
+    }
+
     public function status_update($pk)
     {
         return (new VisitModel())->is_delete($pk);
@@ -56,9 +63,7 @@ class VisitFinish extends Model
     public function update_service($pk)
     {
         $object = Mixin\update($this->table, $this->post, $pk);
-        if ($object != 1){
-            $this->error($object);
-        }
+        if ($object != 1) $this->error($object);
     }
 
     public function success()

@@ -267,6 +267,7 @@ class VisitModel extends Model
 
             }else{
                 
+                $this->application();
                 $this->add_visit_service(null, 1);
                 $this->add_visit_bed();
                 
@@ -282,6 +283,12 @@ class VisitModel extends Model
             $db->commit();
             $this->success();
 
+        }
+    }
+
+    public function application(){
+        if(isset($this->post['application']) and $this->post['application']){
+            Mixin\delete("visit_applications", $this->post['application']);
         }
     }
 

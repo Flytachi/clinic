@@ -1,1 +1,1 @@
-"CREATE TABLE IF NOT EXISTS `panels` (`id` int(11) NOT NULL AUTO_INCREMENT,`ip` char(20) DEFAULT NULL,`rooms` longtext DEFAULT NULL,`is_active` tinyint(1) DEFAULT 1,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+"CREATE TABLE IF NOT EXISTS `panels` (`id` int(11) NOT NULL AUTO_INCREMENT,`ip` char(20) DEFAULT NULL,`rooms` longtext DEFAULT NULL,`title` char(255) DEFAULT NULL,`is_active` tinyint(1) DEFAULT 1,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
