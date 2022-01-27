@@ -48,9 +48,11 @@ require_once 'callback.php';
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-repo-forked mr-2"></i><?= $title ?>
-							<a onclick='Update(`<?= up_url($patient->visit_id, "VisitJournalsModel") ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="float-right text-info ml-2">
+							<?php if ($patient->direction): ?>
+								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitJournalsModel") ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="float-right text-info ml-2">
 								<i class="icon-book mr-1"></i>Дневник
 							</a>
+							<?php endif; ?>
 							<?php if ($activity and $patient->direction and is_grant()): ?>
 								<a onclick='Check(`<?= up_url(null, "VisitRoute", "form_second") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?> mr-2">
 									<i class="icon-plus22 mr-1"></i>Услуга
