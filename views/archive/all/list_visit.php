@@ -9,9 +9,7 @@ if (is_numeric($_GET['id'])) {
 	$patient = False;
 	echo "err";
 }
-if (!$patient) {
-	Mixin\error('404');
-}
+if (!$patient) Mixin\error('404');
 ?>
 <!DOCTYPE html>
 <html lang="en">

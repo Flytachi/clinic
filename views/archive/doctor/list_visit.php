@@ -15,7 +15,7 @@ if (!$patient) {
 
 $tb = new Table($db, "visit_services");
 $tb->set_data("id, service_id, service_name, route_id, accept_date, completed, status, visit_id");
-$tb->where("user_id = $patient->id AND parent_id = $session->session_id")->order_by('add_date DESC');
+$tb->where("user_id = $patient->id AND parent_id = $session->session_id AND status = 7")->order_by('add_date DESC');
 ?>
 <!DOCTYPE html>
 <html lang="en">

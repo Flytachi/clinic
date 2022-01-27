@@ -32,7 +32,7 @@ $header = "Пациенты";
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h6 class="card-title">Пациенты на приём</h6>
+						<h6 class="card-title">Стационарные пациенты</h6>
 						<div class="header-elements">
                             <div class="form-group-feedback form-group-feedback-right mr-2 wmin-200">
                                 <select data-placeholder="Выберите отдел" id="division_input" name="division" class="<?= $classes['form-select'] ?>">

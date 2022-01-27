@@ -94,8 +94,11 @@ class WarehouseSupplyModel extends Model
                 <span class="text-primary"><?= $db->query("SELECT name FROM warehouses WHERE id = ".$this->value('warehouse_id'))->fetchColumn() ?></span><br>
                 <?php if($this->value('completed')): ?>
                     <span style="font-size: 14px"><b>Внесено:</b></span>
-                    <span class="text-primary"><?= date_f($this->value('completed_date'), 1) ?></span>
+                    <span class="text-primary"><?= date_f($this->value('completed_date'), 1) ?></span><br>
+                    <span style="font-size: 14px"><b>Приход на сумму:</b></span>
+                    <span class="text-primary"><?= number_format((new Table($db, $this->_warehouse_item))->set_data("SUM(item_qty*item_cost) 'amount'")->where("uniq_key = '{$this->post['uniq_key']}'")->get_row()->amount) ?></span>
                 <?php endif; ?>
+
             </div>
 
             <?php if($is_active): ?>
