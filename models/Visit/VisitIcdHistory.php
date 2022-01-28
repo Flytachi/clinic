@@ -22,9 +22,9 @@ class VisitIcdHistoryModel extends VisitModel
 
                 <div class="form-group">
                     <label>ICD (МКБ):</label>
-                    <select data-placeholder="Выберите диагноз" name="icd_id" class="<?= $classes['form-select'] ?>" required>
+                    <select data-placeholder="Выберите диагноз" id="icd_id" name="icd_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach($db->query("SELECT * from international_classification_diseases LIMIT 10") as $row): ?>
+                        <?php foreach($db->query("SELECT * from international_classification_diseases LIMIT 20") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($this->value('icd_id') == $row['id']) ? "selected" : "" ?>><?= $row['decryption'] ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -45,6 +45,48 @@ class VisitIcdHistoryModel extends VisitModel
         if ($pk) {
             $this->jquery_init();
         }
+    }
+
+    protected function jquery_init()
+    {
+        ?>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                FormLayouts.init();
+
+                $("#profiles-thread").select2({
+    minimumInputLength: 2,
+    tags: [],
+    ajax: {
+        url: URL,
+        dataType: 'json',
+        type: "GET",
+        quietMillis: 50,
+        data: function (term) {
+            return {
+                term: term
+            };
+        },
+        results: function (data) {
+            return {
+                results: $.map(data, function (item) {
+                    return {
+                        text: item.completeName,
+                        slug: item.slug,
+                        id: item.id
+                    }
+                })
+            };
+        }
+    }
+});
+
+                $("#icd_id").select2({
+                    matcher: matchCustom
+                });
+            });
+        </script>
+        <?php
     }
 
     public function update()
