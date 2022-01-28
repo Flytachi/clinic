@@ -166,15 +166,17 @@ $header = "Панель управления";
 
 								<div class="table-responsive">
 									<table class="table table-sm table-bordered">
-										<tbody>
-											<?php
-											try {
-												$config = new stdClass();
-												$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_%'")->fetchAll(PDO::FETCH_OBJ);
-												foreach ($comp as $value) {
-													$config->{$value->const_label} = $value->const_value;
-												}
-												?>
+										
+										<?php
+										try {
+											$config = new stdClass();
+											$comp = $db->query("SELECT * FROM company_constants WHERE const_label LIKE 'constant_%'")->fetchAll(PDO::FETCH_OBJ);
+											foreach ($comp as $value) {
+												$config->{$value->const_label} = $value->const_value;
+											}
+											?>
+											
+											<tbody>
 												<tr>
 													<th style="width:90%">Package</th>
 													<td class="text-right">
@@ -215,8 +217,10 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+											</tbody>
 
-												<!-- Admin -->
+											<!-- Admin -->
+											<tbody>
 												<tr>
 													<th>Admin Delete Button (users)</th>
 													<td class="text-right">
@@ -257,8 +261,11 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+											</tbody>
+											<!-- End Admin -->
 
-												<!-- Laboratory -->
+											<!-- Laboratory -->
+											<tbody>
 												<tr>
 													<th>Laboratory End All Button</th>
 													<td class="text-right">
@@ -289,8 +296,11 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+											</tbody>
+											<!-- End Laboratory -->
 
-												<!-- Card -->
+											<!-- Card -->
+											<tbody>
 												<tr>
 													<th>Card Stationar Doctor Journal Edit</th>
 													<td class="text-right">
@@ -351,12 +361,40 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
-												<?php
-											} catch (\Exception $e) {
-												echo '<tr class="text-center"><th colspan="2">Не установлена база данных</th></tr>';
-											}
-											?>
-										</tbody>
+											</tbody>
+											<!-- End Card -->
+
+											<!-- Pharmacy -->
+											<tbody>
+												<tr>
+													<th>Pharmacy deliveries to "Internal"</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_pharmacy_deliver_internal" <?= (isset($config->constant_pharmacy_deliver_internal) and $config->constant_pharmacy_deliver_internal) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Pharmacy deliveries to "Operation"</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_pharmacy_deliver_operation" <?= (isset($config->constant_pharmacy_deliver_operation) and $config->constant_pharmacy_deliver_operation) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+											</tbody>
+											<!-- End Pharmacy -->
+
+											<?php
+										} catch (\Exception $e) {
+											echo '<tr class="text-center"><th colspan="2">Не установлена база данных</th></tr>';
+										}
+										?>
+										
 									</table>
 								</div>
 

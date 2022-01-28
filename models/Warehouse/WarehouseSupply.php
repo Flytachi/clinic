@@ -33,7 +33,12 @@ class WarehouseSupplyModel extends Model
                     <label>Склад</label>
                     <select data-placeholder="Выбрать склад" name="warehouse_id" class="<?= $classes['form-select'] ?>">
                         <option value=""></option>
-                        <?php foreach($db->query("SELECT id, name FROM warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                        <?php
+                        $where = "is_active IS NOT NULL AND ( is_external IS NOT NULL";
+                        if(config('pharmacy_deliver_internal')) $where .= " OR is_internal IS NOT NULL";
+                        if(config('pharmacy_deliver_operation')) $where .= " OR is_operation IS NOT NULL";
+                        ?>
+                        <?php foreach($db->query("SELECT id, name FROM warehouses WHERE $where)") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($this->value('warehouse_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
