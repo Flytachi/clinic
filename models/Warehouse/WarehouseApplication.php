@@ -164,6 +164,7 @@ class WarehouseApplication extends Model
                             url: "<?= add_url() ?>",
                             data: data,
                             success: function (result) {
+                                console.log(result);
                                 var data = JSON.parse(result);
                                 if (data.status == "success") {
                                     $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");

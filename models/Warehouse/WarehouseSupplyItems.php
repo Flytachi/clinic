@@ -145,10 +145,10 @@ class WarehouseSupplyItemsModel extends Model
 
     public function clean()
     {
-        $this->post['item_cost'] = (isset($this->post['item_cost'])) ? str_replace(',', '', $this->post['item_cost']) : 0;
-        $this->post['item_price'] = (isset($this->post['item_price'])) ? str_replace(',', '', $this->post['item_price']) : 0;
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
+        $this->post['item_cost'] = (isset($this->post['item_cost'])) ? str_replace(',', '', $this->post['item_cost']) : 0;
+        $this->post['item_price'] = (isset($this->post['item_price'])) ? str_replace(',', '', $this->post['item_price']) : 0;
         return True;
     }
 

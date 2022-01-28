@@ -53,37 +53,6 @@ class VisitIcdHistoryModel extends VisitModel
         <script type="text/javascript">
             $( document ).ready(function() {
                 FormLayouts.init();
-
-                $("#profiles-thread").select2({
-    minimumInputLength: 2,
-    tags: [],
-    ajax: {
-        url: URL,
-        dataType: 'json',
-        type: "GET",
-        quietMillis: 50,
-        data: function (term) {
-            return {
-                term: term
-            };
-        },
-        results: function (data) {
-            return {
-                results: $.map(data, function (item) {
-                    return {
-                        text: item.completeName,
-                        slug: item.slug,
-                        id: item.id
-                    }
-                })
-            };
-        }
-    }
-});
-
-                $("#icd_id").select2({
-                    matcher: matchCustom
-                });
             });
         </script>
         <?php
