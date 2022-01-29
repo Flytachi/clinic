@@ -346,7 +346,7 @@
                             }
                             ?>
                             <?php if(!$patient->direction): ?>
-                                <button id="sweet_visit_finish" data-href="<?= up_url($patient->visit_id, 'VisitFinishStationar') ?>" <?= $button_tip2 ?> class="<?= $classes['btn-completed'] ?>">
+                                <button id="sweet_visit_finish2" data-href="<?= up_url($patient->visit_id, 'VisitFinishStationar') ?>" <?= $button_tip2 ?> class="<?= $classes['btn-completed'] ?>">
                                     <i class="icon-paste2 mr-2"></i><?= $button_inner2 ?>
                                 </button>
                             <?php endif; ?>

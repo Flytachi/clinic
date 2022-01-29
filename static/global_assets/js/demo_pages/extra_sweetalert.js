@@ -54,6 +54,25 @@ var SweetAlert = (function () {
             }
         });
 
+        $("#sweet_visit_finish2").on("click", function (event) {
+            event.preventDefault();
+            var url = this.dataset.href;
+            var question = this.dataset.question;
+            var btn = this.dataset.btn;
+
+            // Verification
+
+            if (this.dataset.btn == "Выписать") {
+                // -- Стационар --
+                Main_1_stages_1(this, url, question, btn);
+                // ----
+            } else {
+                // -- Амбулаторные --
+                Main_0_stages_1(this, url, question, btn);
+                // ----
+            }
+        });
+
         function Stage_success(params, url, question, btn) {
             // finish
             swal({
