@@ -103,7 +103,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                             </td>
                                             <td class="text-center">
 												<?php if (!division_assist()): ?>
-													<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+													<button onclick="VisitUpStatusQueue(this, <?= $row->count ?>, <?= $row->id ?>)" data-userid="<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                             	<?php else: ?>
 													<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND is_queue IS NOT NULL")->fetch()): ?>
 														<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" 
@@ -161,6 +161,11 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 	<?php endif; ?>
 
 	<script type="text/javascript">
+
+		function VisitUpStatusQueue(params, tr, id) {
+			sendQueue(params, false);
+			VisitUpStatus(tr, id);
+		}
 
 		function VisitUpStatus(tr, id) {
 			data_ajax.id = id;
@@ -227,20 +232,26 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 			});
 		}
 
-		function sendQueue(params) {
+		function sendQueue(params, del=true) {
 			data_ajax.model = "QueueUp";
 			data_ajax.room_id = "<?= $session->data->room_id ?>";
 			data_ajax.user_id = params.dataset.userid;
 			$.ajax({
 				type: "POST",
 				url: "<?= add_url() ?>",
-				data: data_ajax,
+				data: {
+					model = "QueueUp",
+					room_id = "<?= $session->data->room_id ?>",
+					user_id = params.dataset.userid
+				},
 				success: function (result) {
-					$(params).css("background-color", "rgb(244, 67, 54)");
-					$(params).css("color", "white");
-					$(params).fadeOut(900, function() {
-						$(this).remove();
-					});
+					if (del) {		
+						$(params).css("background-color", "rgb(244, 67, 54)");
+						$(params).css("color", "white");
+						$(params).fadeOut(900, function() {
+							$(this).remove();
+						});
+					}
  				},
 			});
 			
