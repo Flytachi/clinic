@@ -57,13 +57,15 @@ $tb->set_self(viv('diagnostic/index'));
 					</td>
 					<td class="text-center">
 						<?php if (!division_assist()): ?>
-							<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" href="<?php //up_url($row->id, 'VisitUpStatus') ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+							<button onclick="UpStatusAndQueue(<?= $row->user_id ?>, <?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 						<?php else: ?>
-							<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" data-parentid="<?= $row->parent_id ?>"
-								<?php if (!$row->direction): ?>
-									onclick="sendPatient(this)"
-								<?php endif; ?>
-								>Принять</button>
+							<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND is_queue IS NOT NULL")->fetch()): ?>
+								<button type="button" class="btn btn-outline-success btn-sm legitRipple" 
+									<?php if (!$row->direction): ?>
+										onclick="sendQueue(<?= $row->user_id ?>)"
+									<?php endif; ?>
+									>Принять</button>
+							<?php endif; ?>
 							<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
 						<?php endif; ?>
 						<?php if($session->session_id == $row->parent_id): ?>
