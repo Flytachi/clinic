@@ -123,15 +123,9 @@ class VisitServicesModel extends Model
 
     public function error($message)
     {
-        // $mess = '<div class="alert bg-danger alert-styled-left alert-dismissible">
-        //     <button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-        //     <span class="font-weight-semibold"> '.$message.'</span>
-        // </div>';
-
-        $mess = $message;
         echo json_encode(array(
             'status' => 'error',
-            'message' => $mess,
+            'message' => $message,
         ));
         exit;
     }

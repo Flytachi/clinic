@@ -103,12 +103,12 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                             </td>
                                             <td class="text-center">
 												<?php if (!division_assist()): ?>
-													<button onclick="VisitUpStatusAndQueue(this, <?= $row->count ?>, <?= $row->id ?>)" data-userid="<?= $row->user_id ?>" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+													<button onclick="UpStatusAndQueue(<?= $row->user_id ?>, <?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                             	<?php else: ?>
 													<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND is_queue IS NOT NULL")->fetch()): ?>
-														<button type="button" class="btn btn-outline-success btn-sm legitRipple" data-userid="<?= $row->user_id ?>" 
+														<button type="button" class="btn btn-outline-success btn-sm legitRipple" 
 															<?php if (!$row->direction): ?>
-																onclick="sendQueue(this)"
+																onclick="sendQueue(<?= $row->user_id ?>)"
 															<?php endif; ?>
 															>Принять</button>
 													<?php endif; ?>
@@ -139,8 +139,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 	</div>
 	<!-- /page content -->
 
-	<?php if(division_assist()): ?>
-		<script type="text/javascript">
+	<script type="text/javascript">
+
+		<?php if(division_assist()): ?>
 			const data_ajax = {
 				model: "VisitServicesModel",
 				status: 3,
@@ -148,19 +149,19 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 				parent_id: null,
 				accept_date: date_format(new Date()),
 			};
-		</script>
-	<?php else: ?>
-		<script type="text/javascript">
+		<?php else: ?>
 			const data_ajax = {
 				model: "VisitServicesModel",
 				status: 3,
 				parent_id: "<?= $session->session_id ?>",
 				accept_date: date_format(new Date()),
 			};
-		</script>
-	<?php endif; ?>
+		<?php endif; ?>
 
-	<script type="text/javascript">
+		function UpStatusAndQueue(user, tr, id) {
+			sendQueue(user, false);
+			VisitUpStatus(tr, id);
+		}
 
 		function VisitUpStatus(tr, id) {
 			data_ajax.id = id;
@@ -169,6 +170,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 				url: "<?= add_url() ?>",
 				data: data_ajax,
 				success: function (result) {
+					console.log(result);
 					var data = JSON.parse(result);
 
 					if (data.status == "success") {
@@ -227,17 +229,14 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 			});
 		}
 
-		function sendQueue(params, del=true) {
-			data_ajax.model = "QueueUp";
-			data_ajax.room_id = "<?= $session->data->room_id ?>";
-			data_ajax.user_id = params.dataset.userid;
+		function sendQueue(user, del=true) {
 			$.ajax({
 				type: "POST",
 				url: "<?= add_url() ?>",
 				data: {
-					model = "QueueUp",
-					room_id = "<?= $session->data->room_id ?>",
-					user_id = params.dataset.userid
+					model: "QueueUp",
+					room_id: "<?= $session->data->room_id ?>",
+					user_id: user
 				},
 				success: function (result) {
 					if (del) {		
@@ -250,11 +249,6 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
  				},
 			});
 			
-		}
-
-		function VisitUpStatusAndQueue(params, tr, id) {
-			sendQueue(params, false);
-			VisitUpStatus(tr, id);
 		}
 
 		$("#search_input").keyup(function() {
