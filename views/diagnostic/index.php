@@ -103,12 +103,12 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                             </td>
                                             <td class="text-center">
 												<?php if (!division_assist()): ?>
-													<button onclick="UpStatusAndQueue(<?= $row->user_id ?>, <?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+													<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>, <?= $row->user_id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
                                             	<?php else: ?>
 													<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND is_queue IS NOT NULL")->fetch()): ?>
 														<button type="button" class="btn btn-outline-success btn-sm legitRipple" 
 															<?php if (!$row->direction): ?>
-																onclick="sendQueue(<?= $row->user_id ?>)"
+																onclick="sendQueue(<?= $row->user_id ?>, true, this)"
 															<?php endif; ?>
 															>Принять</button>
 													<?php endif; ?>
@@ -158,22 +158,39 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 			};
 		<?php endif; ?>
 
-		function UpStatusAndQueue(user, tr, id) {
-			sendQueue(user, false);
-			VisitUpStatus(tr, id);
+		function sendQueue(user, del=true, params = null) {
+			$.ajax({
+				type: "POST",
+				url: "<?= add_url() ?>",
+				data: {
+					model: "QueueUp",
+					room_id: "<?= $session->data->room_id ?>",
+					user_id: user
+				},
+				success: function (result) {
+					if (del && params) {		
+						$(params).css("background-color", "rgb(244, 67, 54)");
+						$(params).css("color", "white");
+						$(params).fadeOut(900, function() {
+							$(this).remove();
+						});
+					}
+ 				},
+			});
+			
 		}
 
-		function VisitUpStatus(tr, id) {
+		function VisitUpStatus(tr, id, user = null) {
 			data_ajax.id = id;
 			$.ajax({
 				type: "POST",
 				url: "<?= add_url() ?>",
 				data: data_ajax,
 				success: function (result) {
-					console.log(result);
 					var data = JSON.parse(result);
 
 					if (data.status == "success") {
+						if (user) sendQueue(sendQueue, false);
 						new Noty({
 							text: 'Процедура приёма прошла успешно!',
 							type: 'success'
@@ -198,7 +215,6 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 		}
 
 		function FailureVisitService(tr, url) {
-			
 			$.ajax({
 				type: "GET",
 				url: url,
@@ -227,28 +243,6 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 					}
  				},
 			});
-		}
-
-		function sendQueue(user, del=true) {
-			$.ajax({
-				type: "POST",
-				url: "<?= add_url() ?>",
-				data: {
-					model: "QueueUp",
-					room_id: "<?= $session->data->room_id ?>",
-					user_id: user
-				},
-				success: function (result) {
-					if (del) {		
-						$(params).css("background-color", "rgb(244, 67, 54)");
-						$(params).css("color", "white");
-						$(params).fadeOut(900, function() {
-							$(this).remove();
-						});
-					}
- 				},
-			});
-			
 		}
 
 		$("#search_input").keyup(function() {

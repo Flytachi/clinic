@@ -57,19 +57,19 @@ $tb->set_self(viv('diagnostic/index'));
 					</td>
 					<td class="text-center">
 						<?php if (!division_assist()): ?>
-							<button onclick="UpStatusAndQueue(<?= $row->user_id ?>, <?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
+							<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>, <?= $row->user_id ?>)" type="button" class="btn btn-outline-success btn-sm legitRipple">Принять</button>
 						<?php else: ?>
 							<?php if (module("queue") and $db->query("SELECT * FROM queue WHERE room_id = {$session->data->room_id} AND user_id = $row->user_id AND is_queue IS NOT NULL")->fetch()): ?>
 								<button type="button" class="btn btn-outline-success btn-sm legitRipple" 
 									<?php if (!$row->direction): ?>
-										onclick="sendQueue(<?= $row->user_id ?>)"
+										onclick="sendQueue(<?= $row->user_id ?>, true, this)"
 									<?php endif; ?>
 									>Принять</button>
 							<?php endif; ?>
 							<button onclick="VisitUpStatus(<?= $row->count ?>, <?= $row->id ?>)" type="button" class="btn btn-outline-info btn-sm legitRipple">Снять</button>
 						<?php endif; ?>
 						<?php if($session->session_id == $row->parent_id): ?>
-							<button onclick="FailureVisitService(<?= $row->count ?>, '<?= del_url($row->id, 'VisitFailure') ?>')" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
+							<button onclick="FailureVisitService(<?= $row->count ?>, '<?= del_url($row->id, 'VisitFailure') ?>', <?= $row->user_id ?>)" data-toggle="modal" data-target="#modal_failure" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
 						<?php endif; ?>
 					</td>
 				</tr>
