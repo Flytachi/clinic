@@ -155,7 +155,7 @@ class VisitServiceUp extends VisitServicesModel
             if ($old = $db->query("SELECT id FROM queue WHERE room_id = $room AND is_accept IS NOT NULL LIMIT 1")->fetchColumn()) {
                 Mixin\update("queue", array('is_accept' => null, 'is_delete' => 1), $old);
             }
-            Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1), array('room_id' => $room, 'user_id' => $user, 'is_queue' => 1));
+            Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1, 'accept_date' => date("Y-m-d H:i:s")), array('room_id' => $room, 'user_id' => $user, 'is_queue' => 1));
         }
         if (isset($this->post['queue_user']) and $this->post['queue_user']) unset($this->post['queue_user']);
     }

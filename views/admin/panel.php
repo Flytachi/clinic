@@ -74,6 +74,7 @@ $tb->where_or_serch($where_search)->order_by("ip ASC")->set_limit(15);
                                 <thead>
                                     <tr class="<?= $classes['table-thead'] ?>">
                                         <th>Адрес</th>
+                                        <th>Длительность простоя</th>
                                         <th>Кабинеты</th>
                                         <th style="width: 100px">Действия</th>
                                     </tr>
@@ -82,6 +83,7 @@ $tb->where_or_serch($where_search)->order_by("ip ASC")->set_limit(15);
                                     <?php foreach ($tb->get_table() as $row): ?>
 										<tr>
 				                            <td><?= $row->ip ?></td>
+				                            <td><?= number_format($row->duration) ?> мин.</td>
 				                            <td>
 												<?php 
 												$str = "";

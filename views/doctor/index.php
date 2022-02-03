@@ -165,7 +165,6 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 		}
 
 		function FailureVisitService(url) {
-			
 			$.ajax({
 				type: "GET",
 				url: url,

@@ -35,7 +35,18 @@ class QueueUp extends Queue
             if ($old = $db->query("SELECT id FROM queue WHERE room_id = {$this->post['room_id']} AND is_accept IS NOT NULL LIMIT 1")->fetchColumn()) {
                 Mixin\update("queue", array('is_accept' => null, 'is_delete' => 1), $old);
             }
-            Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1), array('room_id' => $this->post['room_id'], 'user_id' => $this->post['user_id'], 'is_queue' => 1));
+            Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1, 'accept_date' => date("Y-m-d H:i:s")), array('room_id' => $this->post['room_id'], 'user_id' => $this->post['user_id'], 'is_queue' => 1));
+        }
+    }
+}
+
+class QueueDel extends Queue
+{
+    public function clean()
+    {
+        global $db;
+        if ($this->post['room_id'] and $this->post['user_id']) {
+            Mixin\update("queue", array('is_queue' => null, 'is_delete' => 1), array('room_id' => $this->post['room_id'], 'user_id' => $this->post['user_id']));
         }
     }
 }

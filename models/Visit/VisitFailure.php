@@ -56,39 +56,6 @@ class VisitFailure extends Model
         <?php
     }
 
-    // public function update()
-    // {
-    //     if($this->clean()){
-    //         $pk = $this->post['id'];
-    //         unset($this->post['id']);
-    //         $object = Mixin\update($this->table, $this->post, $pk);
-    //         if (!intval($object)){
-    //             $this->error($object);
-    //         }
-    //         $this->success($pk);
-    //     }
-    // }
-
-    // public function clean()
-    // {
-    //     global $db;
-    //     $visit = $db->query("SELECT direction, bed_id FROM visit WHERE id = {$this->post['id']}")->fetch();
-    //     if ($visit['direction']) {
-    //         $form = new VisitModel;
-    //         ob_start();
-    //         $form->delete($this->post['id']);
-    //         ob_clean();
-
-    //         Mixin\delete('visit_analyze', $this->post['id'], 'visit_id');
-    //         $this->success($this->post['id']);
-    //     }else {
-    //         $this->post = Mixin\clean_form($this->post);
-    //         $this->post = Mixin\to_null($this->post);
-    //         return True;
-    //     }
-
-    // }
-
     public function status_update($pk)
     {
         return (new VisitModel())->is_delete($pk);
@@ -163,11 +130,11 @@ class VisitFailure extends Model
                 // Is order
                 if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
                     
-                    // Visit service 
+                    // Visit service
+                    if (module('queue')) $this->queue($data);
                     $object = Mixin\delete($this->table, $pk);
                     if(!intval($object)){
                         $this->error("Произошла ошибка на сервере!");
-                        $db->rollBack();
                     }
 
                     $this->status_update($visit['id']);
@@ -177,9 +144,9 @@ class VisitFailure extends Model
 
                     $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
                     if (!intval($object)){
-                        $this->error($object);
+                        $this->error("Произошла ошибка на сервере!");
                     }
-                    
+                    if (module('queue')) $this->queue($data);
                     $this->success($pk);
 
                 }
@@ -193,6 +160,17 @@ class VisitFailure extends Model
         }
         
 
+    }
+
+    public function queue($data)
+    {
+        global $db;
+        if($data['parent_id']) $room = $db->query("SELECT room_id FROM users WHERE id = {$data['parent_id']}")->fetchAll();
+        else $room = $db->query("SELECT DISTINCT room_id FROM users WHERE division_id = {$data['division_id']} AND room_id IS NOT NULL")->fetchAll();
+        //
+        if ($data['user_id'] and count($room) > 0) {
+            foreach ($room as $ro) Mixin\update("queue", array('is_queue' => null, 'is_delete' => 1), array('room_id' => $ro['room_id'], 'user_id' => $data['user_id']));
+        }
     }
 
     public function success($pk = null)

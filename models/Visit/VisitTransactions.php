@@ -673,6 +673,7 @@ class VisitTransactionsModel extends Model
         } else {
             $sql = "SELECT id, visit_service_id, item_cost, item_name FROM $this->table WHERE is_price IS NULL AND visit_id = {$this->visit['id']} AND visit_service_id IN (".implode(",", $this->post['visit_services']).") ORDER BY item_cost ASC";
             $action = "price";
+            if (module('queue')) $this->queue();
         }
 
         foreach ($db->query($sql) as $row) {
@@ -719,7 +720,6 @@ class VisitTransactionsModel extends Model
                 $this->stationar_price();
             }else {
                 $this->ambulator_price();
-                if (module('queue')) $this->queue();
             }
             $db->commit();
             $this->success();

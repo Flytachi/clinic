@@ -21,12 +21,17 @@ class PanelModel extends Model
 
             <div class="form-group row">
     
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label>IP:</label>
                     <input type="text" class="form-control" name="ip" placeholder="xxx.xxx.xxx.xxx" required value="<?= $this->value('ip') ?>">
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-3">
+                    <label>Длительность простоя (минуты):</label>
+                    <input type="number" class="form-control" name="duration" placeholder="Введите длительность" required value="<?= $this->value('duration') ?>">
+                </div>
+
+                <div class="col-md-3">
                     <label>Кабинеты:</label>
                     <select data-placeholder="Выбрать кабинет" name="rooms[]" multiple="multiple" class="form-control selm">
                         <?php foreach ($db->query("SELECT * FROM rooms") as $row): ?>
