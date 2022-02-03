@@ -92,16 +92,36 @@ if (!isset($_GET['type'])) {
 
         <legend class="font-weight-semibold text-uppercase font-size-sm">
             <i class="icon-file-text mr-2"></i>Протокол операции
+            <?php if ($activity and !$operation->completed and (is_grant())): ?>
+                <a onclick='Update(`<?= up_url($operation->id, "VisitOperationInspectionModel") ?>`)' class="float-right text-info">
+                    <i class="icon-file-plus mr-1"></i>Осмотр
+                </a>
+            <?php endif; ?>
         </legend>
 
         <div class="card">
 
             <div class="table-responsive">
+                <table class="table table-hover table-sm border-primary border-1 border-bottom">
+                    <tbody>
+                        <tr class="table-secondary text-center" onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationJournalsModel').$get_data ?>')">
+                            <th colspan="2">Протокол</th>
+                        </tr>
+                    </tbody>
+                </table>
+                
                 <table class="table table-hover table-sm">
                     <tbody>
-                        <tr onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationJournalsModel').$get_data ?>')">
-                            <td>Протокол</td>
-                        </tr>
+                        <?php
+                        $tbz = new Table($db, "visit_operation_inspections");
+                        $tbz->where("operation_id = $operation->id")->order_by('id DESC');
+                        ?>
+                        <?php foreach ($tbz->get_table() as $row): ?>
+                            <tr onclick="UpdateOperations('<?= viv('card/operation_inspection') ?>?pk=<?= $row->id ?>')">
+                                <td><?= date_f($row->add_date, 1) ?></td>
+                                <td><?= get_full_name($row->response_id) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

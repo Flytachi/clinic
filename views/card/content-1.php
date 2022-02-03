@@ -49,9 +49,13 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-repo-forked mr-2"></i><?= $title ?>
 							<?php if ($patient->direction): ?>
-								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitJournalsModel") ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="float-right text-info ml-2">
-								<i class="icon-book mr-1"></i>Дневник
-							</a>
+								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitInspectionModel") ?>`)' class="float-right text-info ml-2">
+									<i class="icon-file-plus mr-1"></i>Осмотр
+								</a>
+
+								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitJournalsModel") ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="float-right text-brown ml-2">
+									<i class="icon-book mr-1"></i>Дневник
+								</a>
 							<?php endif; ?>
 							<?php if ($activity and $patient->direction and is_grant()): ?>
 								<a onclick='Check(`<?= up_url(null, "VisitRoute", "form_second") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?> mr-2">
@@ -105,6 +109,36 @@ require_once 'callback.php';
 													<?php if ( $activity and $row->status == 3 ): ?>
 														<button onclick="FailureVisitService('<?= del_url($row->id, 'VisitFailure') ?>')" type="button" class="btn btn-outline-danger btn-sm legitRipple">Отмена</button>
 													<?php endif; ?>
+												</td>
+											</tr>
+										<?php endforeach; ?>
+									</tbody>
+								</table>
+							</div>
+
+						</div>
+
+						<div class="card mt-3">
+							<div class="table-responsive">
+								<table class="table table-hover table-sm">
+									<thead class="<?= $classes['table-thead'] ?>">
+										<tr>
+											<th>Дата</th>
+											<th>Врач</th>
+											<th class="text-right" style="width: 50%">Действия</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php
+										$tbz = new Table($db, "visit_inspections");
+										$tbz->where("visit_id = $patient->visit_id")->order_by('id DESC');
+										?>
+										<?php foreach ($tbz->get_table() as $row): ?>
+											<tr class="">
+												<td><?= date_f($row->add_date, 1) ?></td>
+												<td><?= get_full_name($row->response_id) ?></td>
+												<td class="text-right">
+													<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
 												</td>
 											</tr>
 										<?php endforeach; ?>

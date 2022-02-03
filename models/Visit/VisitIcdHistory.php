@@ -24,7 +24,7 @@ class VisitIcdHistoryModel extends VisitModel
                     <label>ICD (МКБ):</label>
                     <select data-placeholder="Выберите диагноз" id="icd_id" name="icd_id" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach($db->query("SELECT * from international_classification_diseases LIMIT 20") as $row): ?>
+                        <?php foreach($db->query("SELECT * from international_classification_diseases") as $row): ?>
                             <option value="<?= $row['id'] ?>" <?= ($this->value('icd_id') == $row['id']) ? "selected" : "" ?>><?= $row['decryption'] ?></option>
                         <?php endforeach; ?>
                     </select>
