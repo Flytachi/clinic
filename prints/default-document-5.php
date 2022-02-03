@@ -2,9 +2,7 @@
 require_once '../tools/warframe.php';
 
 
-// Акт Сверки
-
-
+// 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
     $docs->report = $db->query("SELECT service_report FROM visit_services WHERE visit_id = $docs->id AND service_id = 1")->fetchColumn();

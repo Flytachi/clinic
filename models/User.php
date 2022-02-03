@@ -52,7 +52,7 @@ class UserModel extends Model
                                     </optgroup>
                                     <optgroup label="Специалисты">
                                         <?php foreach ($PERSONAL as $key => $value): ?>
-                                            <?php if(in_array($key, [5,6,10,11,12,13])): ?>
+                                            <?php if(in_array($key, [5,6,10,11,12,13,14])): ?>
                                                 <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                                             <?php endif; ?>
                                         <?php endforeach; ?>
@@ -74,6 +74,7 @@ class UserModel extends Model
                                     <?php foreach ($db->query("SELECT * FROM divisions") as $row): ?>
                                         <?php if($row['level'] == 5): ?>
                                             <option value="<?= $row['id'] ?>" data-chained="7" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
+                                            <option value="<?= $row['id'] ?>" data-chained="14" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                         <?php endif; ?>
                                         <option value="<?= $row['id'] ?>" data-chained="<?= $row['level'] ?>" <?= ($this->value('division_id') == $row['id']) ? 'selected': '' ?>><?= $row['title'] ?></option>
                                     <?php endforeach; ?>
