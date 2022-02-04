@@ -7,7 +7,6 @@ class Constant extends Model
 {
     public $table = 'corp_constants';
     public $branch = 'corp_branchs';
-    public $_permission = 'warehouse_setting_permissions';
 
     public function get_or_404(int $pk)
     {
