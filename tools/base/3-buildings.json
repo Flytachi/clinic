@@ -1,1 +1,0 @@
-"CREATE TABLE IF NOT EXISTS `buildings` (`id` tinyint(2) NOT NULL AUTO_INCREMENT,`name` char(200) DEFAULT NULL,`floors` tinyint(3) NOT NULL DEFAULT 1,`add_date` datetime DEFAULT current_timestamp(),PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

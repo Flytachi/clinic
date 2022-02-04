@@ -1,1 +1,0 @@
-"CREATE TABLE IF NOT EXISTS `bed_types` (`id` tinyint(3) NOT NULL AUTO_INCREMENT,`name` char(50) DEFAULT NULL,`price` decimal(65,1) DEFAULT 0.0,`price_foreigner` decimal(65,1) DEFAULT 0.0,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

@@ -1,1 +1,0 @@
-"CREATE TABLE IF NOT EXISTS `company_constants` (`const_label` char(50) NOT NULL,`const_value` varchar(500) DEFAULT NULL,PRIMARY KEY (`const_label`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

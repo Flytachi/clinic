@@ -14,7 +14,7 @@ function get_dir_contents($dir, $filter = '', &$results = array()) {
     }
 
     return $results;
-} 
+}
 
 function parad($title, $value) {
     echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
@@ -100,12 +100,8 @@ function viv_link($url, $class = ""){
 }
 
 function prints($url=null){
-    return DIR."/prints/default-$url".EXT;
+    return DIR."/print/default-$url".EXT;
 }
-
-// function img($url){
-//     return DIR."/static/$url";
-// }
 
 function stack($url){
     return DIR."/static/$url";
