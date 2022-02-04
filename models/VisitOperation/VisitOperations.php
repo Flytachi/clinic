@@ -42,21 +42,11 @@ class VisitOperationsModel extends Model
                 <div class="form-group row">
 
                     <div class="col-md-6">
-                        <label>Отдел:</label>
-                        <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
-                            <option></option>
-                            <?php foreach ($db->query("SELECT * FROM divisions WHERE level = 5") as $row): ?>
-                                <option value="<?= $row['id'] ?>"><?= $row['title'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
                         <label>Дата:</label>
                         <input type="date" class="form-control" name="operation_date">
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-6">
                         <label>Время:</label>
                         <input type="time" class="form-control" name="operation_time">
                     </div>
@@ -69,7 +59,7 @@ class VisitOperationsModel extends Model
                         <label>Услуга:</label>
                         <select data-placeholder="Выберите услугу" name="operation_id" id="operation_id" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
-                            <?php foreach ($db->query("SELECT * FROM services WHERE is_active IS NOT NULL AND user_level = 5 AND type = 3") as $row): ?>
+                            <?php foreach ($db->query("SELECT * FROM services WHERE is_active IS NOT NULL AND user_level = 5 AND division_id = $patient->division_id AND type = 3") as $row): ?>
                                 <option class="text-danger" value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" data-price="<?= number_format(($patient->is_foreigner) ? $row['price_foreigner'] : $row['price']) ?>"><?= $row['name'] ?></option>
                             <?php endforeach; ?>
                         </select>

@@ -7,8 +7,8 @@ $tb = new Table($db, "visit_operations vo");
 $tb->set_data("DISTINCT v.id, vo.user_id, us.birth_date, vo.grant_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vo.visit_id) LEFT JOIN users us ON(us.id=vo.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
-	"v.completed IS NULL AND v.is_active IS NOT NULL",
-	"v.completed IS NULL AND v.is_active IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"v.completed IS NULL AND v.is_active IS NOT NULL AND v.division_id = $session->session_division",
+	"v.completed IS NULL AND v.is_active IS NOT NULL AND v.division_id = $session->session_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('')->set_limit(20);
 ?>

@@ -118,35 +118,38 @@ require_once 'callback.php';
 
 						</div>
 
-						<div class="card mt-3">
-							<div class="table-responsive">
-								<table class="table table-hover table-sm">
-									<thead class="<?= $classes['table-thead'] ?>">
-										<tr>
-											<th>Дата</th>
-											<th>Врач</th>
-											<th class="text-right" style="width: 50%">Действия</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										$tbz = new Table($db, "visit_inspections");
-										$tbz->where("visit_id = $patient->visit_id")->order_by('id DESC');
-										?>
-										<?php foreach ($tbz->get_table() as $row): ?>
-											<tr class="">
-												<td><?= date_f($row->add_date, 1) ?></td>
-												<td><?= get_full_name($row->response_id) ?></td>
-												<td class="text-right">
-													<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
-												</td>
+						<?php if ($patient->direction): ?>
+							<div class="card mt-3">
+	
+								<div class="table-responsive">
+									<table class="table table-hover table-sm">
+										<thead class="<?= $classes['table-thead'] ?>">
+											<tr>
+												<th>Дата</th>
+												<th>Врач</th>
+												<th class="text-right" style="width: 50%">Действия</th>
 											</tr>
-										<?php endforeach; ?>
-									</tbody>
-								</table>
+										</thead>
+										<tbody>
+											<?php
+											$tbz = new Table($db, "visit_inspections");
+											$tbz->where("visit_id = $patient->visit_id")->order_by('id DESC');
+											?>
+											<?php foreach ($tbz->get_table() as $row): ?>
+												<tr class="">
+													<td><?= date_f($row->add_date, 1) ?></td>
+													<td><?= get_full_name($row->response_id) ?></td>
+													<td class="text-right">
+														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
+													</td>
+												</tr>
+											<?php endforeach; ?>
+										</tbody>
+									</table>
+								</div>
+	
 							</div>
-
-						</div>
+						<?php endif; ?>
 
 				    </div>
 

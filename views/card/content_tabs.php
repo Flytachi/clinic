@@ -20,17 +20,17 @@
             <a href="<?= viv('card/content-2').$agr ?>" class="nav-link <?= viv_link('card/content-2') ?> legitRipple" style="white-space:nowrap;"><i class="icon-archive mr-1"></i>Услуги</a>
         </li>
     <?php endif; ?>
-    <?php if ( $activity and $patient->direction and !permission(11) ): ?>
+    <?php if ( $activity and $patient->direction and !permission([11,14]) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-3').$agr ?>" class="nav-link <?= viv_link('card/content-3') ?> legitRipple" style="white-space:nowrap;"><i class="icon-archive mr-1"></i>Другие визиты</a>
         </li>
     <?php endif; ?>
-    <?php if ( ($activity or !$patient->direction) and !permission(11) ): ?>
+    <?php if ( ($activity or !$patient->direction) and !permission([11,14]) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-4').$agr ?>" class="nav-link <?= viv_link('card/content-4') ?> legitRipple" style="white-space:nowrap;"><i class="icon-clipboard6 mr-1"></i>Другие услуги</a>
         </li>
     <?php endif; ?>
-    <?php if ( ($activity or !$patient->direction) and !permission(11) ): ?>
+    <?php if ( ($activity or !$patient->direction) and !permission([11,14]) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-5').$agr ?>" class="nav-link <?= viv_link('card/content-5') ?> legitRipple" style="white-space:nowrap;"><i class="icon-add mr-1"></i>Назначенные услуги</a>
         </li>
@@ -55,12 +55,12 @@
             <a href="<?= viv('card/content-9').$agr ?>" class="nav-link <?= viv_link('card/content-9') ?> legitRipple" style="white-space:nowrap;"><i class="icon-magazine mr-1"></i>Лист назначений</a>
         </li>
     <?php endif; ?>
-    <?php if( module('module_physio') and !permission(11) ): ?>
+    <?php if( module('module_physio') and !permission([11,14]) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-10').$agr ?>" class="nav-link <?= viv_link('card/content-10') ?> legitRipple" style="white-space:nowrap;"><i class="icon-googleplus5 mr-1"></i>Физиотерапия</a>
         </li>
     <?php endif; ?>
-    <?php if( !permission(11) ): ?>
+    <?php if( !permission([11,14]) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-11').$agr ?>" class="nav-link <?= viv_link('card/content-11') ?> legitRipple" style="white-space:nowrap;"><i class="icon-files-empty mr-1"></i>Документы</a>
         </li>

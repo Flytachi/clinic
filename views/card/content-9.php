@@ -48,9 +48,9 @@ is_module('module_bypass');
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-magazine mr-2"></i>Лист назначений
-							<a onclick="Print('<?= viv('prints/sheet') ?>?id=<?= $patient->visit_id ?>')" class="float-right text-info mr-2">
+							<!-- <a onclick="Print('<?= viv('prints/sheet') ?>?id=<?= $patient->visit_id ?>')" class="float-right text-info mr-2">
 								<i class="icon-drawer3 mr-1"></i>Лист
-							</a>
+							</a> -->
 						</legend>
 
 						<!-- External events -->
