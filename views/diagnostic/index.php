@@ -158,6 +158,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 			};
 		<?php endif; ?>
 
+
 		function sendQueue(user, del=true, params = null) {
 			$.ajax({
 				type: "POST",
@@ -190,7 +191,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 					var data = JSON.parse(result);
 
 					if (data.status == "success") {
-						if (user) sendQueue(sendQueue, false);
+						if (user) sendQueue(user, false);
 						new Noty({
 							text: 'Процедура приёма прошла успешно!',
 							type: 'success'

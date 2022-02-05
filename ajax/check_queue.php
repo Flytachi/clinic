@@ -13,7 +13,7 @@ if ($panel) {
             if ($panel['is_day']) {
                 if ($value['add_date'] < date("Y-m-d")) $data[$key]['is_delete'] = true;
             }
-            if ($panel['duration'] and $panel['duration'] > 0) {
+            if ($panel['duration'] and $panel['duration'] > 0 and $value['is_accept']) {
                 if(date_diff(new DateTime(date("Y-m-d H:i:s")), new DateTime($value['accept_date']))->i > $panel['duration']) $data[$key]['is_delete'] = true;
             }
         }
