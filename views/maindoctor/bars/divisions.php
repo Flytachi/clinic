@@ -10,7 +10,7 @@
 <div class="row">
 
 	<?php foreach ($db->query("SELECT id, title FROM divisions WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1) ORDER BY level") as $row): ?>
-		<div class="col-sm-4 col-xl-3">
+		<div class="col-sm-4 col-xl-3" onclick="selDivision(<?= $row['id'] ?>)">
 			<div class="card card-body">
 				<div class="media">
 					<div class="media-body">
@@ -30,3 +30,22 @@
 
 </div>
 <!-- /Информация об отделах -->
+<script>
+	function selDivision(pk) {
+		$.ajax({
+			type: "GET",
+			url: "<?= ajax("main/divisionService") ?>",
+			data: {pk},
+			success: function (result) {
+				$('#modal_default').modal('show');
+				$('#form_card').html(result);
+			},
+		});
+	}
+</script>
+
+<div id="modal_default" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-lg">
+		<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>
+	</div>
+</div>

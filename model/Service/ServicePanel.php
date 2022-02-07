@@ -90,9 +90,9 @@ class ServicePanel extends Model
                     <?php if (empty($this->post['head'])): ?>
                         <td>
                             <select name="parent_id[<?= $this->i ?>]" id="parent_input_<?= $row->id ?>" class="<?= $classes['form-select'] ?> parents" data-id="<?= $row->id ?>" <?= $this->requared ?>>
-                                <?php if ($this->result == ""): ?>
+                                <?php //if ($this->result == ""): ?>
                                     <option value="">Выбран весь отдел</option>
-                                <?php endif; ?>
+                                <?php //endif; ?>
                                 <?php if ($row->user_level == 6): ?>
                                     <?php foreach ($db->query("SELECT id FROM users WHERE user_level = 6 AND is_active IS NOT NULL") as $parent): ?>
                                         <option value="<?= $parent->id ?>" <?= ( isset($this->post['selected'][$row->id]) and isset($this->post['selected'][$row->id]['parent']) and  $this->post['selected'][$row->id]['parent'] == $parent->id ) ? "selected" : "" ?>><?= get_full_name($parent->id) ?></option>

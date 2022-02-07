@@ -2,12 +2,12 @@
 require_once '../../tools/warframe.php';
 $session->is_auth("master");
 
-$tb = new Table($db, "users");
-$search = $tb->get_serch();
+$tb = new UserModel;
+$search = $tb->getSearch();
 $where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+$tb->Where($where_search)->Order("user_level, last_name ASC")->Limit(15);
 
-$tb->where_or_serch($where_search)->order_by("user_level, last_name ASC")->set_limit(15);
-$tb->set_self(viv('master/index'));  
+$tb->returnPath(viv('master/index'));  
 ?>
 <div class="table-responsive">
     <table class="table table-hover">
@@ -21,7 +21,7 @@ $tb->set_self(viv('master/index'));
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($tb->get_table(1) as $row): ?>
+            <?php foreach ($tb->list(1) as $row): ?>
                 <tr 
                 <?php if ($row->user_level == 1): ?>
                     class="table-dark text-danger"
@@ -65,4 +65,4 @@ $tb->set_self(viv('master/index'));
     </table>
 </div>
 
-<?php $tb->get_panel(); ?>
+<?php $tb->panel(); ?>

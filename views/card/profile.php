@@ -391,7 +391,7 @@
 
             <?php endif; ?>
 
-            <?php if (!$activity and (!$patient->is_active or $patient->completed)): ?>
+            <?php if (!$activity and (!$patient->is_active or $patient->completed) and $patient->direction): ?>
 
                 <div class="col-md-12">
                     <div class="text-right">
