@@ -28,8 +28,9 @@ class __Base
 
         $this->create_db_name = $ini['DATABASE']['NAME'];
         $this->create_db_user = $ini['DATABASE']['USER'];
+        $this->create_db_port = $ini['DATABASE']['PORT'];
         $this->create_db_password = $ini['DATABASE']['PASS'];
-        $DNS = "$this->db_driver:host=$this->db_host;charset=$this->db_charset";
+        $DNS = "$this->db_driver:host=$this->db_host;port=$this->create_db_port;charset=$this->db_charset";
         
         // Site Constants
         try {

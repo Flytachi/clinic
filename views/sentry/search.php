@@ -2,16 +2,14 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$tb = new Table($db, "visits");
-$tb->set_data("id, user_id, add_date, discharge_date, grant_id, division_id");
-$division = Mixin\clean((isset($_GET['table_division']) and $_GET['table_division']) ? $_GET['table_division'] : "");
-$search = $tb->get_serch();
+$tb = (new VisitModel)->Data("id, user_id, add_date, discharge_date, grant_id, division_id");
+$search = $tb->getSearch();
 $search_array = array(
-	"division_id = $division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
-	"division_id = $division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
+	"division_id = $search AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
+	"division_id = $search AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
 );
-$tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
-$tb->set_self(viv('sentry/index'));
+$tb->Where($search_array)->Order("add_date DESC")->Limit(20);
+$tb->returnPath(viv('sentry/index'));
 ?>
 <div class="table-responsive">
     <table class="table table-hover table-sm">
@@ -27,7 +25,7 @@ $tb->set_self(viv('sentry/index'));
             </tr>
         </thead>
         <tbody>
-            <?php foreach($tb->get_table(1) as $row): ?>
+            <?php foreach($tb->list(1) as $row): ?>
                 <tr>
                     <td><?= $row->count ?></td>
                     <td><?= addZero($row->user_id) ?></td>
@@ -68,4 +66,4 @@ $tb->set_self(viv('sentry/index'));
     </table>
 </div>
 
-<?php $tb->get_panel(); ?>
+<?php $tb->panel(); ?>

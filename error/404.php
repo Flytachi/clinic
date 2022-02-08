@@ -1,6 +1,3 @@
-<?php
-require_once '../tools/warframe.php';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,13 +7,13 @@ require_once '../tools/warframe.php';
 	<title>Ошибка - 404</title>
 
 	<!-- Global stylesheets -->
-	<link rel="shortcut icon" href="<?= stack("assets/images/logo.png") ?>" type="image/x-icon">
-	<link href="<?= stack("assets/fonts/font.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("global_assets/css/icons/icomoon/styles.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("assets/css/bootstrap.min.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("assets/css/bootstrap_limitless.min.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("assets/css/layout.min.css") ?>" rel="stylesheet" type="text/css">
-	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
+	<link rel="shortcut icon" href="/static/assets/images/logo.png" type="image/x-icon">
+	<link href="/static/assets/fonts/font.css" rel="stylesheet" type="text/css">
+	<link href="/static/global_assets/css/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
+	<link href="/static/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="/static/assets/css/bootstrap_limitless.min.css" rel="stylesheet" type="text/css">
+	<link href="/static/assets/css/layout.min.css" rel="stylesheet" type="text/css">
+	<link href="/static/assets/css/components.min.css" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
 
 </head>

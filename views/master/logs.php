@@ -48,18 +48,21 @@ $header = "Логи";
 
 				dd(PDO::getAvailableDrivers());
 				
-				$DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
+				//* 1 Step *//
 
-				try {
-					$pacs = new PDO($DNS, "OCS", "OCS");
-					$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-					$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
-					$pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				} catch (\PDOException $e) {
-					die($e->getMessage());
-				} 
+				// $DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
+
+				// try {
+				// 	$pacs = new PDO($DNS, "OCS", "OCS");
+				// 	$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+				// 	$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+				// 	$pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				// } catch (\PDOException $e) {
+				// 	die($e->getMessage());
+				// } 
 
 
+				//* 2 Step *//
 				// $DNS = "sqlsrv:Server=213.230.90.9;Database=OCS;";
 
 				// try {

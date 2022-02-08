@@ -1,7 +1,10 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth(5);
+$session->is_auth([5,8]);
 $header = "Пациенты";
+
+$tb = (new VisitModel)->as("v")->Data("d.id, d.title")->Join("divisions d ON(d.id=v.division_id)")->Where("v.direction IS NOT NULL AND v.completed IS NULL AND v.is_active IS NOT NULL");
+$search = $tb->getSearch();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,21 +37,16 @@ $header = "Пациенты";
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Стационарные пациенты</h6>
 						<div class="header-elements">
-                            <div class="form-group-feedback form-group-feedback-right mr-2 wmin-200">
-                                <select data-placeholder="Выберите отдел" id="division_input" name="division" class="<?= $classes['form-select'] ?>">
+                            <div class="form-group-feedback form-group-feedback-right mr-2 wmin-350">
+                                <select data-placeholder="Выберите отдел" id="division_input" class="<?= $classes['form-select'] ?>">
                                     <option></option>
-                                    <?php foreach($db->query("SELECT * from divisions WHERE level = 5") as $row): ?>
-                                        <option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id'] == $row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
+                                    <?php foreach($tb->Group("d.title")->list() as $row): ?>
+                                        <option value="<?= $row->id ?>" <?= ( $search and $search == $row->id) ? "selected" : "" ?>><?= $row->title ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-							<!-- <div class="form-group-feedback form-group-feedback-right mr-2">
-								<input type="text" class="<?= $classes['input-search'] ?>" value="" id="search_input" placeholder="Поиск..." title="Введите ID, имя пациента или название услуги">
-								<div class="form-control-feedback">
-									<i class="icon-search4 font-size-base text-muted"></i>
-								</div>
-							</div> -->
 						</div>
+						
 					</div>
 
 					<div class="card-body" id="search_display"></div>
@@ -66,32 +64,30 @@ $header = "Пациенты";
 
 	<script type="text/javascript">
 
-		$("#division_input").change(function() {
+		<?php if($search): ?>
+			Search('<?= json_encode($_GET) ?>');
+		<?php endif; ?>
+
+		$("#division_input").change(SearchDublicate);
+
+		function SearchDublicate(){
+			Search(null);
+		}
+
+		function Search(data = null) {
+			var input = document.querySelector('#division_input');
+			var display = document.querySelector('#search_display');
+			if(data) var data = JSON.parse(data);
+			else var data = {CRD_search: input.value};
 			$.ajax({
 				type: "GET",
 				url: "<?= viv('sentry/search') ?>",
-				data: {
-					table_division: this.value,
-				},
+				data: data,
 				success: function (result) {
-					$('#search_display').html(result);
+					display.innerHTML = result;
 				},
 			});
-		});
-
-        $("#search_input").keyup(function() {
-			$.ajax({
-				type: "GET",
-				url: "<?= ajax('search/doctor-index') ?>",
-				data: {
-					table_division: $("#division_input").val(),
-					table_search: this.value,
-				},
-				success: function (result) {
-					$('#search_display').html(result);
-				},
-			});
-		});
+		}
 
 	</script>
 

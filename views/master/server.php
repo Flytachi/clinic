@@ -33,7 +33,7 @@ $header = "Контроль базы данных";
 
 				    <div class="card-header header-elements-inline">
 				        <h5 class="card-title">Дамп базы данных</h5>
-						<?php if( $dir = is_dir(dirname(__DIR__, 2)."/dump") ): ?>
+						<?php if( $dir = is_dir(dirname(__DIR__, 2)."/backup") ): ?>
 							<div class="header-elements">
 								<a href="<?= ajax('master/cap').'?is_create=1' ?>" class="btn btn-sm border-1 text-dark" title="Create Dump"><i class="icon-database-add"></i></a>
 							</div>
@@ -60,13 +60,12 @@ $header = "Контроль базы данных";
 				                </thead>
 				                <tbody>
 									<?php if( $dir ): ?>
-										<?php $i=1; foreach (array_diff(scandir(dirname(__DIR__, 2)."/dump"), array('..', '.')) as $value): ?>
+										<?php $i=1; foreach (array_diff(scandir(dirname(__DIR__, 2)."/backup"), array('..', '.')) as $value): ?>
 											<tr> 
 												<td><?= $i++ ?></td>
 												<td><?= pathinfo($value, PATHINFO_FILENAME); ?></td>
 												<td>
 													<a onclick="Conf('<?= ajax('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>')" title="Use Dump" class="list-icons-up text-success"><i class="icon-upload"></i></a>
-													<a href="/dump/<?= $value ?>" class="list-icons-up text-dark" title="Download Dump" download><i class="icon-download"></i></a>
 													<a onclick="Conf('<?= ajax('master/cap') ?>', '<?= pathinfo($value, PATHINFO_FILENAME) ?>', 1)" title="Delete Dump" class="list-icons-up text-danger"><i class="icon-trash"></i></a>
 												</td>
 											</tr>

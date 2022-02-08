@@ -61,7 +61,7 @@ abstract class Credo implements CredoInterface
       
      * -----------------------------------------------------------------------
      * 
-     * @version 1.0
+     * @version 1.5
      */
     
     private $db;
@@ -74,6 +74,7 @@ abstract class Credo implements CredoInterface
         (String) $this->CRD_join = "";
         (String) $this->CRD_where = "";
         (String) $this->CRD_order = "";
+        (String) $this->CRD_group = "";
         (String) $this->CRD_selfPage = "";
         (String) $this->CRD_search = "";
         (String) $this->CRD_searchGetName = "CRD_search=";
@@ -144,10 +145,10 @@ abstract class Credo implements CredoInterface
             Установка зависимостей!
         */
         if (is_array($context)) {
-            if ($this->CRD_search) $this->CRD_where = $context[1];
-            else $this->CRD_where = $context[0];
+            if ($this->CRD_search) $this->CRD_where = "WHERE " . $context[1];
+            else $this->CRD_where = "WHERE " . $context[0];
             return $this;
-        }else $this->CRD_where = $context;
+        }else $this->CRD_where = "WHERE " . $context;
         return $this;
     }
 
@@ -156,7 +157,16 @@ abstract class Credo implements CredoInterface
         /*
             Установка порядка сортировки!
         */
-        $this->CRD_order = $context;
+        $this->CRD_order = "ORDER BY " . $context;
+        return $this;
+    }
+
+    public function Group(String $context = null)
+    {
+        /*
+            Установка групировки!
+        */
+        $this->CRD_group = "GROUP BY " . $context;
         return $this;
     }
 
@@ -198,26 +208,9 @@ abstract class Credo implements CredoInterface
             if (empty($_GET['CRD_page'])) $_GET['CRD_page'] = 1;
             $this->CRD_params = $this->arrayToUrl($_GET);
 
-            // echo "<div class=\"card card-body border-top-1 border-top-pink text-center\">";
-            // echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center mt-3\" >";
             echo "  <ul class=\"pagination pagination-flat pagination-rounded align-self-center justify-content-center mt-3\" >";
             echo $this->buildPanel($page);
             echo "  </ul>";
-            // echo "</div>";
-            /*
-            <div class="card card-body border-top-1 border-top-pink text-center">
-    
-                <ul class="pagination pagination-flat pagination-rounded align-self-center">
-                    <li class="page-item"><a href="#" class="page-link">&larr; &nbsp; Prev</a></li>
-                    <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                    <li class="page-item disabled"><a href="#" class="page-link">3</a></li>
-                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                    <li class="page-item"><a href="#" class="page-link">Next &nbsp; &rarr;</a></li>
-                </ul>
-    
-            </div>
-            */
         }
     }
 
@@ -417,9 +410,10 @@ abstract class Credo implements CredoInterface
     {
         try {
             $this->CRD_sql = "SELECT $this->CRD_data FROM $this->table $this->CRD_as";
-            if($this->CRD_join) $this->CRD_sql .= " ".$this->CRD_join;
-            if($this->CRD_where) $this->CRD_sql .= " WHERE ".$this->CRD_where;
-            if($this->CRD_order) $this->CRD_sql .= " ORDER BY ".$this->CRD_order;
+            if($this->CRD_join)  $this->CRD_sql .= " " . $this->CRD_join;
+            if($this->CRD_where) $this->CRD_sql .= " " . $this->CRD_where;
+            if($this->CRD_order) $this->CRD_sql .= " " . $this->CRD_order;
+            if($this->CRD_group) $this->CRD_sql .= " " . $this->CRD_group;
             $this->CRD_search = (isset($_GET['CRD_search']) and $_GET['CRD_search']) ? $this->CRD_searchGetName.$_GET['CRD_search'] : "";
         } catch (\Throwable $th) {
             if ($this->CRD_error) throw $th;

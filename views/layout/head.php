@@ -80,7 +80,7 @@
 
 		// Socket
 		let id = <?= $_SESSION['session_id'] ?>;
-		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		// let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
 
 	</script>
 	<script src="<?= stack("assets/js/sessions.js") ?>"></script>
