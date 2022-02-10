@@ -32,19 +32,19 @@ $header = "Логи";
 
 				<?php
 
-				function insertPacs($tb, $post){
-					global $pacs;
-					$col = implode(",", array_keys($post));
-					$val = ":".implode(", :", array_keys($post));
-					$sql = "INSERT INTO $tb ($col) VALUES ($val)";
-					try{
-						$stm = $pacs->prepare($sql)->execute($post);
-						return $pacs->lastInsertId();
-					}
-					catch (\PDOException $ex) {
-						return $ex->getMessage();
-					}
-				}
+				// function insertPacs($tb, $post){
+				// 	global $pacs;
+				// 	$col = implode(",", array_keys($post));
+				// 	$val = ":".implode(", :", array_keys($post));
+				// 	$sql = "INSERT INTO $tb ($col) VALUES ($val)";
+				// 	try{
+				// 		$stm = $pacs->prepare($sql)->execute($post);
+				// 		return $pacs->lastInsertId();
+				// 	}
+				// 	catch (\PDOException $ex) {
+				// 		return $ex->getMessage();
+				// 	}
+				// }
 
 				dd(PDO::getAvailableDrivers());
 				
@@ -74,7 +74,7 @@ $header = "Логи";
 				// 	die($e->getMessage());
 				// } 
 
-				parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
+				// parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
 
 				// $data = array(
 				// 	'PatientID' => '21', 
