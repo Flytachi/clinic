@@ -27,7 +27,7 @@ class __Install
                 foreach ($git_links as $link => $folder) echo exec("git clone $link $this->path/$folder");
             }
         } catch (\Error $e) {
-            echo "\033[31m"." Не такого аргумента.\n";
+            echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 

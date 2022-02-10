@@ -33,7 +33,7 @@ class __Backup
             elseif ($this->argument == "migrate") $this->migrate();
             else echo "\033[31m"." Нет такого аргумента.\n";
         } catch (\Error $e) {
-            echo "\033[31m"." Не такого аргумента.\n";
+            echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 

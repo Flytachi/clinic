@@ -8,6 +8,7 @@ class Core
 {
     private $argument_count;
     private $arguments;
+    private $command_dir = "Command";
 
     function __construct($arg1 = null, $arg2 = null)
     {
@@ -24,7 +25,7 @@ class Core
 
     private function resolution()
     {
-        foreach ($this->get_dir_contents(dirname(__FILE__)."/Command/") as $filename) require_once $filename;
+        foreach (glob(__DIR__."/$this->command_dir/*") as $filename) require_once $filename;
 
         try {
             if ($Class = stristr($this->arguments[1], ":", true)) {
@@ -38,25 +39,19 @@ class Core
             }
             new $Class_construct($Arg, $Arg2);
         } catch (\Error $e) {
-            echo "\033[31m"."Нет такой команды.\n";
+            echo "\033[31m"." Нет такой команды.\n";
         }
+        echo "\033[0m";
 
-    }
-
-    private function get_dir_contents($dir, $filter = '', &$results = array()) {
-        $files = scandir($dir);
-        foreach($files as $key => $value){
-            $path = realpath($dir.DIRECTORY_SEPARATOR.$value); 
-            if(!is_dir($path)) {
-                if(empty($filter) || preg_match($filter, $path)) $results[] = $path;
-            } elseif($value != "." && $value != "..") get_dir_contents($path, $filter, $results);
-        }
-        return $results;
     }
 
     private function help()
     {
-        echo "\033[33m"."Console helper.\n";
+        echo "\033[33m"." ===========> Welcome to Warframe <=========== \n";
+        echo "\033[33m"." Доступные команды: \n";
+        foreach (glob(__DIR__."/$this->command_dir/*") as $command) echo "\033[33m"."  " . mb_strtolower(substr(strstr(basename($command), '_'), 2, -4)) . "\n";
+        echo "\033[33m"." ============================================= \n";
+        echo "\033[0m";
     }
 
 }

@@ -35,7 +35,7 @@ class __Db
             elseif($this->argument == "seed") $this->seed();
             else echo "\033[31m"." Нет такого аргумента.\n";
         } catch (\Error $e) {
-            echo "\033[31m"." Ошибка.\n". $e;
+            echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 
@@ -45,11 +45,7 @@ class __Db
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
         new Connect;
-        $tables = $triggers = [];
-        //
-        // foreach ($db->query("SHOW TRIGGERS") as $trig) $triggers[] = $trig;
-        // $this->create_file(json_encode($triggers, JSON_PRETTY_PRINT), "Triggers");
-        // echo "\033[32m"." Генерация триггеров прошла успешно.\n";
+        $tables = [];
         // 
         foreach ($db->query("SHOW TABLES") as $table) {
             $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
@@ -134,6 +130,11 @@ class __Db
         new Connect;
         if (isset($this->file_name)) {
 
+            if(!file_exists(dirname(__DIR__, 3)."/$this->path_data/$this->file_name.$this->format")){
+                echo "\033[31m"." Ошибка не найдены данные.\n";
+                return 0;
+            }
+
             $data = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_data/$this->file_name.$this->format"), true);
             foreach ($data as $row) HellCrud::insert($this->file_name, $row);
 
@@ -162,13 +163,16 @@ class __Db
         require_once dirname(__DIR__, 2).'/Connection/__load__.php';
         require_once dirname(__DIR__, 3).'/tools/variables.php';
         new Connect;
-        $self_base=$migrate_base=[];
-        foreach ($db->query("SHOW TABLES") as $table) $self_base[] = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
-        $migrate_base[] = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1);
-
-        // if ($diff = array_diff($self_base, $migrate_base)) {
-        //     print_r($diff);
-        // }
+        $self_base=[];
+        foreach ($db->query("SHOW TABLES") as $table) {
+            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+            $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
+            $t = str_replace( stristr(substr(strstr($t, 'AUTO_INCREMENT='), 0, -1), ' ', true), "", $t);
+            $self_base[] = $t;
+        }
+        
+        $migrate_base = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1);
+        if ($diff = array_diff($self_base, $migrate_base)) print_r($diff);
     }
 
     private function help()

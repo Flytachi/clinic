@@ -6,5 +6,5 @@ class _ModelIndex_ extends Model
 {
     public $table = '_TableIndex_';
 }
-        
+
 ?>
