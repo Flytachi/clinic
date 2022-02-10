@@ -228,5 +228,5 @@ class Collection extends Model
         render();
     }
 }
-        
+
 ?>

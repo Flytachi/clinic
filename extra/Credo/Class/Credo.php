@@ -64,7 +64,7 @@ abstract class Credo implements CredoInterface
      * @version 1.5
      */
     
-    private $db;
+    protected $db;
 
     public function __construct($table = null) {
         global $db;

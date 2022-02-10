@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Cluster;
+
 require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Логи";
@@ -31,6 +34,10 @@ $header = "Логи";
 			<div class="content">
 
 				<?php
+
+				$cl = new Cluster;
+
+				$cl->call(null, array("login" => "admin", "password" => "123"), null, "save");
 
 				// function insertPacs($tb, $post){
 				// 	global $pacs;
