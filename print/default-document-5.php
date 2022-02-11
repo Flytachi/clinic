@@ -50,7 +50,7 @@ function persic($str="", $qty=0){
         <div class="row" style="font-size: 22px;">
             <div class="col-12 text-justify">
                 Касалхонага ётқизилган кун <?= persic(date_f($docs->add_date, "d.m.Y"), 34) ?> вақти <?= persic(date_f($docs->add_date, "H:i"), 14) ?>
-                Касалхонадан чиқарилган кун <?= persic(date_f($docs->completed, "d.m.Y"), 32) ?> вақти <?= persic(date_f($docs->completed, "H:i"), 14) ?>
+                Касалхонадан чиқарилган кун <?= persic(($docs->completed) ? date_f($docs->completed, "d.m.Y") : null, 32) ?> вақти <?= persic(($docs->completed) ? date_f($docs->completed, "H:i") : null, 14) ?>
                 <?= persic(null, 36) ?> бўлими,хона №_____________________________________
                 Бўлимга _______________________________________________________________________________
                 ____________________________________________________________________________ ўтказилган
