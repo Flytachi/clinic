@@ -439,6 +439,44 @@ class VisitPanel extends VisitModel
 
                     <div class="col-md-5">
 
+                        <div class="<?= $classes['card'] ?>">
+
+                            <div class="<?= $classes['card-header'] ?>">
+                                <h6 class="card-title">Данные при поступлении</h6>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="form-group row">
+
+                                    <div class="col-md-4">
+                                        <label>Вес:</label>
+                                        <div class="form-group form-group-feedback form-group-feedback-right">
+                                            <input type="number" name="initial[weight]" class="form-control" placeholder="Введите вес" step="0.1" min="0" max="300">
+                                            <div class="form-control-feedback">Кг</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Рост:</label>
+                                        <div class="form-group form-group-feedback form-group-feedback-right">
+                                            <input type="number" name="initial[height]" class="form-control" placeholder="Введите рост" step="0.1" min="0" max="500">
+                                            <div class="form-control-feedback">См</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Температура:</label>
+                                        <div class="form-group form-group-feedback form-group-feedback-right">
+                                            <input type="number" name="initial[temperature]" class="form-control" placeholder="Введите температуру" step="0.1" min="30" max="45">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div> 
+
                         <?php if( isset($this->order_data) and $this->order_data ): ?>
                             <div class="<?= $classes['card'] ?>">
 

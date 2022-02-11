@@ -118,6 +118,9 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>&application=<?= $row->application ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
 													<?php endif; ?>
 													<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
+													<?php if ( isset($stm_dr['id']) and $stm_dr['direction'] ): ?>
+														<a onclick="Print('<?= prints('document-5') ?>?pk=<?= $stm_dr['id'] ?>')" class="dropdown-item"><i class="icon-list"></i> Стационарный лист</a>
+													<?php endif; ?>
 													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                                                 </div>
 											</td>

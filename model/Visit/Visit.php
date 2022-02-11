@@ -14,6 +14,7 @@ class VisitModel extends ModelOld
     public $_bed_types = 'bed_types';
     public $_service = 'visit_services';
     public $_transactions = 'visit_service_transactions';
+    public $_initial = "visit_initial";
 
     public function form_grant($pk = null)
     {
@@ -270,6 +271,7 @@ class VisitModel extends ModelOld
             }else{
                 
                 $this->application();
+                $this->initial();
                 $this->add_visit_service(null, 1);
                 $this->add_visit_bed();
                 
@@ -291,6 +293,12 @@ class VisitModel extends ModelOld
     public function application(){
         if(isset($this->post['application']) and $this->post['application']){
             Mixin\delete("visit_applications", $this->post['application']);
+        }
+    }
+
+    public function initial(){
+        if(isset($this->post['initial']) and $this->post['initial']){
+            Mixin\insert($this->_initial, array_merge(array('visit_id' => $this->visit_pk), $this->post['initial']));
         }
     }
 

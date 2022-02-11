@@ -3,7 +3,7 @@
 
     <?php if( isset($_GET['ward']) ): ?>
 
-        <label>Выбирите палату:</label>
+        <label>Выбирите койку:</label>
         <select data-placeholder="Выбрать койку" name="bed" id="bed" class="<?= $classes['form-select_price'] ?>" required>
             <?php $sql = "SELECT b.*, bt.price FROM beds b LEFT JOIN bed_types bt ON(b.type_id=bt.id) WHERE b.ward_id = {$_GET['ward']}"; ?>
             <?php foreach ($db->query($sql) as $row): ?>
@@ -21,7 +21,7 @@
         <select data-placeholder="Выбрать палату" id="ward_id" class="<?= $classes['form-select'] ?>" required>
             <?php $sql = "SELECT w.id, w.ward, COUNT(b.id) FROM wards w JOIN beds b ON(b.ward_id=w.id) WHERE w.building_id = {$_GET['building']} AND w.division_id = {$_GET['division']} AND b.floor = {$_GET['floor']} AND b.user_id IS NULL GROUP BY w.id"; ?>
             <?php foreach ($db->query($sql) as $row): ?>
-                <option value="<?= $row['id'] ?>"><?= $row['ward'] ?> этаж</option>
+                <option value="<?= $row['id'] ?>"><?= $row['ward'] ?> палата</option>
             <?php endforeach; ?>
         </select>
     
