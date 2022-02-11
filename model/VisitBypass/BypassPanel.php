@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class BypassPanel extends Model
+class BypassPanel extends ModelOld
 {
     public $_package = 'package_bypass';
     public $_bypass = 'visit_bypass';

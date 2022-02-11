@@ -434,7 +434,6 @@ class Table
 
 }
 
-
 class SessionC
 {
     protected $db;

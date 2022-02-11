@@ -1,6 +1,6 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
 class VisitFinishStationar extends VisitFinish
 {

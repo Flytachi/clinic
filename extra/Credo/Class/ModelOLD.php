@@ -2,7 +2,69 @@
 
 namespace Mixin;
 
-abstract class Model extends Credo implements ModelInterface
+interface ModelInterfaceOld
+{
+    public function set_post($post);
+    public function set_table($table);
+    public function get_post();
+    public function get_table();
+    public function get_or_404(Int $pk);
+    public function clear_post();
+    public function save();
+    public function update();
+    public function delete(Int $pk);
+    public function file_download();
+    public function file_clean(String $row_name, $pk = null);
+}
+
+trait ModelTraitResponce
+{
+
+    protected function success()
+    {
+        /**
+         * Действие в случае успеха операции!
+         */
+        echo 1;
+    }
+
+    protected function error($message)
+    {
+        /**
+         * Действие в случае ошибки операции!
+         * Возвращает ошибку!
+         */
+        echo $message;
+    }
+}
+
+trait ModelTrait
+{
+    protected $post;
+    protected $table = '';
+    protected $file_directory = "/storage/";
+    protected $file_format = null;
+    protected $dinamic_delete = true;
+    
+    protected function stop()
+    {
+        /**
+         * Остановка операции!
+         */
+        exit;
+    }
+
+    protected function dd()
+    {
+        /**
+         * Мод для тестов!
+         */
+        dd($this);
+        exit;
+    }
+}
+
+abstract class ModelOld extends Credo implements ModelInterfaceOld
 {
     use ModelTrait, ModelTraitResponce;
     /**

@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class PatientForm extends Model
+class PatientForm extends ModelOld
 {
     public $table = 'users';
     public $table1 = 'province';

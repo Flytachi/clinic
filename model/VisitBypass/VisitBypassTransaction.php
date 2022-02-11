@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class VisitBypassTransactionModel extends Model
+class VisitBypassTransactionModel extends ModelOld
 {
     public $table = 'visit_bypass_transactions';
     public $storage = 'warehouse_storage';

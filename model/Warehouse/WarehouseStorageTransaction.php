@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class WarehouseStorageTransactionModel extends Model
+class WarehouseStorageTransactionModel extends ModelOld
 {
     public $table = 'warehouse_storage_transactions';
     public $_item_manufacturers = 'warehouse_item_manufacturers';

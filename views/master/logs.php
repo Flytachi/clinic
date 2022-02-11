@@ -1,6 +1,7 @@
 <?php
 
 use Mixin\Cluster;
+use Mixin\Model;
 
 require_once '../../tools/warframe.php';
 $session->is_auth();
@@ -35,9 +36,18 @@ $header = "Логи";
 
 				<?php
 
-				$cl = new Cluster;
+				class Test extends Model {
+					public $table = "province";
 
-				$cl->call(null, array("login" => "admin", "password" => "123"), null, "save");
+					public function form()
+					{
+						dd($this);
+					}
+				}
+
+				$cl = new Test;
+
+				$cl->call("get", array("id" => 22, "form" => "form"), null, null);
 
 				// function insertPacs($tb, $post){
 				// 	global $pacs;

@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class Queue extends Model
+class Queue extends ModelOld
 {
     public $table = 'queue';
 

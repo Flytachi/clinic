@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class PackageBypassModel extends Model
+class PackageBypassModel extends ModelOld
 {
     public $table = 'package_bypass';
 

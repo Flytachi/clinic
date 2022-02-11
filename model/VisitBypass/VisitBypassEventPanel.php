@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class VisitBypassEventsPanel extends Model
+class VisitBypassEventsPanel extends ModelOld
 {
     public $table = 'visit_bypass_events';
     public $_visit_bypass = 'visit_bypass';

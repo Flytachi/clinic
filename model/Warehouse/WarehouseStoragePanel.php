@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class WarehouseStoragePanel extends Model
+class WarehouseStoragePanel extends ModelOld
 {
     public $table = 'warehouse_storage';
     public $_name = 'warehouse_item_names';

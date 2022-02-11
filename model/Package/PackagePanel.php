@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class PackagePanel extends Model
+class PackagePanel extends ModelOld
 {
     public $service = 'package_services';
 

@@ -1,10 +1,10 @@
 <?php
 
 use function Mixin\error;
-use Mixin\Model;
+use Mixin\ModelOld;
 
 
-class VisitModel extends Model
+class VisitModel extends ModelOld
 {
     public $table = 'visits';
     public $table2 = 'beds';

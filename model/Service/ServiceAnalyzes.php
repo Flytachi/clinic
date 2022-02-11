@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class ServiceAnalyzesModel extends Model
+class ServiceAnalyzesModel extends ModelOld
 {
     public $table = 'service_analyzes';
 

@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class WardsModel extends Model
+class WardsModel extends ModelOld
 {
     public $table = 'wards';
 

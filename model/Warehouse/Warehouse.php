@@ -1,9 +1,9 @@
 <?php
 
 use Mixin\HellCrud;
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class WarehouseModel extends Model
+class WarehouseModel extends ModelOld
 {
     public $table = 'warehouses';
 

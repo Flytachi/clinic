@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class VisitRoute extends Model
+class VisitRoute extends ModelOld
 {
     public $table = 'visit_services';
     public $_user = 'users';

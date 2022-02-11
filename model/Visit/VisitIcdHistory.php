@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class VisitIcdHistoryModel extends VisitModel
+class VisitIcdHistoryModel extends ModelOld
 {
     public $_icd_history = 'visit_icd_history';
 

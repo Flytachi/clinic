@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class MultiAccountsModel extends Model
+class MultiAccountsModel extends ModelOld
 {
     public $table = 'multi_accounts';
 

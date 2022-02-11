@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class DivisionModel extends Model
+class DivisionModel extends ModelOld
 {
     public $table = 'divisions';
     public $file_format = array('php');

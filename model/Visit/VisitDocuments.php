@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class VisitDocumentsModel extends Model
+class VisitDocumentsModel extends ModelOld
 {
     public $table = 'visit_documents';
     protected $file_directory = "/storage/documents/";

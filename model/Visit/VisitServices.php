@@ -1,11 +1,11 @@
 <?php
 
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
 use function Mixin\error;
 
-class VisitServicesModel extends Model
+class VisitServicesModel extends ModelOld
 {
     public $table = 'visit_services';
     public $_visits = 'visits';

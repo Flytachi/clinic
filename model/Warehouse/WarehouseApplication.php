@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class WarehouseApplication extends Model
+class WarehouseApplication extends ModelOld
 {
     public $table = 'warehouse_storage_applications';
     public $_event_applications = 'visit_bypass_event_applications';

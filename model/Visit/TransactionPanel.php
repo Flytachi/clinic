@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class TransactionPanel extends Model
+class TransactionPanel extends ModelOld
 {
     public $table = 'visits';
 

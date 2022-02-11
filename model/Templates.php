@@ -1,8 +1,8 @@
 <?php
 
-use Mixin\Model;
+use Mixin\ModelOld;
 
-class TemplateModel extends Model
+class TemplateModel extends ModelOld
 {
     public $table = 'templates';
 
