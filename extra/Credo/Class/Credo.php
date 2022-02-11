@@ -324,7 +324,7 @@ abstract class Credo implements CredoInterface
 
     // --------------------
 
-    public function byId(int $id)
+    public function byId(Int $id)
     {
         /*
         Получение 1 экземпляра даных gj id

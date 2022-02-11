@@ -6,12 +6,14 @@ require_once '../tools/warframe.php';
 $session->is_auth();
 
 if ( isset($_GET['model']) ) {
-
+    
     if (class_exists($_GET['model'])) {
-        $form = new $_GET['model'];
+
+        $model = new $_GET['model'];
         unset($_GET['model']);
-        $form->delete($_GET['id']);
-    }else dd("Модель не найдена!");
+        $model->call( 'delete', $_GET );
+
+    }else Hell::error('403');
 
 }else Hell::error('403');
 

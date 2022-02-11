@@ -23,7 +23,7 @@ class __Make
         if (file_exists($file)) {
             if ($this->name) {
                 $template = str_replace("_ModelIndex_", $this->UC_word($this->name), file_get_contents($file));
-                $template = str_replace("_TableIndex_", $this->name, $template);
+                $template = str_replace("_TableIndex_", strtolower($this->name), $template);
                 $this->create_file($template);
             } else echo "\033[33m". " Укажите имя для шаблона!\n";
         } else echo "\033[33m". " Шаблона '$this->argument' не существует!\n";

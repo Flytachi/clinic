@@ -14,20 +14,20 @@ class HellCrud
         return $value;
     }
 
-    static function clean_form($array){
+    static function clean_form(Array $array){
         foreach ($array as $key => $value) {
             $array[$key] = HellCrud::clean($value);
         };
         return $array;
     }
 
-    static function to_null($post){
-        foreach ($post as $key => $value) {
+    static function to_null(Array $array){
+        foreach ($array as $key => $value) {
             if(!$value){
-                $post[$key] = null;
+                $array[$key] = null;
             }
         }
-        return $post;
+        return $array;
     }
     
     static function insert($tb, $post){

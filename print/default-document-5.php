@@ -7,10 +7,15 @@ require_once '../tools/warframe.php';
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
     $data = (new UserModel)->byId($docs->user_id);
+    $visit = (new VisitServicesModel)->Where("visit_id = $docs->id AND service_id = 1")->get();
+    $dig = (new VisitModel())->Where("user_id = $docs->user_id AND direction IS NULL AND completed IS NOT NULL")->Order("completed DESC")->get()->icd_id;
+    $initial = (new VisitInitialModel)->Where("visit_id = $docs->id")->get();
 }else Hell::error('404');
 
-function persic($str="", $qty=0){
-    return  "<em style=\"color: blue;\">" . sprintf("%'.'_" . $qty . "s\n", $str) . "</em>";
+function persic($qty=0, $str=""){
+    $reponce = "";
+    for ($i=0; $i <= ($qty-strlen($str)); $i++) $reponce .= "_";
+    return  "<em style=\"color: blue;\">" . $reponce.$str . "</em>";
 }
 
 ?>
@@ -49,9 +54,9 @@ function persic($str="", $qty=0){
 
         <div class="row" style="font-size: 22px;">
             <div class="col-12 text-justify">
-                Касалхонага ётқизилган кун <?= persic(date_f($docs->add_date, "d.m.Y"), 34) ?> вақти <?= persic(date_f($docs->add_date, "H:i"), 14) ?>
-                Касалхонадан чиқарилган кун <?= persic(($docs->completed) ? date_f($docs->completed, "d.m.Y") : null, 32) ?> вақти <?= persic(($docs->completed) ? date_f($docs->completed, "H:i") : null, 14) ?>
-                <?= persic(null, 36) ?> бўлими,хона №_____________________________________
+                Касалхонага ётқизилган кун <?= persic(30, date_f($docs->add_date, "d.m.Y")) ?> вақти <?= persic(14, date_f($docs->add_date, "H:i")) ?>
+                Касалхонадан чиқарилган кун <?= persic(28, ($docs->completed) ? date_f($docs->completed, "d.m.Y") : null) ?> вақти <?= persic(14, ($docs->completed) ? date_f($docs->completed, "H:i") : null) ?>
+                <?= persic(34, (new DivisionModel)->byId($docs->division_id)->name) ?> бўлими,хона №_____________________________________ <!-- палата + койка-->
                 Бўлимга _______________________________________________________________________________
                 ____________________________________________________________________________ ўтказилган
                 __________________________________________ кун ётиб даволанган ____________________
@@ -61,28 +66,27 @@ function persic($str="", $qty=0){
                 __________________________________________________________________________________________
                 <small style="margin-left: 30%;">(дорининг номи, ножўя таъсирнинг кўриниши)</small><br>
                 __________________________________________________________________________________________
-                ФИО: <?= persic("$data->last_name $data->first_name $data->father_name", 55) ?>
-                2. Жинси <?= persic(($data->gender) ? "Мужской" : "Женский", 7) ?>
-                3.Туғилган сана: кун <?= persic(date_f($data->birth_date, "d"), 10) ?> ой <?= persic(date_f($data->birth_date, "m"), 20) ?> йил <?= persic(date_f($data->birth_date, "Y"), 25) ?>
-                Бўйи ________________, вазни _______________, тана ҳарорати _________________________
-                Доимий яшаш жойи: шаҳар, қишлоқ (чизинг)
-                __________________________________________________________________________________________
+                ФИО: <?= persic(55, "$data->last_name $data->first_name $data->father_name") ?>
+                2. Жинси <?= persic(7, ($data->gender) ? "Мужской" : "Женский") ?>
+                3.Туғилган сана: кун <?= persic(7, date_f($data->birth_date, "d")) ?> ой <?= persic(17, date_f($data->birth_date, "m")) ?> йил <?= persic(25, date_f($data->birth_date, "Y")) ?>
+                Бўйи <?= persic(16, ($initial) ? $initial->height : null ) ?>, вазни <?= persic(15, ($initial) ? $initial->weight : null ) ?>, тана ҳарорати <?= persic(20, ($initial) ? $initial->temperature : null ) ?>
+                Доимий яшаш жойи: шаҳар, қишлоқ (чизинг)<br>
+                <?= persic(89, "$data->province, $data->region $data->address_residence/$data->address_registration") ?><br>
                 <small style="margin-left: 10%;">(яшаш жойи кўрсатилсин, вилоят ва туманлардан келганлар учун манзили ва яқин</small><br>
-                __________________________________________________________________________________________
+                <?= persic(86, "$data->phone_number") ?>
                 <small style="margin-left: 15%;">қариндошларининг яшаш жойи ва телефон рақамлари кўрсатилсин)</small><br>
-                6.Иш жойи, касби, лавозими __________________________________________________________
+                6.Иш жойи, касби, лавозими <?= persic(60-10, "$data->work_place $data->work_position") ?>
                 __________________________________________________________________________________________
                 __________________________________________________________________________________________
                 ногиронлар учун-ногиронликнинг тури ва гуруҳи; уруш ногиронликнинг
                 __________________________________________________________________________________________
                 <small style="margin-left: 47%;">ҳа, йўқ)</small><br>
-                7.Бемор қаердан юборилган __________________________________________________________
+                7.Бемор қаердан юборилган <?= persic(55, ($visit->guide_id) ? (new GuidesModel)->byId($visit->guide_id)->name : null) ?>
                 <small style="margin-left: 55%;">(даволаш муассасасининг номи)</small><br>
                 8.Касалхонага шошилинч равишда келтирилган: ҳа, йўқ _____________________________
                 Қандай транспортда ___________________________________________________________________
                 Касаллик бошлангандан сўнг ўтган вақт, жароҳатдан сўнг, режали равишда 
-                9.Бемор йўлланмасидаги ташҳис _____________________________________________________
-                __________________________________________________________________________________________
+                9.Бемор йўлланмасидаги ташҳис <?= persic(50, ($dig) ? icd($dig, "decryption")['decryption'] : null) ?>
                 __________________________________________________________________________________________
             </div>
         </div>

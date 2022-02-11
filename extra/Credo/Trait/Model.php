@@ -70,7 +70,7 @@ trait ModelTSave
     }
 
     public function saveBody(){
-        $object = HellCrud::insert($this->table, $this->post);
+        $object = HellCrud::insert($this->table, $this->getPost());
         if (!is_numeric($object)) $this->error($object);
     }
 
@@ -89,7 +89,7 @@ trait ModelTUpdate
     }
 
     public function updateBody(){
-        $object = HellCrud::update($this->table, $this->post, $this->get);
+        $object = HellCrud::update($this->table, $this->getPost(), $this->getGet());
         if (!$object) $this->error($object);
     }
 
@@ -107,7 +107,7 @@ trait ModelTDelete
     }
 
     public function deleteBody(){
-        $object = HellCrud::delete($this->table,  $this->get['id']);
+        $object = HellCrud::delete($this->table, $this->getGet()['id']);
         if ($object <= 0) $this->error($object);
     }
 
@@ -136,6 +136,14 @@ trait ModelTResponce
          */
         echo $message;
         exit;
+    }
+}
+
+trait ModelHook
+{
+    public function urlHook()
+    {
+        return Hell::apiHook( array_merge( array("model" =>  get_class($this)), $this->getGet() ) );
     }
 }
 

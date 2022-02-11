@@ -11,10 +11,10 @@ abstract class Model extends Credo implements ModelInterface
      * @version 15.0
      */
 
-    protected $get;
-    protected $post;
-    protected $files;
-    protected $table;
+    private $get = [];
+    private $post = [];
+    private $files = [];
+    protected $table = '';
 
     use 
         ModelSetter, 
@@ -22,7 +22,8 @@ abstract class Model extends Credo implements ModelInterface
         ModelTSave, 
         ModelTUpdate, 
         ModelTDelete,
-        ModelTResponce;
+        ModelTResponce,
+        ModelHook;
 
 
     public function call(String $action = null, Array $get = null, Array $post = null, Array $files = null)
@@ -45,10 +46,18 @@ abstract class Model extends Credo implements ModelInterface
     {
         $object = $this->byId($this->get['id']);
         if ($object) {
-            if(isset($this->get['form'])) $this->{$this->get['form']}($object);
-            else echo json_encode($object);
-        }
-        else Hell::error("404");
+
+            if(isset($this->get['form'])) {
+
+                $this->setPost($object);
+                $form = $this->get['form'];
+                unset($this->get['form']);
+                if (method_exists(get_class($this), $form)) $this->{$form}();
+                else Hell::error("403");
+
+            }else echo json_encode($object);
+
+        } else Hell::error("404");
     }
 
     private function save(){
@@ -83,7 +92,7 @@ abstract class Model extends Credo implements ModelInterface
 
     protected function value(String $column = null)
     {
-        return (isset($this->post[$column])) ? $this->post[$column] : null;
+        return (isset($this->getPost()->{$column})) ? $this->getPost()->{$column} : null;
     }
 
     private function stop()
