@@ -100,7 +100,7 @@ $tb->additions('LEFT JOIN users us ON(us.id=v.user_id)')->where_or_serch($search
 												<?php endif; ?>
 											</td>
                                             <td><?= division_title($row->grant_id) ?></td>
-											<td><?= date_f($row->completed) ?></td>
+											<td><?= ($row->completed) ? date_f($row->completed) : '<span class="text-muted">Нет данных</span>' ?></td>
                                             <td><?= get_full_name($row->grant_id) ?></td>
 											<td class="text-right">
 												<button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
