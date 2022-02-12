@@ -33,7 +33,7 @@ if( isset($_SESSION['message']) ){
         </thead>
         <tbody>
             <?php foreach ($tb->get_table() as $row): ?>
-                <tr>
+                <tr <?php if($row->application) echo 'class="table-danger"'; ?>>
                     <td><?= addZero($row->id) ?></td>
                     <td>
                         <div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
@@ -73,9 +73,12 @@ if( isset($_SESSION['message']) ){
                                 <a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
                             <?php endif; ?>
                             <?php if ( !$row->status ): ?>
-                                <a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
+                                <a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>&application=<?= $row->application ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
                             <?php endif; ?>
                             <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
+                            <?php if ( isset($stm_dr['id']) and $stm_dr['direction'] ): ?>
+                                <a onclick="Print('<?= prints('document-5') ?>?pk=<?= $stm_dr['id'] ?>')" class="dropdown-item"><i class="icon-list"></i> Стационарный лист</a>
+                            <?php endif; ?>
                             <a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                         </div>
                     </td>

@@ -79,13 +79,13 @@
 		// console.log(timoutNow / 60000);
 
 		// Socket
-		let id = <?= $_SESSION['session_id'] ?>;
-		// let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		// let id = <?= $_SESSION['session_id'] ?>;
+		// let conn = new WebSocket("ws://<?php //$ini['SOCKET']['HOST'] ?>:<?php //$ini['SOCKET']['PORT'] ?>");
 
 	</script>
 	<script src="<?= stack("assets/js/sessions.js") ?>"></script>
 
-	<script src="<?= stack("assets/js/socket.js") ?>"></script>
+	<!-- <script src="<?= stack("assets/js/socket.js") ?>"></script> -->
 
 	<!-- JS CKEditor -->
 	<script src="<?= node("@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor.js") ?>"></script>
