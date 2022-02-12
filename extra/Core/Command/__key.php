@@ -16,13 +16,11 @@ class __Key
     private function handle()
     {
         if (!is_null($this->argument) and !is_null($this->seria)) $this->resolution();
-        else echo "---ERROR---";
     }
 
     private function resolution()
     {
         if (hex2bin("$this->argument") === $this->auth) $this->generate_key();
-        else echo "---ERROR---";
     }
 
     private function generate_key()
@@ -31,8 +29,7 @@ class __Key
         $fp = fopen($KEY, "w");
         fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
         fclose($fp);
-        echo "---DONE---";
-        return 1; 
+        echo 1; 
     }
 
 }
