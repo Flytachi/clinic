@@ -9,8 +9,6 @@ class Province extends Model
 
     public function form()
     {
-        dd($_GET);
-        dd($_POST);
         ?>
         <form method="post" action="<?= $this->urlHook() ?>">
             <div class="form-group">
