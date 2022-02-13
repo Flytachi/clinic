@@ -115,7 +115,7 @@ abstract class Credo implements CredoInterface
             Установка дополнений в скрипе!
             До WHERE!
         */
-        $this->CRD_join = "JOIN " . $context;
+        $this->CRD_join .= " JOIN " . $context;
         return $this;
     }
 
@@ -125,7 +125,7 @@ abstract class Credo implements CredoInterface
             Установка дополнений в скрипе!
             До WHERE!
         */
-        $this->CRD_join = "LEFT JOIN " . $context;
+        $this->CRD_join .= " LEFT JOIN " . $context;
         return $this;
     }
 
@@ -135,7 +135,7 @@ abstract class Credo implements CredoInterface
             Установка дополнений в скрипе!
             До WHERE!
         */
-        $this->CRD_join = "RIGHT JOIN " . $context;
+        $this->CRD_join .= " RIGHT JOIN " . $context;
         return $this;
     }
 

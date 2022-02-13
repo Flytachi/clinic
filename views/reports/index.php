@@ -39,6 +39,12 @@ $header = "Отчёты";
 							<div class="col-sm-6 col-lg-3">
 
 								<div class="mb-3">
+									<h6 class="font-weight-semibold">Общие</h6>
+									<ul class="list list-unstyled">
+										<li><a href="<?= viv('reports/all/content_1') ?>">Отчет по проведённым услугам</a></li>
+									</ul>
+								</div>
+								<div class="mb-3">
 									<h6 class="font-weight-semibold">Регистратура</h6>
 									<ul class="list list-unstyled">
 										<li><a href="<?= viv('reports/registry/content_1') ?>">Отчёт по областям</a></li>
