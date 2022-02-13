@@ -140,7 +140,7 @@ $header = "Общий отчёт по проведённым услугам";
 													<?=
 													number_format(
 														(new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")
-														->Join("visits v ON(v.id=vs.visit_id)")->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")
+														->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_orders vr", "vr.visit_id=v.id")
 														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NOT NULL")->get()->c
 													)
 													?>

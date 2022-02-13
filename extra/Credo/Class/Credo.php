@@ -109,32 +109,35 @@ abstract class Credo implements CredoInterface
         return $this;
     }
 
-    public function Join(String $context = null)
+    public function Join(String $context = null, String $on = null)
     {
         /*
             Установка дополнений в скрипе!
             До WHERE!
         */
+        if($on) $context = $context . " ON(" . $on . ")";
         $this->CRD_join .= " JOIN " . $context;
         return $this;
     }
 
-    public function JoinLEFT(String $context = null)
+    public function JoinLEFT(String $context = null, String $on = null)
     {
         /*
             Установка дополнений в скрипе!
             До WHERE!
         */
+        if($on) $context = $context . " ON(" . $on . ")";
         $this->CRD_join .= " LEFT JOIN " . $context;
         return $this;
     }
 
-    public function JoinRIGHT(String $context = null)
+    public function JoinRIGHT(String $context = null, String $on = null)
     {
         /*
             Установка дополнений в скрипе!
             До WHERE!
         */
+        if($on) $context = $context . " ON(" . $on . ")";
         $this->CRD_join .= " RIGHT JOIN " . $context;
         return $this;
     }
