@@ -437,11 +437,11 @@ class Table
 class SessionC
 {
     protected $db;
-    protected $login_url = DIR."/auth/login".EXT;
-    protected $index_url = "../index".EXT; //../index.php
-    protected $logout_url = DIR."/auth/logout".EXT;
-    protected $confirm_password_url = DIR."/auth/confirm_password".EXT;
-    protected $timeout_mark_url = DIR."/auth/timeout_mark".EXT;
+    protected $login_url = DIR . "/auth/login".EXT;
+    protected $index_url = DIR . "/index".EXT; 
+    protected $logout_url = DIR . "/auth/logout".EXT;
+    protected $confirm_password_url = DIR . "/auth/confirm_password".EXT;
+    protected $timeout_mark_url = DIR . "/auth/timeout_mark".EXT;
     
     protected $table = "sessions";
     public $life_session = 5; // minute

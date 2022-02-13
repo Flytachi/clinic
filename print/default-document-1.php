@@ -92,7 +92,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
             </div>
             <div class="col-4 text-right">
                 <?php if (config("print_document_qrcode")): ?>
-                    <img src="<?= api('QRcode', $qr); ?>" width="150" height="150">
+                    <img src="<?= apiMy('QRcode', $qr); ?>" width="150" height="150">
                 <?php endif; ?>
             </div>
         </div>

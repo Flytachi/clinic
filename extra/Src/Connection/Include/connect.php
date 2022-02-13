@@ -16,8 +16,7 @@ class Connect
             ${$_}->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
             if ( isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG'] ) ${$_}->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
-            $_error = $e->getMessage();
-            die(include "error.php");
+            dieConection($e->getMessage()); 
         }
     }
 }

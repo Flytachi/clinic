@@ -14,7 +14,7 @@ ini_set('session.hash_function', "sha512");
 
 require_once dirname(__FILE__).'/temp.php';
 require_once dirname(__DIR__).'/extra/warframe.php';
-require_once dirname(__DIR__).'/libs/lib.php';
+require_once dirname(__FILE__).'/libs/lib.php';
 require_once dirname(__FILE__).'/constants.php';
 require_once dirname(__FILE__).'/functions.php';
 require_once dirname(__FILE__).'/classes.php';

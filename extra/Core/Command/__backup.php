@@ -5,10 +5,17 @@ class __Backup
     private $argument;
     private $name;
     private String $file_format = "sql";
-    private String $path = "backup"; 
+    private String $path = "backup";
+    private String $path_connection = "/Src/Connection/__load__.php";
 
     function __construct($value = null, $name = null)
     {
+        // Cfg
+        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
+        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
+        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
+        //
+        
         $this->argument = $value;
         $this->name = $name;
         $this->handle();
@@ -66,7 +73,7 @@ class __Backup
     private function create()
     {
         if ($this->is_dir()) {
-            require_once dirname(__DIR__, 2).'/Connection/__load__.php';
+            require_once dirname(__DIR__, 2) . $this->path_connection;
             new Connect;
             $path = dirname(__DIR__, 3)."/".$this->path;
             $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
@@ -92,7 +99,7 @@ class __Backup
     {
         if ($this->is_dir()) {
             if ($this->name) {
-                require_once dirname(__DIR__, 2).'/Connection/__load__.php';
+                require_once dirname(__DIR__, 2) . $this->path_connection;
                 $path = dirname(__DIR__, 3)."/".$this->path;
                 $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
                 exec("mysql -u " . ini['DATABASE']['USER'] . " -p" . ini['DATABASE']['PASS'] . " " . ini['DATABASE']['NAME'] . " < $path/$file_name.$this->file_format");

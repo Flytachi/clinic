@@ -8,11 +8,19 @@ class __Db
     private $argument;
     private String $path_base = "tools/base"; 
     private String $path_data = "tools/data"; 
+    private String $path_credo = "/Src/Credo/__load__.php";
+    private String $path_connection = "/Src/Connection/__load__.php";
     private String $format = "json";
 
 
     function __construct($value = null, $name = null)
     {
+        // Cfg
+        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
+        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
+        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
+        //
+        
         $this->argument = $value;
         if ($name) $this->file_name = $name;
         $this->handle();
@@ -42,8 +50,8 @@ class __Db
     private function generate()
     {
         global $db;
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 3).'/tools/variables.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
+        require_once dirname(__DIR__, 3) . '/tools/variables.php';
         new Connect;
         $tables = [];
         // 
@@ -61,8 +69,8 @@ class __Db
     private function migrate()
     {
         global $db; 
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
+        require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect($db);
 
         try {
@@ -92,8 +100,8 @@ class __Db
     private function clean()
     {
         global $db;
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
+        require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect;
         if (isset($this->file_name)) {
             $_clean = HellTable::T_flush($this->file_name);
@@ -112,8 +120,8 @@ class __Db
     private function delete()
     {
         global $db; 
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
+        require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect;
         $_delete = HellTable::T_DELETE_database();
         if ($_delete == 200) {
@@ -125,8 +133,8 @@ class __Db
     private function seed()
     {
         global $db; 
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
+        require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect;
         if (isset($this->file_name)) {
 
@@ -160,8 +168,8 @@ class __Db
     private function compare()
     {
         global $db;
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
-        require_once dirname(__DIR__, 3).'/tools/variables.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
+        require_once dirname(__DIR__, 3) . '/tools/variables.php';
         new Connect;
         $self_base=[];
         foreach ($db->query("SHOW TABLES") as $table) {

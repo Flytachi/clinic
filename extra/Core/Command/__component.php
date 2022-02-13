@@ -32,7 +32,7 @@ class __Component
 
     private function nginx()
     {
-        $file = dirname(__DIR__)."/Template/Server/nginx";
+        $file = dirname(__DIR__) . '/Template/Server/nginx';
         $errors = "";
         if (file_exists(dirname(__DIR__, 3)."/.cfg")) {
             $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );

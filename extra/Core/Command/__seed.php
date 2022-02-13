@@ -4,6 +4,7 @@ class __Seed
 {
     protected String $name;
     private String $path = "tools/data"; 
+    private String $path_connection = "/Src/Connection/__load__.php";
     private String $format = "json"; 
     private Array $json = array();
 
@@ -26,7 +27,7 @@ class __Seed
     private function generate()
     {
         global $db;
-        require_once dirname(__DIR__, 2).'/Connection/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_connection;
         new Connect;
         if ($db->query("SHOW TABLES LIKE '$this->name';")->rowCount()) {
             foreach ($db->query("SELECT * FROM $this->name") as $value) {

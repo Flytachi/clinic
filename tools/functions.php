@@ -339,4 +339,93 @@ function icd($pk = null, $title = 'code,decryption')
     return $stmt;
 }
 
+//---------
+
+function apiMy( $url, $param ){
+    if ($url) {
+        return DIR."/api/$url".EXT."?url=$param";
+    }
+}
+
+function global_render( $url=null ){
+    if ($url) {
+        header("location:".DIR."$url".EXT);
+    }else {
+        header("location:".$_SERVER['HTTP_REFERER']);
+    }
+    exit;
+}
+
+
+function index(){
+    header("location:".DIR."/index".EXT);
+    exit;
+}
+
+
+function viv($url=null){
+    if ($url) {
+        return DIR."/views/$url".EXT;
+    }else {
+        return DIR."/";
+    }
+}
+
+function viv_link($url, $class = ""){
+
+    if (is_array($url)) {
+        
+        foreach ($url as $value) {
+            if (EXT == ".php") {
+                if (viv($value) == $_SERVER['PHP_SELF']) {
+                    return "active $class";
+                }
+            } else {
+                if (viv($value).".php" == $_SERVER['PHP_SELF']) {
+                    return "active $class";
+                }
+            }
+        }
+
+    } else {
+        if (EXT == ".php") {
+            if (viv($url) == $_SERVER['PHP_SELF']) {
+                return "active $class";
+            }
+        } else {
+            if (viv($url).".php" == $_SERVER['PHP_SELF']) {
+                return "active $class";
+            }
+        }
+    }
+}
+
+
+function ajax($url)
+{
+    return DIR."/ajax/$url".EXT;
+}
+
+
+function add_url(){
+    return DIR."/hook/create_to_update".EXT."?";
+}
+
+function del_url($id = null, $model = null, $arg = "?"){
+    if($id) $arg .= "id=$id";
+    if($model) $arg .= "&model=$model";
+    return DIR."/hook/delete".EXT.$arg;
+}
+
+function up_url($id = null, $model, $form = 'form', $arg = "?"){
+    if($id) $arg .= "id=$id";
+    if($model) $arg .= "&model=$model";
+    if($form) $arg .= "&form=$form";
+    return DIR."/hook/get".EXT.$arg;
+}
+
+function download_url($model, $file_name, $is_null = false){
+    return DIR."/hook/download".EXT."?model=$model&file=$file_name&is_null=$is_null";
+}
+
 ?>

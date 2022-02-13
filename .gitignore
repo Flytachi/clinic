@@ -1,10 +1,17 @@
-backup
-libs/*
-!libs/*.php
-node_modules
-session
-storage
-tests
-setting.ini
+## Warframe support
+/backup
+/node_modules
+/session
+/storage
+/tests
+/tools/libs/*
+!/tools/libs/*.php
+/setting.ini
 core.x*
 .*
+
+## IDE support
+*.buildpath
+*.project
+/.settings
+/.idea

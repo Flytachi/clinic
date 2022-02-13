@@ -26,7 +26,7 @@ class __Storage
 
     private function init()
     {
-        require_once dirname(__DIR__, 3).'/tools/variables.php';
+        require_once dirname(__DIR__, 3) . '/tools/variables.php';
         if (exec("mkdir $this->path && echo 1")) echo "\033[32m"." => Директория $this->path создана.\n";
         // storage
         if ( isset($storage) ) {

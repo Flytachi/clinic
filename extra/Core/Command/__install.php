@@ -3,7 +3,7 @@
 class __Install
 {
     private $argument;
-    private $path = "libs";
+    private $path = "tools/libs";
 
     function __construct($value = null, $name = null)
     {
@@ -23,7 +23,7 @@ class __Install
         try {
             if ($this->argument == "npm") echo exec("npm install");
             elseif($this->argument == "git") {
-                require_once dirname(__DIR__, 3).'/tools/variables.php';
+                require_once dirname(__DIR__, 3) . '/tools/variables.php';
                 foreach ($git_links as $link => $folder) echo exec("git clone $link $this->path/$folder");
             }
         } catch (\Error $e) {

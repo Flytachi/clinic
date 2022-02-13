@@ -25,7 +25,7 @@ class __Key
 
     private function generate_key()
     {
-        $KEY = dirname(__DIR__, 3)."/$this->key";
+        $KEY = dirname(__DIR__, 3) . "/$this->key";
         $fp = fopen($KEY, "w");
         fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
         fclose($fp);

@@ -36,16 +36,9 @@ class Hell
         return $out;
     }
 
-    static function api(String $url, Array $param){
-        $str = "?";
-        foreach ($param as $key => $value) $str .= "$key=$value&";
-        $param = substr($str,0,-1);
-        return DIR."/api/$url".EXT.$param;
-    }
-
     static function apiHook(Array $params)
     {
-        return Hell::api(Hell::$hookFile, $params);
+        return api(Hell::$hookFile, $params);
     }
 
     static function apiGet(String $model, Int $id = null, String $form = null)
@@ -53,12 +46,12 @@ class Hell
         $params = array('model' => $model);
         if($id) $params['id'] = $id;
         if($form) $params['form'] = $form;
-        return Hell::api(Hell::$hookGetFile, $params);
+        return api(Hell::$hookGetFile, $params);
     }
 
     static function apiDelete(String $model, Int $id)
     {
-        return Hell::api(Hell::$hookDeleteFile, array('model' => $model, 'id' => $id));
+        return api(Hell::$hookDeleteFile, array('model' => $model, 'id' => $id));
     }
 }
 

@@ -23,13 +23,16 @@ class __Base
 
     private function create()
     {
+        // Cfg
+        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
         $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
-        $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
+        //
 
-        $this->create_db_name = $ini['DATABASE']['NAME'];
-        $this->create_db_user = $ini['DATABASE']['USER'];
-        $this->create_db_port = $ini['DATABASE']['PORT'];
-        $this->create_db_password = $ini['DATABASE']['PASS'];
+        $this->create_db_name = ini['DATABASE']['NAME'];
+        $this->create_db_user = ini['DATABASE']['USER'];
+        $this->create_db_port = ini['DATABASE']['PORT'];
+        $this->create_db_password = ini['DATABASE']['PASS'];
         $DNS = "$this->db_driver:host=$this->db_host;port=$this->create_db_port;charset=$this->db_charset";
         
         // Site Constants

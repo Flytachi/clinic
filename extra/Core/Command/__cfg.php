@@ -7,6 +7,8 @@ class __Cfg
     private $argument;
     private $setting_name = "setting.ini";
     private $cfg_name = ".cfg";
+    private $path_credo = "/Src/Credo/__load__.php";
+    private $path_hell = "/Src/Hell/__load__.php";
     private $default_configuratuons = array(
         'PORT' => 80,
         'HOSTS' => ['warframe'],
@@ -58,8 +60,9 @@ class __Cfg
 
     private function create_setting()
     {
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
-
+        require_once dirname(__DIR__, 2) . $this->path_credo;
+        require_once dirname(__DIR__, 2) . $this->path_hell;
+        
         if (!file_exists(dirname(__DIR__, 3)."/$this->setting_name")) {
             $fp = fopen(dirname(__DIR__, 3)."/$this->setting_name", "x");
             fwrite($fp, Hell::array_to_ini($this->default_configuratuons));
@@ -72,7 +75,8 @@ class __Cfg
 
     private function edit_key()
     {
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_credo;
+        require_once dirname(__DIR__, 2) . $this->path_hell;
         
         if (file_exists(dirname(__DIR__, 3)."/$this->cfg_name")) {
             $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/$this->cfg_name") );
@@ -91,7 +95,8 @@ class __Cfg
 
     private function setting_show()
     {
-        require_once dirname(__DIR__, 2).'/Credo/__load__.php';
+        require_once dirname(__DIR__, 2) . $this->path_credo;
+        require_once dirname(__DIR__, 2) . $this->path_hell;
 
         if (file_exists(dirname(__DIR__, 3)."/$this->cfg_name")) {
             $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/$this->cfg_name") );
