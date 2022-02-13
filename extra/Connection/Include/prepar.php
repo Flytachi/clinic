@@ -7,8 +7,6 @@ $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
 define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
 $ini = ini;
 
-date_default_timezone_set(ini['GLOBAL_SETTING']['TIME_ZONE']);
-
 if (isset(ini['SECURITY']['GUARD']) and ini['SECURITY']['GUARD']) {
     if (!file_exists(dirname(__DIR__, 3)."/.key")) dieConection("Authenticity check failed.");
     $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 3)."/.key")[0])) );
