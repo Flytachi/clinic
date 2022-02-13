@@ -17,22 +17,21 @@ class __Cfg
             'SERIA' => null,
         ),
         'GLOBAL_SETTING' => array(
-            'TIME_ZONE' => 'Asia/Samarkand', 
-            'SESSION_TIMEOUT' => null, 
+            'TIME_ZONE' => 'Asia/Samarkand',
+            'SESSION_TIMEOUT' => null,
             'SESSION_LIFE' => null,
-            'HIDE_EXTENSION' => false, 
-            'ROOT_MOD' => false, 
-            'DEBUG' => true, 
-        ), 
+            'HIDE_EXTENSION' => false,
+            'DEBUG' => true,
+        ),
         'DATABASE' => array(
-            'DRIVER' => 'mysql', 
-            'CHARSET' => 'utf8', 
+            'DRIVER' => 'mysql',
+            'CHARSET' => 'utf8',
             'HOST' => 'localhost',
             'PORT' => 3306,
-            'NAME' => null,  
+            'NAME' => null,
             'USER' => null,
-            'PASS' => null, 
-        ) 
+            'PASS' => null,
+        )
     );
 
 
