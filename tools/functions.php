@@ -406,6 +406,9 @@ function ajax($url)
     return DIR."/ajax/$url".EXT;
 }
 
+function prints(String $url){
+    return DIR . "/print/default-$url".EXT;
+}
 
 function add_url(){
     return DIR."/hook/create_to_update".EXT."?";
