@@ -9,15 +9,15 @@
 
 <div class="row">
 
-	<?php foreach ($db->query("SELECT id, title FROM divisions WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1) ORDER BY level") as $row): ?>
-		<div class="col-sm-4 col-xl-3" onclick="selDivision(<?= $row['id'] ?>)">
+	<?php foreach ((new DivisionModel)->Data("id, title")->Where("level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)")->Order("level")->list() as $row): ?>
+		<div class="col-sm-4 col-xl-3" onclick="selDivision(<?= $row->id ?>)">
 			<div class="card card-body">
 				<div class="media">
 					<div class="media-body">
 						<h3 class="font-weight-semibold mb-0">
-							<?= $db->query("SELECT id FROM visit_services WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+							<?= $db->query("SELECT id FROM visit_services WHERE division_id = $row->id AND DATE_FORMAT(accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
 						</h3>
-						<span class="text-uppercase font-size-sm text-muted"><?= $row['title'] ?></span>
+						<span class="text-uppercase font-size-sm text-muted"><?= $row->title ?></span>
 					</div>
 
 					<div class="ml-3 align-self-center">

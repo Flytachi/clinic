@@ -14,7 +14,12 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT * FROM users WHERE DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+						<?= 
+							number_format(
+								(new UserModel)->Data("COUNT(id) 'c'")
+								->Where("user_level = 15 AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->get()->c
+							);
+						?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Новые пациенты</span>
 				</div>
@@ -31,7 +36,14 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visits v LEFT JOIN visit_services vs ON(v.user_id=vs.user_id) LEFT JOIN users us ON(us.id=vs.user_id) WHERE v.direction IS NULL AND DATE_FORMAT(vs.add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+						<?= 
+							number_format(
+								(new VisitServicesModel)->as("vs")
+									->Data("COUNT(DISTINCT vs.user_id) 'c'")
+									->Join("visits v", "v.id=vs.visit_id")
+									->Where("v.direction IS NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->get()->c
+							);
+						?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Посещаемость (Амбулатор)</span>
 				</div>
@@ -48,7 +60,14 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT * FROM visits WHERE direction IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+						<?= 
+							number_format(
+								(new VisitServicesModel)->as("vs")
+									->Data("COUNT(DISTINCT vs.user_id) 'c'")
+									->Join("visits v", "v.id=vs.visit_id")
+									->Where("v.direction IS NOT NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->get()->c
+							);
+						?>					
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Посещаемость (Стационар)</span>
 				</div>
