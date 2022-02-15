@@ -89,7 +89,7 @@ $header = "Общий отчёт по проведённым услугам";
 
 				<?php if ($_POST): ?>
 					<?php
-					$Iam = "vs.status IN(3,7) AND vs.service_id != 1";
+					$Iam = "vs.status IN(3,7)";
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end']   = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 					$where = $Iam . " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
@@ -124,56 +124,56 @@ $header = "Общий отчёт по проведённым услугам";
 	                                    </tr>
 	                                </thead>
 	                                <tbody>
+										<?php $pc = $ao = $an = $so = $sn = 0; ?>
 										<?php foreach ($tb->list(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
 												<td><?= $row->title ?></td>
 												<td class="text-center">
-													<?=
-													number_format(
-														(new VisitServicesModel)->as("vs")->Data("DISTINCT COUNT(vs.user_id) 'c'")
-														->Where($where . " AND vs.division_id = $row->id")->get()->c
-													)
+													<?php
+													$p = (new VisitServicesModel)->as("vs")->Data("COUNT(DISTINCT vs.user_id) 'c'")
+													->Where($where . " AND vs.division_id = $row->id")->get()->c;
+													$pc += $p; echo number_format($p);
 													?>
 												</td>
 												<td class="text-center">
-													<?=
-													number_format(
-														(new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")
-														->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_orders vr", "vr.visit_id=v.id")
-														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NOT NULL")->get()->c
-													)
+													<?php
+													$p2 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_orders vr", "vr.visit_id=v.id")
+													->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NOT NULL")->get()->c;
+													$ao += $p2; echo number_format($p2);
 													?>
 												</td>
 												<td class="text-center">
-													<?=
-													number_format(
-														(new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")
-														->Join("visits v ON(v.id=vs.visit_id)")->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")
-														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NULL")->get()->c
-													)
+													<?php
+													$p3 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
+													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NULL")->get()->c;
+													$an += $p3; echo number_format($p3);
 													?>
 												</td>
 												<td class="text-center">
-													<?=
-													number_format(
-														(new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")
-														->Join("visits v ON(v.id=vs.visit_id)")->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")
-														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NOT NULL")->get()->c
-													)
+													<?php
+													$p4 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
+													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NOT NULL")->get()->c;
+													$so += $p4; echo number_format($p4);
 													?>
 												</td>
 												<td class="text-center">
-													<?=
-													number_format(
-														(new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")
-														->Join("visits v ON(v.id=vs.visit_id)")->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")
-														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NULL")->get()->c
-													)
+													<?php
+													$p5 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
+													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NULL")->get()->c;
+													$sn += $p5; echo number_format($p5);
 													?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
+										<tr class="table-secondary">
+											<th class="text-right" colspan="2">Итог:</th>
+											<th class="text-center"><?= number_format($pc) ?></th>
+											<th class="text-center"><?= number_format($ao) ?></th>
+											<th class="text-center"><?= number_format($an) ?></th>
+											<th class="text-center"><?= number_format($so) ?></th>
+											<th class="text-center"><?= number_format($sn) ?></th>
+										</tr>
 	                                </tbody>
 	                            </table>
 	                        </div>

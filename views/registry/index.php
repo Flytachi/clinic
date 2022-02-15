@@ -12,6 +12,9 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 <html lang="en">
 <?php include layout('head') ?>
 
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
+
 <body>
 	<!-- Main navbar -->
 	<?php include layout('navbar') ?>
@@ -39,7 +42,14 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Список пациентов</h6>
 						<div class="header-elements">
+							<div class="form-check form-check-right form-check-switchery mr-4">
+								<label class="form-check-label">
+									<input type="checkbox" class="form-input-switchery swit" id="serch_check">
+									Назначеные
+								</label>
+							</div>
 							<div class="form-group-feedback form-group-feedback-right mr-2">
+							
 								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
 								<div class="form-control-feedback">
 									<i class="icon-search4 font-size-base text-muted"></i>
@@ -166,18 +176,22 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 			});
 		};
 
-		$("#search_input").keyup(function() {
+		function Search(){
 			$.ajax({
 				type: "GET",
 				url: "<?= ajax('search/registry-index') ?>",
 				data: {
+					application: $("#serch_check").is(':checked'),
 					table_search: $("#search_input").val(),
 				},
 				success: function (result) {
 					$('#search_display').html(result);
 				},
 			});
-		});
+		}
+
+		$("#search_input").keyup(Search);
+		$("#serch_check").on('change', Search);
 	</script>
 
 </body>

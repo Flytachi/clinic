@@ -2,12 +2,17 @@
 require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 
-$tb = new Table($db, "users");
-$search = $tb->get_serch();
-$where_search = array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
+else $apl = "";
 
-$tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
-$tb->set_self(viv('registry/index'));  
+$tb = new Table($db, "users u");
+$search = $tb->get_serch();
+$where_search = array(
+    $apl."u.user_level = 15", 
+    $apl."u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
+
+$tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applications va ON(va.user_id=u.id)")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
+$tb->set_self(viv('registry/index'));
 ?>
 <?php
 if( isset($_SESSION['message']) ){

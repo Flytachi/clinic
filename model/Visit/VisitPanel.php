@@ -587,6 +587,7 @@ class VisitPanel extends VisitModel
 
         <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <script type="text/javascript">
+            $("#parent_id").chained("#division_id");
             $("#division_id").on("change", () => changeDivision());
 
             function changeDivision(){
