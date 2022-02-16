@@ -33,4 +33,13 @@ function getDirContent($dir, $filter = '', &$results = array()) {
     return $results;
 }
 
+function importModel(String $modelName){
+    foreach (getDirContent(dirname(__DIR__, 2)."/model/") as $model) {
+        if ( basename($model) == $modelName . ".php" ) {
+            try { include $model; } 
+            catch (\Throwable $th) { dd($th); exit; }
+        }
+    }
+}
+
 ?>

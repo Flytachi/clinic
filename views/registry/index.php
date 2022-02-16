@@ -3,10 +3,16 @@ require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 $header = "Список пациентов";
 
+if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
+else $apl = "";
+
 $tb = new Table($db, "users u");
 $search = $tb->get_serch();
-$where_search = array("u.user_level = 15", "u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
-$tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id) 'application'")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
+$where_search = array(
+    $apl."u.user_level = 15", 
+    $apl."u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
+
+$tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applications va ON(va.user_id=u.id)")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">

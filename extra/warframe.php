@@ -43,8 +43,4 @@ else define('EXT', ".php");
 foreach (glob(dirname(__FILE__)."/Src/*") as $plugin) require_once $plugin . '/__load__.php';
 //
 
-// Подключение Моделей
-if (is_dir(dirname(__DIR__)."/model")) foreach (getDirContent(dirname(__DIR__)."/model/") as $filename) require_once $filename;
-//
-
 ?>

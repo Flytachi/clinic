@@ -2,8 +2,6 @@
 
 namespace Mixin;
 
-use Stringable;
-
 class Hell
 {
     static $hookFile = "hook";
@@ -11,7 +9,7 @@ class Hell
     static $hookDeleteFile = "hookDelete";
 
     static function error(String $url){
-        if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error') die( include dirname(__DIR__, 3)."/error/$url.php" );
+        if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error') die( include dirname(__DIR__, 4)."/error/$url.php" );
     }
 
     static function array_to_ini(Array $a, Array $parent = array())

@@ -14,6 +14,11 @@ ini_set('session.hash_function', "sha512");
 
 require_once dirname(__FILE__).'/temp.php';
 require_once dirname(__DIR__).'/extra/warframe.php';
+
+// Подключение Моделей
+if (is_dir(dirname(__DIR__)."/model")) foreach (getDirContent(dirname(__DIR__)."/model/") as $filename) require_once $filename;
+//
+
 require_once dirname(__FILE__).'/libs/lib.php';
 require_once dirname(__FILE__).'/constants.php';
 require_once dirname(__FILE__).'/functions.php';
