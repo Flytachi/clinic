@@ -12,7 +12,7 @@ interface CredoInterface
     public function Limit(Int $limit = 0);
     public function Data(String $context = "*");
     public function Join(String $context = null);
-    public function Where(Mixed $context = null);
+    public function Where(Mixed $context);
     public function Order(String $context = null);
     public function get();
     public function getId();

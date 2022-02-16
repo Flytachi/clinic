@@ -5,16 +5,16 @@ function dieConection($_error = null) {
 }
 
 function dd($value = null) {
-    echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
+    echo '<pre style="background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;">';
     print_r($value);
-    echo "</pre>";
+    echo '</pre>';
 }
 
 function parad($title = null, $value = null) {
-    echo "<pre style=\"background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;\">";
+    echo '<pre style="background-color: black; color: #00ff00; border-style: solid; border-color: #ff0000; border-width: medium;">';
     echo "<strong style=\"color: #ffffff;\">$title</strong><br>";
     print_r($value);
-    echo "</pre>";
+    echo '</pre>';
 }
 
 function getDirContent($dir, $filter = '', &$results = array()) {
@@ -33,11 +33,19 @@ function getDirContent($dir, $filter = '', &$results = array()) {
     return $results;
 }
 
-function importModel(String $modelName){
-    foreach (getDirContent(dirname(__DIR__, 2)."/model/") as $model) {
-        if ( basename($model) == $modelName . ".php" ) {
-            try { include $model; } 
-            catch (\Throwable $th) { dd($th); exit; }
+function importModel(String ...$models){
+    foreach ($models as $model) {
+        $path = dirname(__DIR__, 2) .'/model/' . $model . '.php';
+        if (file_exists($path)) {
+            try { include $path; }
+            catch (\Throwable $th) { 
+                if (!ini['GLOBAL_SETTING']['DEBUG']) dd('Ошибка в модели');
+                else dd($th);
+                die;
+            }
+        } else {
+            dd("Модель не найдена"); 
+            die;
         }
     }
 }

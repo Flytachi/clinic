@@ -32,7 +32,7 @@ function persic($qty=0, $str=""){
                 <strong style="font-size: 20px;">
                     Ўзбекистон Республикаси <br>
                     соғлиқни сақлаш вазиринин <br>
-                    ______________________
+                    бухарский областной многопрофильный медицинский центр
                 </strong>
             </div>
             <div class="col-6 text-center">
@@ -46,7 +46,7 @@ function persic($qty=0, $str=""){
             </div>
 
             <div class="col-12 text-center mt-1">
-                <h2><b>СТАЦИОНАР БЕМОРНИНГ ТИББИЙ КАРТАСИ № <?= $docs->parad_id ?></b></h2>
+                <h2><b>СТАЦИОНАР БЕМОРНИНГ ТИББИЙ КАРТАСИ № __</b></h2>
             </div>
             
         </div>

@@ -17,7 +17,7 @@ require_once dirname(__DIR__).'/extra/warframe.php';
 
 
 // Подключение Моделей
-if (is_dir(dirname(__DIR__)."/model")) foreach (getDirContent(dirname(__DIR__)."/model/") as $filename) require_once $filename;
+if (is_dir(dirname(__DIR__)."/model_old")) foreach (getDirContent(dirname(__DIR__)."/model_old/") as $filename) require_once $filename;
 //
 
 

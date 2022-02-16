@@ -4,6 +4,8 @@ use Mixin\Model;
 
 require_once '../../tools/warframe.php';
 
+importModel('Province');
+
 use Mixin\Hell;
 $session->is_auth();
 $header = "";
