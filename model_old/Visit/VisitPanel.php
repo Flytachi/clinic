@@ -426,14 +426,7 @@ class VisitPanel extends VisitModel
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label>Специалиста:</label>
-                            <select data-placeholder="Выберите специалиста" name="parent_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
-                                <?php foreach($db->query("SELECT * FROM users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
-                                    <option value="<?= $row['id'] ?>" <?php if(isset($application) and $row['id'] == $application['responsible_id']) echo "selected" ?> data-chained="<?= $row['division_id'] ?>"><?= get_full_name($row['id']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                        <div class="form-group" id="parent_area"></div>
 
                     </div>
 
@@ -587,7 +580,6 @@ class VisitPanel extends VisitModel
 
         <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <script type="text/javascript">
-            $("#parent_id").chained("#division_id");
             $("#division_id").on("change", () => changeDivision());
 
             function changeDivision(){
@@ -600,6 +592,15 @@ class VisitPanel extends VisitModel
                         document.querySelector("#building_area").innerHTML = response;
                         $("#building_id").on("change", () => changeBuilding());
                         changeBuilding();
+                    }
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= ajax('options/getParent') ?>",
+                    data: { division },
+                    success: (response) => {
+                        document.querySelector("#parent_area").innerHTML = response;
                     }
                 });
             }

@@ -160,12 +160,19 @@ abstract class Credo implements CredoInterface
         return substr($str,0,-1);
     }
 
-    private function error(\PDOException $error){
+    private function error($error){
         $message = "\t" . $error->getMessage();
         foreach ($error->getTrace() as $key => $value) {
-            if ($key != 0) $message .= "\n\t\t#" . $key . ' ' . $value['file'] . '(' . $value['line'] . '): ' . $value['class'] . $value['type'] . $value['function'];  
+            if ($key != 0) {
+                $message .= "\n\t\t#" . $key . ' ';  
+                if (isset($value['file']))     $message .= $value['file'];
+                if (isset($value['line']))     $message .= '(' . $value['line'] . '): ';
+                if (isset($value['class']))    $message .= $value['class'];
+                if (isset($value['type']))     $message .= $value['type'];
+                if (isset($value['function'])) $message .= $value['function'];
+            }
         }
-        throw parad('CREDO', $message);
+        die (parad('CREDO', $message));
     }
 
 }

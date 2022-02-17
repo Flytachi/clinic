@@ -4,20 +4,27 @@ namespace Mixin;
 
 interface CredoInterface
 {
-    public function byId(int $id);
-    public function panel();
+    public function get(String ...$items);
+    public function byId(Int $id, $item = '');
     public function list(Bool $counter = false);
-    public function showError(Bool $status = false);
-    public function returnPath(String $uri = null);
-    public function Limit(Int $limit = 0);
+    public function getId();
+    //
+    public function as(String $context = "");
     public function Data(String $context = "*");
-    public function Join(String $context = null);
+    public function Limit(Int $limit = 0);
+    public function Join(String $context = null, String $on = null);
+    public function JoinLEFT(String $context = null, String $on = null);
+    public function JoinRIGHT(String $context = null, String $on = null);
     public function Where(Mixed $context);
     public function Order(String $context = null);
-    public function get();
-    public function getId();
-    public function getSql();
+    public function Group(String $context = null);
+    //
+    public function panel();
+    //
+    public function returnPath(String $uri = null);
+    public function showError(Bool $status = false);
     public function getSearch();
+    public function getSql();
 }
 
 ?>

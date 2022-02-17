@@ -4,61 +4,37 @@ namespace Mixin;
 
 trait ModelSetter
 {
-    public function setGet($data)
+    final public function setGet($data)
     {
-        /**
-         * Устанавливаем данные о записи!
-         * GET
-         */
         $this->get = $data;
     }
 
-    public function setPost($data)
+    final public function setPost($data)
     {
-        /**
-         * Устанавливаем данные о записи!
-         * POST
-         */
         $this->post = $data;
     }
 
-    public function setFiles($data)
+    final public function setFiles($data)
     {
-        /**
-         * Устанавливаем данные о записи!
-         * FILES
-         */
         $this->files = $data;
     }
 }
 
 trait ModelGetter
 {
-    public function getGet()
+    final public function getGet(String $item = null)
     {
-        /**
-         * Данные о записи!
-         * GET
-         */
-        return $this->get;
+        return ($item == null) ? $this->get : $this->get[$item];
     }
 
-    public function getPost()
+    final public function getPost(String $item = null)
     {
-        /**
-         * Данные о записи!
-         * POST
-         */
-        return $this->post;
+        return ($item == null) ? $this->post : $this->post[$item];
     }
 
-    public function getFiles()
+    final public function getFiles(String $item = null)
     {
-        /**
-         * Данные о записи!
-         * FILES
-         */
-        return $this->files;
+        return ($item == null) ? $this->files : $this->files[$item];
     }
 }
 
@@ -121,19 +97,12 @@ trait ModelTResponce
 {
     public function success()
     {
-        /**
-         * Действие в случае успеха операции!
-         */
         echo 1;
         exit;
     }
 
     public function error($message)
     {
-        /**
-         * Действие в случае ошибки операции!
-         * Возвращает ошибку!
-         */
         echo $message;
         exit;
     }
@@ -141,7 +110,7 @@ trait ModelTResponce
 
 trait ModelHook
 {
-    public function urlHook()
+    final public function urlHook()
     {
         return Hell::apiHook( array_merge( array("model" =>  get_class($this)), $this->getGet() ) );
     }

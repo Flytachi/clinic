@@ -26,7 +26,7 @@ abstract class Model extends Credo implements ModelInterface
         ModelHook;
 
 
-    public function call(String $action = null, Array $get = null, Array $post = null, Array $files = null)
+    final public function call(String $action = null, Array $get = null, Array $post = null, Array $files = null)
     {
         if ($get != null) $this->setGet($get);
         if ($post != null) $this->setPost($post);

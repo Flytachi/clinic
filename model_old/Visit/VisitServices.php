@@ -1,6 +1,6 @@
 <?php
 
-
+use Mixin\HellCrud;
 use Mixin\ModelOld;
 
 use function Mixin\error;
@@ -139,7 +139,9 @@ class VisitServiceUp extends VisitServicesModel
 {
     public function clean()
     {
-        if (module('queue')) $this->queue();
+        $visit = (new VisitModel)->byId( (new VisitServicesModel)->byId($this->post['id'])->visit_id );
+        if ($visit->direction and is_null($visit->grant_id)) HellCrud::update($this->_visits, array('grant_id' => $this->post['parent_id']), $visit->id);
+        if (!$visit->direction and module('queue')) $this->queue();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;

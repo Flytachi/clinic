@@ -4,90 +4,79 @@ namespace Mixin;
 
 trait CredoQuery
 {
-    public function byId(Int $id)
+    final public function get(String ...$items)
     {
-        /*
-        Получение 1 экземпляра даных gj id
-        */
-        $this->Where("id = $id");
-        $this->generateSql();
         try {
+
+            if ($data = implode(',', $items)) $this->Data($data);
+            $this->generateSql();
             $get = $this->db->query($this->CRD_sql)->fetch(\PDO::FETCH_OBJ);
             return $get;
-        } catch (\Throwable $th) {
-            if ($this->CRD_error) $this->error($th);
-            else echo 'Ошибка в генерации скрипта <strong>"BY ID"</strong>';
-        }
 
-    }
-
-    public function get()
-    {
-        /*
-        Получение 1 экземпляра даных
-        */
-        $this->generateSql();
-        
-        try {
-            $get = $this->db->query($this->CRD_sql)->fetch(\PDO::FETCH_OBJ);
-            return $get;
         } catch (\Throwable $th) {
             if ($this->CRD_error) $this->error($th);
             else echo 'Ошибка в генерации скрипта <strong>"GET"</strong>';
         }
-        
+    }
+
+    final public function byId(Int $id, $item = '')
+    {
+        try {
+
+            $this->Where("id = $id");
+            if (!is_array($item)) return $this->get($item);
+            else return call_user_func_array([$this, 'get'], $item);
+
+        } catch (\Throwable $th) {
+            if ($this->CRD_error) $this->error($th);
+            else echo 'Ошибка в генерации скрипта <strong>"BY ID"</strong>';
+        }
+    }
+
+    final public function list(Bool $counter = false)
+    {
+        try {
+            $this->generateSql();
+            
+            if ($this->CRD_limit) {
+                $page = (int)(isset($_GET['CRD_page'])) ? (int) $_GET['CRD_page'] : $page = 1;
+                $offset = (int) $this->CRD_limit * ($page - 1);
+                $this->CRD_sql .= " LIMIT $this->CRD_limit OFFSET $offset";
+            }
+
+            $list = $this->db->query($this->CRD_sql)->fetchAll(\PDO::FETCH_OBJ);
+            if ($counter) {
+                $off_count = (($this->CRD_limit) ? $offset : 0) + 1;
+                foreach ($list as $key => $value) $list[$key]->{'count'} = $off_count++;
+            }
+            return $list;
+
+        } catch (\Throwable $th) {
+            if ($this->CRD_error) $this->error($th);
+            else echo 'Ошибка в генерации скрипта <strong>"LIST"</strong>';
+        }
     }
 
     public function getId()
     {
-        /*
-        Получение 1 экземпляра даных
-        */
-        $this->Data("id");
-        $this->generateSql();
-        
         try {
+
+            $this->Data("id");
+            $this->generateSql();
             $get = $this->db->query($this->CRD_sql)->fetchColumn();
             return $get;
+
         } catch (\Throwable $th) {
             if ($this->CRD_error) $this->error($th);
             else echo 'Ошибка в генерации скрипта <strong>"GET ID"</strong>';
         }
         
     }
-
-    final public function list(Bool $counter = false)
-    {
-        /*
-            Получение массива с данными!
-        */
-        $this->generateSql();
-        
-        if ($this->CRD_limit) {
-            $page = (int)(isset($_GET['CRD_page'])) ? (int) $_GET['CRD_page'] : $page = 1;
-            $offset = (int) $this->CRD_limit * ($page - 1);
-            $this->CRD_sql .= " LIMIT $this->CRD_limit OFFSET $offset";
-        }
-        try {
-            $list = $this->db->query($this->CRD_sql)->fetchAll(\PDO::FETCH_OBJ);
-            if ($counter) {
-                $off_count = (($this->CRD_limit) ? $offset : 0) + 1;
-                foreach ($list as $key => $value) {
-                    $list[$key]->{'count'} = $off_count++;
-                }
-            }
-            return $list;
-        } catch (\Throwable $th) {
-            if ($this->CRD_error) $this->error($th);
-            else echo 'Ошибка в генерации скрипта <strong>"LIST"</strong>';
-        }
-
-    }
 }
 
 trait CredoParams
 {
-    public function as(String $context = "*")
+    final public function as(String $context = "")
     {
         /*
             Установка столбцов которые хотим вытащить, по умолчаню все!
@@ -96,7 +85,7 @@ trait CredoParams
         return $this;
     }
 
-    public function Data(String $context = "*")
+    final public function Data(String $context = "*")
     {
         /*
             Установка столбцов которые хотим вытащить, по умолчаню все!
@@ -105,7 +94,7 @@ trait CredoParams
         return $this;
     }
 
-    public function Limit(Int $limit = null) 
+    final public function Limit(Int $limit = null) 
     {
         /*
             Установка Лимита строк на странице
@@ -114,7 +103,7 @@ trait CredoParams
         return $this;
     }
 
-    public function Join(String $context = null, String $on = null)
+    final public function Join(String $context = null, String $on = null)
     {
         /*
             Установка дополнений в скрипе!
@@ -125,7 +114,7 @@ trait CredoParams
         return $this;
     }
 
-    public function JoinLEFT(String $context = null, String $on = null)
+    final public function JoinLEFT(String $context = null, String $on = null)
     {
         /*
             Установка дополнений в скрипе!
@@ -136,7 +125,7 @@ trait CredoParams
         return $this;
     }
 
-    public function JoinRIGHT(String $context = null, String $on = null)
+    final public function JoinRIGHT(String $context = null, String $on = null)
     {
         /*
             Установка дополнений в скрипе!
@@ -147,7 +136,7 @@ trait CredoParams
         return $this;
     }
 
-    public function Where($context)
+    final public function Where($context)
     {
         /*
             Установка зависимостей!
@@ -160,7 +149,7 @@ trait CredoParams
         return $this;
     }
 
-    public function Order(String $context = null)
+    final public function Order(String $context = null)
     {
         /*
             Установка порядка сортировки!
@@ -169,7 +158,7 @@ trait CredoParams
         return $this;
     }
 
-    public function Group(String $context = null)
+    final public function Group(String $context = null)
     {
         /*
             Установка групировки!
@@ -203,7 +192,7 @@ trait CredoPanel
         }
     }
 
-    private function buildPanel(int $page)
+    final private function buildPanel(int $page)
     {
         $this->selfP = $this->CRD_firstBack = $this->CRD_nextLast = "";
         $self_uri = $this->path();
@@ -316,42 +305,28 @@ trait CredoHelp
 {
     public function returnPath(String $uri = null)
     {
-        /*
-            Установка главной страницы!
-            Используется в скрипте поиска.
-        */
         $this->CRD_selfPage = $uri;
         return $this;
     }
     
-    public function showError(Bool $status = false) 
+    final public function showError(Bool $status = false)
     {
-        /*
-            Вывод ошибок
-        */
         $this->CRD_error = $status;
         return $this;
     }
 
-    public function getSql()
+    final public function getSearch()
     {
-        /*
-            Получение массива с данными!
-        */
-        $this->generateSql();
-        return $this->CRD_sql;
-    }
-
-    public function getSearch()
-    {
-        /*
-            Получить искомый объект!
-        */
         $this->CRD_search = (isset($_GET['CRD_search']) and $_GET['CRD_search']) ? $this->CRD_searchGetName.$_GET['CRD_search'] : "";
         $search = str_replace($this->CRD_searchGetName, "", $this->CRD_search);
         return $this->clsDta($search);
     }
 
+    final public function getSql()
+    {
+        $this->generateSql();
+        return $this->CRD_sql;
+    }
 }
 
 ?>
