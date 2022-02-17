@@ -4,9 +4,9 @@
 /session
 /storage
 /tests
-/tools/nginx.conf
 /tools/libs/*
 !/tools/libs/*.php
+/tools/nginx.conf
 /setting.ini
 /core.x*
 /.*
