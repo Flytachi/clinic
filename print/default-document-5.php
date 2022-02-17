@@ -5,10 +5,9 @@ require_once '../tools/warframe.php';
 
 // 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
-    $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.comment, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
     $data = (new UserModel)->byId($docs->user_id);
     $visit = (new VisitServicesModel)->Where("visit_id = $docs->id AND service_id = 1")->get();
-    $dig = (new VisitModel)->Where("user_id = $docs->user_id AND direction IS NULL AND completed IS NOT NULL")->Order("completed DESC")->get();
     $initial = (new VisitInitialModel)->Where("visit_id = $docs->id")->get();
 }else Hell::error('404');
 
@@ -85,7 +84,7 @@ function persic($qty=0, $str=""){
                 8.Касалхонага шошилинч равишда келтирилган: ҳа, йўқ _____________________________
                 Қандай транспортда ___________________________________________________________________
                 Касаллик бошлангандан сўнг ўтган вақт, жароҳатдан сўнг, режали равишда 
-                9.Бемор йўлланмасидаги ташҳис <?= persic(50, ($dig and $dig->icd_id) ? icd($dig->icd_id, "decryption")['decryption'] : null) ?>
+                9.Бемор йўлланмасидаги ташҳис <?= persic(50, $docs->comment) ?>
                 __________________________________________________________________________________________
             </div>
         </div>

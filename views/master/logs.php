@@ -33,21 +33,7 @@ $header = "Логи";
 
 			<!-- Content area -->
 			<div class="content">
-
 				<?php
-
-				class Test extends Model {
-					public $table = "province";
-
-					public function form()
-					{
-						dd($this);
-					}
-				}
-
-				$cl = new Test;
-
-				$cl->call("get", array("id" => 22, "form" => "form"), null, null);
 
 				// function insertPacs($tb, $post){
 				// 	global $pacs;

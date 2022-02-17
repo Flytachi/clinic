@@ -19,7 +19,11 @@
                 </div>
                 <fieldset class="mb-3 row">
 
-                    <?php if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
+                    <?php
+
+                                                                use Mixin\Hell;
+
+ if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label class="col-md-4"><b>Вес:</b></label>
@@ -158,6 +162,11 @@
                             if ( $activity and (!$patient->direction or ($patient->direction and is_grant())) ) {
                                 $icd_attr = "onclick='UpdateProfile(`".up_url($patient->visit_id, "VisitIcdHistoryModel")."`)' class=\"text-primary\"";
                             }
+
+                            $comment_attr = "";
+                            if ( $activity and (!$patient->direction or ($patient->direction and is_grant())) ) {
+                                $comment_attr = "onclick='UpdateProfile(`". Hell::apiGet('VisitSet', $patient->visit_id, 'form') ."`)' class=\"text-primary\"";
+                            }
                             ?>
                             <label class="col-md-3"><b>ICD (диагноз):</b></label>
                             <div class="col-md-9 text-right">
@@ -178,6 +187,23 @@
                                             data-original-title="<div class='d-flex justify-content-between'><?= $icd['code'] ?><span class='font-size-sm text-muted'><?= get_full_name($patient->icd_autor) ?></span></div>"
                                             data-content="<?= $icd['decryption'] ?>">
                                             <?= $icd['code'] ?></span>
+                                    <?php else: ?>
+                                        <span class="text-muted">Нет данных</span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <label class="col-md-4"><b>Комментарий:</b></label>
+                            <div class="col-md-8 text-right">
+                                <?php if ( $activity and (!$patient->direction or ($patient->direction and is_grant())) ): ?>
+                                    <?php if ($patient->comment): ?>
+                                        <span <?= $comment_attr ?>><?= $patient->comment ?></span>
+                                    <?php else: ?>
+                                        <span <?= $comment_attr ?>>Назначить диагноз</span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <?php if ($patient->comment): ?>
+                                        <span><?= $patient->comment ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">Нет данных</span>
                                     <?php endif; ?>
