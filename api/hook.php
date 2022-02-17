@@ -2,7 +2,7 @@
 
 use Mixin\Hell;
 
-require_once '../tools/warframe.php';
+require '../tools/warframe.php';
 $session->is_auth();
 
 if ( isset($_GET['model']) ) {

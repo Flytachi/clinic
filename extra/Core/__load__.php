@@ -26,11 +26,11 @@ class Core
 
     private function resolution()
     {
-        require_once dirname(__DIR__)."/Function/Dependencies.php";
+        require dirname(__DIR__)."/Function/Dependencies.php";
         
         foreach (glob(__DIR__."/$this->command_dir/*") as $filename) require_once $filename;
 
-        // try {
+        try {
             if ($Class = stristr($this->arguments[1], ":", true)) {
                 $Class_construct = "\__".$Class;
                 $Arg = str_replace(":", "", stristr($this->arguments[1], ":"));
@@ -41,9 +41,9 @@ class Core
                 $Arg2 = isset($this->arguments[2]) ? $this->arguments[2] : null;
             }
             new $Class_construct($Arg, $Arg2);
-        // } catch (\Error $e) {
-        //     echo "\033[31m"." Нет такой команды.\n";
-        // }
+        } catch (\Error $e) {
+            echo "\033[31m"." Нет такой команды.\n";
+        }
         echo "\033[0m";
 
     }

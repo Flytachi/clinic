@@ -3,8 +3,8 @@
 // Версия PHP 7.4
 if (PHP_VERSION == 7.4) {
     
-    require_once 'Core/Command/__component.php';
-    require_once 'Core/Command/__cfg.php';
+    require 'Core/Command/__component.php';
+    require 'Core/Command/__cfg.php';
     new __Component("init");
     new __Cfg("setting");
     new __Cfg("gen");

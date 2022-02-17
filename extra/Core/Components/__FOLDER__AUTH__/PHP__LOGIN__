@@ -1,5 +1,5 @@
 <?php
-require_once '../tools/warframe.php';
+require '../tools/warframe.php';
 $session->is_auth();
 ?>
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ $session->is_auth();
             <button type="submit"><span></span><span></span><span></span><span></span><b>Войти</b></button>
         </form>
 
-        <small style="color: red;"><?php is_message(); ?></small>
+        <small style="color: red;"><?php /* error message */ ?></small>
     </div>
 
 </body>

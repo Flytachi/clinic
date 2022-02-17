@@ -1,19 +1,7 @@
 <?php
 
-// Extentions
-// ini_set('session.sid_length', 48);
-// ini_set('session.sid_bits_per_character', 7);
-// ini_set('session.use_trans_sid', 0);
-// ini_set('session.use_strict_mode', 1);
-// ini_set('session.cookie_lifetime', 0);
-// ini_set('session.cookie_httponly', 1);
-// ini_set('session.cookie_samesite', "SameSite");
-// ini_set('session.cache_limiter', "nocache");
-// ini_set('session.hash_function', "sha512");
-//
-
-require_once dirname(__FILE__).'/temp.php';
-require_once dirname(__DIR__).'/extra/warframe.php';
+include dirname(__FILE__).'/temp.php';
+require dirname(__DIR__).'/extra/warframe.php';
 
 
 // Подключение Моделей
@@ -21,11 +9,11 @@ if (is_dir(dirname(__DIR__)."/model_old")) foreach (getDirContent(dirname(__DIR_
 //
 
 
-require_once dirname(__FILE__).'/libs/lib.php';
-require_once dirname(__FILE__).'/constants.php';
-require_once dirname(__FILE__).'/functions.php';
-require_once dirname(__FILE__).'/classes.php';
-require_once dirname(__FILE__).'/mixin.php';
+include dirname(__FILE__).'/libs/lib.php';
+include dirname(__FILE__).'/constants.php';
+include dirname(__FILE__).'/functions.php';
+include dirname(__FILE__).'/classes.php';
+include dirname(__FILE__).'/mixin.php';
 
 date_default_timezone_set(ini['GLOBAL_SETTING']['TIME_ZONE']);
 

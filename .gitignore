@@ -4,11 +4,12 @@
 /session
 /storage
 /tests
+/tools/nginx.conf
 /tools/libs/*
 !/tools/libs/*.php
 /setting.ini
-core.x*
-.*
+/core.x*
+/.*
 
 ## IDE support
 *.buildpath
