@@ -77,6 +77,7 @@ $header = "";
                                         <td><?= $row->name ?></td>
                                             <td>
                                             <div class="list-icons">
+                                                <a onclick="Update('<?= Hell::apiAxe('Province') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                                                 <a onclick="Update('<?= Hell::apiGet('Province', $row->id, 'form') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
                                                 <a href="<?= Hell::apiDelete('Province', $row->id) ?>" onclick="return confirm('Вы уверены что хотите удалить направителя?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                                             </div>

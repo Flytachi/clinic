@@ -1,6 +1,5 @@
 <?php
 
-use Mixin\Hell;
 use Mixin\Model;
 
 class Province extends Model
@@ -25,6 +24,11 @@ class Province extends Model
 
         </form>
         <?php
+    }
+
+    public function axe(){
+        dd($this);
+        $this->stop();
     }
 }
 

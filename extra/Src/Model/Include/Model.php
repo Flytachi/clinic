@@ -11,9 +11,9 @@ abstract class Model extends Credo implements ModelInterface
      * @version 15.0
      */
 
-    private $get = [];
-    private $post = [];
-    private $files = [];
+    private Array $get = [];
+    private Array $post = [];
+    private Array $files = [];
     protected $table = '';
 
     use 
@@ -39,7 +39,14 @@ abstract class Model extends Credo implements ModelInterface
         elseif ($action == "save") $this->save();
         elseif ($action == "delete") $this->delete();
         elseif ($action == "update") $this->update();
+        elseif ($action == "axe") $this->axeElement();
         else $this->error("NOT ACTION!");
+    }
+
+    private function axeElement()
+    {
+        if (method_exists(get_class($this), 'axe')) $this->{'axe'}();
+        else Hell::error("403");
     }
 
     private function getElement()
@@ -95,20 +102,16 @@ abstract class Model extends Credo implements ModelInterface
         return (isset($this->getPost()->{$column})) ? $this->getPost()->{$column} : null;
     }
 
-    private function stop()
+    final public function stop()
     {
-        /**
-         * Остановка операции!
-         */
         exit;
     }
 
-    private function dd()
+    final public function dd()
     {
-        /**
-         * Мод для тестов!
-         */
-        dd($this);
+        parad("Get", $this->getGet());
+        parad("Post", $this->getPost());
+        parad("Files", $this->getFiles());
         exit;
     }
 

@@ -65,6 +65,18 @@ abstract class Credo implements CredoInterface
      * @version 3.0
      */
     
+    private String $CRD_sql;
+    private String $CRD_as = '';
+    private String $CRD_data = '*';
+    private String $CRD_join = '';
+    private String $CRD_where = '';
+    private String $CRD_order = '';
+    private String $CRD_group = '';
+    private String $CRD_selfPage = '';
+    private String $CRD_search = '';
+    private String $CRD_searchGetName = 'CRD_search=';
+    private Int $CRD_limit = 0;
+    private Bool $CRD_error = false;
     protected $db;
 
     use 
@@ -74,20 +86,10 @@ abstract class Credo implements CredoInterface
         CredoHelp;
 
     
-    public function __construct($table = null) {
+    public function __construct($table_As = null) {
         global $db;
         $this->db = $db;
-        (String) $this->CRD_as = "";
-        (String) $this->CRD_data = "*";
-        (String) $this->CRD_join = "";
-        (String) $this->CRD_where = "";
-        (String) $this->CRD_order = "";
-        (String) $this->CRD_group = "";
-        (String) $this->CRD_selfPage = "";
-        (String) $this->CRD_search = "";
-        (String) $this->CRD_searchGetName = "CRD_search=";
-        (Bool) $this->CRD_error = false;
-        (Int) $this->CRD_limit = 0;
+        if ($table_As) $this->CRD_as = $table_As;
     }
 
     private function generateSql()

@@ -216,6 +216,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												<tr>
+													<th>Register Patient On Division(stationar)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_stationar_on_division" <?= (isset($config->constant_stationar_on_division) and $config->constant_stationar_on_division) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 											</tbody>
 
 											<!-- Admin -->

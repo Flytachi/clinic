@@ -5,6 +5,7 @@ namespace Mixin;
 class Hell
 {
     static $hookFile = "hook";
+    static $hookAxeFile = "hookAxe";
     static $hookGetFile = "hookGet";
     static $hookDeleteFile = "hookDelete";
 
@@ -37,6 +38,12 @@ class Hell
     static function apiHook(Array $params)
     {
         return api(Hell::$hookFile, $params);
+    }
+
+    static function apiAxe(String $model, Array $params = [])
+    {
+        $params['model'] = $model;
+        return api(Hell::$hookAxeFile, $params);
     }
 
     static function apiGet(String $model, Int $id = null, String $form = null)

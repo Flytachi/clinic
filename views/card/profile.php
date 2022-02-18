@@ -168,7 +168,7 @@
                                 $comment_attr = "onclick='UpdateProfile(`". Hell::apiGet('VisitSet', $patient->visit_id, 'form') ."`)' class=\"text-primary\"";
                             }
                             ?>
-                            <label class="col-md-3"><b>ICD (диагноз):</b></label>
+                            <label class="col-md-3"><b>Диагноз (ICD):</b></label>
                             <div class="col-md-9 text-right">
                                 <?php if ( $activity and (!$patient->direction or ($patient->direction and is_grant())) ): ?>
                                     <?php if ($patient->icd_id): ?>
@@ -193,8 +193,8 @@
                                 <?php endif; ?>
                             </div>
 
-                            <label class="col-md-4"><b>Комментарий:</b></label>
-                            <div class="col-md-8 text-right">
+                            <label class="col-md-5"><b>Диагноз (Коммент):</b></label>
+                            <div class="col-md-7 text-right">
                                 <?php if ( $activity and (!$patient->direction or ($patient->direction and is_grant())) ): ?>
                                     <?php if ($patient->comment): ?>
                                         <span <?= $comment_attr ?>><?= $patient->comment ?></span>

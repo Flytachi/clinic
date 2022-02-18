@@ -8,7 +8,6 @@ interface CredoInterface
     public function byId(Int $id, $item = '');
     public function list(Bool $counter = false);
     public function getId();
-    //
     public function as(String $context = "");
     public function Data(String $context = "*");
     public function Limit(Int $limit = 0);
@@ -18,9 +17,7 @@ interface CredoInterface
     public function Where(Mixed $context);
     public function Order(String $context = null);
     public function Group(String $context = null);
-    //
     public function panel();
-    //
     public function returnPath(String $uri = null);
     public function showError(Bool $status = false);
     public function getSearch();
