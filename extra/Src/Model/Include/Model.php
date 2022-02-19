@@ -11,9 +11,9 @@ abstract class Model extends Credo implements ModelInterface
      * @version 15.0
      */
 
-    private Array $get = [];
-    private Array $post = [];
-    private Array $files = [];
+    private $get = [];
+    private $post = [];
+    private $files = [];
     protected $table = '';
 
     use 
@@ -52,10 +52,11 @@ abstract class Model extends Credo implements ModelInterface
     private function getElement()
     {
         $object = $this->byId($this->get['id']);
+
         if ($object) {
-
+            
             if(isset($this->get['form'])) {
-
+                
                 $this->setPost($object);
                 $form = $this->get['form'];
                 unset($this->get['form']);
