@@ -46,7 +46,7 @@ class VisitModel extends ModelOld
                         <label>Специалиста:</label>
                         <select data-placeholder="Выберите специалиста" name="grant_id" id="parent_id" class="<?= $classes['form-select'] ?>" required>
                             <?php foreach($db->query("SELECT * from users WHERE user_level = 5 AND is_active IS NOT NULL") as $row): ?>
-                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($this->value('grant_id') == $row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
+                                <option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ($this->value('grant_id') == $row['id']) ? "disabled" : "" ?>><?= get_full_name($row['id']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
