@@ -73,7 +73,7 @@ class __Component
             }else {
                 $extention = ( $temp = mb_strtolower(strstr(basename($item), '_', true)) ) ? ".$temp" : "";
                 $name = mb_strtolower(substr(strstr(basename($item), '_'), 2, -2));
-                $Cd = explode("|", $name); 
+                $Cd = explode("-", $name); 
                 $newName = $Cd[0];
                 for ($i=1; $i < count($Cd); $i++) $newName .= ucfirst($Cd[$i]);
                 if ($c_path) $this->create_file("$c_path/$newName$extention", file_get_contents($item));
