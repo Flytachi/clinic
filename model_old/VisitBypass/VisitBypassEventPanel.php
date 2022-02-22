@@ -28,7 +28,8 @@ class VisitBypassEventsPanel extends ModelOld
 
     public function card($pk = null)
     {
-        global $classes, $db, $methods, $session;
+        global $classes, $db, $session;
+        importModel('Method');
 
         $today = date('Ymd');
         $start = date_f($this->post['event_start'], 'Ymd');
@@ -115,7 +116,7 @@ class VisitBypassEventsPanel extends ModelOld
                         </div>
 
                         <div class="list-feed-item border-<?= $color ?>">
-                            <strong>Метод: </strong><?= ($this->bypass['method']) ? $methods[$this->bypass['method']] : '<span class="text-muted">Нет данных</span>' ?>
+                            <strong>Метод: </strong><?= ($this->bypass['method']) ? (new Method)->byId($this->bypass['method'], 'name')->name : '<span class="text-muted">Нет данных</span>' ?>
                             <br>
                             <strong>Описание: </strong>
                             <?= ($this->bypass['description']) ? "<br>".preg_replace("#\r?\n#", "<br />", $this->bypass['description']) : '<span class="text-muted">Нет данных</span>' ?>

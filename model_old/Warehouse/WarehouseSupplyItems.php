@@ -59,10 +59,10 @@ class WarehouseSupplyItemsModel extends ModelOld
             <td>
                 <input type="number" name="item_qty" <?= $status ?> class="form-control verification_input" min="1" placeholder="№" value="<?= $this->value('item_qty') ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
             </td>
+            <td>
+                <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
+            </td>
             <?php if(!$this->is_free): ?>
-                <td>
-                    <input id="item_cost-<?= $this->number ?>" type="text" name="item_cost" <?= $status ?> class="form-control verification_input" placeholder="Введите цену" value="<?= number_format($this->value('item_cost')) ?>" onkeyup="UpBtnPrice('btn_save-<?= $this->number ?>')">
-                </td>
                 <td>
                     <input id="item_price-<?= $this->number ?>" type="text" name="item_price" <?= $status ?> class="form-control verification_input input-price" placeholder="Введите цену" value="<?= number_format($this->value('item_price')) ?>" onkeyup="UpBtn('btn_save-<?= $this->number ?>')">
                 </td>

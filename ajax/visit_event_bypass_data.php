@@ -1,6 +1,6 @@
 <?php
 require_once '../tools/warframe.php';
-
+importModel('Method');
 $bypass = (new Table($db, "visit_bypass"))->where("id = {$_GET['pk']}")->get_row();
 ?>
 <ol>
@@ -12,7 +12,7 @@ $bypass = (new Table($db, "visit_bypass"))->where("id = {$_GET['pk']}")->get_row
         <?php endif; ?>
     <?php endforeach; ?>
 </ol>
-<b><em>Метод:</em></b> <?= $methods[$bypass->method] ?><br>
+<b><em>Метод:</em></b> <?= (new Method)->byId($bypass->method, 'name')->name ?><br>
 <?php if ( $bypass->description ): ?>
     <b><em>Описание:</em></b> <br> <?= preg_replace("#\r?\n#", "<br />", $bypass->description) ?>
 <?php endif; ?>

@@ -10,6 +10,12 @@ class __Seed
 
     function __construct(string $name = null)
     {
+        // Cfg
+        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
+        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
+        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
+        //
+
         if ($name) {
             $this->name = $name;
             if ($this->generate()) {
