@@ -2,6 +2,9 @@
 
 define('DIR', str_replace($_SERVER['DOCUMENT_ROOT'], "", dirname(__DIR__))); // $_SERVER['HTTP_HOST']
 
+// ! Import function
+foreach (glob(dirname(__FILE__)."/Function/*") as $function) require $function;
+// ! END Import
 
 // Todo Prepare Setting
 
@@ -36,15 +39,10 @@ if (isset(ini['SECURITY']['GUARD']) and ini['SECURITY']['GUARD']) {
 
 // * END Settings
 
-
-// ! Import function
-foreach (glob(dirname(__FILE__)."/Function/*") as $function) require $function;
-// ! END Import
+// Todo Prepare End
 
 // ! Import src
 foreach (glob(dirname(__FILE__)."/Src/*") as $plugin) require $plugin . '/__load__.php';
 // ! END Import
-
-// Todo Prepare End
 
 ?>

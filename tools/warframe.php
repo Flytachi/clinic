@@ -3,7 +3,6 @@
 include dirname(__FILE__).'/temp.php';
 require dirname(__DIR__).'/extra/warframe.php';
 
-
 // Подключение Моделей
 if (is_dir(dirname(__DIR__)."/model_old")) foreach (getDirContent(dirname(__DIR__)."/model_old/") as $filename) require_once $filename;
 //

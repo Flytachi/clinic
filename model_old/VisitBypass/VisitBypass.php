@@ -27,7 +27,8 @@ class VisitBypassModel extends ModelOld
 
     public function form($pk = null)
     {
-        global $session, $classes, $methods, $db;
+        global $session, $classes, $db;
+        importModel('Method');
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -56,8 +57,8 @@ class VisitBypassModel extends ModelOld
                             <label>Метод:</label>
                             <select data-placeholder="Выбрать метод" name="method" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php foreach ($methods as $key => $value): ?>
-                                    <option value="<?= $key ?>" <?= ($this->value('method') == $key) ? 'selected' : '' ?>><?= $value ?></option>
+                                <?php foreach ((new Method)->Where('is_active IS NOT NULL')->list() as $row): ?>
+                                    <option value="<?= $row->id ?>" <?= ($this->value('method') == $row->id) ? 'selected' : '' ?>><?= $row->name ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

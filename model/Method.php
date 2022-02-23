@@ -2,17 +2,22 @@
 
 use Mixin\Model;
 
-class Province extends Model
+class Method extends Model
 {
-    public $table = 'province';
+    use ResponceRender;
+    public $table = 'methods';
 
     public function form()
     {
+        if( isset($_SESSION['message']) ){
+            echo $_SESSION['message'];
+            unset($_SESSION['message']);
+        }
         ?>
         <form method="post" action="<?= $this->urlHook() ?>">
             <div class="form-group">
-                <label>Name:</label>
-                <input type="text" class="form-control" name="name" placeholder="Введите name" required value="<?= $this->value('name') ?>">
+                <label>Наименование:</label>
+                <input type="text" class="form-control" name="name" placeholder="Введите наименование" required value="<?= $this->value('name') ?>">
             </div>
 
             <div class="text-right">

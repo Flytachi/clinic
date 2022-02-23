@@ -30,9 +30,7 @@ $header = "Препараты";
 			<!-- Content area -->
 			<div class="content">
 
-				<div class="alert bg-warning alert-styled-left alert-dismissible">
-					<span class="font-weight-semibold">Технические работы</span>
-				</div>
+				
 
 			</div>
 

@@ -124,8 +124,8 @@ class WarehouseSupplyModel extends ModelOld
                             <th>Производитель</th>
                             <th style="width:200px">Поставщик</th>
                             <th style="width:90px">Кол-во</th>
+                            <th style="width:100px">Ц.приход</th>
                             <?php if(!$is_free): ?>
-                                <th style="width:100px">Ц.приход</th>
                                 <th style="width:100px">Ц.расход</th>
                             <?php endif; ?>
                             <th style="width:125px">Счёт фактура</th>
@@ -282,10 +282,11 @@ class WarehouseSupplyModel extends ModelOld
                     
                     var input_cost = event.target;
                     var input_price = document.querySelector("#item_price-"+(input_cost.id).replace("item_cost-", ''));
-                    var input_percent = Number(document.querySelector("#percent_input").value);
-                    var input_cost_value = Number(input_cost.value.replace(/,/g,''));
-                    
-                    input_price.value = number_format( input_cost_value + (input_cost_value * (input_percent / 100)) );
+                    if (input_price) {
+                        var input_percent = Number(document.querySelector("#percent_input").value);
+                        var input_cost_value = Number(input_cost.value.replace(/,/g,''));
+                        input_price.value = number_format( input_cost_value + (input_cost_value * (input_percent / 100)) );
+                    }
                     UpBtn(id);
                 }
 
