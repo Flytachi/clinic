@@ -8,6 +8,7 @@ class __Db
     private $argument;
     private String $path_base = "tools/base"; 
     private String $path_data = "tools/data"; 
+    private String $path_hell = "/Src/Hell/__load__.php";
     private String $path_credo = "/Src/Credo/__load__.php";
     private String $path_connection = "/Src/Connection/__load__.php";
     private String $format = "json";
@@ -43,7 +44,8 @@ class __Db
             elseif($this->argument == "seed") $this->seed();
             else echo "\033[31m"." Нет такого аргумента.\n";
         } catch (\Error $e) {
-            echo "\033[31m"." Ошибка в скрипте.\n";
+            echo $e->getMessage();
+            // echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 
@@ -69,6 +71,7 @@ class __Db
     private function migrate()
     {
         global $db; 
+        require_once dirname(__DIR__, 2) . $this->path_hell;
         require_once dirname(__DIR__, 2) . $this->path_connection;
         require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect($db);
@@ -100,6 +103,7 @@ class __Db
     private function clean()
     {
         global $db;
+        require_once dirname(__DIR__, 2) . $this->path_hell;
         require_once dirname(__DIR__, 2) . $this->path_connection;
         require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect;
@@ -119,7 +123,8 @@ class __Db
 
     private function delete()
     {
-        global $db; 
+        global $db;
+        require_once dirname(__DIR__, 2) . $this->path_hell;
         require_once dirname(__DIR__, 2) . $this->path_connection;
         require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect;
@@ -133,6 +138,7 @@ class __Db
     private function seed()
     {
         global $db; 
+        require_once dirname(__DIR__, 2) . $this->path_hell;
         require_once dirname(__DIR__, 2) . $this->path_connection;
         require_once dirname(__DIR__, 2) . $this->path_credo;
         new Connect;
