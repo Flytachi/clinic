@@ -10,7 +10,7 @@ class VisitInspectionModel extends ModelOld
     public function get_or_404(int $pk)
     {
         global $db;
-        $object = $db->query("SELECT * FROM $this->_visit WHERE id = $pk AND completed IS NULL AND is_active IS NOT NULL")->fetch(PDO::FETCH_ASSOC);
+        $object = $db->query("SELECT * FROM $this->table WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
         if($object and permission(5)){
             $this->set_post($object);
             return $this->{$_GET['form']}($object['id']);
@@ -30,7 +30,8 @@ class VisitInspectionModel extends ModelOld
         </div>
         <form method="post" action="<?= add_url() ?>">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-            <input type="hidden" name="visit_id" value="<?= $pk ?>">
+            <input type="hidden" name="id" value="<?= $pk ?>">
+            <input type="hidden" name="visit_id" value="<?= $_GET['visit_id'] ?>">
             <input type="hidden" name="response_id" value="<?= $_SESSION['session_id'] ?>">
 
             <div class="modal-body">
