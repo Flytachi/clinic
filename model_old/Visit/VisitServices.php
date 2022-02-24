@@ -145,6 +145,7 @@ class VisitServiceUp extends VisitServicesModel
         if (!$visit->direction and module('queue')) $this->queue();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
+        if (isset($this->post['queue_user'])) unset($this->post['queue_user']);
         return True;
     }
 
@@ -163,7 +164,6 @@ class VisitServiceUp extends VisitServicesModel
             }
             Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1, 'accept_date' => date("Y-m-d H:i:s")), array('room_id' => $room, 'user_id' => $user, 'is_queue' => 1));
         }
-        if (isset($this->post['queue_user']) and $this->post['queue_user']) unset($this->post['queue_user']);
     }
 }
         
