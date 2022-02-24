@@ -138,6 +138,7 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 					accept_date: date_format(new Date()),
 				},
 				success: function (result) {
+					console.log(result);
 					var data = JSON.parse(result);
 
 					if (data.status == "success") {

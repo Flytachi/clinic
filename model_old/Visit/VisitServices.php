@@ -139,11 +139,10 @@ class VisitServiceUp extends VisitServicesModel
 {
     public function clean()
     {
-        $spk = (is_array($this->post)) ? $this->post['id'][0] : $this->post['id'];
-        $visit = (new VisitModel)->byId( (new VisitServicesModel)->byId($spk)->visit_id );
+        $spk = (is_array($this->post['id'])) ? $this->post['id'][0] : $this->post['id'];
+        $visit = (new VisitModel)->byId( (new VisitServicesModel)->byId($spk, 'visit_id')->visit_id );
         if ($visit->direction and is_null($visit->grant_id)) HellCrud::update($this->_visits, array('grant_id' => $this->post['parent_id']), $visit->id);
         if (!$visit->direction and module('queue')) $this->queue();
-        $this->queue();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
         return True;
