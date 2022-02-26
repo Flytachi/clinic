@@ -68,8 +68,13 @@ class WarehouseStorageTransactionModel extends ModelOld
                 </div>
     
                 <div class="form-group row">
-                    <label class="col-md-3">Списать (кол-во): </label>
-                    <input type="number" name="item_qty" step="1" min="1" max="<?= $this->post['item_qty'] ?>" class="form-control col-md-8" id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
+                    <label class="col-md-3">Списать (кол-во):</label>
+                    <input type="number" name="item_qty" step="1" min="1" max="<?= $this->post['item_qty'] ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-3">Комметарий:</label>
+                    <input type="text" name="comment" class="form-control col-md-8" placeholder="Комментарий">
                 </div>
     
             </div>
@@ -132,6 +137,7 @@ class WarehouseStorageTransactionModel extends ModelOld
             'is_written_off' => 1,
             'responsible_id' => $this->post['responsible_id'],
             'cost' => $this->post['item_qty']*$object['item_price'],
+            'comment' => $this->post['comment'],
         );
         Mixin\insert($this->table, $transaction_post);
 

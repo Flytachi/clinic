@@ -20,7 +20,7 @@ abstract class Credo implements CredoInterface
      * 
      * Поисковая система Ajax:
      * 
-     * $search = $tb->getSerch();       ---> Искомое
+     * $search = $tb->getSearch();       ---> Искомое
      * 
      * 
      * -- search.php

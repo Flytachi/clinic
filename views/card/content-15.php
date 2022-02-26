@@ -40,7 +40,7 @@ is_module('module_pharmacy');
 
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-puzzle3 mr-2"></i>Расходные материалы
-							<?php if ($activity and permission(7)): ?>
+							<?php if ($activity and (permission(7) or !$patient->direction) ): ?>
 								<a onclick='Route(`<?= up_url(null, "VisitBypassTransactionModel") ?>&patient=<?= json_encode($patient) ?>`)' class="float-right <?= $class_color_add ?>">
 									<i class="icon-plus22 mr-1"></i>Добавить
 								</a>
@@ -123,7 +123,7 @@ is_module('module_pharmacy');
 	</div>
 	<!-- /page content -->
 
-    <?php if ($activity and permission([7])): ?>
+    <?php if ($activity and (permission(7) or !$patient->direction)): ?>
 		<div id="modal_default" class="modal fade" tabindex="-1">
 			<div class="modal-dialog modal-full">
 				<div class="<?= $classes['modal-global_content'] ?>" id="form_card"></div>

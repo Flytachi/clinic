@@ -36,11 +36,8 @@ if ($_SESSION['session_id'] == "master") {
             render('coock/index');
             break;
         case 10:
-            if (division_assist() == 2) {
-                render('diagnostic/list_outpatient');
-            }else {
-                render('diagnostic/index');
-            }
+            if (division_assist() == 2) render('diagnostic/list_outpatient');
+            else render('diagnostic/index');
             break;
         case 11:
             render('anesthetist/index');
