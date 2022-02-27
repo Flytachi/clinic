@@ -60,7 +60,8 @@ class __Db
         foreach ($db->query("SHOW TABLES") as $table) {
             $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
             $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
-            $t = str_replace( stristr(substr(strstr($t, 'AUTO_INCREMENT='), 0, -1), ' ', true), "", $t);
+            $t = str_replace( stristr(strstr($t, 'AUTO_INCREMENT='), ' ', true), '', $t);
+            $t = str_replace('  ', ' ', $t);
             $tables[] = $t;
         }
         $this->create_file(json_encode($tables, JSON_PRETTY_PRINT), "Index_Tables");
@@ -181,7 +182,8 @@ class __Db
         foreach ($db->query("SHOW TABLES") as $table) {
             $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
             $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
-            $t = str_replace( stristr(substr(strstr($t, 'AUTO_INCREMENT='), 0, -1), ' ', true), "", $t);
+            $t = str_replace( stristr(strstr($t, 'AUTO_INCREMENT='), ' ', true), '', $t);
+            $t = str_replace('  ', ' ', $t);
             $self_base[] = $t;
         }
         

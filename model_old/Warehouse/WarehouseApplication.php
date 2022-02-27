@@ -28,7 +28,7 @@ class WarehouseApplication extends ModelOld
                 <label>Склад (с):</label>
                 <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_from) ? 'disabled': ''; ?>>
                     <option></option>
-                    <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                    <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE is_active IS NOT NULL AND is_external IS NOT NULL") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($storage_in == $row['id']) ? 'disabled' : '' ?> <?= ($storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -367,13 +367,13 @@ class WarehouseApplication extends ModelOld
                         document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-danger";
                         document.querySelector("#indicator-feed").className = "list-feed-item border-danger";
                         document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
-                        document.querySelector("#indicator-btn").disabled = true;
+                        document.querySelector("#indicator-btn").disabled = false;
                     } else {
                         qty_count.className = "";
                         document.querySelector("#indicator-card").className = "card card-body border-top-1 border-top-secondary";
                         document.querySelector("#indicator-feed").className = "list-feed-item border-secondary";
                         document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
-                        document.querySelector("#indicator-btn").disabled = true;
+                        document.querySelector("#indicator-btn").disabled = false;
                     }
                 }else{
                     event.target.className = "form-control text-right input_count-qty text-danger";

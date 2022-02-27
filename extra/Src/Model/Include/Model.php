@@ -113,7 +113,7 @@ abstract class Model extends Credo implements ModelInterface
         parad("Get", $this->getGet());
         parad("Post", $this->getPost());
         parad("Files", $this->getFiles());
-        exit;
+        $this->stop();
     }
 
 }

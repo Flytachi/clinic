@@ -29,7 +29,8 @@ class VisitBypassTransactionModel extends ModelOld
                 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
                     <?php if( module('pharmacy') ): ?>
                         <?php
-                        $warehouses = (new Table($db, "warehouse_setting_applications wsa"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=wsa.warehouse_id)")->where("wsa.division_id = $session->session_division AND w.is_active IS NOT NULL");
+                        $dirApl = ($patient->direction) ? "wsa.direction IS NOT NULL" : "wsa.direction IS NULL";
+                        $warehouses = (new Table($db, "warehouse_setting_applications wsa"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=wsa.warehouse_id)")->where("wsa.division_id = $session->session_division AND w.is_active IS NOT NULL AND $dirApl");
                         ?>
                         <?php foreach ($warehouses->get_table() as $ware): ?>
                             <li class="nav-item"><a href="#" onclick="ChangeWare(<?= $ware->id ?>)" class="nav-link legitRipple" data-toggle="tab"><?= $ware->name ?></a></li>

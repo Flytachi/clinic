@@ -74,7 +74,7 @@
         </li>
     <?php endif; ?>
 
-    <?php if( module('module_pharmacy') and permission(7) ): ?>
+    <?php if( module('module_pharmacy') and (permission(7) or !$patient->direction) ): ?>
         <li class="nav-item">
             <a href="<?= viv('card/content-15').$agr ?>" class="nav-link <?= viv_link('card/content-15') ?> legitRipple" style="white-space:nowrap;"><i class="icon-puzzle3 mr-1"></i>Расходные материалы</a>
         </li>

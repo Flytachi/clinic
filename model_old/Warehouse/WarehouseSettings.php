@@ -25,12 +25,14 @@ class WarehouseSettingsModel extends ModelOld
     public function form($pk = null)
     {
         global $classes, $db, $PERSONAL;
-        $appl = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')}")->fetchAll();
+        $appl_amb = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')} AND direction IS NULL")->fetchAll();
+        $appl_sta = $db->query("SELECT division_id FROM $this->_application WHERE warehouse_id = {$this->value('id')} AND direction IS NOT NULL")->fetchAll();
         $grants = $db->query("SELECT responsible_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NOT NULL")->fetchAll();
         $users = $db->query("SELECT responsible_id FROM $this->_permission WHERE warehouse_id = {$this->value('id')} AND is_grant IS NULL")->fetchAll();
         for ($i=0; $i < count($grants); $i++) $grants[$i] = $grants[$i]['responsible_id'];
         for ($i=0; $i < count($users); $i++) $users[$i] = $users[$i]['responsible_id'];
-        for ($i=0; $i < count($appl); $i++) $appl[$i] = $appl[$i]['division_id'];
+        for ($i=0; $i < count($appl_amb); $i++) $appl_amb[$i] = $appl_amb[$i]['division_id'];
+        for ($i=0; $i < count($appl_sta); $i++) $appl_sta[$i] = $appl_sta[$i]['division_id'];
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title">Настройки склада <?= $this->value('name') ?></h6>
@@ -99,12 +101,20 @@ class WarehouseSettingsModel extends ModelOld
                 
                 <?php if($this->value('is_internal')): ?>
                     <fieldset>
-                        <legend><b>Заявки</b></legend>
+                        <legend><b>Видимость</b></legend>
                         <div class="form-group">
-                            <label>Видимость склада</label>
-                            <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[]" class="settin <?= $classes['form-multiselect'] ?>">
+                            <label>Заявки (амбулатор)</label>
+                            <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[ambulator][]" class="settin <?= $classes['form-multiselect'] ?>">
                                 <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
-                                    <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
+                                    <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl_amb)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Заявки (стационар)</label>
+                            <select data-placeholder="Выбрать отдел" multiple="multiple" name="application[stationar][]" class="settin <?= $classes['form-multiselect'] ?>">
+                                <?php foreach($db->query("SELECT * from divisions WHERE level IN (5)") as $row): ?>
+                                    <option value="<?= $row['id'] ?>" <?= (in_array($row['id'], $appl_sta)) ? 'selected' : "" ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -210,10 +220,18 @@ class WarehouseSettingsModel extends ModelOld
     {
         global $db;
         Mixin\delete($this->_application, $this->post['warehouse_id'], "warehouse_id");
-            
-        if (isset($this->post['application'])) {
-            foreach ($this->post['application'] as $division) {
-                $object = Mixin\insert($this->_application, array('warehouse_id' => $this->post['warehouse_id'], 'division_id' => $division));
+        if (isset($this->post['application']['ambulator'])) {
+            foreach ($this->post['application']['ambulator'] as $division) {
+                $object = Mixin\insert($this->_application, array('warehouse_id' => $this->post['warehouse_id'], 'division_id' => $division, 'direction' => null));
+                if (!intval($object)){
+                    $this->error($object);
+                    $db->rollBack();
+                }
+            }
+        }
+        if (isset($this->post['application']['stationar'])) {
+            foreach ($this->post['application']['stationar'] as $division) {
+                $object = Mixin\insert($this->_application, array('warehouse_id' => $this->post['warehouse_id'], 'division_id' => $division, 'direction' => 1));
                 if (!intval($object)){
                     $this->error($object);
                     $db->rollBack();

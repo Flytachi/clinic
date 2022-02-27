@@ -35,11 +35,6 @@ $header = "Логи";
 			<div class="content">
 				<?php
 
-				importModel('Province');
-
-				// dd( (new Province)->ShowError(false)->get('name') );
-				dd( (new Province)->list() );
-
 				// function insertPacs($tb, $post){
 				// 	global $pacs;
 				// 	$col = implode(",", array_keys($post));
