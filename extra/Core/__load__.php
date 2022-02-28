@@ -9,7 +9,7 @@ class Core
 {
     private $argument_count;
     private $arguments;
-    private $command_dir = "Command";
+    private String $command_dir = "Command";
 
     function __construct($arg1 = null, $arg2 = null)
     {
@@ -26,7 +26,8 @@ class Core
 
     private function resolution()
     {
-        require dirname(__DIR__)."/Function/Dependencies.php";
+        require dirname(__DIR__) . '/defines.php';
+        require dirname(__DIR__) . '/Function/Dependencies.php';
         
         foreach (glob(__DIR__."/$this->command_dir/*") as $filename) require_once $filename;
 
@@ -34,12 +35,11 @@ class Core
             if ($Class = stristr($this->arguments[1], ":", true)) {
                 $Class_construct = "\__".$Class;
                 $Arg = str_replace(":", "", stristr($this->arguments[1], ":"));
-                $Arg2 = isset($this->arguments[2]) ? $this->arguments[2] : null;
             }else {
                 $Class_construct = "\__".ucfirst($this->arguments[1]);
                 $Arg = null;
-                $Arg2 = isset($this->arguments[2]) ? $this->arguments[2] : null;
             }
+            $Arg2 = $this->arguments[2] ?? null;
             new $Class_construct($Arg, $Arg2);
         } catch (\Error $e) {
             echo "\033[31m"." Нет такой команды.\n";

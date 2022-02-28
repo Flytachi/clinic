@@ -2,21 +2,32 @@
 
 class Connect
 {
-    
-    function __construct(String $DNS = null, String $user = null, String $password = null, String $_ = "db")
+    private String $DNS;
+    private String $user;
+    private String $password;
+
+    function __construct(Array $params)
     {
-        global ${$_};
-        if (is_null($DNS)) $DNS = ini['DATABASE']['DRIVER'].":host=".ini['DATABASE']['HOST'].";port=".ini['DATABASE']['PORT'].";dbname=".ini['DATABASE']['NAME'].";charset=".ini['DATABASE']['CHARSET'];
-        if (is_null($user)) $user = ini['DATABASE']['USER'];
-        if (is_null($password)) $password = ini['DATABASE']['PASS'];
-        
+        if (is_null($params['DRIVER'])) dieConection("Connection: driver not found!");
+        if (is_null($params['CHARSET'])) dieConection("Connection: charset not found!");
+        if (is_null($params['HOST'])) dieConection("Connection: host not found!");
+        if (is_null($params['PORT'])) dieConection("Connection: port not found!");
+        if (is_null($params['NAME'])) dieConection("Connection: db name not found!");
+        if (is_null($params['USER'])) dieConection("Connection: username not found!");
+        $this->DNS = $params['DRIVER'] . ":host=".$params['HOST'] . ";port=" . $params['PORT'] . ";dbname=" . $params['NAME'] . ";charset=" . $params['CHARSET'];
+        $this->user = $params['USER'];
+        $this->password = $params['PASS'];
+    }
+
+    public function connection($debug = false) {
         try {
-            ${$_} = new PDO($DNS, $user, $password);
-            ${$_}->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            ${$_}->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
-            if ( isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG'] ) ${$_}->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $db = new PDO($this->DNS, $this->user, $this->password);
+            $db->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $db->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+            if ( $debug ) $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            return $db;
         } catch (\PDOException $e) {
-            dieConection($e->getMessage()); 
+            dieConection($e->getMessage());
         }
     }
 }

@@ -16,7 +16,8 @@ include dirname(__FILE__).'/mixin.php';
 
 date_default_timezone_set(ini['GLOBAL_SETTING']['TIME_ZONE']);
 
-new Connect;
+$base = new Connect(ini['DATABASE']);
+$db = $base->connection(ini['GLOBAL_SETTING']['DEBUG']);
 $session = new MySession($db, ini['GLOBAL_SETTING']['SESSION_LIFE']);
 
 if (!module('module_pharmacy')) unset($PERSONAL[4]);

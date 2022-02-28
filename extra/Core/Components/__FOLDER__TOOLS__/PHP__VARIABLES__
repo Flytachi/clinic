@@ -1,14 +1,11 @@
 <?php
 
-// Varitables
+// Variables
 
 // Директории для хранения файлов 
 $storage = array();
 
 // Ссылки на git ресурсы
 $git_links = array();
-
-// Настроки для миграции базы даных
-$MUL = array();
 
 ?>

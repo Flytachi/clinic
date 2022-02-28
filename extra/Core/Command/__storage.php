@@ -3,7 +3,8 @@
 class __Storage
 {
     private $argument;
-    private $path = "storage";
+    private $name;
+    private String $path = "storage";
 
     function __construct($value = null, $name = null)
     {

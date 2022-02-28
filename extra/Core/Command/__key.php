@@ -3,13 +3,12 @@
 class __Key
 {
     private $argument;
-    private $key = ".key";
-    private $auth = "master_key_ITACHI:2021-06-30";
+    private $serial;
 
-    function __construct($value = null, $seria = null)
+    function __construct($value = null, $serial = null)
     {
         $this->argument = $value;
-        $this->seria = $seria;
+        $this->serial = $serial;
         $this->handle();
     }
 
@@ -21,13 +20,13 @@ class __Key
 
     private function resolution()
     {
-        if (hex2bin("$this->argument") === $this->auth) $this->generate_key();
+        if (hex2bin("$this->argument") === "master_key_ITACHI:2021-06-30") $this->generate_key();
         else $this->error();
     }
 
     private function generate_key()
     {
-        $KEY = dirname(__DIR__, 3) . "/$this->key";
+        $KEY = dirname(__DIR__, 3) . "/.key";
         $fp = fopen($KEY, "w");
         fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
         fclose($fp);
@@ -36,7 +35,7 @@ class __Key
 
     private function error()
     {
-        unlink(dirname(__DIR__, 3) . "/$this->key");
+        unlink(dirname(__DIR__, 3) . "/.key");
         echo "[security->" . date("Y-m-d H:i:s") . "] Fail";
     }
 

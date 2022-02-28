@@ -4,18 +4,11 @@ class __Backup
 {
     private $argument;
     private $name;
-    private String $file_format = "sql";
     private String $path = "backup";
-    private String $path_connection = "/Src/Connection/__load__.php";
+    private String $file_format = "sql";
 
     function __construct($value = null, $name = null)
     {
-        // Cfg
-        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
-        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
-        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
-        //
-        
         $this->argument = $value;
         $this->name = $name;
         $this->handle();
@@ -23,19 +16,16 @@ class __Backup
 
     private function handle()
     {
-        if (!is_null($this->argument)) {
-            $this->resolution();
-        }else {
-            $this->help();
-        }
+        if (!is_null($this->argument)) $this->resolution();
+        else $this->help();
     }
 
     private function resolution()
     {
         try {
             if ($this->argument == "init") $this->init();
-            elseif ($this->argument == "create") $this->create();
             elseif ($this->argument == "show") $this->show();
+            elseif ($this->argument == "create") $this->create();
             elseif ($this->argument == "delete") $this->delete();
             elseif ($this->argument == "migrate") $this->migrate();
             else echo "\033[31m"." Нет такого аргумента.\n";
@@ -52,7 +42,7 @@ class __Backup
         }else echo "\033[32m"." Директория для резервного копирования уже существует.\n";
     }
 
-    public function is_dir()
+    public function is_dir(): bool
     {
         if (file_exists(dirname(__DIR__, 3)."/".$this->path)) return true;
         else return false;
@@ -66,20 +56,17 @@ class __Backup
             foreach ($scanned_files as $file) {
                 print_r(pathinfo($file, PATHINFO_FILENAME)."\n");
             }
-            return 1;
         }else echo "\033[33m"." Директория для резервного копирования не существует.\n";
     }
 
     private function create()
     {
         if ($this->is_dir()) {
-            require_once dirname(__DIR__, 2) . $this->path_connection;
-            new Connect;
+            $ini = cfgGet();
             $path = dirname(__DIR__, 3)."/".$this->path;
             $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
-            exec("mysqldump -u " . ini['DATABASE']['USER'] . " -p" . ini['DATABASE']['PASS'] . " " . ini['DATABASE']['NAME'] . " > $path/$file_name.$this->file_format");
+            exec("mysqldump -u " . $ini['DATABASE']['USER'] . " -p" . $ini['DATABASE']['PASS'] . " " . $ini['DATABASE']['NAME'] . " > $path/$file_name.$this->file_format");
             echo "\033[32m"." Дамп успешно создан.\n";
-            return 1;
         }else echo "\033[33m"." Директория для резервного копирования не существует.\n";
     }
 
@@ -91,7 +78,6 @@ class __Backup
                 unlink("$path/$this->name.$this->file_format");
                 echo "\033[32m"." Дамп успешно удалён.\n";
             }else echo "\033[33m"." Введите название удаляемого дампа.\n";
-            return 1;
         }else echo "\033[33m"." Директория для резервного копирования не существует.\n";
     }
 
@@ -99,13 +85,11 @@ class __Backup
     {
         if ($this->is_dir()) {
             if ($this->name) {
-                require_once dirname(__DIR__, 2) . $this->path_connection;
+                $ini = cfgGet();
                 $path = dirname(__DIR__, 3)."/".$this->path;
-                $file_name = ($this->name) ? $this->name : date("Y-m-d_H-i-s");
-                exec("mysql -u " . ini['DATABASE']['USER'] . " -p" . ini['DATABASE']['PASS'] . " " . ini['DATABASE']['NAME'] . " < $path/$file_name.$this->file_format");
+                exec("mysql -u " . $ini['DATABASE']['USER'] . " -p" . $ini['DATABASE']['PASS'] . " " . $ini['DATABASE']['NAME'] . " < $path/$this->name.$this->file_format");
                 echo "\033[32m"." Миграция дампа прошла успешно.\n";
             }else echo "\033[33m"." Введите название файла дампа.\n";
-            return 1;
         }else echo "\033[33m"." Директория для резервного копирования не существует.\n";
     }
 

@@ -4,16 +4,17 @@ namespace Mixin;
 
 class Hell
 {
-    static $hookFile = "hook";
-    static $hookAxeFile = "hookAxe";
-    static $hookGetFile = "hookGet";
-    static $hookDeleteFile = "hookDelete";
+    static String $hookFile = "hook";
+    static String $hookAxeFile = "hookAxe";
+    static String $hookGetFile = "hookGet";
+    static String $hookDeleteFile = "hookDelete";
 
-    static function error(String $url){
+    static function error(String $url)
+    {
         if(explode('/', $_SERVER['PHP_SELF'])[1] != 'error') die( include dirname(__DIR__, 4)."/error/$url.php" );
     }
 
-    static function array_to_ini(Array $a, Array $parent = array())
+    static function array_to_ini(Array $a, Array $parent = array()): String
     {
         $out = '';
         foreach ($a as $k => $v)
@@ -35,18 +36,18 @@ class Hell
         return $out;
     }
 
-    static function apiHook(Array $params)
+    static function apiHook(Array $params): String
     {
         return api(Hell::$hookFile, $params);
     }
 
-    static function apiAxe(String $model, Array $params = [])
+    static function apiAxe(String $model, Array $params = []): String
     {
         $params['model'] = $model;
         return api(Hell::$hookAxeFile, $params);
     }
 
-    static function apiGet(String $model, Int $id = null, String $form = null)
+    static function apiGet(String $model, Int $id = null, String $form = null): String
     {
         $params = array('model' => $model);
         if($id) $params['id'] = $id;
@@ -54,7 +55,7 @@ class Hell
         return api(Hell::$hookGetFile, $params);
     }
 
-    static function apiDelete(String $model, Int $id)
+    static function apiDelete(String $model, Int $id): String
     {
         return api(Hell::$hookDeleteFile, array('model' => $model, 'id' => $id));
     }

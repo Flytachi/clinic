@@ -10,12 +10,6 @@ class __Seed
 
     function __construct(string $name = null)
     {
-        // Cfg
-        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
-        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
-        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
-        //
-
         if ($name) {
             $this->name = $name;
             if ($this->generate()) {
@@ -30,11 +24,12 @@ class __Seed
         
     }
 
-    private function generate()
+    private function generate(): bool
     {
-        global $db;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        new Connect;
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
+
         if ($db->query("SHOW TABLES LIKE '$this->name';")->rowCount()) {
             foreach ($db->query("SELECT * FROM $this->name") as $value) {
                 $this->json[] = $value;
@@ -42,11 +37,11 @@ class __Seed
             return $this->create_file();
         } else {
             echo "\033[31m"." Таблица $this->name не найдена.\n";
-            exit;
+            return false;
         }
     }
 
-    private function create_file()
+    private function create_file(): bool
     {
         $file = fopen("$this->path/$this->name.$this->format", "w");
         fwrite($file, json_encode($this->json, JSON_PRETTY_PRINT));

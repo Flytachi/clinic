@@ -3,7 +3,8 @@
 class __Component
 {
     private $argument;
-    private $path = "Components";
+    private $name;
+    private String $path = "Components";
 
     function __construct($value = null, $name = null)
     {
@@ -34,16 +35,15 @@ class __Component
     {
         $file = dirname(__DIR__) . '/Template/Server/nginx';
         $errors = "";
-        if (file_exists(dirname(__DIR__, 3)."/.cfg")) {
-            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
-            $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
+        if (file_exists(cfgPathClose)) {
+            $ini = cfgGet();
             $template = str_replace("__PORT__", $ini['PORT'], file_get_contents($file));
             $template = str_replace("__ROOT__", dirname(__DIR__, 3), $template);
             $template = str_replace("__HOSTS__", implode(' ', $ini['HOSTS']), $template);
             foreach (glob(dirname(__DIR__)."/$this->path/__FOLDER__ERROR__/*") as $value) {
-                $extention = ( $temp = mb_strtolower(strstr(basename($value), '_', true)) ) ? ".$temp" : "";
+                $ext = ( $temp = mb_strtolower(strstr(basename($value), '_', true)) ) ? ".$temp" : "";
                 $name = mb_strtolower(substr(strstr(basename($value), '_'), 2, -2));
-                $errors .= "\n\terror_page $name /error/$name$extention;";
+                $errors .= "\n\terror_page $name /error/$name$ext;";
             }
             $template = str_replace("__ERRORS__", $errors, $template);
 
@@ -71,13 +71,13 @@ class __Component
                 $this->create_dir($create_folder);
                 $this->change_dir($item, $create_folder);
             }else {
-                $extention = ( $temp = mb_strtolower(strstr(basename($item), '_', true)) ) ? ".$temp" : "";
+                $ext = ( $temp = mb_strtolower(strstr(basename($item), '_', true)) ) ? ".$temp" : "";
                 $name = mb_strtolower(substr(strstr(basename($item), '_'), 2, -2));
                 $Cd = explode("-", $name); 
                 $newName = $Cd[0];
                 for ($i=1; $i < count($Cd); $i++) $newName .= ucfirst($Cd[$i]);
-                if ($c_path) $this->create_file("$c_path/$newName$extention", file_get_contents($item));
-                else $this->create_file(dirname(__DIR__, 3)."/$newName$extention", file_get_contents($item));
+                if ($c_path) $this->create_file("$c_path/$newName$ext", file_get_contents($item));
+                else $this->create_file(dirname(__DIR__, 3)."/$newName$ext", file_get_contents($item));
             }
         }
     }

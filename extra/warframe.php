@@ -1,5 +1,7 @@
 <?php
 
+require dirname(__FILE__) . '/defines.php';
+
 define('DIR', str_replace($_SERVER['DOCUMENT_ROOT'], "", dirname(__DIR__))); // $_SERVER['HTTP_HOST']
 
 // ! Import function
@@ -8,14 +10,7 @@ foreach (glob(dirname(__FILE__)."/Function/*") as $function) require $function;
 
 // Todo Prepare Setting
 
-// * Settings
-
-
-// * Cfg
-if (!file_exists(dirname(__DIR__)."/.cfg")) dieConection("Configuration file not found.");
-$cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__)."/.cfg") );
-define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
-$ini = ini;
+define("ini", cfgGet());
 
 // * File extension
 if ( isset(ini['GLOBAL_SETTING']['HIDE_EXTENSION']) and ini['GLOBAL_SETTING']['HIDE_EXTENSION'] ) define('EXT', "");
@@ -33,11 +28,8 @@ if ( isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG'] ) 
 if (isset(ini['SECURITY']['GUARD']) and ini['SECURITY']['GUARD']) {
     if (!file_exists(dirname(__DIR__, 3)."/.key")) dieConection("Authenticity check failed.");
     $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 3)."/.key")[0])) );
-    if ( empty(ini['SECURITY']['SERIA']) or trim($key[0]) !== trim(ini['SECURITY']['SERIA']) or !(date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', $key[1]) && date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', $key[2])) ) dieConection("Authenticity check failed.");
+    if ( empty(ini['SECURITY']['SERIAL']) or trim($key[0]) !== trim(ini['SECURITY']['SERIAL']) or !(date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', $key[1]) && date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', $key[2])) ) dieConection("Authenticity check failed.");
 }
-
-
-// * END Settings
 
 // Todo Prepare End
 

@@ -3,6 +3,7 @@
 class __Install
 {
     private $argument;
+    private $name;
     private $path = "tools/libs";
 
     function __construct($value = null, $name = null)

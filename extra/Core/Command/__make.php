@@ -3,6 +3,7 @@
 class __Make
 {
     private $argument;
+    private $name;
 
     function __construct($value = null, $name = null)
     {
@@ -39,7 +40,6 @@ class __Make
             fclose($fp);
             echo "\033[32m"." Шаблон '$this->argument' успешно создан.\n";
         }else echo "\033[33m"." Шаблон \"$this->argument\" с наименованием '$name' уже существует.\n";
-        return 1;
     }
 
     private function UC_word(String $str)
