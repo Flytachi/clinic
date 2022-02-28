@@ -26,9 +26,9 @@ if ( isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG'] ) 
 
 // * Guard
 if (isset(ini['SECURITY']['GUARD']) and ini['SECURITY']['GUARD']) {
-    if (!file_exists(dirname(__DIR__, 3)."/.key")) dieConection("Authenticity check failed.");
-    $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 3)."/.key")[0])) );
-    if ( empty(ini['SECURITY']['SERIAL']) or trim($key[0]) !== trim(ini['SECURITY']['SERIAL']) or !(date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', $key[1]) && date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', $key[2])) ) dieConection("Authenticity check failed.");
+    if (!file_exists(dirname(__DIR__)."/.key")) dieConection("Key authentication failed.");
+    $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__)."/.key")[0])) );
+    if ( empty(ini['SECURITY']['SERIAL']) or trim($key[0]) !== trim(ini['SECURITY']['SERIAL']) or !(date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', $key[1]) && date('Y-m-d H:i:s') <= date('Y-m-d H:i:s', $key[2])) ) dieConection("Key authentication failed.");
 }
 
 // Todo Prepare End
