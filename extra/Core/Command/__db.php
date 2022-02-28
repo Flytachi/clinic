@@ -123,6 +123,7 @@ class __Db
 
     private function seed()
     {
+        global $db;
         require dirname(__DIR__, 2) . $this->path_hell;
         require dirname(__DIR__, 2) . $this->path_connection;
         $ini = cfgGet();
@@ -136,7 +137,7 @@ class __Db
             }
 
             $data = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_data/$this->name.$this->format"), true);
-            foreach ($data as $row) HellCrud::insert($this->file_name, $row);
+            foreach ($data as $row) HellCrud::insert($this->name, $row);
 
         }else{
 
