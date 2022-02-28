@@ -14,7 +14,7 @@ class __Key
 
     private function handle()
     {
-        if (!is_null($this->argument) and !is_null($this->seria)) $this->resolution();
+        if (!is_null($this->argument) and !is_null($this->serial)) $this->resolution();
         else $this->error();
     }
 
@@ -28,7 +28,7 @@ class __Key
     {
         $KEY = dirname(__DIR__, 3) . "/.key";
         $fp = fopen($KEY, "w");
-        fwrite($fp, bin2hex(zlib_encode($this->seria, ZLIB_ENCODING_DEFLATE)));
+        fwrite($fp, bin2hex(zlib_encode($this->serial, ZLIB_ENCODING_DEFLATE)));
         fclose($fp);
         echo "[security->" . date("Y-m-d H:i:s") . "] Done";
     }

@@ -57,9 +57,9 @@ $header = "База данных";
 				                <tbody>
                                     <?php foreach ($db->query("show tables") as $row): ?>
                                         <tr>
-                                            <td><?= $row['Tables_in_'.$ini['DATABASE']['NAME']] ?></td>
+                                            <td><?= $row['Tables_in_' . ini['DATABASE']['NAME']] ?></td>
                                             <td>
-                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_'.$ini['DATABASE']['NAME']]}")->fetchColumn() ?>
+                                                <?php $rec = $db->query("SELECT count(*) FROM {$row['Tables_in_' . ini['DATABASE']['NAME']]}")->fetchColumn() ?>
                                                 <?php if ($rec == 0): ?>
                                                     <span class="text-success"><?= $rec ?></span>
                                                 <?php elseif ($rec <= 10000000000): ?>
