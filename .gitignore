@@ -9,7 +9,8 @@
 /tools/nginx.conf
 /setting.ini
 /core.x*
-/.*
+/tools/.cfg
+/.key
 
 ## IDE support
 *.buildpath

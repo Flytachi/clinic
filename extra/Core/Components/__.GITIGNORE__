@@ -6,9 +6,11 @@
 /tests
 /tools/libs/*
 !/tools/libs/*.php
+/tools/nginx.conf
 /setting.ini
-core.x*
-.*
+/core.x*
+/tools/.cfg
+/.key
 
 ## IDE support
 *.buildpath

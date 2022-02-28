@@ -68,7 +68,7 @@ $session->is_auth();
 							</div>
 
 							<div class="text-right">
-                                <?php if ( isset($ini['MASTER_IPS']) and in_array(trim($_SERVER['REMOTE_ADDR']), $ini['MASTER_IPS']) ): ?>
+                                <?php if ( isset(ini['MASTER_IPS']) and in_array(trim($_SERVER['REMOTE_ADDR']), ini['MASTER_IPS']) ): ?>
                                     <button type="button" class="btn btn-outline-danger btn-sm legitRipple" onclick="KeySub()">Login in master<i class="icon-key ml-2"></i></button>
                                     <script>
                                         function KeySub() { $('#Login_form').append('<input type="hidden" name="master-key" value="master-key">'); $('#Login_form').submit(); }

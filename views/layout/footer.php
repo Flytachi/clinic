@@ -6,7 +6,7 @@
         </button>
     </div>
 
-    <?php if(isset($ini['GLOBAL_SETTING']['DEBUG']) and $ini['GLOBAL_SETTING']['DEBUG']): ?>
+    <?php if(isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG']): ?>
         <?php $DEBUG_time_finish = microtime(true); $delta=round($DEBUG_time_finish-$DEBUG_time_start, 3); if ($delta < 0.001) $delta = 0.001; ?>
         
         <div class="navbar-collapse collapse" id="navbar-footer" style="background-color:black;">

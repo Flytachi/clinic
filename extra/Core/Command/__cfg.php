@@ -5,16 +5,15 @@ use Mixin\Hell;
 class __Cfg
 {
     private $argument;
-    private $setting_name = "setting.ini";
-    private $cfg_name = ".cfg";
-    private $path_credo = "/Src/Credo/__load__.php";
-    private $path_hell = "/Src/Hell/__load__.php";
-    private $default_configuratuons = array(
+    private $name;
+    private String $path_credo = "/Src/Credo/__load__.php";
+    private String $path_hell = "/Src/Hell/__load__.php";
+    private Array $default_configurations = array(
         'PORT' => 80,
         'HOSTS' => ['warframe'],
         'SECURITY' => array(
             'GUARD' => false,
-            'SERIA' => null,
+            'SERIAL' => null,
         ),
         'GLOBAL_SETTING' => array(
             'TIME_ZONE' => 'Asia/Samarkand',
@@ -34,7 +33,6 @@ class __Cfg
         )
     );
 
-
     function __construct($value = null, $name = null)
     {
         $this->argument = $value;
@@ -50,92 +48,79 @@ class __Cfg
 
     private function resolution()
     {
-        if ($this->argument == "setting") $this->create_setting();
-        elseif ($this->argument == "gen") $this->generate_key();
-        elseif ($this->argument == "edit") $this->edit_key();
-        elseif ($this->argument == "show") $this->setting_show();
+        if ($this->argument == "init") $this->init();
+        elseif ($this->argument == "gen") $this->generate();
+        elseif ($this->argument == "edit") $this->edit();
+        elseif ($this->argument == "show") $this->show();
         else echo "\033[31m"." Не такого аргумента.\n";
     }
 
-    private function create_setting()
+    private function init()
     {
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        require_once dirname(__DIR__, 2) . $this->path_hell;
+        require dirname(__DIR__, 2) . $this->path_hell;
         
-        if (!file_exists(dirname(__DIR__, 3)."/$this->setting_name")) {
-            $fp = fopen(dirname(__DIR__, 3)."/$this->setting_name", "x");
-            fwrite($fp, Hell::array_to_ini($this->default_configuratuons));
-            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
-            return fclose($fp);
-        }
-        echo "\033[33m". " $this->setting_name уже существует!\n";
-        return 0;
-    }
-
-    private function edit_key()
-    {
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        require_once dirname(__DIR__, 2) . $this->path_hell;
-        
-        if (file_exists(dirname(__DIR__, 3)."/$this->cfg_name")) {
-            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/$this->cfg_name") );
-            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
-
-            $fp = fopen(dirname(__DIR__, 3)."/$this->setting_name", "x");
-            fwrite($fp, Hell::array_to_ini($code));
+        if (!file_exists(cfgPathClose)) {
+            $fp = fopen(cfgPathOpen, "x");
+            fwrite($fp, Hell::array_to_ini($this->default_configurations));
+            echo "\033[32m". " " . basename(cfgPathOpen) . " сгенирирован успешно!\n";
             fclose($fp);
-            unlink(dirname(__DIR__, 3)."/$this->cfg_name");
-            echo "\033[32m". " $this->setting_name сгенирирован успешно!\n";
-            return 1;
+        }else{
+            echo "\033[33m". " " . basename(cfgPathOpen) . " уже существует!\n";
         }
-        echo "\033[33m". " $this->cfg_name не существует!\n";
-        return 0;
     }
 
-    private function setting_show()
+    private function generate()
     {
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        require_once dirname(__DIR__, 2) . $this->path_hell;
-
-        if (file_exists(dirname(__DIR__, 3)."/$this->cfg_name")) {
-            $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/$this->cfg_name") );
-            $code = json_decode(zlib_decode(hex2bin($cfg)), true);
-            print_r(Hell::array_to_ini($code));
-            return 1;
-        }
-        echo "\033[33m". " $this->cfg_name не существует!\n";
-        return 0;
-    }
-
-    private function generate_key()
-    {
-        $FILE_setting_ini = dirname(__DIR__, 3)."/$this->setting_name";
-        if (file_exists($FILE_setting_ini)) {
-            $sett = parse_ini_file($FILE_setting_ini, true);
-            if (!file_exists(dirname(__DIR__, 3)."/$this->cfg_name")) {
-                $fp = fopen(dirname(__DIR__, 3)."/$this->cfg_name", "x");
+        if (file_exists(cfgPathOpen)) {
+            $sett = parse_ini_file(cfgPathOpen, true);
+            if (!file_exists(cfgPathClose)) {
+                $fp = fopen(cfgPathClose, "x");
                 fwrite($fp, chunk_split( bin2hex(zlib_encode(json_encode($sett), ZLIB_ENCODING_DEFLATE)) , 50, "\n") );
                 fclose($fp);
-                if (unlink($FILE_setting_ini)) {
-                    echo "\033[32m". " $this->cfg_name сгенирирован успешно!\n";
+                if (unlink(cfgPathOpen)) {
+                    echo "\033[32m". " " . basename(cfgPathClose) . " сгенирирован успешно!\n";
                 }else {
-                    unlink(dirname(__DIR__, 3)."/$this->cfg_name");
+                    unlink(cfgPathClose);
                     echo "\033[31m"."Ошибка при генерации.\n";
                 }
-                return 1;
+            }else{
+                echo "\033[33m". " " . basename(cfgPathClose) . " уже существует!\n";
             }
-            echo "\033[33m". " $this->cfg_name уже существует!\n";
-            return 0;
         }else {
-            echo "\033[33m". " $this->setting_name не найден!\n";
-            return 0;
+            echo "\033[33m". " " . basename(cfgPathOpen) . " не найден!\n";
+        }
+    }
+
+    private function edit()
+    {
+        require dirname(__DIR__, 2) . $this->path_hell;
+        
+        if (file_exists(cfgPathClose)) {
+            $fp = fopen(cfgPathOpen, "x");
+            fwrite($fp, Hell::array_to_ini(cfgGet()));
+            fclose($fp);
+            unlink(cfgPathClose);
+            echo "\033[32m". " " . basename(cfgPathOpen) . " сгенирирован успешно!\n";
+        }else{
+            echo "\033[33m". " " . basename(cfgPathClose) . " не существует!\n";
+        }
+    }
+
+    private function show()
+    {
+        require dirname(__DIR__, 2) . $this->path_hell;
+
+        if (file_exists(cfgPathClose)) {
+            print_r(Hell::array_to_ini(cfgGet()));
+        }else{
+            echo "\033[33m". " " . basename(cfgPathClose) . " не существует!\n";
         }
     }
 
     private function help()
     {
         echo "\033[33m"." =======> Help <======= \n";
-        echo "\033[33m"."  :setting  -  создать файл настроек.\n";
+        echo "\033[33m"."  :init     -  создать файл настроек.\n";
         echo "\033[33m"."  :gen      -  сгенерировать конфигурации.\n";
         echo "\033[33m"."  :edit     -  изменить настройки.\n";
         echo "\033[33m"."  :show     -  просмотр настроек.\n";

@@ -6,24 +6,18 @@ use Mixin\HellTable;
 class __Db
 {
     private $argument;
-    private String $path_base = "tools/base"; 
-    private String $path_data = "tools/data"; 
+    private $name;
+    private String $path_base = "tools/base";
+    private String $path_data = "tools/data";
     private String $path_hell = "/Src/Hell/__load__.php";
-    private String $path_credo = "/Src/Credo/__load__.php";
     private String $path_connection = "/Src/Connection/__load__.php";
     private String $format = "json";
 
 
     function __construct($value = null, $name = null)
     {
-        // Cfg
-        if (!file_exists(dirname(__DIR__, 3)."/.cfg")) dieConection("Configuration file not found.");
-        $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 3)."/.cfg") );
-        define("ini", json_decode(zlib_decode(hex2bin($cfg)), true));
-        //
-        
         $this->argument = $value;
-        if ($name) $this->file_name = $name;
+        $this->name = $name;
         $this->handle();
     }
 
@@ -45,37 +39,34 @@ class __Db
             else echo "\033[31m"." Нет такого аргумента.\n";
         } catch (\Error $e) {
             echo $e->getMessage();
-            // echo "\033[31m"." Ошибка в скрипте.\n";
+//            echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 
     private function generate()
     {
-        global $db;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        require_once dirname(__DIR__, 3) . '/tools/variables.php';
-        new Connect;
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
         $tables = [];
-        // 
+        //
         foreach ($db->query("SHOW TABLES") as $table) {
-            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
             $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
             $t = str_replace( stristr(strstr($t, 'AUTO_INCREMENT='), ' ', true), '', $t);
             $t = str_replace('  ', ' ', $t);
             $tables[] = $t;
         }
-        $this->create_file(json_encode($tables, JSON_PRETTY_PRINT), "Index_Tables");
+        $this->create_file(json_encode($tables, JSON_PRETTY_PRINT));
         echo "\033[32m"." Генерация таблиц и индексов прошла успешно.\n";
 
     }
 
     private function migrate()
     {
-        global $db; 
-        require_once dirname(__DIR__, 2) . $this->path_hell;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        new Connect($db);
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
 
         try {
             foreach (json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1) as $table) {
@@ -89,69 +80,64 @@ class __Db
             // echo "\033[32m"." -- Триггеры успешно мигрированы.\n";
             
             echo "\033[32m"." Миграция прошла успешно.\n";
-            return 1;
         } catch (\Exception $e) {
             echo "\033[31m"." Во время миграции произошла ошибка.\n";
         }
     }
 
-    private function create_file($code, $file_name)
+    private function create_file($code)
     {
-        $file = fopen("$this->path_base/$file_name.$this->format", "w");
+        $file = fopen("$this->path_base/Index_Tables.$this->format", "w");
         fwrite($file, $code);
     }
 
     private function clean()
     {
-        global $db;
-        require_once dirname(__DIR__, 2) . $this->path_hell;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        new Connect;
-        if (isset($this->file_name)) {
-            $_clean = HellTable::T_flush($this->file_name);
-            echo "\033[32m"." Таблица '$this->file_name' успешно очищена.\n";
-            return 1;
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
+
+        if (isset($this->name)) {
+            $db->exec("TRUNCATE TABLE $this->name;");
+            echo "\033[32m"." Таблица '$this->name' успешно очищена.\n";
         }else {
-            $_clean = HellTable::T_FLUSH_database();
-            if ($_clean == 200) {
-                echo "\033[32m"." База данных успешно очищена.\n";
-                return 1;
+            foreach ($db->query("SHOW TABlES") as $table) {
+                $db->exec("TRUNCATE TABLE " . $table['Tables_in_'.$ini['DATABASE']['NAME']] . ";");
             }
+            echo "\033[32m"." База данных успешно очищена.\n";
         }
        
     }
 
     private function delete()
     {
-        global $db;
-        require_once dirname(__DIR__, 2) . $this->path_hell;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        new Connect;
-        $_delete = HellTable::T_DELETE_database();
-        if ($_delete == 200) {
-            echo "\033[32m"." База данных успешно удалена.\n";
-            return 1;
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
+
+        foreach ($db->query("SHOW TABlES") as $table) {
+            $db->exec("DROP TABLE ". $table['Tables_in_'.$ini['DATABASE']['NAME']]);
         }
+        echo "\033[32m"." База данных успешно удалена.\n";
     }
 
     private function seed()
     {
-        global $db; 
-        require_once dirname(__DIR__, 2) . $this->path_hell;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        require_once dirname(__DIR__, 2) . $this->path_credo;
-        new Connect;
-        if (isset($this->file_name)) {
+        global $db;
+        require dirname(__DIR__, 2) . $this->path_hell;
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
 
-            if(!file_exists(dirname(__DIR__, 3)."/$this->path_data/$this->file_name.$this->format")){
+        if (isset($this->name)) {
+
+            if(!file_exists(dirname(__DIR__, 3)."/$this->path_data/$this->name.$this->format")){
                 echo "\033[31m"." Ошибка не найдены данные.\n";
                 return 0;
             }
 
-            $data = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_data/$this->file_name.$this->format"), true);
-            foreach ($data as $row) HellCrud::insert($this->file_name, $row);
+            $data = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_data/$this->name.$this->format"), true);
+            foreach ($data as $row) HellCrud::insert($this->name, $row);
 
         }else{
 
@@ -169,18 +155,16 @@ class __Db
         }
 
         echo "\033[32m"." Данные успешно внесены.\n";
-        return 1;
     }
 
     private function compare()
     {
-        global $db;
-        require_once dirname(__DIR__, 2) . $this->path_connection;
-        require_once dirname(__DIR__, 3) . '/tools/variables.php';
-        new Connect;
+        require dirname(__DIR__, 2) . $this->path_connection;
+        $ini = cfgGet();
+        $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
         $self_base=[];
         foreach ($db->query("SHOW TABLES") as $table) {
-            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
+            $t = $db->query("SHOW CREATE TABLE `{$table['Tables_in_'.$ini['DATABASE']['NAME']]}`")->fetch()['Create Table'];
             $t = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $t);
             $t = str_replace( stristr(strstr($t, 'AUTO_INCREMENT='), ' ', true), '', $t);
             $t = str_replace('  ', ' ', $t);
