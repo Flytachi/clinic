@@ -1,18 +1,25 @@
 <?php
+
+use GuzzleHttp\Psr7\Header;
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 $header = "Список пациентов";
 
-if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
-else $apl = "";
+// if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
+// else $apl = "";
 
-$tb = new Table($db, "users u");
-$search = $tb->get_serch();
+importModel('Patient', 'Region');
+
+$tb = new Patient('p');
+$search = $tb->getSearch();
 $where_search = array(
-    $apl."u.user_level = 15", 
-    $apl."u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
+    "p.add_date IS NOT NULL",
+    "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
+);
 
-$tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applications va ON(va.user_id=u.id)")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
+$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,7 +68,7 @@ $tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applicatio
 									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
 							</div>
-							<a onclick="Update('<?= up_url(null, 'PatientForm') ?>')" class="btn bg-success btn-icon ml-2 legitRipple"><i class="icon-plus22"></i></a>
+							<a onclick="Update('<?= Hell::apiGet('Patient', null, 'form') ?>')" class="btn bg-success btn-icon ml-2 legitRipple"><i class="icon-plus22"></i></a>
 						</div>
 					</div>
 
@@ -90,20 +97,20 @@ $tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applicatio
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach ($tb->get_table() as $row): ?>
+									<?php foreach ($tb->list() as $row): ?>
 										<tr <?php if($row->application) echo 'class="table-danger"'; ?>>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= patient_name($row) ?></div>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
 													<?php endif; ?>
 												</div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= $row->phone_number ?></td>
-											<td><?= $row->region ?></td>
+											<td><?= (new Region)->byId($row->region_id, 'name')->name ?></td>
 											<td><?= date_f($row->add_date, 1) ?></td>
 											<td class="text-center">
 												<?php if ($row->status): ?>
@@ -113,7 +120,7 @@ $tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applicatio
 												<?php endif; ?>
 											</td>
 											<td class="text-center">	
-												<?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE user_id = $row->id AND completed IS NULL")->fetch() ?>
+												<?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE patient_id = $row->id AND completed IS NULL")->fetch() ?>
 												<?php if ( isset($stm_dr['id']) ): ?>
 													<?php if ($stm_dr['direction']): ?>
 														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
@@ -137,16 +144,16 @@ $tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applicatio
 													<?php if ( isset($stm_dr['id']) and $stm_dr['direction'] ): ?>
 														<a onclick="Print('<?= prints('document-5') ?>?pk=<?= $stm_dr['id'] ?>')" class="dropdown-item"><i class="icon-list"></i> Стационарный лист</a>
 													<?php endif; ?>
-													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
+													<a onclick="Update('<?= Hell::apiGet('Patient', $row->id, 'form') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                                                 </div>
 											</td>
 										</tr>
-									<?php endforeach;?>
+									<?php endforeach; ?>
 								</tbody>
 							</table>
 						</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 
@@ -182,22 +189,25 @@ $tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applicatio
 			});
 		};
 
-		function Search(){
+		$("#search_input").keyup(credoSearch);
+		$("#serch_check").on('change', credoSearch);
+
+		function credoSearch() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
 				url: "<?= ajax('search/registry-index') ?>",
 				data: {
 					application: $("#serch_check").is(':checked'),
-					table_search: $("#search_input").val(),
+					CRD_search: input.value,
 				},
 				success: function (result) {
-					$('#search_display').html(result);
+					display.innerHTML = result;
 				},
 			});
 		}
 
-		$("#search_input").keyup(Search);
-		$("#serch_check").on('change', Search);
 	</script>
 
 </body>

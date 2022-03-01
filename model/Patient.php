@@ -1,29 +1,26 @@
 <?php
 
-use Mixin\ModelOld;
+use Mixin\Model;
 
-class PatientForm extends ModelOld
+class Patient extends Model
 {
+    use ResponceRender;
     public $table = 'patients';
-    public $table1 = 'province';
-    public $table2 = 'region';
 
-    public function form($pk = null)
+    public function form()
     {
-        global $db, $classes;
+        global $db, $classes, $session;
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h5 class="modal-title">Добавить/Редактировать пациента <span id="vis_title"></h5>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= $this->urlHook() ?>">
         
             <div class="modal-body">
 
-                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="id" value="<?= $pk ?>">
-                <input type="hidden" name="parent_id" value="<?= $_SESSION['session_id'] ?>">
+                <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
                 <div class="row">
 
@@ -170,11 +167,12 @@ class PatientForm extends ModelOld
             </div>
 
         </form>
-        <?php
-        $this->jquery_init();
-        ?>
         <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <script type="text/javascript">
+            $( document ).ready(function() {
+                FormLayouts.init();
+                Swit.init();
+            });
             $(function(){
                 $("#region").chained("#province");
             });
@@ -182,52 +180,21 @@ class PatientForm extends ModelOld
         <?php
     }
 
-    public function clean()
-    {
-        global $db;
-        if ( isset($this->post['is_foreigner']) ) {
-            $this->post['is_foreigner'] = true;
-        }else{
-            $this->post['is_foreigner'] = false;
-        }
-        $this->post = Mixin\clean_form($this->post);
-        $this->post = Mixin\to_null($this->post);
-        return True;
+    public function saveBefore(){
+        if ( $this->getPost('is_foreigner') ) $this->setPostItem('is_foreigner', true);
+        else $this->setPostItem('is_foreigner', false);
+        $this->db->beginTransaction();
+        $this->cleanPost();
     }
 
-    public function jquery_init()
-    {
-        ?>
-        <script type="text/javascript">
-            $( document ).ready(function() {
-                FormLayouts.init();
-                Swit.init();
-            });
-        </script>
-        <?php
+    public function updateBefore(){
+        if ( $this->getPost('is_foreigner') ) $this->setPostItem('is_foreigner', true);
+        else $this->setPostItem('is_foreigner', false);
+        $this->db->beginTransaction();
+        $this->cleanGet();
+        $this->cleanPost();
     }
 
-    public function success()
-    {
-        $_SESSION['message'] = '
-        <div class="alert alert-info" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-            Успешно
-        </div>
-        ';
-        render();
-    }
-
-    public function error($message)
-    {
-        $_SESSION['message'] = '
-        <div class="alert bg-danger alert-styled-left alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert"><span>×</span></button>
-			<span class="font-weight-semibold"> '.$message.'</span>
-	    </div>
-        ';
-        render();
-    }
 }
 
 ?>

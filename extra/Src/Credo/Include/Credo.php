@@ -33,9 +33,7 @@ abstract class Credo implements CredoInterface
      * 
      * -----------------------------------------------------------------------
     
-        <form action="#">
-            <input type="text" value="<?= $search ?>" id="search_input">
-        </form>
+        <input type="text" value="<?= $search ?>" id="search_input">
       
      * -----------------------------------------------------------------------
      * 

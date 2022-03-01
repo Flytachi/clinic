@@ -23,6 +23,7 @@
         </div>
         <div id="warframe_debug-bar">
             <?php
+                dd("<b>Memory:</b> " . round(memory_get_usage()/1024/1024, 2) . " mb / <b>Time:</b> $delta secs");
                 dd($_SERVER);
             ?>
         </div>
