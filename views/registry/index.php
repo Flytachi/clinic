@@ -7,16 +7,16 @@ require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 $header = "Список пациентов";
 
-// if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
-// else $apl = "";
+if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
+else $apl = "";
 
 importModel('Patient', 'Region');
 
 $tb = new Patient('p');
 $search = $tb->getSearch();
 $where_search = array(
-    "p.add_date IS NOT NULL",
-    "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
+    $apl . "p.add_date IS NOT NULL",
+    $apl . "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 
 $tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(20);

@@ -2,6 +2,8 @@
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Отчёт регистратуры по регистрации";
+
+importModel('Patient', 'Province', 'Region');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +69,7 @@ $header = "Отчёт регистратуры по регистрации";
 									<div class="form-group">
 										<label>Регистратор:</label>
 										<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать регистратора" name="parent_id[]" multiple="multiple">
-											<?php foreach ($db->query("SELECT DISTINCT parent_id FROM users WHERE user_level = 15") as $row): ?>
+											<?php foreach ($db->query("SELECT DISTINCT parent_id FROM patients") as $row): ?>
 												<option value="<?= $row['parent_id'] ?>" <?= ( isset($_POST['parent_id']) and in_array($row['parent_id'], $_POST['parent_id'])) ? "selected" : "" ?>><?= get_full_name($row['parent_id']) ?></option>
 											<?php endforeach; ?>
 										</select>
@@ -81,8 +83,8 @@ $header = "Отчёт регистратуры по регистрации";
 								<div class="col-md-3">
 									<label>Область:</label>
 									<select class="<?= $classes['form-multiselect'] ?>" data-placeholder="Выбрать область" name="province_id[]" multiple="multiple" onchange="CheckRegions(this)">
-										<?php foreach ($db->query("SELECT DISTINCT province_id, province FROM users WHERE user_level = 15") as $row): ?>
-											<option value="<?= $row['province_id'] ?>" <?= ( isset($_POST['province_id']) and in_array($row['province_id'], $_POST['province_id'])) ? "selected" : "" ?>><?= $row['province'] ?></option>
+										<?php foreach ($db->query("SELECT DISTINCT province_id FROM patients") as $row): ?>
+											<option value="<?= $row['province_id'] ?>" <?= ( isset($_POST['province_id']) and in_array($row['province_id'], $_POST['province_id'])) ? "selected" : "" ?>><?= (new Province)->byId($row['province_id'], 'name')->name ?></option>
 										<?php endforeach; ?>
 									</select>
 								</div>
@@ -91,11 +93,11 @@ $header = "Отчёт регистратуры по регистрации";
 									<label>Регионы:</label>
 									<select class="form-control" data-placeholder="Выбрать регион" name="region_id[]" multiple="multiple">
 										<?php if( isset($_POST['province_id']) ): ?>
-											<?php foreach ($db->query("SELECT DISTINCT region_id, region FROM users WHERE user_level = 15 AND province_id IN(".implode(",", $_POST['province_id']) .")") as $row): ?>
-												<option value="<?= $row['region_id'] ?>" <?= ( isset($_POST['region_id']) and in_array($row['region_id'], $_POST['region_id'])) ? "selected" : "" ?>><?= $row['region'] ?></option>
+											<?php foreach ($db->query("SELECT DISTINCT region_id FROM patients WHERE province_id IN(".implode(",", $_POST['province_id']) .")") as $row): ?>
+												<option value="<?= $row['region_id'] ?>" <?= ( isset($_POST['region_id']) and in_array($row['region_id'], $_POST['region_id'])) ? "selected" : "" ?>><?= (new Region)->byId($row['region_id'], 'name')->name ?></option>
 											<?php endforeach; ?>
 										<?php else: ?>
-											<?php foreach ($db->query("SELECT DISTINCT region_id, region FROM users WHERE user_level = 15") as $row): ?>
+											<?php foreach ($db->query("SELECT DISTINCT region_id FROM patients") as $row): ?>
 												<?php if( isset($_POST['region_id']) and in_array($row['region_id'], $_POST['region_id']) ): ?>
 													<option value="<?= $row['region_id'] ?>" selected><?= $row['region'] ?></option>
 												<?php endif; ?>
@@ -120,15 +122,14 @@ $header = "Отчёт регистратуры по регистрации";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$where = " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+					$where = "(DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					if( isset($_POST['parent_id']) ) $where .= " AND parent_id IN(".implode(",", $_POST['parent_id']) .")";
 					if( isset($_POST['province_id']) ) $where .= " AND province_id IN(".implode(",", $_POST['province_id']) .")";
 					if( isset($_POST['region_id']) ) $where .= " AND region_id IN(".implode(",", $_POST['region_id']) .")";
 					if( isset($_POST['birth_from']) and isset($_POST['birth_before']) ) $where .= " AND (DATE_FORMAT(birth_date, '%Y') BETWEEN '".$_POST['birth_from']."' AND '".$_POST['birth_before']."')";
 
-					$tb = new Table($db, "users");
-					$tb->set_data("add_date, id, province, region, parent_id, birth_date");
-					$tb->where("user_level = 15 $where")->order_by('add_date ASC');
+					$tb = new Patient();
+					$tb->Where($where)->Order('add_date');
 					?>
 					<div class="<?= $classes['card'] ?>">
 
@@ -158,14 +159,14 @@ $header = "Отчёт регистратуры по регистрации";
 	                                    </tr>
 	                                </thead>
 	                                <tbody>
-										<?php foreach ($tb->get_table(1) as $row): ?>
+										<?php foreach ($tb->list(1) as $row): ?>
 											<tr>
 												<th><?= $row->count ?></th>
 												<th><?= date_f($row->add_date, 1) ?></th>
 												<th><?= addZero($row->id) ?></th>
-												<th><?= get_full_name($row->id)  ?></th>
-												<th><?= $row->province ?></th>
-												<th><?= $row->region ?></th>
+												<th><?= patient_name($row)  ?></th>
+												<th><?= (new Province)->byId($row->province_id, 'name')->name ?></th>
+												<th><?= (new Region)->byId($row->region_id, 'name')->name ?></th>
 												<th><?= get_full_name($row->parent_id) ?></th>
 												<th><?= date_f($row->birth_date) ?></th>
 											</tr>

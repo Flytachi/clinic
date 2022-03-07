@@ -1,17 +1,18 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth([3, 32]);
 $header = "История платежей ". addZero($_GET['pk']);
 
-if (!is_numeric($_GET['pk'])) {
-	Mixin\error('404');
-}
+if (!is_numeric($_GET['pk'])) Hell::error('404');
 
 $tb = new Table($db, "visit_service_transactions");
 $search = $tb->get_serch();
 $search_array = array(
-	"is_visibility IS NOT NULL AND user_id = {$_GET['pk']} AND is_price IS NOT NULL", 
-	"is_visibility IS NOT NULL AND user_id = {$_GET['pk']} AND is_price IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
+	"is_visibility IS NOT NULL AND patient_id = {$_GET['pk']} AND is_price IS NOT NULL", 
+	"is_visibility IS NOT NULL AND patient_id = {$_GET['pk']} AND is_price IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 ?>
@@ -49,7 +50,7 @@ $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h6 class="card-title"><?= get_full_name($_GET['pk']) ?></h6>
+						<h6 class="card-title"><?= patient_name($_GET['pk']) ?></h6>
 						<div class="header-elements">
 							<div class="list-icons">
 								<button onclick="Print(`<?= prints('check') ?>?pk=<?= $_GET['pk']?>&items=[${arr}]`);" type="button" class="<?= $classes['btn-table'] ?>">Чек</button>

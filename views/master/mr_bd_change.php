@@ -17,6 +17,7 @@ if ($_GET['status'] == "new") {
     $db->exec("ALTER TABLE `visit_operations` CHANGE `user_id` `patient_id` INT(11);");
     $db->exec("ALTER TABLE `visit_orders` CHANGE `user_id` `patient_id` INT(11);");
     $db->exec("ALTER TABLE `visit_services` CHANGE `user_id` `patient_id` INT(11);");
+    $db->exec("ALTER TABLE `visit_service_transactions` CHANGE `user_id` `patient_id` INT(11);");
 
     echo "success";
 
@@ -36,6 +37,7 @@ if ($_GET['status'] == "new") {
     $db->exec("ALTER TABLE `visit_operations` CHANGE `patient_id` `user_id` INT(11);");
     $db->exec("ALTER TABLE `visit_orders` CHANGE `patient_id` `user_id` INT(11);");
     $db->exec("ALTER TABLE `visit_services` CHANGE `patient_id` `user_id` INT(11);");
+    $db->exec("ALTER TABLE `visit_service_transactions` CHANGE `patient_id` `user_id` INT(11);");
 
     echo "success";
 

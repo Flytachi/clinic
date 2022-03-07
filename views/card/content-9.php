@@ -180,7 +180,7 @@ is_module('module_bypass');
 									visit_id: "<?= $patient->visit_id ?>",
 									visit_bypass_id: element.dataset.id,
 									responsible_id: "<?= $session->session_id ?>",
-									user_id: "<?= $patient->id ?>",
+									patient_id: "<?= $patient->id ?>",
 									event_title: element.innerHTML,
 									event_start: toTimestamp(d_date),
 									is_time: is_time,

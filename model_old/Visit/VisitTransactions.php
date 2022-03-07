@@ -184,6 +184,7 @@ class VisitTransactionsModel extends ModelOld
                     url: $(event.target).attr("action"),
                     data: $(event.target).serializeArray(),
                     success: function (result) {
+                        console.log(result);
                         var result = JSON.parse(result);
                         
                         if (result.status == "success") {
@@ -198,7 +199,7 @@ class VisitTransactionsModel extends ModelOld
                             // });
 
                             // // send 
-                            // let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
+                            // let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", patient_id : $('#user_amb_id').val() , parent_id : par_id});
                             // conn.send(obj1);
 
                             // Печать:
@@ -232,11 +233,6 @@ class VisitTransactionsModel extends ModelOld
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="pricer_id" value="<?= $session->session_id ?>">
             <input type="hidden" name="visit_id" value="<?= $pk ?>">
-            <?php /*if(module('module_pharmacy')): ?>
-                <?php if($completed): ?>
-                    <button onclick="Pharm(<?= $pk ?>, '<?= $price['cost_item_2'] ?>', '<?= number_format($price['cost_item_2']) ?>')" type="button" class="btn btn-outline-primary btn-sm" <?= ($price['cost_item_2'] == 0) ? "disabled" : "" ?>>Лекарства</button>
-                <?php endif; ?>
-            <?php endif;*/ ?>
             <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitSalesModel') ?>')" type="button" class="<?= $classes['price_btn-sale'] ?>">Скидка</button>
             <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentsModel') ?>&type=0')" type="button" class="<?= $classes['price_btn-prepayment'] ?>">Предоплата</button>
             <button onclick="CardFuncCheck('<?= up_url($vps['id'], 'VisitInvestmentsModel') ?>&type=1')" type="button" class="<?= $classes['price_btn-refund'] ?>">Возврат</button>
@@ -324,122 +320,6 @@ class VisitTransactionsModel extends ModelOld
                     });
 
                 }
-            }
-
-        </script>
-        <?php
-    }
-
-    public function form_pharm($pk = null)
-    {
-        dd("old function");
-        ?>
-        <form method="post" action="<?= add_url() ?>" onsubmit="Subi_pharm()">
-
-            <div class="modal-body">
-                <input type="hidden" name="model" value="<?= __CLASS__ ?>">
-                <input type="hidden" name="pricer_id" value="<?= $_SESSION['session_id'] ?>">
-                <input type="hidden" name="user_id" id="pharm_user_id">
-                <input type="hidden" name="pharm_cost" id="pharm_total_price_hidden">
-
-                <div class="form-group row">
-
-                    <div class="col-md-12">
-                        <label class="col-form-label">Сумма к оплате:</label>
-                        <input type="text" class="form-control" id="pharm_total_price" disabled>
-                    </div>
-
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-form-label col-md-3">Наличный</label>
-                    <div class="col-md-9">
-                        <div class="input-group">
-                            <input type="number" name="price_cash" id="input_pharm_chek_1" step="0.5" class="form-control" placeholder="расчет" disabled>
-                            <span class="input-group-prepend ml-5">
-                                <span class="input-group-text">
-                                    <input type="checkbox" class="form-control-switchery" data-fouc id="pharm_chek_1" onchange="Checkert2(this)">
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-form-label col-md-3">Пластиковый</label>
-                    <div class="col-md-9">
-                        <div class="input-group">
-                            <input type="number" name="price_card" id="input_pharm_chek_2" step="0.5" class="form-control" placeholder="расчет" disabled>
-                            <span class="input-group-prepend ml-5">
-                                <span class="input-group-text">
-                                    <input type="checkbox" class="form-control-switchery" data-fouc id="pharm_chek_2" onchange="Checkert2(this)">
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-form-label col-md-3">Перечисление</label>
-                    <div class="col-md-9">
-                        <div class="input-group">
-                            <input type="number" name="price_transfer" id="input_pharm_chek_3" step="0.5" class="form-control" placeholder="расчет" disabled>
-                            <span class="input-group-prepend ml-5">
-                                <span class="input-group-text">
-                                    <input type="checkbox" class="form-control-switchery" data-fouc id="pharm_chek_3" onchange="Checkert2(this)">
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-link" data-dismiss="modal">Отмена</button>
-                <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                    <span class="ladda-label">Оплатить</span>
-                    <span class="ladda-spinner"></span>
-                </button>
-            </div>
-
-        </form>
-
-        <script type="text/javascript">
-
-            function Checkert2(event) {
-                var input = $('#input_'+event.id);
-                if(!input.prop('disabled')){
-                    input.attr("disabled", "disabled");
-                    // Downsum(input);
-                }else {
-                    input.removeAttr("disabled");
-                    // Upsum(input); 
-                }
-            }
-
-            function Subi_pharm() {
-                event.preventDefault();
-                $.ajax({
-                    type: $(event.target).attr("method"),
-                    url: $(event.target).attr("action"),
-                    data: $(event.target).serializeArray(),
-                    success: function (result) {
-                        if (result == 1) {
-                            new Noty({
-                                text: 'Успешно!',
-                                type: 'success'
-                            }).show();
-                        }else {
-                            new Noty({
-                                text: result,
-                                type: 'error'
-                            }).show();
-                        }
-                        $('#modal_default').modal('hide');
-                        Check('get_mod.php?pk='+$('#user_st_id').val() ,$('#user_st_id').val());
-                    },
-                });
             }
 
         </script>
@@ -578,7 +458,7 @@ class VisitTransactionsModel extends ModelOld
         $post = array(
             'visit_id' => $row['visit_id'],
             'visit_service_id' => $row['visit_service_id'],
-            'user_id' => $row['user_id'],
+            'patient_id' => $row['patient_id'],
             'pricer_id' => $this->post['pricer_id'],
             'item_type' => $row['item_type'],
             'item_id' => $row['item_id'],
@@ -699,7 +579,8 @@ class VisitTransactionsModel extends ModelOld
         Mixin\update($this->_visits, array('is_active' => 1, 'completed' => date("Y-m-d H:i:s")), $this->visit['id']);
         Mixin\update($this->_services, array('status' => 7), array('visit_id' => $this->visit['id'], 'service_id' => 1, 'status' => 1));
         Mixin\update($this->_bypass_transactions, array('is_price' => 1), array('visit_id' => $this->visit['id']));
-        (new UserModel())->update_status($this->visit['user_id']);
+        importModel('Patient');
+        (new Patient)->update_status($this->visit['patient_id']);
         
     }
 
@@ -739,10 +620,10 @@ class VisitTransactionsModel extends ModelOld
                 if($room = $db->query("SELECT room_id FROM users WHERE is_active IS NOT NULL AND id = {$vs['parent_id']}")->fetchColumn()){
                     $post = array(
                         'room_id' => $room, 
-                        'user_id' => $this->visit['user_id'],
+                        'patient_id' => $this->visit['patient_id'],
                         'is_queue' => true, 
                     );
-                    if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
+                    if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND patient_id = {$post['patient_id']}")->fetchColumn()) {
                         Mixin\insert("queue", $post);
                     }
                 }
@@ -751,10 +632,10 @@ class VisitTransactionsModel extends ModelOld
                     if($data['room_id']) {
                         $post = array(
                             'room_id' => $data['room_id'], 
-                            'user_id' => $this->visit['user_id'],
+                            'patient_id' => $this->visit['patient_id'],
                             'is_queue' => true, 
                         );
-                        if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND user_id = {$post['user_id']}")->fetchColumn()) {
+                        if (!$db->query("SELECT id FROM queue WHERE room_id = {$post['room_id']} AND patient_id = {$post['patient_id']}")->fetchColumn()) {
                             Mixin\insert("queue", $post);
                         }
                     }
@@ -782,7 +663,7 @@ class VisitTransactionsModel extends ModelOld
             echo json_encode(array(
                 'status' => "success" ,
                 'message' => $value,
-                'val' => prints('check')."?pk=".$this->visit['user_id']."&items=".json_encode($this->visit_service_transactions_items)
+                'val' => prints('check')."?pk=".$this->visit['patient_id']."&items=".json_encode($this->visit_service_transactions_items)
             ));
         }
     }

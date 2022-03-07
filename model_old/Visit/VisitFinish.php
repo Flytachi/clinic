@@ -6,7 +6,6 @@ class VisitFinish extends ModelOld
 {
     public $table = 'visit_services';
     public $_visits = 'visits';
-    public $_users = 'users';
     public $_beds = 'beds';
 
     public function get_or_404($pk)
@@ -22,7 +21,7 @@ class VisitFinish extends ModelOld
             $pk = $db->query("SELECT visit_id FROM $this->table WHERE id = $pk")->fetchColumn();
         }else {
             $data = $db->query("SELECT * FROM $this->_visits WHERE id = $pk")->fetch();
-            
+
             if ($data['direction'] and $data['grant_id'] == $session->session_id) {
 
                 // Выписка
@@ -30,7 +29,7 @@ class VisitFinish extends ModelOld
                 Mixin\update($this->_visits, array('is_active' => null), $data['id']);
                 Mixin\update($this->table, array('status' => 1, 'completed' => date('Y-m-d H:i:s')), $vis_service);
                 $bed = $db->query("SELECT * FROM visit_beds WHERE visit_id = $pk AND end_date IS NULL")->fetch();
-                Mixin\update($this->_beds, array('user_id' => null), $bed['bed_id']);
+                Mixin\update($this->_beds, array('patient_id' => null), $bed['bed_id']);
                 Mixin\update("visit_beds", array('end_date' => date("Y-m-d H:i:s")), $bed['id']);
                 Mixin\delete("visit_bypass_event_applications", $pk, "visit_id");
 

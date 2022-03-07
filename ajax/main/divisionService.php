@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $amb = (new VisitServicesModel())->as("vs")
-        ->Data("vs.parent_id, vs.service_name, vs.user_id")
+        ->Data("vs.parent_id, vs.service_name, vs.patient_id")
         ->Join("visits v ON(v.id=vs.visit_id)")
         ->Where("v.direction IS NULL AND vs.division_id = {$_GET['pk']} AND vs.accept_date IS NOT NULL AND DATE_FORMAT(vs.add_date, '%Y-%m-%d') = CURRENT_DATE()")->list();
 $sta = (new VisitServicesModel())->as("vs")
@@ -44,7 +44,7 @@ $sta = (new VisitServicesModel())->as("vs")
                             <tr>	
                                 <td><?= get_full_name($row->parent_id) ?></td>
                                 <td><?= $row->service_name ?></td>
-                                <td><?= get_full_name($row->user_id) ?></td>
+                                <td><?= patient_name($row->patient_id) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -68,7 +68,7 @@ $sta = (new VisitServicesModel())->as("vs")
                             <tr>	
                                 <td><?= get_full_name($row->parent_id) ?></td>
                                 <td><?= $row->service_name ?></td>
-                                <td><?= get_full_name($row->user_id) ?></td>
+                                <td><?= patient_name($row->patient_id) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

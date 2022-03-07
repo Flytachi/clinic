@@ -219,7 +219,7 @@ class VisitBypassEventsPanel extends ModelOld
                 if ($data = $applications->get_row()) {
     
                     $this->visit = $data->visit_id;
-                    $this->user = $data->user_id;
+                    $this->patient = $data->patient_id;
                     foreach ($applications->get_table() as $app) {
                         $this->where = "warehouse_id = $app->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $app->item_name_id AND item_manufacturer_id = $app->item_manufacturer_id AND item_price = $app->item_price";
                         $max_qty = $db->query("SELECT SUM(item_qty) FROM $this->_storage WHERE $this->where")->fetchColumn();
@@ -264,7 +264,7 @@ class VisitBypassEventsPanel extends ModelOld
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
                 'responsible_id' => $session->session_id,
-                'user_id' => $this->user,
+                'patient_id' => $this->patient,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,
@@ -279,7 +279,7 @@ class VisitBypassEventsPanel extends ModelOld
                 'visit_id' => $this->visit,
                 'visit_bypass_event_id' => $this->pk,
                 'responsible_id' => $session->session_id,
-                'user_id' => $this->user,
+                'patient_id' => $this->patient,
                 'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
                 'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
                 'item_qty' => $app->item_qty,

@@ -33,7 +33,7 @@ is_module('laboratory');
 
             <div class="info">
                 <b>ID:</b> <?= $_GET['pk'] ?></br>
-                <b>FIO:</b> <?= get_full_name($_GET['pk']) ?></br>
+                <b>FIO:</b> <?= patient_name($_GET['pk']) ?></br>
                 <b>Date:</b> <?= date('d.m.Y H:i') ?>
             </div>
 

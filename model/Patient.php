@@ -195,6 +195,12 @@ class Patient extends Model
         $this->cleanPost();
     }
 
+    public function update_status(int $pk)
+    {
+        Mixin\update($this->table, array('status' => null), $pk);
+        return true;
+    }
+
 }
 
 ?>

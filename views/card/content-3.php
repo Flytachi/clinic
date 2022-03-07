@@ -61,7 +61,7 @@ require_once 'callback.php';
 										<?php
 										$tb = new Table($db, "visits v");
 										$tb->set_data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
-										$tb->where("v.user_id = $patient->id AND v.id != $patient->visit_id")->order_by('v.add_date DESC');
+										$tb->where("v.patient_id = $patient->id AND v.id != $patient->visit_id")->order_by('v.add_date DESC');
 										?>
 										<?php foreach($tb->get_table(1) as $row): ?>
 											<tr>

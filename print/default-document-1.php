@@ -1,10 +1,13 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../tools/warframe.php';
 
 $code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
 $qr = "http://".config("print_document_qrcode_ip")."/api/document?code=$code";
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
-    $docs = $db->query("SELECT vs.user_id, vs.parent_id, us.birth_date, vs.service_title, vs.service_report, vs.accept_date FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT vs.patient_id, vs.parent_id, p.first_name, p.last_name, p.father_name, p.birth_date, vs.service_title, vs.service_report, vs.accept_date FROM visit_services vs LEFT JOIN patients p ON(p.id=vs.patient_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
     if (!$docs) Mixin\error('404');
 }elseif (isset($_GET['pk']) and $_GET['pk'] == "template" ) {
     $docs = new stdClass();
@@ -31,9 +34,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         possimus architecto sit corporis. Non, consequuntur aspernatur id voluptas perspiciatis facilis recusandae quo illum autem sequi nemo voluptates voluptate 
         nobis, libero aliquam deserunt nam maxime ipsa quos quas unde cupiditate.
         ";
-}else{
-    Mixin\error('404');
-}
+}else Hell::error('404');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,8 +85,8 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         <div class="row">
             <div class="col-8 text-left h3">
-                <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-                <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
+                <b>Ф.И.О.: </b><?= patient_name($docs) ?><br>
+                <b>ID Пациента: </b><?= addZero($docs->patient_id) ?><br>
                 <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
                 <b>Дата исследования: </b><?= ($docs->accept_date) ? date_f($docs->accept_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
                 <b>Врач: </b><?= get_full_name($docs->parent_id) ?><br>

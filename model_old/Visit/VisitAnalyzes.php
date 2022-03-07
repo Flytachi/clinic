@@ -5,7 +5,7 @@ use Mixin\ModelOld;
 class VisitAnalyzesModel extends ModelOld
 {
     public $table = 'visit_analyzes';
-    public $_user = 'users';
+    public $_patient = 'patients';
     public $_visit = 'visits';
     public $_visit_service = 'visit_services';
     public $_service_analyze = 'service_analyzes';
@@ -46,7 +46,7 @@ class VisitAnalyzesModel extends ModelOld
     public function form($pk = null)
     {
         global $db, $classes;
-        $user = $db->query("SELECT id, birth_date, gender FROM $this->_user WHERE id = {$this->post['user_id']}")->fetch();
+        $patient = $db->query("SELECT id, birth_date, gender FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetch();
         ?>
         <form method="post" action="<?= add_url() ?>" id="<?= __CLASS__ ?>_form" onsubmit="SubmitSave(this)">
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
@@ -70,17 +70,17 @@ class VisitAnalyzesModel extends ModelOld
                                 <tbody class="bg-secondary">
                                     <tr>
                                         <th style="width:150px">ID:</th>
-                                        <td><?= addZero($user['id']) ?></td>
+                                        <td><?= addZero($patient['id']) ?></td>
 
                                         <th style="width:150px">Пол:</th>
-                                        <td><?= ($user['gender']) ? "Мужской" : "Женский" ?></td>
+                                        <td><?= ($patient['gender']) ? "Мужской" : "Женский" ?></td>
                                     </tr>
                                     <tr>
                                         <th style="width:150px">FIO:</th>
-                                        <td><?= get_full_name($user['id']) ?></td>
+                                        <td><?= patient_name($patient['id']) ?></td>
 
                                         <th style="width:150px">Дата рождения:</th>
-                                        <td><?= date_f($user['birth_date']) ?></td>
+                                        <td><?= date_f($patient['birth_date']) ?></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -459,7 +459,7 @@ class VisitAnalyzesModel extends ModelOld
                     $post = Mixin\clean_form($post);
                     $post = Mixin\to_null($post);
                     $post['visit_id'] = $this->post['visit_id'];
-                    $post['user_id'] = $db->query("SELECT user_id FROM $this->_visit WHERE id = {$this->post['visit_id']}")->fetchColumn();
+                    $post['patient_id'] = $db->query("SELECT patient_id FROM $this->_visit WHERE id = {$this->post['visit_id']}")->fetchColumn();
                     $post['service_id'] = $db->query("SELECT service_id FROM $this->_visit_service WHERE id = {$post['visit_service_id']}")->fetchColumn();
                     $post['service_name'] = $db->query("SELECT service_name FROM $this->_visit_service WHERE id = {$post['visit_service_id']}")->fetchColumn();
                     $post['analyze_name'] = $db->query("SELECT name FROM $this->_service_analyze WHERE id = {$post['service_analyze_id']}")->fetchColumn();

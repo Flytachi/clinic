@@ -5,7 +5,7 @@ use Mixin\ModelOld;
 class VisitRoute extends ModelOld
 {
     public $table = 'visit_services';
-    public $_user = 'users';
+    public $_patient = 'patients';
     public $table2 = 'beds';
     public $_visits = 'visits';
     public $_beds = 'visit_beds';
@@ -30,7 +30,7 @@ class VisitRoute extends ModelOld
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
@@ -156,7 +156,7 @@ class VisitRoute extends ModelOld
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
@@ -281,7 +281,7 @@ class VisitRoute extends ModelOld
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
@@ -406,7 +406,7 @@ class VisitRoute extends ModelOld
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Отделы</label>
@@ -532,7 +532,7 @@ class VisitRoute extends ModelOld
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
                 <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
                 <input type="hidden" name="status" value="3">
                 
                 <!-- <input type="hidden" name="status" value="2">
@@ -649,7 +649,7 @@ class VisitRoute extends ModelOld
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
                 <div class="form-group">
                     <label>Пакеты:</label>
@@ -724,7 +724,7 @@ class VisitRoute extends ModelOld
         global $db;
         $this->visit_pk = $this->post['visit_id'];
         Mixin\update($this->_visits, array('last_update' => date("Y-m-d H:i:s")), $this->visit_pk);
-        $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+        $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetchColumn();
         $this->chek_order();
     }
 
@@ -753,7 +753,7 @@ class VisitRoute extends ModelOld
             $post['status'] = ($this->post['direction'] or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
         }
         $post['visit_id'] = $this->visit_pk;
-        $post['user_id'] = $this->post['user_id'];
+        $post['patient_id'] = $this->post['patient_id'];
         $post['route_id'] = $session->session_id;
         $post['parent_id'] = (is_array($this->post['parent_id'])) ? $this->post['parent_id'][$key] : $this->post['parent_id'];
         $post['guide_id'] = (isset($this->post['guide_id'])) ? $this->post['guide_id'] : null;
@@ -774,7 +774,7 @@ class VisitRoute extends ModelOld
                 if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
                     $post_price['visit_id'] = $this->visit_pk;
                     $post_price['visit_service_id'] = $object;
-                    $post_price['user_id'] = $this->post['user_id'];
+                    $post_price['patient_id'] = $this->post['patient_id'];
                     $post_price['item_type'] = $data['type'];
                     $post_price['item_id'] = $data['id'];
                     $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];

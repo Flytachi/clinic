@@ -131,7 +131,7 @@ $header = "Общий отчёт по проведённым услугам";
 												<td><?= $row->title ?></td>
 												<td class="text-center">
 													<?php
-													$p = (new VisitServicesModel)->as("vs")->Data("COUNT(DISTINCT vs.user_id) 'c'")
+													$p = (new VisitServicesModel)->as("vs")->Data("COUNT(DISTINCT vs.patient_id) 'c'")
 													->Where($where . " AND vs.division_id = $row->id")->get()->c;
 													$pc += $p; echo number_format($p);
 													?>

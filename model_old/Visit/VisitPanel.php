@@ -6,12 +6,13 @@ class VisitPanel extends VisitModel
 {
     public $table = 'visits';
     public $_user = 'users';
+    public $_patiient = 'patients';
 
     public function get_or_404(int $pk)
     {
         global $db;
         if (permission([2,32])) {
-            $object = $db->query("SELECT * FROM $this->_user WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
+            $object = $db->query("SELECT * FROM $this->_patiient WHERE id = $pk")->fetch(PDO::FETCH_ASSOC);
             if($object){
 
                 if ($_GET['form'] == "stationar") {
@@ -23,11 +24,11 @@ class VisitPanel extends VisitModel
 
                 }else {
 
-                    if ($object['status'] and $db->query("SELECT id FROM $this->table WHERE user_id = $pk AND completed IS NULL AND direction IS NOT NULL")->fetchColumn()) {
+                    if ($object['status'] and $db->query("SELECT id FROM $this->table WHERE patient_id = $pk AND completed IS NULL AND direction IS NOT NULL")->fetchColumn()) {
                         Mixin\error('report_permissions_false');
                         exit;
                     }
-                    $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE user_id = $pk AND completed IS NULL")->fetchColumn();
+                    $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE patient_id = $pk AND completed IS NULL")->fetchColumn();
                     if ( $this->visit_pk ) {
                         $this->order_data = $db->query("SELECT * FROM visit_orders WHERE visit_id = $this->visit_pk")->fetch();
                     }
@@ -65,7 +66,7 @@ class VisitPanel extends VisitModel
 
                 <input type="hidden" name="model" value="<?= get_parent_class($this) ?>">
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-                <input type="hidden" name="user_id" value="<?= $pk ?>">
+                <input type="hidden" name="patient_id" value="<?= $pk ?>">
 
                 <div class="form-group row">
 
@@ -95,7 +96,7 @@ class VisitPanel extends VisitModel
                                         </tr>
                                         <tr>
                                             <th style="width:150px">FIO:</th>
-                                            <td><?= get_full_name($pk) ?></td>
+                                            <td><?= patient_name($this->post) ?></td>
 
                                             <th style="width:150px">Дата рождения:</th>
                                             <td><?= date_f($this->value('birth_date')) ?></td>
@@ -373,7 +374,7 @@ class VisitPanel extends VisitModel
 
                 <input type="hidden" name="model" value="<?= get_parent_class($this) ?>">
                 <input type="hidden" name="route_id" value="<?= $session->session_id ?>">
-                <input type="hidden" name="user_id" value="<?= $pk ?>">
+                <input type="hidden" name="patient_id" value="<?= $pk ?>">
                 <input type="hidden" name="direction" value="1">
                 <input type="hidden" name="status" value="1">
                 <?php if(isset($application) and $application['id']): ?>
@@ -396,7 +397,7 @@ class VisitPanel extends VisitModel
                                     </tr>
                                     <tr>
                                         <th style="width:150px">FIO:</th>
-                                        <td><?= get_full_name($pk) ?></td>
+                                        <td><?= patient_name($this->post) ?></td>
 
                                         <th style="width:150px">Дата рождения:</th>
                                         <td><?= date_f($this->value('birth_date')) ?></td>
@@ -419,7 +420,7 @@ class VisitPanel extends VisitModel
                             <label>Отдел:</label>
                             <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php $sql = "SELECT d.id, d.title, COUNT(b.id) FROM divisions d JOIN wards w ON(w.division_id=d.id) JOIN beds b ON(b.ward_id=w.id) WHERE d.level = 5 AND b.user_id IS NULL GROUP BY d.id"; ?>
+                                <?php $sql = "SELECT d.id, d.title, COUNT(b.id) FROM divisions d JOIN wards w ON(w.division_id=d.id) JOIN beds b ON(b.ward_id=w.id) WHERE d.level = 5 AND b.patient_id IS NULL GROUP BY d.id"; ?>
                                 <?php foreach($db->query($sql) as $row): ?>
                                     <option value="<?= $row['id'] ?>" <?php if(isset($application) and $row['id'] == $application['division_id']) echo "selected" ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>

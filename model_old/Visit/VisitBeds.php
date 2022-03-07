@@ -8,8 +8,7 @@ class VisitBedsModel extends ModelOld
     public $_visits = 'visits';
     public $_beds = 'beds';
     public $_bed_types = 'bed_types';
-    public $_user = 'users';
-
+    public $_patient = 'patients';
 
     public function get_or_404(int $pk)
     {
@@ -102,8 +101,8 @@ class VisitBedsModel extends ModelOld
                         <select data-placeholder="Выбрать койку" name="bed_id" id="bed" class="<?= $classes['form-select_price'] ?>" required>
                             <option></option>
                             <?php foreach ($db->query("SELECT bd.*, bdt.price FROM beds bd LEFT JOIN bed_types bdt ON(bd.type_id=bdt.id)") as $row): ?>
-                                <?php if ($row['user_id']): ?>
-                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-name="<?= $row['types'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM users WHERE id = {$row['user_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
+                                <?php if ($row['patient_id']): ?>
+                                    <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-name="<?= $row['types'] ?>" disabled><?= $row['bed'] ?> койка (<?= ($db->query("SELECT gender FROM patients WHERE id = {$row['patient_id']}")->fetchColumn()) ? "Male" : "Female" ?>)</option>
                                 <?php else: ?>
                                     <option value="<?= $row['id'] ?>" data-chained="<?= $row['ward_id'] ?>" data-name="<?= $row['types'] ?>"><?= $row['bed'] ?> койка</option>
                                 <?php endif; ?>
@@ -242,8 +241,8 @@ class VisitBedsModel extends ModelOld
                 $bed_data = $db->query("SELECT * FROM  $this->_beds WHERE id = {$this->post['bed_id']}")->fetch();
                 $bed_types = $db->query("SELECT * FROM  $this->_bed_types WHERE id = {$bed_data['type_id']}")->fetch();
                 
-                $this->post['user_id'] = $data['user_id'];
-                $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+                $this->post['patient_id'] = $data['patient_id'];
+                $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetchColumn();
                 $this->post['location'] = "{$bed_data['building']} {$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка";
                 $this->post['type'] = $bed_data['types'];
                 $this->post['cost'] = ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'];
@@ -253,7 +252,7 @@ class VisitBedsModel extends ModelOld
 
                 // Остановка предыдущей койки
                 $object = Mixin\update($this->table, array('end_date' => date("Y-m-d H:i:s")), $data['id']);
-                $object2 = Mixin\update($this->_beds, array('user_id' => null), $data['bed_id']);
+                $object2 = Mixin\update($this->_beds, array('patient_id' => null), $data['bed_id']);
                 if (!intval($object) and !intval($object2)){
                     $this->error("Ошибка на сервере!");
                     exit;
@@ -265,7 +264,7 @@ class VisitBedsModel extends ModelOld
                     $this->error("Ошибка на сервере!");
                     $db->rollBack();
                 }
-                $object4 = Mixin\update($this->_beds, array('user_id' => $this->post['user_id']), $bed_data['id']);
+                $object4 = Mixin\update($this->_beds, array('patient_id' => $this->post['patient_id']), $bed_data['id']);
                 if (!intval($object4)){
                     $this->error("Ошибка на сервере!");
                     $db->rollBack();

@@ -22,7 +22,7 @@ class VisitOperationServicesModel extends ModelOld
 
                 $this->visit_id = $_GET['visit_id'];
                 $this->operation_id = $pk;
-                $this->is_foreigner = $db->query("SELECT is_foreigner FROM users WHERE id = {$object['user_id']}")->fetchColumn();
+                $this->is_foreigner = $db->query("SELECT is_foreigner FROM patients WHERE id = {$object['patient_id']}")->fetchColumn();
                 return $this->{$_GET['form']}();
                 
             }else{
@@ -191,8 +191,8 @@ class VisitOperationServicesModel extends ModelOld
         if($this->clean()){
 
             $db->beginTransaction();
-            $user_pk = $db->query("SELECT user_id FROM $this->_visit_operations WHERE id = {$this->post['operation_id']}")->fetchColumn();
-            $this->is_foreigner = $db->query("SELECT is_foreigner FROM users WHERE id = {$user_pk}")->fetchColumn();
+            $patient_pk = $db->query("SELECT patient_id FROM $this->_visit_operations WHERE id = {$this->post['operation_id']}")->fetchColumn();
+            $this->is_foreigner = $db->query("SELECT is_foreigner FROM patients WHERE id = {$patient_pk}")->fetchColumn();
 
             foreach ($this->post['service'] as $key => $value) {
 

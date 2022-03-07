@@ -2,7 +2,7 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$tb = (new VisitModel)->Data("id, user_id, add_date, discharge_date, grant_id, division_id");
+$tb = (new VisitModel)->Data("id, patient_id, add_date, discharge_date, grant_id, division_id");
 $search = $tb->getSearch();
 $search_array = array(
 	"division_id = $search AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
@@ -28,11 +28,11 @@ $tb->returnPath(viv('sentry/index'));
             <?php foreach($tb->list(1) as $row): ?>
                 <tr>
                     <td><?= $row->count ?></td>
-                    <td><?= addZero($row->user_id) ?></td>
+                    <td><?= addZero($row->patient_id) ?></td>
                     <td>
-                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+                        <div class="font-weight-semibold"><?= patient_name($row->patient_id) ?></div>
                         <div class="text-muted">
-                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
                                 <?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
                             <?php endif; ?>
                         </div>

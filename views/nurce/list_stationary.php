@@ -4,7 +4,7 @@ $session->is_auth(7);
 $header = "Рабочий стол";
 
 $tb = new Table($db, "visits");
-$tb->set_data("id, user_id, add_date, discharge_date, grant_id, division_id");
+$tb->set_data("id, patient_id, add_date, discharge_date, grant_id, division_id");
 $search = $tb->get_serch();
 $search_array = array(
 	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
@@ -68,11 +68,11 @@ $tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 									<?php foreach($tb->get_table(1) as $row): ?>
 										<tr>
                                             <td><?= $row->count ?></td>
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->patient_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+												<div class="font-weight-semibold"><?= patient_name($row->patient_id) ?></div>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
 													<?php endif; ?>
 												</div>

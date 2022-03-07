@@ -49,7 +49,7 @@ class VisitBypassEventsModel extends ModelOld
                     $post = array(
                         'visit_id' => $this->post['visit_id'],
                         'visit_bypass_event_id' => $object,
-                        'user_id' => $this->post['user_id'],
+                        'patient_id' => $this->post['patient_id'],
                         'item_name_id' => $item->item_name_id,
                     );
                     

@@ -114,13 +114,13 @@ is_module('queue');
                 }
                 if (document.querySelector("#Troom-"+element.room_id)) {
                     
-                    if (!document.querySelector("#item_"+element.room_id+"-"+element.user_id)) {
+                    if (!document.querySelector("#item_"+element.room_id+"-"+element.patient_id)) {
                         var table = document.querySelector("#Troom-"+element.room_id);
                         let tr = document.createElement("tr");
                         let td = document.createElement("td");
-                        td.innerHTML = element.user_<?= $panel['title'] ?>;
+                        td.innerHTML = element.patient_<?= $panel['title'] ?>;
                         if (element.is_accept) tr.style.backgroundColor = "rgb(0, 255, 0)";
-                        tr.id = "item_"+element.room_id+"-"+element.user_id;
+                        tr.id = "item_"+element.room_id+"-"+element.patient_id;
                         tr.dataset.is_accept = element.is_accept;
                         tr.append(td);
                         table.append(tr);
@@ -137,9 +137,9 @@ is_module('queue');
                     url: "<?= del_url(null, "Queue") ?>",
                     data: { id:element.id },
                     success: function (data) {
-                        $(`#item_${element.room_id}-${element.user_id}`).css("background-color", "rgb(244, 67, 54)");
-                        $(`#item_${element.room_id}-${element.user_id}`).css("color", "white");
-                        $(`#item_${element.room_id}-${element.user_id}`).fadeOut(900, function() {
+                        $(`#item_${element.room_id}-${element.patient_id}`).css("background-color", "rgb(244, 67, 54)");
+                        $(`#item_${element.room_id}-${element.patient_id}`).css("color", "white");
+                        $(`#item_${element.room_id}-${element.patient_id}`).fadeOut(900, function() {
                             $(this).remove();
                         });
                     },
@@ -147,11 +147,11 @@ is_module('queue');
             }
 
             function Update(element) {
-                var item = document.querySelector(`#item_${element.room_id}-${element.user_id}`);
+                var item = document.querySelector(`#item_${element.room_id}-${element.patient_id}`);
                 if (item.dataset.is_accept == "null") {
                     item.dataset.is_accept = element.is_accept;
                     playMusic();
-                    $(`#item_${element.room_id}-${element.user_id}`).fadeIn(900, function() {
+                    $(`#item_${element.room_id}-${element.patient_id}`).fadeIn(900, function() {
                         $(this).css("background-color", "rgb(0, 255, 0)");
                     });
                 }
