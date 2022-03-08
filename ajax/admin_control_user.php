@@ -5,6 +5,6 @@ $session->is_auth();
 // prit($_GET)
 $post = Mixin\clean_form($_GET);
 $post = Mixin\to_null($post);
-$query = Mixin\update("users", array('status' => $post['status']), $post['id']);
+$query = Mixin\update("patients", array('status' => $post['status']), $post['id']);
 echo $_GET['status'];
 ?>

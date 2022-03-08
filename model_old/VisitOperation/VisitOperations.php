@@ -7,7 +7,7 @@ class VisitOperationsModel extends ModelOld
     public $table = 'visit_operations';
     public $_transactions = 'visit_service_transactions';
     public $_services = 'services';
-    public $_user = 'users';
+    public $_patient = 'patients';
 
     public function get_or_404(int $pk)
     {
@@ -37,7 +37,7 @@ class VisitOperationsModel extends ModelOld
             <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
             <input type="hidden" name="grant_id" value="<?= $patient->grant_id ?>">
-            <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+            <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
             <div class="modal-body">
 
@@ -185,7 +185,7 @@ class VisitOperationsModel extends ModelOld
     public function save()
     {
         global $db;
-        $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_user WHERE id = {$this->post['user_id']}")->fetchColumn();
+        $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetchColumn();
         if($this->clean()){
             $db->beginTransaction();
 
@@ -202,7 +202,7 @@ class VisitOperationsModel extends ModelOld
             // Visit price
             $post_price['visit_id'] = $this->post['visit_id'];
             $post_price['visit_service_id'] = $object;
-            $post_price['user_id'] = $this->post['user_id'];
+            $post_price['patient_id'] = $this->post['patient_id'];
             $post_price['item_type'] = 3;
             $post_price['item_id'] = $service['id'];
             $post_price['item_cost'] = ($this->is_foreigner) ? $service['price_foreigner'] : $service['price'];

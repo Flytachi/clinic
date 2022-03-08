@@ -258,11 +258,11 @@ class UserModel extends ModelOld
         }
     }
 
-    public function update_status(int $pk)
-    {
-        Mixin\update($this->table, array('status' => null), $pk);
-        return true;
-    }
+    // public function update_status(int $pk)
+    // {
+    //     Mixin\update($this->table, array('status' => null), $pk);
+    //     return true;
+    // }
 
     public function success()
     {

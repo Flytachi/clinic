@@ -3,11 +3,11 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb->set_data("DISTINCT v.id, vs.patient_id, p.birth_date, p.last_name, p.first_name, p.father_name, vs.route_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id",
-	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
 $tb->set_self(viv('doctor/list_outpatient'));
@@ -27,9 +27,9 @@ $tb->set_self(viv('doctor/list_outpatient'));
         <tbody>
             <?php foreach($tb->get_table() as $row): ?>
                 <tr>
-                    <td><?= addZero($row->user_id) ?></td>
+                    <td><?= addZero($row->patient_id) ?></td>
                     <td>
-                        <span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+                        <span class="font-weight-semibold"><?= patient_name($row) ?></span>
                         <?php if ( $row->order ): ?>
                             <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер</span>
                         <?php endif; ?>

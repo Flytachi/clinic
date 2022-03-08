@@ -19,6 +19,19 @@ function get_full_name($id = null) {
     }
 }
 
+function patient_name($data){
+    global $db;
+    if (is_numeric($data)) {
+        $stmt = $db->query("SELECT first_name, last_name, father_name FROM patients WHERE id = $data")->fetch(PDO::FETCH_OBJ);
+        return ucwords($stmt->last_name." ".$stmt->first_name." ".$stmt->father_name);
+    }elseif(is_array($data) or is_object($data)) {
+        $data = (object) $data;
+        return ucwords($data->last_name." ".$data->first_name." ".$data->father_name);
+    }else {
+        return "<span class=\"text-muted\">Нет даных</span>";
+    }
+}
+
 
 function bytes($bytes, $force_unit = NULL, $format = NULL, $si = TRUE)
 {

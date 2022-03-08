@@ -27,7 +27,7 @@ class VisitInvestmentsModel extends ModelOld
         $vps = (new VisitModel)->price_status($pk);
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
-            <h6 class="modal-title"><?= ($this->value('type')) ? "Возврат": "Предоплата" ?>: <?= get_full_name($this->value('user_id')) ?></h6>
+            <h6 class="modal-title"><?= ($this->value('type')) ? "Возврат": "Предоплата" ?>: <?= get_full_name($this->value('patient_id')) ?></h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
@@ -36,7 +36,7 @@ class VisitInvestmentsModel extends ModelOld
             <div class="modal-body">
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $pk ?>">
-                <input type="hidden" name="user_id" value="<?= $this->value('user_id') ?>">
+                <input type="hidden" name="patient_id" value="<?= $this->value('patient_id') ?>">
                 <input type="hidden" name="pricer_id" value="<?= $session->session_id ?>">
                 <input type="hidden" name="price_type" value="<?= $this->value('type') ?>">
 

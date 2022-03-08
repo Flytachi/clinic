@@ -16,6 +16,7 @@ function layout(String $url) {
 function render(String $url = null, Array $param = null) {
     if ($url) header("location:" . DIR . "/views/$url" . EXT . arrayToRequest($param));
     else header("location:" . $_SERVER['HTTP_REFERER']);
+    exit;
 }
 
 function api(String $url, Array $param = null) {

@@ -1,6 +1,7 @@
 <?php
 
 use Mixin\Hell;
+use Mixin\Model;
 
 require '../tools/warframe.php';
 $session->is_auth();

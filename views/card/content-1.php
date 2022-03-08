@@ -144,8 +144,10 @@ require_once 'callback.php';
 													<td><?= date_f($row->add_date, 1) ?></td>
 													<td><?= get_full_name($row->response_id) ?></td>
 													<td class="text-right">
-														<button onclick="Update('<?= up_url($row->id, 'VisitInspectionModel') ?>&visit_id=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-pencil"></i></button>
-														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
+														<?php if($row->response_id == $session->session_id): ?>
+															<button onclick="Update('<?= up_url($row->id, 'VisitInspectionModel') ?>&visit_id=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-pencil"></i></button>
+														<?php endif; ?>
+														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye"></i></button>
 													</td>
 												</tr>
 											<?php endforeach; ?>

@@ -7,7 +7,7 @@ if ($panel) {
     if ($panel['is_active']) {
         $rooms = implode(",", json_decode($panel['rooms']));
         $data = $db->query("SELECT * FROM queue WHERE room_id IN ($rooms)")->fetchAll();
-        if ($panel['title'] == "name") foreach ($data as $key => $value) $data[$key]["user_name"] = get_full_name($value['user_id']);
+        if ($panel['title'] == "name") foreach ($data as $key => $value) $data[$key]["patient_name"] = patient_name($value['patient_id']);
         //
         foreach ($data as $key => $value) {
             if ($panel['is_day']) {

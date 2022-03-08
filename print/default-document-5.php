@@ -5,8 +5,9 @@ require_once '../tools/warframe.php';
 
 // 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
-    $docs = $db->query("SELECT v.id, v.user_id, v.grant_id, v.parad_id, us.birth_date, v.comment, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN users us ON(us.id=v.user_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
-    $data = (new UserModel)->byId($docs->user_id);
+    importModel('Patient', 'Province', 'Region');
+    $docs = $db->query("SELECT v.id, v.patient_id, v.grant_id, v.parad_id, p.first_name, p.last_name, p.father_name, p.birth_date, v.comment, v.add_date, v.completed, v.division_id, v.icd_id FROM visits v LEFT JOIN patients p ON(p.id=v.patient_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
+    $data = (new Patient())->byId($docs->patient_id);
     $visit = (new VisitServicesModel)->Where("visit_id = $docs->id AND service_id = 1")->get();
     $initial = (new VisitInitialModel)->Where("visit_id = $docs->id")->get();
 }else Hell::error('404');
@@ -64,12 +65,12 @@ function persic($qty=0, $str=""){
                 __________________________________________________________________________________________
                 <small style="margin-left: 30%;">(дорининг номи, ножўя таъсирнинг кўриниши)</small><br>
                 __________________________________________________________________________________________
-                ФИО: <?= persic(65, "$data->last_name $data->first_name $data->father_name") ?>
+                ФИО: <?= persic(65, patient_name($data)) ?>
                 2. Жинси <?= persic(7, ($data->gender) ? "Мужской" : "Женский") ?>
                 3.Туғилган сана: кун <?= persic(7, date_f($data->birth_date, "d")) ?> ой <?= persic(17, date_f($data->birth_date, "m")) ?> йил <?= persic(25, date_f($data->birth_date, "Y")) ?>
                 Бўйи <?= persic(16, ($initial) ? $initial->height : null ) ?>, вазни <?= persic(15, ($initial) ? $initial->weight : null ) ?>, тана ҳарорати <?= persic(20, ($initial) ? $initial->temperature : null ) ?>
                 Доимий яшаш жойи: шаҳар, қишлоқ (чизинг)<br>
-                <?= persic(89, "$data->province, $data->region $data->address_residence/$data->address_registration") ?><br>
+                <?= persic(89, (new Province)->byId($data->province_id)->name . ", " . (new Region)->byId($data->region_id)->name . " $data->address_residence/$data->address_registration") ?><br>
                 <small style="margin-left: 10%;">(яшаш жойи кўрсатилсин, вилоят ва туманлардан келганлар учун манзили ва яқин</small><br>
                 <?= persic(86, "$data->phone_number") ?>
                 <small style="margin-left: 15%;">қариндошларининг яшаш жойи ва телефон рақамлари кўрсатилсин)</small><br>

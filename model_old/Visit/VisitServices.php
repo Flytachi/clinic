@@ -145,7 +145,7 @@ class VisitServiceUp extends VisitServicesModel
         if (!$visit->direction and module('queue')) $this->queue();
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if (isset($this->post['queue_user'])) unset($this->post['queue_user']);
+        if (isset($this->post['queue_patient'])) unset($this->post['queue_patient']);
         return True;
     }
 
@@ -156,13 +156,13 @@ class VisitServiceUp extends VisitServicesModel
             if(isset($this->post['parent_id'])) $room = $db->query("SELECT room_id FROM users WHERE id = {$this->post['parent_id']}")->fetchColumn();
             else $room = $session->data->room_id;
             //
-            if (isset($this->post['queue_user'])) $user = $this->post['queue_user']; 
-            else $user = $db->query("SELECT us.id FROM users us JOIN visit_services vs ON (us.id=vs.user_id) WHERE vs.id = {$this->post['id']}")->fetchColumn();
+            if (isset($this->post['queue_patient'])) $patient = $this->post['queue_patient']; 
+            else $patient = $db->query("SELECT p.id FROM patients p JOIN visit_services vs ON (p.id=vs.patient_id) WHERE vs.id = {$this->post['id']}")->fetchColumn();
             //
             if ($old = $db->query("SELECT id FROM queue WHERE room_id = $room AND is_accept IS NOT NULL LIMIT 1")->fetchColumn()) {
                 Mixin\update("queue", array('is_accept' => null, 'is_delete' => 1), $old);
             }
-            Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1, 'accept_date' => date("Y-m-d H:i:s")), array('room_id' => $room, 'user_id' => $user, 'is_queue' => 1));
+            Mixin\update("queue", array('is_queue' => null, 'is_accept' => 1, 'accept_date' => date("Y-m-d H:i:s")), array('room_id' => $room, 'patient_id' => $patient, 'is_queue' => 1));
         }
     }
 }

@@ -22,6 +22,9 @@ if ( isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG'] ) 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     $DEBUG_time_start = microtime(true);
+    // echo "<style>" . file_get_contents( dirname(__FILE__) . '/Resource/css/debug.css' ) . "</style>";
+    // include dirname(__FILE__) . '/Resource/debug.php';
+    // echo "<script type=\"text/javascript\">" . file_get_contents( dirname(__FILE__) . '/Resource/js/debug.js' ) . "</script>";
 }
 
 // * Guard

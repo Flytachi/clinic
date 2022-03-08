@@ -1,15 +1,16 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 
 if (is_numeric($_GET['id'])) {
 	$header = "Пациент ".addZero($_GET['id']);
-	$patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
-} else {
-	$patient = False;
-	echo "err";
-}
-if (!$patient) Mixin\error('404');
+	importModel('Patient');
+	$patient = (new Patient)->byId($_GET['id']);
+	if(!$patient) Hell::error('404');
+} else Hell::error('404');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +39,7 @@ if (!$patient) Mixin\error('404');
 			<!-- Content area -->
 			<div class="content">
 
-                <?php include "profile.php" ?>
+                <?php include "../profile.php" ?>
 
 				<div class="<?= $classes['card'] ?>">
 
@@ -72,8 +73,8 @@ if (!$patient) Mixin\error('404');
 									$tb->set_data("v.id, v.parad_id, v.icd_id, v.icd_autor, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 									$search = $tb->get_serch();
 									$search_array = array(
-										"v.user_id = $patient->id", 
-										"v.user_id = $patient->id"
+										"v.patient_id = $patient->id", 
+										"v.patient_id = $patient->id"
 									);
 									$tb->where_or_serch($search_array)->order_by('v.add_date DESC')->set_limit(20);
 									?>

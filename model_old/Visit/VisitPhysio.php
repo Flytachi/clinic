@@ -5,7 +5,7 @@ use Mixin\ModelOld;
 class VisitPhysioModel extends ModelOld
 {
     public $table = 'visits';
-    public $_user = 'users';
+    public $_patient = 'patients';
     public $_visit = 'visits';
     public $_visit_service = 'visit_services';
 
@@ -28,7 +28,7 @@ class VisitPhysioModel extends ModelOld
     public function form($pk = null)
     {
         global $db, $classes, $session;
-        $user = $db->query("SELECT id, birth_date, gender FROM $this->_user WHERE id = {$this->post['user_id']}")->fetch();
+        $patient = $db->query("SELECT id, birth_date, gender FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetch();
         $is_division = (division()) ? "AND division_id = ".division() : null;
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
@@ -45,17 +45,17 @@ class VisitPhysioModel extends ModelOld
                         <tbody class="bg-secondary">
                             <tr>
                                 <th style="width:150px">ID:</th>
-                                <td><?= addZero($user['id']) ?></td>
+                                <td><?= addZero($patient['id']) ?></td>
 
                                 <th style="width:150px">Пол:</th>
-                                <td><?= ($user['gender']) ? "Мужской" : "Женский" ?></td>
+                                <td><?= ($patient['gender']) ? "Мужской" : "Женский" ?></td>
                             </tr>
                             <tr>
                                 <th style="width:150px">FIO:</th>
-                                <td><?= get_full_name($user['id']) ?></td>
+                                <td><?= patient_name($patient['id']) ?></td>
 
                                 <th style="width:150px">Дата рождения:</th>
-                                <td><?= date_f($user['birth_date']) ?></td>
+                                <td><?= date_f($patient['birth_date']) ?></td>
                             </tr>
                         </tbody>
                     </table>

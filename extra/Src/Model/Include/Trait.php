@@ -18,23 +18,28 @@ trait ModelSetter
     {
         $this->files = $data;
     }
+
+    final public function setPostItem(String $item, $value = null)
+    {
+        $this->post[$item] = $value;
+    }
 }
 
 trait ModelGetter
 {
     final public function getGet(String $item = null)
     {
-        return ($item == null) ? $this->get : $this->get[$item];
+        return ($item == null) ? $this->get : $this->get[$item] ?? null;
     }
 
     final public function getPost(String $item = null)
     {
-        return ($item == null) ? $this->post : $this->post[$item];
+        return ($item == null) ? $this->post : $this->post[$item] ?? null;
     }
 
     final public function getFiles(String $item = null)
     {
-        return ($item == null) ? $this->files : $this->files[$item];
+        return ($item == null) ? $this->files : $this->files[$item] ?? null;
     }
 }
 
@@ -66,7 +71,7 @@ trait ModelTUpdate
 
     public function updateBody(){
         $object = HellCrud::update($this->table, $this->getPost(), $this->getGet());
-        if (!$object) $this->error($object);
+        if (!is_numeric($object) and $object <= 0) $this->error($object);
     }
 
     public function updateAfter(){

@@ -1,26 +1,26 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 
 if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
 else $apl = "";
 
-$tb = new Table($db, "users u");
-$search = $tb->get_serch();
+importModel('Patient', 'Region');
+
+$tb = new Patient('p');
+$search = $tb->getSearch();
 $where_search = array(
-    $apl."u.user_level = 15", 
-    $apl."u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
+    $apl . "p.add_date IS NOT NULL",
+    $apl . "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
+);
 
-$tb->set_data("u.*, va.id 'application'")->additions("LEFT JOIN visit_applications va ON(va.user_id=u.id)")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
-$tb->set_self(viv('registry/index'));
-?>
-<?php
-if( isset($_SESSION['message']) ){
-    echo $_SESSION['message'];
-    unset($_SESSION['message']);
-}
-?>
+$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(20);
 
+$tb->returnPath(viv('registry/index'));
+?>
 <div class="table-responsive">
     <table class="table table-hover table-sm table-bordered">
         <thead class="<?= $classes['table-thead'] ?>">
@@ -37,20 +37,20 @@ if( isset($_SESSION['message']) ){
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($tb->get_table() as $row): ?>
+            <?php foreach ($tb->list() as $row): ?>
                 <tr <?php if($row->application) echo 'class="table-danger"'; ?>>
                     <td><?= addZero($row->id) ?></td>
                     <td>
-                        <div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+                        <div class="font-weight-semibold"><?= patient_name($row) ?></div>
                         <div class="text-muted">
-                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
+                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->id")->fetch()): ?>
                                 <?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
                             <?php endif; ?>
                         </div>
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td><?= $row->phone_number ?></td>
-                    <td><?= $row->region ?></td>
+                    <td><?= (new Region)->byId($row->region_id, 'name')->name ?></td>
                     <td><?= date_f($row->add_date, 1) ?></td>
                     <td class="text-center">
                         <?php if ($row->status): ?>
@@ -60,7 +60,7 @@ if( isset($_SESSION['message']) ){
                         <?php endif; ?>
                     </td>
                     <td class="text-center">	
-                        <?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE user_id = $row->id AND completed IS NULL")->fetch() ?>
+                        <?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE patient_id = $row->id AND completed IS NULL")->fetch() ?>
                         <?php if ( isset($stm_dr['id']) ): ?>
                             <?php if ($stm_dr['direction']): ?>
                                 <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
@@ -84,13 +84,13 @@ if( isset($_SESSION['message']) ){
                             <?php if ( isset($stm_dr['id']) and $stm_dr['direction'] ): ?>
                                 <a onclick="Print('<?= prints('document-5') ?>?pk=<?= $stm_dr['id'] ?>')" class="dropdown-item"><i class="icon-list"></i> Стационарный лист</a>
                             <?php endif; ?>
-                            <a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
+                            <a onclick="Update('<?= Hell::apiGet('Patient', $row->id, 'form') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                         </div>
                     </td>
                 </tr>
-            <?php endforeach;?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>
 
-<?php $tb->get_panel(); ?>
+<?php $tb->panel(); ?>

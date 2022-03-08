@@ -5,8 +5,8 @@ $session->is_auth();
 $tb = new Table($db, "visit_service_transactions");
 $search = $tb->get_serch();
 $search_array = array(
-	"is_visibility IS NOT NULL AND user_id = {$_GET['pk']} AND is_price IS NOT NULL", 
-	"is_visibility IS NOT NULL AND user_id = {$_GET['pk']} AND is_price IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
+	"is_visibility IS NOT NULL AND patient_id = {$_GET['pk']} AND is_price IS NOT NULL", 
+	"is_visibility IS NOT NULL AND patient_id = {$_GET['pk']} AND is_price IS NOT NULL AND (LOWER(item_name) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->order_by('price_date DESC')->set_limit(20);
 $tb->set_self(viv('cashbox/detail_payment'));  

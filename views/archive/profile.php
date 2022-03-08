@@ -1,7 +1,7 @@
 <div class="<?= $classes['card'] ?>">
 
     <div class="<?= $classes['card-header'] ?>">
-        <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
+        <h5 class="card-title"><b><?= patient_name($patient) ?></b></h5>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>
@@ -41,14 +41,15 @@
                                 <?php endif; ?>
                             </div>
 
+                            <?php importModel('Region') ?>
                             <label class="col-md-4"><b>Адрес проживания:</b></label>
     						<div class="col-md-8 text-right">
-    							<?= $patient->region ?> <?= $patient->address_residence ?>
+    							<?= (new Region)->byId($patient->region_id, 'name')->name ?> <?= $patient->address_residence ?>
     						</div>
 
                             <label class="col-md-4"><b>Адрес прописки:</b></label>
 				            <div class="col-md-8 text-right">
-                               <?= $patient->region ?> <?= $patient->address_registration ?>
+                                <?= (new Region)->byId($patient->region_id, 'name')->name ?> <?= $patient->address_registration ?>
     						</div>
 
                         </div>

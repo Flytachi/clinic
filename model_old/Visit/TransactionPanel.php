@@ -107,7 +107,7 @@ class TransactionPanel extends ModelOld
         <div class="card border-1 border-dark" id="card_info">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($this->value('patient_id')) ?> - <em><?= patient_name($this->value('patient_id')) ?></em></b></h5>
             </div>
 
             <div class="card-body">
@@ -239,7 +239,7 @@ class TransactionPanel extends ModelOld
         <div class="card border-1 border-dark" id="card_info">
 
             <div class="card-header header-elements-inline">
-                <h5 class="card-title"><b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b></h5>
+                <h5 class="card-title"><b><?= addZero($this->value('patient_id')) ?> - <em><?= patient_name($this->value('patient_id')) ?></em></b></h5>
             </div>
 
             <div class="card-body">

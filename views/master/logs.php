@@ -23,7 +23,6 @@ $header = "Логи";
 		<?php include 'sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -33,6 +32,10 @@ $header = "Логи";
 
 			<!-- Content area -->
 			<div class="content">
+				<a href="<?= viv('master/mr_patient_add') ?>" target="_blank" rel="noopener noreferrer">users => set => patients</a><br>
+				<a href="<?= viv('master/mr_patient_delete') ?>" target="_blank" rel="noopener noreferrer">users delete patients</a><br>
+				<a href="<?= viv('master/mr_bd_change') ?>?status=new" target="_blank" rel="noopener noreferrer">set user_id => patient_id</a><br>
+				<a href="<?= viv('master/mr_bd_change') ?>?status=old" target="_blank" rel="noopener noreferrer">set patient_id => user_id</a><br>
 				<?php
 
 				// function insertPacs($tb, $post){

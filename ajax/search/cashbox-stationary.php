@@ -4,10 +4,10 @@ $session->is_auth();
 
 $tb = new Table($db, "visits vs");
 $search = $tb->get_serch();
-$tb->set_data("vs.id, vs.user_id, vs.is_active")->additions("LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.patient_id, vs.is_active, p.last_name, p.first_name, p.father_name")->additions("LEFT JOIN patients p ON(p.id=vs.patient_id)");
 $where_search = array(
 	"vs.direction IS NOT NULL AND vs.completed IS NULL", 
-	"vs.direction IS NOT NULL AND vs.completed IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.direction IS NOT NULL AND vs.completed IS NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($where_search);
 $tb->set_self(viv('cashbox/stationary'));  
@@ -23,9 +23,9 @@ $tb->set_self(viv('cashbox/stationary'));
         <tbody>
             <?php foreach($tb->get_table(1) as $row): ?>
                 <tr class="<?= ($row->is_active) ? "" : "table-warning" ?>" onclick="Check('<?= up_url($row->id, 'TransactionPanel') ?>')" id="VisitIDPrice_<?= $row->id ?>">
-                    <td><?= addZero($row->user_id) ?></td>
+                    <td><?= addZero($row->patient_id) ?></td>
                     <td class="text-center">
-                        <div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+                        <div class="font-weight-semibold"><?= patient_name($row) ?></div>
                     </td>
                 </tr>
             <?php endforeach; ?>

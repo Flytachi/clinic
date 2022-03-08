@@ -1,7 +1,12 @@
+<?php
+use Mixin\Hell;
+importModel('Region');
+$region = (new Region)->byId($patient->region_id);
+?>
 <div class="<?= $classes['card'] ?>">
 
     <div class="<?= $classes['card-header'] ?>">
-        <h5 class="card-title"><b><?= get_full_name($patient->id) ?></b></h5>
+        <h5 class="card-title"><b><?= patient_name($patient) ?></b></h5>
         <div class="header-elements">
             <div class="list-icons">
                 <a class="list-icons-item" data-action="collapse"></a>
@@ -19,11 +24,7 @@
                 </div>
                 <fieldset class="mb-3 row">
 
-                    <?php
-
-                                                                use Mixin\Hell;
-
- if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
+                    <?php if($initial = (new Table($db, 'visit_initial'))->where("visit_id = $patient->visit_id")->get_row()): ?>
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label class="col-md-4"><b>Вес:</b></label>
@@ -102,12 +103,12 @@
 
                             <label class="col-md-4"><b>Адрес проживания:</b></label>
     						<div class="col-md-8 text-right">
-    							<?= $patient->region ?> <?= $patient->address_residence ?>
+    							<?= $region->name ?> <?= $patient->address_residence ?>
     						</div>
 
                             <label class="col-md-4"><b>Адрес прописки:</b></label>
 				            <div class="col-md-8 text-right">
-                               <?= $patient->region ?> <?= $patient->address_registration ?>
+                               <?= $region->name ?> <?= $patient->address_registration ?>
     						</div>
 
                             <label class="col-md-4"><b>Дата назначения визита:</b></label>

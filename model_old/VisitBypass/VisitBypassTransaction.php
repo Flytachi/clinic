@@ -24,7 +24,7 @@ class VisitBypassTransactionModel extends ModelOld
                 <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                 <input type="hidden" name="visit_id" value="<?= $patient->visit_id ?>">
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
-                <input type="hidden" name="user_id" value="<?= $patient->id ?>">
+                <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
                 <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
                     <?php if( module('pharmacy') ): ?>
@@ -89,7 +89,7 @@ class VisitBypassTransactionModel extends ModelOld
                     data: {
                         model: "<?= __CLASS__ ?>",
                         visit_id: <?= $patient->visit_id ?>,
-                        user_id: <?= $patient->id ?>,
+                        patient_id: <?= $patient->id ?>,
                         warehouse_id: warehouse,
                         item_name_id: document.querySelector('#name_id_input_'+index).value,
                         item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
@@ -147,7 +147,7 @@ class VisitBypassTransactionModel extends ModelOld
                     Mixin\insert($this->table, array(
                         'visit_id' => $this->post['visit_id'],
                         'responsible_id' => $session->session_id,
-                        'user_id' => $this->post['user_id'],
+                        'patient_id' => $this->post['patient_id'],
                         'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
                         'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = {$item['item_manufacturer_id']}")->fetchColumn(),
                         'item_qty' => $change_qty,
@@ -162,7 +162,7 @@ class VisitBypassTransactionModel extends ModelOld
                         Mixin\insert($this->table, array(
                             'visit_id' => $this->post['visit_id'],
                             'responsible_id' => $session->session_id,
-                            'user_id' => $this->post['user_id'],
+                            'patient_id' => $this->post['patient_id'],
                             'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
                             'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = {$item['item_manufacturer_id']}")->fetchColumn(),
                             'item_qty' => $change_qty,
@@ -176,7 +176,7 @@ class VisitBypassTransactionModel extends ModelOld
                         Mixin\insert($this->table, array(
                             'visit_id' => $this->post['visit_id'],
                             'responsible_id' => $session->session_id,
-                            'user_id' => $this->post['user_id'],
+                            'patient_id' => $this->post['patient_id'],
                             'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
                             'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = {$item['item_manufacturer_id']}")->fetchColumn(),
                             'item_qty' => $item['item_qty'],

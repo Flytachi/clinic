@@ -5,9 +5,9 @@ is_module('module_laboratory');
 $code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
 $qr = "http://".config("print_document_qrcode_ip")."/api/document?code=$code";
 if ( isset($_GET['pk']) ) {
-    $docs = $db->query("SELECT vs.user_id, vs.parent_id, vs.service_id, us.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT vs.patient_id, vs.patient_id, vs.service_id, p.first_name, p.last_name, p.father_name, p.birth_date, vs.accept_date, vs.service_name FROM visit_services vs LEFT JOIN patients p ON(p.id=vs.patient_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
 }else {
-    $docs = $db->query("SELECT us.id, us.birth_date, v.add_date, v.completed FROM users us LEFT JOIN visits v ON(v.user_id=us.id) WHERE v.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT p.id, p.first_name, p.last_name, p.father_name, p.birth_date, v.add_date, v.completed FROM patients p LEFT JOIN visits v ON(v.patient_id=p.id) WHERE v.id={$_GET['id']}")->fetch(PDO::FETCH_OBJ);
 }
 ?>
 
@@ -60,12 +60,12 @@ if ( isset($_GET['pk']) ) {
         <div class="row">
             <div class="col-md-8 text-left h3">
                 <?php if ( isset($_GET['pk']) ): ?>
-                    <b>Ф.И.О.: </b><?= get_full_name($docs->user_id) ?><br>
-                    <b>ID Пациента: </b><?= addZero($docs->user_id) ?><br>
+                    <b>Ф.И.О.: </b><?= patient_name($docs) ?><br>
+                    <b>ID Пациента: </b><?= addZero($docs->patient_id) ?><br>
                     <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
                     <b>Дата исследования: </b><?= date('d.m.Y H:i', strtotime($docs->accept_date)) ?>
                 <?php else: ?>
-                    <b>Ф.И.О.: </b><?= get_full_name($docs->id) ?><br>
+                    <b>Ф.И.О.: </b><?= patient_name($docs) ?><br>
                     <b>ID Пациента: </b><?= addZero($docs->id) ?><br>
                     <b>Дата рождения: </b><?= date('d.m.Y', strtotime($docs->birth_date)) ?><br>
                     <b>Дата начала визита: </b><?= date('d.m.Y H:i', strtotime($docs->add_date)) ?><br>

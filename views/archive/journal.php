@@ -3,14 +3,15 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Журнал";
 
+importModel('Region');
 $tb = new Table($db, "visits v");
-$tb->set_data('v.id, v.parad_id, v.user_id, v.icd_id, v.icd_autor, v.add_date, us.region, us.address_residence, us.phone_number, v.completed, v.grant_id');
+$tb->set_data('v.id, v.parad_id, v.grant_id, v.patient_id, v.icd_id, v.icd_autor, v.add_date, p.last_name, p.first_name, p.father_name, p.region_id, p.address_residence, p.phone_number, v.completed');
 $search = $tb->get_serch();
 $search_array = array(
 	"v.direction IS NOT NULL", 
-	"v.direction IS NOT NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"v.direction IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions('LEFT JOIN users us ON(us.id=v.user_id)')->where_or_serch($search_array)->order_by('v.add_date ASC')->set_limit(20);
+$tb->additions("LEFT JOIN patients p ON(p.id=v.patient_id)")->where_or_serch($search_array)->order_by('v.add_date ASC')->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,13 +57,6 @@ $tb->additions('LEFT JOIN users us ON(us.id=v.user_id)')->where_or_serch($search
 
 					<div class="card-body" id="search_display">
 
-						<?php
-						if( isset($_SESSION['message']) ){
-				            echo $_SESSION['message'];
-				            unset($_SESSION['message']);
-				        }
-						?>
-
 						<div class="table-responsive card">
                             <table class="table table-hover table-sm">
                                 <thead>
@@ -84,10 +78,10 @@ $tb->additions('LEFT JOIN users us ON(us.id=v.user_id)')->where_or_serch($search
 									<?php foreach($tb->get_table() as $row): ?>
 										<tr>	
                                             <td><?= $row->parad_id ?></td>
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->patient_id) ?></td>
                                             <td><?= date_f($row->add_date, 1) ?></td>
-                                            <td><?= get_full_name($row->user_id) ?></td>
-                                            <td>г. <?= $row->region." ".$row->address_residence ?></td>
+                                            <td><?= patient_name($row) ?></td>
+                                            <td>г. <?= (new Region)->byId($row->region_id, 'name')->name . " " . $row->address_residence ?></td>
                                             <td><?= $row->phone_number ?></td>
                                             <td>
 												<?php if ( $row->icd_id ): ?>

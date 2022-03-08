@@ -1,0 +1,340 @@
+<?php
+
+use Mixin\Hell;
+use Mixin\Model;
+
+class WarehouseStorage extends Model
+{
+    public $table = 'warehouse_storage';
+    public $_warehouses = 'warehouses';
+    public $_applications = 'warehouse_storage_applications';
+    public $_event_applications = 'visit_bypass_event_applications';
+    public $_item_manufacturers = 'warehouse_item_manufacturers';
+    public $_item_suppliers = 'warehouse_item_suppliers';
+    public $_item_names = 'warehouse_item_names';
+    public $i = 0;
+    public $cost = 0;
+
+    public function warehousesPanel($storage_from = null, $storage_in = null, $status = 1){
+        global $classes;
+        ?>
+        <div class="row">
+            <div class="col-md-4 offset-md-2">
+                <label>Склад (с):</label>
+                <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_from) ? 'disabled': ''; ?>>
+                    <option></option>
+                    <?php foreach($this->db->query("SELECT * FROM $this->_warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                        <option value="<?= $row['id'] ?>" <?= ($storage_in == $row['id']) ? 'disabled' : '' ?> <?= ($storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Склад (на):</label>
+                <select data-placeholder="Выберите склад" id="storege_in" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_in) ? 'disabled': ''; ?>>
+                    <option></option>
+                    <?php foreach($this->db->query("SELECT * FROM $this->_warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                        <option value="<?= $row['id'] ?>" <?= ($storage_from == $row['id']) ? 'disabled' : '' ?> <?= ($storage_in == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <div id="panel-frame" class="mt-4"></div>
+        <script type="text/javascript">
+
+            function CheckPks(){
+                var sFrom = document.querySelector("#storege_from");
+                var sIn = document.querySelector("#storege_in");
+
+                if(sFrom.value && !sIn.disabled){
+                    for (let i = 0; i < sIn.options.length; i++) {
+                        if(sIn.options[i].value == sFrom.value) sIn.options[i].disabled = true;
+                        else if(sIn.options[i].disabled) sIn.options[i].disabled = false;
+                    }
+                }
+                if(sIn.value && !sFrom.disabled){
+                    for (let i = 0; i < sFrom.options.length; i++) {
+                        if(sFrom.options[i].value == sIn.value) sFrom.options[i].disabled = true;
+                        else if(sFrom.options[i].disabled) sFrom.options[i].disabled = false;
+                    }
+                }
+                FormLayouts.init();
+
+                if (sFrom.value && sIn.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= Hell::apiAxe(__CLASS__, array('form' => 'frame')) ?>",
+                        data: {
+                            warehouse_id_from: sFrom.value,
+                            warehouse_id_in: sIn.value,
+                            status: <?= $status ?>,
+                            scripts: true,
+                        },
+                        success: function (result) {
+                            $('#panel-frame').html(result);
+                        },
+                    });
+                }
+            }
+            <?php if($storage_from and $storage_in) echo "CheckPks()"; ?>
+
+        </script>
+        <?php
+    }
+
+    public function Axe()
+    {
+        $this->{$this->getGet('form')}();
+    }
+
+    public function frame(){
+        global $session, $classes;
+        ?>
+        <div class="form-group-feedback form-group-feedback-right">
+
+            <input type="text" class="<?= $classes['input-product_search'] ?>" onkeyup="__<?= __CLASS__ ?>__search(this)" id="panel-search_input_product" placeholder="Поиск..." title="Введите название препарата">
+            <div class="form-control-feedback">
+                <i class="icon-search4 font-size-base text-muted"></i>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr class="bg-dark">
+                            <th>Наименование</th>
+                            <th style="width:370px">Производитель</th>
+                            <th style="width:370px">Стоимость</th>
+                            <th class="text-center" style="width:150px">На складе</th>
+                            <th style="width:100px">Кол-во</th>
+                            <th class="text-center" style="width:50px">#</th>
+                        </tr>
+                    </thead>
+                    <tbody id="panel-items">
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <?php if($this->getPost('scripts')): ?>
+            <script type="text/javascript">
+
+                function __<?= __CLASS__ ?>__search(input){
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= Hell::apiAxe(__CLASS__, array('form' => 'itemSearch')) ?>",
+                        data: {
+                            warehouse_id_from: <?= $this->getPost('warehouse_id_from') ?>,
+                            warehouse_id_in: <?= $this->getPost('warehouse_id_in') ?>,
+                            default: true,
+                            search: input.value, 
+                        },
+                        success: function (result) {
+                            $('#panel-items').html(result);
+                        },
+                    });
+                }
+
+                function __<?= __CLASS__ ?>__select(btn, index) {
+                    btn.disabled = true;
+                    
+                    if (Number(document.querySelector('#max_qty_input_'+index).innerHTML) < Number(document.querySelector('#qty_input_'+index).value)) {
+                        new Noty({
+                            text: "Введено недопустимое количество!",
+                            type: "error"
+                        }).show();
+                        btn.disabled = false;
+                    }else{
+                        var data = {
+                            model: "<?= __CLASS__ ?>",
+                            warehouse_id_from: <?= $this->getPost('warehouse_id_from') ?>,
+                            warehouse_id_in: <?= $this->getPost('warehouse_id_in') ?>,
+                            responsible_id: <?= $session->session_id ?>,
+                            item_name_id: document.querySelector('#name_id_input_'+index).value,
+                            item_manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
+                            item_price: document.querySelector('#price_id_input_'+index).value,
+                            item_qty: document.querySelector('#qty_input_'+index).value,
+                            status: <?= $this->getPost('status') ?>,
+                        };
+
+                       /*  $.ajax({
+                            type: "POST",
+                            url: "<?= add_url() ?>",
+                            data: data,
+                            success: function (result) {
+                                console.log(result);
+                                var data = JSON.parse(result);
+                                if (data.status == "success") {
+                                    $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
+                                    $(`#Item_${index}`).css("color", "black");
+                                    $(`#Item_${index}`).fadeOut(900, function() {
+                                        $(this).remove();
+                                    });
+                                    $("#search_input").keyup();
+                                } else {
+                                    new Noty({
+                                        text: data.message,
+                                        type: data.status
+                                    }).show();
+                                    btn.disabled = false;
+                                }
+                            },
+                        });  */
+                    }
+
+                }
+
+            </script>
+        <?php endif; ?>
+        <?php
+    }
+
+    public function itemOption()
+    {
+        $data = $this->getPost();
+        $m = ( isset($data['manufacturer_id']) and $data['manufacturer_id'] ) ? " AND wc.item_manufacturer_id = ".$data['manufacturer_id'] : null;
+        $s = ( isset($data['item_price']) and $data['item_price'] ) ? " AND wc.item_price = ".$data['item_price'] : null;
+
+        $price_result = $this->db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s ORDER BY wc.item_price ASC")->fetchAll();
+        $qty_max = $this->db->query("SELECT SUM(wc.item_qty) FROM $this->table wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn(); 
+        $qty_applications = $this->db->query("SELECT SUM(wc.item_qty) FROM $this->_applications wc WHERE wc.status IN (1,2) AND wc.warehouse_id_from = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
+        $qty_applications += $this->db->query("SELECT SUM(wc.item_qty) FROM $this->_event_applications wc WHERE wc.warehouse_id = {$data['warehouse_id']} AND wc.item_name_id = {$data['item_name_id']} $m $s")->fetchColumn();
+        $qty = $qty_max - $qty_applications;
+        echo json_encode(array('price' => $price_result, 'max_qty' => $qty));
+    }
+
+    public function itemSearch(){
+        global $classes;
+        if ($search = $this->getPost('search')) {
+            $ware_pk = $this->getPost('warehouse_id_from');
+
+            foreach ($this->as('wc')->Data('DISTINCT wc.item_name_id, win.name')->JoinLEFT("$this->_item_names win", "win.id=wc.item_name_id")->Where("wc.warehouse_id = $ware_pk AND wc.item_die_date > CURRENT_DATE() AND LOWER(win.name) LIKE LOWER('%$search%')")->list() as $row){
+                $this->i++;
+                ?>
+                <tr id="Item_<?= $this->i ?>">
+
+                    <!-- Name -->
+                    <td>
+                        <span id="name_input_<?= $this->i ?>"><?= $row->name ?></span>
+                        <input type="hidden" id="name_id_input_<?= $this->i ?>" value="<?= $row->item_name_id ?>">
+                    </td>
+
+                    <!-- Manufacturer -->
+                    <td>
+                        <select id="manufacturer_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> manufacturers" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
+                            <?php if($this->getPost('default')): ?>
+                                <option value="" >Производитель будет выбран автоматически</option>
+                            <?php endif; ?>
+                            <?php foreach ($this->db->query("SELECT DISTINCT wis.id, wis.manufacturer FROM $this->table wc LEFT JOIN $this->_item_manufacturers wis ON (wis.id=wc.item_manufacturer_id) WHERE wc.warehouse_id = $ware_pk AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wis.manufacturer ASC") as $manufacturer): ?>
+                                <?php // if(empty($the_manufacturer)) $the_manufacturer = $manufacturer->id; ?>
+                                <option value="<?= $manufacturer['id'] ?>" ><?= $manufacturer['manufacturer'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+
+                    <!-- Cost -->
+                    <td>
+                        <select id="price_id_input_<?= $this->i ?>" class="<?= $classes['form-select'] ?> costs" data-i="<?= $this->i ?>" data-item_name="<?= $row->item_name_id ?>">
+                            <?php if($this->getPost('default')): ?>
+                                <option value="" >Стоимость будет выбрана автоматически</option>
+                            <?php endif; ?>
+                            <?php foreach ($this->db->query("SELECT DISTINCT wc.item_price FROM $this->table wc WHERE wc.warehouse_id = $ware_pk AND wc.item_die_date > CURRENT_DATE() AND wc.item_name_id = $row->item_name_id ORDER BY wc.item_price ASC") as $price): ?>
+                                <?php // if(empty($the_cost)) $the_cost = $price->item_price; ?>
+                                <option value="<?= $price['item_price'] ?>" ><?= number_format($price['item_price']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+
+                    <!-- Max qty -->
+                    <td class="text-center">
+                        <span id="max_qty_input_<?= $this->i ?>">
+                            <?php
+                            $the_where = "item_name_id = $row->item_name_id";
+                            $max_qty = $this->db->query("SELECT SUM(item_qty) FROM $this->table WHERE warehouse_id = $ware_pk AND item_die_date > CURRENT_DATE() AND $the_where")->fetchColumn();
+                            $applications = $this->db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE status IN (1,2) AND warehouse_id_from = $ware_pk AND $the_where")->fetchColumn();
+                            $applications += $this->db->query("SELECT SUM(item_qty) FROM $this->_event_applications WHERE warehouse_id = $ware_pk AND $the_where")->fetchColumn();
+                            echo $max_qty - $applications;
+                            ?>
+                        </span>
+                    </td>
+
+                    <!-- Qty -->
+                    <td style="width:70px;">
+                        <input type="number" id="qty_input_<?= $this->i ?>" class="form-control counts" value="1" min="1" max="<?= $max_qty ?>">
+                    </td>
+
+                    <!-- Buttons -->
+                    <td>
+                        <button onclick="__<?= __CLASS__ ?>__select(this, <?= $this->i ?>)" type="button" class="btn btn-sm btn-outline bg-teal border-teal text-teal btn-icon rounded-round legitRipple">
+                            <i class="icon-plus2"></i>
+                        </button>
+                    </td>
+
+                </tr>
+                <?php
+            }
+
+            ?>
+            <script type="text/javascript">
+                $( document ).ready(function() {
+                    FormLayouts.init();
+                });
+
+                $(".manufacturers").change(function() {
+                    var index = this.dataset.i;
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= Hell::apiAxe(__CLASS__, array('form' => 'itemOption')) ?>",
+                        data: { 
+                            warehouse_id: <?= $ware_pk ?>,
+                            item_name_id: this.dataset.item_name,
+                            manufacturer_id: this.value,
+                        },
+                        success: function (result) {
+                            var data = JSON.parse(result);
+                            var options = `
+                            <?php if($this->getPost('default')): ?>
+                                <option value="">Стоимость будет выбрана автоматически</option>
+                            <?php endif; ?>
+                            `;
+
+                            for (let i = 0; i < data.price.length; i++) {
+                                var element = data.price[i];
+                                options += `<option value="${element.item_price}">${number_format(element.item_price)}</option>`;
+                            }
+                            document.querySelector('#price_id_input_'+index).innerHTML = options;
+                            document.querySelector('#max_qty_input_'+index).innerHTML = data.max_qty;
+                        },
+                    });
+                });
+
+                $(".costs").change(function() {
+                    var index = this.dataset.i;
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= Hell::apiAxe(__CLASS__, array('form' => 'itemOption')) ?>",
+                        data: { 
+                            warehouse_id: <?= $ware_pk ?>,
+                            item_name_id: this.dataset.item_name,
+                            manufacturer_id: document.querySelector('#manufacturer_id_input_'+index).value,
+                            item_price: this.value,
+                        },
+                        success: function (result) {
+                            var data = JSON.parse(result);
+                            document.querySelector('#max_qty_input_'+index).innerHTML = data.max_qty;
+                        },
+                    });
+                });
+
+            </script>
+            <?php
+        }
+        
+    }
+
+}
+
+?>

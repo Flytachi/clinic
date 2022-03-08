@@ -170,8 +170,8 @@ class VisitFailure extends ModelOld
         if($data['parent_id']) $room = $db->query("SELECT room_id FROM users WHERE id = {$data['parent_id']}")->fetchAll();
         else $room = $db->query("SELECT DISTINCT room_id FROM users WHERE division_id = {$data['division_id']} AND room_id IS NOT NULL")->fetchAll();
         //
-        if ($data['user_id'] and count($room) > 0) {
-            foreach ($room as $ro) Mixin\update("queue", array('is_queue' => null, 'is_delete' => 1), array('room_id' => $ro['room_id'], 'user_id' => $data['user_id']));
+        if ($data['patient_id'] and count($room) > 0) {
+            foreach ($room as $ro) Mixin\update("queue", array('is_queue' => null, 'is_delete' => 1), array('room_id' => $ro['room_id'], 'patient_id' => $data['patient_id']));
         }
     }
 
