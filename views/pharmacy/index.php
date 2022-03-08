@@ -30,9 +30,22 @@ $header = "Препараты";
 			<!-- Content area -->
 			<div class="content">
 
-				
+				<div class="<?= $classes['card'] ?>">
 
-			</div>
+					<div class="<?= $classes['card-header'] ?>">
+						<h5 class="card-title">Перемещение</h5>
+					</div>
+
+					<div class="card-body" id="form_card">
+
+						<?php
+						/* importModel('WarehouseStorage');
+						(new WarehouseStorage)->warehousesPanel(); */
+						?>
+
+					</div>
+
+				</div>
 
 			</div>
             <!-- /content area -->
