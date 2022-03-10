@@ -61,4 +61,35 @@ function importModel(String ...$models){
     }
 }
 
+function debugPanel() {
+
+    if(isset(ini['GLOBAL_SETTING']['DEBUG']) and ini['GLOBAL_SETTING']['DEBUG']) {
+        global $session;
+        echo "<style>" , file_get_contents( dirname(__DIR__) . '/Resource/css/debug.css' ) , "</style>";
+        include dirname(__DIR__) . '/Resource/debug.php';
+        echo "<script type=\"text/javascript\">" , file_get_contents( dirname(__DIR__) . '/Resource/js/debug.js' ) , "</script>";
+    
+        echo "<div id=\"warframe_debug-bar\">";
+        $timeFinish = microtime(true); 
+        $delta=round($timeFinish-$_SERVER['REQUEST_TIME'], 3); if ($delta < 0.001) $delta = 0.001;
+        ?>
+        <div class="navbar-collapse collapse ml-1" id="navbar-footer" style="background-color:black;">
+                <span class="navbar-text text-white">
+                    <b>Memory:</b> <?= round(memory_get_usage()/1024/1024, 2) ?> mb / 
+                    <b>Time:</b> <?= $delta ?> sec 
+                </span>
+    
+                <ul class="navbar-nav ml-lg-auto">
+                    <li class="nav-item navbar-nav-link" style="color: #ff0000;"><em><?= $session->browser ?? "None" ?></em></li>
+                    <li class="nav-item navbar-nav-link text-white"><b>Level: </b><?= $session->session_level ?? "None" ?></li>
+                    <li class="nav-item navbar-nav-link text-white"><b>Division: </b><?= $session->session_division ?? "None" ?></li>
+                </ul>
+            </div>
+        <?php
+        dd($_SERVER);
+        echo "</div>";
+    }
+
+}
+
 ?>

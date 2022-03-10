@@ -22,13 +22,15 @@ class WarehouseApplication extends ModelOld
     public function panel($storage_from = null, $storage_in = null, $status = 1)
     {
         global $classes, $db;
+        $where_st_from = "is_active IS NOT NULL AND is_external IS NOT NULL";
+        $where_st_in = "is_active IS NOT NULL";
         ?>
         <div class="row">
             <div class="col-md-4 offset-md-2">
                 <label>Склад (с):</label>
                 <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_from) ? 'disabled': ''; ?>>
                     <option></option>
-                    <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE is_active IS NOT NULL AND is_external IS NOT NULL") as $row): ?>
+                    <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE $where_st_from") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($storage_in == $row['id']) ? 'disabled' : '' ?> <?= ($storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -37,7 +39,7 @@ class WarehouseApplication extends ModelOld
                 <label>Склад (на):</label>
                 <select data-placeholder="Выберите склад" id="storege_in" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_in) ? 'disabled': ''; ?>>
                     <option></option>
-                    <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                    <?php foreach($db->query("SELECT * FROM $this->warehouses WHERE $where_st_in") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($storage_from == $row['id']) ? 'disabled' : '' ?> <?= ($storage_in == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
