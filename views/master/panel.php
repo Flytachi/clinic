@@ -364,28 +364,7 @@ $header = "Панель управления";
 											<!-- End Card -->
 
 											<!-- Pharmacy -->
-											<tbody>
-												<tr>
-													<th>Pharmacy deliveries to "Internal"</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_pharmacy_deliver_internal" <?= (isset($config->constant_pharmacy_deliver_internal) and $config->constant_pharmacy_deliver_internal) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<th>Pharmacy deliveries to "Operation"</th>
-													<td class="text-right">
-														<div class="list-icons">
-															<label class="form-check-label">
-																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_pharmacy_deliver_operation" <?= (isset($config->constant_pharmacy_deliver_operation) and $config->constant_pharmacy_deliver_operation) ? "checked" : "" ?>>
-															</label>
-														</div>
-													</td>
-												</tr>
-											</tbody>
+											
 											<!-- End Pharmacy -->
 
 											<?php

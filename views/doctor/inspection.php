@@ -25,5 +25,6 @@ $pack = $db->query("SELECT report, last_update, add_date FROM visit_inspections 
 </div>
 
 <div class="modal-footer">
+    <button onclick="Print('<?= prints('document-6') ?>?pk=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
     <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
 </div>

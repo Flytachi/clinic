@@ -73,7 +73,7 @@ class Patient extends Model
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label>Выбирите область:</label>
-                                            <select data-placeholder="Выбрать область" id="province" name="province_id" class="<?= $classes['form-select'] ?>">
+                                            <select data-placeholder="Выбрать область" id="province" name="province_id" class="<?= $classes['form-select'] ?>" required>
                                                 <option></option>
                                                 <?php foreach ($db->query("SELECT DISTINCT pv.name, pv.id FROM region rg LEFT JOIN province pv ON(pv.id=rg.province_id)") as $province): ?>
                                                     <option value="<?= $province['id'] ?>" <?= ($this->value('province_id') == $province['id']) ? "selected" : "" ?>><?= $province['name'] ?></option>
@@ -85,7 +85,7 @@ class Patient extends Model
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label>Выбирите регион:</label>
-                                            <select data-placeholder="Выбрать регион" name="region_id" id="region" class="<?= $classes['form-select'] ?>">
+                                            <select data-placeholder="Выбрать регион" name="region_id" id="region" class="<?= $classes['form-select'] ?>" required>
                                                 <option></option>
                                                 <?php foreach ($db->query("SELECT * FROM region") as $row): ?>
                                                     <option value="<?= $row['id'] ?>" data-chained="<?= $row['province_id'] ?>" <?= ($this->value('region_id') == $row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>

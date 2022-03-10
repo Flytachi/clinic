@@ -3,15 +3,15 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Журнал";
 
-importModel('Region');
-$tb = new Table($db, "visits v");
-$tb->set_data('v.id, v.parad_id, v.grant_id, v.patient_id, v.icd_id, v.icd_autor, v.add_date, p.last_name, p.first_name, p.father_name, p.region_id, p.address_residence, p.phone_number, v.completed');
-$search = $tb->get_serch();
-$search_array = array(
+importModel('Visit', 'Region');
+$tb = new Visit('v');
+$tb->Data('v.id, v.parad_id, v.grant_id, v.patient_id, v.icd_id, v.icd_autor, v.add_date, p.last_name, p.first_name, p.father_name, p.region_id, p.address_residence, p.phone_number, v.completed');
+$search = $tb->getSearch();
+$where = array(
 	"v.direction IS NOT NULL", 
 	"v.direction IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions("LEFT JOIN patients p ON(p.id=v.patient_id)")->where_or_serch($search_array)->order_by('v.add_date ASC')->set_limit(20);
+$tb->JoinLEFT('patients p', 'p.id=v.patient_id')->Where($where)->Order('v.add_date ASC')->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +75,7 @@ $tb->additions("LEFT JOIN patients p ON(p.id=v.patient_id)")->where_or_serch($se
                                     </tr>
                                 </thead>
                                 <tbody>
-									<?php foreach($tb->get_table() as $row): ?>
+									<?php foreach($tb->list() as $row): ?>
 										<tr>	
                                             <td><?= $row->parad_id ?></td>
                                             <td><?= addZero($row->patient_id) ?></td>
@@ -109,7 +109,7 @@ $tb->additions("LEFT JOIN patients p ON(p.id=v.patient_id)")->where_or_serch($se
                             </table>
                         </div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 
@@ -131,6 +131,23 @@ $tb->additions("LEFT JOIN patients p ON(p.id=v.patient_id)")->where_or_serch($se
 	</div>
 
 	<script type="text/javascript">
+		$("#search_input").keyup(credoSearch);
+
+		function credoSearch() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/archive-journal') ?>",
+				data: {
+					CRD_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		}
+
 		function Check(events) {
 			$.ajax({
 				type: "GET",

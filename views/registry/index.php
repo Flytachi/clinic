@@ -110,7 +110,7 @@ $tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.pat
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= $row->phone_number ?></td>
-											<td><?= (new Region)->byId($row->region_id, 'name')->name ?></td>
+											<td><?= ($row->region_id) ? (new Region)->byId($row->region_id, 'name')->name : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td><?= date_f($row->add_date, 1) ?></td>
 											<td class="text-center">
 												<?php if ($row->status): ?>
