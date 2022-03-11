@@ -10,7 +10,7 @@ $search_array = array(
 	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
 	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
 );
-$tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
+$tb->where_or_serch($search_array)->order_by("add_date DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
