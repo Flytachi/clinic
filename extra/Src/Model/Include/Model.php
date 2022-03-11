@@ -8,7 +8,7 @@ abstract class Model extends Credo implements ModelInterface
      * 
      * Model
      * 
-     * @version 15.0
+     * @version 17.6
      */
 
     private $get = [];
@@ -92,6 +92,12 @@ abstract class Model extends Credo implements ModelInterface
         $this->deleteBefore();
         $this->deleteBody();
         $this->deleteAfter();
+    }
+
+    final public function csrfToken(){
+        $token = bin2hex(random_bytes(24));
+        $_SESSION['CSRFTOKEN'] =  $token;
+        echo "<input type=\"hidden\" name=\"csrf_token\" value=\"$token\">";
     }
 
     public final function cleanGet()

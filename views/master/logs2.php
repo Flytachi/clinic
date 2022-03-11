@@ -52,41 +52,10 @@ $header = "Логи";
 
         		<div class="<?= $classes['card'] ?>">
 
-	          		<div class="<?= $classes['card-header'] ?>">
-	                  	<h5 class="card-title">Список Направителей</h5>
-	              	</div>
-
-              		<div class="card-body" id="search_display">
-
-                  		<div class="table-responsive">
-	                      	<table class="table table-hover">
-	                          	<thead>
-	                              	<tr class="<?= $classes['table-thead'] ?>">
-                                        <th style="width:50px">№</th>
-										<th style="width:50%">ФИО</th>
-										<th style="width: 100px">Действия</th>
-	                              	</tr>
-	                          	</thead>
-	                          	<tbody>
-	                              	<?php foreach($tb->list(1) as $row): ?>
-                                  		<tr>
-											<td><?= $row->count ?></td>
-											<td><?= $row->name ?></td>
-	                                      	<td>
-												<div class="list-icons">
-													<a onclick="Update('<?= Hell::apiGet('Province', $row->id, 'form') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= Hell::apiDelete('Province', $row->id) ?>" onclick="return confirm('Вы уверены что хотите удалить направителя?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-				                                </div>
-	                                      	</td>
-                              			</tr>
-									<?php endforeach; ?>
-	                          	</tbody>
-	                      	</table>
-	                  	</div>
-
-						<?php $tb->panel(); ?>
-
-	              	</div>
+					<a href="<?= viv('master/mr_patient_add') ?>" target="_blank" rel="noopener noreferrer">users => set => patients</a><br>
+					<a href="<?= viv('master/mr_patient_delete') ?>" target="_blank" rel="noopener noreferrer">users delete patients</a><br>
+					<a href="<?= viv('master/mr_bd_change') ?>?status=new" target="_blank" rel="noopener noreferrer">set user_id => patient_id</a><br>
+					<a href="<?= viv('master/mr_bd_change') ?>?status=old" target="_blank" rel="noopener noreferrer">set patient_id => user_id</a><br>
 
           		</div>
 				

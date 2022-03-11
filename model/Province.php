@@ -10,6 +10,9 @@ class Province extends Model
     {
         ?>
         <form method="post" action="<?= $this->urlHook() ?>">
+
+            <?php $this->csrfToken() ?>
+
             <div class="form-group">
                 <label>Name:</label>
                 <input type="text" class="form-control" name="name" placeholder="Введите name" required value="<?= $this->value('name') ?>">

@@ -111,7 +111,7 @@ $tb->where_or_serch($where_search)->order_by("win.name ASC, wim.manufacturer ASC
 											<td class="text-right"s>
 												<div class="list-icons">
 													<a href="#" onclick="Check('<?= Hell::apiAxe('WarehouseStorage', array('form' => 'listAplications', 'id' => $row->id)) ?>')" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
-													<!-- <a href="#" onclick="" class="list-icons-item text-warning-600"><i class="icon-redo"></i></a> -->
+													<a href="#" onclick="Check('<?= Hell::apiAxe('WarehouseStorage', array('form' => 'refundItem', 'id' => $row->id)) ?>')" class="list-icons-item text-warning-600"><i class="icon-redo"></i></a>
 													<?php if($is_grant): ?>
 														<a href="#" onclick="Check('<?= up_url($row->id, 'WarehouseStorageTransactionModel') ?>')" class="list-icons-item text-danger-600"><i class="icon-clipboard6"></i></a>
 													<?php endif; ?>
