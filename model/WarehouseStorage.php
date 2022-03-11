@@ -347,7 +347,26 @@ class WarehouseStorage extends Model
             
         <div class="modal-body">
 
-            <?php dd( $item ) ?>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead class="<?= $classes['table-thead'] ?>">
+                        <tr>
+                            <th>ID</th>
+                            <th>ФИО</th>
+                            <th class="text-right" style="width:210px">Кол-во</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($db->query("SELECT p.id, wc.visit_id, p.first_name, p.last_name, p.father_name, SUM(wc.item_qty) 'qty' FROM visit_bypass_event_applications wc LEFT JOIN patients p ON(p.id=wc.patient_id) WHERE wc.warehouse_id = $item->warehouse_id AND wc.item_name_id = $item->item_name_id AND wc.item_manufacturer_id = $item->item_manufacturer_id AND wc.item_price = $item->item_price GROUP BY p.id") as $row): ?>
+                            <tr>
+                                <td><a href="<?= viv('card/content-9') . "?pk=" . $row['visit_id'] ?>"><?= addZero($row['id']) ?></a></td>
+                                <td><?= patient_name($row) ?></td>
+                                <td class="text-right"><?= number_format($row['qty']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 
@@ -399,9 +418,21 @@ class WarehouseStorage extends Model
 
                     </div>
                 </div>
-    
+
+                <?php //dd( $db->query("SELECT * FROM warehouse_storage_transactions")->fetchAll() ); ?>
+
+                <div class="form-group">
+                    <label>Выбирите склад:</label>
+                    <select data-placeholder="Выбрать склад" class="<?= $classes['form-select'] ?>" required>
+                        <option></option>
+                        <?php foreach ($db->query("SELECT * FROM warehouse_storage_transactions") as $row): ?>
+                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
                 <div class="form-group row">
-                    <label class="col-md-3">Списать (кол-во):</label>
+                    <label class="col-md-3">Вернуть (кол-во):</label>
                     <input type="number" name="item_qty" step="1" min="1" max="<?= $item->item_qty ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
                 </div>
 
@@ -413,7 +444,7 @@ class WarehouseStorage extends Model
             </div>
     
             <div class="modal-footer">
-                <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Списать</button>
+                <!-- <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Списать</button> -->
                 <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
             </div>
 
