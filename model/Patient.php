@@ -20,6 +20,7 @@ class Patient extends Model
         
             <div class="modal-body">
 
+                <?php $this->csrfToken(); ?>
                 <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
                 <div class="row">

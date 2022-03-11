@@ -15,6 +15,9 @@ class Method extends Model
         }
         ?>
         <form method="post" action="<?= $this->urlHook() ?>">
+
+            <?php $this->csrfToken() ?>
+            
             <div class="form-group">
                 <label>Наименование:</label>
                 <input type="text" class="form-control" name="name" placeholder="Введите наименование" required value="<?= $this->value('name') ?>">

@@ -16,6 +16,8 @@ class VisitSet extends Model
 
         <form method="post" action="<?= $this->urlHook() ?>" onsubmit="submit<?= __CLASS__ ?>()">
 
+            <?php $this->csrfToken() ?>
+
             <div class="modal-body">
 
                 <div class="form-group">
@@ -60,6 +62,7 @@ class VisitSet extends Model
         </script>
         <?php
     }
+
 }
 
 ?>
