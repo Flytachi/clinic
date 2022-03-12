@@ -50,7 +50,7 @@ $tb->returnPath(viv('registry/index'));
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td><?= $row->phone_number ?></td>
-                    <td><?= (new Region)->byId($row->region_id, 'name')->name ?></td>
+                    <td><?= ($row->region_id) ? (new Region)->byId($row->region_id, 'name')->name : '<span class="text-muted">Нет данных</span>' ?></td>
                     <td><?= date_f($row->add_date, 1) ?></td>
                     <td class="text-center">
                         <?php if ($row->status): ?>
@@ -72,7 +72,7 @@ $tb->returnPath(viv('registry/index'));
                         <?php endif; ?>
                     </td>
                     <td class="text-center">
-                        <button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>
+                        <button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-1"></i></button>
                         <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
                             <?php if ( !$row->status or ($row->status and !$stm_dr['direction']) ): ?>
                                 <a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
