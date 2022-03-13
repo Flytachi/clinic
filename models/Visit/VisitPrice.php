@@ -360,7 +360,7 @@ class VisitPriceModel extends Model
 
                             if (result.status == "success") {
                                 // Выдача выписки
-                                var url = "<?= viv('prints/document_3') ?>?id="+pk;
+                                var url = "<?= viv('prints/document_4') ?>?id="+pk;
                                 Print(url);
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;

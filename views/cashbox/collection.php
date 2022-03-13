@@ -48,10 +48,10 @@ $header = "Инкассация";
 
 				</div>
 
-				<!-- <div class="<?= $classes['card'] ?>">
+				<div class="<?= $classes['card'] ?>">
 
 				    <div class="<?= $classes['card-header'] ?>">
-				        <h5 class="card-title">Список Инкассаций</h5>
+				        <h5 class="card-title">Список</h5>
 				        <div class="header-elements">
 				            <div class="list-icons">
 				                <a class="list-icons-item" data-action="collapse"></a>
@@ -61,27 +61,21 @@ $header = "Инкассация";
 
 				    <div class="card-body">
 
-				        <div class="table-responsive">
-				            <table class="table table-hover">
-				                <thead>
-				                    <tr class="bg-blue">
-				                        <th>#</th>
-				                        <th>Логин</th>
-				                        <th>ФИО</th>
-				                        <th>Роль</th>
-										<th>Кабинет</th>
-				                        <th style="width: 100px">Действия</th>
-				                    </tr>
-				                </thead>
-				                <tbody>
-				                   
-				                </tbody>
-				            </table>
-				        </div>
+						<div class="form-group">
+							<label>Дата принятия:</label>
+							<div class="input-group">
+								<input type="text" class="<?= $classes['form-daterange'] ?>" onchange="Change()" name="date" id="data_range">
+								<span class="input-group-append">
+									<span class="input-group-text"><i class="icon-calendar22"></i></span>
+								</span>
+							</div>
+						</div>
+
+						<div id="check_div"></div>
 
 				    </div>
 
-				</div> -->
+				</div>
 
 			</div>
             <!-- /content area -->
@@ -91,6 +85,32 @@ $header = "Инкассация";
 
 	</div>
 	<!-- /page content -->
+
+	<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
+	<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
+	<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
+	<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
+	<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
+	<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
+
+	<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
+
+	<script>
+
+		function Change(){
+			var date = document.querySelector("#data_range");
+			
+			$.ajax({
+				type: "POST",
+				url: "<?= ajax('collection_list') ?>",
+				data: { date:date.value },
+				success: function (result) {
+					$('#check_div').html(result);
+				}
+			});
+		}
+
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
