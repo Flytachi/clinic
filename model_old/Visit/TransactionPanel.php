@@ -36,14 +36,15 @@ class TransactionPanel extends ModelOld
     public function FirstPanel($pk = null)
     {
         global $db, $classes;
+        importModel('VisitStatus');
         $vps = (new VisitModel)->price_status($pk);
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
                 <h5 class="card-title">
-                    <b><?= addZero($this->value('user_id')) ?> - <em><?= get_full_name($this->value('user_id')) ?></em></b>
-                    <?php if($vps['order']): ?>
-                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер №<?= $db->query("SELECT order_number FROM visit_orders WHERE id = {$vps['order']}")->fetchColumn() ?></span>
+                    <b><?= addZero($this->value('patient_id')) ?> - <em><?= patient_name($this->value('patient_id')) ?></em></b>
+                    <?php if($status = (new VisitStatus)->Where('visit_id =' . $this->value('id'))->get('name') ): ?>
+                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1"><?= $status->name ?></span>
                     <?php endif; ?>
                 </h5>
                 <div class="header-elements">
