@@ -30,7 +30,7 @@ class VisitPanel extends VisitModel
                     }
                     $this->visit_pk = $db->query("SELECT id FROM $this->table WHERE patient_id = $pk AND completed IS NULL")->fetchColumn();
                     if ( $this->visit_pk ) {
-                        $this->order_data = $db->query("SELECT * FROM visit_orders WHERE visit_id = $this->visit_pk")->fetch();
+                        $this->status_data = $db->query("SELECT * FROM visit_status WHERE visit_id = $this->visit_pk")->fetch();
                     }
 
                 }
@@ -53,7 +53,8 @@ class VisitPanel extends VisitModel
 
     public function ambulator($pk = null)
     {
-        global $db, $classes, $PERSONAL, $session;
+        global $db, $classes, $session;
+        importModel('VisitType');
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h5 class="modal-title">Назначить амбулаторное лечение</h5>
@@ -121,86 +122,57 @@ class VisitPanel extends VisitModel
 
                     <div class="col-md-4">
 
-                        <?php if( isset($this->order_data) and $this->order_data ): ?>
-                            <div class="<?= $classes['card'] ?>">
+                        <div class="form-group">
+                            <label>Тип визита:</label>
+                            <?php if(isset($this->status_data) and $this->status_data): ?>
+                                <input type="text" class="form-control" value="<?= $this->status_data['name'] ?>" readonly>
+                            <?php else: ?>
+                                <select data-placeholder="Выберите тип" name="status_is" class="<?= $classes['form-select'] ?>">
+                                    <option></option>
+                                    <?php foreach ((new VisitType)->Where("is_ambulator IS NOT NULL")->list() as $row): ?>
+                                        <option value="<?= $row->id ?>" ><?= $row->name ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php endif; ?>
+                        </div>
 
-                                <div class="<?= $classes['card-header'] ?>">
-                                    <h6 class="card-title">Ордер</h6>
-                                </div>
+                        <?php /* ?>
+                        <div class="<?= $classes['card'] ?>">
 
-                                <div class="card-body">
-
-                                    <div class="form-group row">
-
-                                        <div class="col-md-6">
-                                            <label>Дата выдачи:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                                                </span>
-                                                <input type="date" value="<?= $this->order_data['order_date'] ?>" class="form-control daterange-single" readonly>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label>Номер ордера:</label>
-                                            <input type="number" value="<?= $this->order_data['order_number'] ?>" class="form-control" placeholder="Введите номер ордера" readonly>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Кем выдан:</label>
-                                        <input type="text" value="<?= $this->order_data['order_author'] ?>" class="form-control" placeholder="Введите имя" readonly>
-                                    </div>
-
-                                </div>
-
-                            </div> 
-                        <?php else: ?>
-                            <div class="form-check form-check-switchery form-check-switchery-double">
-                                <label class="form-check-label">
-                                    <input type="checkbox" name="order_status" class="swit" onclick="Checkert(this)">
-                                    Ордер
-                                </label>
+                            <div class="<?= $classes['card-header'] ?>">
+                                <h6 class="card-title">Ордер</h6>
                             </div>
 
-                            <div class="<?= $classes['card'] ?>" id="order_card" style="display:none;">
+                            <div class="card-body">
 
-                                <div class="<?= $classes['card-header'] ?>">
-                                    <h6 class="card-title">Ордер</h6>
-                                </div>
+                                <div class="form-group row">
 
-                                <div class="card-body">
-
-                                    <div class="form-group row">
-
-                                        <div class="col-md-6">
-                                            <label>Дата выдачи:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                                                </span>
-                                                <input type="date" name="order[order_date]" class="form-control daterange-single order_inputs" disambled>
-                                            </div>
+                                    <div class="col-md-6">
+                                        <label>Дата выдачи:</label>
+                                        <div class="input-group">
+                                            <span class="input-group-prepend">
+                                                <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                                            </span>
+                                            <input type="date" class="form-control daterange-single order_inputs" disambled>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <label>Номер ордера:</label>
-                                            <input type="number" name="order[order_number]" class="form-control order_inputs" placeholder="Введите номер ордера" disambled>
-                                        </div>
-
                                     </div>
 
-                                    <div class="form-group">
-                                        <label>Кем выдан:</label>
-                                        <input type="text" name="order[order_author]" class="form-control order_inputs" placeholder="Введите имя" disambled>
+                                    <div class="col-md-6">
+                                        <label>Номер ордера:</label>
+                                        <input type="number" class="form-control order_inputs" placeholder="Введите номер ордера" disambled>
                                     </div>
 
                                 </div>
 
-                            </div> 
-                        <?php endif; ?>
+                                <div class="form-group">
+                                    <label>Кем выдан:</label>
+                                    <input type="text" class="form-control order_inputs" placeholder="Введите имя" disambled>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <?php */ ?>
 
                     </div>
 
@@ -299,19 +271,6 @@ class VisitPanel extends VisitModel
         ?>
         <script src="<?= stack("assets/js/custom.js") ?>"></script>
         <script type="text/javascript">
-        
-            function Checkert(event) {
-                if (event.checked) {
-                    $('#order_card').show();
-                    $('.order_inputs').attr("required", true);
-                    $('.order_inputs').attr("disambled", false);
-                } else {
-                    $('#order_card').hide();
-                    $('.order_inputs').attr("required", false);
-                    $('.order_inputs').attr("disambled", true);
-                }
-                $('.order_inputs').val("");
-            }
 
             var service = {};
 
@@ -361,6 +320,7 @@ class VisitPanel extends VisitModel
     public function stationar($pk = null)
     {
         global $db, $classes, $session;
+        importModel('VisitType');
         if(isset($_GET['application']) and $_GET['application']) $application = $db->query("SELECT * FROM visit_applications WHERE id = {$_GET['application']}")->fetch();
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
@@ -433,6 +393,20 @@ class VisitPanel extends VisitModel
 
                     <div class="col-md-5">
 
+                        <div class="form-group">
+                            <label>Тип визита:</label>
+                            <?php if(isset($this->status_data) and $this->status_data): ?>
+                                <input type="text" class="form-control" value="<?= $this->status_data['name'] ?>" readonly>
+                            <?php else: ?>
+                                <select data-placeholder="Выберите тип" name="status_is" class="<?= $classes['form-select'] ?>">
+                                    <option></option>
+                                    <?php foreach ((new VisitType)->Where("is_stationar IS NOT NULL")->list() as $row): ?>
+                                        <option value="<?= $row->id ?>" ><?= $row->name ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="<?= $classes['card'] ?>">
 
                             <div class="<?= $classes['card-header'] ?>">
@@ -469,89 +443,8 @@ class VisitPanel extends VisitModel
 
                             </div>
 
-                        </div> 
-
-                        <?php if( isset($this->order_data) and $this->order_data ): ?>
-                            <div class="<?= $classes['card'] ?>">
-
-                                <div class="<?= $classes['card-header'] ?>">
-                                    <h6 class="card-title">Ордер</h6>
-                                </div>
-
-                                <div class="card-body">
-
-                                    <div class="form-group row">
-
-                                        <div class="col-md-6">
-                                            <label>Дата выдачи:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                                                </span>
-                                                <input type="date" value="<?= $this->order_data['order_date'] ?>" class="form-control daterange-single" readonly>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label>Номер ордера:</label>
-                                            <input type="number" value="<?= $this->order_data['order_number'] ?>" class="form-control" placeholder="Введите номер ордера" readonly>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Кем выдан:</label>
-                                        <input type="text" value="<?= $this->order_data['order_author'] ?>" class="form-control" placeholder="Введите имя" readonly>
-                                    </div>
-
-                                </div>
-
-                            </div> 
-                        <?php else: ?>
-                            <div class="form-check form-check-switchery form-check-switchery-double">
-                                <label class="form-check-label">
-                                    <input type="checkbox" name="order_status" class="swit" onclick="Checkert(this)">
-                                    Ордер
-                                </label>
-                            </div>
-
-                            <div class="<?= $classes['card'] ?>" id="order_card" style="display:none;">
-
-                                <div class="<?= $classes['card-header'] ?>">
-                                    <h6 class="card-title">Ордер</h6>
-                                </div>
-
-                                <div class="card-body">
-
-                                    <div class="form-group row">
-
-                                        <div class="col-md-6">
-                                            <label>Дата выдачи:</label>
-                                            <div class="input-group">
-                                                <span class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                                                </span>
-                                                <input type="date" name="order[order_date]" class="form-control daterange-single order_inputs" disambled>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label>Номер ордера:</label>
-                                            <input type="number" name="order[order_number]" class="form-control order_inputs" placeholder="Введите номер ордера" disambled>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Кем выдан:</label>
-                                        <input type="text" name="order[order_author]" class="form-control order_inputs" placeholder="Введите имя" disambled>
-                                    </div>
-
-                                </div>
-
-                            </div> 
-                        <?php endif; ?>
-
+                        </div>
+                        
                     </div>
 
                 </div>
@@ -651,19 +544,6 @@ class VisitPanel extends VisitModel
                         FormLayouts.init();
                     }
                 });
-            }
-
-            function Checkert(event) {
-                if (event.checked) {
-                    $('#order_card').show();
-                    $('.order_inputs').attr("required", true);
-                    $('.order_inputs').attr("disambled", false);
-                } else {
-                    $('#order_card').hide();
-                    $('.order_inputs').attr("required", false);
-                    $('.order_inputs').attr("disambled", true);
-                }
-                $('.order_inputs').val("");
             }
 
             <?php if(isset($application) and $application['division_id']): ?>

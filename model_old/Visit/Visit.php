@@ -11,7 +11,7 @@ class VisitModel extends ModelOld
     public $_user = 'users';
     public $_patient = 'patients';
     public $_beds = 'visit_beds';
-    public $_orders = 'visit_orders';
+    public $_status = 'visit_status';
     public $_bed_types = 'bed_types';
     public $_service = 'visit_services';
     public $_transactions = 'visit_service_transactions';
@@ -93,7 +93,7 @@ class VisitModel extends ModelOld
         }else{
             $this->visit_pk = $object;
             $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetchColumn();
-            $this->chek_order();
+            $this->chek_status();
         }
     }
 
@@ -115,7 +115,7 @@ class VisitModel extends ModelOld
         $post['route_id'] = $_SESSION['session_id'];
         $post['guide_id'] = $this->post['guide_id'];
         $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $db->query("SELECT level FROM divisions WHERE id = {$post['division_id']}")->fetchColumn() : $this->post['level'][$key];
-        $post['status'] = ( (isset($this->post['direction']) and $this->post['direction']) or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
+        $post['status'] = ( (isset($this->post['direction']) and $this->post['direction']) or $this->service_is_free($data) ) ? 2 : 1;
         $post['service_id'] = $data['id'];
         $post['service_name'] = $data['name'];
    
@@ -129,22 +129,20 @@ class VisitModel extends ModelOld
                 $db->rollBack();
             }
             
-            if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
-                if (empty($this->post['direction']) or (!permission([2, 32]) and isset($this->post['direction']) and $this->post['direction'])) {
-                    $post_price['visit_id'] = $this->visit_pk;
-                    $post_price['visit_service_id'] = $object_s;
-                    $post_price['patient_id'] = $this->post['patient_id'];
-                    $post_price['item_type'] = $data['type'];
-                    $post_price['item_id'] = $data['id'];
-                    $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
-                    $post_price['item_name'] = $data['name'];
-                    $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
-                    $object = Mixin\insert($this->_transactions, $post_price);
-                    if (!intval($object)){
-                        $this->error("Ошибка при создании платежа услуги!");
-                        $db->rollBack();
-                    }
-                } 
+            if ( !$this->service_is_free($data) ) {
+                $post_price['visit_id'] = $this->visit_pk;
+                $post_price['visit_service_id'] = $object_s;
+                $post_price['patient_id'] = $this->post['patient_id'];
+                $post_price['item_type'] = $data['type'];
+                $post_price['item_id'] = $data['id'];
+                $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
+                $post_price['item_name'] = $data['name'];
+                $post_price['is_visibility'] = (isset($this->post['direction']) and $this->post['direction']) ? null : 1;
+                $object = Mixin\insert($this->_transactions, $post_price);
+                if (!intval($object)){
+                    $this->error("Ошибка при создании платежа услуги!");
+                    $db->rollBack();
+                }
             }
             /*
             // pacs
@@ -191,6 +189,29 @@ class VisitModel extends ModelOld
         unset($post);
     }
 
+    public function service_is_free($service = null)
+    {
+        if(isset($this->status_is) and $this->status_is){
+            if($service['user_level'] == 1 and $service['type'] == 101) return true;
+            elseif($service['user_level'] == 5) {
+                if($this->status_is['free_service_1'] and $service['type'] == 1) return true;
+                elseif($this->status_is['free_service_2'] and $service['type'] == 2) return true;
+                elseif($this->status_is['free_service_3'] and $service['type'] == 3) return true;
+            }
+            elseif($service['user_level'] == 6 and $this->status_is['free_laboratory']) return true;
+            elseif($service['user_level'] == 10 and $this->status_is['free_diagnostic']) return true;
+            elseif($service['user_level'] == 12 and $this->status_is['free_physio']) return true;
+            return false;
+        }
+        return false;
+    }
+
+    public function bed_is_free()
+    {
+        if(isset($this->status_is) and $this->status_is and $this->status_is['free_bed']) return true;
+        else return false;
+    }
+
     public function insertPacs($tb, $post){
         global $pacs;
         $col = implode(",", array_keys($post));
@@ -211,6 +232,7 @@ class VisitModel extends ModelOld
         $bed_data = $db->query("SELECT * FROM $this->table2 WHERE id = {$this->post['bed']}")->fetch();
         $bed_types = $db->query("SELECT * FROM  $this->_bed_types WHERE id = {$bed_data['type_id']}")->fetch();
 
+        $price = ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'];
         $post = array(
             'visit_id' => $this->visit_pk,
             'parent_id' => $session->session_id,
@@ -218,7 +240,7 @@ class VisitModel extends ModelOld
             'bed_id' => $this->post['bed'],
             'location' => "{$bed_data['building']} {$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка",
             'type' => $bed_data['types'],
-            'cost' => ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'],
+            'cost' => ($this->bed_is_free()) ? 0 : $price,
         );
 
         $object = Mixin\insert($this->_beds, $post);
@@ -234,24 +256,20 @@ class VisitModel extends ModelOld
         }
     }
 
-    public function chek_order()
+    public function chek_status()
     {
-        global $db, $session;
-        if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
-            $this->is_order = True;
-        }else if (isset($this->post['order_status'])) {
-            $post = Mixin\clean_form($this->post['order']);
-            $post = Mixin\to_null($post);
-            $post['visit_id'] = $this->visit_pk;
-            $post['parent_id'] = $session->session_id;
-            $post['patient_id'] = $this->post['patient_id'];
-            $object = Mixin\insert($this->_orders, $post);
+        global $db;
+        importModel('VisitType');
+        $this->status_is = $db->query("SELECT * FROM $this->_status WHERE visit_id = $this->visit_pk")->fetch();
+        if(!$this->status_is and isset($this->post['status_is']) and $this->post['status_is']) {
+            $type = (new VisitType)->byId($this->post['status_is'], ['name', 'free_service_1', 'free_service_2', 'free_service_3', 'free_laboratory', 'free_diagnostic', 'free_physio', 'free_bed']);
+            $object = Mixin\insert($this->_status, array_merge((array) $type, array('visit_id' => $this->visit_pk)));
             if (!intval($object)) {
                 $this->error($object);
-                $db->rollBack();
-                $this->error("Ошибка при создании ордера!");
+                $this->error("Ошибка при назначении статуса!");
+            }else {
+                $this->status_is = $db->query("SELECT * FROM $this->_status WHERE visit_id = $this->visit_pk")->fetch();
             }
-            $this->is_order = True;
         }
     }
 
@@ -404,11 +422,11 @@ class VisitModel extends ModelOld
                         v.id,
                         v.grant_id,
                         v.direction,
-                        IFNULL( (SELECT vr.id FROM visit_orders vr WHERE vr.visit_id=v.id), NULL) 'order',
+                        IFNULL( (SELECT vr.id FROM $this->_status vr WHERE vr.visit_id=v.id), NULL) 'status_id',
                         IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NOT NULL)), 0) 'balance',
-                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
-                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
-                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_service_transactions vp WHERE vp.visit_id = v.id AND vp.is_price IS NOT NULL) * -1), 0) 'cost-services',
+                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM $this->_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
+                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM $this->_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM $this->_transactions vp WHERE vp.visit_id = v.id AND vp.is_price IS NOT NULL) * -1), 0) 'cost-services',
                         IFNULL( ROUND((SELECT SUM(vt.item_qty*vt.item_cost) FROM visit_bypass_transactions vt WHERE vt.visit_id = v.id AND vt.is_price IS NOT NULL) * -1), 0) 'cost-preparats',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
@@ -420,7 +438,6 @@ class VisitModel extends ModelOld
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";
                 $object = $db->query($sql)->fetch();
-                if ($object['direction'] and $object['order']) $object['cost-beds'] = 0;
                 $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
                 $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
@@ -430,11 +447,11 @@ class VisitModel extends ModelOld
                         v.id,
                         v.grant_id,
                         v.direction,
-                        IFNULL( (SELECT vr.id FROM visit_orders vr WHERE vr.visit_id=v.id), NULL) 'order',
+                        IFNULL( (SELECT vr.id FROM $this->_status vr WHERE vr.visit_id=v.id), NULL) 'status_id',
                         IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL)), 0) 'balance',
-                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM visit_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
-                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM visit_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
-                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM visit_service_transactions vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,2,3) AND vp.is_price IS NULL) * -1), 0) 'cost-services',
+                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM $this->_beds vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
+                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM $this->_beds vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM $this->_transactions vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,2,3) AND vp.is_price IS NULL) * -1), 0) 'cost-services',
                         IFNULL( ROUND((SELECT SUM(vt.item_qty*vt.item_cost) FROM visit_bypass_transactions vt WHERE vt.visit_id = v.id AND vt.is_price IS NULL) * -1), 0) 'cost-preparats',
                         IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
                         IFNULL( vl.sale_service_unit , 0) 'sale-service',
@@ -445,7 +462,6 @@ class VisitModel extends ModelOld
                         LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
                     WHERE v.id = $pk";
                 $object = $db->query($sql)->fetch();
-                if ($object['direction'] and $object['order']) $object['cost-beds'] = 0;
                 $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
                 $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];

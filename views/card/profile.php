@@ -137,8 +137,8 @@ $region = (new Region)->byId($patient->region_id);
                                 <?php else: ?>
                                     <span style="font-size:15px;" class="badge badge-flat border-brown text-brown">Местный</span>
                                 <?php endif; ?>
-                                <?php if ( $patient->order ): ?>
-                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер №<?= $db->query("SELECT order_number FROM visit_orders WHERE id = $patient->order")->fetchColumn() ?></span>
+                                <?php if ( $patient->status_id ): ?>
+                                    <span style="font-size:15px;" class="badge badge-flat border-danger text-danger"><?= $patient->status_name ?></span>
                                 <?php endif; ?>
 
                             </div>

@@ -73,20 +73,9 @@ class VisitServicesModel extends ModelOld
 
                 // Начало Транкзации
                 $db->beginTransaction();
-                // Visit prices 
-                $object = Mixin\delete($this->_transactions, $pk, "visit_service_id");
-                if(!intval($object)){
-                    $this->error("Произошла ошибка на сервере!");
-                    $db->rollBack();
-                    exit;
-                }
-                // Visit service 
-                $object = Mixin\delete($this->table, $pk);
-                if(!intval($object)){
-                    $this->error("Произошла ошибка на сервере!");
-                    $db->rollBack();
-                    exit;
-                }
+                // Visit prices / service
+                Mixin\delete($this->_transactions, $pk, "visit_service_id");
+                Mixin\delete($this->table, $pk);
 
                 $this->status_update();
                 

@@ -22,9 +22,9 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 p.address_residence, p.address_registration, p.status, p.is_foreigner,
                 v.id 'visit_id', v.parad_id, v.grant_id, v.direction, v.division_id, v.icd_id, 
                 v.icd_autor, v.is_active, v.add_date, v.discharge_date, v.completed, v.comment,
-                vr.id 'order'
+                vt.id 'status_id', vt.name 'status_name'
             FROM visits v
-                LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)
+                LEFT JOIN visit_status vt ON (v.id = vt.visit_id)
                 LEFT JOIN patients p ON (v.patient_id = p.id)
             WHERE v.id = {$_GET['pk']}";
 

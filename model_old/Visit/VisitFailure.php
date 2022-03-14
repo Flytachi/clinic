@@ -6,7 +6,7 @@ class VisitFailure extends ModelOld
 {
     public $table = 'visit_services';
     public $_transactions = 'visit_service_transactions';
-    public $_orders = 'visit_orders';
+    public $_status = 'visit_status';
     public $_visits = 'visits';
 
     public function form($pk = null)
@@ -72,7 +72,7 @@ class VisitFailure extends ModelOld
         if ($visit['direction']) {
 
             # Стационар
-            if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
+            if ( $db->query("SELECT id FROM $this->_status WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
                     
                 $this->error("Функция отказа стационара с ордером не сделана!");
                 return 1;
@@ -98,18 +98,9 @@ class VisitFailure extends ModelOld
                 if ( in_array($data['status'], [2,3]) and ($data['parent_id'] == $session->session_id or $data['route_id'] == $session->session_id)) {
                     
                     $db->beginTransaction();
-                    // Visit prices 
-                    $object = Mixin\delete($this->_transactions, $pk, "visit_service_id");
-                    if(!intval($object)){
-                        $this->error("Произошла ошибка на сервере!");
-                        $db->rollBack();
-                    }
-                    // Visit service 
-                    $object = Mixin\delete($this->table, $pk);
-                    if(!intval($object)){
-                        $this->error("Произошла ошибка на сервере!");
-                        $db->rollBack();
-                    }
+                    // Visit prices / service
+                    Mixin\delete($this->_transactions, $pk, "visit_service_id");
+                    Mixin\delete($this->table, $pk);
 
                     $this->status_update($visit['id']);
                     
@@ -129,25 +120,19 @@ class VisitFailure extends ModelOld
             // Абулатор
             if ( ( $session->session_id == $data['parent_id'] ) or ( ($data['level'] == 6 and permission(6)) ) or ( ($data['level'] == 12 and permission(12)) ) or permission([3, 32]) ) {
             
-                // Is order
-                if ( $db->query("SELECT id FROM $this->_orders WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
+                // Is status
+                if ( $db->query("SELECT id FROM $this->_status WHERE visit_id = {$visit['id']}")->fetchColumn() ) {
                     
                     // Visit service
                     if (module('queue')) $this->queue($data);
-                    $object = Mixin\delete($this->table, $pk);
-                    if(!intval($object)){
-                        $this->error("Произошла ошибка на сервере!");
-                    }
+                    Mixin\delete($this->table, $pk);
 
                     $this->status_update($visit['id']);
                     $this->success($pk);
 
                 }else{
 
-                    $object = Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
-                    if (!intval($object)){
-                        $this->error("Произошла ошибка на сервере!");
-                    }
+                    Mixin\update($this->table, array('failure_id' => $session->session_id, 'status' => 5), $pk);
                     if (module('queue')) $this->queue($data);
                     $this->success($pk);
 

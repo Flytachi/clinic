@@ -25,11 +25,11 @@ class VisitType extends Model
                     <label class="d-block font-weight-semibold">Бесплатно:</label>
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="free_service_1" name="free_service_1" value="1" <?= ($this->value('free_service_1')) ? 'checked' : ''; ?>>
-                        <label class="custom-control-label" for="free_service_1">Услуги (консультуции)</label>
+                        <label class="custom-control-label" for="free_service_1">Услуги (обычные)</label>
                     </div>
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="free_service_2" name="free_service_2" value="1" <?= ($this->value('free_service_2')) ? 'checked' : ''; ?>>
-                        <label class="custom-control-label" for="free_service_2">Услуги (обычные)</label>
+                        <label class="custom-control-label" for="free_service_2">Услуги (консультуции)</label>
                     </div>
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="free_service_3" name="free_service_3" value="1" <?= ($this->value('free_service_3')) ? 'checked' : ''; ?>>
