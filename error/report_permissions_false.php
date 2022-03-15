@@ -1,6 +1,5 @@
 <?php
 require_once '../tools/warframe.php';
-$session->is_auth();
 ?>
 <!-- Page content -->
 <div class="page-content">

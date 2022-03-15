@@ -86,7 +86,6 @@
         </li>
     <?php endif; ?>
 
-    
 </ul>
 
 <?php

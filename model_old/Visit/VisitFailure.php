@@ -95,7 +95,7 @@ class VisitFailure extends ModelOld
             } else {
                 
                 // Проверка прав
-                if ( in_array($data['status'], [2,3]) and ($data['parent_id'] == $session->session_id or $data['route_id'] == $session->session_id)) {
+                if ( in_array($data['status'], [2,3]) and ($data['parent_id'] == $session->session_id or $data['route_id'] == $session->session_id) ) {
                     
                     $db->beginTransaction();
                     // Visit prices / service

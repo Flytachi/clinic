@@ -134,6 +134,10 @@ $tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.pat
 											<td class="text-center">
 												<button type="button" class="<?= $classes['btn-detail'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-1"></i></button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
+													
+													<a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'ambulator', 'patient_id' => $row->id)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>New Назначить визит (Aмбулаторный)</a>
+													<a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'stationar', 'patient_id' => $row->id, 'application' => $row->application)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>New Назначить визит (Стационарный)</a>
+													
 													<?php if ( !$row->status or ($row->status and !$stm_dr['direction']) ): ?>
 														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'ambulator') ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
 													<?php endif; ?>

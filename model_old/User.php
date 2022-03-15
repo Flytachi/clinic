@@ -213,7 +213,7 @@ class UserModel extends ModelOld
                 }
                 if (the.value == 6 || the.value == 12) {
                     document.querySelector('#division_id').required = false;
-                    $("#division_id").prepend(`<option value="0">Выбрать весь отдел</option>`);
+                    $("#division_id").prepend(`<option value="0">Все отделы</option>`);
                 }else{
                     if (!document.querySelector('#division_id').required) {
                         document.querySelector('#division_id').required = true;

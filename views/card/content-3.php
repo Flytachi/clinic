@@ -60,7 +60,7 @@ require_once 'callback.php';
 									<tbody>
 										<?php
 										$tb = new Table($db, "visits v");
-										$tb->set_data("v.id, vr.id 'order', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+										$tb->set_data("v.id, vr.id 'status_name', v.add_date, v.completed, v.direction")->additions("LEFT JOIN visit_status vr ON (v.id = vr.visit_id)");
 										$tb->where("v.patient_id = $patient->id AND v.id != $patient->visit_id")->order_by('v.add_date DESC');
 										?>
 										<?php foreach($tb->get_table(1) as $row): ?>
@@ -68,8 +68,8 @@ require_once 'callback.php';
 												<td><?= $row->count ?></td>
 												<td><?= $row->id ?></td>
 												<td>
-													<?php if ( $row->order ): ?>
-														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+													<?php if ( $row->status_name ): ?>
+														<span style="font-size:13px;" class="badge badge-flat border-danger text-danger"><?= $row->status_name ?></span>
 													<?php endif; ?>
 												</td>
 												<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
