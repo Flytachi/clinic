@@ -16,7 +16,6 @@ class VisitBypassModel extends ModelOld
 
             // Bypass
             $this->visit = $object;
-            $this->order = $db->query("SELECT * FROM visit_orders WHERE visit_id = $pk")->fetchColumn();
             return $this->{$_GET['form']}($pk);
 
         }else{
@@ -46,7 +45,7 @@ class VisitBypassModel extends ModelOld
 
                 <div class="row">
 
-                    <div class="col-4">
+                    <div class="col-md-4">
 
                         <div class="form-group">
                             <label>Название назначения:</label>
@@ -70,7 +69,7 @@ class VisitBypassModel extends ModelOld
 
                     </div>
 
-                    <div class="col-8">
+                    <div class="col-md-8">
                         <div class="text-right">
                             <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple mb-1" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
                         </div>
@@ -91,6 +90,15 @@ class VisitBypassModel extends ModelOld
                         </div>
 
                     </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>
+                        </div>
+                    </div>
                 
                 </div>
 
@@ -104,27 +112,6 @@ class VisitBypassModel extends ModelOld
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </ul>
-
-                <div class="form-group-feedback form-group-feedback-right row">
-
-                    <!-- <div class="col-md-10">
-                        <div id="bypass_search_input" style="display:none;">
-                            <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
-                            <div class="form-control-feedback">
-                                <i class="icon-search4 font-size-base text-muted"></i>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div class="col-md-2">
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                                <span class="ladda-label">Сохранить</span>
-                                <span class="ladda-spinner"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
 
                 <div class="form-group" id="panel-frame"></div>
 

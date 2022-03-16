@@ -18,7 +18,6 @@ interface CredoInterface
     public function Order(String $context = null);
     public function Group(String $context = null);
     public function panel();
-    public function returnPath(String $uri = null);
     public function showError(Bool $status = false);
     public function getSearch();
     public function getSql();

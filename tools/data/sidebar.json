@@ -130,7 +130,7 @@
     {
         "id": 9,
         "level": 1,
-        "sort": 5,
+        "sort": 6,
         "is_parent": 1,
         "parent_id": null,
         "module": null,
@@ -210,7 +210,7 @@
     {
         "id": 14,
         "level": 1,
-        "sort": 6,
+        "sort": 7,
         "is_parent": 2,
         "parent_id": null,
         "module": null,
@@ -258,7 +258,7 @@
     {
         "id": 17,
         "level": 1,
-        "sort": 7,
+        "sort": 8,
         "is_parent": null,
         "parent_id": null,
         "module": null,
@@ -274,7 +274,7 @@
     {
         "id": 18,
         "level": 1,
-        "sort": 8,
+        "sort": 9,
         "is_parent": null,
         "parent_id": null,
         "module": null,
@@ -290,7 +290,7 @@
     {
         "id": 19,
         "level": 1,
-        "sort": 9,
+        "sort": 10,
         "is_parent": null,
         "parent_id": null,
         "module": "module_pharmacy",
@@ -427,7 +427,7 @@
         "name": "\u041f\u0440\u0438\u043d\u044f\u0442\u044c \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u0430",
         "is_active": "[\"doctor\/index\"]",
         "is_division": null,
-        "script": "SELECT vs.id, vs.patient_id, p.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 5 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = _sk0) OR (vs.parent_id IS NULL AND vs.division_id = _sk1) ) ORDER BY vs.id ASC",
+        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 5 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = _sk0) OR (vs.parent_id IS NULL AND vs.division_id = _sk1) ) ORDER BY vs.id ASC",
         "script_item": "{\"_sk0\":\"session_id\",\"_sk1\":\"session_division\"}",
         "badge_class": "badge bg-danger badge-pill ml-auto"
     },
@@ -443,7 +443,7 @@
         "name": "\u0410\u043c\u0431\u0443\u043b\u0430\u0442\u043e\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"doctor\/list_outpatient\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = _sk0 ORDER BY vs.accept_date DESC",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, p.last_name, p.first_name, p.father_name, vs.route_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = _sk0 ORDER BY vs.accept_date DESC",
         "script_item": "{\"_sk0\":\"session_id\"}",
         "badge_class": "badge bg-blue badge-pill ml-auto"
     },
@@ -459,7 +459,7 @@
         "name": "\u0421\u0442\u0430\u0446\u0438\u043e\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"doctor\/list_stationary\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 5 AND v.direction IS NOT NULL AND vs.parent_id = _sk0 AND vs.route_id != _sk0 ORDER BY vs.accept_date DESC",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, p.last_name, p.first_name, p.father_name, vs.route_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 5 AND v.direction IS NOT NULL AND vs.parent_id = _sk0 AND vs.route_id != _sk0 ORDER BY vs.accept_date DESC",
         "script_item": "{\"_sk0\":\"session_id\"}",
         "badge_class": "badge bg-success badge-pill ml-auto"
     },
@@ -555,7 +555,7 @@
         "name": "\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b",
         "is_active": "[\"laboratory\/index\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 6",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.route_id, v.direction, v.add_date, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 6",
         "script_item": null,
         "badge_class": "badge bg-danger badge-pill ml-auto"
     },
@@ -571,7 +571,7 @@
         "name": "\u0410\u043c\u0431\u0443\u043b\u0430\u0442\u043e\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"laboratory\/list_outpatient\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, v.add_date, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id)  LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 6 AND v.direction IS NULL selector",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.route_id, v.add_date, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 6 AND v.direction IS NULL selector",
         "script_item": "{\"selector\":0}",
         "badge_class": "badge bg-blue badge-pill ml-auto"
     },
@@ -587,7 +587,7 @@
         "name": "\u0421\u0442\u0430\u0446\u0438\u043e\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"laboratory\/list_stationary\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, v.add_date, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id)  LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL selector",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.route_id, v.add_date, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL selector",
         "script_item": "{\"selector\":0}",
         "badge_class": "badge bg-success badge-pill ml-auto"
     },
@@ -747,7 +747,7 @@
         "name": "\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b",
         "is_active": "[\"diagnostic\/index\"]",
         "is_division": "110",
-        "script": "SELECT vs.id, vs.patient_id, p.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 10 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = _sk0) OR (vs.parent_id IS NULL AND vs.division_id = _sk1) ) ORDER BY vs.id ASC",
+        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.add_date, vs.service_name, vs.route_id, v.direction, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 10 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = _sk0) OR (vs.parent_id IS NULL AND vs.division_id = _sk1) ) ORDER BY vs.id ASC",
         "script_item": "{\"_sk0\":\"session_id\",\"_sk1\":\"session_division\"}",
         "badge_class": "badge bg-danger badge-pill ml-auto"
     },
@@ -763,7 +763,7 @@
         "name": "\u0410\u043c\u0431\u0443\u043b\u0430\u0442\u043e\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"diagnostic\/list_outpatient\"]",
         "is_division": "101",
-        "script": "SELECT vs.id, vs.patient_id, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
+        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
         "script_item": "{\"_sk0\":\"session_id\",\"selector\":1}",
         "badge_class": "badge bg-blue badge-pill ml-auto"
     },
@@ -779,7 +779,7 @@
         "name": "\u0421\u0442\u0430\u0446\u0438\u043e\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"diagnostic\/list_stationary\"]",
         "is_division": "101",
-        "script": "SELECT vs.id, vs.patient_id, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
+        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
         "script_item": "{\"_sk0\":\"session_id\",\"selector\":1}",
         "badge_class": "badge bg-success badge-pill ml-auto"
     },
@@ -875,7 +875,7 @@
         "name": "\u0410\u043c\u0431\u0443\u043b\u0430\u0442\u043e\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"physio\/index\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 12 AND v.direction IS NULL AND (vs.parent_id IS NULL OR vs.parent_id = _sk0) selector",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, v.direction, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 12 AND v.direction IS NULL AND (vs.parent_id IS NULL OR vs.parent_id = _sk0) selector",
         "script_item": "{\"_sk0\":\"session_id\",\"selector\":0}",
         "badge_class": "badge bg-blue badge-pill ml-auto"
     },
@@ -891,7 +891,7 @@
         "name": "\u0421\u0442\u0430\u0446\u0438\u043e\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"physio\/list_stationary\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT v.id, vs.patient_id, p.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 12 AND v.direction IS NOT NULL AND (vs.parent_id IS NULL OR vs.parent_id = _sk0) selector",
+        "script": "SELECT DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 2 AND vs.level = 12 AND v.direction IS NOT NULL AND (vs.parent_id IS NULL OR vs.parent_id = _sk0) selector",
         "script_item": "{\"_sk0\":\"session_id\",\"selector\":0}",
         "badge_class": "badge bg-success badge-pill ml-auto"
     },
@@ -1178,6 +1178,38 @@
         "icon": "",
         "name": "\u0427\u0435\u043a",
         "is_active": "[\"admin\/setting_check\"]",
+        "is_division": null,
+        "script": null,
+        "script_item": null,
+        "badge_class": null
+    },
+    {
+        "id": 76,
+        "level": 1,
+        "sort": 5,
+        "is_parent": 3,
+        "parent_id": null,
+        "module": null,
+        "route": null,
+        "icon": "icon-city",
+        "name": "\u0412\u0438\u0437\u0438\u0442\u044b",
+        "is_active": "[\"admin\/visit_type\"]",
+        "is_division": null,
+        "script": null,
+        "script_item": null,
+        "badge_class": null
+    },
+    {
+        "id": 77,
+        "level": 1,
+        "sort": 1,
+        "is_parent": null,
+        "parent_id": 3,
+        "module": null,
+        "route": "admin\/visit_type",
+        "icon": null,
+        "name": "\u0422\u0438\u043f\u044b",
+        "is_active": "[\"admin\/visit_type\"]",
         "is_division": null,
         "script": null,
         "script_item": null,

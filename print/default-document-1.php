@@ -11,7 +11,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     if (!$docs) Mixin\error('404');
 }elseif (isset($_GET['pk']) and $_GET['pk'] == "template" ) {
     $docs = new stdClass();
-    $docs->user_id = 1;
+    $docs->patient_id = 1;
+    $docs->last_name = "";
+    $docs->first_name = "";
+    $docs->father_name = "";
     $docs->birth_date = date("Y-m-d");
     $docs->accept_date = date("Y-m-d H-i-s");
     $docs->parent_id = 1;
@@ -41,6 +44,20 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
     <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("assets/my_css/document.css") ?>">
+
+    <style>
+        figure table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 3px solid grey;
+        }
+        figure table th {
+            border: 1px solid grey;
+        }
+        figure table td {
+            border: 1px solid grey;
+        }
+    </style>
 
     <body>
 

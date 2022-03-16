@@ -9,14 +9,15 @@ class VisitRoute extends ModelOld
     public $table2 = 'beds';
     public $_visits = 'visits';
     public $_beds = 'visit_beds';
-    public $_orders = 'visit_orders';
+    public $_status = 'visit_status';
     public $_transactions = 'visit_service_transactions';
 
     public function form($pk = null)
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
-        $is_order = ($patient->direction) ? null : $patient->order;
+        importModel('VisitStatus');
+        $status = ($patient->status_id) ? (new VisitStatus)->byId($patient->status_id, 'free_service_1')->free_service_1 : null;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -100,7 +101,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         search: this.value,
                         selected: service,
                         types: "1,2",
@@ -121,7 +122,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         selected: service,
                         types: "1,2",
                         cols: 1
@@ -142,7 +143,8 @@ class VisitRoute extends ModelOld
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
-        $is_order = ($patient->direction) ? null : $patient->order;
+        importModel('VisitStatus');
+        $status = ($patient->status_id) ? (new VisitStatus)->byId($patient->status_id, 'free_laboratory')->free_laboratory : null;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -225,7 +227,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -246,7 +248,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -267,7 +269,8 @@ class VisitRoute extends ModelOld
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
-        $is_order = ($patient->direction) ? null : $patient->order;
+        importModel('VisitStatus');
+        $status = ($patient->status_id) ? (new VisitStatus)->byId($patient->status_id, 'free_diagnostic')->free_diagnostic : null;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -350,7 +353,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -371,7 +374,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -392,7 +395,8 @@ class VisitRoute extends ModelOld
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
-        $is_order = ($patient->direction) ? null : $patient->order;
+        importModel('VisitStatus');
+        $status = ($patient->status_id) ? (new VisitStatus)->byId($patient->status_id, 'free_physio')->free_physio : null;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -475,7 +479,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $("#division_selector").val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -496,7 +500,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: $(params).val(),
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         selected: service,
                         types: "1",
                         cols: 1
@@ -517,7 +521,8 @@ class VisitRoute extends ModelOld
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
-        $is_order = ($patient->direction) ? null : $patient->order;
+        importModel('VisitStatus');
+        $status = ($patient->status_id) ? (new VisitStatus)->byId($patient->status_id, 'free_service_1')->free_service_1 : null;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -592,7 +597,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         search: this.value,
                         selected: service,
                         types: "1",
@@ -614,7 +619,7 @@ class VisitRoute extends ModelOld
                     data: {
                         divisions: ["<?= division() ?>"],
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                         selected: service,
                         types: "1",
                         cols: 3,
@@ -635,7 +640,8 @@ class VisitRoute extends ModelOld
     {
         global $db, $classes, $session;
         $patient = json_decode($_GET['patient']);
-        $is_order = ($patient->direction) ? null : $patient->order;
+        importModel('VisitStatus');
+        $status = ($patient->status_id) ? (new VisitStatus)->byId($patient->status_id, 'free_service_1')->free_service_1 : null;
         ?>
         <form method="post" action="<?= add_url() ?>">
 
@@ -675,7 +681,7 @@ class VisitRoute extends ModelOld
                     data: { 
                         pk:params.value,
                         is_foreigner: "<?= $patient->is_foreigner ?>",
-                        is_order: "<?= $is_order ?>",
+                        is_free: "<?= $status ?>",
                     },
                     success: function (result) {
                         $('#div_form').html(result);
@@ -725,17 +731,30 @@ class VisitRoute extends ModelOld
         $this->visit_pk = $this->post['visit_id'];
         Mixin\update($this->_visits, array('last_update' => date("Y-m-d H:i:s")), $this->visit_pk);
         $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetchColumn();
-        $this->chek_order();
+        $this->chek_status();
     }
 
-    public function chek_order()
+    public function chek_status()
     {
         global $db;
-        if(!$this->post['direction']){
-            if ($db->query("SELECT id FROM $this->_orders WHERE visit_id = $this->visit_pk")->fetchColumn()) {
-                $this->is_order = True;
+        $this->status_is = $db->query("SELECT * FROM $this->_status WHERE visit_id = $this->visit_pk")->fetch();
+    }
+
+    public function service_is_free($service = null)
+    {
+        if(isset($this->status_is) and $this->status_is){
+            if($service['user_level'] == 1 and $service['type'] == 101) return true;
+            elseif($service['user_level'] == 5) {
+                if($this->status_is['free_service_1'] and $service['type'] == 1) return true;
+                elseif($this->status_is['free_service_2'] and $service['type'] == 2) return true;
+                elseif($this->status_is['free_service_3'] and $service['type'] == 3) return true;
             }
+            elseif($service['user_level'] == 6 and $this->status_is['free_laboratory']) return true;
+            elseif($service['user_level'] == 10 and $this->status_is['free_diagnostic']) return true;
+            elseif($service['user_level'] == 12 and $this->status_is['free_physio']) return true;
+            return false;
         }
+        return false;
     }
 
     public function add_visit_service($key = null, $value)
@@ -750,7 +769,7 @@ class VisitRoute extends ModelOld
             $post['status'] = $this->post['status'];
             $post['accept_date'] = date("Y-m-d H:i:s");
         } else {
-            $post['status'] = ($this->post['direction'] or (isset($this->is_order) and $this->is_order) ) ? 2 : 1;
+            $post['status'] = ($this->post['direction'] or $this->service_is_free($data) ) ? 2 : 1;
         }
         $post['visit_id'] = $this->visit_pk;
         $post['patient_id'] = $this->post['patient_id'];
@@ -770,21 +789,19 @@ class VisitRoute extends ModelOld
                 $db->rollBack();
             }
 
-            if ( empty($this->is_order) or (isset($this->is_order) and !$this->is_order) ) {
-                if (!$this->post['direction'] or (!permission([2, 32]) and $this->post['direction'])) {
-                    $post_price['visit_id'] = $this->visit_pk;
-                    $post_price['visit_service_id'] = $object;
-                    $post_price['patient_id'] = $this->post['patient_id'];
-                    $post_price['item_type'] = $data['type'];
-                    $post_price['item_id'] = $data['id'];
-                    $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
-                    $post_price['item_name'] = $data['name'];
-                    $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
-                    $object = Mixin\insert($this->_transactions, $post_price);
-                    if (!intval($object)){
-                        $this->error("Ошибка при создании платежа услуги!");
-                        $db->rollBack();
-                    }
+            if ( !$this->service_is_free($data) ) {
+                $post_price['visit_id'] = $this->visit_pk;
+                $post_price['visit_service_id'] = $object;
+                $post_price['patient_id'] = $this->post['patient_id'];
+                $post_price['item_type'] = $data['type'];
+                $post_price['item_id'] = $data['id'];
+                $post_price['item_cost'] = ($this->is_foreigner) ? $data['price_foreigner'] : $data['price'];
+                $post_price['item_name'] = $data['name'];
+                $post_price['is_visibility'] = ($this->post['direction']) ? null : 1;
+                $object = Mixin\insert($this->_transactions, $post_price);
+                if (!intval($object)){
+                    $this->error("Ошибка при создании платежа услуги!");
+                    $db->rollBack();
                 }
             }
             

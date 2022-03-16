@@ -73,7 +73,7 @@ class WarehouseSettingsModel extends ModelOld
                     </div>
 
                     <div class="form-group">
-                        <label>Доступ на переводы:</label>
+                        <label>Доступ на создание заявок:</label>
                         <select data-placeholder="Выбрать пользователя" name="permission[users][]" multiple="multiple" class="settin <?= $classes['form-multiselect'] ?>">
                             <?php foreach ($PERSONAL as $key => $value): ?>
                                 <?php if(in_array($key, [4,5,6,7,10])): ?>

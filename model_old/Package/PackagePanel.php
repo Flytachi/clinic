@@ -90,7 +90,7 @@ class PackagePanel extends ModelOld
                     divisions: divisions,
                     selected: service,
                     is_foreigner: "<?= $this->post['is_foreigner'] ?>",
-                    is_order: "<?= $this->post['is_order'] ?>",
+                    is_free: "<?= $this->post['is_free'] ?>",
                     types: "1,2",
                     cols: 1,
                     is_service_checked: 1,

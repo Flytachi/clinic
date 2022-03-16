@@ -109,6 +109,7 @@ trait ModelTResponce
     public function error($message)
     {
         echo $message;
+        if($this->db->inTransaction()) $this->db->rollBack();
         exit;
     }
 }

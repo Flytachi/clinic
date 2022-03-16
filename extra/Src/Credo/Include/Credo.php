@@ -20,47 +20,51 @@ abstract class Credo implements CredoInterface
      * 
      * Поисковая система Ajax:
      * 
+     *  # php box make:table 'name'
+     * 
      * $search = $tb->getSearch();       ---> Искомое
      * 
-     * 
-     * -- search.php
-     * 
-     * $tb->returnPath('адрес главной страницы');
      * 
      * 
      * 
      * Скрипт на Php + Html:
      * 
      * -----------------------------------------------------------------------
-    
-        <input type="text" value="<?= $search ?>" id="search_input">
+
+        <input type="text" value="" id="search_input">
       
      * -----------------------------------------------------------------------
      * 
      * Скрипт на Js + Ajax:
      * 
      * -----------------------------------------------------------------------
-    
-        $("#search_input").keyup(credoSearch);
 
-        function credoSearch() {
-            var input = document.querySelector('#search_input');
-            var display = document.querySelector('#search_display');
-            $.ajax({
-                type: "GET",
-                url: "search.php",
-                data: {
-                    CRD_search: input.value,
-                },
-                success: function (result) {
-                    display.innerHTML = result;
-                },
-            });
-        }
+        function credoSearch(params = '') {
+			if (document.querySelector('#search_display')) {
+				var display = document.querySelector('#search_display');
+				isLoading(display);
+
+				$.ajax({
+					type: "GET",
+					url: "<?= api('table/registry/Patient') ?>"+params,
+					data: {
+						CRD_search: document.querySelector('#search_input').value,
+					},
+					success: function (result) {
+						isLoaded(display);
+						display.innerHTML = result;
+					},
+				});
+
+			}
+		}
+		
+		$(document).ready(() => credoSearch());
+		$("#search_input").keyup(() => credoSearch());
       
      * -----------------------------------------------------------------------
      * 
-     * @version 3.0
+     * @version 7.1 betta
      */
     
     private String $CRD_sql;
@@ -70,7 +74,6 @@ abstract class Credo implements CredoInterface
     private String $CRD_where = '';
     private String $CRD_order = '';
     private String $CRD_group = '';
-    private String $CRD_selfPage = '';
     private String $CRD_search = '';
     private String $CRD_searchGetName = 'CRD_search=';
     private Int $CRD_limit = 0;
@@ -104,16 +107,6 @@ abstract class Credo implements CredoInterface
             else echo 'Ошибка в генерации скрипта <strong>"SQL"</strong>';
         }
         
-    }
-
-    private function path()
-    {
-        if (!$this->CRD_selfPage) {
-            $uri = $_SERVER['PHP_SELF'];
-            if (EXT != ".php") $uri = str_replace('.php', '', $_SERVER['PHP_SELF']);
-            return $uri;
-        }
-        return $this->CRD_selfPage;
     }
 
     private function clsDta($value = "") {

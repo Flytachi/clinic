@@ -8,7 +8,7 @@ abstract class Model extends Credo implements ModelInterface
      * 
      * Model
      * 
-     * @version 17.6
+     * @version 9.1
      */
 
     private $get = [];
@@ -70,8 +70,13 @@ abstract class Model extends Credo implements ModelInterface
                     if (method_exists(get_class($this), $form)) $this->{$form}();
                     else Hell::error("403");
     
-                }else echo json_encode($object);
-    
+                }else {
+
+                    header('Content-type: application/json');
+                    echo json_encode($object);
+
+                }
+
             } else Hell::error("403");
         }
     }

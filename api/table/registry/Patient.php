@@ -2,7 +2,8 @@
 
 use Mixin\Hell;
 
-require_once '../../tools/warframe.php';
+require '../../../tools/warframe.php';
+
 $session->is_auth([2, 32]);
 
 if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
@@ -17,9 +18,9 @@ $where_search = array(
     $apl . "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 
-$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(20);
+$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search);
+$tb->Order("p.add_date DESC")->Limit(20);
 
-$tb->returnPath(viv('registry/index'));
 ?>
 <div class="table-responsive">
     <table class="table table-hover table-sm table-bordered">

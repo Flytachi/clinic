@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.route_id, v.direction, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb->set_data("DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.route_id, v.direction, v.add_date, vr.name 'status_name'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND vs.level = 6",
@@ -32,8 +32,8 @@ $tb->set_self(viv('laboratory/index'));
                     <td><?= addZero($row->patient_id) ?></td>
                     <td>
                         <span class="font-weight-semibold"><?= patient_name($row) ?></span>
-                        <?php if ( $row->order ): ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
+                        <?php if ( $row->status_name ): ?>
+                            <span style="font-size:13px;" class="badge badge-flat border-danger text-danger"><?= $row->status_name ?></span>
                         <?php endif; ?>
                         <div class="text-muted">
                             <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
