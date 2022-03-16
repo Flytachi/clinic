@@ -8,6 +8,20 @@ $session->is_auth();
     <button type="button" class="close" data-dismiss="modal">×</button>
 </div>
 
+<style>
+    figure table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 3px solid grey;
+    }
+    figure table th {
+        border: 1px solid grey;
+    }
+    figure table td {
+        border: 1px solid grey;
+    }
+</style>
+
 <div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
 $pack = $db->query("SELECT service_title, service_report, service_id FROM visit_services WHERE id = {$_GET['pk']}")->fetch();

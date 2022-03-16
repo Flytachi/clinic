@@ -38,8 +38,8 @@ class __Db
             elseif($this->argument == "seed") $this->seed();
             else echo "\033[31m"." Нет такого аргумента.\n";
         } catch (\Error $e) {
-            echo $e->getMessage();
-//            echo "\033[31m"." Ошибка в скрипте.\n";
+            // echo $e->getMessage();
+            echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 

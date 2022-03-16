@@ -45,6 +45,20 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     <?php include layout('head') ?>
     <link rel="stylesheet" href="<?= stack("assets/my_css/document.css") ?>">
 
+    <style>
+        figure table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 3px solid grey;
+        }
+        figure table th {
+            border: 1px solid grey;
+        }
+        figure table td {
+            border: 1px solid grey;
+        }
+    </style>
+
     <body>
 
         <div class="row">

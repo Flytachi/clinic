@@ -6,7 +6,6 @@ use Mixin\Model;
 
 class Visit extends Model
 {
-    use ResponceRender;
     public $table = 'visits';
     public $tBed = 'beds';
     public $tPatient = 'patients';
@@ -50,7 +49,7 @@ class Visit extends Model
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form method="post" action="<?= $this->urlHook() ?>">
+        <form method="post" action="<?= $this->urlHook() ?>" onsubmit="submitForm()">
         
             <div class="modal-body">
 
@@ -320,7 +319,7 @@ class Visit extends Model
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form method="post" action="<?= $this->urlHook() ?>">
+        <form method="post" action="<?= $this->urlHook() ?>" onsubmit="submitForm()">
         
             <div class="modal-body">
 
@@ -607,17 +606,18 @@ class Visit extends Model
     public function saveBody()
     {
         $this->createOrUpdateVisit();
-
-        if (is_array($this->getPost('service'))) {
+        
+        if ($this->getGet('type') == 'ambulator') {
             // Амбулатор
+            if(!$this->getPost('service')) $this->error("Не назначены услуги!");
             foreach ($this->getPost('service') as $key => $value) $this->addVisitService($key, $value);
-        }else{
+        }elseif($this->getGet('type') == 'stationar'){
             // Стационар
             $this->application();
             $this->initial();
             $this->addVisitService(null, 1);
             $this->addVisitBed();
-        }
+        }else $this->error("Недопустимый запрос");
 
         $this->patientUpdateStatus();
     }
@@ -626,10 +626,7 @@ class Visit extends Model
     {
         // Обновление статуса у пациента
         $obj = Mixin\update($this->tPatient, array('status' => True), $this->getPost('patient_id'));
-        if (!intval($obj)){
-            $this->error("Ошибка в обновление статуса пациента!");
-            $this->db->rollBack();
-        }
+        if (!intval($obj)) $this->error("Ошибка в обновление статуса пациента!");
     }
 
     private function createOrUpdateVisit()
@@ -643,10 +640,8 @@ class Visit extends Model
             'last_update' => date("Y-m-d H:i:s"),
         );
         $obj = HellCrud::insert_or_update($this->table, $post, 'patient_id', 'completed IS NULL');
-        if (!is_numeric($obj)) {
-            $this->error("Ошибка создании или обновлении визита!");
-            $this->db->rollBack();
-        }else{
+        if (!is_numeric($obj)) $this->error("Ошибка создании или обновлении визита!");
+        else{
             $this->visit_pk = $obj;
             $this->is_foreigner = $this->db->query("SELECT is_foreigner FROM $this->tPatient WHERE id = " . $this->getPost('patient_id'))->fetchColumn();
             $this->chekStatus();
@@ -661,10 +656,8 @@ class Visit extends Model
             $type = (new VisitType)->byId($this->getPost('status_is'), ['name', 'free_service_1', 'free_service_2', 'free_service_3', 'free_laboratory', 'free_diagnostic', 'free_physio', 'free_bed']);
             $object = HellCrud::insert($this->tStatus, array_merge((array) $type, array('visit_id' => $this->visit_pk)));
             
-            if (!is_numeric($object)) {
-                $this->error("Ошибка при назначении статуса!");
-                $this->db->rollBack();
-            }else {
+            if (!is_numeric($object)) $this->error("Ошибка при назначении статуса!");
+            else {
                 $this->status_is = (new VisitStatus)->Where('visit_id=' . $this->visit_pk)->get();
             }
         }
@@ -715,10 +708,7 @@ class Visit extends Model
             $post = HellCrud::clean_form($post);
             $post = HellCrud::to_null($post);
             $obj = HellCrud::insert($this->tVisitService, $post);
-            if (!is_numeric($obj)){
-                $this->error("Ошибка при создании услуги!");
-                $this->db->rollBack();
-            }
+            if (!is_numeric($obj)) $this->error("Ошибка при создании услуги!");
             
             if ( !$this->serviceIsFree($service) ) {
                 $post_price['visit_id'] = $this->visit_pk;
@@ -730,10 +720,7 @@ class Visit extends Model
                 $post_price['item_name'] = $service->name;
                 $post_price['is_visibility'] = ( $this->getPost('direction') ) ? null : 1;
                 $object = Mixin\insert($this->tVisitServiceTransaction, $post_price);
-                if (!is_numeric($object)){
-                    $this->error("Ошибка при создании платежа услуги!");
-                    $this->db->rollBack();
-                }
+                if (!is_numeric($object)) $this->error("Ошибка при создании платежа услуги!");
             }
             $this->pacsSend();
         }
@@ -770,16 +757,10 @@ class Visit extends Model
         );
 
         $object = HellCrud::insert($this->tVisitBed, $post);
-        if (!is_numeric($object)) {
-            $this->error("Ошибка при создании платежа для койки!");
-            $this->db->rollBack();
-        }
+        if (!is_numeric($object)) $this->error("Ошибка при создании платежа для койки!");
 
         $object2 = HellCrud::update($this->tBed, array('patient_id' => $this->getPost('patient_id')), $this->getPost('bed'));
-        if (!is_numeric($object2) and $object <= 0){
-            $this->error("Ошибка при бронировании пациентом койки!");
-            $this->db->rollBack();
-        }
+        if (!is_numeric($object2) and $object <= 0) $this->error("Ошибка при бронировании пациентом койки!");
     }
 
     private function bedIsFree()
@@ -934,6 +915,25 @@ class Visit extends Model
                 return $object;
             }
         } else return array();
+    }
+
+    public function success()
+    {
+        header('Content-type: application/json');
+        echo json_encode(array(
+            'status' => 'success'
+        ));
+    }
+
+    public function error($message)
+    {
+        header('Content-type: application/json');
+        echo json_encode(array(
+            'status' => 'error',
+            'message' => $message
+        ));
+        if($this->db->inTransaction()) $this->db->rollBack();
+        exit;
     }
 
 }

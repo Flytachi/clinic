@@ -1,0 +1,7 @@
+<?php
+require '../../../tools/warframe.php';
+
+importModel('_TableIndex_');
+
+$tb = new _TableIndex_;
+?>
