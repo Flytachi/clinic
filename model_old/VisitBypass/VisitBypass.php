@@ -16,7 +16,6 @@ class VisitBypassModel extends ModelOld
 
             // Bypass
             $this->visit = $object;
-            $this->order = $db->query("SELECT * FROM visit_orders WHERE visit_id = $pk")->fetchColumn();
             return $this->{$_GET['form']}($pk);
 
         }else{

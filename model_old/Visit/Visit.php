@@ -3,6 +3,13 @@
 use function Mixin\error;
 use Mixin\ModelOld;
 
+/*
+OLD scripts  -  ! удалить после проверки
+    VisitFinish - 63
+    VisitFailure - 65
+    VisitServices - 102
+    VisitTransactions - 569
+*/
 
 class VisitModel extends ModelOld
 {

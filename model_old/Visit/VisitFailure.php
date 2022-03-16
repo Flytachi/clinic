@@ -60,7 +60,9 @@ class VisitFailure extends ModelOld
 
     public function status_update($pk)
     {
-        return (new VisitModel())->is_delete($pk);
+        importModel('Visit');
+        return (new Visit)->is_delete($pk);
+        // return (new VisitModel())->is_delete($pk);
     }
 
     public function delete(int $pk)

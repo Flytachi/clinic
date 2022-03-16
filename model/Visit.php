@@ -836,7 +836,7 @@ class Visit extends Model
     public function is_update(int $pk)
     {
         $patient = $this->byId($pk, 'patient_id')->patient_id;
-        $service = $this->db->query("SELECT * FROM $this->tService WHERE visit_id = $pk AND status NOT IN(6,7)")->rowCount();
+        $service = $this->db->query("SELECT * FROM $this->tVisitService WHERE visit_id = $pk AND status NOT IN(6,7)")->rowCount();
 
         if ($service == 0) {
 
@@ -852,8 +852,8 @@ class Visit extends Model
     public function is_delete(int $pk)
     {
         $patient = $this->byId($pk, 'patient_id')->patient_id;
-        $service = $this->db->query("SELECT * FROM $this->tService WHERE visit_id = $pk")->rowCount();
-        $service_update = $this->db->query("SELECT * FROM $this->tService WHERE visit_id = $pk AND status IN(1,2,3,5)")->rowCount();
+        $service = $this->db->query("SELECT * FROM $this->tVisitService WHERE visit_id = $pk")->rowCount();
+        $service_update = $this->db->query("SELECT * FROM $this->tVisitService WHERE visit_id = $pk AND status IN(1,2,3,5)")->rowCount();
 
         if ($service == 0) {
 
@@ -880,7 +880,7 @@ class Visit extends Model
         return (new Patient)->update_status($user);
     }
 
-    public function price_status(Int $pk = null)
+    public function VPS(Int $pk)
     {
         if ($pk) {
             if ($this->db->query("SELECT completed FROM $this->table WHERE id = $pk")->fetchColumn()) {
@@ -933,9 +933,7 @@ class Visit extends Model
                 $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
                 return $object;
             }
-        } else {
-            return array();
-        }
+        } else return array();
     }
 
 }

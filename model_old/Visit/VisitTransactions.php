@@ -564,13 +564,16 @@ class VisitTransactionsModel extends ModelOld
             }
             $this->{$action}($row);
         }
-        (new VisitModel())->is_update($this->visit['id']);
+        importModel('Visit');
+        (new Visit)->is_update($this->visit['id']);
+        // (new VisitModel())->is_update($this->visit['id']);
     }
 
     public function stationar_price()
     {
         global $session;
-        $vps = (new VisitModel)->price_status($this->visit['id']);
+        importModel('Visit');
+        $vps = (new Visit)->VPS($this->visit['id']);
         if ($vps['result'] != 0) {
             $this->error("В транзакции отказано!");
         }

@@ -97,7 +97,9 @@ class VisitServicesModel extends ModelOld
 
     public function status_update()
     {
-        return (new VisitModel())->is_delete($this->visit_pk);
+        importModel('Visit');
+        return (new Visit)->is_delete($this->visit_pk);
+        // return (new VisitModel())->is_delete($this->visit_pk);
     }
 
     public function success($stat = null)

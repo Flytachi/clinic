@@ -35,9 +35,9 @@ class TransactionPanel extends ModelOld
 
     public function FirstPanel($pk = null)
     {
-        global $db, $classes;
-        importModel('VisitStatus');
-        $vps = (new VisitModel)->price_status($pk);
+        global $classes;
+        importModel('Visit', 'VisitStatus');
+        $vps = (new Visit)->VPS($pk);
         ?>
         <div class="card border-1 border-dark">
             <div class="card-header header-elements-inline">
@@ -516,7 +516,8 @@ class TransactionPanel extends ModelOld
     public function DetailPanelTotal($pk = null)
     {
         global $db;
-        $vps = (new VisitModel)->price_status($pk);
+        importModel('Visit');
+        $vps = (new Visit)->VPS($pk);
         $tb = new Table($db, "visit_beds");
         $tb->set_data("location, type, cost, ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(end_date, CURRENT_TIMESTAMP()), start_date), '%H')) 'time'")->where("visit_id = $pk")->order_by("start_date ASC");
         $sale_info = (new Table($db, "visit_sales"))->where("visit_id = $pk")->get_row();

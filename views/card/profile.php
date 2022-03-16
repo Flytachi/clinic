@@ -227,7 +227,8 @@ $region = (new Region)->byId($patient->region_id);
                 <?php $class_color_add = "text-success"; ?>
                 <?php if ($patient->direction): ?>
                     <?php
-                    $vps = (new VisitModel)->price_status($patient->visit_id);
+                    importModel('Visit');
+                    $vps = (new Visit)->VPS($patient->visit_id);
                     if ($vps['result'] >= 0) {
                         $class_card_balance = "text-success";
                         $class_color_add = "cl_btn_balance text-success";
