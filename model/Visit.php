@@ -8,6 +8,17 @@ class Visit extends Model
 {
     use ResponceRender;
     public $table = 'visits';
+    public $tBed = 'beds';
+    public $tPatient = 'patients';
+    public $tBedType = 'bed_types';
+    public $tService = 'services';
+    public $tDivision = 'divisions';
+    public $tStatus = 'visit_status';
+    public $tVisitService = 'visit_services';
+    public $tVisitServiceTransaction = 'visit_service_transactions';
+    public $tVisitApplication = 'visit_applications';
+    public $tVisitInitial = "visit_initial";
+    public $tVisitBed = 'visit_beds';
 
     public function Axe()
     {
@@ -541,7 +552,8 @@ class Visit extends Model
         <?php
     }
 
-    public function ajax(){
+    public function ajax()
+    {
         global $classes;
 
         if ( $this->getGet('ward') ) {
@@ -592,21 +604,338 @@ class Visit extends Model
         
     }
 
-    public function saveBefore(){
-        $this->db->beginTransaction();
-        $this->cleanPost();
+    public function saveBody()
+    {
+        $this->createOrUpdateVisit();
+
+        if (is_array($this->getPost('service'))) {
+            // Амбулатор
+            foreach ($this->getPost('service') as $key => $value) $this->addVisitService($key, $value);
+        }else{
+            // Стационар
+            $this->application();
+            $this->initial();
+            $this->addVisitService(null, 1);
+            $this->addVisitBed();
+        }
+
+        $this->patientUpdateStatus();
     }
 
-    public function saveBody(){
+    private function patientUpdateStatus()
+    {
+        // Обновление статуса у пациента
+        $obj = Mixin\update($this->tPatient, array('status' => True), $this->getPost('patient_id'));
+        if (!intval($obj)){
+            $this->error("Ошибка в обновление статуса пациента!");
+            $this->db->rollBack();
+        }
+    }
+
+    private function createOrUpdateVisit()
+    {
+        $post = array(
+            'parad_id' => ( $this->getPost('direction') ) ? $this->Data("IFNULL(MAX(parad_id), 0) 't'")->Where('direction IS NOT NULL')->get()->t + 1 : null,
+            'grant_id' => ( $this->getPost('direction') ) ? $this->getPost('parent_id') : null,
+            'patient_id' => ( $this->getPost('patient_id') ) ? $this->getPost('patient_id') : null,
+            'direction' => ( $this->getPost('direction') ) ? $this->getPost('direction') : null,
+            'division_id' => ( $this->getPost('direction') ) ? $this->getPost('division_id') : null,
+            'last_update' => date("Y-m-d H:i:s"),
+        );
+        $obj = HellCrud::insert_or_update($this->table, $post, 'patient_id', 'completed IS NULL');
+        if (!is_numeric($obj)) {
+            $this->error("Ошибка создании или обновлении визита!");
+            $this->db->rollBack();
+        }else{
+            $this->visit_pk = $obj;
+            $this->is_foreigner = $this->db->query("SELECT is_foreigner FROM $this->tPatient WHERE id = " . $this->getPost('patient_id'))->fetchColumn();
+            $this->chekStatus();
+        }
+    }
+
+    private function chekStatus()
+    {
+        importModel('VisitType', 'VisitStatus');
+        $this->status_is = (new VisitStatus)->Where('visit_id=' . $this->visit_pk)->get();
+        if( !$this->status_is and $this->getPost('status_is') ) {
+            $type = (new VisitType)->byId($this->getPost('status_is'), ['name', 'free_service_1', 'free_service_2', 'free_service_3', 'free_laboratory', 'free_diagnostic', 'free_physio', 'free_bed']);
+            $object = HellCrud::insert($this->tStatus, array_merge((array) $type, array('visit_id' => $this->visit_pk)));
+            
+            if (!is_numeric($object)) {
+                $this->error("Ошибка при назначении статуса!");
+                $this->db->rollBack();
+            }else {
+                $this->status_is = (new VisitStatus)->Where('visit_id=' . $this->visit_pk)->get();
+            }
+        }
+    }
+
+    private function serviceIsFree($service = null)
+    {
+        if(isset($this->status_is) and $this->status_is){
+            if($service->user_level == 1 and $service->type == 101) return true;
+            elseif($service->user_level == 5) {
+                if($this->status_is->free_service_1 and $service->type == 1) return true;
+                elseif($this->status_is->free_service_2 and $service->type == 2) return true;
+                elseif($this->status_is->free_service_3 and $service->type == 3) return true;
+            }
+            elseif($service->user_level == 6 and $this->status_is->free_laboratory) return true;
+            elseif($service->user_level == 10 and $this->status_is->free_diagnostic) return true;
+            elseif($service->user_level == 12 and $this->status_is->free_physio) return true;
+            return false;
+        }
+        return false;
+    }
+
+    private function addVisitService($key = null, $value)
+    {
+        global $session;
+        importModel('Service');
+        $service = (new Service)->byId($value);
+
+        if ( $this->getPost('direction') ) $post['division_id'] = $this->getPost('division_id');
+        else{
+            if ( isset($this->getPost('division_id')[$key]) and $this->getPost('division_id')[$key] ) {
+                $post['division_id'] = $this->getPost('division_id')[$key];
+            }
+        }
+
+        $post['visit_id'] = $this->visit_pk;
+        $post['patient_id'] = $this->getPost('patient_id');
+        $post['parent_id'] = ( $this->getPost('direction') ) ? $this->getPost('parent_id') : $this->getPost('parent_id')[$key];
+        $post['route_id'] = $session->session_id;
+        $post['guide_id'] = $this->getPost('guide_id');
+        $post['level'] = ( isset($post['division_id']) and $post['division_id'] ) ? $this->db->query("SELECT level FROM $this->tDivision WHERE id=" . $post['division_id'])->fetchColumn() : $this->getPost('level')[$key];
+        $post['status'] = ( $this->getPost('direction') or $this->serviceIsFree($service) ) ? 2 : 1;
+        $post['service_id'] = $service->id;
+        $post['service_name'] = $service->name;
+   
+        $count = ( $this->getPost('direction') ) ? 1 : $this->getPost('count')[$key];
+        for ($i=0; $i < $count; $i++) {
+            $post = HellCrud::clean_form($post);
+            $post = HellCrud::to_null($post);
+            $obj = HellCrud::insert($this->tVisitService, $post);
+            if (!is_numeric($obj)){
+                $this->error("Ошибка при создании услуги!");
+                $this->db->rollBack();
+            }
+            
+            if ( !$this->serviceIsFree($service) ) {
+                $post_price['visit_id'] = $this->visit_pk;
+                $post_price['visit_service_id'] = $obj;
+                $post_price['patient_id'] = $this->getPost('patient_id');
+                $post_price['item_type'] = $service->type;
+                $post_price['item_id'] = $service->id;
+                $post_price['item_cost'] = ($this->is_foreigner) ? $service->price_foreigner : $service->price;
+                $post_price['item_name'] = $service->name;
+                $post_price['is_visibility'] = ( $this->getPost('direction') ) ? null : 1;
+                $object = Mixin\insert($this->tVisitServiceTransaction, $post_price);
+                if (!is_numeric($object)){
+                    $this->error("Ошибка при создании платежа услуги!");
+                    $this->db->rollBack();
+                }
+            }
+            $this->pacsSend();
+        }
+        unset($post);
+    }
+
+    private function application(){
+        if( $this->getPost('application') ){
+            Mixin\delete($this->tVisitApplication, $this->getPost('application'));
+        }
+    }
+
+    private function initial(){
+        if( $this->getPost('initial') ){
+            Mixin\insert($this->tVisitInitial, array_merge(array('visit_id' => $this->visit_pk), $this->getPost('initial')));
+        }
+    }
+
+    private function addVisitBed()
+    {
+        global $session;
+        $bed = $this->db->query("SELECT * FROM $this->tBed WHERE id=" . $this->getPost('bed'))->fetch();
+        $bed_type = $this->db->query("SELECT * FROM $this->tBedType WHERE id=" . $bed['type_id'])->fetch();
+
+        $price = ($this->is_foreigner) ? $bed_type['price_foreigner'] : $bed_type['price'];
+        $post = array(
+            'visit_id' => $this->visit_pk,
+            'parent_id' => $session->session_id,
+            'patient_id' => $this->getPost('patient_id'),
+            'bed_id' => $bed['id'],
+            'location' => $bed['building'] . " " . $bed['floor'] . " этаж " . $bed['ward'] . " палата " . $bed['bed'] . " койка",
+            'type' => $bed['types'],
+            'cost' => ($this->bedIsFree()) ? 0 : $price,
+        );
+
+        $object = HellCrud::insert($this->tVisitBed, $post);
+        if (!is_numeric($object)) {
+            $this->error("Ошибка при создании платежа для койки!");
+            $this->db->rollBack();
+        }
+
+        $object2 = HellCrud::update($this->tBed, array('patient_id' => $this->getPost('patient_id')), $this->getPost('bed'));
+        if (!is_numeric($object2) and $object <= 0){
+            $this->error("Ошибка при бронировании пациентом койки!");
+            $this->db->rollBack();
+        }
+    }
+
+    private function bedIsFree()
+    {
+        if(isset($this->status_is) and $this->status_is and $this->status_is->free_bed) return true;
+        else return false;
+    }
+
+    private function pacsSend()
+    {
+        /*
+            // pacs
+            $DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
+            try {
+                $pacs = new PDO($DNS, "OCS", "OCS");
+                $pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                $pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+                $pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (\PDOException $e) {
+                // die($e->getMessage());
+                $this->error("Ошибка при соединении с PACS!");
+                $db->rollBack();
+            }
+            $pacsData = $db->query("SELECT vs.user_id, us.first_name, us.last_name, us.father_name, us.gender, us.birth_date, d.name, vs.add_date, vs.service_name, vs.route_id FROM $this->_service vs JOIN users us ON(us.id=vs.user_id) JOIN divisions d ON(d.id=vs.division_id) WHERE vs.id = $object_s")->fetch();
+            $pdata = array(
+                'PatientID' => $pacsData['user_id'],
+                'LastName' => $pacsData['last_name'] ." ". $pacsData['first_name'] ." ". $pacsData['father_name'], 
+                'Sex' => ($pacsData['gender']) ? 'M' : 'F', 
+                'BirthDate' => $pacsData['birth_date'], 
+                'Modality' => 'MR', 
+                'Department' => $pacsData['name'],
+                'TimeDate' => $pacsData['add_date'],
+                'StudyName' => $pacsData['service_name'],
+                'PACSOCSBridgeKey' => $object_s,
+                'Status' => 0,
+                'ReadStatus' => 0,
+                'OrderDoctor' => $pacsData['route_id'],
+                'OCSComment' => '',
+            );
+
+            $col = implode(",", array_keys($pdata));
+            $val = ":".implode(", :", array_keys($pdata));
+            $sql = "INSERT INTO QueueRecord ($col) VALUES ($val)";
+            try{
+                $stm = $pacs->prepare($sql)->execute($pdata);
+            }
+            catch (\PDOException $ex) {
+                $this->error($ex->getMessage());
+            }
+            // end pacs
+            */
+    }
+
+    public function is_update(int $pk)
+    {
+        $patient = $this->byId($pk, 'patient_id')->patient_id;
+        $service = $this->db->query("SELECT * FROM $this->tService WHERE visit_id = $pk AND status NOT IN(6,7)")->rowCount();
+
+        if ($service == 0) {
+
+            $object = Mixin\update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
+            if(!intval($object)) return $object;
+            $this->status_update($patient);
+            return null;
+
+        } else return $service;
         
-        $this->dd();
-        /* $object = HellCrud::insert($this->table, $this->getPost());
-        if (!is_numeric($object)) $this->error($object); */
     }
 
-    public function saveAfter(){
-        // $this->db->commit();
-        // $this->success();
+    public function is_delete(int $pk)
+    {
+        $patient = $this->byId($pk, 'patient_id')->patient_id;
+        $service = $this->db->query("SELECT * FROM $this->tService WHERE visit_id = $pk")->rowCount();
+        $service_update = $this->db->query("SELECT * FROM $this->tService WHERE visit_id = $pk AND status IN(1,2,3,5)")->rowCount();
+
+        if ($service == 0) {
+
+            $object = Mixin\delete($this->table, $pk);
+            if(!intval($object)) return $object;
+            $this->status_update($patient);
+            return null;
+
+        } else {
+
+            if ($service_update == 0) {
+                $object = Mixin\update($this->table, array('completed' => date("Y-m-d H:i:s")), $pk);
+                if(!intval($object)) return $object;
+                $this->status_update($patient);
+            }
+            return $service;
+        }
+        
+    }
+
+    public function status_update($user)
+    {
+        importModel('Patient');
+        return (new Patient)->update_status($user);
+    }
+
+    public function price_status(Int $pk = null)
+    {
+        if ($pk) {
+            if ($this->db->query("SELECT completed FROM $this->table WHERE id = $pk")->fetchColumn()) {
+                $sql = "SELECT
+                        v.id,
+                        v.grant_id,
+                        v.direction,
+                        IFNULL( (SELECT vr.id FROM $this->tStatus vr WHERE vr.visit_id=v.id), NULL) 'status_id',
+                        IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NOT NULL)), 0) 'balance',
+                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM $this->tVisitBed vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
+                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM $this->tVisitBed vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM $this->tVisitServiceTransaction vp WHERE vp.visit_id = v.id AND vp.is_price IS NOT NULL) * -1), 0) 'cost-services',
+                        IFNULL( ROUND((SELECT SUM(vt.item_qty*vt.item_cost) FROM visit_bypass_transactions vt WHERE vt.visit_id = v.id AND vt.is_price IS NOT NULL) * -1), 0) 'cost-preparats',
+                        IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
+                        IFNULL( vl.sale_service_unit , 0) 'sale-service',
+                        -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                        v.add_date,
+                        v.is_active,
+                        v.completed
+                    FROM visits v 
+                        LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
+                    WHERE v.id = $pk";
+                $object = $this->db->query($sql)->fetch();
+                $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
+                $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
+                $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
+                return $object;
+            } else {
+                $sql = "SELECT
+                        v.id,
+                        v.grant_id,
+                        v.direction,
+                        IFNULL( (SELECT vr.id FROM $this->tStatus vr WHERE vr.visit_id=v.id), NULL) 'status_id',
+                        IFNULL( ROUND((SELECT SUM(vi.balance_cash + vi.balance_card + vi.balance_transfer) FROM visit_investments vi WHERE vi.visit_id = v.id AND vi.expense IS NULL)), 0) 'balance',
+                        IFNULL( (SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H'))) FROM $this->tVisitBed vb WHERE vb.visit_id = v.id) , 0) 'bed-time',
+                        IFNULL( ROUND((SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vb.end_date, CURRENT_TIMESTAMP()), vb.start_date), '%H')) * (vb.cost / 24)) FROM $this->tVisitBed vb WHERE vb.visit_id = v.id) * -1), 0) 'cost-beds',
+                        IFNULL( ROUND((SELECT SUM(vp.item_cost) FROM $this->tVisitServiceTransaction vp WHERE vp.visit_id = v.id AND vp.item_type IN (1,2,3) AND vp.is_price IS NULL) * -1), 0) 'cost-services',
+                        IFNULL( ROUND((SELECT SUM(vt.item_qty*vt.item_cost) FROM visit_bypass_transactions vt WHERE vt.visit_id = v.id AND vt.is_price IS NULL) * -1), 0) 'cost-preparats',
+                        IFNULL( vl.sale_bed_unit , 0) 'sale-bed',
+                        IFNULL( vl.sale_service_unit , 0) 'sale-service',
+                        -- @cost_item_2 := IFNULL((SELECT SUM(item_cost) FROM visit_price WHERE visit_id = vs.id AND item_type IN (2,3,4) AND price_date IS NULL), 0) 'cost_item_2',
+                        v.add_date,
+                        v.is_active
+                    FROM visits v 
+                        LEFT JOIN visit_sales vl ON(vl.visit_id = v.id)
+                    WHERE v.id = $pk";
+                $object = $this->db->query($sql)->fetch();
+                $object['sale-total'] = $object['sale-bed'] + $object['sale-service'];
+                $object['total_cost'] = $object['cost-services'] + $object['cost-beds'] + $object['cost-preparats'];
+                $object['result'] = $object['balance'] + $object['total_cost'] + $object['sale-total'];
+                return $object;
+            }
+        } else {
+            return array();
+        }
     }
 
 }

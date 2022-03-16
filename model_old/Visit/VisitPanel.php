@@ -2,7 +2,7 @@
 
 use Mixin\ModelOld;
 
-class VisitPanel extends VisitModel
+class VisitPanel2 extends VisitModel
 {
     public $table = 'visits';
     public $_user = 'users';
