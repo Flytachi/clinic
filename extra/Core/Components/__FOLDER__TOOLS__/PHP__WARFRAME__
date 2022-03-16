@@ -1,0 +1,14 @@
+<?php
+
+require dirname(__DIR__).'/extra/warframe.php';
+require dirname(__FILE__).'/libs/lib.php';
+require dirname(__FILE__).'/constants.php';
+require dirname(__FILE__).'/functions.php';
+require dirname(__FILE__).'/classes.php';
+
+date_default_timezone_set(ini['GLOBAL_SETTING']['TIME_ZONE']);
+
+// Good luck ...
+// $base = new Connect(ini['DATABASE']);
+// $db = $base->connection(ini['GLOBAL_SETTING']['DEBUG']);
+?>

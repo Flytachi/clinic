@@ -5,12 +5,12 @@ is_module('module_laboratory');
 $header = "Стационарные пациенты";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.user_id, us.birth_date, vs.route_id, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)  LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb->set_data("DISTINCT v.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.route_id, v.add_date, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division()) ? "AND vs.division_id = ".division() : null;
 $search_array = array(
 	"vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL $is_division",
-	"vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL $is_division AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.status = 3 AND vs.level = 6 AND v.direction IS NOT NULL $is_division AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 $tb->where_or_serch($search_array)->set_limit(20);
 ?>
@@ -75,9 +75,9 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                 <tbody>
 									<?php foreach($tb->get_table(1) as $row): ?>
 										<tr id="VisitService_tr_<?= $row->count ?>">
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->patient_id) ?></td>
                                             <td>
-												<span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+												<span class="font-weight-semibold"><?= patient_name($row) ?></span>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
@@ -98,7 +98,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
                                                 <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i>Просмотр</button>
                                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
                                                     <a onclick="ResultShow('<?= up_url($row->id, 'VisitAnalyzesModel') ?>&items=<?= json_encode($services) ?>')" class="dropdown-item"><i class="icon-pencil7"></i> Добавить результ</a>
-													<a onclick="Print('<?= prints('test_tube') ?>?pk=<?= $row->user_id ?>')" class="dropdown-item"><i class="icon-unlink2"></i> Пробирка</a>
+													<a onclick="Print('<?= prints('test_tube') ?>?pk=<?= $row->patient_id ?>')" class="dropdown-item"><i class="icon-unlink2"></i> Пробирка</a>
                                                 </div>
                                             </td>
                                         </tr>

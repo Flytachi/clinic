@@ -1,4 +1,8 @@
 <?php
+
+use Mixin\Cluster;
+use Mixin\Model;
+
 require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Логи";
@@ -19,7 +23,6 @@ $header = "Логи";
 		<?php include 'sidebar.php' ?>
 		<!-- /main sidebar -->
 
-
 		<!-- Main content -->
 		<div class="content-wrapper">
 
@@ -32,34 +35,37 @@ $header = "Логи";
 
 				<?php
 
-				function insertPacs($tb, $post){
-					global $pacs;
-					$col = implode(",", array_keys($post));
-					$val = ":".implode(", :", array_keys($post));
-					$sql = "INSERT INTO $tb ($col) VALUES ($val)";
-					try{
-						$stm = $pacs->prepare($sql)->execute($post);
-						return $pacs->lastInsertId();
-					}
-					catch (\PDOException $ex) {
-						return $ex->getMessage();
-					}
-				}
+				// function insertPacs($tb, $post){
+				// 	global $pacs;
+				// 	$col = implode(",", array_keys($post));
+				// 	$val = ":".implode(", :", array_keys($post));
+				// 	$sql = "INSERT INTO $tb ($col) VALUES ($val)";
+				// 	try{
+				// 		$stm = $pacs->prepare($sql)->execute($post);
+				// 		return $pacs->lastInsertId();
+				// 	}
+				// 	catch (\PDOException $ex) {
+				// 		return $ex->getMessage();
+				// 	}
+				// }
 
 				dd(PDO::getAvailableDrivers());
 				
-				$DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
+				//* 1 Step *//
 
-				try {
-					$pacs = new PDO($DNS, "OCS", "OCS");
-					$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-					$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
-					$pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				} catch (\PDOException $e) {
-					die($e->getMessage());
-				} 
+				// $DNS = "odbc:Driver=ODBC Driver 17 for SQL Server;Server=192.168.10.89;Port:1433;Database=OCS;";
+
+				// try {
+				// 	$pacs = new PDO($DNS, "OCS", "OCS");
+				// 	$pacs->SetAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+				// 	$pacs->SetAttribute(PDO::ATTR_EMULATE_PREPARES, False);
+				// 	$pacs->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				// } catch (\PDOException $e) {
+				// 	die($e->getMessage());
+				// } 
 
 
+				//* 2 Step *//
 				// $DNS = "sqlsrv:Server=213.230.90.9;Database=OCS;";
 
 				// try {
@@ -71,7 +77,7 @@ $header = "Логи";
 				// 	die($e->getMessage());
 				// } 
 
-				parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
+				// parad("PACS", $pacs->query("SELECT * FROM QueueRecord")->fetchAll());
 
 				// $data = array(
 				// 	'PatientID' => '21', 

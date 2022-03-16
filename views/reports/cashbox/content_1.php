@@ -54,7 +54,7 @@ $header = "Отчёт кассы";
 								<div class="col-md-3">
 									<label>Дата визита:</label>
 									<div class="input-group">
-										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_GET['date']) ) ? $_GET['date'] : "" ?>">
+										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : "" ?>">
 										<span class="input-group-append">
 											<span class="input-group-text"><i class="icon-calendar22"></i></span>
 										</span>
@@ -105,8 +105,8 @@ $header = "Отчёт кассы";
 							if( isset($_POST['pricer_id']) ) $where2 .= " AND pricer_id IN(".implode(",", $_POST['pricer_id']) .")";
 
 							$total=$total_cash=$total_card=$total_transfer=0;
-							$tb1 = $db->query("SELECT price_date 'date', pricer_id, user_id, price_cash 'cash', price_card 'card', price_transfer 'transfer' FROM visit_service_transactions WHERE is_visibility IS NOT NULL AND is_price IS NOT NULL $where1 ORDER BY price_date ASC")->fetchAll();
-							$tb2 = $db->query("SELECT add_date 'date', pricer_id, user_id, balance_cash 'cash', balance_card 'card', balance_transfer 'transfer' FROM visit_investments WHERE $where2 ORDER BY add_date ASC")->fetchAll();
+							$tb1 = $db->query("SELECT price_date 'date', pricer_id, patient_id, price_cash 'cash', price_card 'card', price_transfer 'transfer' FROM visit_service_transactions WHERE is_visibility IS NOT NULL AND is_price IS NOT NULL $where1 ORDER BY price_date ASC")->fetchAll();
+							$tb2 = $db->query("SELECT add_date 'date', pricer_id, patient_id, balance_cash 'cash', balance_card 'card', balance_transfer 'transfer' FROM visit_investments WHERE $where2 ORDER BY add_date ASC")->fetchAll();
 							?>
 
 							<table class="table table-hover datatable-basic table-sm" id="table">
@@ -128,7 +128,7 @@ $header = "Отчёт кассы";
 											<td><?= $i++ ?></td>
 											<td><?= date_f($row['date'], 1) ?></td>
 											<td><?= get_full_name($row['pricer_id']) ?></td>
-											<td><?= get_full_name($row['user_id'])  ?></td>
+											<td><?= patient_name($row['patient_id'])  ?></td>
 											<td class="text-right text-<?= number_color($row['cash']) ?>">
 												<?php
 												$total_cash += $row['cash'];

@@ -4,11 +4,11 @@ $session->is_auth([3, 32]);
 $header = "Не принятые услуги";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id, vs.level")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id)");
+$tb->set_data("vs.id, vs.patient_id, vs.service_name, vs.add_date, vs.route_id, vs.division_id, vs.parent_id, vs.level, p.last_name, p.first_name, p.father_name")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 2 AND v.direction IS NULL", 
-	"vs.status = 2 AND v.direction IS NULL AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
+	"vs.status = 2 AND v.direction IS NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
 ?>
@@ -73,9 +73,9 @@ $tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
                                 <tbody>
 									<?php foreach($tb->get_table() as $row): ?>
 										<tr id="PatientFailure_tr_<?= $row->id ?>">
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->patient_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+												<div class="font-weight-semibold"><?= patient_name($row) ?></div>
 											</td>
                                             <td><?= $row->service_name ?></td>
 											<td><?= ($row->add_date) ? date_f($row->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>

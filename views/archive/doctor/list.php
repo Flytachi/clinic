@@ -3,14 +3,15 @@ require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Мои пациенты";
 
-$tb = new Table($db, "users us");
+importModel('Region');
+$tb = new Table($db, "patients p");
 $search = $tb->get_serch();
 $where_search = array(
-	"us.user_level = 15 AND vs.parent_id = $session->session_id AND vs.status = 7",
-	"us.user_level = 15 AND vs.parent_id = $session->session_id AND vs.status = 7 AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.parent_id = $session->session_id AND vs.status = 7",
+	"vs.parent_id = $session->session_id AND vs.status = 7 AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 
-$tb->set_data("DISTINCT us.id, us.birth_date, us.phone_number, us.region, us.add_date")->additions("LEFT JOIN visit_services vs ON(vs.user_id=us.id)")->where_or_serch($where_search)->order_by("us.add_date DESC")->set_limit(20);
+$tb->set_data("DISTINCT p.id, p.last_name, p.first_name, p.father_name, p.birth_date, p.phone_number, p.region_id, p.add_date")->additions("LEFT JOIN visit_services vs ON(vs.patient_id=p.id)")->where_or_serch($where_search)->order_by("p.add_date DESC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,11 +73,11 @@ $tb->set_data("DISTINCT us.id, us.birth_date, us.phone_number, us.region, us.add
 										<tr>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= patient_name($row) ?></div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= $row->phone_number ?></td>
-											<td><?= $row->region ?></td>
+											<td><?= (new Region)->byId($row->region_id, 'name')->name ?></td>
 											<td><?= date_f($row->add_date, 1) ?></td>
 											<td class="text-center">
 												<a href="<?= viv('archive/doctor/list_visit') ?>?id=<?= $row->id ?>" class="<?= $classes['btn-detail'] ?>"><i class="icon-eye mr-2"></i> Просмотр</a>

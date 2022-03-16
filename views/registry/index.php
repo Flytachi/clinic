@@ -1,16 +1,32 @@
 <?php
+
+use GuzzleHttp\Psr7\Header;
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth([2, 32]);
 $header = "Список пациентов";
 
-$tb = new Table($db, "users u");
-$search = $tb->get_serch();
-$where_search = array("u.user_level = 15", "u.user_level = 15 AND (u.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', u.last_name, u.first_name, u.father_name)) LIKE LOWER('%$search%'))");
-$tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id) 'application'")->where_or_serch($where_search)->order_by("u.add_date DESC")->set_limit(20);
+if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
+else $apl = "";
+
+importModel('Patient', 'Region');
+
+$tb = new Patient('p');
+$search = $tb->getSearch();
+$where_search = array(
+    $apl . "p.add_date IS NOT NULL",
+    $apl . "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
+);
+
+$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
+
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -39,13 +55,20 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Список пациентов</h6>
 						<div class="header-elements">
+							<div class="form-check form-check-right form-check-switchery mr-4">
+								<label class="form-check-label">
+									<input type="checkbox" class="form-input-switchery swit" id="serch_check">
+									Назначеные
+								</label>
+							</div>
 							<div class="form-group-feedback form-group-feedback-right mr-2">
+							
 								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
 								<div class="form-control-feedback">
 									<i class="icon-search4 font-size-base text-muted"></i>
 								</div>
 							</div>
-							<a onclick="Update('<?= up_url(null, 'PatientForm') ?>')" class="btn bg-success btn-icon ml-2 legitRipple"><i class="icon-plus22"></i></a>
+							<a onclick="Update('<?= Hell::apiGet('Patient', null, 'form') ?>')" class="btn bg-success btn-icon ml-2 legitRipple"><i class="icon-plus22"></i></a>
 						</div>
 					</div>
 
@@ -74,20 +97,20 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach ($tb->get_table() as $row): ?>
+									<?php foreach ($tb->list() as $row): ?>
 										<tr <?php if($row->application) echo 'class="table-danger"'; ?>>
 											<td><?= addZero($row->id) ?></td>
 											<td>
-												<div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+												<div class="font-weight-semibold"><?= patient_name($row) ?></div>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
 													<?php endif; ?>
 												</div>
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= $row->phone_number ?></td>
-											<td><?= $row->region ?></td>
+											<td><?= ($row->region_id) ? (new Region)->byId($row->region_id, 'name')->name : '<span class="text-muted">Нет данных</span>' ?></td>
 											<td><?= date_f($row->add_date, 1) ?></td>
 											<td class="text-center">
 												<?php if ($row->status): ?>
@@ -97,7 +120,7 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 												<?php endif; ?>
 											</td>
 											<td class="text-center">	
-												<?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE user_id = $row->id AND completed IS NULL")->fetch() ?>
+												<?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE patient_id = $row->id AND completed IS NULL")->fetch() ?>
 												<?php if ( isset($stm_dr['id']) ): ?>
 													<?php if ($stm_dr['direction']): ?>
 														<span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>
@@ -118,16 +141,19 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 														<a onclick="Update('<?= up_url($row->id, 'VisitPanel', 'stationar') ?>&application=<?= $row->application ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
 													<?php endif; ?>
 													<a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
-													<a onclick="Update('<?= up_url($row->id, 'PatientForm') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
+													<?php if ( isset($stm_dr['id']) and $stm_dr['direction'] ): ?>
+														<a onclick="Print('<?= prints('document-5') ?>?pk=<?= $stm_dr['id'] ?>')" class="dropdown-item"><i class="icon-list"></i> Стационарный лист</a>
+													<?php endif; ?>
+													<a onclick="Update('<?= Hell::apiGet('Patient', $row->id, 'form') ?>')" class="dropdown-item"><i class="icon-quill2"></i>Редактировать</a>
                                                 </div>
 											</td>
 										</tr>
-									<?php endforeach;?>
+									<?php endforeach; ?>
 								</tbody>
 							</table>
 						</div>
 
-						<?php $tb->get_panel(); ?>
+						<?php $tb->panel(); ?>
 
 					</div>
 
@@ -163,18 +189,25 @@ $tb->set_data("u.*, (SELECT id FROM visit_applications va WHERE va.user_id=u.id)
 			});
 		};
 
-		$("#search_input").keyup(function() {
+		$("#search_input").keyup(credoSearch);
+		$("#serch_check").on('change', credoSearch);
+
+		function credoSearch() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
 			$.ajax({
 				type: "GET",
 				url: "<?= ajax('search/registry-index') ?>",
 				data: {
-					table_search: $("#search_input").val(),
+					application: $("#serch_check").is(':checked'),
+					CRD_search: input.value,
 				},
 				success: function (result) {
-					$('#search_display').html(result);
+					display.innerHTML = result;
 				},
 			});
-		});
+		}
+
 	</script>
 
 </body>

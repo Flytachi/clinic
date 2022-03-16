@@ -1,1 +1,19 @@
-[{"id":1,"parent_id":null,"username":"admin","password":"d033e22ae348aeb5660fc2140aec35850c4da997","is_active":1,"first_name":"Admin","last_name":"Admin","father_name":"Admin","birth_date":null,"province_id":null,"province":null,"region_id":null,"region":null,"passport_seria":null,"passport_pin_fl":null,"work_place":null,"work_position":null,"phone_number":null,"address_residence":null,"address_registration":null,"gender":null,"user_level":1,"division_id":null,"status":1,"share":null,"is_foreigner":null,"room":null,"token_telegramm":null,"pacs_login":null,"pacs_password":null,"insurance_policy":null,"add_date":"2021-04-28 18:35:53.740125"}]
+[
+    {
+        "id": 1,
+        "parent_id": null,
+        "username": "admin",
+        "password": "d033e22ae348aeb5660fc2140aec35850c4da997",
+        "is_active": 1,
+        "first_name": "Admin",
+        "last_name": "Admin",
+        "father_name": "Admin",
+        "phone_number": null,
+        "user_level": 1,
+        "division_id": null,
+        "share": null,
+        "room_id": null,
+        "pacs_login": null,
+        "pacs_password": null
+    }
+]

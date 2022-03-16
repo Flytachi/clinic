@@ -1,1 +1,0 @@
-"CREATE TABLE IF NOT EXISTS `service_analyzes` (`id` smallint(5) NOT NULL AUTO_INCREMENT,`service_id` smallint(5) DEFAULT NULL,`name` char(100) DEFAULT NULL,`code` char(50) DEFAULT NULL,`standart` text NOT NULL,`unit` char(50) DEFAULT NULL,`status` tinyint(1) DEFAULT 1,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

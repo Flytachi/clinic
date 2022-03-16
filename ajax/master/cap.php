@@ -1,13 +1,13 @@
 <?php
 require_once '../../tools/warframe.php';
-require_once '../../extra/Console/command.php';
+require_once '../../extra/Core/Command/__backup.php';
 $session->is_auth();
 
 
 if ($session->session_level == "master") {
     
     if ($_GET['is_create']) {
-        new __Dump("create");
+        new __Backup("create");
         $_SESSION['message'] = '
         <div class="alert alert-primary" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
@@ -16,7 +16,7 @@ if ($session->session_level == "master") {
         ';
         render();
     }elseif ($_GET['is_delete']) {
-        new __Dump("delete", $_GET['file']);
+        new __Backup("delete", $_GET['file']);
         $_SESSION['message'] = '
         <div class="alert alert-primary" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
@@ -25,8 +25,8 @@ if ($session->session_level == "master") {
         ';
         render();
     }elseif ($_GET['file']) {
-        new __Dump("create", "merge_in_".date("Y-m-d_H-i-s"));
-        new __Dump("migrate", $_GET['file']);
+        new __Backup("create", "merge_in_".date("Y-m-d_H-i-s"));
+        new __Backup("migrate", $_GET['file']);
         $_SESSION['message'] = '
         <div class="alert alert-primary" role="alert">
             <button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>

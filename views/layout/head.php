@@ -69,8 +69,8 @@
 
 		// Sessions
 		var sessionActive = Boolean("<?= ( isset($sessionActive) ) ? 'true' : 'false' ?>");
-		var warningTimeout = Number("<?= ( isset($ini['GLOBAL_SETTING']['SESSION_TIMEOUT']) ) ? $ini['GLOBAL_SETTING']['SESSION_TIMEOUT'] : 1 ?>") * 60000; 
-		var timoutNow = (Number("<?= $ini['GLOBAL_SETTING']['SESSION_LIFE'] ?>") * 60000) - warningTimeout;
+		var warningTimeout = Number("<?= ini['GLOBAL_SETTING']['SESSION_TIMEOUT'] ?? 1 ?>") * 60000; 
+		var timoutNow = (Number("<?= ini['GLOBAL_SETTING']['SESSION_LIFE'] ?>") * 60000) - warningTimeout;
 		var logout_url = "<?= $session->logout_link() ?>";
 		var timeout_mark = "<?= $session->timeout_mark_link() ?>";
 		var warningTimerID,timeoutTimerID;
@@ -79,13 +79,13 @@
 		// console.log(timoutNow / 60000);
 
 		// Socket
-		let id = <?= $_SESSION['session_id'] ?>;
-		let conn = new WebSocket("ws://<?= $ini['SOCKET']['HOST'] ?>:<?= $ini['SOCKET']['PORT'] ?>");
+		// let id = <?= $_SESSION['session_id'] ?>;
+		// let conn = new WebSocket("ws://<?php //ini['SOCKET']['HOST'] ?>:<?php //ini['SOCKET']['PORT'] ?>");
 
 	</script>
 	<script src="<?= stack("assets/js/sessions.js") ?>"></script>
 
-	<script src="<?= stack("assets/js/socket.js") ?>"></script>
+	<!-- <script src="<?= stack("assets/js/socket.js") ?>"></script> -->
 
 	<!-- JS CKEditor -->
 	<script src="<?= node("@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor.js") ?>"></script>

@@ -27,8 +27,8 @@ $count = count($buildings);
     
                     <?php for($fl=1; $fl <= $building->floors; $fl++): ?>
                         <?php
-                        $opens += $open = $db->query("SELECT * FROM beds WHERE building_id = $building->id AND floor = $fl AND user_id IS NULL")->rowCount();
-                        $closes += $close = $db->query("SELECT * FROM beds WHERE building_id = $building->id AND floor = $fl AND user_id IS NOT NULL")->rowCount();
+                        $opens += $open = $db->query("SELECT * FROM beds WHERE building_id = $building->id AND floor = $fl AND patient_id IS NULL")->rowCount();
+                        $closes += $close = $db->query("SELECT * FROM beds WHERE building_id = $building->id AND floor = $fl AND patient_id IS NOT NULL")->rowCount();
                         ?>
                         <div class="row mt-2">
                             <div class="col-12"><?= $fl ?> этаж</div>

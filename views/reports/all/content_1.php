@@ -1,11 +1,19 @@
 <?php
 require_once '../../../tools/warframe.php';
 $session->is_auth();
-$header = "Общий отчёт по услугам";
-?>
+$header = "Общий отчёт по проведённым услугам";
+?> 
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
+<script src="<?= stack('global_assets/js/plugins/pickers/daterangepicker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/anytime.min.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.date.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/picker.time.js') ?>"></script>
+<script src="<?= stack('global_assets/js/plugins/pickers/pickadate/legacy.js') ?>"></script>
+
+<script src="<?= stack('global_assets/js/demo_pages/picker_date.js') ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -28,12 +36,10 @@ $header = "Общий отчёт по услугам";
 			<!-- Content area -->
 			<div class="content">
 
-				<?php include "content_tabs.php"; ?>
+                <div class="<?= $classes['card-filter'] ?>">
 
-                <div class="<?= $classes['card'] ?>">
-
-                    <div class="<?= $classes['card-header'] ?>">
-                        <h6 class="card-title" >Фильтр</h6>
+                    <div class="<?= $classes['card-filter_header'] ?>">
+                        <h6 class="card-title">Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
@@ -47,6 +53,17 @@ $header = "Общий отчёт по услугам";
 
 							<div class="form-group row">
 
+								<div class="col-md-6">
+									<label>Отдел:</label>
+									<select data-placeholder="Выберите отдел" name="division_id[]" class="<?= $classes['form-multiselect'] ?>" multiple="multiple" required>
+										<?php foreach ($PERSONAL as $key => $value): ?>
+                                            <?php if(in_array($key, [5,6,10,12])): ?>
+                                                <option value="<?= $key ?>"<?= (isset($_POST['division_id']) and in_array($key, $_POST['division_id'])) ? 'selected': '' ?>><?= $value ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+									</select>
+								</div>
+
 								<div class="col-md-3">
 									<label>Дата принятия:</label>
 									<div class="input-group">
@@ -57,76 +74,10 @@ $header = "Общий отчёт по услугам";
 									</div>
 								</div>
 
-								<div class="col-md-3">
-									<label>Отдел:</label>
-									<select id="division" name="division_id" class="<?= $classes['form-select'] ?>">
-									   <option value="">Выберите отдел</option>
-										<?php foreach($db->query('SELECT * from division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1)') as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['division_id']) and $_POST['division_id']==$row['id']) ? "selected" : "" ?>><?= $row['title'] ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label>Услуга:</label>
-									<select id="service" name="service_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите услугу</option>
-										<?php foreach($db->query('SELECT * from service WHERE user_level IN(5, 6, 10, 12)') as $row): ?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['service_id']) and $_POST['service_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label>Специалист:</label>
-									<select id="parent_id" name="parent_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите специалиста</option>
-										<?php foreach($db->query('SELECT * from users WHERE user_level IN(5, 6, 10, 12)') as $row): ?>
-											<option value="<?= $row['id'] ?>" data-chained="<?= $row['division_id'] ?>" <?= ( isset($_POST['parent_id']) and $_POST['parent_id']==$row['id']) ? "selected" : "" ?>><?= get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-							</div>
-
-							<div class="from-group row">
-
-								<div class="col-md-3">
-									<label>Тип визита:</label>
-									<select class="<?= $classes['form-select'] ?>" name="direction">
-				                        <option value="">Выберите тип визита</option>
-										<option value="1" <?= ( isset($_POST['direction']) and $_POST['direction']==1) ? "selected" : "" ?>>Амбулаторный</option>
-										<option value="2" <?= ( isset($_POST['direction']) and $_POST['direction']==2) ? "selected" : "" ?>>Стационарный</option>
-				                    </select>
-								</div>
-
-								<div class="col-md-3">
-									<label>Пациент:</label>
-									<select name="user_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите пациента</option>
-										<?php foreach($db->query('SELECT * from users WHERE user_level = 15') as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
-								<div class="col-md-3">
-									<label class="d-block font-weight-semibold">Статус</label>
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_unchecked" name="compl_true" <?= (empty($_POST) or isset($_POST['compl_true'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_unchecked">Завершёные</label>
-									</div>
-
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input" id="custom_checkbox_stacked_checked" name="compl_false" <?= (empty($_POST) or isset($_POST['compl_false'])) ? "checked" : "" ?>>
-										<label class="custom-control-label" for="custom_checkbox_stacked_checked">Не завершёные</label>
-									</div>
-								</div>
-
 							</div>
 
 							<div class="text-right">
-								<button type="submit" class="btn btn-outline-info"><i class="icon-search4 mr-2"></i>Поиск</button>
+								<button type="submit" class="<?= $classes['card-filter_btn'] ?>"><i class="icon-search4 mr-2"></i>Поиск</button>
 							</div>
 
 
@@ -138,49 +89,13 @@ $header = "Общий отчёт по услугам";
 
 				<?php if ($_POST): ?>
 					<?php
+					$Iam = "vs.status IN(3,7)";
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
-					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT
-								vs.accept_date,
-								(SELECT title FROM division WHERE id=vs.division_id) 'division',
-								vp.item_name,
-								vs.parent_id,
-								vs.direction,
-								vs.user_id,
-								vs.status,
-								vs.completed
-							FROM visit vs
-								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-							WHERE
-								vp.item_type = 1 AND vs.accept_date IS NOT NULL";
-					// Обработка
-					if ($_POST['date_start'] and $_POST['date_end']) {
-						$sql .= " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
-					}
-					if ( isset($_POST['division_id']) and $_POST['division_id']) {
-						$sql .= " AND vs.division_id = {$_POST['division_id']}";
-					}
-					if ( isset($_POST['service_id']) and $_POST['service_id']) {
-						$sql .= " AND vs.service_id = {$_POST['service_id']}";
-					}
-					if ( isset($_POST['parent_id']) and $_POST['parent_id']) {
-						$sql .= " AND vs.parent_id = {$_POST['parent_id']}";
-					}
-					if ( isset($_POST['user_id']) and $_POST['user_id']) {
-						$sql .= " AND vs.user_id = {$_POST['user_id']}";
-					}
-					if ( isset($_POST['direction']) and $_POST['direction']) {
-						$sql .= ($_POST['direction']==1) ? " AND vs.direction IS NULL" : " AND vs.direction IS NOT NULL";
-					}
-					if (!$_POST['compl_true'] or !$_POST['compl_false']) {
-						if ($_POST['compl_true']) {
-							$sql .= " AND vs.completed IS NOT NULL";
-						}
-						if ($_POST['compl_false']) {
-							$sql .= " AND vs.completed IS NULL";
-						}
-					}
-					$i=1;
+					$_POST['date_end']   = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
+					$where = $Iam . " AND (DATE_FORMAT(vs.accept_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
+					
+					$tb = new DivisionModel;
+					$tb->Where("level IN(" . implode(",", $_POST['division_id']) . ")");
 					?>
 					<div class="<?= $classes['card'] ?>">
 
@@ -188,7 +103,7 @@ $header = "Общий отчёт по услугам";
 							<h6 class="card-title">Услуги</h6>
 							<div class="header-elements">
 								<div class="list-icons">
-									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="btn btn-outline-info btn-sm legitRipple">Excel</button>
+									<button onclick="ExportExcel('table', 'Document','document.xls')" type="button" class="<?= $classes['btn-table'] ?>">Excel</button>
 								</div>
 							</div>
 						</div>
@@ -200,56 +115,64 @@ $header = "Общий отчёт по услугам";
 	                                <thead>
 	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
-											<th style="width: 11%">Дата проведения</th>
 				                            <th>Отдел</th>
-				                            <th>Услуга</th>
-											<th>Специалист</th>
-				                            <th style="width: 10%">Тип визита</th>
-											<th>Пациент</th>
-											<th style="width: 10%">Статус</th>
+											<th class="text-center">Кол-во пациентов</th>
+											<th class="text-center">Амб. услуги(ордер)</th>
+											<th class="text-center">Амб. услуги(нет ордера)</th>
+											<th class="text-center">Стац. услуги(ордер)</th>
+											<th class="text-center">Стац. услуги(нет ордера)</th>
 	                                    </tr>
 	                                </thead>
 	                                <tbody>
-										<?php foreach ($db->query($sql) as $row): ?>
+										<?php $pc = $ao = $an = $so = $sn = 0; ?>
+										<?php foreach ($tb->list(1) as $row): ?>
 											<tr>
-												<td><?= $i++ ?></td>
-												<td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['division'] ?></td>
-												<td><?= $row['item_name'] ?></td>
-												<td><?= get_full_name($row['parent_id']) ?></td>
-												<td><?= ($row['direction']) ? "Стационарный" : "Амбулаторный" ?></td>
-												<td><?= get_full_name($row['user_id']) ?></td>
-												<td>
+												<td><?= $row->count ?></td>
+												<td><?= $row->title ?></td>
+												<td class="text-center">
 													<?php
-													if ($row['completed']) {
-														?>
-														<span style="font-size:15px;" class="badge badge-flat border-success text-success">Завершена</span>
-														<?php
-													} else {
-														switch ($row['status']):
-															case 1:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-orange text-orange">Ожидание</span>
-																<?php
-																break;
-															case 2:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-success text-success">У специолиста</span>
-																<?php
-																break;
-															default:
-																?>
-																<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Оплачивается</span>
-																<?php
-																break;
-														endswitch;
-													}
+													$p = (new VisitServicesModel)->as("vs")->Data("COUNT(DISTINCT vs.patient_id) 'c'")
+													->Where($where . " AND vs.division_id = $row->id")->get()->c;
+													$pc += $p; echo number_format($p);
+													?>
+												</td>
+												<td class="text-center">
+													<?php
+													$p2 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_orders vr", "vr.visit_id=v.id")
+													->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NOT NULL")->get()->c;
+													$ao += $p2; echo number_format($p2);
+													?>
+												</td>
+												<td class="text-center">
+													<?php
+													$p3 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
+													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NULL")->get()->c;
+													$an += $p3; echo number_format($p3);
+													?>
+												</td>
+												<td class="text-center">
+													<?php
+													$p4 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
+													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NOT NULL")->get()->c;
+													$so += $p4; echo number_format($p4);
+													?>
+												</td>
+												<td class="text-center">
+													<?php
+													$p5 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
+													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NULL")->get()->c;
+													$sn += $p5; echo number_format($p5);
 													?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
-											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
+											<th class="text-right" colspan="2">Итог:</th>
+											<th class="text-center"><?= number_format($pc) ?></th>
+											<th class="text-center"><?= number_format($ao) ?></th>
+											<th class="text-center"><?= number_format($an) ?></th>
+											<th class="text-center"><?= number_format($so) ?></th>
+											<th class="text-center"><?= number_format($sn) ?></th>
 										</tr>
 	                                </tbody>
 	                            </table>
@@ -271,8 +194,7 @@ $header = "Общий отчёт по услугам";
 
 	<script type="text/javascript">
 		$(function(){
-			$("#service").chained("#division");
-			$("#parent_id").chained("#division");
+			$("#parent_id").chained("#division_id");
 		});
 	</script>
 

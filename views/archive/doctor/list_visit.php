@@ -1,21 +1,20 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../../tools/warframe.php';
 $session->is_auth();
 
 if (is_numeric($_GET['id'])) {
 	$header = "Пациент ".addZero($_GET['id']);
-	$patient = $db->query("SELECT * FROM users WHERE id = {$_GET['id']}")->fetch(PDO::FETCH_OBJ);
-} else {
-	$patient = False;
-	echo "err";
-}
-if (!$patient) {
-	Mixin\error('404');
-}
+	importModel('Patient');
+	$patient = (new Patient)->byId($_GET['id']);
+	if(!$patient) Hell::error('404');
+} else Hell::error('404');
 
 $tb = new Table($db, "visit_services");
 $tb->set_data("id, service_id, service_name, route_id, accept_date, completed, status, visit_id");
-$tb->where("user_id = $patient->id AND parent_id = $session->session_id AND status = 7")->order_by('add_date DESC');
+$tb->where("patient_id = $patient->id AND parent_id = $session->session_id AND status = 7")->order_by('add_date DESC');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +44,7 @@ $tb->where("user_id = $patient->id AND parent_id = $session->session_id AND stat
 			<!-- Content area -->
 			<div class="content">
 
-                <?php include "profile.php" ?>
+                <?php include "../profile.php" ?>
 
 				<div class="<?= $classes['card'] ?>">
 

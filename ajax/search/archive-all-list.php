@@ -2,9 +2,10 @@
 require_once '../../tools/warframe.php';
 $session->is_auth();
 
-$tb = new Table($db, "users");
+importModel('Region');
+$tb = new Table($db, "patients");
 $search = $tb->get_serch();
-$where_search = array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
+$where_search = array(null, "(id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
 $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(30);
 $tb->set_self(viv('archive/all/list'));
@@ -29,16 +30,16 @@ $tb->set_self(viv('archive/all/list'));
                 <tr>
                     <td><?= addZero($row->id) ?></td>
                     <td>
-                        <div class="font-weight-semibold"><?= get_full_name($row->id) ?></div>
+                        <div class="font-weight-semibold"><?= patient_name($row) ?></div>
                         <div class="text-muted">
-                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->id")->fetch()): ?>
+                            <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->id")->fetch()): ?>
                                 <?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
                             <?php endif; ?>
                         </div>
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td><?= $row->phone_number ?></td>
-                    <td><?= $row->region ?></td>
+                    <td><?= (new Region)->byId($row->region_id, 'name')->name ?></td>
                     <td><?= date_f($row->add_date, 1) ?></td>
                     <td class="text-center">
                         <?php if ($row->status): ?>
@@ -48,7 +49,7 @@ $tb->set_self(viv('archive/all/list'));
                         <?php endif; ?>
                     </td>
                     <td class="text-center">	
-                        <?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE user_id = $row->id AND completed IS NULL")->fetch() ?>
+                        <?php $stm_dr = $db->query("SELECT id, direction FROM visits WHERE patient_id = $row->id AND completed IS NULL")->fetch() ?>
                         <?php if ( isset($stm_dr['id']) ): ?>
                             <?php if ($stm_dr['direction']): ?>
                                 <span style="font-size:15px;" class="badge badge-flat border-danger text-danger-600">Стационарный</span>

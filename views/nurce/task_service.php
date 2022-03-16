@@ -12,7 +12,7 @@ $visit = $tb = (new Table($db, "visits"))->where("id = $pk AND is_active IS NOT 
     ?>
     <div class="row">
         <div class="col-md-12 text-center">
-            <h3> <b>ID <?= addZero($visit->user_id) ?>:</b> <?= get_full_name($visit->user_id) ?></h3>
+            <h3> <b>ID <?= addZero($visit->patient_id) ?>:</b> <?= patient_name($visit->patient_id) ?></h3>
         </div>
     </div>
     

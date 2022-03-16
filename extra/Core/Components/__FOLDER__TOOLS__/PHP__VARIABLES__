@@ -1,0 +1,11 @@
+<?php
+
+// Variables
+
+// Директории для хранения файлов 
+$storage = array();
+
+// Ссылки на git ресурсы
+$git_links = array();
+
+?>

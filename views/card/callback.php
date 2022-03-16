@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth();
 $header = "Пациент";
@@ -14,24 +17,22 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     }
 
     $sql = "SELECT
-                us.id, us.birth_date, us.province, us.region, us.phone_number, us.gender, 
-                us.address_residence, us.address_registration, us.status, us.is_foreigner,
-                v.id 'visit_id', v.parad_id, v.grant_id, v.direction, v.division_id, v.icd_id, v.icd_autor, v.is_active, v.add_date, v.discharge_date, v.completed, 
+                p.id, p.first_name, p.last_name, p.father_name, 
+                p.birth_date, p.province_id, p.region_id, p.phone_number, p.gender, 
+                p.address_residence, p.address_registration, p.status, p.is_foreigner,
+                v.id 'visit_id', v.parad_id, v.grant_id, v.direction, v.division_id, v.icd_id, 
+                v.icd_autor, v.is_active, v.add_date, v.discharge_date, v.completed, v.comment,
                 vr.id 'order'
             FROM visits v
                 LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)
-                LEFT JOIN users us ON (v.user_id = us.id)
+                LEFT JOIN patients p ON (v.patient_id = p.id)
             WHERE v.id = {$_GET['pk']}";
 
     $patient = $db->query($sql)->fetch(PDO::FETCH_OBJ);
 
-    if (!$patient or ($activity and $patient->completed) ) {
-        Mixin\error('404');
-    }if (!$patient->is_active and $activity) {
-        Mixin\error('404');
-    }elseif(!$patient->is_active and !$activity) {
-        $activity = False;
-    }
+    if (!$patient or ($activity and $patient->completed) ) Hell::error('404');
+    if (!$patient->is_active and $activity) Hell::error('404');
+    elseif(!$patient->is_active and !$activity) $activity = False;
 
     function is_grant(Int $id = null)
     {
@@ -47,7 +48,5 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         }
     }
     
-} else {
-    Mixin\error('404');
-}
+} else Hell::error('404');
 ?>

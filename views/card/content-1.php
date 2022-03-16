@@ -49,10 +49,6 @@ require_once 'callback.php';
 						<legend class="font-weight-semibold text-uppercase font-size-sm">
 							<i class="icon-repo-forked mr-2"></i><?= $title ?>
 							<?php if ($patient->direction): ?>
-								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitInspectionModel") ?>`)' class="float-right text-info ml-2">
-									<i class="icon-file-plus mr-1"></i>Осмотр
-								</a>
-
 								<a onclick='Update(`<?= up_url($patient->visit_id, "VisitJournalsModel") ?>&patient=<?= json_encode($patient) ?>&activity=<?= $activity ?>`)' class="float-right text-brown ml-2">
 									<i class="icon-book mr-1"></i>Дневник
 								</a>
@@ -119,6 +115,14 @@ require_once 'callback.php';
 						</div>
 
 						<?php if ($patient->direction): ?>
+
+							<legend class="font-weight-semibold text-uppercase font-size-sm">
+								<i class="icon-repo-forked mr-2"></i>Осмотры
+								<a onclick='Update(`<?= up_url(null, "VisitInspectionModel") ?>&visit_id=<?= $patient->visit_id ?>`)' class="float-right text-info ml-2">
+									<i class="icon-file-plus mr-1"></i>Осмотр
+								</a>
+							</legend>
+
 							<div class="card mt-3">
 	
 								<div class="table-responsive">
@@ -140,7 +144,10 @@ require_once 'callback.php';
 													<td><?= date_f($row->add_date, 1) ?></td>
 													<td><?= get_full_name($row->response_id) ?></td>
 													<td class="text-right">
-														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye mr-2"></i> Просмотр</button>
+														<?php if($row->response_id == $session->session_id): ?>
+															<button onclick="Update('<?= up_url($row->id, 'VisitInspectionModel') ?>&visit_id=<?= $patient->visit_id ?>')" type="button" class="btn btn-outline-primary btn-sm legitRipple"><i class="icon-pencil"></i></button>
+														<?php endif; ?>
+														<button onclick="Check('<?= viv('doctor/inspection') ?>?pk=<?= $row->id ?>')" type="button" class="<?= $classes['btn-viewing'] ?>"><i class="icon-eye"></i></button>
 													</td>
 												</tr>
 											<?php endforeach; ?>
@@ -149,6 +156,7 @@ require_once 'callback.php';
 								</div>
 	
 							</div>
+
 						<?php endif; ?>
 
 				    </div>

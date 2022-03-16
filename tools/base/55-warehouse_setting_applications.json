@@ -1,1 +1,0 @@
-"CREATE TABLE IF NOT EXISTS `warehouse_setting_applications` (`id` int(11) NOT NULL AUTO_INCREMENT,`warehouse_id` smallint(5) DEFAULT NULL,`division_id` smallint(5) DEFAULT NULL,`add_date` datetime DEFAULT current_timestamp(),PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

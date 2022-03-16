@@ -1,20 +1,20 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth(10);
 is_module('module_diagnostic');
-
-if (division_assist() == 1) {
-	Mixin\error('423');
-}
+if (division_assist() == 1) Hell::error('423');
 $header = "Стационарные пациенты";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.user_id, us.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN users us ON(us.id=vs.user_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb->set_data("vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
 $search_array = array(
 	"vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = $session->session_id $is_division )",
-	"vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = $session->session_id $is_division ) AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
+	"vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = $session->session_id $is_division ) AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
 $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
 ?>
@@ -95,14 +95,14 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 											}
 										?>
 										<tr class="<?= $tr ?>">
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->patient_id) ?></td>
                                             <td>
-												<span class="font-weight-semibold"><?= get_full_name($row->user_id) ?></span>
+												<span class="font-weight-semibold"><?= patient_name($row) ?></span>
 												<?php if ( $row->order ): ?>
 													<span style="font-size:15px;" class="badge badge-flat border-danger text-danger">Ордер</span>
 												<?php endif; ?>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
 													<?php endif; ?>
 												</div>

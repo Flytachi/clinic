@@ -13,8 +13,7 @@ foreach ($items as $item) {
         $qty_max = $db->query("SELECT SUM(item_qty) FROM warehouse_storage WHERE warehouse_id = $item->warehouse_id AND item_die_date > CURRENT_DATE() AND item_name_id = $item->item_name_id $m $c")->fetchColumn(); 
         // $qty_applications = $db->query("SELECT SUM(wc.item_qty) FROM visit_bypass_event_applications wc WHERE wc.warehouse_id = $item->warehouse_id AND wc.item_name_id = $item->item_name_id $m $c")->fetchColumn();
 
-        
-        $qty = $qty_max;// - $qty_applications;
+        $qty = $qty_max; // - $qty_applications;
         if($qty < $item->item_qty) {
             $ware_name = (new Table($db, "warehouses"))->where("id = $item->warehouse_id")->get_row()->name;
             $item_name = (new Table($db, "warehouse_item_names"))->where("id = $item->item_name_id")->get_row()->name;

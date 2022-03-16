@@ -3,15 +3,15 @@ require_once '../../../tools/warframe.php';
 $session->is_auth();
 $header = "Завершёный пациенты";
 
-$tb = new Table($db, "users us");
-$tb->set_data("DISTINCT us.id, us.dateBith, us.numberPhone, us.add_date");
+$tb = new Table($db, "patients p");
+$tb->set_data("DISTINCT p.id, p.dateBith, p.numberPhone, p.add_date");
 $search = $tb->get_serch();
 
 $search_array = array(
 	"vs.completed IS NOT NULL AND vs.assist_id = $session->session_id", 
-	"vs.completed IS NOT NULL AND vs.assist_id = $session->session_id AND (us.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', us.last_name, us.first_name, us.father_name)) LIKE LOWER('%$search%'))"
+	"vs.completed IS NOT NULL AND vs.assist_id = $session->session_id AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->additions("LEFT JOIN visit vs ON(us.id=vs.user_id)")->where_or_serch($search_array)->order_by("us.id DESC")->set_limit(20);
+$tb->additions("LEFT JOIN visit vs ON(p.id=vs.patient_id)")->where_or_serch($search_array)->order_by("p.id DESC")->set_limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +75,7 @@ $tb->additions("LEFT JOIN visit vs ON(us.id=vs.user_id)")->where_or_serch($searc
 									<?php foreach ($tb->get_table() as $row): ?>
 										<tr>
                                             <td><?= addZero($row->id) ?></td>
-                                            <td><div class="font-weight-semibold"><?= get_full_name($row->id) ?></div></td>
+                                            <td><div class="font-weight-semibold"><?= patient_name($row->id) ?></div></td>
                                             <td><?= date_f($row->dateBith) ?></td>
                                             <td><?= $row->numberPhone ?></td>
                                             <td><?= date_f($row->add_date, 1) ?></td>

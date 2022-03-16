@@ -1,1 +1,0 @@
-"CREATE TABLE IF NOT EXISTS `multi_accounts` (`id` smallint(5) NOT NULL AUTO_INCREMENT,`slot` char(20) NOT NULL,`user_id` int(11) NOT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"

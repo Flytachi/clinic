@@ -13,6 +13,6 @@ if ( isset($_GET['pk']) ) {
 	$_SESSION['status'] = $session->session_login;
 	$_SESSION['session_level'] = $avatar->user_level;
 	$_SESSION['session_division'] = $avatar->division_id;
-	header("location:/");
+	header("location:".DIR."/index".EXT);
 }
 ?>

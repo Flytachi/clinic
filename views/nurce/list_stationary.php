@@ -3,14 +3,15 @@ require_once '../../tools/warframe.php';
 $session->is_auth(7);
 $header = "Рабочий стол";
 
-$tb = new Table($db, "visits");
-$tb->set_data("id, user_id, add_date, discharge_date, grant_id, division_id");
-$search = $tb->get_serch();
+importModel('Visit');
+$tb = new Visit('v');
+$tb->Data("v.id, v.patient_id, p.first_name, p.last_name, p.father_name, v.add_date, v.discharge_date, v.grant_id, v.division_id");
+$search = $tb->getSearch();
 $search_array = array(
-	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
-	"division_id = $session->session_division AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
+	"v.division_id = $session->session_division AND v.direction IS NOT NULL AND v.completed IS NULL AND v.is_active IS NOT NULL",
+	"v.division_id = $session->session_division AND v.direction IS NOT NULL AND v.completed IS NULL AND v.is_active IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))",
 );
-$tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
+$tb->JoinLEFT('patients p', 'p.id=v.patient_id')->Where($search_array)->Order("v.add_date DESC")->Limit(20);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,13 +44,16 @@ $tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Пациенты</h6>
 						<div class="header-elements">
-							<div class="list-icons">
-								<a class="list-icons-item" data-action="collapse"></a>
+							<div class="form-group-feedback form-group-feedback-right mr-2">
+								<input type="text" class="<?= $classes['input-search'] ?>" value="<?= $search ?>" id="search_input" placeholder="Поиск..." title="Введите ID или имя пациента">
+								<div class="form-control-feedback">
+									<i class="icon-search4 font-size-base text-muted"></i>
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="card-body">
+					<div class="card-body" id="search_display">
 
 						<div class="table-responsive">
 							<table class="table table-hover table-sm">
@@ -65,14 +69,14 @@ $tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach($tb->get_table(1) as $row): ?>
+									<?php foreach($tb->list(1) as $row): ?>
 										<tr>
                                             <td><?= $row->count ?></td>
-                                            <td><?= addZero($row->user_id) ?></td>
+                                            <td><?= addZero($row->patient_id) ?></td>
                                             <td>
-												<div class="font-weight-semibold"><?= get_full_name($row->user_id) ?></div>
+												<div class="font-weight-semibold"><?= patient_name($row->patient_id) ?></div>
 												<div class="text-muted">
-													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE user_id = $row->user_id")->fetch()): ?>
+													<?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
 														<?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
 													<?php endif; ?>
 												</div>
@@ -106,6 +110,8 @@ $tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 							</table>
 						</div>
 
+						<?php $tb->panel() ?>
+
 					</div>
 
 				</div>
@@ -121,7 +127,22 @@ $tb->where_or_serch($search_array)->order_by("add_date DESC")->set_limit(20);
 
 	<script type="text/javascript">
 		
+		$("#search_input").keyup(credoSearch);
 
+		function credoSearch() {
+			var input = document.querySelector('#search_input');
+			var display = document.querySelector('#search_display');
+			$.ajax({
+				type: "GET",
+				url: "<?= ajax('search/nurce-list_stationary') ?>",
+				data: {
+					CRD_search: input.value,
+				},
+				success: function (result) {
+					display.innerHTML = result;
+				},
+			});
+		}
 
 	</script>
 

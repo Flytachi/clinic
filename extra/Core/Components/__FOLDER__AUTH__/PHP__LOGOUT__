@@ -1,0 +1,5 @@
+<?php
+require '../tools/warframe.php';
+$session->is_auth();
+$session->destroy();
+?>
