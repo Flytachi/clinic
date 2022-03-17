@@ -1,5 +1,5 @@
 <?php
-require '../../../tools/warframe.php';
+require '../../tools/warframe.php';
 
 importModel('_TableIndex_');
 
