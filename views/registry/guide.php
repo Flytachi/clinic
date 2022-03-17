@@ -90,8 +90,8 @@ $tb->where_or_serch($where_search)->order_by("name ASC")->set_limit(20);
 											<td><?= number_format($row->share, 1) ?></td>
 	                                      	<td>
 												<div class="list-icons">
-													<a onclick="Update('<?= up_url($row->id, 'GuideModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<a href="<?= del_url($row->id, 'GuideModel') ?>" onclick="return confirm('Вы уверены что хотите удалить направителя?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+													<a onclick="Update('<?= up_url($row->id, 'GuidesModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
+													<a href="<?= del_url($row->id, 'GuidesModel') ?>" onclick="return confirm('Вы уверены что хотите удалить направителя?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
 				                                </div>
 	                                      	</td>
                               			</tr>

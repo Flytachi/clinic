@@ -10,7 +10,7 @@ $where = array(
 	"v.direction IS NOT NULL", 
 	"v.direction IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->JoinLEFT('patients p', 'p.id=v.patient_id')->Where($where)->Order('v.add_date ASC')->Limit(20);
+$tb->JoinLEFT('patients p', 'p.id=v.patient_id')->Where($where)->Order('v.parad_id ASC')->Limit(20);
 ?>
 <div class="table-responsive card">
     <table class="table table-hover table-sm">
