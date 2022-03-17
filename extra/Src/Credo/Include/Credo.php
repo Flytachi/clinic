@@ -16,55 +16,62 @@ abstract class Credo implements CredoInterface
      * $tb->list()                       --->  Получае массив с данными
      * $tb->panel()                      --->  Вытаскиваем панель с пагинациией
      * 
+     * $search = $tb->getSearch();       --->  Искомое
      * 
-     * 
-     * Поисковая система Ajax:
-     * 
-     *  # php box make:table 'name'
-     * 
-     * $search = $tb->getSearch();       ---> Искомое
-     * 
-     * 
-     * 
-     * 
-     * Скрипт на Php + Html:
      * 
      * -----------------------------------------------------------------------
-
-        <input type="text" value="" id="search_input">
-      
+     * Скрипт на Html:
      * -----------------------------------------------------------------------
-     * 
+     
+         Поле для поиска
+             <input type="text" value="" id="search_input">
+     
+         Место выведения результата
+             <div class="card-body" id="search_display"></div>
+     
+     
+     * -----------------------------------------------------------------------
      * Скрипт на Js + Ajax:
-     * 
      * -----------------------------------------------------------------------
-
-        function credoSearch(params = '') {
-			if (document.querySelector('#search_display')) {
-				var display = document.querySelector('#search_display');
-				isLoading(display);
-
-				$.ajax({
-					type: "GET",
-					url: "<?= api('table/registry/Patient') ?>"+params,
-					data: {
-						CRD_search: document.querySelector('#search_input').value,
-					},
-					success: function (result) {
-						isLoaded(display);
-						display.innerHTML = result;
-					},
-				});
-
-			}
-		}
-		
-		$(document).ready(() => credoSearch());
-		$("#search_input").keyup(() => credoSearch());
-      
+     
+         <script type="text/javascript">
+     
+             function credoSearch(params = '') {
+                 if (document.querySelector('#search_display')) {
+                     var display = document.querySelector('#search_display');
+                     isLoading(display);
+                 
+                     $.ajax({
+                         type: "GET",
+                         url: "<?= api('table/registry/Patient') ?>"+params,
+                         success: function (result) {
+                             isLoaded(display);
+                             display.innerHTML = result;
+                         },
+                     });
+                 
+                 }
+             }
+         
+             $(document).ready(() => credoSearch());
+         
+         </script>
+         
+     * -----------------------------------------------------------------------
+     * Ajax поиск
+     * -----------------------------------------------------------------------
+         
+         Поставить в ajax запрос 
+             data: {
+                 CRD_search: document.querySelector('#search_input').value,
+             }
+         
+         JavaScript
+             $("#search_input").keyup(() => credoSearch());
+         
      * -----------------------------------------------------------------------
      * 
-     * @version 7.1 betta
+     * @version 7.1
      */
     
     private String $CRD_sql;

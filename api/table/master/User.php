@@ -1,13 +1,12 @@
 <?php
-require_once '../../tools/warframe.php';
-$session->is_auth("master");
+require '../../../tools/warframe.php';
 
-$tb = new UserModel;
+importModel('User');
+
+$tb = new User;
 $search = $tb->getSearch();
-$where_search = array("user_level != 15", "user_level != 15 AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
-$tb->Where($where_search)->Order("user_level, last_name ASC")->Limit(15);
-
-$tb->returnPath(viv('master/index'));  
+$tb->Where(array("is_active iS NOT NULL", "is_active iS NOT NULL AND (username LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))"));
+$tb->Order("user_level, last_name ASC")->Limit(20);
 ?>
 <div class="table-responsive">
     <table class="table table-hover">
