@@ -51,7 +51,7 @@ $session->is_auth();
     <div id="invoice-POS">
 
         <div id="top">
-            <center><img id="image" src="<?= ( config('print_header_logotype') ) ? config('print_header_logotype') : stack('global_assets/images/placeholders/cover.jpg') ; ?>" alt="Логотип"></center>
+            <center><img id="image" src="<?= ( config('check_logotype') ) ? config('check_logotype') : stack('global_assets/images/placeholders/cover.jpg') ; ?>" alt="Логотип"></center>
         </div>
 
         <div id="mid">
