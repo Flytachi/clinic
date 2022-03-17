@@ -139,12 +139,14 @@
                 <?php endforeach; ?>
                 <!-- /Main -->
 
-                <li class="nav-item">
-                    <a href="<?= viv('sentry/index') ?>" class="nav-link legitRipple">
-                        <i class="icon-list"></i>
-                        <span>Дежурство</span>
-                    </a>
-                </li>
+                <?php if(permission(5)): ?>
+                    <li class="nav-item">
+                        <a href="<?= viv('sentry/index') ?>" class="nav-link legitRipple">
+                            <i class="icon-list"></i>
+                            <span>Дежурство</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
 
                 <?php if(module('module_pharmacy') and permission([4,5,7])): ?>
                     <!-- Warehouse -->
