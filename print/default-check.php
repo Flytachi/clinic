@@ -13,7 +13,7 @@ $session->is_auth();
     #image{
         text-align: center;
         height: 25mm;
-        width: 50mm;
+        width: 25mm;
     }
     table{
         width: 50mm;
