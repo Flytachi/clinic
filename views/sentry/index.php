@@ -64,31 +64,32 @@ $search = $tb->getSearch();
 
 	<script type="text/javascript">
 
+		function credoSearch(params = '') {
+			if (document.querySelector('#search_display')) {
+				var display = document.querySelector('#search_display');
+				isLoading(display);
+
+				$.ajax({
+					type: "GET",
+					url: "<?= api('table/sentry/Visit') ?>"+params,
+					data: {
+						CRD_search: document.querySelector('#division_input').value,
+					},
+					success: function (result) {
+						isLoaded(display);
+						display.innerHTML = result;
+					},
+				});
+
+			}
+		}
+		
+		$("#division_input").change(() => credoSearch());
+
 		<?php if($search): ?>
-			Search('<?= json_encode($_GET) ?>');
+			credoSearch();
 		<?php endif; ?>
-
-		$("#division_input").change(SearchDublicate);
-
-		function SearchDublicate(){
-			Search(null);
-		}
-
-		function Search(data = null) {
-			var input = document.querySelector('#division_input');
-			var display = document.querySelector('#search_display');
-			if(data) var data = JSON.parse(data);
-			else var data = {CRD_search: input.value};
-			$.ajax({
-				type: "GET",
-				url: "<?= viv('sentry/search') ?>",
-				data: data,
-				success: function (result) {
-					display.innerHTML = result;
-				},
-			});
-		}
-
+		
 	</script>
 
     <!-- Footer -->

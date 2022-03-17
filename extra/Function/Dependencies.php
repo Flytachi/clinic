@@ -48,7 +48,9 @@ function importModel(String ...$models){
     foreach ($models as $model) {
         $path = dirname(__DIR__, 2) .'/model/' . $model . '.php';
         if (file_exists($path)) {
-            try { include $path; }
+            try { 
+                if( !class_exists($model) ) include $path;
+            }
             catch (\Throwable $th) { 
                 if (!ini['GLOBAL_SETTING']['DEBUG']) dd('Ошибка в модели');
                 else dd($th);

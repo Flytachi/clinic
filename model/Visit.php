@@ -605,6 +605,8 @@ class Visit extends Model
 
     public function saveBody()
     {
+        importModel('Service');
+
         $this->createOrUpdateVisit();
         
         if ($this->getGet('type') == 'ambulator') {
@@ -620,6 +622,11 @@ class Visit extends Model
         }else $this->error("Недопустимый запрос");
 
         $this->patientUpdateStatus();
+    }
+
+    public function saveAfter(){
+        $this->db->commit();
+        $this->success();
     }
 
     private function patientUpdateStatus()
@@ -683,7 +690,6 @@ class Visit extends Model
     private function addVisitService($key = null, $value)
     {
         global $session;
-        importModel('Service');
         $service = (new Service)->byId($value);
 
         if ( $this->getPost('direction') ) $post['division_id'] = $this->getPost('division_id');
