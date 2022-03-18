@@ -38,7 +38,6 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 			<!-- Content area -->
 			<div class="content">
 
-
 				<div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
@@ -79,7 +78,15 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 											</td>
 											<td><?= date_f($row->birth_date) ?></td>
                                             <td>
-												<?php foreach($db->query("SELECT service_name, service_title FROM visit_services WHERE visit_id = $row->id AND status = 3 AND parent_id = $session->session_id AND level = 5") as $serv): ?>
+												<?php foreach($db->query("SELECT vs.service_name, vs.service_title, st.day, vs.accept_date FROM visit_services vs LEFT JOIN service_terms st ON(vs.service_id=st.service_id) WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.parent_id = $session->session_id AND vs.level = 5") as $serv): ?>
+													<?php
+														if($serv['day']) {
+															if (date_diff(new DateTime('now'), new DateTime($serv['accept_date']))->days >= $serv['day']) {
+																$color = 'success';
+															}else $color = 'danger';
+															echo "<span class=\"badge badge-$color mr-1\">{$serv['day']} day</span>"; 
+														}
+													?>
 													<span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span><br>
 												<?php endforeach; ?>
 											</td>

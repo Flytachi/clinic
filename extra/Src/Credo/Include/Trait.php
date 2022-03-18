@@ -19,6 +19,21 @@ trait CredoQuery
         }
     }
 
+    final public function by(Array $params, $item = '')
+    {
+        try {
+            $where = '';
+            foreach ($params as $key => $value) $where .= "$key = $value ";
+            $this->Where($where);
+            if (!is_array($item)) return $this->get($item);
+            else return call_user_func_array([$this, 'get'], $item);
+
+        } catch (\Throwable $th) {
+            if ($this->CRD_error) $this->error($th);
+            else echo 'Ошибка в генерации скрипта <strong>"BY"</strong>';
+        }
+    }
+
     final public function byId(Int $id, $item = '')
     {
         try {

@@ -8,7 +8,7 @@ abstract class Model extends Credo implements ModelInterface
      * 
      * Model
      * 
-     * @version 9.1
+     * @version 9.2
      */
 
     private $get = [];
@@ -22,7 +22,7 @@ abstract class Model extends Credo implements ModelInterface
         ModelTSave, 
         ModelTUpdate, 
         ModelTDelete,
-        ModelTResponce,
+        ModelTJsonResponce,
         ModelHook;
 
 

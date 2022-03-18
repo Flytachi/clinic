@@ -88,7 +88,7 @@ trait ModelTDelete
     }
 
     public function deleteBody(){
-        $object = HellCrud::delete($this->table, $this->getGet()['id']);
+        $object = HellCrud::delete($this->table, $this->getGet('id'));
         if ($object <= 0) $this->error($object);
     }
 
@@ -98,17 +98,24 @@ trait ModelTDelete
     }
 }
 
-trait ModelTResponce
+trait ModelTJsonResponce
 {
     public function success()
     {
-        echo 1;
+        header('Content-type: application/json');
+        echo json_encode(array(
+            'status' => 'success'
+        ));
         exit;
     }
 
     public function error($message)
     {
-        echo $message;
+        header('Content-type: application/json');
+        echo json_encode(array(
+            'status' => 'error',
+            'message' => $message
+        ));
         if($this->db->inTransaction()) $this->db->rollBack();
         exit;
     }

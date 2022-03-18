@@ -1,6 +1,7 @@
 <?php
 
 use Mixin\Hell;
+use Mixin\HellCrud;
 use Mixin\Model;
 
 class WarehouseStorage extends Model
@@ -15,15 +16,51 @@ class WarehouseStorage extends Model
     public $i = 0;
     public $cost = 0;
 
-    public function warehousesPanel($storage_from = null, $storage_in = null, $status = 1){
+    public function applicationAdd()
+    {
+        $this->saveBefore();
+        $m = ($this->getPost('item_manufacturer_id')) ? "AND item_manufacturer_id = " . $this->getPost('item_manufacturer_id') : null;
+        $s = ($this->getPost('item_price')) ? "AND item_price = " . $this->getPost('item_price') : null;
+        $qty = $this->getPost('item_qty');
+
+        foreach ($this->Data('DISTINCT item_manufacturer_id, item_price')->Where("warehouse_id = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_die_date > CURRENT_DATE() $m $s")->Order("item_die_date ASC, item_price ASC")->list() as $param) {
+            
+            $item_qty = $this->db->query("SELECT SUM(item_qty) FROM $this->table WHERE warehouse_id = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_die_date > CURRENT_DATE() AND item_manufacturer_id = $param->item_manufacturer_id AND item_price = $param->item_price ORDER BY item_die_date ASC, item_price ASC")->fetchColumn();
+            $item_qty -= $this->db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE status IN (1,2) AND warehouse_id_from = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_manufacturer_id = $param->item_manufacturer_id AND item_price = $param->item_price")->fetchColumn();
+            $item_qty -= $this->db->query("SELECT SUM(item_qty) FROM $this->_event_applications WHERE warehouse_id = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_manufacturer_id = $param->item_manufacturer_id AND item_price = $param->item_price")->fetchColumn();
+
+            if ($item_qty > 0) {
+                
+                $obj = HellCrud::insert($this->_applications, array(
+                    'warehouse_id_from' => $this->getPost('warehouse_id_from'),
+                    'warehouse_id_in' => $this->getPost('warehouse_id_in'),
+                    'responsible_id' => $this->getPost('responsible_id'),
+                    'item_name_id' => $this->getPost('item_name_id'),
+                    'item_manufacturer_id' => $param->item_manufacturer_id,
+                    'item_price' => $param->item_price,
+                    'item_qty' => ($qty > $item_qty) ? $item_qty : $qty,
+                    'status' => $this->getPost('status')
+                ));
+
+                if (!is_numeric($obj)) $this->error($obj);
+                if ($qty > $item_qty) $qty -= $item_qty;
+                else break;
+            }
+
+        }
+        $this->saveAfter();
+    }
+
+    public function warehousesPanel($storage_from = null, $storage_in = null, $status = 1)
+    {
         global $classes;
         ?>
         <div class="row">
             <div class="col-md-4 offset-md-2">
                 <label>Склад (с):</label>
                 <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_from) ? 'disabled': ''; ?>>
-                    <option></option>
-                    <?php foreach($this->db->query("SELECT * FROM $this->_warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                    <option value=""></option>
+                    <?php foreach($this->db->query("SELECT * FROM $this->_warehouses WHERE is_active IS NOT NULL AND is_external IS NOT NULL") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($storage_in == $row['id']) ? 'disabled' : '' ?> <?= ($storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -86,7 +123,8 @@ class WarehouseStorage extends Model
         $this->{$this->getGet('form')}();
     }
 
-    public function frame(){
+    public function frame()
+    {
         global $session, $classes;
         ?>
         <div class="form-group-feedback form-group-feedback-right">
@@ -149,7 +187,6 @@ class WarehouseStorage extends Model
                         btn.disabled = false;
                     }else{
                         var data = {
-                            model: "<?= __CLASS__ ?>",
                             warehouse_id_from: <?= $this->getPost('warehouse_id_from') ?>,
                             warehouse_id_in: <?= $this->getPost('warehouse_id_in') ?>,
                             responsible_id: <?= $session->session_id ?>,
@@ -160,14 +197,12 @@ class WarehouseStorage extends Model
                             status: <?= $this->getPost('status') ?>,
                         };
 
-                       /*  $.ajax({
+                        $.ajax({
                             type: "POST",
-                            url: "<?= add_url() ?>",
+                            url: "<?= Hell::apiAxe(__CLASS__, array('form' => 'applicationAdd')) ?>",
                             data: data,
-                            success: function (result) {
-                                console.log(result);
-                                var data = JSON.parse(result);
-                                if (data.status == "success") {
+                            success: function (res) {
+                                if (res.status == "success") {
                                     $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
                                     $(`#Item_${index}`).css("color", "black");
                                     $(`#Item_${index}`).fadeOut(900, function() {
@@ -176,13 +211,13 @@ class WarehouseStorage extends Model
                                     $("#search_input").keyup();
                                 } else {
                                     new Noty({
-                                        text: data.message,
-                                        type: data.status
+                                        text: res.message,
+                                        type: res.status
                                     }).show();
                                     btn.disabled = false;
                                 }
                             },
-                        });  */
+                        });
                     }
 
                 }

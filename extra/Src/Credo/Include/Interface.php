@@ -5,6 +5,7 @@ namespace Mixin;
 interface CredoInterface
 {
     public function get(String ...$items);
+    public function by(Array $params, $item = '');
     public function byId(Int $id, $item = '');
     public function list(Bool $counter = false);
     public function getId();

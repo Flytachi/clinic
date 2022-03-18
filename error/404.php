@@ -39,27 +39,6 @@
 					</div>
 					<!-- /error title -->
 
-
-					<!-- Error content -->
-					<div class="row">
-						<div class="col-xl-4 offset-xl-4 col-md-8 offset-md-2">
-
-							<!-- Buttons -->
-							<div class="row">
-								<div class="col-sm-6">
-									<a href="../" class="btn btn-primary btn-block"><i class="icon-home4 mr-2"></i> Dashboard</a>
-								</div>
-
-								<div class="col-sm-6">
-									<a href="javascript:history.back()" class="btn btn-light btn-block mt-3 mt-sm-0" title="Вернуться на предыдущую страницу" >><i class="icon-menu7 mr-2"></i> назад </a>
-								</div>
-							</div>
-							<!-- /buttons -->
-
-						</div>
-					</div>
-					<!-- /error wrapper -->
-
 				</div>
 				<!-- /container -->
 
