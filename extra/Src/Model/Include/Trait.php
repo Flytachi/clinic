@@ -123,9 +123,9 @@ trait ModelTJsonResponce
 
 trait ModelHook
 {
-    final public function urlHook()
+    final public function urlHook(String $otherModel = null)
     {
-        return Hell::apiHook( array_merge( array("model" =>  get_class($this)), $this->getGet() ) );
+        return Hell::apiHook( array_merge( array("model" => ($otherModel) ? $otherModel : get_class($this)), $this->getGet() ) );
     }
 }
 

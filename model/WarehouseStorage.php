@@ -16,7 +16,7 @@ class WarehouseStorage extends Model
     public $i = 0;
     public $cost = 0;
 
-    public function applicationAdd()
+    private function applicationAdd()
     {
         $this->saveBefore();
         $m = ($this->getPost('item_manufacturer_id')) ? "AND item_manufacturer_id = " . $this->getPost('item_manufacturer_id') : null;
@@ -414,16 +414,16 @@ class WarehouseStorage extends Model
     public function refundItem()
     {
         global $classes, $db, $session;
-        $item = $this->byId($this->getGet('id'));
+        $this->setPost($this->byId($this->getGet('id')));
+        $this->dd();
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title">Возврат препарат</h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= $this->urlHook('WarehouseStorageTransaction') ?>" onsubmit="submitForm()">
 
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
             <input type="hidden" name="item_id" value="<?= $this->value('id') ?>">
             <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
             
@@ -433,21 +433,20 @@ class WarehouseStorage extends Model
                     <div class="list-feed list-feed-rhombus list-feed-solid">
                         <div class="list-feed-item border-danger">
                             <strong>Препарат: </strong>
-                            <span><?= $db->query("SELECT name FROM $this->_item_names WHERE id = $item->item_name_id")->fetchColumn() ?></span>
+                            <span><?= $db->query("SELECT name FROM $this->_item_names WHERE id = " . $this->value('item_name_id'))->fetchColumn() ?></span>
                         </div>
     
                         <div class="list-feed-item border-danger">
                             <strong>Данные: </strong><br>
-                            Производитель - <?= $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = $item->item_manufacturer_id")->fetchColumn() ?><br>
-                            Цена - <?= number_format($item->item_price) ?><br>
-                            Срок годности - <?= date_f($item->item_die_date) ?><br>
+                            Производитель - <?= $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = " . $this->value('item_manufacturer_id'))->fetchColumn() ?><br>
+                            Цена - <?= number_format($this->value('item_price')) ?><br>
+                            Срок годности - <?= date_f($this->value('item_die_date')) ?><br>
                         </div>
     
                         <div class="list-feed-item border-danger">
                             <strong>Имеющиеся кол-во: </strong>
                             <span id="item_qty_required" style="font-size:15px;" class="ml-1">
-                                <?= number_format($item->item_qty);
-                                ?>
+                                <?= number_format($this->value('item_qty')); ?>
                             </span> / <span id="item_qty_count">0</span>
                         </div>
 
@@ -468,7 +467,7 @@ class WarehouseStorage extends Model
 
                 <div class="form-group row">
                     <label class="col-md-3">Вернуть (кол-во):</label>
-                    <input type="number" name="item_qty" step="1" min="1" max="<?= $item->item_qty ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
+                    <input type="number" name="item_qty" step="1" min="1" max="<?= $this->value('item_qty') ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
                 </div>
 
                 <div class="form-group row">
@@ -492,6 +491,95 @@ class WarehouseStorage extends Model
                 var qty_count = document.querySelector("#item_qty_count");
                 
                 if ( Number(event.target.max) >= Number(event.target.value) ) {
+                    event.target.className = "form-control col-md-8";
+                    var qty = Number(event.target.value);
+                    qty_count.className = "text-success";
+                    document.querySelector("#indicator-btn").className = "btn btn-outline-danger btn-sm legitRipple";
+                    document.querySelector("#indicator-btn").disabled = false;
+                }else{
+                    qty_count.className = "text-danger";
+                    event.target.className = "form-control col-md-8 text-danger";
+                    document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
+                    document.querySelector("#indicator-btn").disabled = true;
+                }
+                
+                qty_count.innerHTML = number_format(qty);
+
+            });
+
+        </script>
+        <?php
+    }
+
+    public function writtenOffItem()
+    {
+        global $classes, $session;
+        $this->setPost($this->byId($this->getGet('id')));
+        ?>
+        <div class="<?= $classes['modal-global_header'] ?>">
+            <h6 class="modal-title">Списать препарат</h6>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <form method="post" action="<?= $this->urlHook('WarehouseStorageTransaction') ?>" onsubmit="submitForm()">
+
+            <?php $this->csrfToken(); ?>
+
+            <input type="hidden" name="item_id" value="<?= $this->value('id') ?>">
+            <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
+            
+            <div class="modal-body">
+
+                <div class="card card-body border-top-1 border-top-danger">
+                    <div class="list-feed list-feed-rhombus list-feed-solid">
+                        <div class="list-feed-item border-danger">
+                            <strong>Препарат: </strong>
+                            <span><?= $this->db->query("SELECT name FROM $this->_item_names WHERE id = " . $this->value('item_name_id'))->fetchColumn() ?></span>
+                        </div>
+    
+                        <div class="list-feed-item border-danger">
+                            <strong>Данные: </strong><br>
+                            Производитель - <?= $this->db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = " . $this->value('item_manufacturer_id'))->fetchColumn() ?><br>
+                            Цена - <?= number_format($this->value('item_price')) ?><br>
+                            Срок годности - <?= date_f($this->value('item_die_date')) ?><br>
+                        </div>
+    
+                        <div class="list-feed-item border-danger">
+                            <strong>Имеющиеся кол-во: </strong>
+                            <span id="item_qty_required" style="font-size:15px;" class="ml-1">
+                                <?= number_format($this->value('item_qty')); ?>
+                            </span> / <span id="item_qty_count">0</span>
+                        </div>
+
+                    </div>
+                </div>
+    
+                <div class="form-group row">
+                    <label class="col-md-3">Списать (кол-во):</label>
+                    <input type="number" name="item_qty" step="1" min="1" max="<?= $this->value('item_qty') ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-3">Комметарий:</label>
+                    <input type="text" name="comment" class="form-control col-md-8" placeholder="Комментарий">
+                </div>
+    
+            </div>
+    
+            <div class="modal-footer">
+                <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Списать</button>
+                <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
+            </div>
+
+        </form>
+        <script  type="text/javascript">
+
+            var qty_required = document.querySelector("#item_qty_required");
+            
+            $("#input_count-qty").on("input", function (event) {
+                var qty_count = document.querySelector("#item_qty_count");
+                
+                if ( Number(event.target.max) >= Number(event.target.value) && Number(event.target.value) > 0 ) {
                     event.target.className = "form-control col-md-8";
                     var qty = Number(event.target.value);
                     qty_count.className = "text-success";

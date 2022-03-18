@@ -7,7 +7,6 @@ $session->is_auth();
 is_module('pharmacy');
 $header = "Рабочий стол";
 
-
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
 	importModel('Warehouse', 'WarehouseStorage', 'WarehouseStorageApplication');
@@ -101,7 +100,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                     url: "<?= api('table/warehouse/Application') ?>"+params,
 					data: {
 						warehouse: <?= $warehouse->id ?>, 
-						is_grant: "<?= $data['is_grant'] ?>",
+						is_grant: <?= ($data['is_grant']) ? 1 : 0 ?>,
 						CRD_search: document.querySelector('#search_input').value,
 					},
                     success: function (result) {
