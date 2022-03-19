@@ -415,7 +415,6 @@ class WarehouseStorage extends Model
     {
         global $classes, $db, $session;
         $this->setPost($this->byId($this->getGet('id')));
-        $this->dd();
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title">Возврат препарат</h6>
@@ -424,26 +423,27 @@ class WarehouseStorage extends Model
 
         <form method="post" action="<?= $this->urlHook('WarehouseStorageTransaction') ?>" onsubmit="submitForm()">
 
+            <?php $this->csrfToken(); ?>
             <input type="hidden" name="item_id" value="<?= $this->value('id') ?>">
             <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
             
             <div class="modal-body">
 
-                <div class="card card-body border-top-1 border-top-danger">
+                <div class="card card-body border-top-1 border-top-warning">
                     <div class="list-feed list-feed-rhombus list-feed-solid">
-                        <div class="list-feed-item border-danger">
+                        <div class="list-feed-item border-warning">
                             <strong>Препарат: </strong>
                             <span><?= $db->query("SELECT name FROM $this->_item_names WHERE id = " . $this->value('item_name_id'))->fetchColumn() ?></span>
                         </div>
     
-                        <div class="list-feed-item border-danger">
+                        <div class="list-feed-item border-warning">
                             <strong>Данные: </strong><br>
                             Производитель - <?= $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = " . $this->value('item_manufacturer_id'))->fetchColumn() ?><br>
                             Цена - <?= number_format($this->value('item_price')) ?><br>
                             Срок годности - <?= date_f($this->value('item_die_date')) ?><br>
                         </div>
     
-                        <div class="list-feed-item border-danger">
+                        <div class="list-feed-item border-warning">
                             <strong>Имеющиеся кол-во: </strong>
                             <span id="item_qty_required" style="font-size:15px;" class="ml-1">
                                 <?= number_format($this->value('item_qty')); ?>
@@ -453,14 +453,19 @@ class WarehouseStorage extends Model
                     </div>
                 </div>
 
-                <?php //dd( $db->query("SELECT * FROM warehouse_storage_transactions")->fetchAll() ); ?>
+                <?php
+                importModel('WarehouseStorageApplication');
+                $warehouses = (new WarehouseStorageApplication('wp'))->Data('w.id, w.name');
+                $warehouses->Where("wp.warehouse_id_in=" . $this->value('warehouse_id') . " AND wp.item_name_id=". $this->value('item_name_id') . " AND wp.item_manufacturer_id=" . $this->value('item_manufacturer_id') . " AND wp.item_price=" . $this->value('item_price') . " AND wp.status = 3");
+                $warehouses->JoinRIGHT('warehouses w', 'w.id=wp.warehouse_id_from')->Group('w.id');
+                ?>
 
                 <div class="form-group">
                     <label>Выбирите склад:</label>
-                    <select data-placeholder="Выбрать склад" class="<?= $classes['form-select'] ?>" required>
+                    <select data-placeholder="Выбрать склад" name="warehouse_id_in" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM warehouse_storage_transactions") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php foreach ($warehouses->list() as $row): ?>
+                            <option value="<?= $row->id ?>"><?= $row->name ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -478,7 +483,7 @@ class WarehouseStorage extends Model
             </div>
     
             <div class="modal-footer">
-                <!-- <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Списать</button> -->
+                <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Возврат</button>
                 <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
             </div>
 
@@ -490,11 +495,11 @@ class WarehouseStorage extends Model
             $("#input_count-qty").on("input", function (event) {
                 var qty_count = document.querySelector("#item_qty_count");
                 
-                if ( Number(event.target.max) >= Number(event.target.value) ) {
+                if ( Number(event.target.max) >= Number(event.target.value) && Number(event.target.value) > 0 ) {
                     event.target.className = "form-control col-md-8";
                     var qty = Number(event.target.value);
                     qty_count.className = "text-success";
-                    document.querySelector("#indicator-btn").className = "btn btn-outline-danger btn-sm legitRipple";
+                    document.querySelector("#indicator-btn").className = "btn btn-outline-warning btn-sm legitRipple";
                     document.querySelector("#indicator-btn").disabled = false;
                 }else{
                     qty_count.className = "text-danger";
@@ -506,6 +511,8 @@ class WarehouseStorage extends Model
                 qty_count.innerHTML = number_format(qty);
 
             });
+
+            FormLayouts.init();
 
         </script>
         <?php

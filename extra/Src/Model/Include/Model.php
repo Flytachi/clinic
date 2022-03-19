@@ -124,6 +124,7 @@ abstract class Model extends Credo implements ModelInterface
 
     final public function stop()
     {
+        if($this->db->inTransaction()) $this->db->rollBack();
         exit;
     }
 

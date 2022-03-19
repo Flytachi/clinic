@@ -23,7 +23,15 @@ trait CredoQuery
     {
         try {
             $where = '';
-            foreach ($params as $key => $value) $where .= "$key = $value ";
+            foreach ($params as $key => $value) {
+                if($where == '') {
+                    if(strtotime($value)) $where .= "$key = '$value' ";
+                    else $where .= "$key = $value ";
+                }else {
+                    if(strtotime($value)) $where .= "AND $key = '$value' ";
+                    else $where .= "AND $key = $value ";
+                }
+            }
             $this->Where($where);
             if (!is_array($item)) return $this->get($item);
             else return call_user_func_array([$this, 'get'], $item);

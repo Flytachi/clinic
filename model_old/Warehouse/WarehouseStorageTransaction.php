@@ -218,7 +218,6 @@ class WarehouseStorageTransactionModel extends ModelOld
         // Create transaction
         $transaction_post = array(
             'warehouse_id_from' => $object['warehouse_id'],
-            'item_id' => $object['id'],
             'item_name' => $db->query("SELECT name FROM $this->_item_names WHERE id = {$object['item_name_id']}")->fetchColumn(),
             'item_manufacturer' => $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = {$object['item_manufacturer_id']}")->fetchColumn(),
             'item_qty' => $this->post['item_qty'],
