@@ -76,7 +76,7 @@ class WarehouseStorageTransaction extends Model
         } else {
             // create
             $q = HellCrud::insert($this->tStorage, array_merge($searchObj, array('item_qty' => $this->getPost('item_qty'))));
-            if (!is_numeric($q)) $this->error('Ошибка при создании препарата');
+            if ( !is_numeric($q) ) $this->error('Ошибка при создании препарата');
         }
 
         // Create transaction

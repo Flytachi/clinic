@@ -13,7 +13,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
 	$warehouse = (new Warehouse)->byId($_GET['pk']);
 	if ($warehouse) {
-		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = $warehouse->id AND responsible_id = $session->session_id")->fetch();
+		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = $warehouse->id AND user_id = $session->session_id AND is_application IS NOT NULL")->fetch();
 		if(!$data) Hell::error('404');
 	} else Hell::error('404');
     

@@ -2,39 +2,47 @@
 
 namespace Mixin;
 
-trait ModelSetter
+trait ModelGet
 {
     final public function setGet($data)
     {
         $this->get = $data;
     }
 
+    final public function getGet(String $item = null)
+    {
+        return ($item == null) ? $this->get : $this->get[$item] ?? null;
+    }
+}
+
+trait ModelPost
+{
     final public function setPost($data)
     {
         $this->post = $data;
     }
 
-    final public function setFiles($data)
+    final public function getPost(String $item = null)
     {
-        $this->files = $data;
+        return ($item == null) ? $this->post : $this->post[$item] ?? null;
     }
 
     final public function setPostItem(String $item, $value = null)
     {
         $this->post[$item] = $value;
     }
+
+    final public function deletePostItem(String $item)
+    {
+        unset($this->post[$item]);
+    }
 }
 
-trait ModelGetter
+trait ModelFiles
 {
-    final public function getGet(String $item = null)
+    final public function setFiles($data)
     {
-        return ($item == null) ? $this->get : $this->get[$item] ?? null;
-    }
-
-    final public function getPost(String $item = null)
-    {
-        return ($item == null) ? $this->post : $this->post[$item] ?? null;
+        $this->files = $data;
     }
 
     final public function getFiles(String $item = null)

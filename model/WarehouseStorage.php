@@ -424,6 +424,7 @@ class WarehouseStorage extends Model
         <form method="post" action="<?= $this->urlHook('WarehouseStorageTransaction') ?>" onsubmit="submitForm()">
 
             <?php $this->csrfToken(); ?>
+            
             <input type="hidden" name="item_id" value="<?= $this->value('id') ?>">
             <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
             

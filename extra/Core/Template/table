@@ -31,7 +31,7 @@ dd($tb->list());
 
                 $.ajax({
                     type: "GET",
-                    url: "<?= api('table/_FileName_') ?>"+params,
+                    url: "<?= api('table/_TableIndex_') ?>"+params,
                     success: function (result) {
                         isLoaded(display);
                         display.innerHTML = result;

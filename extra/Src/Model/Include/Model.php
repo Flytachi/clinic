@@ -8,7 +8,7 @@ abstract class Model extends Credo implements ModelInterface
      * 
      * Model
      * 
-     * @version 9.2
+     * @version 9.3
      */
 
     private $get = [];
@@ -17,8 +17,9 @@ abstract class Model extends Credo implements ModelInterface
     protected $table = '';
 
     use 
-        ModelSetter, 
-        ModelGetter,
+        ModelGet, 
+        ModelPost,
+        ModelFiles,
         ModelTSave, 
         ModelTUpdate, 
         ModelTDelete,

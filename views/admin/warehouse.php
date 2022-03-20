@@ -1,4 +1,7 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 is_module('pharmacy');
@@ -7,6 +10,9 @@ $header = "Склады";
 <!DOCTYPE html>
 <html lang="en">
 <?php include layout('head') ?>
+
+<script src="<?= stack("global_assets/js/plugins/forms/styling/switchery.min.js") ?>"></script>
+<script src="<?= stack("assets/js/custom.js") ?>"></script>
 
 <body>
 	<!-- Main navbar -->
@@ -32,101 +38,16 @@ $header = "Склады";
 
 				<div class="<?= $classes['card'] ?>">
 
-					<div class="<?= $classes['card-header'] ?>">
-						<h5 class="card-title">Добавить Склад</h5>
-					</div>
-
-					<div class="card-body" id="form_card">
-
-                        <?php (new WarehouseModel)->form(); ?>
-
-					</div>
-
-				</div>
-
-				<div class="<?= $classes['card'] ?>">
-
 	          		<div class="<?= $classes['card-header'] ?>">
 	                  	<h5 class="card-title">Склады</h5>
+						<div class="header-elements">
+							<div class="list-icons">
+								<a onclick="ModalCheck('<?= Hell::apiGet('Warehouse', null, 'form') ?>')" href="#" class="list-icons-item text-success"><i class="icon-add"></i></a>
+							</div>
+						</div>
 	              	</div>
 
-              		<div class="card-body">
-                  		<div class="table-responsive">
-	                      	<table class="table table-hover">
-	                          	<thead class="<?= $classes['table-thead'] ?>">
-	                              	<tr>
-									  	<th style="width:50px">№</th>
-									  	<th>Наименование</th>
-									  	<th>Статус</th>
-									  	<th>Тип</th>
-                                        <th style="width: 100px">Действия</th>
-	                              	</tr>
-	                          	</thead>
-	                          	<tbody>
-									<?php
-									$tb = new Table($db, "warehouses");
-									?>
-                                    <?php foreach ($tb->get_table(1) as $row): ?>
-										<tr>
-											<td><?= $row->count ?></td>
-											<td><?= $row->name ?></td>
-											<td>
-												<?php 
-													if($row->is_payment){
-														echo "Платный";
-													}elseif ($row->is_free) {
-														echo "Бесплатный";
-													}else{
-														echo "<span class=\"text-muted\">Нет данных</span>";
-													}
-												?>
-											</td>
-											<td>
-												<?php 
-													if($row->is_internal){
-														echo "Внутренний<br>";
-													}if ($row->is_external) {
-														echo "Внешний<br>";
-													}if ($row->is_operation) {
-														echo "Операционный<br>";
-													}if(!$row->is_internal and !$row->is_external and !$row->is_operation){
-														echo "<span class=\"text-muted\">Нет данных</span>";
-													}
-												?>
-											</td>
-                                            <td>
-												<div class="list-icons">
-                                                    <div class="dropdown">                      
-														<?php if ($row->is_active): ?>
-															<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Active</a>
-														<?php else: ?>
-															<a href="#" id="status_change_<?= $row->id ?>" class="badge bg-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pasive</a>
-														<?php endif; ?>
-
-														<div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(74px, 21px, 0px);">
-															<a onclick="Change(<?= $row->id ?>, 1)" class="dropdown-item">
-																<span class="badge badge-mark mr-2 border-success"></span>
-																Active
-															</a>
-															<a onclick="Change(<?= $row->id ?>, 0)" class="dropdown-item">
-																<span class="badge badge-mark mr-2 border-secondary"></span>
-																Pasive
-															</a>
-														</div>
-													</div>
-													<a onclick="ShowConf('<?= up_url($row->id, 'WarehouseSettingsModel') ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
-													<a onclick="Update('<?= up_url($row->id, 'WarehouseModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
-													<?php if (config("admin_delete_button_warehouses")): ?>										
-                                                        <a href="<?= del_url($row->id, 'WarehouseModel') ?>" onclick="return confirm('Вы уверены что хотите удалить склад?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
-													<?php endif; ?>
-				                                </div>
-                                            </td>
-										</tr>
-									<?php endforeach; ?>
-	                          	</tbody>
-	                      	</table>
-	                  	</div>
-	              	</div>
+					<div class="card-body" id="search_display"></div>
 
           		</div>
 
@@ -170,18 +91,8 @@ $header = "Склады";
 			});
         }
 
-		function Update(events) {
-			$.ajax({
-				type: "GET",
-				url: events,
-				success: function (result) {
-					$('#form_card').html(result);
-                    BootstrapMultiselect.init();
-				},
-			});
-		};
-
-		function ShowConf(events) {
+		function ModalCheck(events) {
+			event.preventDefault();
 			$.ajax({
 				type: "GET",
 				url: events,
@@ -191,6 +102,73 @@ $header = "Склады";
 				},
 			});
 		};
+
+		function Delete(events, item) {
+			event.preventDefault();
+			if (confirm(`Вы уверены что хотите удалить \"${item}\"?`)) {
+				$.ajax({
+					type: "GET",
+					url: events,
+					success: function (res) {
+						if (res.status == "success") {
+							new Noty({
+								text: "Успешно!",
+								type: "success",
+							}).show();
+							credoSearch();
+						} else {
+							new Noty({
+								text: res.message,
+								type: "error",
+							}).show();
+						}
+					},
+				});
+			}
+		};
+
+		function submitForm(up = 1) {
+			event.preventDefault();
+			$.ajax({
+				type: $(event.target).attr("method"),
+				url: $(event.target).attr("action"),
+				data: $(event.target).serializeArray(),
+				success: function (res) {
+					$('#modal_default').modal('hide');
+					if (res.status == "success") {
+						new Noty({
+							text: "Успешно!",
+							type: "success",
+						}).show();
+						if (up) credoSearch();
+					} else {
+						new Noty({
+							text: res.message,
+							type: "error",
+						}).show();
+					}
+				},
+			});
+		}
+
+		function credoSearch(params = '') {
+            if (document.querySelector('#search_display')) {
+                var display = document.querySelector('#search_display');
+                isLoading(display);
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= api('table/admin/Warehouse') ?>"+params,
+                    success: function (result) {
+                        isLoaded(display);
+                        display.innerHTML = result;
+                    },
+                });
+
+            }
+        }
+
+        $(document).ready(() => credoSearch());
 
 	</script>
 
