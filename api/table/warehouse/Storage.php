@@ -50,7 +50,7 @@ $tb->Order('win.name ASC, wim.manufacturer ASC')->Limit(20);
                     <td class="text-center"><?= $row->item_die_date ?></td>
                     <td class="text-right"s>
                         <div class="list-icons">
-                            <a href="#" onclick="Check('<?= Hell::apiAxe('WarehouseStorage', array('form' => 'listAplications', 'id' => $row->id)) ?>')" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
+                            <a href="#" onclick="Check('<?= Hell::apiAxe('WarehouseStorage', array('form' => 'listApplications', 'id' => $row->id)) ?>')" class="list-icons-item text-primary-600"><i class="icon-list"></i></a>
                             <a href="#" onclick="Check('<?= Hell::apiAxe('WarehouseStorage', array('form' => 'refundItem', 'id' => $row->id)) ?>')" class="list-icons-item text-warning-600"><i class="icon-redo"></i></a>
                             <?php if($_GET['is_grant']): ?>
                                 <a href="#" onclick="Check('<?= Hell::apiAxe('WarehouseStorage', array('form' => 'writtenOffItem', 'id' => $row->id)) ?>')" class="list-icons-item text-danger-600"><i class="icon-clipboard6"></i></a>

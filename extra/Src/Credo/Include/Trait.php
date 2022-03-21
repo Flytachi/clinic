@@ -172,6 +172,28 @@ trait CredoParams
         return $this;
     }
 
+    final public function Wr($context)
+    {
+        /*
+            Установка зависимостей!
+        */
+        if (is_array($context)) {
+            
+            $this->CRD_where = "WHERE ";
+            foreach ($context as $key => $value) {
+
+                if(is_array($value)) {
+                    $this->CRD_where .= ($this->CRD_where == "WHERE ") ? "$key IN (" . implode(',', $value) . ") " : "AND $key IN (" . implode(',', $value) . ") ";
+                } else {
+                    $this->CRD_where .= ($this->CRD_where == "WHERE ") ? "$key = '$value' " : "AND $key = '$value' ";
+                }
+
+            }
+
+        }else $this->CRD_where = "WHERE " . $context;
+        return $this;
+    }
+
     final public function Order(String $context = null)
     {
         /*

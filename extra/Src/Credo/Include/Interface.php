@@ -16,6 +16,7 @@ interface CredoInterface
     public function JoinLEFT(String $context = null, String $on = null);
     public function JoinRIGHT(String $context = null, String $on = null);
     public function Where(Mixed $context);
+    public function Wr(Mixed $context);
     public function Order(String $context = null);
     public function Group(String $context = null);
     public function panel();

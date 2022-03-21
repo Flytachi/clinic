@@ -12,10 +12,10 @@ dd($tb->list());
 * -----------------------------------------------------------------------
 
     Поле для поиска
-        <input type="text" value="" id="search_input">
+        <input type="text" id="search_input">
 
     Место выведения результата
-        <div class="card-body" id="search_display"></div>
+        <div id="search_display"></div>
 
 
 * -----------------------------------------------------------------------

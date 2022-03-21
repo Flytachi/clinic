@@ -370,37 +370,78 @@ class WarehouseStorage extends Model
         
     }
 
-    public function listAplications()
+    public function listApplications()
     {
         global $classes, $db;
         $item = $this->byId($this->getGet('id'));
+        if(!$item) Hell::error("403");
+        importModel('WarehouseStorageApplication');
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
-            <h6 class="modal-title">Оформленные заявки</h6>
+            <h6 class="modal-title">Бронь</h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
             
         <div class="modal-body">
 
-            <div class="table-responsive">
-                <table class="table table-hover table-sm">
-                    <thead class="<?= $classes['table-thead'] ?>">
-                        <tr>
-                            <th>ID</th>
-                            <th>ФИО</th>
-                            <th class="text-right" style="width:210px">Кол-во</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($db->query("SELECT p.id, wc.visit_id, p.first_name, p.last_name, p.father_name, SUM(wc.item_qty) 'qty' FROM visit_bypass_event_applications wc LEFT JOIN patients p ON(p.id=wc.patient_id) WHERE wc.warehouse_id = $item->warehouse_id AND wc.item_name_id = $item->item_name_id AND wc.item_manufacturer_id = $item->item_manufacturer_id AND wc.item_price = $item->item_price GROUP BY p.id") as $row): ?>
-                            <tr>
-                                <td><a href="<?= viv('card/content-9') . "?pk=" . $row['visit_id'] ?>"><?= addZero($row['id']) ?></a></td>
-                                <td><?= patient_name($row) ?></td>
-                                <td class="text-right"><?= number_format($row['qty']) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+
+                <li class="nav-item"><a href="#tab-1" class="nav-link legitRipple active" data-toggle="tab">Склады</a></li>
+                <li class="nav-item"><a href="#tab-2" class="nav-link legitRipple" data-toggle="tab">Пациенты</a></li>
+
+            </ul>
+
+            <div class="tab-content">
+
+                <div class="tab-pane fade show active" id="tab-1">
+                    <div class="table-responsive card">
+                        <table class="table table-hover table-sm">
+                            <thead class="<?= $classes['table-thead'] ?>">
+                                <tr>
+                                    <th>Склад</th>
+                                    <th class="text-right" style="width:210px">Кол-во</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $appWare = new WarehouseStorageApplication('wsa');
+                                $appWare->Data("w.id, w.name, SUM(item_qty) 'qty'")->JoinRIGHT('warehouses w', 'w.id=wsa.warehouse_id_in');
+                                $appWare->Where("wsa.warehouse_id_from = $item->warehouse_id AND wsa.item_name_id = $item->item_name_id AND wsa.item_manufacturer_id = $item->item_manufacturer_id AND wsa.item_price = $item->item_price AND wsa.status = 2")->Group('w.id');
+                                ?>
+                                <?php foreach ($appWare->list() as $row): ?>
+                                    <tr>
+                                        <td><?= $row->name ?></td>
+                                        <td class="text-right"><?= number_format($row->qty) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab-2">
+                    <div class="table-responsive card">
+                        <table class="table table-hover table-sm">
+                            <thead class="<?= $classes['table-thead'] ?>">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ФИО</th>
+                                    <th class="text-right" style="width:210px">Кол-во</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($db->query("SELECT p.id, wc.visit_id, p.first_name, p.last_name, p.father_name, SUM(wc.item_qty) 'qty' FROM visit_bypass_event_applications wc LEFT JOIN patients p ON(p.id=wc.patient_id) WHERE wc.warehouse_id = $item->warehouse_id AND wc.item_name_id = $item->item_name_id AND wc.item_manufacturer_id = $item->item_manufacturer_id AND wc.item_price = $item->item_price GROUP BY p.id") as $row): ?>
+                                    <tr>
+                                        <td><a href="<?= viv('card/content-9') . "?pk=" . $row['visit_id'] ?>"><?= addZero($row['id']) ?></a></td>
+                                        <td><?= patient_name($row) ?></td>
+                                        <td class="text-right"><?= number_format($row['qty']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
             </div>
 
         </div>

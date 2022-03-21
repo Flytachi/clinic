@@ -406,14 +406,14 @@
         "is_parent": null,
         "parent_id": null,
         "module": null,
-        "route": "pharmacy\/application",
-        "icon": "icon-clipboard6",
-        "name": "\u0417\u0430\u044f\u0432\u043a\u0438",
-        "is_active": "[\"pharmacy\/application\"]",
+        "route": "reports\/index",
+        "icon": "icon-stack-text",
+        "name": "\u041e\u0442\u0447\u0451\u0442\u044b",
+        "is_active": "[\"reports\/index\"]",
         "is_division": null,
-        "script": "SELECT DISTINCT warehouse_id_from, warehouse_id_in FROM warehouse_storage_applications WHERE status = 2",
+        "script": null,
         "script_item": null,
-        "badge_class": "badge bg-blue badge-pill ml-auto"
+        "badge_class": null
     },
     {
         "id": 27,

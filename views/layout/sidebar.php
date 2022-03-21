@@ -155,7 +155,7 @@
                         <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['warehouse_name'] ?></div> <i class="icon-menu" title="Main"></i></li>
                     
                         <li class="nav-item">
-                            <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                            <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple <?= viv_link('warehouse/index') ?>">
                                 <i class="icon-store"></i>
                                 <span>Склад</span>
                             </a>
@@ -163,7 +163,7 @@
 
                         <?php if($side_warehouse['is_application']): ?>
                             <li class="nav-item">
-                                <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple <?= viv_link('warehouse/application') ?>">
                                     <i class="icon-file-text3"></i>
                                     <span>Заявки</span>
 
@@ -199,9 +199,14 @@
 
                         <?php if($side_warehouse['is_transaction']): ?>
                             <li class="nav-item">
-                                <a href="<?= viv('warehouse/transaction') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                                <a href="<?= viv('warehouse/transaction') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple <?= viv_link('warehouse/transaction') ?>">
                                     <i class="icon-clipboard6"></i>
                                     <span>Перемещение</span>
+                                    <?php $si_ware = $db->query("SELECT DISTINCT warehouse_id_in FROM warehouse_storage_applications WHERE warehouse_id_from = {$side_warehouse['warehouse_id']} AND status = 2")->rowCount() ?>
+                                    <?php if($si_ware): ?>
+                                        <span class="badge bg-blue badge-pill ml-auto"><?= $si_ware ?></span>
+                                    <?php endif; ?>
+                                    <?php unset($si_ware); ?>
                                 </a>
                             </li>
                         <?php endif; ?>
