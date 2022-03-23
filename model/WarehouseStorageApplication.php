@@ -35,7 +35,7 @@ class WarehouseStorageApplication extends Model
 
             // Обработка транксации
             importModel('WarehouseStorageTransaction');
-            (new WarehouseStorageTransaction)->addTransaction($this->getPost('warehouse_id_in'), $session->session_id, $this->getPost('item'));
+            (new WarehouseStorageTransaction)->addTransactionMoving($this->getPost('warehouse_id_in'), $session->session_id, $this->getPost('item'));
             
         }
     }

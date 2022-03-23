@@ -3,8 +3,6 @@
 use Mixin\HellCrud;
 use Mixin\Model;
 
-use function Mixin\error;
-
 class WarehouseStorageTransaction extends Model
 {
     public $table = 'warehouse_storage_transactions';
@@ -147,7 +145,35 @@ class WarehouseStorageTransaction extends Model
         if (!is_numeric(HellCrud::insert($this->table, $post))) $this->error('Ошибка при создании транзакции');
     }
 
-    public function addTransaction(Int $warehouse_in, Int $responsible, Array $items, $comment = null)
+    private function transactionSold()
+    {
+        $obj = $this->db->query("SELECT * FROM $this->tStorage WHERE id = " . $this->getPost('item_id'))->fetch();
+        if(!$obj) $this->error('Препарат не найден');
+
+        // Update vs Delete storages
+        if ($obj['item_qty'] != $this->getPost('item_qty')) {
+            $q = HellCrud::update($this->tStorage, array('item_qty' => $obj['item_qty']-$this->getPost('item_qty')), $obj['id']);
+            if ( !is_numeric($q) and $q <= 0 ) $this->error('Ошибка при удалении препарата');
+        } else {
+            if (HellCrud::delete($this->tStorage, $obj['id']) <= 0 ) $this->error('Ошибка при удалении препарата');
+        }
+
+        // Create transaction
+        $post = array(
+            'warehouse_id_from' => $obj['warehouse_id'],
+            'item_name' => $this->db->query("SELECT name FROM $this->tItemName WHERE id = {$obj['item_name_id']}")->fetchColumn(),
+            'item_manufacturer' => $this->db->query("SELECT manufacturer FROM $this->tItemManufacturer WHERE id = {$obj['item_manufacturer_id']}")->fetchColumn(),
+            'item_qty' => $this->getPost('item_qty'),
+            'item_price' => $obj['item_price'],
+            'is_sold' => 1,
+            'responsible_id' => $this->getPost('responsible_id'),
+            'cost' => $this->getPost('item_qty') * $obj['item_price'],
+            'comment' => $this->getPost('comment'),
+        );
+        if (!is_numeric(HellCrud::insert($this->table, $post))) $this->error('Ошибка при создании транзакции');
+    }
+
+    public function addTransactionMoving(Int $warehouse_in, Int $responsible, Array $items, $comment = null)
     {
         $this->setPost(array(
             'warehouse_id_in' => $warehouse_in,
@@ -160,6 +186,20 @@ class WarehouseStorageTransaction extends Model
                 $this->setPostItem('item_qty', $qty);
                 $this->transactionMoving();
             }
+        }
+    }
+
+    public function addTransactionSold(Int $warehouse, Int $responsible, Array $item, $comment = null)
+    {
+        if ($item['qty'] > 0) {
+            $this->setPost(array(
+                'warehouse_id' => $warehouse,
+                'item_id' => $item['id'],
+                'item_qty' => $item['qty'],
+                'responsible_id' => $responsible,
+                'comment' => $comment
+            ));
+            $this->transactionSold();
         }
     }
 

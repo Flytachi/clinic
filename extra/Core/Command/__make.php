@@ -50,6 +50,7 @@ class __Make
 
     private function create_file($path, $code = "")
     {
+        if (!is_dir($path)) mkdir($path);
         $name = $this->UC_word($this->name);
         $file_name = "$path/$name.php";
         if (!file_exists($file_name)) {

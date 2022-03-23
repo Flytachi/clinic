@@ -18,6 +18,6 @@ $pack = $db->query("SELECT service_title, service_report, service_id FROM visit_
 
 <div class="modal-footer">
     <button onclick="Print('<?= prints('document-3') ?>?pk=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm"><i class="icon-printer2"></i></button>
-    <button onclick="Print('<?= prints('document-5') ?>?pk=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm btn-danger"><i class="icon-printer2"></i></button>
+    <button onclick="Print('<?= prints('document-5') ?>?pk=<?= $_GET['pk'] ?>')" type="button" class="btn btn-sm bg-brown"><i class="icon-printer2"></i></button>
     <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Закрыть</button>
 </div>

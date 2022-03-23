@@ -111,7 +111,7 @@ $tb->where_or_serch($search_array)->set_limit(20);
 	<!-- /page content -->
 
 	<div id="modal_result_show" class="modal fade" tabindex="-1">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog modal-full">
 			<div class="<?= $classes['modal-global_content'] ?>" id="modal_result_show_content">
 
 			</div>

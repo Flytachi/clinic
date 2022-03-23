@@ -255,11 +255,7 @@ require_once 'callback.php';
 													<?php endforeach; ?>
 												</ul>
 											</td>
-											<?php if($patient->order): ?>
-												<td class="text-right text-secondary"><?= number_format($total_bed) ?></td>
-											<?php else: ?>
-												<td class="text-right text-<?= number_color($total_bed, true) ?>"><?= number_format($total_bed) ?></td>
-											<?php endif; ?>
+											<td class="text-right text-<?= number_color($total_bed, true) ?>"><?= number_format($total_bed) ?></td>
 										</tr>
 										<tr>
 											<td><strong style="font-size: 15px;">Услуги</strong></td>

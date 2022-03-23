@@ -7,7 +7,7 @@ try {
     include 'Include/Table.php';
 
 } catch (\Throwable $th) {
-    dieConection($th); 
+    dieConnection($th); 
 }
 
 ?>

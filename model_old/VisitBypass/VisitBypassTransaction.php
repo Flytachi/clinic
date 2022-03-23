@@ -1,5 +1,6 @@
 <?php
 
+use Mixin\Hell;
 use Mixin\ModelOld;
 
 class VisitBypassTransactionModel extends ModelOld
@@ -47,17 +48,16 @@ class VisitBypassTransactionModel extends ModelOld
             var warehouse = null;
 
             function ChangeWare(params) {
-                
                 if (params) {
                     $.ajax({
                         type: "POST",
-                        url: "<?= up_url(1, 'WarehouseApplication') ?>",
+                        url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'frame')) ?>",
                         data: {
                             warehouse_id_from: params,
                             status: 1,
                         },
                         success: function (result) {
-                            document.querySelector("#panel-frame").innerHTML = result;
+                            $('#panel-frame').html(result);
                         },
                     });
                 }
@@ -65,14 +65,14 @@ class VisitBypassTransactionModel extends ModelOld
                 warehouse = params;
             }
 
-            function __WarehouseApplication__search(input){
+            function __WarehouseStorage__search(input){
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(1, 'WarehouseStoragePanel') ?>",
+                    url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'itemSearch')) ?>",
                     data: {
                         warehouse_id_from: warehouse,
                         default: true,
-                        search: input.value, 
+                        search: input.value,
                     },
                     success: function (result) {
                         $('#panel-items').html(result);
@@ -80,7 +80,7 @@ class VisitBypassTransactionModel extends ModelOld
                 });
             }
 
-            function __WarehouseStoragePanel__select(btn, index) {
+            function __WarehouseStorage__select(btn, index) {
                 btn.disabled = true;
 
                 $.ajax({
@@ -97,7 +97,6 @@ class VisitBypassTransactionModel extends ModelOld
                         item_qty: document.querySelector('#qty_input_'+index).value,
                     },
                     success: function (result) {
-                        console.log(result);
                         var data = JSON.parse(result);
                         if (data.status == "success") {
                             $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
@@ -126,16 +125,12 @@ class VisitBypassTransactionModel extends ModelOld
         global $db, $session;
         $this->where = "warehouse_id = {$this->post['warehouse_id']} AND item_die_date > CURRENT_DATE() AND item_name_id = {$this->post['item_name_id']}";
         
-        if ($this->post['item_manufacturer_id']) {
-            // $item = $db->query("SELECT * FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
-            $this->where .= " AND item_manufacturer_id = {$this->post['item_manufacturer_id']}";
-        }
-        if ($this->post['item_price']) {
-            // $item = $db->query("SELECT * FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
-            $this->where .= " AND item_price = {$this->post['item_price']}";
-        }
+        if ($this->post['item_manufacturer_id']) $this->where .= " AND item_manufacturer_id = {$this->post['item_manufacturer_id']}";
+        if ($this->post['item_price']) $this->where .= " AND item_price = {$this->post['item_price']}";
+
         $qty = $db->query("SELECT SUM(item_qty) FROM $this->storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetchColumn();
-        
+        $db->beginTransaction();
+
         if ($qty >= $this->post['item_qty']) {
             $change_qty = $this->post['item_qty'];
 
@@ -143,7 +138,8 @@ class VisitBypassTransactionModel extends ModelOld
                 $temp_qty = $item['item_qty'] - $change_qty;
                 if ($temp_qty == 0) {
                     // Delete
-                    Mixin\delete($this->storage, $item['id']);
+                    importModel('WarehouseStorageTransaction');
+                    (new WarehouseStorageTransaction)->addTransactionSold($this->post['warehouse_id'], $session->session_id, array('id' => $item['id'], 'qty' => $change_qty), 'sale');
                     Mixin\insert($this->table, array(
                         'visit_id' => $this->post['visit_id'],
                         'responsible_id' => $session->session_id,
@@ -158,7 +154,8 @@ class VisitBypassTransactionModel extends ModelOld
                 }else{
                     // Update
                     if ($temp_qty > 0) {
-                        Mixin\update($this->storage, array('item_qty' => $temp_qty), $item['id']);
+                        importModel('WarehouseStorageTransaction');
+                        (new WarehouseStorageTransaction)->addTransactionSold($this->post['warehouse_id'], $session->session_id, array('id' => $item['id'], 'qty' => $change_qty), 'sale');
                         Mixin\insert($this->table, array(
                             'visit_id' => $this->post['visit_id'],
                             'responsible_id' => $session->session_id,
@@ -172,7 +169,8 @@ class VisitBypassTransactionModel extends ModelOld
                         break;
                     }else {
                         // Delete
-                        Mixin\delete($this->storage, $item['id']);
+                        importModel('WarehouseStorageTransaction');
+                        (new WarehouseStorageTransaction)->addTransactionSold($this->post['warehouse_id'], $session->session_id, array('id' => $item['id'], 'qty' => $item['item_qty']), 'sale');
                         Mixin\insert($this->table, array(
                             'visit_id' => $this->post['visit_id'],
                             'responsible_id' => $session->session_id,
@@ -192,6 +190,7 @@ class VisitBypassTransactionModel extends ModelOld
             $this->error("Требуемое количество превышает имеющиеся!");
         }
 
+        $db->commit();
         $this->success();
     }
 
