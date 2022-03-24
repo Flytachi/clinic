@@ -398,6 +398,12 @@ class Visit extends Model
                             <?php endif; ?>
                         </div>
 
+                        <?php if(config('registry_appointment_discharge')): ?>
+                            <div class="form-group">
+                                <input type="date" name="discharge_date" class="form-control daterange-single" required>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="<?= $classes['card'] ?>">
 
                             <div class="<?= $classes['card-header'] ?>">
@@ -551,6 +557,11 @@ class Visit extends Model
         <?php
     }
 
+    public function resort()
+    {
+        $this->dd();
+    }
+
     public function ajax()
     {
         global $classes;
@@ -645,6 +656,7 @@ class Visit extends Model
             'direction' => ( $this->getPost('direction') ) ? $this->getPost('direction') : null,
             'division_id' => ( $this->getPost('direction') ) ? $this->getPost('division_id') : null,
             'last_update' => date("Y-m-d H:i:s"),
+            'discharge_date' => ( $this->getPost('discharge_date') ) ? $this->getPost('discharge_date') : null,
         );
         $obj = HellCrud::insert_or_update($this->table, $post, 'patient_id', 'completed IS NULL');
         if (!is_numeric($obj)) $this->error("Ошибка создании или обновлении визита!");

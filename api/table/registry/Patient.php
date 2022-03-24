@@ -82,6 +82,10 @@ $tb->Order("p.add_date DESC")->Limit(20);
                             <?php if ( !$row->status ): ?>
                                 <a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'stationar', 'patient_id' => $row->id, 'application' => $row->application)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
                             <?php endif; ?>
+                            <?php if ( module('resort') ): ?>
+                                <a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'resort', 'patient_id' => $row->id)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Курорт)</a>
+                            <?php endif; ?>
+
                             <a href="<?= viv('archive/all/list_visit') ?>?id=<?= $row->id ?>" class="dropdown-item"><i class="icon-users4"></i> Визиты</a>
                             <?php if ( isset($stm_dr['id']) and $stm_dr['direction'] ): ?>
                                 <a onclick="Print('<?= prints('document-5') ?>?pk=<?= $stm_dr['id'] ?>')" class="dropdown-item"><i class="icon-list"></i> Стационарный лист</a>
