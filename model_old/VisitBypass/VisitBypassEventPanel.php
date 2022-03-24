@@ -261,6 +261,7 @@ class VisitBypassEventsPanel extends ModelOld
 
         Mixin\insert($this->_bypass_transactions, array(
             'visit_id' => $this->visit,
+            'warehouse_id' => $app->warehouse_id,
             'visit_bypass_event_id' => $this->pk,
             'responsible_id' => $session->session_id,
             'patient_id' => $this->patient,

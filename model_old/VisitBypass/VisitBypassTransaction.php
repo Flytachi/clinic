@@ -142,6 +142,7 @@ class VisitBypassTransactionModel extends ModelOld
                     (new WarehouseStorageTransaction)->addTransactionSold($this->post['warehouse_id'], $session->session_id, array('id' => $item['id'], 'qty' => $change_qty), 'sale');
                     Mixin\insert($this->table, array(
                         'visit_id' => $this->post['visit_id'],
+                        'warehouse_id' => $this->post['warehouse_id'],
                         'responsible_id' => $session->session_id,
                         'patient_id' => $this->post['patient_id'],
                         'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
@@ -158,6 +159,7 @@ class VisitBypassTransactionModel extends ModelOld
                         (new WarehouseStorageTransaction)->addTransactionSold($this->post['warehouse_id'], $session->session_id, array('id' => $item['id'], 'qty' => $change_qty), 'sale');
                         Mixin\insert($this->table, array(
                             'visit_id' => $this->post['visit_id'],
+                            'warehouse_id' => $this->post['warehouse_id'],
                             'responsible_id' => $session->session_id,
                             'patient_id' => $this->post['patient_id'],
                             'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
@@ -173,6 +175,7 @@ class VisitBypassTransactionModel extends ModelOld
                         (new WarehouseStorageTransaction)->addTransactionSold($this->post['warehouse_id'], $session->session_id, array('id' => $item['id'], 'qty' => $item['item_qty']), 'sale');
                         Mixin\insert($this->table, array(
                             'visit_id' => $this->post['visit_id'],
+                            'warehouse_id' => $this->post['warehouse_id'],
                             'responsible_id' => $session->session_id,
                             'patient_id' => $this->post['patient_id'],
                             'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = {$item['item_name_id']}")->fetchColumn(),
