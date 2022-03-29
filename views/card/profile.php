@@ -1,4 +1,5 @@
 <?php
+//sda
 if ( isset($_GET['pk']) ) {
     $agr = "?pk=".$_GET['pk'];
     $activity = False;
