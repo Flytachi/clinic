@@ -1214,5 +1214,21 @@
         "script": null,
         "script_item": null,
         "badge_class": null
+    },
+    {
+        "id": 78,
+        "level": 7,
+        "sort": 5,
+        "is_parent": null,
+        "parent_id": null,
+        "module": null,
+        "route": "reports\/index",
+        "icon": "icon-stack-text",
+        "name": "\u041e\u0442\u0447\u0451\u0442",
+        "is_active": "[\"reports\/index\"]",
+        "is_division": null,
+        "script": null,
+        "script_item": null,
+        "badge_class": null
     }
 ]
