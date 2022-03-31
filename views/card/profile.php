@@ -279,16 +279,18 @@ $region = (new Region)->byId($patient->region_id);
                         <div class="col-md-6">
                             <div class="form-group row">
 
-                                <?php if ($patient->completed): ?>
-                                    <label class="col-md-4"><b>Прибыль:</b></label>
-                                    <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
-                                        <?= number_format($vps['balance']) ?>
-                                    </div>
-                                <?php else: ?>
-                                    <label class="col-md-4"><b>Баланс:</b></label>
-                                    <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
-                                        <?= number_format($vps['result']) ?>
-                                    </div>
+                                <?php if(config('card_stationar_balance_show')): ?>
+                                    <?php if ($patient->completed): ?>
+                                        <label class="col-md-4"><b>Прибыль:</b></label>
+                                        <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
+                                            <?= number_format($vps['balance']) ?>
+                                        </div>
+                                    <?php else: ?>
+                                        <label class="col-md-4"><b>Баланс:</b></label>
+                                        <div class="col-md-8 text-right <?= $class_card_balance ?>" id="id_selector_balance" data-balance_status="<?= $id_selector_balance ?>">
+                                            <?= number_format($vps['result']) ?>
+                                        </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
 
                                 <label class="col-md-3"><b>Прибывание:</b></label>
@@ -320,7 +322,7 @@ $region = (new Region)->byId($patient->region_id);
 
             </div>
 
-            <?php if ($activity and $patient->direction and is_grant()): ?>
+            <?php if ($activity and config('card_stationar_update_discharge') and $patient->direction and is_grant()): ?>
                 <div id="modal_discharge_date" class="modal fade" tabindex="-1">
                     <div class="modal-dialog modal-md">
                         <div class="<?= $classes['modal-global_content'] ?>">
@@ -424,7 +426,7 @@ $region = (new Region)->byId($patient->region_id);
                 <div class="col-md-12">
                     <div class="text-right">
                         <button onclick="Check_kwin('<?= viv('card/journal') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-journal'] ?>"><i class="icon-book mr-1"></i> Дневник</button>
-                        <button onclick="Print('<?= prints('document-5').'?pk='.$patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>"><i class="icon-paste2 mr-1"></i> АКТ</button>
+                        <button onclick="Print('<?= prints('document-4').'?pk='.$patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>"><i class="icon-paste2 mr-1"></i> АКТ</button>
                         <button onclick="Check_kwin('<?= viv('doctor/report-2') ?>?pk=<?= $patient->visit_id ?>')" type="button" class="<?= $classes['btn-completed'] ?>"><i class="icon-paste2 mr-1"></i> Выписка</button>
                     </div>
                 </div>
@@ -457,7 +459,21 @@ $region = (new Region)->byId($patient->region_id);
     </div>
 
 </div>
-<?php if ($activity): ?>
+
+<?php if($patient->discharge_date <= date("Y-m-d")): ?>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            swal({
+                position: "top",
+                title: "Пациента пора выписывать!",
+                text: 'Сегодняшняя дата совпадает или опережает дату выписки.',
+                type: "info",
+            });
+        });
+    </script>
+<?php endif; ?>
+
+<?php if (config('card_stationar_balance_notice') and $activity): ?>
     <script type="text/javascript">
         $( document ).ready(function() {
             $('.cl_btn_balance').click(function(events) {

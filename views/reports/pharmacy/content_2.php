@@ -90,12 +90,12 @@ $header = "Отчёт аптеки по складам";
 					<?php
 					$_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 					$_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
-					$sql = "SELECT * FROM warehouse_storage_transactions WHERE (warehouse_id_from = {$_POST['warehouse_id']} OR warehouse_id_in = {$_POST['warehouse_id']})";
+					$sql = "SELECT * FROM visit_bypass_transactions WHERE warehouse_id = {$_POST['warehouse_id']}";
 					// Обработка
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
-					$total_cash = $total_card = $total_transfer = $total_cost = 0;
+					$total_price = 0;
 					?>
 
 					<div class="<?= $classes['card'] ?>">
@@ -120,116 +120,39 @@ $header = "Отчёт аптеки по складам";
 								<table class="table table-hover table-sm" id="table">
 									<thead>
 										<tr class="<?= $classes['table-thead'] ?>">
-											<th class="text-center">Тип расхода</th>
 											<th>Дата</th>
 											<th>Ответственный</th>
 											<th>Препарат</th>
 											<th>Поставщик</th>
+											<th>Пациент</th>
 											<th class="text-right">Стоимость ед.</th>
 											<th class="text-right">Кол-во</th>
-											<th class="text-right">Наличные</th>
-											<th class="text-right">Терминал</th>
-											<th class="text-right">Перечисление</th>
 											<th class="text-right">Сумма</th>
 										</tr>
 									</thead>
 									<tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
-												<td class="text-center">
-													<?php if ($row['is_moving']): ?>
-														<span class="badge badge-primary">Перевод</span>
-													<?php endif; ?>
-													<?php if ($row['is_written_off']): ?>
-														<span class="badge badge-danger">Списание</span>
-													<?php endif; ?>
-													<?php if ($row['is_sold']): ?>
-														<span class="badge badge-success">Продажа</span>
-													<?php endif; ?>
-												</td>
 												<td><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></td>
 												<td><?= get_full_name($row['responsible_id']) ?></td>
 												<td><?= $row['item_name'] ?></td>
 												<td><?= $row['item_manufacturer'] ?></td>
-												<td class="text-right"><?= number_format($row['item_price']) ?></td>
+												<td><?= patient_name($row['patient_id']) ?></td>
+												<td class="text-right"><?= number_format($row['item_cost']) ?></td>
+												<td class="text-right"><?= number_format($row['item_qty']) ?></td>
 												<td class="text-right">
-													<?= number_format($row['item_qty']) ?>
-													<?php if($row['warehouse_id_in'] == $_POST['warehouse_id']): ?>
-														<i class="text-success icon-arrow-up7"></i>
+													<?php if ($row['is_price']): ?>
+														<?php $total_price += $row['price']; ?>
+														<span class="text-success"><?= number_format($row['price'], 1) ?></span>
 													<?php else: ?>
-														<i class="text-danger icon-arrow-down7"></i>
+														<span class="text-secondary"><?= number_format($row['price'], 1) ?></span>
 													<?php endif; ?>
 												</td>
-												<?php if($row['is_moving']): ?>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['price_cash'], 1) ?></span>
-													</td>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['price_card'], 1) ?></span>
-													</td>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['price_transfer'], 1) ?></span>
-													</td>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['cost'], 1) ?></span>
-													</td>
-												<?php elseif($row['is_written_off']): ?>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['price_cash'], 1) ?></span>
-													</td>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['price_card'], 1) ?></span>
-													</td>
-													<td class="text-right">
-														<span class="text-secondary"><?= number_format($row['price_transfer'], 1) ?></span>
-													</td>
-													<td class="text-right">
-														<span class="text-secondary">
-															<?php $total_cost += -$row['cost']; if (-$row['cost'] > 0): ?>
-																<span class="text-success"><?= number_format(-$row['cost'], 1) ?></span>
-															<?php else: ?>
-																<span class="text-danger"><?= number_format(-$row['cost'], 1) ?></span>
-															<?php endif; ?>
-														</span>
-													</td>
-												<?php else: ?>
-													<td class="text-right">
-														<?php $total_cash += -$row['price_cash']; if (-$row['price_cash'] > 0): ?>
-															<span class="text-success"><?= number_format(-$row['price_cash'], 1) ?></span>
-														<?php else: ?>
-															<span class="text-danger"><?= number_format(-$row['price_cash'], 1) ?></span>
-														<?php endif; ?>
-													</td>
-													<td class="text-right">
-														<?php $total_card += -$row['price_card']; if (-$row['price_card'] > 0): ?>
-															<span class="text-success"><?= number_format(-$row['price_card'], 1) ?></span>
-														<?php else: ?>
-															<span class="text-danger"><?= number_format(-$row['price_card'], 1) ?></span>
-														<?php endif; ?>
-													</td>
-													<td class="text-right">
-														<?php $total_transfer += -$row['price_transfer']; if (-$row['price_transfer'] > 0): ?>
-															<span class="text-success"><?= number_format(-$row['price_transfer'], 1) ?></span>
-														<?php else: ?>
-															<span class="text-danger"><?= number_format(-$row['price_transfer'], 1) ?></span>
-														<?php endif; ?>
-													</td>
-													<td class="text-right">
-														<?php $total_cost += -$row['cost']; if (-$row['cost'] > 0): ?>
-															<span class="text-success"><?= number_format(-$row['cost'], 1) ?></span>
-														<?php else: ?>
-															<span class="text-danger"><?= number_format(-$row['cost'], 1) ?></span>
-														<?php endif; ?>
-													</td>
-												<?php endif; ?>
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary text-right">
 											<th colspan="7">Итого:</th>
-											<th><?= number_format($total_cash, 1) ?></th>
-											<th><?= number_format($total_card, 1) ?></th>
-											<th><?= number_format($total_transfer, 1) ?></th>
-											<th><?= number_format($total_cost, 1) ?></th>
+											<th><?= number_format($total_price); ?></th>
 										</tr>
 									</tbody>
 								</table>

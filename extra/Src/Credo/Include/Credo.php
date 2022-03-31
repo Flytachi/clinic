@@ -71,7 +71,7 @@ abstract class Credo implements CredoInterface
          
      * -----------------------------------------------------------------------
      * 
-     * @version 7.1
+     * @version 7.2
      */
     
     private String $CRD_sql;

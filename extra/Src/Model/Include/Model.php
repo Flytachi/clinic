@@ -8,7 +8,7 @@ abstract class Model extends Credo implements ModelInterface
      * 
      * Model
      * 
-     * @version 9.1
+     * @version 9.3
      */
 
     private $get = [];
@@ -17,12 +17,13 @@ abstract class Model extends Credo implements ModelInterface
     protected $table = '';
 
     use 
-        ModelSetter, 
-        ModelGetter,
+        ModelGet, 
+        ModelPost,
+        ModelFiles,
         ModelTSave, 
         ModelTUpdate, 
         ModelTDelete,
-        ModelTResponce,
+        ModelTJsonResponce,
         ModelHook;
 
 
@@ -124,6 +125,7 @@ abstract class Model extends Credo implements ModelInterface
 
     final public function stop()
     {
+        if($this->db->inTransaction()) $this->db->rollBack();
         exit;
     }
 

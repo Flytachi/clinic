@@ -12,10 +12,10 @@ dd($tb->list());
 * -----------------------------------------------------------------------
 
     Поле для поиска
-        <input type="text" value="" id="search_input">
+        <input type="text" id="search_input">
 
     Место выведения результата
-        <div class="card-body" id="search_display"></div>
+        <div id="search_display"></div>
 
 
 * -----------------------------------------------------------------------
@@ -31,7 +31,7 @@ dd($tb->list());
 
                 $.ajax({
                     type: "GET",
-                    url: "<?= api('table/registry/Patient') ?>"+params,
+                    url: "<?= api('table/_TableIndex_') ?>"+params,
                     success: function (result) {
                         isLoaded(display);
                         display.innerHTML = result;
@@ -52,7 +52,7 @@ dd($tb->list());
     Добавить в ajax запрос 
         data: {
             CRD_search: document.querySelector('#search_input').value,
-        }
+        },
 
     JavaScript
         $("#search_input").keyup(() => credoSearch());

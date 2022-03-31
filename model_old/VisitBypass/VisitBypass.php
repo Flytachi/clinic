@@ -1,5 +1,6 @@
 <?php
 
+use Mixin\Hell;
 use Mixin\ModelOld;
 
 class VisitBypassModel extends ModelOld
@@ -123,17 +124,16 @@ class VisitBypassModel extends ModelOld
             var warehouse = null;
 
             function ChangeWare(params) {
-                
                 if (params) {
                     $.ajax({
                         type: "POST",
-                        url: "<?= up_url(1, 'WarehouseApplication') ?>",
+                        url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'frame')) ?>",
                         data: {
                             warehouse_id_from: params,
                             status: 1,
                         },
                         success: function (result) {
-                            document.querySelector("#panel-frame").innerHTML = result;
+                            $('#panel-frame').html(result);
                         },
                     });
                 }
@@ -141,14 +141,14 @@ class VisitBypassModel extends ModelOld
                 warehouse = params;
             }
 
-            function __WarehouseApplication__search(input){
+            function __WarehouseStorage__search(input){
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(1, 'WarehouseStoragePanel') ?>",
+                    url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'itemSearch')) ?>",
                     data: {
                         warehouse_id_from: warehouse,
                         default: true,
-                        search: input.value, 
+                        search: input.value,
                     },
                     success: function (result) {
                         $('#panel-items').html(result);
@@ -156,7 +156,7 @@ class VisitBypassModel extends ModelOld
                 });
             }
 
-            function __WarehouseStoragePanel__select(btn, index) {
+            function __WarehouseStorage__select(btn, index) {
                 btn.disabled = true;
 
                 var data = {

@@ -5,7 +5,7 @@ try {
     include 'Include/connect.php';
 
 } catch (\Throwable $th) {
-    dieConection($th); 
+    dieConnection($th); 
 }
 
 ?>

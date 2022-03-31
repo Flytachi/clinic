@@ -76,7 +76,7 @@ is_module('module_pharmacy');
 									  		<tr>
                                         		<td><?= $i++ ?></td>
   											  	<td><?= $row['item_name'] ?></td>
-                                        		<td><?= $row['item_cost'] ?></td>
+                                        		<td><?= number_format($row['item_cost']) ?></td>
   											  	<td>
   											  		<?php
 	  													$total_total_price += $row['price'];

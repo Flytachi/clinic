@@ -255,43 +255,22 @@ class VisitBypassEventsPanel extends ModelOld
     {
         global $db, $session;
         $item = $db->query("SELECT * FROM $this->_storage WHERE $this->where ORDER BY item_die_date ASC, item_price ASC")->fetch();
-        $qty_sold = $item['item_qty'] - $app->item_qty;
 
-        if ($qty_sold > 0) {
-            // Update
-            Mixin\update($this->_storage, array('item_qty' => $qty_sold), $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
-                'visit_id' => $this->visit,
-                'visit_bypass_event_id' => $this->pk,
-                'responsible_id' => $session->session_id,
-                'patient_id' => $this->patient,
-                'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
-                'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_qty' => $app->item_qty,
-                'item_cost' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : $item['item_price'],
-                'price' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
-            ));
+        importModel('WarehouseStorageTransaction');
+        (new WarehouseStorageTransaction)->addTransactionSold($app->warehouse_id, $session->session_id, array('id' => $item['id'], 'qty' => $app->item_qty), 'event bypass');
 
-        }elseif ($qty_sold == 0) {
-            // Delete
-            Mixin\delete($this->_storage, $item['id']);
-            Mixin\insert($this->_bypass_transactions, array(
-                'visit_id' => $this->visit,
-                'visit_bypass_event_id' => $this->pk,
-                'responsible_id' => $session->session_id,
-                'patient_id' => $this->patient,
-                'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
-                'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
-                'item_qty' => $app->item_qty,
-                'item_cost' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : $item['item_price'],
-                'price' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
-            ));
-
-        }else{
-            // Convert
-            $this->error("Ошибка при работе со складом");
-            $this->stop();
-        }
+        Mixin\insert($this->_bypass_transactions, array(
+            'visit_id' => $this->visit,
+            'warehouse_id' => $app->warehouse_id,
+            'visit_bypass_event_id' => $this->pk,
+            'responsible_id' => $session->session_id,
+            'patient_id' => $this->patient,
+            'item_name' => $db->query("SELECT name FROM warehouse_item_names WHERE id = $app->item_name_id")->fetchColumn(),
+            'item_manufacturer' => $db->query("SELECT manufacturer FROM warehouse_item_manufacturers WHERE id = $app->item_manufacturer_id")->fetchColumn(),
+            'item_qty' => $app->item_qty,
+            'item_cost' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : $item['item_price'],
+            'price' => (isset($app->warehouse_order) and $app->warehouse_order) ? 0 : ($item['item_price'] * $app->item_qty),
+        ));
         // Удаляем бронь
         Mixin\delete($this->_event_applications, $app->id);
         

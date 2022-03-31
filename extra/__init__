@@ -5,8 +5,9 @@ if (PHP_VERSION == 7.4) {
     
     require 'Core/Command/__component.php';
     require 'Core/Command/__cfg.php';
+    require 'defines.php';
     new __Component("init");
-    new __Cfg("setting");
+    new __Cfg("init");
     new __Cfg("gen");
 
 }else {

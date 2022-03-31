@@ -1,34 +1,35 @@
 <?php
-require_once '../../tools/warframe.php';
+
+use Mixin\Hell;
+
+require '../../../tools/warframe.php';
 $session->is_auth();
 
-$is_grant = $_GET['is_grant'];
+importModel('WarehouseStorageApplication');
 
-$tb = new Table($db, "warehouse_storage_applications wa");
-$search = $tb->get_serch();
-$tb->set_data('wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.item_qty, wa.status, wa.add_date')->additions("LEFT JOIN warehouse_item_names win ON(win.id=wa.item_name_id)");
-if ($is_grant) {
-	$where_search = array(
-		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3", 
-		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+$tb = new WarehouseStorageApplication('wa');
+$search = $tb->getSearch();
+$tb->Data('wa.id, wa.responsible_id, win.name, wa.item_manufacturer_id, wa.item_qty, wa.status, wa.add_date');
+$tb->JoinLEFT('warehouse_item_names win', 'win.id=wa.item_name_id');
+if ($_GET['is_grant']) {
+	$where = array(
+		"wa.warehouse_id_in = {$_GET['warehouse']} AND wa.status != 3", 
+		"wa.warehouse_id_in = {$_GET['warehouse']} AND wa.status != 3 AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 	);
 } else {
-	$where_search = array(
-		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND wa.responsible_id = $session->session_id", 
-		"wa.warehouse_id_in = {$_GET['pk']} AND wa.status != 3 AND wa.responsible_id = $session->session_id AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
+	$where = array(
+		"wa.warehouse_id_in = {$_GET['warehouse']} AND wa.status != 3 AND wa.responsible_id = $session->session_id", 
+		"wa.warehouse_id_in = {$_GET['warehouse']} AND wa.status != 3 AND wa.responsible_id = $session->session_id AND ( LOWER(win.name) LIKE LOWER('%$search%') )"
 	);
 }
-
-
-$tb->where_or_serch($where_search)->order_by("win.name ASC")->set_limit(20);
-$tb->set_self(viv('warehouse/application'));  
+$tb->Where($where)->Order("win.name ASC")->Limit(20);
 ?>
 <div class="table-responsive">
     <table class="table table-hover">
         <thead>
             <tr class="<?= $classes['table-thead'] ?>">
                 <th style="width: 50px">#</th>
-                <?php if($is_grant): ?>
+                <?php if($_GET['is_grant']): ?>
                     <th style="width:200px">Заявитель</th>
                 <?php endif; ?>
                 <th>Наименование</th>
@@ -40,10 +41,10 @@ $tb->set_self(viv('warehouse/application'));
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($tb->get_table(1) as $row): ?>
+            <?php foreach ($tb->list(1) as $row): ?>
                 <tr id="TR_item_<?= $row->count ?>">
                     <td><?= $row->count ?></td>
-                    <?php if($is_grant): ?>
+                    <?php if($_GET['is_grant']): ?>
                         <td><?= get_full_name($row->responsible_id) ?></td>
                     <?php endif; ?>
                     <td><?= $row->name ?></td>
@@ -71,14 +72,14 @@ $tb->set_self(viv('warehouse/application'));
                     </td>
                     <td class="text-right"s>
                         <div class="list-icons">
-                            <?php if ( ($row->responsible_id == $session->session_id and $row->status == 1) or ($is_grant and in_array($row->status, [1,2,4])) ): ?>
-                                <a href="#" onclick="Delete(<?= $row->count ?>, '<?= del_url($row->id, 'WarehouseApplication') ?>')" onclick="return confirm('Вы уверены что хотите удалить заявку?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
+                            <?php if ( ($row->responsible_id == $session->session_id and $row->status == 1) or ($_GET['is_grant'] and in_array($row->status, [1,2,4])) ): ?>
+                                <a href="#" onclick="Delete(<?= $row->count ?>, '<?= Hell::apiDelete('WarehouseStorageApplication', $row->id) ?>')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
                             <?php endif; ?>
-                            <?php if ($is_grant): ?>
+                            <?php if ($_GET['is_grant']): ?>
                                 <?php if ( $row->status == 2 ): ?>
                                     <span class="list-icons-item text-success ml-1"><i class="icon-clipboard2"></i></span>
                                 <?php else: ?>
-                                    <a href="#" onclick="ConfirmApplication(<?= $row->id ?>, <?= $row->count ?>)" class="list-icons-item ml-1"><i class="icon-clipboard"></i></a>
+                                    <a href="#" onclick="ConfirmApplication(<?= $row->count ?>, '<?= Hell::apiAxe('WarehouseStorageApplication', array('id' => $row->id, 'status' => 2)) ?>')" class="list-icons-item ml-1"><i class="icon-clipboard"></i></a>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
@@ -89,4 +90,4 @@ $tb->set_self(viv('warehouse/application'));
     </table>
 </div>
 
-<?php $tb->get_panel(); ?>
+<?php $tb->panel(); ?>

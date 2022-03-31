@@ -19,6 +19,29 @@ trait CredoQuery
         }
     }
 
+    final public function by(Array $params, $item = '')
+    {
+        try {
+            $where = '';
+            foreach ($params as $key => $value) {
+
+                if(is_array($value)) {
+                    $where .= ($where == '') ? "$key IN (" . implode(',', $value) . ") " : "AND $key IN (" . implode(',', $value) . ") ";
+                } else {
+                    $where .= ($where == '') ? "$key = '$value' " : "AND $key = '$value' ";
+                }
+
+            }
+            $this->Where($where);
+            if (!is_array($item)) return $this->get($item);
+            else return call_user_func_array([$this, 'get'], $item);
+
+        } catch (\Throwable $th) {
+            if ($this->CRD_error) $this->error($th);
+            else echo 'Ошибка в генерации скрипта <strong>"BY"</strong>';
+        }
+    }
+
     final public function byId(Int $id, $item = '')
     {
         try {
@@ -145,6 +168,28 @@ trait CredoParams
             if ($this->CRD_search) $this->CRD_where = "WHERE " . $context[1];
             else $this->CRD_where = "WHERE " . $context[0];
             return $this;
+        }else $this->CRD_where = "WHERE " . $context;
+        return $this;
+    }
+
+    final public function Wr($context)
+    {
+        /*
+            Установка зависимостей!
+        */
+        if (is_array($context)) {
+            
+            $this->CRD_where = "WHERE ";
+            foreach ($context as $key => $value) {
+
+                if(is_array($value)) {
+                    $this->CRD_where .= ($this->CRD_where == "WHERE ") ? "$key IN (" . implode(',', $value) . ") " : "AND $key IN (" . implode(',', $value) . ") ";
+                } else {
+                    $this->CRD_where .= ($this->CRD_where == "WHERE ") ? "$key = '$value' " : "AND $key = '$value' ";
+                }
+
+            }
+
         }else $this->CRD_where = "WHERE " . $context;
         return $this;
     }

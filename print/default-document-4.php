@@ -8,7 +8,6 @@ require_once '../tools/warframe.php';
 // Акт Сверки
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT v.id, v.patient_id, v.grant_id, v.parad_id, p.first_name, p.last_name, p.father_name, p.birth_date, v.add_date, v.completed FROM visits v LEFT JOIN patients p ON(p.id=v.patient_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
-    $order = $db->query("SELECT id FROM visit_orders WHERE visit_id = $docs->id")->fetchColumn();
     $total = 0; 
 }else Hell::error('404');
 
@@ -62,13 +61,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         <div class="text-left h3">
             <b>Ф.И.О.: </b><?= patient_name($docs) ?><br>
-            <b>ID Пациента: </b><?= addZero($docs->parent_id) ?><br>
+            <b>ID Пациента: </b><?= addZero($docs->patient_id) ?><br>
             <b>Дата рождения: </b><?= ($docs->birth_date) ? date_f($docs->birth_date) : '<span class="text-muted">Нет данных</span>' ?><br>
             <b>Дата поступления: </b><?= ($docs->add_date) ? date_f($docs->add_date, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
             <b>Дата выписки: </b><?= ($docs->completed) ? date_f($docs->completed, 1) : '<span class="text-muted">Нет данных</span>' ?><br>
-            <?php if($order): ?>
-                <b>Ордер №: </b><?= $order ?><br>
-            <?php endif; ?>
         </div>
 
         <?php if (config("print_document_hr-3")) echo '<div class="my_hr-1" style="border-color:'.config("print_document_hr-3-color").'"></div>' ; ?>
@@ -108,11 +104,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                             </td>
                             
                             <td class="text-right">
-                                <?php if($order): ?>
-                                    0
-                                <?php else: ?>
-                                    <?php $total += $row->time * ($row->cost / 24); echo number_format($row->time * ($row->cost / 24)); ?>
-                                <?php endif; ?>
+                                <?php $total += $row->time * ($row->cost / 24); echo number_format($row->time * ($row->cost / 24)); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

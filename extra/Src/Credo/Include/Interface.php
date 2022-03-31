@@ -5,6 +5,7 @@ namespace Mixin;
 interface CredoInterface
 {
     public function get(String ...$items);
+    public function by(Array $params, $item = '');
     public function byId(Int $id, $item = '');
     public function list(Bool $counter = false);
     public function getId();
@@ -15,6 +16,7 @@ interface CredoInterface
     public function JoinLEFT(String $context = null, String $on = null);
     public function JoinRIGHT(String $context = null, String $on = null);
     public function Where(Mixed $context);
+    public function Wr(Mixed $context);
     public function Order(String $context = null);
     public function Group(String $context = null);
     public function panel();

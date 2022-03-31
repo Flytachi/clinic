@@ -5,13 +5,9 @@ function dieConnection($_error = null)
     die(include dirname(__DIR__) . "/Resource/error.php"); 
 }
 
-function dieConection($_error = null) {
-    die(include dirname(__DIR__) . "/Resource/error.php");
-}
-
 function cfgGet(): array
 {
-    if (!file_exists(cfgPathClose)) dieConection("Configuration file not found.");
+    if (!file_exists(cfgPathClose)) dieConnection("Configuration file not found.");
     return json_decode(zlib_decode(hex2bin( str_replace("\n", "", file_get_contents(cfgPathClose)) )), true);
 }
 

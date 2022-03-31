@@ -126,7 +126,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
-												
+												<tr>
+													<th>Resort</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="module_resort" <?= (isset($company->module_resort) and $company->module_resort) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 												<tr>
 													<th>ZeTTa PACS</th>
 													<td class="text-right">
@@ -207,11 +216,21 @@ $header = "Панель управления";
 													</td>
 												</tr>
 												<tr>
-													<th>Register Patient On Division(stationar)</th>
+													<th>Registry Patient On All Division(stationar)</th>
 													<td class="text-right">
 														<div class="list-icons">
 															<label class="form-check-label">
 																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_stationar_on_division" <?= (isset($config->constant_stationar_on_division) and $config->constant_stationar_on_division) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Registry Appointment (Discharge Date)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_registry_appointment_discharge" <?= (isset($config->constant_registry_appointment_discharge) and $config->constant_registry_appointment_discharge) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>
@@ -301,6 +320,26 @@ $header = "Панель управления";
 											<!-- Card -->
 											<tbody>
 												<tr>
+													<th>Card Stationar Balance Show</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_balance_show" <?= (isset($config->constant_card_stationar_balance_show) and $config->constant_card_stationar_balance_show) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Card Stationar Balance Notice</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_balance_notice" <?= (isset($config->constant_card_stationar_balance_notice) and $config->constant_card_stationar_balance_notice) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
 													<th>Card Stationar Doctor Journal Edit</th>
 													<td class="text-right">
 														<div class="list-icons">
@@ -356,6 +395,16 @@ $header = "Панель управления";
 														<div class="list-icons">
 															<label class="form-check-label">
 																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_condition_button" <?= (isset($config->constant_card_stationar_condition_button) and $config->constant_card_stationar_condition_button) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<th>Card Stationar Doctor Update (Discharge Date)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_update_discharge" <?= (isset($config->constant_card_stationar_update_discharge) and $config->constant_card_stationar_update_discharge) ? "checked" : "" ?>>
 															</label>
 														</div>
 													</td>

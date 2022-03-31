@@ -107,8 +107,7 @@ class VisitPhysioModel extends ModelOld
         <script type="text/javascript">
 
             function CompleteVisitService(url) {
-                event.target.className = "text-muted";
-                event.target.removeAttribute("onclick");
+                event.target.disabled = true;
 
                 $.ajax({
                     type: "GET",

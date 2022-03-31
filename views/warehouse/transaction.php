@@ -13,7 +13,7 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
 	$warehouse = (new Warehouse)->byId($_GET['pk']);
 	if ($warehouse) {
-		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = $warehouse->id AND user_id = $session->session_id")->fetch();
+		$data = $db->query("SELECT id, is_grant FROM warehouse_setting_permissions WHERE warehouse_id = $warehouse->id AND user_id = $session->session_id AND is_transaction IS NOT NULL")->fetch();
 		if(!$data) Hell::error('404');
 	} else Hell::error('404');
     
@@ -47,18 +47,17 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 <div class="<?= $classes['card'] ?>">
 
 					<div class="<?= $classes['card-header'] ?>">
-						<h5 class="card-title">Склад "<?= $warehouse->name ?>"</h5>
-                        <div class="header-elements">
-							<div class="form-group-feedback form-group-feedback-right mr-2">
-								<input type="text" class="<?= $classes['input-search'] ?>" id="search_input" placeholder="Поиск..." title="Введите наименование препарата">
-								<div class="form-control-feedback">
-									<i class="icon-search4 font-size-base text-muted"></i>
-								</div>
-							</div>
-				        </div>
+						<h5 class="card-title">Перемещение </h5>
 					</div>
 
-					<div class="card-body" id="search_display"></div>
+					<div class="card-body">
+
+						<div class="row">
+							<div class="col-md-4" id="search_display"></div>
+							<div class="col-md-8" id="application_display"></div>
+						</div>
+
+					</div>
 
 				</div>
 
@@ -79,6 +78,9 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
     <script type="text/javascript">
 
+		var storageActive = null;
+		var applicationActive = null;
+
 		function submitForm() {
 			event.preventDefault();
 			$.ajax({
@@ -92,7 +94,8 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 							text: "Успешно!",
 							type: "success",
 						}).show();
-						credoSearch();
+
+						Delete(`#TR_application-${applicationActive}`);
 					} else {
 						new Noty({
 							text: res.message,
@@ -103,17 +106,52 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 			});
 		}
 
-		function Check(events) {
-			event.preventDefault();
+		function Delete(element) {
+			$(element).css("background-color", "rgb(244, 67, 54)");
+			$(element).css("color", "white");
+			$(element).fadeOut(900, function() {
+				$(this).remove();
+				if (document.querySelectorAll(".application_item").length == 0) credoSearch();
+			});
+		}
+
+		function selectStorage(pk) {
+			if (document.querySelector('#application_display')) {
+                var display = document.querySelector('#application_display');
+                isLoading(display);
+
+                $.ajax({
+                    type: "GET",
+                    url: "<?= Hell::apiGet('WarehouseStorageApplication', null, 'listApplications') ?>",
+					data: { warehouse_id_from: <?= $warehouse->id ?>, warehouse_id_in: pk },
+                    success: function (result) {
+                        isLoaded(display);
+						storageActive = pk;
+                        display.innerHTML = result;
+                    },
+                });
+
+            }
+		}
+
+		function applicationDetail(pk, wareFrom, wareIn, appId, appManufacturer, appPrice) {
 			$.ajax({
 				type: "GET",
-				url: events,
+				url: "<?= Hell::apiGet('WarehouseStorageApplication', null, 'detailApplication') ?>",
+				data: { 
+					warehouse_id_from: wareFrom,
+					warehouse_id_in: wareIn,
+					item_name_id: appId,
+					item_manufacturer_id: appManufacturer,
+					item_price: appPrice,
+				},
 				success: function (result) {
+					applicationActive = pk;
 					$('#modal_default').modal('show');
 					$('#form_card').html(result);
 				},
 			});
-		};
+		}
 
         function credoSearch(params = '') {
             if (document.querySelector('#search_display')) {
@@ -122,13 +160,8 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
                 $.ajax({
                     type: "GET",
-                    url: "<?= api('table/warehouse/Storage') ?>"+params,
-					data: {
-						warehouse: <?= $warehouse->id ?>,
-						is_payment: <?= ($warehouse->is_payment) ? 1 : 0 ?>,
-						is_grant: <?= ($data['is_grant']) ? 1 : 0 ?>,
-						CRD_search: document.querySelector('#search_input').value,
-					},
+                    url: "<?= api('table/warehouse/Transaction') ?>"+params,
+					data: { warehouse_id: <?= $warehouse->id ?> },
                     success: function (result) {
                         isLoaded(display);
                         display.innerHTML = result;
@@ -139,7 +172,6 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
         }
 
         $(document).ready(() => credoSearch());
-		$("#search_input").keyup(() => credoSearch());
 
     </script>
 
