@@ -4,11 +4,12 @@ $session->is_auth();
 
 importModel('Visit');
 
-$tb = (new Visit)->Data("id, patient_id, add_date, discharge_date, grant_id, division_id");
+$tb = (new Visit('v'))->Data("v.id, v.patient_id, v.add_date, v.discharge_date, v.grant_id, v.division_id, vr.name 'status_name'");
+$tb->JoinLEFT('visit_status vr','vr.visit_id=v.id');
 $search = $tb->getSearch();
 $search_array = array(
-	"division_id = $search AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
-	"division_id = $search AND direction IS NOT NULL AND completed IS NULL AND is_active IS NOT NULL",
+	"v.division_id = $search AND v.direction IS NOT NULL AND v.completed IS NULL AND v.is_active IS NOT NULL",
+	"v.division_id = $search AND v.direction IS NOT NULL AND v.completed IS NULL AND v.is_active IS NOT NULL",
 );
 $tb->Where($search_array)->Order("add_date DESC")->Limit(20);
 ?>
@@ -31,7 +32,12 @@ $tb->Where($search_array)->Order("add_date DESC")->Limit(20);
                     <td><?= $row->count ?></td>
                     <td><?= addZero($row->patient_id) ?></td>
                     <td>
-                        <div class="font-weight-semibold"><?= patient_name($row->patient_id) ?></div>
+                        <div class="font-weight-semibold">
+                            <?= patient_name($row->patient_id) ?>
+                            <?php if ( $row->status_name ): ?>
+                                <span style="font-size:13px;" class="badge badge-flat border-danger text-danger"><?= $row->status_name ?></span>
+                            <?php endif; ?>
+                        </div>
                         <div class="text-muted">
                             <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
                                 <?= $stm['building'] ?>  <?= $stm['floor'] ?> этаж <?= $stm['ward'] ?> палата <?= $stm['bed'] ?> койка;
@@ -42,7 +48,7 @@ $tb->Where($search_array)->Order("add_date DESC")->Limit(20);
                     <td><?= ($row->discharge_date) ? date_f($row->discharge_date, 1) : '<span class="text-muted">Нет данных</span>' ?></td>
                     <td>
                         <?= $db->query("SELECT title FROM divisions WHERE id = $row->division_id")->fetchColumn() ?>
-                        <div class="text-muted"><?= get_full_name($row->grant_id) ?></div>
+                        <div class="text-muted"><?= userFullName($row->grant_id) ?></div>
                     </td>
                     <td class="text-right">
                         <button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="icon-eye mr-2"></i> Просмотр</button>

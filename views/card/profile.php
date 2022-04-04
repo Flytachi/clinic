@@ -460,18 +460,21 @@ $region = (new Region)->byId($patient->region_id);
 
 </div>
 
-<?php if($patient->discharge_date and $patient->discharge_date <= date("Y-m-d")): ?>
-    <script type="text/javascript">
-        $( document ).ready(function() {
-            swal({
-                position: "top",
-                title: "Пациента пора выписывать!",
-                text: 'Сегодняшняя дата совпадает или опережает дату выписки.',
-                type: "info",
+<?php if (config('card_stationar_discharge_date_notice') and $activity): ?>
+    <?php if(is_grant() and !$patient->completed and $patient->discharge_date and $patient->discharge_date <= date("Y-m-d")): ?>
+        <script type="text/javascript">
+            $( document ).ready(function() {
+                swal({
+                    position: "top",
+                    title: "Пациента пора выписывать!",
+                    text: 'Сегодняшняя дата совпадает или опережает дату выписки.',
+                    type: "info",
+                });
             });
-        });
-    </script>
+        </script>
+    <?php endif; ?>
 <?php endif; ?>
+
 
 <?php if (config('card_stationar_balance_notice') and $activity): ?>
     <script type="text/javascript">
