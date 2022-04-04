@@ -73,7 +73,9 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         <div class="text-left h3">
 
-            <?= $docs->report ?>
+            <p>
+                <?= stristr($docs->report, "Рекомендация:", true) ?>
+            </p>
 
             <h4 class="text-center"><strong>Результаты визитов:</strong></h4>
             <p>
@@ -105,6 +107,22 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                     <?php endforeach; ?>
                 </p>
             <?php endif; ?>
+
+            <div class="table-responsive card">
+                <table class="table table-bordered table-sm">
+                    <tbody>
+
+                        <!-- Рекомендация -->
+                        <td>
+                            <strong>Рекомендация:</strong>
+                        </td>
+                        <td>
+                            <?= str_replace("Рекомендация:", '', stristr($docs->report, "Рекомендация:")) ?>
+                        </td>
+
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 

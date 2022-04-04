@@ -409,6 +409,16 @@ $header = "Панель управления";
 														</div>
 													</td>
 												</tr>
+												<tr>
+													<th>Card Stationar Notice (Discharge Date)</th>
+													<td class="text-right">
+														<div class="list-icons">
+															<label class="form-check-label">
+																<input onclick="ConstChange(this)" type="checkbox" class="swit bg-danger" name="constant_card_stationar_discharge_date_notice" <?= (isset($config->constant_card_stationar_discharge_date_notice) and $config->constant_card_stationar_discharge_date_notice) ? "checked" : "" ?>>
+															</label>
+														</div>
+													</td>
+												</tr>
 											</tbody>
 											<!-- End Card -->
 

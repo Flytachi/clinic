@@ -64,7 +64,7 @@ $header = "Общий отчёт по проведённым услугам";
 									</select>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-6">
 									<label>Дата принятия:</label>
 									<div class="input-group">
 										<input type="text" class="<?= $classes['form-daterange'] ?>" name="date" value="<?= ( isset($_POST['date']) ) ? $_POST['date'] : '' ?>">
