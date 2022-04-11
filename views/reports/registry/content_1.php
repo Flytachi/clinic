@@ -75,16 +75,6 @@ $header = "Отчёт регистратуры по регистрации";
 									</select>
 								</div>
 
-								<div class="col-md-3">
-									<label>Направитель:</label>
-									<select name="guide_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите направителя</option>
-										<?php foreach($db->query('SELECT * from guides') as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['guide_id']) and $_POST['guide_id']==$row['id']) ? "selected" : "" ?>><?= $row['name'] ?></option>
-										<?php endforeach; ?>
-									</select>
-								</div>
-
 							</div>
 
 							<div class="from-group row">
@@ -133,9 +123,10 @@ $header = "Отчёт регистратуры по регистрации";
 								vs.add_date,
 								gd.name 'guide',
 								vs.user_id,
-								vp.item_name,
-								vp.item_cost,
 								vs.route_id,
+								vp.item_name,
+								us.numberPhone,
+								vp.item_cost,
 								vs.direction,
 								vs.laboratory,
 								gd.price,
@@ -143,12 +134,10 @@ $header = "Отчёт регистратуры по регистрации";
 							FROM visit vs
 								LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
 								LEFT JOIN guides gd ON(gd.id=vs.guide_id)
+								LEFT JOIN users us ON(us.id=vs.user_id)
 							WHERE
 								vp.item_type = 1 AND vs.add_date IS NOT NULL";
 					// Обработка
-					if ($_POST['route_id']) {
-						$sql .= " AND vs.route_id IN (".implode(",", $_POST['route_id']).")";
-					}
 					if ($_POST['date_start'] and $_POST['date_end']) {
 						$sql .= " AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN '".$_POST['date_start']."' AND '".$_POST['date_end']."')";
 					}
@@ -194,7 +183,7 @@ $header = "Отчёт регистратуры по регистрации";
 	                                    <tr class="<?= $classes['table-thead'] ?>">
 											<th style="width: 50px">№</th>
 											<th style="width: 13%">Дата регистрации</th>
-				                            <th>Напрвитель</th>
+				                            <th>Контакты</th>
 											<th>Id</th>
 											<th>Пациент</th>
 											<th>Мед услуга</th>
@@ -207,7 +196,7 @@ $header = "Отчёт регистратуры по регистрации";
 											<tr>
 												<td><?= $i++ ?></td>
 												<td><?= ($row['add_date']) ? date('d.m.y H:i', strtotime($row['add_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
-												<td><?= $row['guide'] ?></td>
+												<td><?= $row['numberPhone'] ?></td>
 												<td><?= addZero($row['user_id']) ?></td>
 												<td><?= get_full_name($row['user_id']) ?></td>
 												<td><?= $row['item_name'] ?></td>
