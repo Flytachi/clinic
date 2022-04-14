@@ -1,5 +1,6 @@
 <?php
 
+use Mixin\Hell;
 use Mixin\ModelOld;
 
 class VisitBypassModel extends ModelOld
@@ -16,7 +17,6 @@ class VisitBypassModel extends ModelOld
 
             // Bypass
             $this->visit = $object;
-            $this->order = $db->query("SELECT * FROM visit_orders WHERE visit_id = $pk")->fetchColumn();
             return $this->{$_GET['form']}($pk);
 
         }else{
@@ -46,7 +46,7 @@ class VisitBypassModel extends ModelOld
 
                 <div class="row">
 
-                    <div class="col-4">
+                    <div class="col-md-4">
 
                         <div class="form-group">
                             <label>Название назначения:</label>
@@ -70,7 +70,7 @@ class VisitBypassModel extends ModelOld
 
                     </div>
 
-                    <div class="col-8">
+                    <div class="col-md-8">
                         <div class="text-right">
                             <button onclick="AddPreparat()" class="btn btn-outline-success btn-sm legitRipple mb-1" type="button"><i class="icon-plus22 mr-2"></i>Добавить Сторонний Препарат</button>
                         </div>
@@ -91,6 +91,15 @@ class VisitBypassModel extends ModelOld
                         </div>
 
                     </div>
+
+                    <div class="col-md-12">
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                                <span class="ladda-label">Сохранить</span>
+                                <span class="ladda-spinner"></span>
+                            </button>
+                        </div>
+                    </div>
                 
                 </div>
 
@@ -105,27 +114,6 @@ class VisitBypassModel extends ModelOld
                     <?php endif; ?>
                 </ul>
 
-                <div class="form-group-feedback form-group-feedback-right row">
-
-                    <!-- <div class="col-md-10">
-                        <div id="bypass_search_input" style="display:none;">
-                            <input type="text" class="<?= $classes['input-product_search'] ?>" id="search_input_product" placeholder="Поиск..." title="Введите название препарата">
-                            <div class="form-control-feedback">
-                                <i class="icon-search4 font-size-base text-muted"></i>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div class="col-md-2">
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
-                                <span class="ladda-label">Сохранить</span>
-                                <span class="ladda-spinner"></span>
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-
                 <div class="form-group" id="panel-frame"></div>
 
             </div>
@@ -136,17 +124,16 @@ class VisitBypassModel extends ModelOld
             var warehouse = null;
 
             function ChangeWare(params) {
-                
                 if (params) {
                     $.ajax({
                         type: "POST",
-                        url: "<?= up_url(1, 'WarehouseApplication') ?>",
+                        url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'frame')) ?>",
                         data: {
                             warehouse_id_from: params,
                             status: 1,
                         },
                         success: function (result) {
-                            document.querySelector("#panel-frame").innerHTML = result;
+                            $('#panel-frame').html(result);
                         },
                     });
                 }
@@ -154,14 +141,14 @@ class VisitBypassModel extends ModelOld
                 warehouse = params;
             }
 
-            function __WarehouseApplication__search(input){
+            function __WarehouseStorage__search(input){
                 $.ajax({
                     type: "POST",
-                    url: "<?= up_url(1, 'WarehouseStoragePanel') ?>",
+                    url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'itemSearch')) ?>",
                     data: {
                         warehouse_id_from: warehouse,
                         default: true,
-                        search: input.value, 
+                        search: input.value,
                     },
                     success: function (result) {
                         $('#panel-items').html(result);
@@ -169,7 +156,7 @@ class VisitBypassModel extends ModelOld
                 });
             }
 
-            function __WarehouseStoragePanel__select(btn, index) {
+            function __WarehouseStorage__select(btn, index) {
                 btn.disabled = true;
 
                 var data = {

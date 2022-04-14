@@ -69,20 +69,32 @@ class VisitPhysioModel extends ModelOld
 
                     <thead class="<?= $classes['table-thead'] ?>">
                         <tr>
-                            <th style="width: 55%;">Название</th>
+                            <th style="width: 12%;">Дата</th>
+                            <th>Отдел/Назначил</th>
+                            <th>Название</th>
+                            <!-- <th class="text-center">Комментарий</th> -->
                             <th class="text-center">Кол-во</th>
                             <th class="text-right">Действия Ед.</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($db->query("SELECT DISTINCT service_id, service_name FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division") as $row): ?>
-                            <?php $value = $db->query("SELECT id, COUNT(id) 'count' FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND service_id = {$row['service_id']} AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division")->fetch(); ?>
+                        <?php foreach ($db->query("SELECT DISTINCT service_id, service_name, route_id, add_date FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division") as $row): ?>
+                            <?php $value = $db->query("SELECT id, COUNT(id) 'count' FROM $this->_visit_service WHERE visit_id = $pk AND level = 12 AND status = 2 AND service_id = {$row['service_id']} AND route_id = {$row['route_id']} AND add_date = '{$row['add_date']}' AND (parent_id IS NULL OR parent_id = $session->session_id) $is_division")->fetch(); ?>
                             <tr class="changer_tab-services">
-                                <td><?= $row['service_name'] ?></td>
+                                <td><?= date_f($row['add_date'], 1) ?></td>
+                                <td>
+                                    <?php
+                                    if ($title = division_title($row['route_id'])) echo $title;
+                                    else echo level_name($row['route_id']);
+                                    unset($title);
+                                    ?>
+                                    <div class="text-muted"><?= get_full_name($row['route_id']) ?></div>
+                                </td>
+                                <td><?= $row['service_name'] ?> </td>
                                 <td class="text-center changer_tab-service_qty"><?= $value['count'] ?></td>
                                 <td class="text-right">
-                                    <a onclick="CompleteVisitService('<?= del_url($value['id'], __CLASS__) ?>')" class="text-success">Завершить</a>
-                                    <a onclick="FailureVisitService('<?= del_url($value['id'], 'VisitFailure') ?>')" type="button" class="text-danger legitRipple">Отказ</a>
+                                    <button onclick="CompleteVisitService('<?= del_url($value['id'], __CLASS__) ?>')" class="btn btn-outline-success btn-sm legitRipple">Завершить</button>
+                                    <button onclick="FailureVisitService('<?= del_url($value['id'], 'VisitFailure') ?>')" class="btn btn-outline-danger btn-sm legitRipple">Отказ</button>
                                 </td>
                             </tr>                            
                         <?php endforeach; ?>
@@ -95,8 +107,7 @@ class VisitPhysioModel extends ModelOld
         <script type="text/javascript">
 
             function CompleteVisitService(url) {
-                event.target.className = "text-muted";
-                event.target.removeAttribute("onclick");
+                event.target.disabled = true;
 
                 $.ajax({
                     type: "GET",
@@ -131,8 +142,7 @@ class VisitPhysioModel extends ModelOld
             }
 
             function FailureVisitService(url) {
-                event.target.className = "text-muted";
-                event.target.removeAttribute("onclick");
+                event.target.disabled = true;
 
                 $.ajax({
                     type: "GET",

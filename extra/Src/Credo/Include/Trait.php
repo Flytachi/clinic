@@ -19,6 +19,29 @@ trait CredoQuery
         }
     }
 
+    final public function by(Array $params, $item = '')
+    {
+        try {
+            $where = '';
+            foreach ($params as $key => $value) {
+
+                if(is_array($value)) {
+                    $where .= ($where == '') ? "$key IN (" . implode(',', $value) . ") " : "AND $key IN (" . implode(',', $value) . ") ";
+                } else {
+                    $where .= ($where == '') ? "$key = '$value' " : "AND $key = '$value' ";
+                }
+
+            }
+            $this->Where($where);
+            if (!is_array($item)) return $this->get($item);
+            else return call_user_func_array([$this, 'get'], $item);
+
+        } catch (\Throwable $th) {
+            if ($this->CRD_error) $this->error($th);
+            else echo 'Ошибка в генерации скрипта <strong>"BY"</strong>';
+        }
+    }
+
     final public function byId(Int $id, $item = '')
     {
         try {
@@ -149,6 +172,28 @@ trait CredoParams
         return $this;
     }
 
+    final public function Wr($context)
+    {
+        /*
+            Установка зависимостей!
+        */
+        if (is_array($context)) {
+            
+            $this->CRD_where = "WHERE ";
+            foreach ($context as $key => $value) {
+
+                if(is_array($value)) {
+                    $this->CRD_where .= ($this->CRD_where == "WHERE ") ? "$key IN (" . implode(',', $value) . ") " : "AND $key IN (" . implode(',', $value) . ") ";
+                } else {
+                    $this->CRD_where .= ($this->CRD_where == "WHERE ") ? "$key = '$value' " : "AND $key = '$value' ";
+                }
+
+            }
+
+        }else $this->CRD_where = "WHERE " . $context;
+        return $this;
+    }
+
     final public function Order(String $context = null)
     {
         /*
@@ -195,11 +240,10 @@ trait CredoPanel
     final private function buildPanel(int $page)
     {
         $this->selfP = $this->CRD_firstBack = $this->CRD_nextLast = "";
-        $self_uri = $this->path();
 
         // prev
         if ($this->CRD_totalPages > 5) {
-            if ($page > 1) $this->CRD_firstBack = "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, -1)."\" class=\"page-link\">&larr; &nbsp; Prev</a></li>";
+            if ($page > 1) $this->CRD_firstBack = "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, -1)."')\" class=\"page-link\">&larr; &nbsp; Prev</a></li>";
         }
 
         // left
@@ -208,48 +252,48 @@ trait CredoPanel
             if ($this->CRD_totalPages == 5) {
 
                 if ($page == 1) {
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">".($page+1)."</a></li>";
                 }elseif($page == 2) {
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, -1)."\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, -1)."')\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
                 }
                 
             }elseif ($this->CRD_totalPages == 4) {
 
                 if ($page == 1) {
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">".($page+1)."</a></li>";
                 }elseif($page == 2) {
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, -1)."\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, -1)."')\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
                 }
                 
             }else {
-                $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
-                if ($this->CRD_totalPages > 4) $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">".($page+1)."</a></li>";
+                $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
+                if ($this->CRD_totalPages > 4) $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">".($page+1)."</a></li>";
             }
         
         }else {
-            $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, 1)."\" class=\"page-link\">1</a></li>";
-            if ($this->CRD_totalPages > 3) $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, 2)."\" class=\"page-link\">2</a></li>";
+            $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, 1)."')\" class=\"page-link\">1</a></li>";
+            if ($this->CRD_totalPages > 3) $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, 2)."')\" class=\"page-link\">2</a></li>";
         }
 
         // center
         if ($this->CRD_totalPages == 5) {
 
             $status = ($page == 3) ? "active" : ""; 
-            $this->selfP .= "<li class=\"page-item $status\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, 3)."\" class=\"page-link\">3</a></li>";
+            $this->selfP .= "<li class=\"page-item $status\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, 3)."')\" class=\"page-link\">3</a></li>";
        
         }elseif ($this->CRD_totalPages > 4) {
 
-            if ($page <= floor($this->CRD_totalPages / 2)) $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, floor(($this->CRD_totalPages+$page)/2))."\" class=\"page-link\">...</a></li>";
-            else $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, floor(($page)/2))."\" class=\"page-link\">...</a></li>";
+            if ($page <= floor($this->CRD_totalPages / 2)) $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, floor(($this->CRD_totalPages+$page)/2))."')\" class=\"page-link\">...</a></li>";
+            else $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, floor(($page)/2))."')\" class=\"page-link\">...</a></li>";
 
         }elseif($this->CRD_totalPages == 3) {
 
             $status = ($page == 2) ? "active" : ""; 
-            $this->selfP .= "<li class=\"page-item $status\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, 2)."\" class=\"page-link\">2</a></li>";
+            $this->selfP .= "<li class=\"page-item $status\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, 2)."')\" class=\"page-link\">2</a></li>";
         
         }
         
@@ -257,44 +301,44 @@ trait CredoPanel
         // right
         if ($page > floor($this->CRD_totalPages / 2)) {
 
-            if ($this->CRD_totalPages > 5) $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, -1)."\" class=\"page-link\">".($page-1)."</a></li>";
+            if ($this->CRD_totalPages > 5) $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, -1)."')\" class=\"page-link\">".($page-1)."</a></li>";
             
             if ($this->CRD_totalPages == 5) {
 
                 if ($page == 4) {
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">".($page+1)."</a></li>";
                 }elseif($page == 5) {
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, -1)."\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, -1)."')\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
                 }else {
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">".($page+1)."</a></li>";
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 2)."\" class=\"page-link\">".($page+2)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 2)."')\" class=\"page-link\">".($page+2)."</a></li>";
                 }
                 
             }elseif ($this->CRD_totalPages == 4) {
 
                 if ($page == 3) {
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">".($page+1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">".($page+1)."</a></li>";
                 }elseif($page == 4) {
-                    $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, -1)."\" class=\"page-link\">".($page-1)."</a></li>";
-                    $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
+                    $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, -1)."')\" class=\"page-link\">".($page-1)."</a></li>";
+                    $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
                 }
                 
             }elseif ($this->CRD_totalPages == 3) {
                 $status = ($page == 3) ? "active" : ""; 
-                $this->selfP .= "<li class=\"page-item $status\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, 3)."\" class=\"page-link\">3</a></li>";
-            }else $this->selfP .= "<li class=\"page-item active\"><a href=\"$self_uri\t$this->CRD_params\" class=\"page-link\">$page</a></li>";
+                $this->selfP .= "<li class=\"page-item $status\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, 3)."')\" class=\"page-link\">3</a></li>";
+            }else $this->selfP .= "<li class=\"page-item active\"><a onclick=\"credoSearch('$this->CRD_params')\" class=\"page-link\">$page</a></li>";
 
         }else {
-            if ($this->CRD_totalPages > 3) $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, $this->CRD_totalPages-1)."\" class=\"page-link\">".($this->CRD_totalPages-1)."</a></li>";
-            $this->selfP .= "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageSet($this->CRD_params, $this->CRD_totalPages)."\" class=\"page-link\">$this->CRD_totalPages</a></li>";
+            if ($this->CRD_totalPages > 3) $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, $this->CRD_totalPages-1)."')\" class=\"page-link\">".($this->CRD_totalPages-1)."</a></li>";
+            $this->selfP .= "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageSet($this->CRD_params, $this->CRD_totalPages)."')\" class=\"page-link\">$this->CRD_totalPages</a></li>";
         }
         
         // next
         if ($this->CRD_totalPages > 5) {
-            if ($page < $this->CRD_totalPages) $this->CRD_nextLast =  "<li class=\"page-item\"><a href=\"$self_uri\t".$this->pageAddon($this->CRD_params, 1)."\" class=\"page-link\">Next &nbsp; &rarr;</a></li>";
+            if ($page < $this->CRD_totalPages) $this->CRD_nextLast =  "<li class=\"page-item\"><a onclick=\"credoSearch('".$this->pageAddon($this->CRD_params, 1)."')\" class=\"page-link\">Next &nbsp; &rarr;</a></li>";
         }
 
         return $this->CRD_firstBack.$this->selfP.$this->CRD_nextLast;
@@ -303,11 +347,6 @@ trait CredoPanel
 
 trait CredoHelp
 {
-    public function returnPath(String $uri = null)
-    {
-        $this->CRD_selfPage = $uri;
-        return $this;
-    }
     
     final public function showError(Bool $status = false)
     {

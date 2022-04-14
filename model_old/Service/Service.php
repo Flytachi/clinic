@@ -55,7 +55,7 @@ class ServiceModel extends ModelOld
                     <select data-placeholder="Выбрать роль" name="user_level" id="user_level" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
                         <?php foreach ($PERSONAL as $key => $value): ?>
-                            <?php if(!in_array($key, [1,2,3,4,7,8,32])): ?>
+                            <?php if(!in_array($key, [1,2,3,4,7,8,14,32])): ?>
                                 <option value="<?= $key ?>"<?= ($this->value('user_level') == $key) ? 'selected': '' ?>><?= $value ?></option>
                             <?php endif; ?>
                         <?php endforeach; ?>

@@ -26,6 +26,8 @@ $PERSONAL = array(
 $print_text_count = 3;
 $print_hr_count = 4;
 
+$PHARM_VISION = [4,5,7];
+
 $CATEGORY = array(
     2 => "Лекарства",
     3 => "Расходные материалы",

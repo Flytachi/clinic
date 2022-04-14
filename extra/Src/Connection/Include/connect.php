@@ -8,12 +8,12 @@ class Connect
 
     function __construct(Array $params)
     {
-        if (is_null($params['DRIVER'])) dieConection("Connection: driver not found!");
-        if (is_null($params['CHARSET'])) dieConection("Connection: charset not found!");
-        if (is_null($params['HOST'])) dieConection("Connection: host not found!");
-        if (is_null($params['PORT'])) dieConection("Connection: port not found!");
-        if (is_null($params['NAME'])) dieConection("Connection: db name not found!");
-        if (is_null($params['USER'])) dieConection("Connection: username not found!");
+        if (is_null($params['DRIVER'])) dieConnection("Connection: driver not found!");
+        if (is_null($params['CHARSET'])) dieConnection("Connection: charset not found!");
+        if (is_null($params['HOST'])) dieConnection("Connection: host not found!");
+        if (is_null($params['PORT'])) dieConnection("Connection: port not found!");
+        if (is_null($params['NAME'])) dieConnection("Connection: db name not found!");
+        if (is_null($params['USER'])) dieConnection("Connection: username not found!");
         $this->DNS = $params['DRIVER'] . ":host=".$params['HOST'] . ";port=" . $params['PORT'] . ";dbname=" . $params['NAME'] . ";charset=" . $params['CHARSET'];
         $this->user = $params['USER'];
         $this->password = $params['PASS'];
@@ -27,7 +27,7 @@ class Connect
             if ( $debug ) $db->SetAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $db;
         } catch (\PDOException $e) {
-            dieConection($e->getMessage());
+            dieConnection($e->getMessage());
         }
     }
 }

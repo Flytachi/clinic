@@ -24,7 +24,8 @@ class VisitInvestmentsModel extends ModelOld
     public function form($pk = null)
     {
         global $classes, $session;
-        $vps = (new VisitModel)->price_status($pk);
+        importModel('Visit');
+        $vps = (new Visit)->VPS($pk);
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title"><?= ($this->value('type')) ? "Возврат": "Предоплата" ?>: <?= get_full_name($this->value('patient_id')) ?></h6>

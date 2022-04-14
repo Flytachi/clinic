@@ -7,7 +7,7 @@ try {
     include 'Include/Credo.php';
     
 } catch (\Throwable $th) {
-    dieConection($th); 
+    dieConnection($th); 
 }
 
 ?>

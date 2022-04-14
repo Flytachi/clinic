@@ -1,6 +1,7 @@
 <?php
 
 use Mixin\Hell;
+use Mixin\HellCrud;
 use Mixin\Model;
 
 class WarehouseStorage extends Model
@@ -15,15 +16,51 @@ class WarehouseStorage extends Model
     public $i = 0;
     public $cost = 0;
 
-    public function warehousesPanel($storage_from = null, $storage_in = null, $status = 1){
+    private function applicationAdd()
+    {
+        $this->saveBefore();
+        $m = ($this->getPost('item_manufacturer_id')) ? "AND item_manufacturer_id = " . $this->getPost('item_manufacturer_id') : null;
+        $s = ($this->getPost('item_price')) ? "AND item_price = " . $this->getPost('item_price') : null;
+        $qty = $this->getPost('item_qty');
+
+        foreach ($this->Data('DISTINCT item_manufacturer_id, item_price')->Where("warehouse_id = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_die_date > CURRENT_DATE() $m $s")->Order("item_die_date ASC, item_price ASC")->list() as $param) {
+            
+            $item_qty = $this->db->query("SELECT SUM(item_qty) FROM $this->table WHERE warehouse_id = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_die_date > CURRENT_DATE() AND item_manufacturer_id = $param->item_manufacturer_id AND item_price = $param->item_price ORDER BY item_die_date ASC, item_price ASC")->fetchColumn();
+            $item_qty -= $this->db->query("SELECT SUM(item_qty) FROM $this->_applications WHERE status IN (1,2) AND warehouse_id_from = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_manufacturer_id = $param->item_manufacturer_id AND item_price = $param->item_price")->fetchColumn();
+            $item_qty -= $this->db->query("SELECT SUM(item_qty) FROM $this->_event_applications WHERE warehouse_id = " . $this->getPost('warehouse_id_from') . " AND item_name_id = " . $this->getPost('item_name_id') . " AND item_manufacturer_id = $param->item_manufacturer_id AND item_price = $param->item_price")->fetchColumn();
+
+            if ($item_qty > 0) {
+                
+                $obj = HellCrud::insert($this->_applications, array(
+                    'warehouse_id_from' => $this->getPost('warehouse_id_from'),
+                    'warehouse_id_in' => $this->getPost('warehouse_id_in'),
+                    'responsible_id' => $this->getPost('responsible_id'),
+                    'item_name_id' => $this->getPost('item_name_id'),
+                    'item_manufacturer_id' => $param->item_manufacturer_id,
+                    'item_price' => $param->item_price,
+                    'item_qty' => ($qty > $item_qty) ? $item_qty : $qty,
+                    'status' => $this->getPost('status')
+                ));
+
+                if (!is_numeric($obj)) $this->error($obj);
+                if ($qty > $item_qty) $qty -= $item_qty;
+                else break;
+            }
+
+        }
+        $this->saveAfter();
+    }
+
+    public function warehousesPanel($storage_from = null, $storage_in = null, $status = 1)
+    {
         global $classes;
         ?>
         <div class="row">
             <div class="col-md-4 offset-md-2">
                 <label>Склад (с):</label>
                 <select data-placeholder="Выберите склад" id="storege_from" class="<?= $classes['form-select'] ?>" onchange="CheckPks()" required <?= ($storage_from) ? 'disabled': ''; ?>>
-                    <option></option>
-                    <?php foreach($this->db->query("SELECT * FROM $this->_warehouses WHERE is_active IS NOT NULL") as $row): ?>
+                    <option value=""></option>
+                    <?php foreach($this->db->query("SELECT * FROM $this->_warehouses WHERE is_active IS NOT NULL AND is_external IS NOT NULL") as $row): ?>
                         <option value="<?= $row['id'] ?>" <?= ($storage_in == $row['id']) ? 'disabled' : '' ?> <?= ($storage_from == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -86,7 +123,8 @@ class WarehouseStorage extends Model
         $this->{$this->getGet('form')}();
     }
 
-    public function frame(){
+    public function frame()
+    {
         global $session, $classes;
         ?>
         <div class="form-group-feedback form-group-feedback-right">
@@ -149,7 +187,6 @@ class WarehouseStorage extends Model
                         btn.disabled = false;
                     }else{
                         var data = {
-                            model: "<?= __CLASS__ ?>",
                             warehouse_id_from: <?= $this->getPost('warehouse_id_from') ?>,
                             warehouse_id_in: <?= $this->getPost('warehouse_id_in') ?>,
                             responsible_id: <?= $session->session_id ?>,
@@ -160,14 +197,12 @@ class WarehouseStorage extends Model
                             status: <?= $this->getPost('status') ?>,
                         };
 
-                       /*  $.ajax({
+                        $.ajax({
                             type: "POST",
-                            url: "<?= add_url() ?>",
+                            url: "<?= Hell::apiAxe(__CLASS__, array('form' => 'applicationAdd')) ?>",
                             data: data,
-                            success: function (result) {
-                                console.log(result);
-                                var data = JSON.parse(result);
-                                if (data.status == "success") {
+                            success: function (res) {
+                                if (res.status == "success") {
                                     $(`#Item_${index}`).css("background-color", "rgb(70, 200, 150)");
                                     $(`#Item_${index}`).css("color", "black");
                                     $(`#Item_${index}`).fadeOut(900, function() {
@@ -176,13 +211,13 @@ class WarehouseStorage extends Model
                                     $("#search_input").keyup();
                                 } else {
                                     new Noty({
-                                        text: data.message,
-                                        type: data.status
+                                        text: res.message,
+                                        type: res.status
                                     }).show();
                                     btn.disabled = false;
                                 }
                             },
-                        });  */
+                        });
                     }
 
                 }
@@ -335,37 +370,78 @@ class WarehouseStorage extends Model
         
     }
 
-    public function listAplications()
+    public function listApplications()
     {
         global $classes, $db;
         $item = $this->byId($this->getGet('id'));
+        if(!$item) Hell::error("403");
+        importModel('WarehouseStorageApplication');
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
-            <h6 class="modal-title">Оформленные заявки</h6>
+            <h6 class="modal-title">Бронь</h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
             
         <div class="modal-body">
 
-            <div class="table-responsive">
-                <table class="table table-hover table-sm">
-                    <thead class="<?= $classes['table-thead'] ?>">
-                        <tr>
-                            <th>ID</th>
-                            <th>ФИО</th>
-                            <th class="text-right" style="width:210px">Кол-во</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($db->query("SELECT p.id, wc.visit_id, p.first_name, p.last_name, p.father_name, SUM(wc.item_qty) 'qty' FROM visit_bypass_event_applications wc LEFT JOIN patients p ON(p.id=wc.patient_id) WHERE wc.warehouse_id = $item->warehouse_id AND wc.item_name_id = $item->item_name_id AND wc.item_manufacturer_id = $item->item_manufacturer_id AND wc.item_price = $item->item_price GROUP BY p.id") as $row): ?>
-                            <tr>
-                                <td><a href="<?= viv('card/content-9') . "?pk=" . $row['visit_id'] ?>"><?= addZero($row['id']) ?></a></td>
-                                <td><?= patient_name($row) ?></td>
-                                <td class="text-right"><?= number_format($row['qty']) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
+
+                <li class="nav-item"><a href="#tab-1" class="nav-link legitRipple active" data-toggle="tab">Склады</a></li>
+                <li class="nav-item"><a href="#tab-2" class="nav-link legitRipple" data-toggle="tab">Пациенты</a></li>
+
+            </ul>
+
+            <div class="tab-content">
+
+                <div class="tab-pane fade show active" id="tab-1">
+                    <div class="table-responsive card">
+                        <table class="table table-hover table-sm">
+                            <thead class="<?= $classes['table-thead'] ?>">
+                                <tr>
+                                    <th>Склад</th>
+                                    <th class="text-right" style="width:210px">Кол-во</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $appWare = new WarehouseStorageApplication('wsa');
+                                $appWare->Data("w.id, w.name, SUM(item_qty) 'qty'")->JoinRIGHT('warehouses w', 'w.id=wsa.warehouse_id_in');
+                                $appWare->Where("wsa.warehouse_id_from = $item->warehouse_id AND wsa.item_name_id = $item->item_name_id AND wsa.item_manufacturer_id = $item->item_manufacturer_id AND wsa.item_price = $item->item_price AND wsa.status = 2")->Group('w.id');
+                                ?>
+                                <?php foreach ($appWare->list() as $row): ?>
+                                    <tr>
+                                        <td><?= $row->name ?></td>
+                                        <td class="text-right"><?= number_format($row->qty) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab-2">
+                    <div class="table-responsive card">
+                        <table class="table table-hover table-sm">
+                            <thead class="<?= $classes['table-thead'] ?>">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ФИО</th>
+                                    <th class="text-right" style="width:210px">Кол-во</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($db->query("SELECT p.id, wc.visit_id, p.first_name, p.last_name, p.father_name, SUM(wc.item_qty) 'qty' FROM visit_bypass_event_applications wc LEFT JOIN patients p ON(p.id=wc.patient_id) WHERE wc.warehouse_id = $item->warehouse_id AND wc.item_name_id = $item->item_name_id AND wc.item_manufacturer_id = $item->item_manufacturer_id AND wc.item_price = $item->item_price GROUP BY p.id") as $row): ?>
+                                    <tr>
+                                        <td><a href="<?= viv('card/content-9') . "?pk=" . $row['visit_id'] ?>"><?= addZero($row['id']) ?></a></td>
+                                        <td><?= patient_name($row) ?></td>
+                                        <td class="text-right"><?= number_format($row['qty']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            
             </div>
 
         </div>
@@ -379,61 +455,66 @@ class WarehouseStorage extends Model
     public function refundItem()
     {
         global $classes, $db, $session;
-        $item = $this->byId($this->getGet('id'));
+        $this->setPost($this->byId($this->getGet('id')));
         ?>
         <div class="<?= $classes['modal-global_header'] ?>">
             <h6 class="modal-title">Возврат препарат</h6>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form method="post" action="<?= add_url() ?>">
+        <form method="post" action="<?= $this->urlHook('WarehouseStorageTransaction') ?>" onsubmit="submitForm()">
 
-            <input type="hidden" name="model" value="<?= __CLASS__ ?>">
+            <?php $this->csrfToken(); ?>
+            
             <input type="hidden" name="item_id" value="<?= $this->value('id') ?>">
             <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
             
             <div class="modal-body">
 
-                <div class="card card-body border-top-1 border-top-danger">
+                <div class="card card-body border-top-1 border-top-warning">
                     <div class="list-feed list-feed-rhombus list-feed-solid">
-                        <div class="list-feed-item border-danger">
+                        <div class="list-feed-item border-warning">
                             <strong>Препарат: </strong>
-                            <span><?= $db->query("SELECT name FROM $this->_item_names WHERE id = $item->item_name_id")->fetchColumn() ?></span>
+                            <span><?= $db->query("SELECT name FROM $this->_item_names WHERE id = " . $this->value('item_name_id'))->fetchColumn() ?></span>
                         </div>
     
-                        <div class="list-feed-item border-danger">
+                        <div class="list-feed-item border-warning">
                             <strong>Данные: </strong><br>
-                            Производитель - <?= $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = $item->item_manufacturer_id")->fetchColumn() ?><br>
-                            Цена - <?= number_format($item->item_price) ?><br>
-                            Срок годности - <?= date_f($item->item_die_date) ?><br>
+                            Производитель - <?= $db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = " . $this->value('item_manufacturer_id'))->fetchColumn() ?><br>
+                            Цена - <?= number_format($this->value('item_price')) ?><br>
+                            Срок годности - <?= date_f($this->value('item_die_date')) ?><br>
                         </div>
     
-                        <div class="list-feed-item border-danger">
+                        <div class="list-feed-item border-warning">
                             <strong>Имеющиеся кол-во: </strong>
                             <span id="item_qty_required" style="font-size:15px;" class="ml-1">
-                                <?= number_format($item->item_qty);
-                                ?>
+                                <?= number_format($this->value('item_qty')); ?>
                             </span> / <span id="item_qty_count">0</span>
                         </div>
 
                     </div>
                 </div>
 
-                <?php //dd( $db->query("SELECT * FROM warehouse_storage_transactions")->fetchAll() ); ?>
+                <?php
+                importModel('WarehouseStorageApplication');
+                $warehouses = (new WarehouseStorageApplication('wp'))->Data('w.id, w.name');
+                $warehouses->Where("wp.warehouse_id_in=" . $this->value('warehouse_id') . " AND wp.item_name_id=". $this->value('item_name_id') . " AND wp.item_manufacturer_id=" . $this->value('item_manufacturer_id') . " AND wp.item_price=" . $this->value('item_price') . " AND wp.status = 3");
+                $warehouses->JoinRIGHT('warehouses w', 'w.id=wp.warehouse_id_from')->Group('w.id');
+                ?>
 
                 <div class="form-group">
                     <label>Выбирите склад:</label>
-                    <select data-placeholder="Выбрать склад" class="<?= $classes['form-select'] ?>" required>
+                    <select data-placeholder="Выбрать склад" name="warehouse_id_in" class="<?= $classes['form-select'] ?>" required>
                         <option></option>
-                        <?php foreach ($db->query("SELECT * FROM warehouse_storage_transactions") as $row): ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
+                        <?php foreach ($warehouses->list() as $row): ?>
+                            <option value="<?= $row->id ?>"><?= $row->name ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-md-3">Вернуть (кол-во):</label>
-                    <input type="number" name="item_qty" step="1" min="1" max="<?= $item->item_qty ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
+                    <input type="number" name="item_qty" step="1" min="1" max="<?= $this->value('item_qty') ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
                 </div>
 
                 <div class="form-group row">
@@ -444,7 +525,7 @@ class WarehouseStorage extends Model
             </div>
     
             <div class="modal-footer">
-                <!-- <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Списать</button> -->
+                <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Возврат</button>
                 <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
             </div>
 
@@ -456,7 +537,98 @@ class WarehouseStorage extends Model
             $("#input_count-qty").on("input", function (event) {
                 var qty_count = document.querySelector("#item_qty_count");
                 
-                if ( Number(event.target.max) >= Number(event.target.value) ) {
+                if ( Number(event.target.max) >= Number(event.target.value) && Number(event.target.value) > 0 ) {
+                    event.target.className = "form-control col-md-8";
+                    var qty = Number(event.target.value);
+                    qty_count.className = "text-success";
+                    document.querySelector("#indicator-btn").className = "btn btn-outline-warning btn-sm legitRipple";
+                    document.querySelector("#indicator-btn").disabled = false;
+                }else{
+                    qty_count.className = "text-danger";
+                    event.target.className = "form-control col-md-8 text-danger";
+                    document.querySelector("#indicator-btn").className = "btn btn-outline-secondary btn-sm legitRipple";
+                    document.querySelector("#indicator-btn").disabled = true;
+                }
+                
+                qty_count.innerHTML = number_format(qty);
+
+            });
+
+            FormLayouts.init();
+
+        </script>
+        <?php
+    }
+
+    public function writtenOffItem()
+    {
+        global $classes, $session;
+        $this->setPost($this->byId($this->getGet('id')));
+        ?>
+        <div class="<?= $classes['modal-global_header'] ?>">
+            <h6 class="modal-title">Списать препарат</h6>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <form method="post" action="<?= $this->urlHook('WarehouseStorageTransaction') ?>" onsubmit="submitForm()">
+
+            <?php $this->csrfToken(); ?>
+
+            <input type="hidden" name="item_id" value="<?= $this->value('id') ?>">
+            <input type="hidden" name="responsible_id" value="<?= $session->session_id ?>">
+            
+            <div class="modal-body">
+
+                <div class="card card-body border-top-1 border-top-danger">
+                    <div class="list-feed list-feed-rhombus list-feed-solid">
+                        <div class="list-feed-item border-danger">
+                            <strong>Препарат: </strong>
+                            <span><?= $this->db->query("SELECT name FROM $this->_item_names WHERE id = " . $this->value('item_name_id'))->fetchColumn() ?></span>
+                        </div>
+    
+                        <div class="list-feed-item border-danger">
+                            <strong>Данные: </strong><br>
+                            Производитель - <?= $this->db->query("SELECT manufacturer FROM $this->_item_manufacturers WHERE id = " . $this->value('item_manufacturer_id'))->fetchColumn() ?><br>
+                            Цена - <?= number_format($this->value('item_price')) ?><br>
+                            Срок годности - <?= date_f($this->value('item_die_date')) ?><br>
+                        </div>
+    
+                        <div class="list-feed-item border-danger">
+                            <strong>Имеющиеся кол-во: </strong>
+                            <span id="item_qty_required" style="font-size:15px;" class="ml-1">
+                                <?= number_format($this->value('item_qty')); ?>
+                            </span> / <span id="item_qty_count">0</span>
+                        </div>
+
+                    </div>
+                </div>
+    
+                <div class="form-group row">
+                    <label class="col-md-3">Списать (кол-во):</label>
+                    <input type="number" name="item_qty" step="1" min="1" max="<?= $this->value('item_qty') ?>" class="form-control col-md-8" required id="input_count-qty" placeholder="Введите кол-во списываемого препарата">
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-3">Комметарий:</label>
+                    <input type="text" name="comment" class="form-control col-md-8" placeholder="Комментарий">
+                </div>
+    
+            </div>
+    
+            <div class="modal-footer">
+                <button type="submit" id="indicator-btn" class="btn btn-outline-secondary btn-sm legitRipple" disabled>Списать</button>
+                <button type="button" class="<?= $classes['modal-global_btn_close'] ?>" data-dismiss="modal">Отмена</button>
+            </div>
+
+        </form>
+        <script  type="text/javascript">
+
+            var qty_required = document.querySelector("#item_qty_required");
+            
+            $("#input_count-qty").on("input", function (event) {
+                var qty_count = document.querySelector("#item_qty_count");
+                
+                if ( Number(event.target.max) >= Number(event.target.value) && Number(event.target.value) > 0 ) {
                     event.target.className = "form-control col-md-8";
                     var qty = Number(event.target.value);
                     qty_count.className = "text-success";

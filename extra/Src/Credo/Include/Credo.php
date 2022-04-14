@@ -16,51 +16,62 @@ abstract class Credo implements CredoInterface
      * $tb->list()                       --->  Получае массив с данными
      * $tb->panel()                      --->  Вытаскиваем панель с пагинациией
      * 
+     * $search = $tb->getSearch();       --->  Искомое
      * 
-     * 
-     * Поисковая система Ajax:
-     * 
-     * $search = $tb->getSearch();       ---> Искомое
-     * 
-     * 
-     * -- search.php
-     * 
-     * $tb->returnPath('адрес главной страницы');
-     * 
-     * 
-     * 
-     * Скрипт на Php + Html:
      * 
      * -----------------------------------------------------------------------
-    
-        <input type="text" value="<?= $search ?>" id="search_input">
-      
+     * Скрипт на Html:
      * -----------------------------------------------------------------------
-     * 
+     
+         Поле для поиска
+             <input type="text" value="" id="search_input">
+     
+         Место выведения результата
+             <div class="card-body" id="search_display"></div>
+     
+     
+     * -----------------------------------------------------------------------
      * Скрипт на Js + Ajax:
-     * 
      * -----------------------------------------------------------------------
-    
-        $("#search_input").keyup(credoSearch);
-
-        function credoSearch() {
-            var input = document.querySelector('#search_input');
-            var display = document.querySelector('#search_display');
-            $.ajax({
-                type: "GET",
-                url: "search.php",
-                data: {
-                    CRD_search: input.value,
-                },
-                success: function (result) {
-                    display.innerHTML = result;
-                },
-            });
-        }
-      
+     
+         <script type="text/javascript">
+     
+             function credoSearch(params = '') {
+                 if (document.querySelector('#search_display')) {
+                     var display = document.querySelector('#search_display');
+                     isLoading(display);
+                 
+                     $.ajax({
+                         type: "GET",
+                         url: "<?= api('table/registry/Patient') ?>"+params,
+                         success: function (result) {
+                             isLoaded(display);
+                             display.innerHTML = result;
+                         },
+                     });
+                 
+                 }
+             }
+         
+             $(document).ready(() => credoSearch());
+         
+         </script>
+         
+     * -----------------------------------------------------------------------
+     * Ajax поиск
+     * -----------------------------------------------------------------------
+         
+         Поставить в ajax запрос 
+             data: {
+                 CRD_search: document.querySelector('#search_input').value,
+             }
+         
+         JavaScript
+             $("#search_input").keyup(() => credoSearch());
+         
      * -----------------------------------------------------------------------
      * 
-     * @version 3.0
+     * @version 7.2
      */
     
     private String $CRD_sql;
@@ -70,7 +81,6 @@ abstract class Credo implements CredoInterface
     private String $CRD_where = '';
     private String $CRD_order = '';
     private String $CRD_group = '';
-    private String $CRD_selfPage = '';
     private String $CRD_search = '';
     private String $CRD_searchGetName = 'CRD_search=';
     private Int $CRD_limit = 0;
@@ -104,16 +114,6 @@ abstract class Credo implements CredoInterface
             else echo 'Ошибка в генерации скрипта <strong>"SQL"</strong>';
         }
         
-    }
-
-    private function path()
-    {
-        if (!$this->CRD_selfPage) {
-            $uri = $_SERVER['PHP_SELF'];
-            if (EXT != ".php") $uri = str_replace('.php', '', $_SERVER['PHP_SELF']);
-            return $uri;
-        }
-        return $this->CRD_selfPage;
     }
 
     private function clsDta($value = "") {

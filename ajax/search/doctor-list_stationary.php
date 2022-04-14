@@ -3,7 +3,7 @@ require_once '../../tools/warframe.php';
 $session->is_auth();
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("DISTINCT v.id, vs.patient_id, p.birth_date, p.last_name, p.first_name, p.father_name, vs.route_id, vr.id 'order'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_orders vr ON (v.id = vr.visit_id)");
+$tb->set_data("DISTINCT v.id, vs.patient_id, p.birth_date, p.last_name, p.first_name, p.father_name, vs.route_id, vr.name 'status_name'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $search_array = array(
 	"vs.status = 3 AND vs.level = 5 AND v.direction IS NOT NULL AND vs.parent_id = $session->session_id AND vs.route_id != $session->session_id",
@@ -36,8 +36,8 @@ if( isset($_SESSION['message']) ){
                     <td><?= addZero($row->patient_id) ?></td>
                     <td>
                         <span class="font-weight-semibold"><?= patient_name($row) ?></span>
-                        <?php if ( $row->order ): ?>
-                            <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1">Ордер</span>
+                        <?php if ( $row->status_name ): ?>
+                            <span style="font-size:13px;" class="badge badge-flat border-danger text-danger"><?= $row->status_name ?></span>
                         <?php endif; ?>
                         <div class="text-muted">
                             <?php if($stm = $db->query("SELECT building, floor, ward, bed FROM beds WHERE patient_id = $row->patient_id")->fetch()): ?>
@@ -47,8 +47,9 @@ if( isset($_SESSION['message']) ){
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td>
-                        <?php foreach($db->query("SELECT service_name, service_title FROM visit_services WHERE visit_id = $row->id AND status = 3 AND parent_id = $session->session_id AND level = 5") as $serv): ?>
-                            <span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span><br>
+                        <?php foreach($db->query("SELECT service_name, service_title, accept_date FROM visit_services WHERE visit_id = $row->id AND status = 3 AND parent_id = $session->session_id AND level = 5") as $serv): ?>
+                            <span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span>
+                            <span class="text-muted">(<?= date_f($serv['accept_date'], 1) ?>)</span><br>
                         <?php endforeach; ?>
                     </td>
                     <td>

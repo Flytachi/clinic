@@ -100,7 +100,7 @@ require_once 'callback.php';
 												<td class="text-right">
 													<button type="button" class="<?= $classes['btn-viewing'] ?> dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Просмотр</button>
 	                                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(1153px, 186px, 0px);">
-														<?php if( $activity and ( (!$patient->direction and $row->status == 1) or ( $patient->direction and $row->status == 2 and ($row->route_id == $session->session_id or is_grant()) and $row->service_id != 1 ) ) ): ?>
+														<?php if( $activity and ( (!$patient->direction and $row->status == 1) or ( $patient->direction and $row->status == 2 and ($row->route_id == $session->session_id or is_grant()) ) ) ): ?>
 															<a onclick="Delete('<?= del_url($row->id, 'VisitServicesModel') ?>', '#TR_<?= $row->id ?>')" class="dropdown-item"><i class="icon-x"></i>Отмена</a>
 														<?php endif; ?>
 														<?php if ( in_array($row->status, [3,5,6,7]) ): ?>

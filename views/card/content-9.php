@@ -59,7 +59,7 @@ is_module('module_bypass');
 							<div class="card-body">
 								
 								<div class="row">
-									<?php if($activity and is_grant()): ?>
+									<?php if($activity and permission(5)): ?>
 										<div class="col-md-4">
 											<div class="mb-3" id="external-events">
 												<h6>Пакеты назначений</h6>
@@ -146,7 +146,7 @@ is_module('module_bypass');
 			))();
         }
 
-		<?php if(is_grant()): ?>
+		<?php if(permission(5)): ?>
 
 			function CalendarDrop(info, element, allDay) {
 
@@ -368,7 +368,7 @@ is_module('module_bypass');
 		};
 
 		document.addEventListener("DOMContentLoaded", function () {
-			<?php if($activity and is_grant()): ?>
+			<?php if($activity and permission(5)): ?>
 				FullCalendarAdvanced.init(bypassEventUrl);
 			<?php else: ?>
 				FullCalendarAdvanced.block(bypassEventUrl, "<?= $patient->add_date ?>");

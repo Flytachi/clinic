@@ -7,6 +7,7 @@ class VisitBedsModel extends ModelOld
     public $table = 'visit_beds';
     public $_visits = 'visits';
     public $_beds = 'beds';
+    public $_status = 'visit_status';
     public $_bed_types = 'bed_types';
     public $_patient = 'patients';
 
@@ -229,10 +230,18 @@ class VisitBedsModel extends ModelOld
         return True;
     }
 
+    public function bed_is_free()
+    {
+        if(isset($this->status_is) and $this->status_is and $this->status_is['free_bed']) return true;
+        else return false;
+    }
+
     public function save()
     {
         global $db, $session;
-        
+
+        importModel('VisitType');
+        $this->status_is = $db->query("SELECT * FROM $this->_status WHERE visit_id = {$this->post['visit_id']}")->fetch();
 
         if($this->clean()){
             
@@ -241,11 +250,13 @@ class VisitBedsModel extends ModelOld
                 $bed_data = $db->query("SELECT * FROM  $this->_beds WHERE id = {$this->post['bed_id']}")->fetch();
                 $bed_types = $db->query("SELECT * FROM  $this->_bed_types WHERE id = {$bed_data['type_id']}")->fetch();
                 
+                $price = ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'];
+
                 $this->post['patient_id'] = $data['patient_id'];
                 $this->is_foreigner = $db->query("SELECT is_foreigner FROM $this->_patient WHERE id = {$this->post['patient_id']}")->fetchColumn();
                 $this->post['location'] = "{$bed_data['building']} {$bed_data['floor']} этаж {$bed_data['ward']} палата {$bed_data['bed']} койка";
                 $this->post['type'] = $bed_data['types'];
-                $this->post['cost'] = ($this->is_foreigner) ? $bed_types['price_foreigner'] : $bed_types['price'];
+                $this->post['cost'] = ($this->bed_is_free()) ? 0 : $price;
                 unset($this->post['old_id']);
     
                 $db->beginTransaction();

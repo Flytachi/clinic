@@ -120,11 +120,11 @@ $header = "Отчёт аптеки по складам";
 								<table class="table table-hover table-sm" id="table">
 									<thead>
 										<tr class="<?= $classes['table-thead'] ?>">
-											<th>Препарат</th>
-											<th>Поставщик</th>
+											<th class="text-center">Тип расхода</th>
 											<th>Дата</th>
 											<th>Ответственный</th>
-											<th class="text-center">Тип расхода</th>
+											<th>Препарат</th>
+											<th>Поставщик</th>
 											<th class="text-right">Стоимость ед.</th>
 											<th class="text-right">Кол-во</th>
 											<th class="text-right">Наличные</th>
@@ -136,10 +136,6 @@ $header = "Отчёт аптеки по складам";
 									<tbody>
 										<?php foreach ($db->query($sql) as $row): ?>
 											<tr>
-												<td><?= $row['item_name'] ?></td>
-												<td><?= $row['item_manufacturer'] ?></td>
-												<td><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></td>
-												<td><?= get_full_name($row['responsible_id']) ?></td>
 												<td class="text-center">
 													<?php if ($row['is_moving']): ?>
 														<span class="badge badge-primary">Перевод</span>
@@ -151,6 +147,10 @@ $header = "Отчёт аптеки по складам";
 														<span class="badge badge-success">Продажа</span>
 													<?php endif; ?>
 												</td>
+												<td><?= date("d.m.Y H:i", strtotime($row['add_date'])) ?></td>
+												<td><?= get_full_name($row['responsible_id']) ?></td>
+												<td><?= $row['item_name'] ?></td>
+												<td><?= $row['item_manufacturer'] ?></td>
 												<td class="text-right"><?= number_format($row['item_price']) ?></td>
 												<td class="text-right">
 													<?= number_format($row['item_qty']) ?>

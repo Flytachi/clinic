@@ -112,7 +112,7 @@ class ServicePanel extends ModelOld
                     </td>
 
                     <!-- Price -->
-                    <?php if( isset($this->post['is_order']) and $this->post['is_order'] ): ?>
+                    <?php if( isset($this->post['is_free']) and $this->post['is_free'] ): ?>
                         <td class="text-right">
                             <span class="text-muted">Бесплатно</span>
                         </td>
@@ -130,7 +130,7 @@ class ServicePanel extends ModelOld
         ?>
         <tr class="table-secondary">
             <th class="text-right" colspan="<?= 6-$this->post['cols'] ?>">Итого:</th>
-            <?php if( isset($this->post['is_order']) and $this->post['is_order'] ): ?>
+            <?php if( isset($this->post['is_free']) and $this->post['is_free'] ): ?>
                 <th class="text-right"><span class="text-muted">Бесплатно</span></th>
             <?php else: ?>                
                 <th class="text-right" id="total_price"><?= number_format($this->cost) ?></th>
@@ -142,7 +142,7 @@ class ServicePanel extends ModelOld
             });
 
             function tot_sum(the) {
-                var order = "<?= ( isset($this->post['is_order']) and $this->post['is_order'] ) ? null : 1 ?>";
+                var free = "<?= ( isset($this->post['is_free']) and $this->post['is_free'] ) ? null : 1 ?>";
                 var total = $('#total_price');
                 var cost = total.text().replace(/,/g,'');
                 var price = (document.querySelector('#count_input_'+the.value)).dataset.price;
@@ -151,11 +151,11 @@ class ServicePanel extends ModelOld
                     service[the.value] = {};
                     service[the.value]['parent'] = $("#parent_input_"+the.value).val();
                     service[the.value]['count'] = $("#count_input_"+the.value).val();
-                    if (order) {
+                    if (free) {
                         total.text( number_format(Number(cost) + (Number(price) * service[the.value]['count']), '.', ',') );
                     }
                 }else {
-                    if (order) {
+                    if (free) {
                         total.text( number_format(Number(cost) - (Number(price) * service[the.value]['count']), '.', ',') );
                     }
                     delete service[the.value];
@@ -171,12 +171,12 @@ class ServicePanel extends ModelOld
             });
 
             $(".counts").keyup(function() {
-                var order = "<?= ( isset($this->post['is_order']) and $this->post['is_order'] ) ? null : 1 ?>";
+                var free = "<?= ( isset($this->post['is_free']) and $this->post['is_free'] ) ? null : 1 ?>";
                 var total = $('#total_price');
                 var cost = total.text().replace(/,/g,'');
 
                 if (typeof service[this.dataset.id] !== "undefined") {
-                    if (order) {
+                    if (free) {
                         total.text( number_format(Number(cost) + (this.dataset.price * (this.value - service[this.dataset.id]['count'])), '.', ',') );
                     }
                     service[this.dataset.id]['count'] = this.value;

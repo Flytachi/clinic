@@ -14,6 +14,7 @@
 	<link href="<?= stack("assets/css/components.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/css/colors.min.css") ?>" rel="stylesheet" type="text/css">
 	<link href="<?= stack("assets/my_css/style.css") ?>" rel="stylesheet" type="text/css">
+	<link href="<?= stack("assets/my_css/loader.css") ?>" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->
@@ -60,5 +61,6 @@
 
 	<!-- JS chained -->
 	<script src="<?= stack("assets/js/jquery.chained.js") ?>"></script>
+	<script src="<?= stack("assets/js/loader.js") ?>"></script>
 
 </head>

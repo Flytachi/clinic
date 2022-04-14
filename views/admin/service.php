@@ -1,8 +1,12 @@
 <?php
+
+use Mixin\Hell;
+
 require_once '../../tools/warframe.php';
 $session->is_auth(1);
 $header = "Услуги";
 
+importModel('ServiceTerm');
 $tb = new Table($db, "services sc");
 $tb->set_data("sc.*, ds.title")->additions("LEFT JOIN divisions ds ON(ds.id=sc.division_id)");
 $search = $tb->get_serch();
@@ -97,7 +101,12 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 	                                      	<td><?= $PERSONAL[$row->user_level] ?></td>
 	                                      	<td><?= $row->title ?></td>
 											<td><?= $row->code ?></td>
-											<td><?= $row->name ?></td>
+											<td>
+												<?php
+												if( $term = (new ServiceTerm)->by(array('service_id'=>$row->id), 'day') ) echo '<span class="badge badge-danger mr-1">' . $term->day . ' day</span>';
+												?>
+												<?= $row->name ?>
+											</td>
 											<td>
 												<?php switch ($row->type) {
 													case 1:
@@ -132,6 +141,9 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 															</a>
 														</div>
 													</div>
+													<?php if($row->type == 2): ?>
+														<a onclick="ShowConf('<?= Hell::apiAxe('ServiceTerm', array('service_id'=>$row->id)) ?>')" class="list-icons-item text-primary"><i class="icon-cog4"></i></a>
+													<?php endif; ?>
 													<a onclick="Update('<?= up_url($row->id, 'ServiceModel') ?>')" class="list-icons-item text-primary-600"><i class="icon-pencil7"></i></a>
 													<?php if (config("admin_delete_button_services")): ?>										
 														<a href="<?= del_url($row->id, 'ServiceModel') ?>" onclick="return confirm('Вы уверены что хотите удалить услугу?')" class="list-icons-item text-danger-600"><i class="icon-trash"></i></a>
@@ -158,6 +170,12 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 
 	</div>
 	<!-- /page content -->
+
+	<div id="modal_default" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-lg">
+			<div class="<?= $classes['modal-global_content'] ?>" id="modal_default_card"></div>
+		</div>
+	</div>
 
     <!-- Footer -->
     <?php include layout('footer') ?>
@@ -203,8 +221,18 @@ $tb->where_or_serch($where_search)->order_by("user_level, division_id, code, nam
 			});
 		});
 
+		function ShowConf(events) {
+			$.ajax({
+				type: "GET",
+				url: events,
+				success: function (result) {
+					$('#modal_default').modal('show');
+					$('#modal_default_card').html(result);
+				},
+			});
+		};
+
 		function Update(events) {
-			events
 			$.ajax({
 				type: "GET",
 				url: events,

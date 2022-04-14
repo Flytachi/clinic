@@ -139,51 +139,77 @@
                 <?php endforeach; ?>
                 <!-- /Main -->
 
-                <?php if(module('module_pharmacy') and permission([4,5,7])): ?>
+                <?php if(permission(5)): ?>
+                    <li class="nav-item">
+                        <a href="<?= viv('sentry/index') ?>" class="nav-link legitRipple">
+                            <i class="icon-list"></i>
+                            <span>Дежурство</span>
+                        </a>
+                    </li>
+                <?php endif; ?>
+
+                <?php if(module('module_pharmacy') and permission($PHARM_VISION)): ?>
                     <!-- Warehouse -->
-                    <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, wsp.is_grant, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.responsible_id = $session->session_id") as $side_warehouse): ?>
+                    <?php foreach ($db->query("SELECT DISTINCT wsp.warehouse_id, wsp.is_application, wsp.is_transaction, wsp.is_grant, w.name 'warehouse_name' FROM warehouse_setting_permissions wsp LEFT JOIN warehouses w ON(w.id=wsp.warehouse_id) WHERE w.is_active IS NOT NULL AND wsp.user_id = $session->session_id") as $side_warehouse): ?>
 
                         <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs"><?= $side_warehouse['warehouse_name'] ?></div> <i class="icon-menu" title="Main"></i></li>
                     
                         <li class="nav-item">
-                            <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
+                            <a href="<?= viv('warehouse/index') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple <?= viv_link('warehouse/index') ?>">
                                 <i class="icon-store"></i>
                                 <span>Склад</span>
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple">
-                                <i class="icon-file-text3"></i>
-                                <span>Заявки</span>
-                                <?php if($side_warehouse['is_grant']): ?>
+                        <?php if($side_warehouse['is_application']): ?>
+                            <li class="nav-item">
+                                <a href="<?= viv('warehouse/application') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple <?= viv_link('warehouse/application') ?>">
+                                    <i class="icon-file-text3"></i>
+                                    <span>Заявки</span>
 
-                                    <div class="ml-auto">
-                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 1")->rowCount(); ?>
+                                    <?php if($side_warehouse['is_grant']): ?>
+
+                                        <div class="ml-auto">
+                                            <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 1")->rowCount(); ?>
+                                            <?php if($si_ware): ?>
+                                                <span class="badge bg-teal align-self-center"><?= $si_ware ?></span>
+                                            <?php endif; ?>
+                                            <?php unset($si_ware); ?>
+
+                                            <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 2")->rowCount(); ?>
+                                            <?php if($si_ware): ?>
+                                                <span class="badge bg-orange align-self-center"><?= $si_ware ?></span>
+                                            <?php endif; ?>
+                                            <?php unset($si_ware); ?>
+                                        </div>
+
+                                    <?php else: ?>
+
+                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status != 3 AND responsible_id = $session->session_id")->rowCount(); ?>
                                         <?php if($si_ware): ?>
-                                            <span class="badge bg-teal align-self-center"><?= $si_ware ?></span>
+                                            <span class="badge bg-teal align-self-center ml-auto"><?= $si_ware ?></span>
                                         <?php endif; ?>
                                         <?php unset($si_ware); ?>
 
-                                        <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status = 2")->rowCount(); ?>
-                                        <?php if($si_ware): ?>
-                                            <span class="badge bg-orange align-self-center"><?= $si_ware ?></span>
-                                        <?php endif; ?>
-                                        <?php unset($si_ware); ?>
-                                    </div>
+                                    <?php endif; ?>
+                                    
+                                </a>
+                            </li>
+                        <?php endif; ?>
 
-                                <?php else: ?>
-
-                                    <?php $si_ware = $db->query("SELECT id FROM warehouse_storage_applications WHERE warehouse_id_in = {$side_warehouse['warehouse_id']} AND status != 3 AND responsible_id = $session->session_id")->rowCount(); ?>
+                        <?php if($side_warehouse['is_transaction']): ?>
+                            <li class="nav-item">
+                                <a href="<?= viv('warehouse/transaction') ?>?pk=<?= $side_warehouse['warehouse_id'] ?>" class="nav-link legitRipple <?= viv_link('warehouse/transaction') ?>">
+                                    <i class="icon-clipboard6"></i>
+                                    <span>Перемещение</span>
+                                    <?php $si_ware = $db->query("SELECT DISTINCT warehouse_id_in FROM warehouse_storage_applications WHERE warehouse_id_from = {$side_warehouse['warehouse_id']} AND status = 2")->rowCount() ?>
                                     <?php if($si_ware): ?>
-                                        <span class="badge bg-teal align-self-center ml-auto"><?= $si_ware ?></span>
+                                        <span class="badge bg-blue badge-pill ml-auto"><?= $si_ware ?></span>
                                     <?php endif; ?>
                                     <?php unset($si_ware); ?>
-
-                                <?php endif; ?>
-                                
-                            </a>
-                        </li>
+                                </a>
+                            </li>
+                        <?php endif; ?>
 
                     <?php endforeach; ?>
                     <!-- /Warehouse -->

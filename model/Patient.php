@@ -4,7 +4,6 @@ use Mixin\Model;
 
 class Patient extends Model
 {
-    use ResponceRender;
     public $table = 'patients';
 
     public function form()
@@ -16,7 +15,7 @@ class Patient extends Model
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
 
-        <form method="post" action="<?= $this->urlHook() ?>">
+        <form method="post" action="<?= $this->urlHook() ?>" onsubmit="submitForm()">
         
             <div class="modal-body">
 
@@ -200,6 +199,25 @@ class Patient extends Model
     {
         Mixin\update($this->table, array('status' => null), $pk);
         return true;
+    }
+
+    public function success()
+    {
+        header('Content-type: application/json');
+        echo json_encode(array(
+            'status' => 'success'
+        ));
+    }
+
+    public function error($message)
+    {
+        header('Content-type: application/json');
+        echo json_encode(array(
+            'status' => 'error',
+            'message' => $message
+        ));
+        if($this->db->inTransaction()) $this->db->rollBack();
+        exit;
     }
 
 }

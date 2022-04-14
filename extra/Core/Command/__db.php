@@ -38,8 +38,8 @@ class __Db
             elseif($this->argument == "seed") $this->seed();
             else echo "\033[31m"." Нет такого аргумента.\n";
         } catch (\Error $e) {
-            echo $e->getMessage();
-//            echo "\033[31m"." Ошибка в скрипте.\n";
+            // echo $e->getMessage();
+            echo "\033[31m"." Ошибка в скрипте.\n";
         }
     }
 
@@ -69,16 +69,10 @@ class __Db
         $db = (new Connect($ini['DATABASE']))->connection($ini['GLOBAL_SETTING']['DEBUG']);
 
         try {
-            foreach (json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1) as $table) {
+            $bases = glob(dirname(__DIR__, 3)."/$this->path_base/*.$this->format");
+            foreach (json_decode(file_get_contents(end($bases)), 1) as $table) {
                 $db->exec($table);
             }
-            echo "\033[32m"." -- Таблицы успешно мигрированы.\n";
-            //
-            // foreach (json_decode(file_get_contents(dirname(__DIR__, 2)."/$this->path_base/Triggers.$this->format"), 1) as $trigger) {
-            //     $db->exec("DROP TRIGGER IF EXISTS {$trigger['Trigger']}; DELIMITER $ CREATE TRIGGER {$trigger['Trigger']} {$trigger['Timing']} {$trigger['Event']} ON {$trigger['Table']} FOR EACH ROW {$trigger['Statement']} $ DELIMITER ;");
-            // }
-            // echo "\033[32m"." -- Триггеры успешно мигрированы.\n";
-            
             echo "\033[32m"." Миграция прошла успешно.\n";
         } catch (\Exception $e) {
             echo "\033[31m"." Во время миграции произошла ошибка.\n";
@@ -87,7 +81,8 @@ class __Db
 
     private function create_file($code)
     {
-        $file = fopen("$this->path_base/Index_Tables.$this->format", "w");
+        $file_name = date("Y-m-d_h-i-s");
+        $file = fopen("$this->path_base/$file_name.$this->format", "w");
         fwrite($file, $code);
     }
 
@@ -171,8 +166,11 @@ class __Db
             $self_base[] = $t;
         }
         
-        $migrate_base = json_decode(file_get_contents(dirname(__DIR__, 3)."/$this->path_base/Index_Tables.$this->format"), 1);
+        $bases = glob(dirname(__DIR__, 3)."/$this->path_base/*.$this->format");
+        $migrate_base = json_decode(file_get_contents(end($bases)), 1);
         if ($diff = array_diff($self_base, $migrate_base)) print_r($diff);
+        elseif ($diff = array_diff($migrate_base, $self_base)) print_r($diff);
+        else echo "\033[32m"." Текущая база данных актуальна.\n";
     }
 
     private function help()
