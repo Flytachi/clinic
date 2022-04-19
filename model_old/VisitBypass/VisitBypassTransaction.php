@@ -27,17 +27,20 @@ class VisitBypassTransactionModel extends ModelOld
                 <input type="hidden" name="direction" value="<?= $patient->direction ?>">
                 <input type="hidden" name="patient_id" value="<?= $patient->id ?>">
 
-                <ul class="nav nav-tabs nav-tabs-solid nav-justified rounded border-0">
-                    <?php if( module('pharmacy') ): ?>
+                <div class="form-group">
+                    <label>Склад:</label>
+                    <select data-placeholder="Выбрать Склад" name="method" class="<?= $classes['form-select'] ?>" onchange="ChangeWare(this)" required>
+                        <option></option>
                         <?php
                         $dirApl = ($patient->direction) ? "wsa.direction IS NOT NULL" : "wsa.direction IS NULL";
                         $warehouses = (new Table($db, "warehouse_setting_applications wsa"))->set_data("w.id, w.name")->additions("LEFT JOIN warehouses w ON(w.id=wsa.warehouse_id)")->where("wsa.division_id = $session->session_division AND w.is_active IS NOT NULL AND $dirApl");
                         ?>
-                        <?php foreach ($warehouses->get_table() as $ware): ?>
-                            <li class="nav-item"><a href="#" onclick="ChangeWare(<?= $ware->id ?>)" class="nav-link legitRipple" data-toggle="tab"><?= $ware->name ?></a></li>
+                        <?php foreach ($warehouses->get_table() as $row): ?>
+                            <option value="<?= $row->id ?>"><?= $row->name ?></option>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
+                    </select>
+                </div>
+                
 
                 <div class="form-group" id="panel-frame"></div>
 
@@ -48,6 +51,23 @@ class VisitBypassTransactionModel extends ModelOld
             var warehouse = null;
 
             function ChangeWare(params) {
+                if (params.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "<?= Hell::apiAxe('WarehouseStorage', array('form' => 'frame')) ?>",
+                        data: {
+                            warehouse_id_from: params.value,
+                            status: 1,
+                        },
+                        success: function (result) {
+                            $('#panel-frame').html(result);
+                        },
+                    });
+                }
+                
+                warehouse = params.value;
+            }
+            /* function ChangeWare(params) {
                 if (params) {
                     $.ajax({
                         type: "POST",
@@ -63,7 +83,7 @@ class VisitBypassTransactionModel extends ModelOld
                 }
                 
                 warehouse = params;
-            }
+            } */
 
             function __WarehouseStorage__search(input){
                 $.ajax({

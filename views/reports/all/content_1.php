@@ -110,21 +110,38 @@ $header = "Общий отчёт по проведённым услугам";
 
 						<div class="card-body">
 
+							<?php 
+							importModel('VisitType');
+							$amb = (new VisitType)->Where("is_ambulator IS NOT NULL")->list();
+							$sta = (new VisitType)->Where("is_stationar IS NOT NULL")->list();
+							$Tamb = $Tsta = [];
+							?>
+
 							<div class="table-responsive">
 	                            <table class="table table-hover table-sm table-bordered" id="table">
-	                                <thead>
-	                                    <tr class="<?= $classes['table-thead'] ?>">
-											<th style="width: 50px">№</th>
-				                            <th>Отдел</th>
-											<th class="text-center">Кол-во пациентов</th>
-											<th class="text-center">Амб. услуги(ордер)</th>
-											<th class="text-center">Амб. услуги(нет ордера)</th>
-											<th class="text-center">Стац. услуги(ордер)</th>
-											<th class="text-center">Стац. услуги(нет ордера)</th>
+	                                <thead class="<?= $classes['table-thead'] ?>">
+	                                    <tr>
+											<th style="width: 50px" rowspan="2">№</th>
+				                            <th rowspan="2">Отдел</th>
+											<th class="text-center" rowspan="2">Кол-во пациентов</th>
+											<th class="text-center" colspan="<?= count($amb)+1 ?>">Амбулаторные услуги</th>
+											<th class="text-center" colspan="<?= count($sta)+1 ?>">Стационарные услуги</th>
 	                                    </tr>
+										<tr>
+											<th class="text-center">Без типа</th>
+											<?php foreach($amb as $k => $r): ?>
+												<?php $Tamb[$k] = 0; ?>
+												<th class="text-center"><?= $r->name ?></th>
+											<?php endforeach; ?>
+											<th class="text-center">Без типа</th>
+											<?php foreach($sta as $k => $r): ?>
+												<?php $Tsta[$k] = 0; ?>
+												<th class="text-center"><?= $r->name ?></th>
+											<?php endforeach; ?>
+										</tr>
 	                                </thead>
 	                                <tbody>
-										<?php $pc = $ao = $an = $so = $sn = 0; ?>
+										<?php $pc = $ao = $an = 0; ?>
 										<?php foreach ($tb->list(1) as $row): ?>
 											<tr>
 												<td><?= $row->count ?></td>
@@ -136,43 +153,54 @@ $header = "Общий отчёт по проведённым услугам";
 													$pc += $p; echo number_format($p);
 													?>
 												</td>
+
 												<td class="text-center">
 													<?php
-													$p2 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_orders vr", "vr.visit_id=v.id")
-													->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NOT NULL")->get()->c;
-													$ao += $p2; echo number_format($p2);
+													$p = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_status vr", "vr.visit_id=v.id")
+													->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NULL")->get()->c;
+													$ao += $p; echo number_format($p);
 													?>
 												</td>
+												<?php foreach($amb as $k => $r): ?>
+													<td class="text-center">
+														<?php
+														$p = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_status vr", "vr.visit_id=v.id")
+														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.visit_type_id = $r->id")->get()->c;
+														$Tamb[$k] += $p; echo number_format($p);
+														?>
+													</td>
+												<?php endforeach; ?>
+
 												<td class="text-center">
 													<?php
-													$p3 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
-													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NULL AND vr.id IS NULL")->get()->c;
-													$an += $p3; echo number_format($p3);
+													$p = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_status vr", "vr.visit_id=v.id")
+													->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NULL")->get()->c;
+													$an += $p; echo number_format($p);
 													?>
 												</td>
-												<td class="text-center">
-													<?php
-													$p4 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
-													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NOT NULL")->get()->c;
-													$so += $p4; echo number_format($p4);
-													?>
-												</td>
-												<td class="text-center">
-													<?php
-													$p5 = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v ON(v.id=vs.visit_id)")
-													->JoinLEFT("visit_orders vr ON(vr.visit_id=v.id)")->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.id IS NULL")->get()->c;
-													$sn += $p5; echo number_format($p5);
-													?>
-												</td>
+												<?php foreach($sta as $k => $r): ?>
+													<td class="text-center">
+														<?php
+														$p = (new VisitServicesModel)->as("vs")->Data("COUNT(*) 'c'")->Join("visits v", "v.id=vs.visit_id")->JoinLEFT("visit_status vr", "vr.visit_id=v.id")
+														->Where($where . " AND vs.division_id = $row->id AND v.direction IS NOT NULL AND vr.visit_type_id = $r->id")->get()->c;
+														$Tsta[$k] += $p; echo number_format($p);
+														?>
+													</td>
+												<?php endforeach; ?>
+												
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
 											<th class="text-right" colspan="2">Итог:</th>
 											<th class="text-center"><?= number_format($pc) ?></th>
 											<th class="text-center"><?= number_format($ao) ?></th>
+											<?php foreach($Tamb as $r): ?>
+												<th class="text-center"><?= number_format($r) ?></th>
+											<?php endforeach; ?>
 											<th class="text-center"><?= number_format($an) ?></th>
-											<th class="text-center"><?= number_format($so) ?></th>
-											<th class="text-center"><?= number_format($sn) ?></th>
+											<?php foreach($Tsta as $r): ?>
+												<th class="text-center"><?= number_format($r) ?></th>
+											<?php endforeach; ?>
 										</tr>
 	                                </tbody>
 	                            </table>
