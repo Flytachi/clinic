@@ -139,7 +139,7 @@
                 <?php endforeach; ?>
                 <!-- /Main -->
 
-                <?php if(permission(5)): ?>
+                <?php if(permission([5, 7])): ?>
                     <li class="nav-item">
                         <a href="<?= viv('sentry/index') ?>" class="nav-link legitRipple">
                             <i class="icon-list"></i>

@@ -1,6 +1,6 @@
 <?php
 require_once '../../tools/warframe.php';
-$session->is_auth([5,8]);
+$session->is_auth([5,7,8]);
 $header = "Пациенты";
 
 $tb = (new VisitModel)->as("v")->Data("d.id, d.title")->Join("divisions d ON(d.id=v.division_id)")->Where("v.direction IS NOT NULL AND v.completed IS NULL AND v.is_active IS NOT NULL");
