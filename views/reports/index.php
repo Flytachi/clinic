@@ -151,10 +151,9 @@ $header = "Отчёты";
                     <?php endif; ?>
                     <!-- end -->
 
-                    <!-- Физиотерапия -->
+                    <!-- Процедурная -->
                     <?php if (permission([1, 2, 3, 8, 12, 13, 32])): ?>
-                        <!-- <a href="<?= viv('reports/physio/content_1') ?>" class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</a> -->
-                        <button class="btn btn-outline-secondary" style="font-size:1rem;">Процедурная</button>
+                        <a href="<?= viv('reports/manipulation/content_1') ?>" class="btn btn-outline-success" style="font-size:1rem;">Процедурная</a>
                     <?php else: ?>
                         <button class="btn btn-outline-danger" style="font-size:1rem;">Процедурная</button>
                     <?php endif; ?>
