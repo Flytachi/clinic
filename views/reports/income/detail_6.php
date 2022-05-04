@@ -10,7 +10,7 @@ $sql = "SELECT vs.user_id, SUM(iv.balance_cash + iv.balance_card + iv.balance_tr
         WHERE vs.direction IS NOT NULL AND bed_id IS NOT NULL
             AND vs.grant_id={$_POST['parent_id']} 
             AND vs.priced_date IS NOT NULL 
-            AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
+            AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
 // $detail = $db->query($sql)->fetchAll(PDO::FETCH_OBJ);
 // dd($detail);
 $total_price = 0; $i = 1;
