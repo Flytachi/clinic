@@ -6,8 +6,8 @@ $_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]))
 
 $sql = "SELECT vs.user_id, SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'deposit'
         FROM visit vs 
-            LEFT JOIN investment iv ON(iv.user_id=vs.user_id)
-        WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL 
+            LEFT JOIN investment iv ON(iv.user_id=vs.user_id AND iv.status IS NOT NULL)
+        WHERE vs.direction IS NOT NULL AND bed_id IS NOT NULL
             AND vs.grant_id={$_POST['parent_id']} 
             AND vs.priced_date IS NOT NULL 
             AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
