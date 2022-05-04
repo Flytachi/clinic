@@ -29,7 +29,7 @@ $total_price = 0; $i = 1;
         <?php foreach ($db->query($sql) as $row): ?>
             <tr>
                 <td><?= $i++ ?></td>
-                <td><?= get_full_name($row['user_id']) ?></td>
+                <td><b><?= $row['user_id'] ?></b> - <?= get_full_name($row['user_id']) ?></td>
                 <td class="text-right">
                     <?php $total_price += $row['deposit']; echo number_format($row['deposit']); ?>
                 </td>
