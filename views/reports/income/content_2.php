@@ -33,7 +33,7 @@ $header = "Доход";
                 <div class="<?= $classes['card'] ?>">
 
                     <div class="<?= $classes['card-header'] ?>">
-                        <h6 class="card-title" >Фильтр UP2</h6>
+                        <h6 class="card-title" >Фильтр</h6>
                         <div class="header-elements">
                             <div class="list-icons">
                                 <a class="list-icons-item" data-action="collapse"></a>
