@@ -4,7 +4,7 @@ require_once '../../../tools/warframe.php';
 $_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 $_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 
-$sql = "SELECT vs.accept_date, vs.user_id, ds.title, vp.item_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' 
+$sql = "SELECT vs.priced_date, vs.user_id, ds.title, vp.item_name, (vp.price_cash + vp.price_card + vp.price_transfer) 'price' 
         FROM visit vs 
             LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) 
             LEFT JOIN service sc ON(sc.id=vs.service_id) 
@@ -23,7 +23,7 @@ $total_price = 0; $i = 1;
     <thead>
         <tr class="<?= $classes['table-thead'] ?>">
             <th style="width: 50px">№</th>
-            <th style="width: 11%">Дата приёма</th>
+            <th style="width: 11%">Дата платежа</th>
             <th>Пациент</th>
             <th>Отдел</th>
             <th>Услуга</th>
@@ -34,7 +34,7 @@ $total_price = 0; $i = 1;
         <?php foreach ($db->query($sql) as $row): ?>
             <tr>
                 <td><?= $i++ ?></td>
-                <td><?= ($row['accept_date']) ? date('d.m.y H:i', strtotime($row['accept_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
+                <td><?= ($row['priced_date']) ? date('d.m.y H:i', strtotime($row['priced_date'])) : '<span class="text-muted">Нет данных</span>' ?></td>
                 <td><?= get_full_name($row['user_id']) ?></td>
                 <td><?= $row['title'] ?></td>
                 <td><?= $row['item_name'] ?></td>
