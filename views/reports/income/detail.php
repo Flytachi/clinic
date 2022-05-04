@@ -7,7 +7,7 @@ require_once '../../../tools/warframe.php';
     <li class="nav-item"><a onclick="Detail_control('<?= viv('reports/income/detail_3') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Стационарные Консультации</a></li>
     <li class="nav-item"><a onclick="Detail_control('<?= viv('reports/income/detail_4') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Стационарные Услуги</a></li>
     <li class="nav-item"><a onclick="Detail_control('<?= viv('reports/income/detail_5') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Стационарные Осмотры</a></li>
-    <li class="nav-item"><a onclick="Detail_control('<?= viv('reports/income/detail_6') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Стационарные Дипозиты</a></li>
+    <li class="nav-item"><a onclick="Detail_control('<?= viv('reports/income/detail_6') ?>')" href="#" class="nav-link legitRipple" data-toggle="tab">Стационарные Депозиты</a></li>
 </ul>
 
 <div class="table-responsive" id="div_show_detail">

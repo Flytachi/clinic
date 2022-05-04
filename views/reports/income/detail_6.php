@@ -4,7 +4,7 @@ require_once '../../../tools/warframe.php';
 $_POST['date_start'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[0]));
 $_POST['date_end'] = date('Y-m-d', strtotime(explode(' - ', $_POST['date'])[1]));
 
-$sql = "SELECT vs.user_id, SUM(balance_cash + balance_card + balance_transfer) 'deposit'
+$sql = "SELECT vs.user_id, SUM(iv.balance_cash + iv.balance_card + iv.balance_transfer) 'deposit'
         FROM visit vs 
             LEFT JOIN investment iv ON(iv.user_id=vs.user_id)
         WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL 
