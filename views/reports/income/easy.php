@@ -11,7 +11,7 @@ foreach ($bed_types as $value) {
         @sta_bed_hour_{$value['id']} := IFNULL(
             (
                 SELECT SUM(ROUND(DATE_FORMAT(TIMEDIFF(IFNULL(vs.completed, CURRENT_TIMESTAMP()), vs.add_date), '%H'))) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN beds bd ON(bd.id=vp.item_id)
-                WHERE bd.types = {$value['id']} AND vp.item_type IN (101) AND vs.direction IS NOT NULL AND vs.grant_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                WHERE bd.types = {$value['id']} AND vp.item_type IN (101) AND vs.direction IS NOT NULL AND vs.grant_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
             )
             , 0) 'sta_bed_hour-{$value['id']}',
     ";
@@ -24,45 +24,45 @@ $sql = "SELECT us.id,
             @amb_service_count_1 := IFNULL(
                 (
                     SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vs.direction IS NULL AND sc.type = 1 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND sc.type = 1 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_service_count_1',
             @amb_service_count_2 := IFNULL(
                 (
                     SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vs.direction IS NULL AND sc.type = 2 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND sc.type = 2 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_service_count_2',
             --
             @amb_service_amount_1 := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vs.direction IS NULL AND sc.type = 1 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND sc.type = 1 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_service_amount_1',
             @amb_service_amount_2 := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vs.direction IS NULL AND sc.type = 2 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND sc.type = 2 AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_service_amount_2',
             --
             @amb_users_count := IFNULL(
                 (
                     SELECT COUNT(DISTINCT vs.user_id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vs.direction IS NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_users_count',
             @amb_service_route_count := IFNULL(
                 (
                     SELECT COUNT(vs.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vs.direction IS NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_service_route_count',
             @amb_service_route_amount := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vs.direction IS NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'amb_service_route_amount',
             --
@@ -73,38 +73,38 @@ $sql = "SELECT us.id,
             @sta_service_count_1 := IFNULL(
                 (
                     SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vp.item_type IN (1) AND sc.type = 1 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (1) AND sc.type = 1 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_count_1',
             @sta_service_count_2 := IFNULL(
                 (
                     SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vp.item_type IN (1) AND sc.type = 2 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (1) AND sc.type = 2 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_count_2',
             @sta_service_count_3 := IFNULL(
                 (
                     SELECT COUNT(vp.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vp.item_type IN (5) AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (5) AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_count_3',
             --
             @sta_service_amount_1 := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vp.item_type IN (1) AND sc.type = 1 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (1) AND sc.type = 1 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_amount_1',
             @sta_service_amount_2 := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id) LEFT JOIN service sc ON(sc.id=vs.service_id)
-                    WHERE vp.item_type IN (1) AND sc.type = 2 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (1) AND sc.type = 2 AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_amount_2',
             @sta_service_amount_3 := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vp.item_type IN (5) AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (5) AND vs.direction IS NOT NULL AND vs.parent_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_amount_3',
             --
@@ -114,13 +114,13 @@ $sql = "SELECT us.id,
             @sta_grant_visit_count := IFNULL(
                 (
                     SELECT COUNT(vs.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL AND vs.grant_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL AND vs.grant_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_grant_visit_count',
             @sta_grant_visit_amount := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL AND vs.grant_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vp.item_type IN (101) AND vs.direction IS NOT NULL AND vs.grant_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_grant_visit_amount',
             $bed
@@ -128,13 +128,13 @@ $sql = "SELECT us.id,
             @sta_service_route_count := IFNULL(
                 (
                     SELECT COUNT(vs.id) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vs.direction IS NOT NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NOT NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_route_count',
             @sta_service_route_amount := IFNULL(
                 (
                     SELECT SUM(vp.price_cash + vp.price_card + vp.price_transfer) FROM visit vs LEFT JOIN visit_price vp ON(vp.visit_id=vs.id)
-                    WHERE vs.direction IS NOT NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.add_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
+                    WHERE vs.direction IS NOT NULL AND vs.route_id=us.id AND vs.priced_date IS NOT NULL AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")
                 )
                 , 0) 'sta_service_route_amount'
             --
