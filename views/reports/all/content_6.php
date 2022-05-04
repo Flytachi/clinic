@@ -146,6 +146,7 @@ $header = "Общий отчёт по операционным услугам";
 						}
 					}
 					$i=1;
+					$c=0;
 					?>
 					<div class="card border-1 border-info">
 
@@ -183,12 +184,15 @@ $header = "Общий отчёт по операционным услугам";
 												<td><?= get_full_name($row['grant_id']) ?></td>
 												<td><?= $row['item_name'] ?></td>
 												<td>
+													<?php $c += $row['item_cost'] ?>
 													<?= number_format($row['item_cost']) ?>
 												</td>
 											</tr>
 										<?php endforeach; ?>
 										<tr class="table-secondary">
 											<th colspan="2">Общее колличество: <?= $i-1 ?></th>
+											<th colspan="4" class="text-right">Общая сумма:</th>
+											<th class="text-right"><?= number_format($c) ?></th>
 										</tr>
 	                                </tbody>
 	                            </table>
