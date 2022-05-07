@@ -6,21 +6,14 @@ require '../../../tools/warframe.php';
 
 $session->is_auth([2, 32]);
 
-if ( isset($_GET['application']) and $_GET['application'] == "true") $apl = "va.id IS NOT NULL AND ";
-else $apl = "";
-
 importModel('Patient', 'Region');
 
 $tb = new Patient('p');
-$search = $tb->getSearch();
-$where_search = array(
-    $apl . "p.add_date IS NOT NULL",
-    $apl . "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
-);
-
-$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search);
-$tb->Order("p.add_date DESC")->Limit(20);
-
+$tb->Data("p.*, r.id 'region'")->JoinLEFT('region r', 'r.id=p.region_id');
+if ($search = $tb->getSearch()) {
+    $tb->Where("p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))");
+}
+$tb->Order("p.add_date DESC")->showError(true)->Limit(20);
 ?>
 <div class="table-responsive">
     <table class="table table-hover table-sm table-bordered">
@@ -39,7 +32,7 @@ $tb->Order("p.add_date DESC")->Limit(20);
         </thead>
         <tbody>
             <?php foreach ($tb->list() as $row): ?>
-                <tr <?php if($row->application) echo 'class="table-danger"'; ?>>
+                <tr>
                     <td><?= addZero($row->id) ?></td>
                     <td>
                         <div class="font-weight-semibold"><?= patient_name($row) ?></div>
@@ -51,7 +44,7 @@ $tb->Order("p.add_date DESC")->Limit(20);
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td><?= $row->phone_number ?></td>
-                    <td><?= ($row->region_id) ? (new Region)->byId($row->region_id, 'name')->name : '<span class="text-muted">Нет данных</span>' ?></td>
+                    <td><?= $row->region ?></td>
                     <td><?= date_f($row->add_date, 1) ?></td>
                     <td class="text-center">
                         <?php if ($row->status): ?>
