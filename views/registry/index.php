@@ -40,12 +40,6 @@ $header = "Список пациентов";
 					<div class="<?= $classes['card-header'] ?>">
 						<h6 class="card-title">Список пациентов</h6>
 						<div class="header-elements">
-							<div class="form-check form-check-right form-check-switchery mr-4">
-								<label class="form-check-label">
-									<input type="checkbox" class="form-input-switchery swit" id="serch_check">
-									Назначеные
-								</label>
-							</div>
 							<div class="form-group-feedback form-group-feedback-right mr-2">
 							
 								<input type="text" class="<?= $classes['input-search'] ?>" value="" id="search_input" placeholder="Поиск..." title="Введите ID или имя">
@@ -126,7 +120,6 @@ $header = "Список пациентов";
 					type: "GET",
 					url: "<?= api('table/registry/Patient') ?>"+params,
 					data: {
-						application: $("#serch_check").is(':checked'),
 						CRD_search: document.querySelector('#search_input').value,
 					},
 					success: function (result) {
