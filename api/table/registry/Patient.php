@@ -9,7 +9,7 @@ $session->is_auth([2, 32]);
 importModel('Patient', 'Region');
 
 $tb = new Patient('p');
-$tb->Data("p.*, r.id 'region'")->JoinLEFT('region r', 'r.id=p.region_id');
+$tb->Data("p.*, r.name 'region'")->JoinLEFT('region r', 'r.id=p.region_id');
 if ($search = $tb->getSearch()) {
     $tb->Where("p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))");
 }
