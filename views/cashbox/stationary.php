@@ -10,7 +10,7 @@ $where_search = array(
 	"vs.direction IS NOT NULL AND vs.completed IS NULL", 
 	"vs.direction IS NOT NULL AND vs.completed IS NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($where_search);
+$tb->where_or_serch($where_search)->set_limit(15);
 ?>
 <!DOCTYPE html>
 <html lang="en">
