@@ -7,7 +7,7 @@ $tb = new Table($db, "users");
 $search = $tb->get_serch();
 $where_search = array("user_level = 15", "user_level = 15 AND (id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', last_name, first_name, father_name)) LIKE LOWER('%$search%'))");
 
-$tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
+$tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(15);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -203,8 +203,11 @@ $tb->where_or_serch($where_search)->order_by("add_date DESC")->set_limit(20);
 			});
 		};
 
+		var cXhr = null;
+
 		$("#search_input").keyup(function() {
-			$.ajax({
+			if(cXhr && cXhr.readyState != 4) cXhr.abort();
+			cXhr = $.ajax({
 				type: "GET",
 				url: "<?= ajax('search/registry') ?>",
 				data: {
