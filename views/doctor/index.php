@@ -10,7 +10,7 @@ $search_array = array(
 	"vs.status = 2 AND vs.level = 5 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) )", 
 	"vs.status = 2 AND vs.level = 5 AND ( (vs.parent_id IS NOT NULL AND vs.parent_id = $session->session_id) OR (vs.parent_id IS NULL AND vs.division_id = $session->session_division) ) AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%') OR LOWER(vs.service_name) LIKE LOWER('%$search%') )"
 );
-$tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(20);
+$tb->where_or_serch($search_array)->order_by('vs.id ASC')->set_limit(10);
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -9,7 +9,7 @@ $search_array = array(
 	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id",
 	"vs.status = 3 AND vs.level = 5 AND v.direction IS NULL AND vs.parent_id = $session->session_id AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(20);
+$tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(10);
 $tb->set_self(viv('doctor/list_outpatient'));
 ?>
 <div class="table-responsive">
