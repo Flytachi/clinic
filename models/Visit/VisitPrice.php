@@ -105,16 +105,21 @@ class VisitPriceModel extends Model
 
                             let par_id;
 
-                            parent_id.forEach(function(events) {
-                                let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
-
-                                par_id = $(events).val()
-
-                                conn.send(obj);
+                            parent_id.forEach(function(events) {                                
+                                try {
+                                    let obj = JSON.stringify({ type : 'alert_new_patient',  id : $(events).val(), message: "У вас новый амбулаторный пациент!" });
+                                    par_id = $(events).val()
+                                    conn.send(obj);
+                                } catch (error) {
+                                    console.log('Error send 1');
+                                }
                             });
-                                let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
-
-                                conn.send(obj1);
+                                try {
+                                    let obj1 = JSON.stringify({ type : 'new_patient',  id : "1983", user_id : $('#user_amb_id').val() , parent_id : par_id});
+                                    conn.send(obj1);
+                                } catch (error) {
+                                    console.log('Error send 2');
+                                }
 
 
                                 // Печать:
