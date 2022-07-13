@@ -17,7 +17,7 @@ $where_search = array(
     $apl . "p.add_date IS NOT NULL AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
 
-$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(20);
+$tb->Data("p.*, va.id 'application'")->JoinLEFT('visit_applications va', 'va.patient_id=p.id')->Where($where_search)->Order("p.add_date DESC")->Limit(15);
 
 $tb->returnPath(viv('registry/index'));
 ?>
