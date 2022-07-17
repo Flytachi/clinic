@@ -28,7 +28,7 @@ $tb->Group('v.id')->Order('vs.accept_date DESC')->Limit(10);
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach($tb->showError(true)->list() as $row): ?>
+			<?php foreach($tb->list() as $row): ?>
 				<tr>
 					<td><?= addZero($row->patient_id) ?></td>
 					<td>
