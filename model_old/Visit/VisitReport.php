@@ -1,5 +1,6 @@
 <?php
 
+use Mixin\HellCrud;
 use Mixin\ModelOld;
 
 class VisitReport extends ModelOld
@@ -9,6 +10,8 @@ class VisitReport extends ModelOld
     public function form($pk = null)
     {
         global $db, $classes, $session;
+        importModel('VisitServiceReport');
+        $report = (new VisitServiceReport)->Where("visit_service_id=".$this->value('id'))->get();
         ?>
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
 
@@ -36,7 +39,7 @@ class VisitReport extends ModelOld
                 <h1>
                     <div class="col-md-8 offset-md-2">
                         <div class="form-group-feedback form-group-feedback-right">
-                            <input type="text" style="font-size: 1.3rem;" id="service_title" name="service_title" value="<?= ($this->value('service_title')) ? $this->value('service_title') : $this->value('service_name') ?>" class="form-control" placeholder="Названия отчета" data-is_new="<?= ($this->value('service_title')) ? '' : 1 ?>">
+                            <input type="text" style="font-size: 1.3rem;" id="service_title" name="reports[title]" value="<?= ($report and $report->title) ? $report->title : $this->value('service_name') ?>" class="form-control" placeholder="Названия отчета" data-is_new="<?= ($this->value('service_title')) ? '' : 1 ?>">
                             <div class="form-control-feedback">
                                 <span style="font-size: 1.3rem;" id="service_title_indicator"></span>
                             </div>
@@ -50,7 +53,7 @@ class VisitReport extends ModelOld
                         <div class="document-editor__toolbar"></div>
                         <div class="document-editor__editable-container">
                             <div class="document-editor__editable" id="document-editor__editable_template">
-                                <?= ($this->value('service_report')) ? $this->value('service_report') : "<br><strong>Рекомендация:</strong>" ?>
+                                <?= ($report) ? $report->body : "<br><strong>Рекомендация:</strong>" ?>
                             </div>
                         </div>
                         <?php if(config('document_autosave')): ?>
@@ -65,7 +68,7 @@ class VisitReport extends ModelOld
                         <?php endif; ?>
                     </div>
 
-                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"><?= ($this->value('service_report')) ? $this->value('service_report') : '' ?></textarea>
+                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="reports[body]" rows="1"><?= ($report->body) ? $report->body : '' ?></textarea>
 
                 </div>
 
@@ -160,49 +163,7 @@ class VisitReport extends ModelOld
         <?php if(config('document_autosave')): ?>
             <script type="text/javascript">
 
-                $("#service_title").keyup(function() {
-                    const Indicator = document.querySelector( '#service_title_indicator' );
-
-                    Indicator.classList.add( 'text-muted' );
-                    Indicator.innerHTML = "!";
-                    $.ajax({
-                        type: "POST",
-                        url: "<?= add_url() ?>",
-                        data: {
-                            model: "VisitServicesModel",
-                            id: "<?= $pk ?>",
-                            service_title: this.value,
-                        },
-                        success: function (result) {
-                            var data = JSON.parse(result);
-                            
-                            if (data.status == "success") {
-
-                                try {
-                                    var tr = document.querySelector( `#VisitService_tr_${data.pk}` );
-                                
-                                    Indicator.classList.remove( 'text-muted' );
-                                    Indicator.classList.add( 'text-success' );
-                                    Indicator.innerHTML = "&#10004";
-
-                                    if (tr.dataset.is_new) {
-                                        tr.innerHTML = '<button onclick="location.reload();" type="button" class="btn btn-outline-primary btn-sm legitRipple">Обновите страницу</button>';
-                                    }
-                                } catch (error) {
-                                    
-                                }
-                                
-
-                            }else{
-
-                                Indicator.classList.remove( 'text-muted' );
-                                Indicator.classList.add( 'text-danger' );
-                                Indicator.innerHTML = "&#10006;";
-
-                            }
-                        },
-                    });
-                });
+                $("#service_title").keyup(() => {SaveData()});
 
                 function SaveData(data, params) {
                     const Textarea = document.querySelector('#document-editor__area');
@@ -212,13 +173,18 @@ class VisitReport extends ModelOld
                     var data_ajax = {
                         model: "VisitServicesModel",
                         id: "<?= $pk ?>",
-                        service_report: params,
+                        reports: {
+                            title: $("#service_title").val(),
+                        }
                     };                    
                     if ("<?= division_assist() == 2 ?>" && document.querySelector(`#service_title`).dataset.is_new) {
                         data_ajax.parent_id = "<?= $session->session_id ?>";
                     }
 
-                    Textarea.value = params;
+                    if(params) {
+                        data_ajax.reports.body = params;
+                        Textarea.value = params;
+                    }
                     Indicator.classList.add( 'text-muted' );
                     Indicator.innerHTML = "Loading...";
 
@@ -234,10 +200,6 @@ class VisitReport extends ModelOld
                                 Indicator.classList.remove( 'text-muted' );
                                 Indicator.classList.add( 'text-success' );
                                 Indicator.innerHTML = "&#10004 Saved!";
-
-                                if (document.querySelector(`<?= (permission(10)) ? '#service_title' : '#VisitService_tr_${data.pk}' ?>`).dataset.is_new) {
-                                    $("#service_title").keyup();
-                                }
                                 
                             }else{
 
@@ -271,6 +233,8 @@ class VisitReport extends ModelOld
     public function form_finish($pk = null)
     {
         global $classes;
+        importModel('VisitServiceReport');
+        $report = (new VisitServiceReport)->Where("visit_service_id=".$this->value('id'))->get();
         ?>
         <form method="post" id="form_<?= __CLASS__ ?>" action="<?= add_url() ?>">
 
@@ -284,7 +248,7 @@ class VisitReport extends ModelOld
                 <?php if(!config('document_autosave')): ?>
                     <input type="hidden" name="model" value="<?= __CLASS__ ?>">
                     <input type="hidden" name="id" value="<?= $pk ?>">
-                    <input type="hidden" name="service_title" value="<?= $this->post['service_name'] ?>">
+                    <input type="hidden" name="reports[title]" value="<?= $this->post['service_name'] ?>">
                 <?php endif; ?>
 
                 <div id="document_<?= __CLASS__ ?>">
@@ -293,8 +257,8 @@ class VisitReport extends ModelOld
                         <div class="document-editor__toolbar"></div>
                         <div class="document-editor__editable-container">
                             <div class="document-editor__editable" id="document-editor__editable_template">
-                                <?php if ($this->value('service_report')): ?>
-                                    <?= $this->value('service_report') ?>
+                                <?php if ($report): ?>
+                                    <?= $report->body ?>
                                 <?php else: ?>
                                     <span class="text-big"><strong>Клинический диагноз:</strong></span><br>
                                     <span class="text-big"><strong>Сопутствующие заболевания:</strong></span><br>
@@ -317,7 +281,7 @@ class VisitReport extends ModelOld
                         <?php endif; ?>
                     </div>
 
-                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"><?= ($this->value('service_report')) ? $this->value('service_report') : '' ?></textarea>
+                    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="reports[body]" rows="1"><?= ($report) ? $report->body : '' ?></textarea>
 
                 </div>
 
@@ -365,8 +329,10 @@ class VisitReport extends ModelOld
                     var data_ajax = {
                         model: "VisitServicesModel",
                         id: "<?= $pk ?>",
-                        service_title: "<?= $this->post['service_name'] ?>",
-                        service_report: params,
+                        reports: {
+                            title: "<?= $this->post['service_name'] ?>",
+                            body: params
+                        }
                     };
 
                     Textarea.value = params;
@@ -474,16 +440,19 @@ class VisitReport extends ModelOld
 
     public function clean()
     {
-        if (empty($this->post['service_report'])) {
-            unset($this->post['service_report']);
-        }else {
-            $report = $this->post['service_report'];
+        if (isset($this->post['reports']) and $this->post['reports']) {
+            importModel('VisitServiceReport');
+            $record = new VisitServiceReport;
+            $record->Where("visit_service_id=" . $this->post['id']);
+            if ($r = $record->get()) {
+                HellCrud::update("visit_service_reports", $this->post['reports'], $r->id);
+            } else {
+                HellCrud::insert("visit_service_reports", array_merge(array('visit_service_id'=>$this->post['id']), $this->post['reports']) );
+            }
+            unset($this->post['reports']);
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if ( isset($report) ) {
-            $this->post['service_report'] = $report;
-        }
         return True;
     }
 

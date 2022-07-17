@@ -25,7 +25,7 @@ if ($_GET['main']) {
     if ($_GET['stage'] == 1) {
         $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND route_id = $session->session_id AND (parent_id IS NULL OR parent_id IS NOT NULL AND parent_id != $session->session_id) AND completed IS NULL";
     } else if($_GET['stage'] == 2) {
-        $sql = "SELECT id FROM visit_services WHERE visit_id = {$_GET['pk']} AND parent_id = $session->session_id AND completed IS NULL AND service_title IS NOT NULL";
+        $sql = "SELECT vs.id FROM visit_services vs LEFT JOIN visit_service_reports vsr ON(vsr.visit_service_id=vs.id) WHERE vs.visit_id = {$_GET['pk']} AND vs.parent_id = $session->session_id AND vs.status = 3 AND vsr.id IS NOT NULL";
     } else if($_GET['stage'] == 3) {
         // $sql = "SELECT vs.id FROM visit vs WHERE vs.patient_id = {$_GET['id']} AND vs.route_id = {$_SESSION['session_id']} AND vs.completed IS NULL AND vs.diagnostic IS NOT NULL AND vs.accept_date IS NOT NULL AND vs.completed IS NULL";
         echo 0;

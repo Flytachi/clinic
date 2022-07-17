@@ -13,14 +13,19 @@ class VisitServicesModel extends ModelOld
 
     public function clean()
     {
-        if ( isset($this->post['service_report']) ) {
-            $report = $this->post['service_report'];
+        if (isset($this->post['reports']) and $this->post['reports']) {
+            importModel('VisitServiceReport');
+            $record = new VisitServiceReport;
+            $record->Where("visit_service_id=" . $this->post['id']);
+            if ($r = $record->get()) {
+                HellCrud::update("visit_service_reports", $this->post['reports'], $r->id);
+            } else {
+                HellCrud::insert("visit_service_reports", array_merge(array('visit_service_id'=>$this->post['id']), $this->post['reports']) );
+            }
+            unset($this->post['reports']);
         }
         $this->post = Mixin\clean_form($this->post);
         $this->post = Mixin\to_null($this->post);
-        if ( isset($report) ) {
-            $this->post['service_report'] = $report;
-        }
         return True;
     }
 
@@ -29,19 +34,21 @@ class VisitServicesModel extends ModelOld
         if($this->clean()){
             $pk = $this->post['id'];
             unset($this->post['id']);
-            if (is_array($pk)) {
-                foreach ($pk as $pkis) {
-                    $object = Mixin\update($this->table, $this->post, $pkis);
+            if (count($this->post)) {
+                if (is_array($pk)) {
+                    foreach ($pk as $pkis) {
+                        $object = Mixin\update($this->table, $this->post, $pkis);
+                        if (!intval($object)){
+                            $this->error($object);
+                            exit;
+                        }
+                    }
+                } else {
+                    $object = Mixin\update($this->table, $this->post, $pk);
                     if (!intval($object)){
                         $this->error($object);
                         exit;
                     }
-                }
-            } else {
-                $object = Mixin\update($this->table, $this->post, $pk);
-                if (!intval($object)){
-                    $this->error($object);
-                    exit;
                 }
             }
             $this->pk = $pk;

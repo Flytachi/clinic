@@ -36,7 +36,7 @@ $tb->set_self(viv('doctor/list_outpatient'));
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td>
-                        <?php foreach($db->query("SELECT vs.service_name, vs.service_title, st.day, vs.accept_date FROM visit_services vs LEFT JOIN service_terms st ON(vs.service_id=st.service_id) WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.parent_id = $session->session_id AND vs.level = 5") as $serv): ?>
+                        <?php foreach($db->query("SELECT vs.service_name, st.day, vs.accept_date FROM visit_services vs LEFT JOIN service_terms st ON(vs.service_id=st.service_id) WHERE vs.visit_id = $row->id AND vs.status = 3 AND vs.parent_id = $session->session_id AND vs.level = 5") as $serv): ?>
                             <?php
                                 if($serv['day']) {
                                     if (date_diff(new DateTime('now'), new DateTime($serv['accept_date']))->days >= $serv['day']) {
@@ -45,7 +45,7 @@ $tb->set_self(viv('doctor/list_outpatient'));
                                     echo "<span class=\"badge badge-$color mr-1\">{$serv['day']} day</span>"; 
                                 }
                             ?>
-                            <span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span><br>
+                            <span><?= $serv['service_name'] ?></span><br>
                         <?php endforeach; ?>
                     </td>
                     <td>

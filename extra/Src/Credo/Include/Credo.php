@@ -106,8 +106,8 @@ abstract class Credo implements CredoInterface
             $this->CRD_sql = "SELECT $this->CRD_data FROM $this->table $this->CRD_as";
             if($this->CRD_join)  $this->CRD_sql .= " " . $this->CRD_join;
             if($this->CRD_where) $this->CRD_sql .= " " . $this->CRD_where;
-            if($this->CRD_order) $this->CRD_sql .= " " . $this->CRD_order;
             if($this->CRD_group) $this->CRD_sql .= " " . $this->CRD_group;
+            if($this->CRD_order) $this->CRD_sql .= " " . $this->CRD_order;
             $this->CRD_search = (isset($_GET['CRD_search']) and $_GET['CRD_search']) ? $this->CRD_searchGetName.$_GET['CRD_search'] : "";
         } catch (\Throwable $th) {
             if ($this->CRD_error) $this->error($th);

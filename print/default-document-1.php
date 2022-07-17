@@ -7,7 +7,7 @@ require_once '../tools/warframe.php';
 $code = bin2hex( basename(__FILE__, '.php').array_to_url($_GET) );
 $qr = "http://".config("print_document_qrcode_ip")."/api/document?code=$code";
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
-    $docs = $db->query("SELECT vs.patient_id, vs.parent_id, p.first_name, p.last_name, p.father_name, p.birth_date, vs.service_title, vs.service_report, vs.accept_date FROM visit_services vs LEFT JOIN patients p ON(p.id=vs.patient_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
+    $docs = $db->query("SELECT vs.patient_id, vs.parent_id, p.first_name, p.last_name, p.father_name, p.birth_date, vsr.title, vsr.body, vs.accept_date FROM visit_services vs LEFT JOIN visit_service_reports vsr ON(vsr.visit_service_id=vs.id) LEFT JOIN patients p ON(p.id=vs.patient_id) WHERE vs.id={$_GET['pk']}")->fetch(PDO::FETCH_OBJ);
     if (!$docs) Mixin\error('404');
 }elseif (isset($_GET['pk']) and $_GET['pk'] == "template" ) {
     $docs = new stdClass();
@@ -18,8 +18,8 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs->birth_date = date("Y-m-d");
     $docs->accept_date = date("Y-m-d H-i-s");
     $docs->parent_id = 1;
-    $docs->service_title = "Test Print Document";
-    $docs->service_report = 
+    $docs->title = "Test Print Document";
+    $docs->body = 
         "
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt, alias saepe ipsum odio atque sapiente nihil mollitia nulla quam eligendi recusandae 
         iste voluptate illo sunt! Nulla voluptatem fuga facilis laborum recusandae ipsum numquam. Molestias magnam accusantium rem maxime vel dolor repudiandae 
@@ -120,9 +120,9 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
 
         <div class="text-left">
 
-            <h3 class="text-center h1"><b><?= $docs->service_title ?></b></h3>
+            <h3 class="text-center h1"><b><?= $docs->title ?></b></h3>
             <div class="h3">
-                <?= $docs->service_report ?>
+                <?= $docs->body ?>
             </div>
 
         </div>
