@@ -763,7 +763,7 @@
         "name": "\u0410\u043c\u0431\u0443\u043b\u0430\u0442\u043e\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"diagnostic\/list_outpatient\"]",
         "is_division": "101",
-        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
+        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_name, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
         "script_item": "{\"_sk0\":\"session_id\",\"selector\":1}",
         "badge_class": "badge bg-blue badge-pill ml-auto"
     },
@@ -779,7 +779,7 @@
         "name": "\u0421\u0442\u0430\u0446\u0438\u043e\u043d\u0430\u0440\u043d\u044b\u0435 \u043f\u0430\u0446\u0438\u0435\u043d\u0442\u044b",
         "is_active": "[\"diagnostic\/list_stationary\"]",
         "is_division": "101",
-        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
+        "script": "SELECT vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_name, vs.parent_id, vr.name 'status_name' FROM visit_services vs LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id) WHERE vs.status = 3 AND vs.level = 10 AND v.direction IS NOT NULL AND ( vs.parent_id = _sk0 selector ) ORDER BY vs.accept_date DESC",
         "script_item": "{\"_sk0\":\"session_id\",\"selector\":1}",
         "badge_class": "badge bg-success badge-pill ml-auto"
     },
