@@ -419,7 +419,10 @@ class VisitReport extends ModelOld
         if($this->clean()){
             $db->beginTransaction();
             $pk = $this->post['id']; unset($this->post['id']);
-            $object = Mixin\update($this->table, $this->post, $pk);
+            if (count($this->post)) {
+                $object = Mixin\update($this->table, $this->post, $pk);
+                if (!intval($object)) $this->error($object);
+            }
             if ($end) {
 
                 $VisitFinish = new VisitFinish();
