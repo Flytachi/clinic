@@ -53,13 +53,17 @@ class VisitRoute extends ModelOld
                     </div>
                     <div class="col-md-1">
                         <div class="text-right">
-                            <button type="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
+                            <button type="submit" id="submit" class="btn btn-sm btn-light btn-ladda btn-ladda-spinner ladda-button legitRipple" data-spinner-color="#333" data-style="zoom-out">
                                 <span class="ladda-label">Отправить</span>
                                 <span class="ladda-spinner"></span>
                             </button>
                         </div>
                     </div>
-
+<script>
+	document.getElementById('submit').onclick = function() {
+    this.disabled = true;
+}
+			</script>
                 </div>
 
                 <div class="form-group">
