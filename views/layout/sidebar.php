@@ -101,7 +101,7 @@
                                     <a href="<?= viv($row['route']) ?>" class="nav-link legitRipple <?= viv_link(json_decode($row['is_active'])) ?>">
                                         <i class="<?= $row['icon'] ?>"></i>
                                         <span><?= $row['name'] ?></span>
-                                        <?php /* if($row['script']): ?>
+                                        <?php if($row['script']): ?>
                                             <?php
                                             if ($row['script_item']) {
                                                 $srt = (array) json_decode($row['script_item']);
@@ -126,7 +126,7 @@
                                                 <span class="<?= $row['badge_class'] ?>"><?= $side ?></span>
                                             <?php endif; ?>
                                             <?php unset($side); unset($new_script); ?>
-                                        <?php endif; */ ?>
+                                        <?php endif; ?>
                                     </a>
                                 </li>
                             <?php endif; ?>
