@@ -423,6 +423,7 @@ class VisitReport extends ModelOld
                 $object = Mixin\update($this->table, $this->post, $pk);
                 if (!intval($object)) $this->error($object);
             }
+
             if ($end) {
 
                 $VisitFinish = new VisitFinish();
@@ -436,7 +437,6 @@ class VisitReport extends ModelOld
                 }
             }
         }
-        
         $db->commit();
         $this->success();
     }

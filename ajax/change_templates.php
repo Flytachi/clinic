@@ -24,7 +24,7 @@ if ($_POST['pk']) {
         <?php endif; ?>
     </div>
 
-    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"></textarea>
+    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="reports[body]" rows="1"></textarea>
 
     <script>
         DecoupledEditor
@@ -66,7 +66,7 @@ if ($_POST['pk']) {
         <?php endif; ?>
     </div>
 
-    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="service_report" rows="1"></textarea>
+    <textarea id="document-editor__area" class="form-control" style="display: none" placeholder="[[%ticket_content]]" name="reports[body]" rows="1"></textarea>
 
 
     <script>

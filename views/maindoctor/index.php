@@ -31,9 +31,15 @@ $header = "Рабочий стол";
 			<!-- Content area -->
 			<div class="content">
 
-                <?php include 'bars/objects.php'; ?>
-				<?php include 'bars/patients.php'; ?>
-				<?php include 'bars/divisions.php'; ?>
+				<div id="barObjects">
+					<div class="text-muted text-center">Loading...</div>
+				</div>
+				<div id="barPatients">
+					<div class="text-muted text-center">Loading...</div>
+				</div>
+				<div id="barDivisions">
+					<div class="text-muted text-center">Loading...</div>
+				</div>
 
 			</div>
             <!-- /content area -->
@@ -43,6 +49,35 @@ $header = "Рабочий стол";
 
 	</div>
 	<!-- /page content -->
+
+	<script>
+		$(document).ready(() => {
+			$.ajax({
+				type: "GET",
+				url: "<?= viv('maindoctor/bars/objects') ?>",
+				success: function (response) {
+					$("#barObjects").html(response);
+					StatisticWidgets.init();
+
+					$.ajax({
+						type: "GET",
+						url: "<?= viv('maindoctor/bars/patients') ?>",
+						success: function (response) {
+							$("#barPatients").html(response);
+							$.ajax({
+								type: "GET",
+								url: "<?= viv('maindoctor/bars/divisions') ?>",
+								success: function (response) {
+									$("#barDivisions").html(response);
+								},
+							});
+						},
+					});
+				},
+			});
+
+		});
+	</script>
 
     <!-- Footer -->
     <?php include layout('footer') ?>

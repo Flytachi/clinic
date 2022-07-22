@@ -1,3 +1,7 @@
+<?php 
+require_once '../../../tools/warframe.php';
+$session->is_auth(8);
+?>
 <!-- Информация об отделах -->
 <div class="mb-3">
 	<div class="header-elements-sm-inline">
