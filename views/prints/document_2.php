@@ -90,7 +90,7 @@ if ( isset($_GET['items']) ) {
                 <div class="table-responsive card">
                     <table class="minimalistBlack">
                         <thead>
-                            <t id="text-h">
+                            <tr id="text-h">
                                 <th class="text-left">Услуга</th>
                                 <th class="text-left">Анализ</th>
                                 <th class="text-right">Норма</th>
