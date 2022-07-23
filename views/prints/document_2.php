@@ -26,7 +26,7 @@ if ( isset($_GET['items']) ) {
     <style>
         body
         {
-            font-size: 120% !important;
+            font-size: 110% !important;
         }
     </style>
 
