@@ -87,21 +87,19 @@ if ( isset($_GET['items']) ) {
 
             <?php if ( isset($_GET['items']) ): ?>
 
-                <?php foreach (json_decode($_GET['items']) as $item): ?>
-                    <h1 class="text-center"><b><?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?></b> </h1>
-
-                    <div class="table-responsive card">
-                        <table class="minimalistBlack">
-                            <thead>
-                                <t id="text-h">
-                                    <th style="width:3%">№</th>
-                                    <th class="text-left">Анализ</th>
-                                    <th class="text-right" style="width:15%">Норма</th>
-                                    <th class="text-right" style="width:10%">Ед</th>
-                                    <th class="text-center" style="width:15%">Результат</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <div class="table-responsive card">
+                    <table class="minimalistBlack">
+                        <thead>
+                            <t id="text-h">
+                                <th style="width:3%">№</th>
+                                <th class="text-left">Анализ</th>
+                                <th class="text-right" style="width:15%">Норма</th>
+                                <th class="text-right" style="width:10%">Ед</th>
+                                <th class="text-center" style="width:15%">Результат</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach (json_decode($_GET['items']) as $item): ?>
                                 <?php
                                 $i = 1;
                                 $norm = "scl.name, scl.code, scl.standart";
@@ -122,10 +120,12 @@ if ( isset($_GET['items']) ) {
                                     <?php
                                 }
                                 ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                
 
             <?php else: ?>
 
