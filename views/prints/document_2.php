@@ -91,7 +91,6 @@ if ( isset($_GET['items']) ) {
                     <table class="minimalistBlack">
                         <thead>
                             <t id="text-h">
-                                <th style="width:3%">№</th>
                                 <th class="text-left">Услуга</th>
                                 <th class="text-left">Анализ</th>
                                 <th class="text-right">Норма</th>
@@ -102,7 +101,6 @@ if ( isset($_GET['items']) ) {
                         <tbody>
                             <?php foreach (json_decode($_GET['items']) as $item): ?>
                                 <?php
-                                $i = 1;
                                 $norm = "scl.name, scl.code, scl.standart";
                                 $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = $item";
                                 $table = $db->query($sql)->fetchAll();
@@ -110,7 +108,6 @@ if ( isset($_GET['items']) ) {
                                 foreach ($table as $row) {
                                     ?>
                                     <tr id="text-b">
-                                        <td><?= $i++ ?></td>
                                         <?php if($col != 0): ?>
                                             <td rowspan="<?= $col ?>">
                                                 <b>
