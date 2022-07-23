@@ -93,7 +93,7 @@ if ( isset($_GET['items']) ) {
                             <t id="text-h">
                                 <th style="width:3%">№</th>
                                 <th class="text-left">Анализ</th>
-                                <th class="text-right" style="width:15%">Норма</th>
+                                <th class="text-right">Норма</th>
                                 <th class="text-right" style="width:10%">Ед</th>
                                 <th class="text-center" style="width:15%">Результат</th>
                             </tr>
