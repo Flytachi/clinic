@@ -92,10 +92,11 @@ if ( isset($_GET['items']) ) {
                         <thead>
                             <t id="text-h">
                                 <th style="width:3%">№</th>
+                                <th class="text-left">Услуга</th>
                                 <th class="text-left">Анализ</th>
                                 <th class="text-right">Норма</th>
-                                <th class="text-right" style="width:10%">Ед</th>
-                                <th class="text-center" style="width:15%">Результат</th>
+                                <th class="text-right" style="width:7%">Ед</th>
+                                <th class="text-center" style="width:7%">Результат</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -104,10 +105,19 @@ if ( isset($_GET['items']) ) {
                                 $i = 1;
                                 $norm = "scl.name, scl.code, scl.standart";
                                 $sql = "SELECT vl.id, vl.result, vl.deviation, $norm, scl.unit FROM visit_analyze vl LEFT JOIN service_analyze scl ON (vl.analyze_id = scl.id) WHERE vl.visit_id = $item";
-                                foreach ($db->query($sql) as $row) {
+                                $table = $db->query($sql)->fetchAll();
+                                $col = count((array) $table);
+                                foreach ($table as $row) {
                                     ?>
                                     <tr id="text-b">
                                         <td><?= $i++ ?></td>
+                                        <?php if($col != 0): ?>
+                                            <td rowspan="<?= $col ?>">
+                                                <b>
+                                                    <?= $db->query("SELECT sc.name FROM visit vs LEFT JOIN service sc ON(sc.id=vs.service_id) WHERE vs.id=$item")->fetch()['name'] ?>
+                                                </b>
+                                            </td>
+                                        <?php endif; ?>
                                         <td class="text-left"><?= $row['name'] ?></td>
                                         <td class="text-right">
                                             <?= preg_replace("#\r?\n#", "<br />", $row['standart']) ?>
@@ -118,6 +128,7 @@ if ( isset($_GET['items']) ) {
                                         <td class="text-center"><?= $row['result'] ?></td>
                                     </tr>
                                     <?php
+                                    $col = 0;
                                 }
                                 ?>
                             <?php endforeach; ?>

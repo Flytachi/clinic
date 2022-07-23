@@ -7,8 +7,9 @@ body{
 
 @media print {
     html, body{
-        height: 290mm;
+        height: 297mm;
         width: 210mm;
+        page-break-before: always;
     }
 }
 
@@ -30,7 +31,7 @@ body{
 }
 
 table.minimalistBlack {
-    border: px solid #000000;
+    border: 1px solid #000000;
     width: 100%;
     text-align: left;
     border-collapse: collapse;
