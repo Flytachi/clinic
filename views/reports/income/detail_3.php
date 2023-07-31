@@ -11,7 +11,7 @@ $sql = "SELECT vs.priced_date, vs.user_id, ds.title, vp.item_name, (vp.price_cas
             LEFT JOIN division ds ON(ds.id=vs.division_id)
         WHERE vs.direction IS NOT NULL AND sc.type = 2 AND vs.parent_id = {$_POST['parent_id']} 
             AND vs.priced_date IS NOT NULL 
-            AND (DATE_FORMAT(vs.completed, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
+            AND (DATE_FORMAT(vs.priced_date, '%Y-%m-%d') BETWEEN \"{$_POST['date_start']}\" AND \"{$_POST['date_end']}\")";
 // $detail = $db->query($sql)->fetchAll(PDO::FETCH_OBJ);
 // dd($detail);
 $total_price = 0; $i = 1;
