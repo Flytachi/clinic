@@ -9,7 +9,7 @@ if (!file_exists(dirname(__DIR__, 2)."/.key")) {
         die(include "error_db_connect.php");
     }
     $cfg = str_replace("\n", "", file_get_contents(dirname(__DIR__, 2)."/.cfg") );
-    $key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) );
+    //$key = explode("-", zlib_decode(hex2bin(file(dirname(__DIR__, 2)."/.key")[0])) );
     $ini = json_decode(zlib_decode(hex2bin($cfg)), true);
 
     // if ( empty($ini['SECURITY']['SERIA']) or trim($key[0]) !== trim($ini['SECURITY']['SERIA']) or date_diff( new \DateTime(date('Y-m-d H:i:s', $key[1])), new \DateTime(date('Y-m-d H:i:s')) )->d >= 3 ) {
