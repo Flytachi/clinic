@@ -1,9 +1,9 @@
 <?php
 // Database Constants
-if (!file_exists(dirname(__DIR__, 2)."/.key")) {
-    $_error = "Authenticity check failed!";
-    die(include "error_db_connect.php");
-}else{
+// if (!file_exists(dirname(__DIR__, 2)."/.key")) {
+//     $_error = "Authenticity check failed!";
+//     die(include "error_db_connect.php");
+// }else{
     if (!file_exists(dirname(__DIR__, 2)."/.cfg")) {
         $_error = "Сonfiguration key not found!";
         die(include "error_db_connect.php");
@@ -16,7 +16,7 @@ if (!file_exists(dirname(__DIR__, 2)."/.key")) {
     //     $_error = "Authenticity check failed!";
     //     die(include "error_db_connect.php");
     // }
-}
+// }
 
 $DNS = $ini['GLOBAL_SETTING']['DRIVER'].":host=".$ini['DATABASE']['HOST'].";dbname=".$ini['DATABASE']['NAME'].";charset=".$ini['GLOBAL_SETTING']['CHARSET'];
 
