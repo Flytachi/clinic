@@ -17,7 +17,7 @@ foreach ($db->query("SELECT id FROM users WHERE user_level IN (2, 32)") as $arr_
                 <div class="row">
                     <div class="col-md-6 text-left">
                         <!-- <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(*) FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL GROUP BY user_id")->fetchColumn() ?></span> -->
-                        <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(*) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY us.id, us.add_date")->fetchColumn() ?></span>
+                        <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(*) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY us.id")->fetchColumn() ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>
@@ -42,8 +42,8 @@ foreach ($db->query("SELECT id FROM users WHERE user_level IN (2, 32)") as $arr_
 
                 <div class="row">
                     <div class="col-md-6 text-left">
-                        <!-- <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT user_id FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND direction IS NULL")->rowCount() ?></span> -->
-                        <span class="badge font-size-lg"><?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND vs.direction IS NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?></span>
+                        <!-- <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(*) FROM visit WHERE accept_date IS NOT NULL AND completed IS NULL AND direction IS NULL GROUP BY user_id")->fetchColumn() ?></span> -->
+                        <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(*) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode($registrators, ", ").") AND vs.direction IS NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY us.id")->fetchColumn() ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>
