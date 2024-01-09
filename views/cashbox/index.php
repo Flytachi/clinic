@@ -66,7 +66,7 @@ $header = "Рабочий стол";
 				                        </thead>
 				                        <tbody id="search_display">
 				                            <?php
-				                            foreach($db->query("SELECT DISTINCT user_id 'id' FROM visit WHERE direction IS NULL AND priced_date IS NULL AND add_date") as $row) {
+				                            foreach($db->query("SELECT user_id 'id' FROM visit WHERE direction IS NULL AND priced_date IS NULL GROUP BY user_id") as $row) {
 				                            ?>
 				                                <tr onclick="Check('get_mod.php?pk=<?= $row['id'] ?>')">
 				                                    <td><?= addZero($row['id']) ?></td>
