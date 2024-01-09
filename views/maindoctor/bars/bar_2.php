@@ -11,10 +11,7 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?php
-						// prit($db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchAll());
-						?>
-						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+						<?= $db->query("SELECTCOUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Общие пациенты</span>
 				</div>
@@ -31,7 +28,7 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+						<?= $db->query("SELECT COUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Новые пациенты</span>
 				</div>
@@ -48,7 +45,7 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT DISTINCT us.id, us.add_date FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') != CURRENT_DATE()")->rowCount() ?>
+						<?= $db->query("SELECT COUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') != CURRENT_DATE()")->fetchColumn() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Постояные пациенты</span>
 				</div>
@@ -81,7 +78,7 @@
 				<div class="media">
 					<div class="media-body">
 						<h3 class="font-weight-semibold mb-0">
-							<?= $db->query("SELECT id FROM visit WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->rowCount() ?>
+							<?= $db->query("SELECT COUNT(id) FROM visit WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
 						</h3>
 						<span class="text-uppercase font-size-sm text-muted"><?= $row['title'] ?></span>
 					</div>
