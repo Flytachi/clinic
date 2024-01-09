@@ -11,7 +11,7 @@
 			<div class="media">
 				<div class="media-body">
 					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECTCOUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
+						<?= $db->query("SELECT COUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
 					</h3>
 					<span class="text-uppercase font-size-sm text-muted">Общие пациенты</span>
 				</div>
