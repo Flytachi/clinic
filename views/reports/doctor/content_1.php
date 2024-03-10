@@ -101,13 +101,10 @@ $header = "Отчёт врачей по услугам";
 								</div>
 
 								<div class="col-md-3">
-									<label>Пациент:</label>
-									<select name="user_id" class="<?= $classes['form-select'] ?>">
-										<option value="">Выберите пациента</option>
-										<?php foreach($db->query('SELECT * from users WHERE user_level = 15') as $row): ?>
-											<option value="<?= $row['id'] ?>" <?= ( isset($_POST['user_id']) and $_POST['user_id']==$row['id']) ? "selected" : "" ?>><?= addZero($row['id'])." - ".get_full_name($row['id']) ?></option>
-										<?php endforeach; ?>
-									</select>
+									<div class="form-group">
+									    <label>Пациент(ID):</label>
+									    <input type="text" class="form-control" name="user_id" placeholder="Введите ID пациента" value="<?= $_POST['user_id'] ?? "" ?>">
+									</div>
 								</div>
 
 								<div class="col-md-3">
