@@ -1,95 +1,117 @@
-<!-- Информация о пациентах -->
+<!-- Информация о койках -->
 <div class="mb-3">
-	<h4 class="mb-0 font-weight-semibold">Пациенты</h4>
-	<span class="text-muted d-block">Информация о пациентах</span>
+	<h4 class="mb-0 font-weight-semibold">Койки</h4>
+	<span class="text-muted d-block">Информация о койках</span>
 </div>
+
+<?php $bed_type = $db->query("SELECT id, name FROM bed_type")->fetchAll(); ?>
 
 <div class="row">
 
-	<div class="col-sm-6 col-xl-4">
-		<div class="card card-body">
-			<div class="media">
-				<div class="media-body">
-					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT COUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
-					</h3>
-					<span class="text-uppercase font-size-sm text-muted">Общие пациенты</span>
-				</div>
+	<div class="col-sm-6 col-xl-3">
 
-				<div class="ml-3 align-self-center">
-					<i class="icon-users4 icon-3x text-blue-400"></i>
-				</div>
+		<!-- Invitation stats colored -->
+		<div class="card text-center bg-blue-400 has-bg-image">
+			<div class="card-body">
+				<h6 class="font-weight-semibold mb-0 mt-1">Информация о койках</h6>
+				<div class="opacity-75 mb-3">Всего
+                    <span id="progress_percentage_all"><?= $db->query("SELECT id FROM beds")->rowCount() ?></span>
+                </div>
+				<div class="svg-center position-relative mb-1" id="progress_percentage"></div>
+			</div>
+
+			<div class="card-body border-top-0 pt-0">
+                <span style="display:none" id="progress_percentage_open"><?= $db->query("SELECT id FROM beds WHERE user_id IS NULL")->rowCount() ?></span>
+                <span style="display:none" id="progress_percentage_close"><?= $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL")->rowCount() ?></span>
+
+                <div class="row">
+
+                    <div class="col-12">Свободные</div>
+
+                    <?php foreach ($bed_type as $row): ?>
+                        <div class="col-6">
+                            <div class="text-uppercase font-size-xs"><?= $row['name'] ?></div>
+                            <h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
+                                <?= $db->query("SELECT id FROM beds WHERE user_id IS NULL AND types = {$row['id']}")->rowCount() ?>
+                            </h5>
+                        </div>
+                    <?php endforeach; ?>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-12">Занятые</div>
+                    <?php foreach ($bed_type as $row): ?>
+                        <div class="col-6">
+                            <div class="text-uppercase font-size-xs"><?= $row['name'] ?></div>
+                            <h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
+                                <?= $db->query("SELECT id FROM beds WHERE user_id IS NOT NULL AND types = {$row['id']}")->rowCount() ?>
+                            </h5>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
 			</div>
 		</div>
+		<!-- /invitation stats colored -->
+
 	</div>
 
-	<div class="col-sm-6 col-xl-4">
-		<div class="card card-body">
-			<div class="media">
-				<div class="media-body">
-					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT COUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
-					</h3>
-					<span class="text-uppercase font-size-sm text-muted">Новые пациенты</span>
-				</div>
+    <?php foreach ($FLOOR as $key => $value): ?>
+        <div class="col-sm-6 col-xl-3">
 
-				<div class="ml-3 align-self-center">
-					<i class="icon-users2 icon-3x text-success-400"></i>
-				</div>
-			</div>
-		</div>
-	</div>
+    		<!-- Invitation stats white -->
+    		<div class="card text-center">
+    			<div class="card-body">
+    				<h6 class="font-weight-semibold mb-0 mt-1"><?= $value ?></h6>
+    				<div class="text-muted mb-3">Всего
+                        <span id="progress_percentage_<?=$key?>_all"><?= $db->query("SELECT bd.id FROM beds bd LEFT JOIN wards wd ON(bd.ward_id=wd.id) WHERE wd.floor = $key")->rowCount() ?></span>
+                    </div>
+    				<div class="svg-center position-relative mb-1" id="progress_percentage_<?=$key?>"></div>
+    			</div>
 
-	<div class="col-sm-6 col-xl-4">
-		<div class="card card-body">
-			<div class="media">
-				<div class="media-body">
-					<h3 class="font-weight-semibold mb-0">
-						<?= $db->query("SELECT COUNT(DISTINCT us.id, us.add_date) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() AND DATE_FORMAT(us.add_date, '%Y-%m-%d') != CURRENT_DATE()")->fetchColumn() ?>
-					</h3>
-					<span class="text-uppercase font-size-sm text-muted">Постояные пациенты</span>
-				</div>
+    			<div class="card-body border-top-0 pt-0">
 
-				<div class="ml-3 align-self-center">
-					<i class="icon-users icon-3x text-danger-400"></i>
-				</div>
-			</div>
-		</div>
-	</div>
+                    <span style="display:none" id="progress_percentage_<?=$key?>_open"><?= $db->query("SELECT bd.id FROM beds bd LEFT JOIN wards wd ON(bd.ward_id=wd.id) WHERE wd.floor = $key AND user_id IS NULL")->rowCount() ?></span>
+                    <span style="display:none" id="progress_percentage_<?=$key?>_close"><?= $db->query("SELECT bd.id FROM beds bd LEFT JOIN wards wd ON(bd.ward_id=wd.id) WHERE wd.floor = $key AND user_id IS NOT NULL")->rowCount() ?></span>
+
+                    <div class="row">
+
+                        <div class="col-12">Свободные</div>
+
+                        <?php foreach ($bed_type as $row): ?>
+                            <div class="col-6">
+                                <div class="text-uppercase font-size-xs"><?= $row['name'] ?></div>
+                                <h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
+                                    <?= $db->query("SELECT bd.id FROM beds bd LEFT JOIN wards wd ON(bd.ward_id=wd.id) WHERE wd.floor = $key AND user_id IS NULL AND bd.types = {$row['id']}")->rowCount() ?>
+                                </h5>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-12">Занятые</div>
+
+                        <?php foreach ($bed_type as $row): ?>
+                            <div class="col-6">
+                                <div class="text-uppercase font-size-xs"><?= $row['name'] ?></div>
+                                <h5 class="font-weight-semibold line-height-1 mt-1 mb-0">
+                                    <?= $db->query("SELECT bd.id FROM beds bd LEFT JOIN wards wd ON(bd.ward_id=wd.id) WHERE wd.floor = $key AND user_id IS NOT NULL AND bd.types = {$row['id']}")->rowCount() ?>
+                                </h5>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+
+    			</div>
+    		</div>
+    		<!-- /invitation stats white -->
+
+    	</div>
+    <?php endforeach; ?>
 
 </div>
-<!-- /Информация о пациентах -->
-
-<!-- Информация об отделах -->
-<div class="mb-3">
-
-	<div class=" header-elements-sm-inline">
-		<h4 class="mb-0 font-weight-semibold">Отделы</h4>
-		<span class="text-muted d-block">Информация об отделах</span>
-		<h4 class="mb-0 font-weight-semibold"></h4>
-	</div>
-</div>
-
-<div class="row">
-
-	<?php foreach ($db->query("SELECT id, title FROM division WHERE level IN(5, 6, 12) OR level = 10 AND (assist IS NULL OR assist = 1) ORDER BY level") as $row): ?>
-		<div class="col-sm-4 col-xl-3">
-			<div class="card card-body">
-				<div class="media">
-					<div class="media-body">
-						<h3 class="font-weight-semibold mb-0">
-							<?= $db->query("SELECT COUNT(id) FROM visit WHERE division_id = {$row['id']} AND accept_date IS NOT NULL AND DATE_FORMAT(add_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?>
-						</h3>
-						<span class="text-uppercase font-size-sm text-muted"><?= $row['title'] ?></span>
-					</div>
-
-					<div class="ml-3 align-self-center">
-						<i class="icon-cube4 icon-3x text-blue-400"></i>
-					</div>
-				</div>
-			</div>
-		</div>
-	<?php endforeach; ?>
-
-</div>
-<!-- /Информация об отделах -->
+<!-- /Информация о койках -->
