@@ -1,11 +1,12 @@
 <?php
 $registrators = [];
-foreach ($db->query("SELECT id FROM users WHERE user_level IN (2, 32)") as $arr_users) {
+$regData = $db->query("SELECT id FROM users WHERE user_level IN (2, 32)")->fetchAll();
+foreach ($regData as $arr_users) {
     $registrators[] = $arr_users['id'];
 }
-$data = $db->query("SELECT vs.direction, COUNT(DISTINCT us.id) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY vs.direction")->fetchAll();
-dd($data);
-exit;
+$data = $db->query("SELECT vs.direction, COUNT(DISTINCT us.id) 'qty' FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY vs.direction")->fetchAll();
+$amb = (isset($data[0]) && isset($data[0]['qty'])) ? $data[0]['qty'] : 0;
+$sta = (isset($data[1]) && isset($data[0]['qty'])) ? $data[1]['qty'] : 0;
 ?>
 <!-- Widgets with charts -->
 <div class="row">
@@ -20,7 +21,7 @@ exit;
 
                 <div class="row">
                     <div class="col-md-6 text-left">
-                        <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(*) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY us.id")->fetchColumn() ?></span>
+                        <span class="badge font-size-lg"><?= $amb + $sta ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>
@@ -45,7 +46,7 @@ exit;
 
                 <div class="row">
                     <div class="col-md-6 text-left">
-                        <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(DISTINCT us.id) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND vs.direction IS NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?></span>
+                        <span class="badge font-size-lg"><?= $amb ?></span>
                     </div>
                     <div class="col-md-6 text-right">
                         <span class="badge badge-pill badge-success font-size-lg">+3</span>
@@ -70,7 +71,7 @@ exit;
 
                 <div class="row">
                     <div class="col-md-6 text-left">
-                        <span class="badge font-size-lg"><?= $db->query("SELECT COUNT(DISTINCT us.id) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND vs.direction IS NOT NULL AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE()")->fetchColumn() ?></span>
+                        <span class="badge font-size-lg"><?= $sta ?></span>
 
                     </div>
                     <div class="col-md-6 text-right">
