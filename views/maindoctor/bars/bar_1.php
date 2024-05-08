@@ -1,9 +1,4 @@
 <?php
-$registrators = [];
-$regData = $db->query("SELECT id FROM users WHERE user_level IN (2, 32)")->fetchAll();
-foreach ($regData as $arr_users) {
-    $registrators[] = $arr_users['id'];
-}
 $data = $db->query("SELECT vs.direction, COUNT(DISTINCT us.id) 'qty' FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY vs.direction")->fetchAll();
 $amb = (isset($data[0]) && isset($data[0]['qty'])) ? $data[0]['qty'] : 0;
 $sta = (isset($data[1]) && isset($data[0]['qty'])) ? $data[1]['qty'] : 0;
