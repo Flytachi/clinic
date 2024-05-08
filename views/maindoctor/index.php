@@ -41,9 +41,9 @@ $header = "Рабочий стол";
 				$regData = $db->query("SELECT id FROM users WHERE user_level IN (2, 32)")->fetchAll();
 				foreach ($regData as $arr_users) $registrators[] = $arr_users['id'];
 
-				//include 'bars/bar_1.php';
-				// include 'bars/bar_2.php';
-				include 'bars/bar_3.php';
+				include 'bars/bar_1.php';
+				//include 'bars/bar_2.php';
+				//include 'bars/bar_3.php';
 				?>
 
 			</div>
