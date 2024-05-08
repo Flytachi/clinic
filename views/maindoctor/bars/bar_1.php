@@ -1,7 +1,11 @@
 <?php
+$registrators = [];
 foreach ($db->query("SELECT id FROM users WHERE user_level IN (2, 32)") as $arr_users) {
     $registrators[] = $arr_users['id'];
 }
+$data = $db->query("SELECT vs.direction, COUNT(DISTINCT us.id) FROM visit vs LEFT JOIN users us ON(us.id=vs.user_id) WHERE vs.route_id IN (".implode(", ", $registrators).") AND DATE_FORMAT(vs.accept_date, '%Y-%m-%d') = CURRENT_DATE() GROUP BY vs.direction")->fetchAll();
+dd($data);
+exit;
 ?>
 <!-- Widgets with charts -->
 <div class="row">
