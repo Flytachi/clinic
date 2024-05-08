@@ -120,7 +120,23 @@ $header = "Настройки";
 									</div>
 								</div>
 
-							</fieldset>
+                            	<button onclick="AddinputTime()" type="button" class="btn btn-outline-success btn-sm"><i class="icon-plus22 mr-2"></i>Добавить этаж</button>
+                                <div class="form-group row" id="floors_div">
+                                    <?php if( isset($company->floors) ): ?>
+                                        <?php foreach (json_decode($company->floors) as $floor_key => $value): ?>
+                                            <div class="col-md-3" id="floors_input_<?= $floor_key ?>">
+                                                <div class="form-group-feedback form-group-feedback-right">
+                                                    <input type="number" name="floors[<?= $floor_key ?>]" class="form-control" value="<?= $value ?>" required>
+                                                    <div class="form-control-feedback text-danger">
+                                                        <i class="icon-minus-circle2" onclick="$('#floors_input_<?= $floor_key ?>').remove();"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </div>
+
+                            </fieldset>
 
 
                             <fieldset class="mb-3">
