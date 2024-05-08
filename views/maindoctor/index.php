@@ -37,7 +37,7 @@ $header = "Рабочий стол";
 			<div class="content">
 
                 		<?php 
-				//include 'bars/bar_1.php';
+				include 'bars/bar_1.php';
 				// include 'bars/bar_2.php';
 				//include 'bars/bar_3.php';
 				?>
