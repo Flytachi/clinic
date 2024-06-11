@@ -371,7 +371,7 @@ class Visit extends Model
                             <label>Отдел:</label>
                             <select data-placeholder="Выберите отдел" name="division_id" id="division_id" class="<?= $classes['form-select'] ?>" required>
                                 <option></option>
-                                <?php $sql = "SELECT d.id, d.title, COUNT(b.id) FROM divisions d JOIN wards w ON(w.division_id=d.id) JOIN beds b ON(b.ward_id=w.id) WHERE d.level = 5 AND b.patient_id IS NULL GROUP BY d.id"; ?>
+                                <?php $sql = "SELECT d.id, d.title, COUNT(b.id) FROM divisions d LEFT JOIN wards w ON(w.division_id=d.id) LEFT JOIN beds b ON(b.ward_id=w.id) WHERE d.level = 5 AND b.patient_id IS NULL GROUP BY d.id"; ?>
                                 <?php foreach($this->db->query($sql) as $row): ?>
                                     <option value="<?= $row['id'] ?>" <?php if(isset($application) and $row['id'] == $application['division_id']) echo "selected" ?>><?= $row['title'] ?></option>
                                 <?php endforeach; ?>
