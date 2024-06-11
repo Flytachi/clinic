@@ -9,7 +9,7 @@ if (division_assist() == 1) Hell::error('423');
 $header = "Стационарные пациенты";
 
 $tb = new Table($db, "visit_services vs");
-$tb->set_data("vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_title, vs.service_name, vs.parent_id, vr.name 'status_name'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id)");
+$tb->set_data("vs.id, vs.patient_id, p.last_name, p.first_name, p.father_name, p.birth_date, vs.accept_date, vs.route_id, vs.service_name, vs.parent_id, vr.name 'status_name'")->additions("LEFT JOIN visits v ON(v.id=vs.visit_id) LEFT JOIN patients p ON(p.id=vs.patient_id) LEFT JOIN visit_status vr ON (v.id = vr.visit_id)");
 $search = $tb->get_serch();
 $is_division = (division_assist()) ? "OR vs.assist_id IS NOT NULL" : null;
 $search_array = array(
@@ -110,7 +110,7 @@ $tb->where_or_serch($search_array)->order_by('vs.accept_date DESC')->set_limit(2
 											<td><?= date_f($row->birth_date) ?></td>
 											<td><?= date_f($row->accept_date, 1) ?></td>
                                             <td>
-												<span class="<?= ($row->service_title) ? 'text-primary' : 'text-danger' ?>"><?= $row->service_name ?></span>
+												<span><?= $row->service_name ?></span>
 											</td>
 											<td>
 												<?= level_name($row->route_id) ." ". division_name($row->route_id) ?>

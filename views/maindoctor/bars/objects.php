@@ -1,4 +1,7 @@
 <?php
+require_once '../../../tools/warframe.php';
+$session->is_auth(8);
+
 $buildings = (new Table($db, "buildings"))->get_table();
 $count = count($buildings);
 ?>

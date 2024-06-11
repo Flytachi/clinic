@@ -35,6 +35,16 @@ $header = "Логи";
 
 				<?php
 
+				/* foreach ($db->query("SELECT id, service_title, service_report FROM visit_services WHERE id > 199695 LIMIT 30000")->fetchAll() as $serv) {
+					if ($serv['service_title'] and $serv['service_report']) {
+						Mixin\insert('visit_service_reports', array(
+							'visit_service_id' => $serv['id'],
+							'title' => $serv['service_title'],
+							'body' => $serv['service_report'],
+						));
+					}
+				} */
+
 				// function insertPacs($tb, $post){
 				// 	global $pacs;
 				// 	$col = implode(",", array_keys($post));

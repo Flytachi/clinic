@@ -24,10 +24,10 @@ $session->is_auth();
 
 <div class="modal-body ml-3 mr-3 text-justify" style="font-size: 1rem">
 <?php
-$pack = $db->query("SELECT service_title, service_report, service_id FROM visit_services WHERE id = {$_GET['pk']}")->fetch();
+$pack = $db->query("SELECT vsr.title, vsr.body FROM visit_services vs LEFT JOIN visit_service_reports vsr ON(vsr.visit_service_id=vs.id) WHERE vs.id = {$_GET['pk']}")->fetch();
 ?>
-    <h3 class="text-center"><?= $pack['service_title'] ?></h3>
-    <?= $pack['service_report'] ?>
+    <h3 class="text-center"><?= $pack['title'] ?></h3>
+    <?= $pack['body'] ?>
 </div>
 
 <div class="modal-footer">

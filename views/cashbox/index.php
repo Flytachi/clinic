@@ -11,7 +11,7 @@ $where_search = array(
 	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1", 
 	"vs.direction IS NULL AND vs.completed IS NULL AND vss.status = 1 AND (p.id LIKE '%$search%' OR LOWER(CONCAT_WS(' ', p.last_name, p.first_name, p.father_name)) LIKE LOWER('%$search%'))"
 );
-$tb->where_or_serch($where_search)->set_limit(15);
+$tb->where_or_serch($where_search);
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -47,8 +47,8 @@ if( isset($_SESSION['message']) ){
                     </td>
                     <td><?= date_f($row->birth_date) ?></td>
                     <td>
-                        <?php foreach($db->query("SELECT service_name, service_title, accept_date FROM visit_services WHERE visit_id = $row->id AND status = 3 AND parent_id = $session->session_id AND level = 5") as $serv): ?>
-                            <span class="<?= ($serv['service_title']) ? 'text-primary' : 'text-danger' ?>"><?= $serv['service_name'] ?></span>
+                        <?php foreach($db->query("SELECT service_name, accept_date FROM visit_services WHERE visit_id = $row->id AND status = 3 AND parent_id = $session->session_id AND level = 5") as $serv): ?>
+                            <span><?= $serv['service_name'] ?></span>
                             <span class="text-muted">(<?= date_f($serv['accept_date'], 1) ?>)</span><br>
                         <?php endforeach; ?>
                     </td>

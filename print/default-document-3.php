@@ -6,8 +6,7 @@ require_once '../tools/warframe.php';
 
 if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
     $docs = $db->query("SELECT v.id, v.patient_id, v.grant_id, v.parad_id, p.first_name, p.last_name, p.father_name, p.birth_date, v.add_date, v.completed FROM visits v LEFT JOIN patients p ON(p.id=v.patient_id) WHERE v.id={$_GET['pk']} AND v.direction IS NOT NULL")->fetch(PDO::FETCH_OBJ);
-    $docs->report = $db->query("SELECT service_report FROM visit_services WHERE visit_id = $docs->id AND service_id = 1")->fetchColumn();
-
+    $docs->report = $db->query("SELECT vsr.body FROM visit_services vs LEFT JOIN visit_service_reports vsr ON(vsr.visit_service_id=vs.id) WHERE vs.visit_id = $docs->id AND vs.service_id = 1")->fetchColumn();
 }else Hell::error('404');
 
 ?>
@@ -81,10 +80,10 @@ if ( isset($_GET['pk']) and is_numeric($_GET['pk']) ) {
                 <?php foreach ($db->query("SELECT DISTINCT vs.division_id, ds.name, ds.title FROM visit_services vs LEFT JOIN divisions ds ON(ds.id=vs.division_id) WHERE vs.visit_id = $docs->id AND vs.level IN (5,10) AND vs.completed IS NOT NULL AND vs.service_id != 1 ") as $div): ?>
                     <strong><?= $div['title'] ?>: </strong>
                     <ul>
-                        <?php foreach ($db->query("SELECT * FROM visit_services WHERE visit_id = $docs->id AND level IN (5,10) AND completed IS NOT NULL AND service_id != 1 AND division_id = {$div['division_id']}") as $row): ?>
+                        <?php foreach ($db->query("SELECT vsr.title, vsr.body FROM vs.visit_services LEFT JOIN visit_service_reports vsr ON(vsr.visit_service_id=vs.id) WHERE vs.visit_id = $docs->id AND vs.level IN (5,10) AND vs.completed IS NOT NULL AND vs.service_id != 1 AND vs.division_id = {$div['division_id']}") as $row): ?>
                             <li>
-                                <strong><?= $row['service_title'] ?>:</strong>
-                                <?= str_replace("Рекомендация:", '', stristr($row['service_report'], "Рекомендация:")); ?>
+                                <strong><?= $row['title'] ?>:</strong>
+                                <?= str_replace("Рекомендация:", '', stristr($row['body'], "Рекомендация:")); ?>
                             </li>
                         <?php endforeach; ?>
                     </ul>

@@ -39,12 +39,15 @@ class TransactionPanel extends ModelOld
         importModel('Visit', 'VisitStatus');
         $vps = (new Visit)->VPS($pk);
         ?>
-        <div class="card border-1 border-dark">
+        <div class="card border-1 border-dark" id="panelInfo">
             <div class="card-header header-elements-inline">
                 <h5 class="card-title">
-                    <b><?= addZero($this->value('patient_id')) ?> - <em><?= patient_name($this->value('patient_id')) ?></em></b>
+                    <b>
+                        <?= addZero($this->value('patient_id')) ?> - <em><?= patient_name($this->value('patient_id')) ?></em>
+                        (<?= (new DivisionModel)->byId($this->value('division_id'))->title ?>)
+                    </b>
                     <?php if($status = (new VisitStatus)->Where('visit_id =' . $this->value('id'))->get('name') ): ?>
-                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1"><?= $status->name ?></span>
+                        <span style="font-size:15px;" class="badge badge-flat border-danger text-danger ml-1"><?= $status->name ?> </span>
                     <?php endif; ?>
                 </h5>
                 <div class="header-elements">
@@ -98,6 +101,23 @@ class TransactionPanel extends ModelOld
 
             </div>
         </div>
+        <div id="panelLoad" style="display: none;">
+            <div class="row">
+                <div class="col-md-12 text-center mt-3 text-muted" style="font-size: 1.5rem">Loading...</div>
+            </div>
+        </div>
+        <script>
+            function PanelBlock(status = true) {
+                if (status) {
+                    $("#panelInfo").hide();
+                    $("#panelLoad").show();
+                } else {
+                    $("#panelInfo").show();
+                    $("#panelLoad").hide();
+                }
+                
+            }
+        </script>
         <?php
     }
 

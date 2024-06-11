@@ -1,5 +1,10 @@
 <!-- Информация о пациентах -->
-<?php importModel('Patient') ?>
+<?php 
+require_once '../../../tools/warframe.php';
+$session->is_auth(8);
+
+importModel('Patient');
+?>
 <div class="mb-3">
 	<div class="header-elements-sm-inline">
 		<span class="mb-0 text-muted d-block">Пациенты</span>

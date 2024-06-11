@@ -294,21 +294,24 @@ class VisitTransactionsModel extends ModelOld
 
                 }else {
                     
+                    PanelBlock(true);
                     $.ajax({
                         type: $('#<?= __CLASS__ ?>_form').attr("method"),
                         url: $('#<?= __CLASS__ ?>_form').attr("action"),
                         data: $('#<?= __CLASS__ ?>_form').serializeArray(),
                         success: function (result) {
                             var result = JSON.parse(result);
+                            PanelBlock(false);
 
                             if (result.status == "success") {
                                 // Выдача выписки
-                                Print(result.val);
+                                // Print(result.val);
                                 // Перезагрузка
                                 sessionStorage['message'] = result.message;
-                                setTimeout( function() {
+                                /* setTimeout( function() {
                                         location.reload();
-                                    }, 1000)
+                                    }, 1000) */
+                                location.reload();
                             }else {
                                 new Noty({
                                     text: result.message,
