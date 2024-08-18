@@ -258,9 +258,9 @@ if (!isset($_GET['type'])) {
         <div class="col-md-5">
 
             <legend class="font-weight-semibold text-uppercase font-size-sm">
-                <i class="icon-reading mr-2"></i>Персонал
+                <i class="icon-reading mr-2"></i>Препараты
                 <?php if ($activity and is_grant() and !$operation->completed): ?>
-                    <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationMembersModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
+                    <a onclick="UpdateOperations('<?= up_url($operation->id, 'VisitOperationConsumablesModel').$get_data ?>')" class="float-right text-<?= $color ?> mr-1">
                         <i class="icon-plus22"></i>Добавить
                     </a>
                 <?php endif; ?>
