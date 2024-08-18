@@ -253,7 +253,7 @@ if (!isset($_GET['type'])) {
 
     </div>
 
-    <?php /*if(module('module_pharmacy')): ?>
+    <?php if(module('module_pharmacy')): ?>
         <!-- Preparasts -->
         <div class="col-md-5">
 
@@ -314,7 +314,7 @@ if (!isset($_GET['type'])) {
             </div>
 
         </div>
-    <?php endif;*/ ?>
+    <?php endif; ?>
 
     <!-- Сonsumables -->
     <div class="col-md-5">
