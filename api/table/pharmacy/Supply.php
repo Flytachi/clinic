@@ -5,7 +5,9 @@ $session->is_auth();
 importModel('WarehouseSupply');
 
 $tb = new WarehouseSupply;
-$tb->Order('supply_date DESC')->Limit(30);
+$tb->as("w")->Data("w.*, wis.supplier as 'supplier_name'");
+$tb->JoinLEFT("warehouse_item_suppliers wis", "wis.id=w.supplier_id");
+$tb->Order('w.supply_date DESC')->Limit(30);
 ?>
 <div class="table-responsive">
     <table class="table table-hover">
@@ -15,6 +17,8 @@ $tb->Order('supply_date DESC')->Limit(30);
                 <th style="width:200px">Ключ</th>
                 <th style="width:35%">Ответственный</th>
                 <th>Склад</th>
+                <th>Поставщик</th>
+                <th>Счёт. факт.</th>
                 <th>Дата поставки</th>
                 <th>Дата заноса</th>
                 <th class="text-right" style="width: 100px">Действия</th>
@@ -27,6 +31,8 @@ $tb->Order('supply_date DESC')->Limit(30);
                     <td><?= $row->uniq_key ?></td>
                     <td><?= get_full_name($row->parent_id) ?></td>
                     <td><?= (new Table($db, "warehouses"))->where("id = $row->warehouse_id")->get_row()->name ?></td>
+                    <td><?= $row->supplier_name ?? '<span class="text-muted">Нет данных</span>' ?></td>
+                    <td><?= $row->faktura ?? '<span class="text-muted">Нет данных</span>' ?></td>
                     <td><?= date_f($row->supply_date) ?></td>
                     <td><?= ($row->completed) ? date_f($row->completed_date, 1) : '<span class="text-muted">Нет данных</span>'; ?></td>
                     <td class="text-right">

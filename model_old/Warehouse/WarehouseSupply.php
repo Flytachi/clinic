@@ -30,29 +30,47 @@ class WarehouseSupplyModel extends ModelOld
                 <input type="hidden" name="id" value="<?= $pk ?>">
                 <input type="hidden" name="parent_id" value="<?= $session->session_id ?>">
 
-                    
-                <div class="form-group">
-                    <label>Склад</label>
-                    <select data-placeholder="Выбрать склад" name="warehouse_id" class="<?= $classes['form-select'] ?>">
-                        <option value=""></option>
-                        <?php
-                        $where = "is_active IS NOT NULL AND ( is_external IS NOT NULL";
-                        if(config('pharmacy_deliver_internal')) $where .= " OR is_internal IS NOT NULL";
-                        if(config('pharmacy_deliver_operation')) $where .= " OR is_operation IS NOT NULL";
-                        ?>
-                        <?php foreach($db->query("SELECT id, name FROM warehouses WHERE $where)") as $row): ?>
-                            <option value="<?= $row['id'] ?>" <?= ($this->value('warehouse_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                <div class="row form-group">
+                    <div class="col-6">
+                        <label>Склад</label>
+                        <select data-placeholder="Выбрать склад" name="warehouse_id" class="<?= $classes['form-select'] ?>">
+                            <option value=""></option>
+                            <?php
+                            $where = "is_active IS NOT NULL AND ( is_external IS NOT NULL";
+                            if(config('pharmacy_deliver_internal')) $where .= " OR is_internal IS NOT NULL";
+                            if(config('pharmacy_deliver_operation')) $where .= " OR is_operation IS NOT NULL";
+                            ?>
+                            <?php foreach($db->query("SELECT id, name FROM warehouses WHERE $where)") as $row): ?>
+                                <option value="<?= $row['id'] ?>" <?= ($this->value('warehouse_id') == $row['id']) ? 'selected' : '' ?>><?= $row['name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="col-6">
+                        <label>Поставщик</label>
+                        <select data-placeholder="Выбрать поставщика" name="supplier_id" class="<?= $classes['form-select'] ?>">
+                            <option value=""></option>
+                            <?php foreach ($db->query("SELECT * FROM warehouse_item_suppliers") as $row): ?>
+                                <option value="<?= $row['id'] ?>"  <?= ($this->value('supplier_id') == $row['id']) ? 'selected': '' ?>><?= $row['supplier'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Дата поставки:</label>
-                    <div class="input-group">
-                        <span class="input-group-prepend">
-                            <span class="input-group-text"><i class="icon-calendar22"></i></span>
-                        </span>
-                        <input type="date" name="supply_date" class="form-control daterange-single" value="<?= $this->value('supply_date') ?>" required>
+                <div class="row form-group">
+                    <div class="col-6">
+                        <label>№ фактуры:</label>
+                        <input type="text" name="faktura" class="form-control" value="<?= $this->value('faktura') ?>" placeholder="Введите № фактуры">
+                    </div>
+
+                    <div class="col-6">
+                        <label>Дата поставки:</label>
+                        <div class="input-group">
+                            <span class="input-group-prepend">
+                                <span class="input-group-text"><i class="icon-calendar22"></i></span>
+                            </span>
+                            <input type="date" name="supply_date" class="form-control daterange-single" value="<?= $this->value('supply_date') ?>" required>
+                        </div>
                     </div>
                 </div>
 
@@ -99,11 +117,11 @@ class WarehouseSupplyModel extends ModelOld
             <div class="text-left mb-1">
                 <span style="font-size: 14px"><b>Склад:</b></span>
                 <span class="text-primary"><?= $db->query("SELECT name FROM warehouses WHERE id = ".$this->value('warehouse_id'))->fetchColumn() ?></span><br>
+                <span style="font-size: 14px"><b>Приход на сумму:</b></span>
+                <span class="text-primary"><?= number_format((new Table($db, $this->_warehouse_item))->set_data("SUM(item_qty*item_cost) 'amount'")->where("uniq_key = '{$this->post['uniq_key']}'")->get_row()->amount) ?></span>
                 <?php if($this->value('completed')): ?>
                     <span style="font-size: 14px"><b>Внесено:</b></span>
                     <span class="text-primary"><?= date_f($this->value('completed_date'), 1) ?></span><br>
-                    <span style="font-size: 14px"><b>Приход на сумму:</b></span>
-                    <span class="text-primary"><?= number_format((new Table($db, $this->_warehouse_item))->set_data("SUM(item_qty*item_cost) 'amount'")->where("uniq_key = '{$this->post['uniq_key']}'")->get_row()->amount) ?></span>
                 <?php endif; ?>
 
             </div>
@@ -250,7 +268,7 @@ class WarehouseSupplyModel extends ModelOld
                     DefaulStat();
                     $.ajax({
                         type: "GET",
-                        url: "<?= ajax("warehouse_add") ?>",
+                        url: "<?= ajax("warehouse_add") ?>?supplier_id=<?= $this->value('supplier_id') ?>&faktura=<?= $this->value('faktura') ?>",
                         data: { number: i, uniq_key: "<?= $this->value('uniq_key') ?>", is_free: "<?= $is_free ?>" },
                         success: function (result) {
                             $('#table_body').append(result);
@@ -493,7 +511,7 @@ class WarehouseSupplyModel extends ModelOld
             $pk = $this->post['id'];
             unset($this->post['id']);
 
-            if ($this->post['completed']) {
+            if (isset($this->post['completed']) && $this->post['completed']) {
 
                 // Storage Update
                 $this->post['completed_date'] = date("Y-m-d H:i:s");

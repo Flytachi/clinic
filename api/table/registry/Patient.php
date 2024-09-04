@@ -73,7 +73,7 @@ $tb->Order("p.add_date DESC")->showError(true)->Limit(20);
                                 <a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'ambulator', 'patient_id' => $row->id)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Aмбулаторный)</a>
                             <?php endif; ?>
                             <?php if ( !$row->status ): ?>
-                                <a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'stationar', 'patient_id' => $row->id, 'application' => $row->application)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
+                                <a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'stationar', 'patient_id' => $row->id, 'application' => $row->application ?? null)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Стационарный)</a>
                             <?php endif; ?>
                             <?php if ( module('resort') ): ?>
                                 <a onclick="Update('<?= Hell::apiAxe('Visit', array('type' => 'resort', 'patient_id' => $row->id)) ?>')" class="dropdown-item"><i class="icon-file-plus"></i>Назначить визит (Курорт)</a>

@@ -13,6 +13,8 @@ class WarehouseSupplyItemsModel extends ModelOld
     {
         global $db, $classes;
         $status = ($this->is_active) ? '' : 'readonly="readonly"';
+        if (isset($_GET['supplier_id'])) $this->post['item_supplier_id'] = $_GET['supplier_id'];
+        if (isset($_GET['faktura'])) $this->post['item_faktura'] = $_GET['faktura'];
         ?>
         <?php if(!$this->not_tr): ?>
             <tr id="table_tr-<?= $this->number ?>">
